@@ -74,3 +74,5 @@ nelmio_security:
         names: ['*']
     encrypted_cookie:
         names: ['*']
+    forced_ssl:
+        enabled: false

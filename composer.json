@@ -1,10 +1,10 @@
 {
-    "name": "surfnet/stepup-gateway",
+    "name": "surfnet/stepup-middleware",
     "license": "Apache-2.0",
-    "description": "The SURFnet Step-up Gateway sits between a SAML Service Provider and Identity Provider and can provide a certain Level of Assurance by performing second-factor authentication.",
+    "description": "The SURFnet Step-up Middleware exposes an API for managing Step-up Identities and Tokens.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\StepupGatewayBundle\\": "src"
+            "Surfnet\\StepupMiddlewareBundle\\": "src"
         }
     },
     "minimum-stability": "stable",

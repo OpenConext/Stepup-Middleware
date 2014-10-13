@@ -46,7 +46,7 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        default_connection: gateway
+        default_connection: middleware
         connections:
             middleware:
                 driver:   "%database_driver%"

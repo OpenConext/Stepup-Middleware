@@ -46,13 +46,65 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
+        default_connection: gateway
+        connections:
+            middleware:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_middleware_name%"
+                user:     "%database_middleware_user%"
+                password: "%database_middleware_password%"
+                charset:  UTF8
+            gateway:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_gateway_name%"
+                user:     "%database_gateway_user%"
+                password: "%database_gateway_password%"
+                charset:  UTF8
+            middleware_deploy:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_middleware_name%"
+                user:     "%database_deploy_user%"
+                password: "%database_deploy_password%"
+                charset:  UTF8
+            gateway_deploy:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_gateway_name%"
+                user:     "%database_deploy_user%"
+                password: "%database_deploy_password%"
+                charset:  UTF8
+    orm:
+        default_entity_manager: gateway
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            middleware:
+                connection: middleware
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                mappings: []
+            gateway:
+                connection: gateway
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                mappings: []
+            middleware_deploy:
+                connection: middleware_deploy
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                mappings: []
+            gateway_deploy:
+                connection: gateway_deploy
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                mappings: []
+
+doctrine_migrations:
+    namespace: Surfnet\StepupMiddleware\Migrations
+    table_name: migration_versions
+    name: Step-up RA Migrations
 
 # Swiftmailer Configuration
 swiftmailer:

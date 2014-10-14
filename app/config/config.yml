@@ -64,19 +64,11 @@ doctrine:
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
                 charset:  UTF8
-            middleware_deploy:
+            deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
                 dbname:   "%database_middleware_name%"
-                user:     "%database_deploy_user%"
-                password: "%database_deploy_password%"
-                charset:  UTF8
-            gateway_deploy:
-                driver:   "%database_driver%"
-                host:     "%database_host%"
-                port:     "%database_port%"
-                dbname:   "%database_gateway_name%"
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
@@ -92,12 +84,8 @@ doctrine:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings: []
-            middleware_deploy:
-                connection: middleware_deploy
-                naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings: []
-            gateway_deploy:
-                connection: gateway_deploy
+            deploy:
+                connection: deploy
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings: []
 

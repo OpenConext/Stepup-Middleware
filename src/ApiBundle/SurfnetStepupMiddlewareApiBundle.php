@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddlewareBundle;
+namespace Surfnet\StepupMiddleware\ApiBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class SurfnetStepupMiddlewareBundle extends Bundle
+class SurfnetStepupMiddlewareApiBundle extends Bundle
 {
 }

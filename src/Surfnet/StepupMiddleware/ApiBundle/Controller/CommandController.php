@@ -30,7 +30,7 @@ class CommandController extends Controller
      * @ParamConverter(
      *     name="command",
      *     converter="surfnet_stepup_middleware_api.command",
-     *     options={"namespace": "Surfnet\StepupMiddleware"}
+     *     options={"namespace": "Surfnet\Stepup"}
      * )
      * @param Request $request
      * @param object $command

@@ -27,7 +27,11 @@ use Symfony\Component\HttpFoundation\Response;
 class CommandController extends Controller
 {
     /**
-     * @ParamConverter(name="command", converter="surfnet_stepup_middleware_api.command")
+     * @ParamConverter(
+     *     name="command",
+     *     converter="surfnet_stepup_middleware_api.command",
+     *     options={"namespace": "Surfnet\StepupMiddleware"}
+     * )
      * @param Request $request
      * @param object $command
      * @return Response

@@ -27,6 +27,12 @@ class CommandParamConverter implements ParamConverterInterface
 {
     public function apply(Request $request, ParamConverter $configuration)
     {
+        $namespace = $configuration->getOptions()['namespace'];
+
+        if (!is_string($namespace) || empty($namespace)) {
+            throw new \RuntimeException('Please provide a non-empty command namespace string.');
+        }
+
         $json = $request->getContent();
         $object = json_decode($json, true);
 
@@ -34,7 +40,8 @@ class CommandParamConverter implements ParamConverterInterface
 
         preg_match('~^(\w+):([\w\\.]+)$~', $object['command']['name'], $commandName);
         $commandClassName = sprintf(
-            'Surfnet\StepupMiddleware\%s\Command\%sCommand',
+            '%s\%s\Command\%sCommand',
+            rtrim($namespace, '\\'),
             $commandName[1],
             str_replace('.', '\\', $commandName[2])
         );
@@ -52,7 +59,8 @@ class CommandParamConverter implements ParamConverterInterface
 
     public function supports(ParamConverter $configuration)
     {
-        return $configuration->getName() === 'command';
+        return $configuration->getName() === 'command'
+            && isset($configuration->getOptions()['namespace']);
     }
 
     /**

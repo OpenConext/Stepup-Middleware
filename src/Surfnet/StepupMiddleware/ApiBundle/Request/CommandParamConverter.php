@@ -27,8 +27,7 @@ class CommandParamConverter implements ParamConverterInterface
 {
     public function apply(Request $request, ParamConverter $configuration)
     {
-        $json = $request->getContent();
-        $object = json_decode($json, true);
+        $object = json_decode($request->getContent(), true);
 
         $this->assertIsValidCommandStructure($object);
 

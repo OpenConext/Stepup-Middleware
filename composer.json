@@ -4,7 +4,8 @@
     "description": "The SURFnet Step-up Middleware exposes an API for managing Step-up Identities and Tokens.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\StepupMiddlewareBundle\\": "src"
+            "Surfnet\\StepupMiddleware\\": "src\\Surfnet\\StepupMiddleware",
+            "Surfnet\\Stepup\\": "src\\Surfnet\\Stepup"
         }
     },
     "minimum-stability": "stable",

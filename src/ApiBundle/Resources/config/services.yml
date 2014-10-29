@@ -1,0 +1,5 @@
+services:
+    surfnet_stepup_middleware_api.request.command_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
+        tags:
+            - { name: request.param_converter, priority: -1, converter: surfnet_stepup_middleware_api.command }

@@ -23,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CommandController extends Controller
 {
@@ -38,9 +39,6 @@ class CommandController extends Controller
      */
     public function handleAction(Request $request, $command)
     {
-        $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName], 202);
-
-        return $response;
+        throw new HttpException(418, 'Not Yet Implemented');
     }
 }

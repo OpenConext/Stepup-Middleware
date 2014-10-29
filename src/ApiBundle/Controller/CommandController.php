@@ -35,7 +35,7 @@ class CommandController extends Controller
     public function handleAction(Request $request, $command)
     {
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response = new JsonResponse(['command' => $command->__uuid, 'processed_by' => $serverName], 202);
+        $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName], 202);
 
         return $response;
     }

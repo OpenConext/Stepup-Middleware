@@ -40,7 +40,7 @@ class CommandParamConverter implements ParamConverterInterface
         );
 
         $command = new $commandClassName;
-        $command->__uuid = $object['command']['uuid'];
+        $command->UUID = $object['command']['uuid'];
 
         foreach ($object['command']['payload'] as $property => $value) {
             $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));

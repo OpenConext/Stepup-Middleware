@@ -62,23 +62,27 @@ class CommandParamConverter implements ParamConverterInterface
     private function assertIsValidCommandStructure($data)
     {
         if (!is_array($data)) {
-            throw new BadCommandRequestException(['Command is not valid: body must be a JSON object.']);
+            $type = gettype($data);
+
+            throw new BadCommandRequestException(
+                [sprintf('Command is not valid: body must be a JSON object, but is of type %s', $type)]
+            );
         }
 
         if (!isset($data['command'])) {
-            throw new BadCommandRequestException(['Command is not valid: no command object.']);
+            throw new BadCommandRequestException(["Required parameter 'command' is not set."]);
         }
 
         if (!isset($data['command']['name']) || !is_string($data['command']['name'])) {
-            throw new BadCommandRequestException(['Command is not valid: pass command name string.']);
+            throw new BadCommandRequestException(["Required command parameter 'name' is not set or not a string."]);
         }
 
         if (!isset($data['command']['uuid']) || !is_string($data['command']['uuid'])) {
-            throw new BadCommandRequestException(['Command is not valid: pass UUID.']);
+            throw new BadCommandRequestException(["Required command parameter 'uuid' is not set or not a string."]);
         }
 
         if (!isset($data['command']['payload']) || !is_array($data['command']['payload'])) {
-            throw new BadCommandRequestException(['Command is not valid: pass payload object.']);
+            throw new BadCommandRequestException(["Required command parameter 'payload' is not set or not an object."]);
         }
     }
 }

@@ -34,9 +34,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter')
-            ->shouldReceive('getOptions')->with()->andReturn(['namespace' => 'Surfnet'])
-            ->getMock();
+        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -46,12 +44,9 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
      * @dataProvider convertibleCommandNames
      * @param string $expectedCommandClass
      * @param string $commandName
-     * @param string $namespace
      */
-    public function testItCanConvertCommandNameNotation($expectedCommandClass, $commandName, $namespace)
+    public function testItCanConvertCommandNameNotation($expectedCommandClass, $commandName)
     {
-        require_once(__DIR__ . '/commands.php');
-
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new \stdClass]];
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
@@ -60,9 +55,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', m::type($expectedCommandClass))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter')
-            ->shouldReceive('getOptions')->with()->andReturn(['namespace' => $namespace])
-            ->getMock();
+        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -70,8 +63,6 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testItSetsUuid()
     {
-        require_once(__DIR__ . '/commands.php');
-
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new \stdClass]];
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
@@ -145,13 +136,13 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'It can convert simple command notation with a namespace' => [
-                'My\Ns\Root\Command\FooBarCommand', 'Root:FooBar', 'My\\Ns',
+                'Surfnet\Stepup\Root\Command\FooBarCommand', 'Root:FooBar',
             ],
             'It can convert simple command notation with a namespace with trailing backslash' => [
-                'My\Ns\Root\Command\FooBarCommand', 'Root:FooBar', 'My\\Ns\\',
+                'Surfnet\Stepup\Root\Command\FooBarCommand', 'Root:FooBar',
             ],
             'It can convert namespaced command notation with a namespace' => [
-                'My\Ns\Root\Command\Ns\QuuxCommand', 'Root:Ns.Quux', 'My\\Ns',
+                'Surfnet\Stepup\Root\Command\Ns\QuuxCommand', 'Root:Ns.Quux',
             ],
         ];
     }

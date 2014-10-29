@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-namespace My\Ns\Root\Command
+namespace Surfnet\Stepup\Root\Command
 {
     class FooBarCommand
     {
     }
 }
 
-namespace My\Ns\Root\Command\Ns
+namespace Surfnet\Stepup\Root\Command\Ns
 {
     class QuuxCommand
     {

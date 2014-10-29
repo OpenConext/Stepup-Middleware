@@ -18,26 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Surfnet\Stepup\Command\Command;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CommandController extends Controller
 {
-    /**
-     * @ParamConverter(
-     *     name="command",
-     *     converter="surfnet_stepup_middleware_api.command",
-     *     options={"namespace": "Surfnet\Stepup"}
-     * )
-     * @param Request $request
-     * @param object $command
-     * @return Response
-     */
-    public function handleAction(Request $request, $command)
+    public function handleAction(Command $command)
     {
         throw new HttpException(418, 'Not Yet Implemented');
     }

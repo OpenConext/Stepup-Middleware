@@ -27,11 +27,11 @@ class CommandParamConverter implements ParamConverterInterface
 {
     public function apply(Request $request, ParamConverter $configuration)
     {
-        $object = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
 
-        $this->assertIsValidCommandStructure($object);
+        $this->assertIsValidCommandStructure($data);
 
-        preg_match('~^(\w+):([\w\\.]+)$~', $object['command']['name'], $commandName);
+        preg_match('~^(\w+):([\w\\.]+)$~', $data['command']['name'], $commandName);
         $commandClassName = sprintf(
             'Surfnet\Stepup\%s\Command\%sCommand',
             $commandName[1],
@@ -39,9 +39,9 @@ class CommandParamConverter implements ParamConverterInterface
         );
 
         $command = new $commandClassName;
-        $command->UUID = $object['command']['uuid'];
+        $command->UUID = $data['command']['uuid'];
 
-        foreach ($object['command']['payload'] as $property => $value) {
+        foreach ($data['command']['payload'] as $property => $value) {
             $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
             $command->$properlyCasedProperty = $value;
         }
@@ -56,28 +56,28 @@ class CommandParamConverter implements ParamConverterInterface
     }
 
     /**
-     * @param $object
+     * @param mixed $data
      * @throws BadCommandRequestException
      */
-    private function assertIsValidCommandStructure($object)
+    private function assertIsValidCommandStructure($data)
     {
-        if (!is_array($object)) {
+        if (!is_array($data)) {
             throw new BadCommandRequestException(['Command is not valid: body must be a JSON object.']);
         }
 
-        if (!isset($object['command'])) {
+        if (!isset($data['command'])) {
             throw new BadCommandRequestException(['Command is not valid: no command object.']);
         }
 
-        if (!isset($object['command']['name']) || !is_string($object['command']['name'])) {
+        if (!isset($data['command']['name']) || !is_string($data['command']['name'])) {
             throw new BadCommandRequestException(['Command is not valid: pass command name string.']);
         }
 
-        if (!isset($object['command']['uuid']) || !is_string($object['command']['uuid'])) {
+        if (!isset($data['command']['uuid']) || !is_string($data['command']['uuid'])) {
             throw new BadCommandRequestException(['Command is not valid: pass UUID.']);
         }
 
-        if (!isset($object['command']['payload']) || !is_array($object['command']['payload'])) {
+        if (!isset($data['command']['payload']) || !is_array($data['command']['payload'])) {
             throw new BadCommandRequestException(['Command is not valid: pass payload object.']);
         }
     }

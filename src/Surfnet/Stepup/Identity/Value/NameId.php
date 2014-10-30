@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
 /**
@@ -33,7 +34,7 @@ class NameId implements Id
     public function __construct($value)
     {
         if (!is_string($value)) {
-            throw new \InvalidArgumentException('Identity ID must be string');
+            throw InvalidArgumentException::invalidType('string', 'value', $value);
         }
 
         $this->value = $value;

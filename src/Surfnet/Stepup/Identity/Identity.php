@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\AggregateRoot;
+namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;

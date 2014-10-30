@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Surfnet\Stepup\Identity\AggregateRoot\Identity;
+use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;

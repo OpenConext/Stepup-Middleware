@@ -26,6 +26,6 @@ class IdentityRepository extends EventSourcingRepository
 {
     public function __construct(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
-        parent::__construct($eventStore, $eventBus, 'Surfnet\Stepup\Identity\AggregateRoot\Identity');
+        parent::__construct($eventStore, $eventBus, 'Surfnet\Stepup\Identity\Identity');
     }
 }

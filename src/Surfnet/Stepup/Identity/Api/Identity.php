@@ -19,7 +19,13 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 
 interface Identity extends AggregateRoot
 {
+    /**
+     * @param IdentityId $id
+     * @return Identity
+     */
+    public static function create(IdentityId $id);
 }

@@ -31,7 +31,8 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
         );
-        $loader->load('pipeline.yml');
+        $loader->load('command_handlers.yml');
         $loader->load('event_sourcing.yml');
+        $loader->load('pipeline.yml');
     }
 }

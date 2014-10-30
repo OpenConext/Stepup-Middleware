@@ -1,0 +1,6 @@
+command_handle:
+    path: /command
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Command:handle }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+

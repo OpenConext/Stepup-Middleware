@@ -40,13 +40,6 @@ class InvalidCommandExceptionListener implements EventSubscriberInterface
             return;
         }
 
-        $errors = [];
-
-        foreach ($exception->getViolations() as $violation) {
-            /** @var ConstraintViolationInterface $violation */
-            $errors[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
-        }
-
-        $event->setResponse(new JsonResponse(['errors' => $errors], 400));
+        $event->setResponse(new JsonResponse(['errors' => $exception->getErrors()], 400));
     }
 }

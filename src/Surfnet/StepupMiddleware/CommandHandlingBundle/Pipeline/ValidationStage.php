@@ -41,7 +41,7 @@ class ValidationStage implements Stage
         $violations = $this->validator->validate($command);
 
         if (count($violations) > 0) {
-            throw new InvalidCommandException($violations);
+            throw InvalidCommandException::createFromViolations($violations);
         }
 
         return $command;

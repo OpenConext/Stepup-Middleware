@@ -18,27 +18,49 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception;
 
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class InvalidCommandException extends \RuntimeException
+class InvalidCommandException extends \RuntimeException implements ProcessingAbortedException
 {
     /**
-     * @var ConstraintViolationListInterface
+     * @var string[]
      */
-    private $violations;
+    private $errors;
 
-    public function __construct(ConstraintViolationListInterface $violations, $code = 0, \Exception $previous = null)
+    public static function createFromViolations(ConstraintViolationListInterface $violations)
+    {
+        return new self(self::mapViolationsToErrorStrings($violations));
+    }
+
+    public function __construct(array $errors, $code = 0, \Exception $previous = null)
     {
         parent::__construct('', $code, $previous);
 
-        $this->violations = $violations;
+        $this->errors = $errors;
     }
 
     /**
-     * @return ConstraintViolationListInterface
+     * @return string[]
      */
-    public function getViolations()
+    public function getErrors()
     {
-        return $this->violations;
+        return $this->errors;
+    }
+
+    /**
+     * @param ConstraintViolationListInterface $violations
+     * @return array
+     */
+    private static function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations)
+    {
+        $errors = [];
+
+        foreach ($violations as $violation) {
+            /** @var ConstraintViolationInterface $violation */
+            $errors[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
+        }
+
+        return $errors;
     }
 }

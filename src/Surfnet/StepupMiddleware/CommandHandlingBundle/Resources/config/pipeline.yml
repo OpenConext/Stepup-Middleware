@@ -27,6 +27,8 @@ services:
 
     surfnet_stepup_middleware_core.command_handler.identity_command_handler:
         class: Surfnet\Stepup\Identity\CommandHandler\IdentityCommandHandler
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.repository.identity
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_core.listener.invalid_command_exception_listener:

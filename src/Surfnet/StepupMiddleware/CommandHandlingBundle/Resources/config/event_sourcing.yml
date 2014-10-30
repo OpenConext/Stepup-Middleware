@@ -1,0 +1,14 @@
+services:
+    surfnet_stepup_middleware_command_handling.repository.identity:
+        class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.event_store.in_memory
+            - @surfnet_stepup_middleware_command_handling.event_bus.simple
+
+    surfnet_stepup_middleware_command_handling.event_store.in_memory:
+        public: false
+        class: Broadway\EventStore\InMemoryEventStore
+
+    surfnet_stepup_middleware_command_handling.event_bus.simple:
+        public: false
+        class: Broadway\EventHandling\SimpleEventBus

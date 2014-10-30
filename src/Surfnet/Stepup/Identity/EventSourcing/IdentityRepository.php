@@ -16,14 +16,16 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Command;
+namespace Surfnet\Stepup\Identity\EventSourcing;
 
-use Surfnet\Stepup\Command\Command;
+use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventSourcing\EventSourcingRepository;
+use Broadway\EventStore\EventStoreInterface;
 
-class NoopCommand implements Command
+class IdentityRepository extends EventSourcingRepository
 {
-    /**
-     * @var string
-     */
-    public $UUID;
+    public function __construct(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    {
+        parent::__construct($eventStore, $eventBus, 'Surfnet\Stepup\Identity\AggregateRoot\Identity');
+    }
 }

@@ -19,12 +19,30 @@
 namespace Surfnet\Stepup\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Surfnet\Stepup\Identity\Command\NoopCommand;
+use Surfnet\Stepup\Identity\AggregateRoot\Identity;
+use Surfnet\Stepup\Identity\Command\CreateIdentityCommand;
+use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 
 class IdentityCommandHandler extends CommandHandler
 {
-    public function handleNoopCommand(NoopCommand $command)
+    /**
+     * @var IdentityRepository
+     */
+    private $repository;
+
+    /**
+     * @param IdentityRepository $repository
+     */
+    public function __construct(IdentityRepository $repository)
     {
-        // NOP
+        $this->repository = $repository;
+    }
+
+    public function handleCreateIdentityCommand(CreateIdentityCommand $command)
+    {
+        $identity = Identity::create(new IdentityId($command->id));
+
+        $this->repository->add($identity);
     }
 }

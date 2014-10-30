@@ -71,9 +71,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', self::spy($spiedCommand))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter')
-            ->shouldReceive('getOptions')->with()->andReturn(['namespace' => 'My\Ns'])
-            ->getMock();
+        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -93,9 +91,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', self::spy($spiedCommand))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter')
-            ->shouldReceive('getOptions')->with()->andReturn(['namespace' => 'My\Ns'])
-            ->getMock();
+        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);

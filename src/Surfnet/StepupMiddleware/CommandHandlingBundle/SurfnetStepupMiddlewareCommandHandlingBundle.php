@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddCommandBusCommandHandlersCompilerPass;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddEventBusListenersCompilerPass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddPipelineStagesCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -31,5 +32,6 @@ class SurfnetStepupMiddlewareCommandHandlingBundle extends Bundle
 
         $container->addCompilerPass(new AddPipelineStagesCompilerPass());
         $container->addCompilerPass(new AddCommandBusCommandHandlersCompilerPass());
+        $container->addCompilerPass(new AddEventBusListenersCompilerPass());
     }
 }

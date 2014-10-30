@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\CommandHandling;
 
+use Surfnet\Stepup\CommandHandling\Exception\InvalidCommandException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStage implements Stage
@@ -40,7 +41,7 @@ class ValidationStage implements Stage
         $violations = $this->validator->validate($command);
 
         if (count($violations) > 0) {
-            throw new Exception\InvalidCommandException('Command did not validate', $violations);
+            throw new InvalidCommandException($violations);
         }
 
         return $command;

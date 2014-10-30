@@ -47,6 +47,6 @@ class InvalidCommandExceptionListener implements EventSubscriberInterface
             $errors[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
         }
 
-        $event->setResponse(new JsonResponse(['message' => $exception->getMessage(), 'errors' => $errors], 400));
+        $event->setResponse(new JsonResponse(['errors' => $errors], 400));
     }
 }

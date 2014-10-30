@@ -27,13 +27,9 @@ class InvalidCommandException extends \RuntimeException
      */
     private $violations;
 
-    public function __construct(
-        $message,
-        ConstraintViolationListInterface $violations,
-        $code = 0,
-        \Exception $previous = null
-    ) {
-        parent::__construct($message, $code, $previous);
+    public function __construct(ConstraintViolationListInterface $violations, $code = 0, \Exception $previous = null)
+    {
+        parent::__construct('', $code, $previous);
 
         $this->violations = $violations;
     }

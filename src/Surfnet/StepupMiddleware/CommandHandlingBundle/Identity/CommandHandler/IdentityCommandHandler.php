@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 use Broadway\CommandHandling\CommandHandler;
 use Surfnet\Stepup\Identity\AggregateRoot\Identity;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 
 class IdentityCommandHandler extends CommandHandler
@@ -41,7 +41,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
     {
-        $identity = Identity::create(new IdentityId($command->id));
+        $identity = Identity::create(new NameId($command->id));
 
         $this->repository->add($identity);
     }

@@ -20,7 +20,10 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Identity\Api\Id;
 
-class IdentityId implements Id
+/**
+ * The natural identifier of an Identity is the SAML Name ID.
+ */
+class NameId implements Id
 {
     /**
      * @var string

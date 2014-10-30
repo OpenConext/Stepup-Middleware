@@ -19,16 +19,16 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 abstract class IdentityEvent implements SerializableInterface
 {
     /**
-     * @var IdentityId
+     * @var NameId
      */
     public $id;
 
-    public function __construct(IdentityId $id)
+    public function __construct(NameId $id)
     {
         $this->id = $id;
     }

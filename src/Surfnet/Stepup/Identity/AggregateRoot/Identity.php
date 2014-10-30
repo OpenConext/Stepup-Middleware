@@ -22,16 +22,16 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\NoopEvent;
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
     /**
-     * @var IdentityId
+     * @var NameId
      */
     private $id;
 
-    public static function create(IdentityId $id)
+    public static function create(NameId $id)
     {
         $identity = new self();
         $identity->apply(new IdentityCreatedEvent($id));

@@ -21,10 +21,10 @@ namespace Surfnet\Stepup\Identity\Api;
 interface Id
 {
     /**
-     * @param mixed $id
+     * @param mixed $value
      * @throws \InvalidArgumentException
      */
-    public function __construct($id);
+    public function __construct($value);
 
     /**
      * @return string

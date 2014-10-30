@@ -25,20 +25,20 @@ class IdentityId implements Id
     /**
      * @var string
      */
-    private $id;
+    private $value;
 
-    public function __construct($id)
+    public function __construct($value)
     {
-        if (!is_string($id)) {
+        if (!is_string($value)) {
             throw new \InvalidArgumentException('Identity ID must be string');
         }
 
-        $this->id = $id;
+        $this->value = $value;
     }
 
     public function __toString()
     {
-        return $this->id;
+        return $this->value;
     }
 
     public function equals(Id $other)

@@ -19,13 +19,22 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Command\Command;
+use Surfnet\Stepup\CommandHandling\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class CommandController extends Controller
 {
-    public function handleAction(Command $command)
+    public function handleAction(Command $command, Request $request)
     {
-        throw new HttpException(418, 'Not Yet Implemented');
+        /** @var Pipeline $pipeline */
+        $pipeline = $this->get('pipeline');
+        $command = $pipeline->process($command);
+
+        $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
+        $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName]);
+
+        return $response;
     }
 }

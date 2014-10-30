@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\CommandHandling;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Doctrine\DBAL\Driver\Connection;
 

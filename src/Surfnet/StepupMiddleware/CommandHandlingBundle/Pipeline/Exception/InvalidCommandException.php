@@ -16,26 +16,29 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Surfnet\Stepup\Command\Command;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class CreateIdentityCommand implements Command
+class InvalidCommandException extends \RuntimeException
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.uuid.must_be_string")
-     *
-     * @var string
+     * @var ConstraintViolationListInterface
      */
-    public $UUID;
+    private $violations;
+
+    public function __construct(ConstraintViolationListInterface $violations, $code = 0, \Exception $previous = null)
+    {
+        parent::__construct('', $code, $previous);
+
+        $this->violations = $violations;
+    }
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
-     *
-     * @var string
+     * @return ConstraintViolationListInterface
      */
-    public $id;
+    public function getViolations()
+    {
+        return $this->violations;
+    }
 }

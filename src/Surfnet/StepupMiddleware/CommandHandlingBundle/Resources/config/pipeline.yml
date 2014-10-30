@@ -3,21 +3,21 @@ services:
         alias: surfnet_stepup_middleware_core.pipeline.transaction_aware_pipeline
 
     surfnet_stepup_middleware_core.pipeline.transaction_aware_pipeline:
-        class: Surfnet\Stepup\CommandHandling\TransactionAwarePipeline
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline
         arguments:
             - @surfnet_stepup_middleware_core.pipeline.staged_pipeline
             - @doctrine.dbal.middleware_connection
 
     surfnet_stepup_middleware_core.pipeline.staged_pipeline:
-        class: Surfnet\Stepup\CommandHandling\StagedPipeline
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline
 
     surfnet_stepup_middleware_core.pipeline.stage.validation:
-        class: Surfnet\Stepup\CommandHandling\ValidationStage
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage
         arguments: [ @validator ]
         tags: [{ name: pipeline.stage, priority: 2 }]
 
     surfnet_stepup_middleware_core.pipeline.stage.dispatch:
-        class: Surfnet\Stepup\CommandHandling\DispatchStage
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage
         arguments:
             - @surfnet_stepup_middleware_core.command_bus
         tags: [{ name: pipeline.stage, priority: 50 }]
@@ -26,7 +26,7 @@ services:
         class: Broadway\CommandHandling\SimpleCommandBus
 
     surfnet_stepup_middleware_core.command_handler.identity_command_handler:
-        class: Surfnet\Stepup\Identity\CommandHandler\IdentityCommandHandler
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler
         arguments:
             - @surfnet_stepup_middleware_command_handling.repository.identity
         tags: [{ name: command_bus.command_handler }]

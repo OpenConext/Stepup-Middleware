@@ -16,29 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\CommandHandling;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Broadway\CommandHandling\CommandBusInterface;
-
-class DispatchStage implements Stage
+/**
+ * A stage is used in context of a pipeline and represents a stage in the processing of a command. Stages may block
+ * further processing of a command by throwing an exception.
+ */
+interface Stage
 {
     /**
-     * @var CommandBusInterface
+     * @param object $command
+     * @return object
      */
-    private $commandBus;
-
-    /**
-     * @param CommandBusInterface $commandBus
-     */
-    public function __construct(CommandBusInterface $commandBus)
-    {
-        $this->commandBus = $commandBus;
-    }
-
-    public function process($command)
-    {
-        $this->commandBus->dispatch($command);
-
-        return $command;
-    }
+    public function process($command);
 }

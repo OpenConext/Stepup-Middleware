@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\CommandHandler;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
 use Surfnet\Stepup\Identity\AggregateRoot\Identity;
-use Surfnet\Stepup\Identity\Command\CreateIdentityCommand;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 
 class IdentityCommandHandler extends CommandHandler
 {

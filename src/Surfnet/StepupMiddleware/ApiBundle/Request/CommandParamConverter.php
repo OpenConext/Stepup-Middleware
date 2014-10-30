@@ -33,7 +33,7 @@ class CommandParamConverter implements ParamConverterInterface
 
         preg_match('~^(\w+):([\w\\.]+)$~', $data['command']['name'], $commandName);
         $commandClassName = sprintf(
-            'Surfnet\Stepup\%s\Command\%sCommand',
+            'Surfnet\StepupMiddleware\CommandHandlingBundle\%s\Command\%sCommand',
             $commandName[1],
             str_replace('.', '\\', $commandName[2])
         );
@@ -52,7 +52,7 @@ class CommandParamConverter implements ParamConverterInterface
     public function supports(ParamConverter $configuration)
     {
         return $configuration->getName() === 'command'
-            && $configuration->getClass() === 'Surfnet\Stepup\Command\Command';
+            && $configuration->getClass() === 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command';
     }
 
     /**

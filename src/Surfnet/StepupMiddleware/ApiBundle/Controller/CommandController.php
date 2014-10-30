@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Command\Command;
-use Surfnet\Stepup\CommandHandling\Pipeline;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

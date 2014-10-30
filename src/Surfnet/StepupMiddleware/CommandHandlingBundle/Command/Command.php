@@ -16,17 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\CommandHandling;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
 /**
- * A stage is used in context of a pipeline and represents a stage in the processing of a command. Stages may block
- * further processing of a command by throwing an exception.
+ * Marker interface that must be implemented by all Step-up commands. All Step-up commands MUST sport a $UUID string
+ * field.
  */
-interface Stage
+interface Command
 {
-    /**
-     * @param object $command
-     * @return object
-     */
-    public function process($command);
 }

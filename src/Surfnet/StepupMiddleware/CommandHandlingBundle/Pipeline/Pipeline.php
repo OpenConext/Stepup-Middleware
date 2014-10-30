@@ -16,12 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 /**
- * Marker interface that must be implemented by all Step-up commands. All Step-up commands MUST sport a $UUID string
- * field.
+ * Describes a linear structure in which commands are processed. For example, authorisation may be checked and
+ * validation may take place before actually handling a command.
  */
-interface Command
+interface Pipeline
 {
+    /**
+     * @param object $command
+     * @return object
+     */
+    public function process($command);
 }

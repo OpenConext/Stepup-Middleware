@@ -16,34 +16,30 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\CommandHandling;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Surfnet\Stepup\CommandHandling\Exception\InvalidCommandException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
-class ValidationStage implements Stage
+class StagedPipeline implements Pipeline
 {
     /**
-     * @var ValidatorInterface
+     * @var Stage[]
      */
-    private $validator;
+    private $stages = [];
 
     /**
-     * @param ValidatorInterface $validator
+     * @param object $command
+     * @return object
      */
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
-
     public function process($command)
     {
-        $violations = $this->validator->validate($command);
-
-        if (count($violations) > 0) {
-            throw new InvalidCommandException($violations);
+        foreach ($this->stages as $stage) {
+            $command = $stage->process($command);
         }
 
         return $command;
+    }
+
+    public function addStage(Stage $stage)
+    {
+        $this->stages[] = $stage;
     }
 }

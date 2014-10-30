@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\CommandHandling\Exception;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Broadway\CommandHandling\CommandBusInterface;
 
-class InvalidCommandException extends \RuntimeException
+class DispatchStage implements Stage
 {
     /**
-     * @var ConstraintViolationListInterface
+     * @var CommandBusInterface
      */
-    private $violations;
-
-    public function __construct(ConstraintViolationListInterface $violations, $code = 0, \Exception $previous = null)
-    {
-        parent::__construct('', $code, $previous);
-
-        $this->violations = $violations;
-    }
+    private $commandBus;
 
     /**
-     * @return ConstraintViolationListInterface
+     * @param CommandBusInterface $commandBus
      */
-    public function getViolations()
+    public function __construct(CommandBusInterface $commandBus)
     {
-        return $this->violations;
+        $this->commandBus = $commandBus;
+    }
+
+    public function process($command)
+    {
+        $this->commandBus->dispatch($command);
+
+        return $command;
     }
 }

@@ -32,9 +32,10 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new Surfnet\StepupMiddleware\ApiBundle\SurfnetStepupMiddlewareApiBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
+            new Surfnet\StepupMiddleware\CommandHandlingBundle\SurfnetStepupMiddlewareCommandHandlingBundle(),
+            new Surfnet\StepupMiddleware\ApiBundle\SurfnetStepupMiddlewareApiBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

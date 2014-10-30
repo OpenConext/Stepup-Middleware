@@ -81,8 +81,6 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testItSetsPayload()
     {
-        require_once(__DIR__ . '/commands.php');
-
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')

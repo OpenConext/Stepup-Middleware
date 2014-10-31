@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\Api;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Identity\Value\NameId;
+
+interface Identity extends AggregateRoot
 {
-    class QuuxCommand
-    {
-    }
+    /**
+     * @param NameId $id
+     * @return Identity
+     */
+    public static function create(NameId $id);
 }

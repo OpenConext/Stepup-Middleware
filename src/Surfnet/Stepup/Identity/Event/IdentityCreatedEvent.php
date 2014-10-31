@@ -16,16 +16,20 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\Event;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+class IdentityCreatedEvent extends IdentityEvent
 {
-    class QuuxCommand
+    public static function deserialize(array $data)
     {
+        return new self($data->id);
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return ['id' => (string) $this->id];
     }
 }

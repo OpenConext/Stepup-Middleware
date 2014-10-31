@@ -16,16 +16,38 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Doctrine\ORM\Mapping as ORM;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
+
+/**
+ * @ORM\Entity
+ */
+class Identity
 {
-    class QuuxCommand
+    /**
+     * @ORM\Id
+     * @ORM\Column
+     *
+     * @var string
+     */
+    private $nameId;
+
+    public function __construct($nameId)
     {
+        if (!is_string($nameId)) {
+            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
+        }
+
+        $this->nameId = $nameId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameId()
+    {
+        return $this->nameId;
     }
 }

@@ -16,16 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+/**
+ * A stage is used in context of a pipeline and represents a stage in the processing of a command. Stages may block
+ * further processing of a command by throwing an exception.
+ */
+interface Stage
 {
-    class QuuxCommand
-    {
-    }
+    /**
+     * @param object $command
+     * @return object
+     */
+    public function process($command);
 }

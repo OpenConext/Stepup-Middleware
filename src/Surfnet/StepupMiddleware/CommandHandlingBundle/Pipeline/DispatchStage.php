@@ -16,16 +16,29 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Broadway\CommandHandling\CommandBusInterface;
+
+class DispatchStage implements Stage
 {
-    class QuuxCommand
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+
+    /**
+     * @param CommandBusInterface $commandBus
+     */
+    public function __construct(CommandBusInterface $commandBus)
     {
+        $this->commandBus = $commandBus;
+    }
+
+    public function process($command)
+    {
+        $this->commandBus->dispatch($command);
+
+        return $command;
     }
 }

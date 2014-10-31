@@ -130,13 +130,13 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'It can convert simple command notation with a namespace' => [
-                'Surfnet\Stepup\Root\Command\FooBarCommand', 'Root:FooBar',
+                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand', 'Root:FooBar',
             ],
             'It can convert simple command notation with a namespace with trailing backslash' => [
-                'Surfnet\Stepup\Root\Command\FooBarCommand', 'Root:FooBar',
+                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand', 'Root:FooBar',
             ],
             'It can convert namespaced command notation with a namespace' => [
-                'Surfnet\Stepup\Root\Command\Ns\QuuxCommand', 'Root:Ns.Quux',
+                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand', 'Root:Ns.Quux',
             ],
         ];
     }

@@ -16,16 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+
+class IdentityRepository
 {
-    class QuuxCommand
+    /**
+     * @param string $nameId
+     * @return Identity|null
+     */
+    public function find($nameId)
+    {
+        return null;
+    }
+
+    /**
+     * @param Identity $identity
+     */
+    public function save(Identity $identity)
     {
     }
 }

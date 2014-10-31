@@ -16,16 +16,30 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+class StagedPipeline implements Pipeline
 {
-    class QuuxCommand
+    /**
+     * @var Stage[]
+     */
+    private $stages = [];
+
+    /**
+     * @param object $command
+     * @return object
+     */
+    public function process($command)
     {
+        foreach ($this->stages as $stage) {
+            $command = $stage->process($command);
+        }
+
+        return $command;
+    }
+
+    public function addStage(Stage $stage)
+    {
+        $this->stages[] = $stage;
     }
 }

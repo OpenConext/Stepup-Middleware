@@ -16,16 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+/**
+ * Describes a linear structure in which commands are processed. For example, authorisation may be checked and
+ * validation may take place before actually handling a command.
+ */
+interface Pipeline
 {
-    class QuuxCommand
-    {
-    }
+    /**
+     * @param object $command
+     * @return object
+     */
+    public function process($command);
 }

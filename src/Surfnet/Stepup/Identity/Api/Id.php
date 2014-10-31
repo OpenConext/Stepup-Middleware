@@ -16,16 +16,24 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\Api;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+interface Id
 {
-    class QuuxCommand
-    {
-    }
+    /**
+     * @param mixed $value
+     * @throws \InvalidArgumentException
+     */
+    public function __construct($value);
+
+    /**
+     * @return string
+     */
+    public function __toString();
+
+    /**
+     * @param Id $other
+     * @return bool
+     */
+    public function equals(Id $other);
 }

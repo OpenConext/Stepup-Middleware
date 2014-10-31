@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\EventSourcing;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventSourcing\EventSourcingRepository;
+use Broadway\EventStore\EventStoreInterface;
+
+class IdentityRepository extends EventSourcingRepository
 {
-    class QuuxCommand
+    public function __construct(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
+        parent::__construct($eventStore, $eventBus, 'Surfnet\Stepup\Identity\Identity');
     }
 }

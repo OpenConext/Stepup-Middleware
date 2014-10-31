@@ -16,19 +16,23 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\DependencyInjection;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class SurfnetStepupMiddlewareApiExtension extends Extension
+class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
 {
     public function load(array $config, ContainerBuilder $container)
     {
-        $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $fileLoader->load('services.yml');
-        $fileLoader->load('projection.yml');
+        $loader = new YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config')
+        );
+        $loader->load('command_handlers.yml');
+        $loader->load('event_sourcing.yml');
+        $loader->load('pipeline.yml');
     }
 }

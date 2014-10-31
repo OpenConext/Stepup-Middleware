@@ -16,16 +16,37 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\Value;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Api\Id;
+
+/**
+ * The natural identifier of an Identity is the SAML Name ID.
+ */
+class NameId implements Id
 {
-    class QuuxCommand
+    /**
+     * @var string
+     */
+    private $value;
+
+    public function __construct($value)
     {
+        if (!is_string($value)) {
+            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        }
+
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
+    }
+
+    public function equals(Id $other)
+    {
+        return $this == $other;
     }
 }

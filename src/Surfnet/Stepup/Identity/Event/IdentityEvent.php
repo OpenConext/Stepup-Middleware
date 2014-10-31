@@ -16,16 +16,20 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\Stepup\Identity\Event;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+use Broadway\Serializer\SerializableInterface;
+use Surfnet\Stepup\Identity\Value\NameId;
+
+abstract class IdentityEvent implements SerializableInterface
 {
-    class QuuxCommand
+    /**
+     * @var NameId
+     */
+    public $id;
+
+    public function __construct(NameId $id)
     {
+        $this->id = $id;
     }
 }

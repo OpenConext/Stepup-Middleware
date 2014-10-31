@@ -16,16 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
-    class FooBarCommand
-    {
-    }
-}
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
+/**
+ * Marker interface that must be implemented by all Step-up commands. All Step-up commands MUST sport a $UUID string
+ * field.
+ */
+interface Command
 {
-    class QuuxCommand
-    {
-    }
 }

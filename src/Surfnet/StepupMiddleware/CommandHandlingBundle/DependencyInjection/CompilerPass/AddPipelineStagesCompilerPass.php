@@ -26,7 +26,7 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->getDefinition('surfnet_stepup_middleware_core.pipeline.staged_pipeline');
+        $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline');
         $stageDefinitions = $container->findTaggedServiceIds('pipeline.stage');
 
         foreach (array_keys($stageDefinitions) as $id) {

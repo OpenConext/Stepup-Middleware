@@ -26,7 +26,7 @@ class AddCommandBusCommandHandlersCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->getDefinition('surfnet_stepup_middleware_core.command_bus');
+        $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.command_bus');
         $commandHandlerDefinitions = $container->findTaggedServiceIds('command_bus.command_handler');
 
         foreach (array_keys($commandHandlerDefinitions) as $id) {

@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 
 use Broadway\Domain\DomainEventStream;
-use Broadway\Domain\DomainMessageInterface;
 use Mockery as m;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 

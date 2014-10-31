@@ -18,11 +18,13 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\Value\NameId;
+
 class IdentityCreatedEvent extends IdentityEvent
 {
     public static function deserialize(array $data)
     {
-        return new self($data->id);
+        return new self(new NameId($data['id']));
     }
 
     /**

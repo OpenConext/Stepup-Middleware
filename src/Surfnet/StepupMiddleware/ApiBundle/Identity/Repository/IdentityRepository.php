@@ -29,7 +29,10 @@ class IdentityRepository extends EntityRepository
      */
     public function find($nameId)
     {
-        return parent::find($nameId);
+        /** @var Identity|null $identity */
+        $identity = parent::find($nameId);
+
+        return $identity;
     }
 
     /**

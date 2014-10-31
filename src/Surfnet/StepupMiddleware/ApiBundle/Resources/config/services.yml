@@ -1,0 +1,16 @@
+services:
+    surfnet_stepup_middleware_api.request.command_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
+        tags:
+            - { name: request.param_converter, priority: -1, converter: surfnet_stepup_middleware_api.command }
+
+    surfnet_stepup.listener.bad_json_request_exception_listener:
+        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    surfnet_stepup_middleware_api.repository.identity:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]

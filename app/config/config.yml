@@ -73,13 +73,19 @@ doctrine:
                 password: "%database_deploy_password%"
                 charset:  UTF8
     orm:
-        default_entity_manager: gateway
+        default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
         entity_managers:
             middleware:
                 connection: middleware
                 naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings: []
+                mappings:
+                    api:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
+                        prefix: Surfnet\StepupMiddleware\ApiBundle
+                        is_bundle: false
             gateway:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -87,7 +93,13 @@ doctrine:
             deploy:
                 connection: deploy
                 naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings: []
+                mappings:
+                    api:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
+                        prefix: Surfnet\StepupMiddleware\ApiBundle
+                        is_bundle: false
 
 doctrine_migrations:
     namespace: Surfnet\StepupMiddleware\Migrations

@@ -16,10 +16,29 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddlewareBundle;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Broadway\CommandHandling\CommandBusInterface;
 
-class SurfnetStepupMiddlewareBundle extends Bundle
+class DispatchStage implements Stage
 {
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+
+    /**
+     * @param CommandBusInterface $commandBus
+     */
+    public function __construct(CommandBusInterface $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+
+    public function process($command)
+    {
+        $this->commandBus->dispatch($command);
+
+        return $command;
+    }
 }

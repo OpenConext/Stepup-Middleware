@@ -4,8 +4,12 @@
     "description": "The SURFnet Step-up Middleware exposes an API for managing Step-up Identities and Tokens.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\StepupMiddlewareBundle\\": "src"
+            "Surfnet\\StepupMiddleware\\": "src\\Surfnet\\StepupMiddleware",
+            "Surfnet\\Stepup\\": "src\\Surfnet\\Stepup"
         }
+    },
+    "autoload-dev": {
+        "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"]
     },
     "minimum-stability": "stable",
     "require": {
@@ -24,7 +28,8 @@
         "nelmio/security-bundle": "~1.4",
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
         "doctrine/migrations": "~1.0.0|1.0.0@dev",
-        "broadway/broadway": "~0.2.0"
+        "broadway/broadway": "~0.2.0",
+        "mockery/mockery": "~0.9"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

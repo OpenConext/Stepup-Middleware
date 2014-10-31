@@ -23,7 +23,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 
 class InvalidCommandExceptionListener implements EventSubscriberInterface
 {

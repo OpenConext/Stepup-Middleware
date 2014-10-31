@@ -2,12 +2,25 @@ services:
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:
-            - @surfnet_stepup.event_store.in_memory
+            - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
 
     surfnet_stepup.event_store.in_memory:
         public: false
         class: Broadway\EventStore\InMemoryEventStore
+
+    surfnet_stepup.event_store.dbal:
+        public: false
+        class: Broadway\EventStore\DBALEventStore
+        arguments:
+            - @doctrine.dbal.middleware_connection
+            - @surfnet_stepup.event_store.simple_serializer
+            - @surfnet_stepup.event_store.simple_serializer
+            - 'event_stream'
+
+    surfnet_stepup.event_store.simple_serializer:
+        public: false
+        class: Broadway\Serializer\SimpleInterfaceSerializer
 
     surfnet_stepup_middleware_command_handling.event_bus.buffered:
         public: false

@@ -16,23 +16,34 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Api;
+namespace Surfnet\Stepup\Identity\Value;
 
-use Broadway\Domain\AggregateRoot;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Api\Id;
 
-interface Identity extends AggregateRoot
+class IdentityId implements Id
 {
     /**
-     * @param IdentityId $id
-     * @param NameId $nameId
-     * @return Identity
+     * @var string
      */
-    public static function create(IdentityId $id, NameId $nameId);
+    private $value;
 
-    /**
-     * Construct a new aggregate root. Aggregate roots can only be affected by events, so no parameters are allowed.
-     */
-    public function __construct();
+    public function __construct($value)
+    {
+        if (!is_string($value)) {
+            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        }
+
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
+    }
+
+    public function equals(Id $other)
+    {
+        return $this == $other;
+    }
 }

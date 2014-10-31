@@ -18,11 +18,27 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
+
 class IdentityCreatedEvent extends IdentityEvent
 {
+    /**
+     * @var NameId
+     */
+    public $nameId;
+
+    public function __construct(IdentityId $id, NameId $nameId)
+    {
+        parent::__construct($id);
+
+        $this->nameId = $nameId;
+    }
+
+
     public static function deserialize(array $data)
     {
-        return new self($data->id);
+        return new self(new IdentityId($data['id']), new NameId($data['name_id']));
     }
 
     /**
@@ -30,6 +46,6 @@ class IdentityCreatedEvent extends IdentityEvent
      */
     public function serialize()
     {
-        return ['id' => (string) $this->id];
+        return ['id' => (string) $this->id, 'name_id' => (string) $this->nameId];
     }
 }

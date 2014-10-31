@@ -1,9 +1,5 @@
 services:
     surfnet_stepup_middleware_api.projector.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentityProjector
-        arguments:
-            - @surfnet_stepup_middleware_api.repository.identity
+        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
         tags: [{ name: event_bus.event_listener }]
-
-    surfnet_stepup_middleware_api.repository.identity:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository

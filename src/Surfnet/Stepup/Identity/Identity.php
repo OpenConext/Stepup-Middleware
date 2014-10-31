@@ -21,30 +21,37 @@ namespace Surfnet\Stepup\Identity;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
     /**
-     * @var NameId
+     * @var IdentityId
      */
     private $id;
 
-    public static function create(NameId $id)
+    /**
+     * @var NameId
+     */
+    private $nameId;
+
+    public static function create(IdentityId $id, NameId $nameId)
     {
         $identity = new self();
-        $identity->apply(new IdentityCreatedEvent($id));
+        $identity->apply(new IdentityCreatedEvent($id, $nameId));
 
         return $identity;
     }
 
-    private function __construct()
+    final public function __construct()
     {
     }
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->id;
+        $this->nameId = $event->nameId;
     }
 
     /**

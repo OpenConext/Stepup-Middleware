@@ -8,3 +8,9 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    surfnet_stepup_middleware_api.repository.identity:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]

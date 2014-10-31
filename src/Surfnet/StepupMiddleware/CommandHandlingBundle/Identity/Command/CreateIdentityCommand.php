@@ -24,18 +24,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CreateIdentityCommand implements Command
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.uuid.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.create_identity.command_uuid.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.command_uuid.must_be_string")
      *
      * @var string
      */
     public $UUID;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.create_identity.uuid.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.uuid.must_be_string")
      *
      * @var string
      */
-    public $id;
+    public $uuid;
+
+    /**
+     * @Assert\NotBlank(message="stepup.command.create_identity.name_id.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.name_id.must_be_string")
+     *
+     * @var string
+     */
+    public $nameId;
 }

@@ -18,17 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
-class IdentityRepository
+class IdentityRepository extends EntityRepository
 {
     /**
-     * @param string $nameId
+     * @param string $id
      * @return Identity|null
      */
-    public function find($nameId)
+    public function find($id)
     {
-        return null;
+        /** @var Identity|null $identity */
+        $identity = parent::find($id);
+
+        return $identity;
     }
 
     /**
@@ -36,5 +40,8 @@ class IdentityRepository
      */
     public function save(Identity $identity)
     {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($identity);
+        $entityManager->flush();
     }
 }

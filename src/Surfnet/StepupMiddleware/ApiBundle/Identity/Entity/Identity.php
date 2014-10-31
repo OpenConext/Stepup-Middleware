@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
  */
 class Identity
 {

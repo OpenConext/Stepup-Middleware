@@ -28,19 +28,39 @@ class Identity
 {
     /**
      * @ORM\Id
+     * @ORM\Column(length=36)
+     *
+     * @var string
+     */
+    private $id;
+
+    /**
      * @ORM\Column
      *
      * @var string
      */
     private $nameId;
 
-    public function __construct($nameId)
+    public function __construct($id, $nameId)
     {
+        if (!is_string($id)) {
+            throw InvalidArgumentException::invalidType('string', 'id', $id);
+        }
+
         if (!is_string($nameId)) {
             throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
+        $this->id = $id;
         $this->nameId = $nameId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

@@ -24,13 +24,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 class IdentityRepository extends EntityRepository
 {
     /**
-     * @param string $nameId
+     * @param string $id
      * @return Identity|null
      */
-    public function find($nameId)
+    public function find($id)
     {
         /** @var Identity|null $identity */
-        $identity = parent::find($nameId);
+        $identity = parent::find($id);
 
         return $identity;
     }

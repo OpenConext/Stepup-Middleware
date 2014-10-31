@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Projector;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class IdentityProjector extends Projector
 {

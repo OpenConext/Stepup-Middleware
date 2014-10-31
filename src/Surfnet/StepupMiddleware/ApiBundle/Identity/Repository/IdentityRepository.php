@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Repository;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class IdentityRepository
 {

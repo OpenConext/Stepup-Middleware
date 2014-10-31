@@ -29,5 +29,6 @@ class SurfnetStepupMiddlewareApiExtension extends Extension
     {
         $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $fileLoader->load('services.yml');
+        $fileLoader->load('projection.yml');
     }
 }

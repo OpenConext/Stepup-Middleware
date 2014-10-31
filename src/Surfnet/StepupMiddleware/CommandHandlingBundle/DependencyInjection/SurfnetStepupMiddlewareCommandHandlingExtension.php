@@ -34,6 +34,5 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
         $loader->load('command_handlers.yml');
         $loader->load('event_sourcing.yml');
         $loader->load('pipeline.yml');
-        $loader->load('projectors.yml');
     }
 }

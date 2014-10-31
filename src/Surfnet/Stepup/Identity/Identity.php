@@ -21,7 +21,6 @@ namespace Surfnet\Stepup\Identity;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\NoopEvent;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 class Identity extends EventSourcedAggregateRoot implements IdentityApi

@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 

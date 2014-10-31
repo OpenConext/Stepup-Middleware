@@ -38,7 +38,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return $identity;
     }
 
-    private function __construct()
+    final public function __construct()
     {
     }
 

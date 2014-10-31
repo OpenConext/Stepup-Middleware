@@ -28,4 +28,9 @@ interface Identity extends AggregateRoot
      * @return Identity
      */
     public static function create(NameId $id);
+
+    /**
+     * Construct a new aggregate root. Aggregate roots can only be affected by events, so no parameters are allowed.
+     */
+    public function __construct();
 }

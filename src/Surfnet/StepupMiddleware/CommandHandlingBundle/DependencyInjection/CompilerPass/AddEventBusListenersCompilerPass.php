@@ -26,7 +26,7 @@ class AddEventBusListenersCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.event_bus.simple');
+        $definition = $container->getDefinition('surfnet_stepup.event_bus.simple');
         $eventListenerDefinitions = $container->findTaggedServiceIds('event_bus.event_listener');
 
         foreach (array_keys($eventListenerDefinitions) as $id) {

@@ -32,12 +32,12 @@ class CreateIdentityCommand implements Command
     public $UUID;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.uuid.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
      *
      * @var string
      */
-    public $uuid;
+    public $id;
 
     /**
      * @Assert\NotBlank(message="stepup.command.create_identity.name_id.must_not_be_blank")

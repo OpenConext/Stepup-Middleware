@@ -42,7 +42,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
     {
-        $identity = Identity::create(new IdentityId($command->uuid), new NameId($command->nameId));
+        $identity = Identity::create(new IdentityId($command->id), new NameId($command->nameId));
 
         $this->repository->add($identity);
     }

@@ -1,17 +1,11 @@
 security:
     firewalls:
-        api:
-            pattern: ^/api/|^/command
+        default:
             http_basic: ~
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-        default:
-            anonymous: ~
 
     access_control:
-        - { path: ^/api/|^/command, roles: [ROLE_SS,ROLE_RA] }
+        - { roles: [ROLE_SS,ROLE_RA] }
 
     providers:
         in_memory:

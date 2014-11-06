@@ -19,12 +19,13 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
  */
-class Identity
+class Identity implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -69,5 +70,10 @@ class Identity
     public function getNameId()
     {
         return $this->nameId;
+    }
+
+    public function jsonSerialize()
+    {
+        return ['id' => $this->id, 'name_id' => $this->nameId];
     }
 }

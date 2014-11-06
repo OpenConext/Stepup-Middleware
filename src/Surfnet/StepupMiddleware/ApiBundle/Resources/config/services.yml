@@ -4,7 +4,7 @@ services:
         tags:
             - { name: request.param_converter, priority: -1, converter: surfnet_stepup_middleware_api.command }
 
-    surfnet_stepup.listener.bad_json_request_exception_listener:
+    surfnet_stepup_middleware_api.listener.bad_command_request_exception_listener:
         class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }

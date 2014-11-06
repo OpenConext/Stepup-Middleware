@@ -1,12 +1,22 @@
 security:
+    firewalls:
+        default:
+            http_basic: ~
+            entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
+
+    access_control:
+        - { roles: [ROLE_SS,ROLE_RA] }
+
     providers:
         in_memory:
-            memory: ~
+            memory:
+                users:
+                    ss:
+                        password: %selfservice_api_password%
+                        roles: 'ROLE_SS'
+                    ra:
+                        password: %registration_authority_api_password%
+                        roles: 'ROLE_RA'
 
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-
-        default:
-            anonymous: ~
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -27,8 +28,14 @@ class SurfnetStepupMiddlewareApiExtension extends Extension
 {
     public function load(array $config, ContainerBuilder $container)
     {
+        $processor = new Processor();
+        $config = $processor->processConfiguration(new Configuration(), $config);
+
         $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $fileLoader->load('services.yml');
         $fileLoader->load('projection.yml');
+
+        $entryPoint = $container->getDefinition('surfnet_stepup_middleware_api.security.json_basic_auth_entry_point');
+        $entryPoint->replaceArgument(0, $config['http_basic_realm']);
     }
 }

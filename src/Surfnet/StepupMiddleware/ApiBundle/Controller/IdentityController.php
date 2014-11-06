@@ -18,29 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class IdentityController extends Controller
 {
-    public function getAction($id)
+    public function getAction($id, $institution)
     {
         if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
             throw new AccessDeniedHttpException('Client is not authorised to access identity');
         }
 
-        $identities = $this->getRepository()->find($id);
+        $identity = $this->getService()->get($id, $institution);
 
-        return new JsonResponse($identities);
+        return new JsonResponse($identity);
     }
 
     /**
-     * @return IdentityRepository
+     * @return IdentityService
      */
-    private function getRepository()
+    private function getService()
     {
-        return $this->get('surfnet_stepup_middleware_api.repository.identity');
+        return $this->get('surfnet_stepup_middleware_api.service.identity');
     }
 }

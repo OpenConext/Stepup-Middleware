@@ -9,13 +9,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
+    surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
+        class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
+        arguments:
+            - ~ # HTTP Basic realm string, see extension
+
     surfnet_stepup_middleware_api.repository.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
         factory_service: doctrine.orm.middleware_entity_manager
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
 
-    surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
-        class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
-        arguments:
-            - ~ # HTTP Basic realm string, see extension
+    surfnet_stepup_middleware_api.service.identity:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
+        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]

@@ -9,11 +9,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
-    surfnet_stepup.listener.entity_not_found_exception_listener:
-        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\EntityNotFoundExceptionListener
-        tags:
-            - { name: kernel.event_subscriber }
-
     surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
         class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
         arguments:

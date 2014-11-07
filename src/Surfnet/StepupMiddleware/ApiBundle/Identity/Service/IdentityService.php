@@ -40,19 +40,10 @@ class IdentityService
     /**
      * @param string $id
      * @param string $instituteId
-     * @return Identity
-     * @throws EntityNotFoundException
+     * @return Identity|null
      */
-    public function get($id, $instituteId)
+    public function find($id, $instituteId)
     {
-        $identity = $this->repository->find($id);
-
-        if (!$identity instanceof Identity) {
-            throw new EntityNotFoundException(
-                sprintf("Identity with id '%s' not found within institution '%s'", $id, $instituteId)
-            );
-        }
-
-        return $identity;
+        return $this->repository->find($id);
     }
 }

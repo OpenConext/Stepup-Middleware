@@ -22,6 +22,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends Controller
 {
@@ -31,7 +32,13 @@ class IdentityController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access identity');
         }
 
-        $identity = $this->getService()->get($id, $institution);
+        $identity = $this->getService()->find($id, $institution);
+
+        if ($identity === null) {
+            throw new NotFoundHttpException(
+                sprintf("Identity '%s' does not exist within institution '%s'", $id, $institution)
+            );
+        }
 
         return new JsonResponse($identity);
     }

@@ -36,6 +36,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Surfnet\StepupMiddleware\CommandHandlingBundle\SurfnetStepupMiddlewareCommandHandlingBundle(),
             new Surfnet\StepupMiddleware\ApiBundle\SurfnetStepupMiddlewareApiBundle(),
+            new Surfnet\StepupMiddleware\MiddlewareBundle\MiddlewareBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

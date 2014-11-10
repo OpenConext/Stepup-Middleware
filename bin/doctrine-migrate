@@ -1,3 +1,0 @@
-#!/bin/bash
-BASEDIR=$(dirname $0)
-(cd $BASEDIR/.. && app/console doc:mig:mig --em=deploy)

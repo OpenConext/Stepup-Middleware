@@ -9,9 +9,7 @@
 !app/logs/.gitkeep
 /build/
 /vendor/
-/bin/*
-!/bin/doctrine-diff
-!/bin/doctrine-migrate
+/bin
 /composer.phar
 /cache.properties
 /app/SymfonyRequirements.php

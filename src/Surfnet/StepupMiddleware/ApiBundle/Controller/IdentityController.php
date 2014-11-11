@@ -26,17 +26,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends Controller
 {
-    public function getAction($id, $institution)
+    public function getAction($id)
     {
         if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
             throw new AccessDeniedHttpException('Client is not authorised to access identity');
         }
 
-        $identity = $this->getService()->find($id, $institution);
+        $identity = $this->getService()->find($id);
 
         if ($identity === null) {
             throw new NotFoundHttpException(
-                sprintf("Identity '%s' does not exist within institution '%s'", $id, $institution)
+                sprintf("Identity '%s' does not exist", $id)
             );
         }
 

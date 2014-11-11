@@ -5,7 +5,7 @@ command_handle:
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 identity:
-    path:     /institution/{institution}/identity/{id}
+    path:     /identity/{id}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:get }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

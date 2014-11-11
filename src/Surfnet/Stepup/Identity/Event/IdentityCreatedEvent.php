@@ -28,24 +28,20 @@ class IdentityCreatedEvent extends IdentityEvent
      */
     public $nameId;
 
-    public function __construct(IdentityId $id, NameId $nameId)
+    public function __construct(IdentityId $identityId, NameId $nameId)
     {
-        parent::__construct($id);
+        parent::__construct($identityId);
 
         $this->nameId = $nameId;
     }
 
-
     public static function deserialize(array $data)
     {
-        return new self(new IdentityId($data['id']), new NameId($data['name_id']));
+        return new self(new IdentityId($data['identity_id']), new NameId($data['name_id']));
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
-        return ['id' => (string) $this->id, 'name_id' => (string) $this->nameId];
+        return ['identity_id' => (string) $this->identityId, 'name_id' => (string) $this->nameId];
     }
 }

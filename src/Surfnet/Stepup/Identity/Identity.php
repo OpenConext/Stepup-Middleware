@@ -50,7 +50,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
-        $this->id = $event->id;
+        $this->id = $event->identityId;
         $this->nameId = $event->nameId;
     }
 

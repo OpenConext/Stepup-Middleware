@@ -19,10 +19,14 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerified;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -36,6 +40,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private $nameId;
 
+    /**
+     * @var int
+     */
+    private $tokenCount;
+
     public static function create(IdentityId $id, NameId $nameId)
     {
         $identity = new self();
@@ -48,10 +57,25 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
     }
 
+    public function verifyYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
+    {
+        if ($this->tokenCount > 0) {
+            throw new DomainException('User may not have more than one token');
+        }
+
+        $this->apply(new YubikeySecondFactorVerified($this->id, $secondFactorId, $yubikeyPublicId));
+    }
+
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
         $this->nameId = $event->nameId;
+        $this->tokenCount = 0;
+    }
+
+    public function applyYubikeySecondFactorVerified(YubikeySecondFactorVerified $event)
+    {
+        $this->tokenCount++;
     }
 
     /**

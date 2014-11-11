@@ -22,7 +22,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 {
     /**
      * @param string $expected description of expected type
-     * @param $parameterName
+     * @param string $parameterName
      * @param mixed $parameter the parameter that is not of the expected type.
      *
      * @return self

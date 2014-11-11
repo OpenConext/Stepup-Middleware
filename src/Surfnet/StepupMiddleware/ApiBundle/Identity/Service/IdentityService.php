@@ -39,10 +39,9 @@ class IdentityService
 
     /**
      * @param string $id
-     * @param string $instituteId
      * @return Identity|null
      */
-    public function find($id, $instituteId)
+    public function find($id)
     {
         return $this->repository->find($id);
     }

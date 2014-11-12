@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
@@ -42,6 +44,13 @@ class Identity implements JsonSerializable
      */
     private $nameId;
 
+    /**
+     * @ORM\OneToMany(targetEntity="SecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|SecondFactor[]
+     */
+    private $secondFactors;
+
     public function __construct($id, $nameId)
     {
         if (!is_string($id)) {
@@ -54,6 +63,7 @@ class Identity implements JsonSerializable
 
         $this->id = $id;
         $this->nameId = $nameId;
+        $this->secondFactors = new ArrayCollection();
     }
 
     /**
@@ -72,8 +82,13 @@ class Identity implements JsonSerializable
         return $this->nameId;
     }
 
+    public function addSecondFactor(SecondFactor $secondFactor)
+    {
+        $this->secondFactors->add($secondFactor);
+    }
+
     public function jsonSerialize()
     {
-        return ['id' => $this->id, 'name_id' => $this->nameId];
+        return ['id' => $this->id, 'name_id' => $this->nameId, 'secondFactors' => $this->secondFactors->toArray()];
     }
 }

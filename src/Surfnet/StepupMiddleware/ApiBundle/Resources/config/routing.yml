@@ -9,3 +9,9 @@ identity:
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:get }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+identity_second_factors:
+    path:     /identity/{identityId}/second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:SecondFactor:findByIdentity }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

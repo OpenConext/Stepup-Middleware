@@ -16,22 +16,32 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Doctrine\ORM\EntityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 
-class SecondFactorRepository extends EntityRepository
+class SecondFactorService
 {
+    /**
+     * @var SecondFactorRepository
+     */
+    private $repository;
+
+    /**
+     * @param SecondFactorRepository $repository
+     */
+    public function __construct(SecondFactorRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * @param string $identityId
      * @return SecondFactor[]
      */
     public function findByIdentity($identityId)
     {
-        return $this->createQueryBuilder('sf')
-            ->where('sf.identity = :identityId')
-            ->setParameter('identityId', $identityId)
-            ->getQuery()
-            ->getResult();
+        return $this->repository->findByIdentity($identityId);
     }
 }

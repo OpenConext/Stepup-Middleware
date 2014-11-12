@@ -23,3 +23,13 @@ services:
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
         arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
+
+    surfnet_stepup_middleware_api.repository.second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor ]
+
+    surfnet_stepup_middleware_api.service.second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService
+        arguments: [ @surfnet_stepup_middleware_api.repository.second_factor ]

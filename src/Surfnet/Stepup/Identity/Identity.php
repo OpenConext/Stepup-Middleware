@@ -66,14 +66,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new YubikeySecondFactorVerified($this->id, $secondFactorId, $yubikeyPublicId));
     }
 
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
         $this->nameId = $event->nameId;
         $this->tokenCount = 0;
     }
 
-    public function applyYubikeySecondFactorVerified(YubikeySecondFactorVerified $event)
+    protected function applyYubikeySecondFactorVerified(YubikeySecondFactorVerified $event)
     {
         $this->tokenCount++;
     }

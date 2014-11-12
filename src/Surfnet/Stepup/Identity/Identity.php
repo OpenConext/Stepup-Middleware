@@ -22,7 +22,7 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerified;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerifiedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -63,7 +63,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('User may not have more than one token');
         }
 
-        $this->apply(new YubikeySecondFactorVerified($this->id, $secondFactorId, $yubikeyPublicId));
+        $this->apply(new YubikeySecondFactorVerifiedEvent($this->id, $secondFactorId, $yubikeyPublicId));
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -73,7 +73,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->tokenCount = 0;
     }
 
-    protected function applyYubikeySecondFactorVerified(YubikeySecondFactorVerified $event)
+    protected function applyYubikeySecondFactorVerifiedEvent(YubikeySecondFactorVerifiedEvent $event)
     {
         $this->tokenCount++;
     }

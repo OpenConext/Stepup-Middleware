@@ -22,7 +22,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
-class YubikeySecondFactorVerified extends IdentityEvent
+class YubikeySecondFactorVerifiedEvent extends IdentityEvent
 {
     /**
      * The UUID of the verified second factor.

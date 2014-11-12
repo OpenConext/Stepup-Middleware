@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerified;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerifiedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -42,7 +42,7 @@ class IdentityProjector extends Projector
         $this->identityRepository->save(new Identity((string) $event->identityId, (string) $event->nameId));
     }
 
-    public function applyYubikeySecondFactorVerified(YubikeySecondFactorVerified $event)
+    public function applyYubikeySecondFactorVerifiedEvent(YubikeySecondFactorVerifiedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
 

@@ -16,26 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateIdentityCommand extends AbstractCommand
+abstract class AbstractCommand implements Command
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.command_uuid.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.command_uuid.must_be_string")
      *
      * @var string
      */
-    public $id;
-
-    /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.name_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.name_id.must_be_string")
-     *
-     * @var string
-     */
-    public $nameId;
+    public $UUID;
 }

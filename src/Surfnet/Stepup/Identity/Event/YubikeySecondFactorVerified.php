@@ -29,14 +29,14 @@ class YubikeySecondFactorVerified extends IdentityEvent
      *
      * @var SecondFactorId
      */
-    private $secondFactorId;
+    public $secondFactorId;
 
     /**
      * The Yubikey's public ID.
      *
      * @var YubikeyPublicId
      */
-    private $yubikeyPublicId;
+    public $yubikeyPublicId;
 
     /**
      * @param IdentityId $identityId

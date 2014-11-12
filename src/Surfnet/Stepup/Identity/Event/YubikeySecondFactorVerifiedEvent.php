@@ -43,8 +43,11 @@ class YubikeySecondFactorVerifiedEvent extends IdentityEvent
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
      */
-    public function __construct(IdentityId $identityId, SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
-    {
+    public function __construct(
+        IdentityId $identityId,
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId
+    ) {
         parent::__construct($identityId);
 
         $this->secondFactorId = $secondFactorId;

@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * Copyright 2014 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
+
+use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventStore\EventStoreInterface;
+use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerifiedEvent;
+use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyYubikeySecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+
+class IdentityCommandHandlerTest extends CommandHandlerTest
+{
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    {
+        return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus));
+    }
+
+    public function testAnIdentityCanBeCreated()
+    {
+        $id = self::uuid();
+        $nameId = md5(__METHOD__);
+
+        $command = new CreateIdentityCommand();
+        $command->id = $id;
+        $command->nameId = $nameId;
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([])
+            ->when($command)
+            ->then([new IdentityCreatedEvent(new IdentityId($id), new NameId($nameId))]);
+    }
+
+    public function testAYubikeySecondFactorCanBeVerified()
+    {
+        $id = new IdentityId(self::uuid());
+        $nameId = new NameId(md5(__METHOD__));
+        $secFacId = new SecondFactorId(self::uuid());
+        $pubId = new YubikeyPublicId('ccccvfeghijk');
+
+        $command = new VerifyYubikeySecondFactorCommand();
+        $command->identityId = (string) $id;
+        $command->secondFactorId = (string) $secFacId;
+        $command->yubikeyPublicId = (string) $pubId;
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([new IdentityCreatedEvent($id, $nameId)])
+            ->when($command)
+            ->then([new YubikeySecondFactorVerifiedEvent($id, $secFacId, $pubId)]);
+    }
+
+    public function testAYubikeySecondFactorCannotBeVerifiedTwice()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+
+        $id = new IdentityId(self::uuid());
+        $nameId = new NameId(md5(__METHOD__));
+        $secFacId1 = new SecondFactorId(self::uuid());
+        $secFacId2 = new SecondFactorId(self::uuid());
+        $pubId1 = new YubikeyPublicId('ccccvfeghijk');
+        $pubId2 = new YubikeyPublicId('ccccvfeghidd');
+
+        $command = new VerifyYubikeySecondFactorCommand();
+        $command->identityId = (string) $id;
+        $command->secondFactorId = (string) $secFacId1;
+        $command->yubikeyPublicId = (string) $pubId1;
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([new IdentityCreatedEvent($id, $nameId), new YubikeySecondFactorVerifiedEvent($id, $secFacId1, $pubId1)])
+            ->when($command)
+            ->then([new YubikeySecondFactorVerifiedEvent($id, $secFacId2, $pubId2)]);
+    }
+}

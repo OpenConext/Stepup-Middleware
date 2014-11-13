@@ -19,7 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
 
 class IdentityRepository extends EntityRepository
 {
@@ -38,10 +43,32 @@ class IdentityRepository extends EntityRepository
     /**
      * @param Identity $identity
      */
-    public function save(Identity $identity)
+    private function save(Identity $identity)
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($identity);
         $entityManager->flush();
+    }
+
+    public function create(IdentityId $identityId, NameId $nameId)
+    {
+        $this->save(new Identity((string) $identityId, (string) $nameId));
+    }
+
+    public function proveYubikeyPossession(
+        IdentityId $identityId,
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId
+    ) {
+        $identity = $this->find((string) $identityId);
+
+        if (!$identity instanceof Identity) {
+            return;
+        }
+
+        $secondFactor = new SecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
+        $identity->addSecondFactor($secondFactor);
+
+        $this->save($identity);
     }
 }

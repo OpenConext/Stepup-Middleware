@@ -21,8 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class IdentityProjector extends Projector
@@ -39,26 +37,15 @@ class IdentityProjector extends Projector
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
-        $this->identityRepository->save(new Identity((string) $event->identityId, (string) $event->nameId));
+        $this->identityRepository->create($event->identityId, $event->nameId);
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
-
-        if (!$identity instanceof Identity) {
-            // @TODO Log?
-            return;
-        }
-
-        $secondFactor = new SecondFactor(
-            $identity,
-            (string) $event->secondFactorId,
-            'yubikey',
-            (string) $event->yubikeyPublicId
+        $this->identityRepository->proveYubikeyPossession(
+            $event->identityId,
+            $event->secondFactorId,
+            $event->yubikeyPublicId
         );
-        $identity->addSecondFactor($secondFactor);
-
-        $this->identityRepository->save($identity);
     }
 }

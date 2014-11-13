@@ -30,7 +30,8 @@
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
         "doctrine/migrations": "~1.0.0|1.0.0@dev",
         "broadway/broadway": "~0.2.0",
-        "mockery/mockery": "~0.9"
+        "mockery/mockery": "~0.9",
+        "surfnet/stepup-bundle": "dev-develop"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

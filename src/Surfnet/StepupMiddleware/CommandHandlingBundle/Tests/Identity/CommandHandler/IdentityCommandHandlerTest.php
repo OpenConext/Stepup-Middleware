@@ -21,14 +21,14 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandH
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\YubikeySecondFactorVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyYubikeySecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
@@ -54,14 +54,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([new IdentityCreatedEvent(new IdentityId($id), new NameId($nameId))]);
     }
 
-    public function testAYubikeySecondFactorCanBeVerified()
+    public function testAYubikeyPossessionCanBeProven()
     {
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId = new SecondFactorId(self::uuid());
         $pubId = new YubikeyPublicId('ccccvfeghijk');
 
-        $command = new VerifyYubikeySecondFactorCommand();
+        $command = new ProveYubikeyPossessionCommand();
         $command->identityId = (string) $id;
         $command->secondFactorId = (string) $secFacId;
         $command->yubikeyPublicId = (string) $pubId;
@@ -70,10 +70,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([new IdentityCreatedEvent($id, $nameId)])
             ->when($command)
-            ->then([new YubikeySecondFactorVerifiedEvent($id, $secFacId, $pubId)]);
+            ->then([new YubikeyPossessionProvenEvent($id, $secFacId, $pubId)]);
     }
 
-    public function testAYubikeySecondFactorCannotBeVerifiedTwice()
+    public function testYubikeyPossessioncannotBeProvenTwice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
@@ -84,15 +84,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $pubId1 = new YubikeyPublicId('ccccvfeghijk');
         $pubId2 = new YubikeyPublicId('ccccvfeghidd');
 
-        $command = new VerifyYubikeySecondFactorCommand();
+        $command = new ProveYubikeyPossessionCommand();
         $command->identityId = (string) $id;
         $command->secondFactorId = (string) $secFacId1;
         $command->yubikeyPublicId = (string) $pubId1;
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId), new YubikeySecondFactorVerifiedEvent($id, $secFacId1, $pubId1)])
+            ->given([new IdentityCreatedEvent($id, $nameId), new YubikeyPossessionProvenEvent($id, $secFacId1, $pubId1)])
             ->when($command)
-            ->then([new YubikeySecondFactorVerifiedEvent($id, $secFacId2, $pubId2)]);
+            ->then([new YubikeyPossessionProvenEvent($id, $secFacId2, $pubId2)]);
     }
 }

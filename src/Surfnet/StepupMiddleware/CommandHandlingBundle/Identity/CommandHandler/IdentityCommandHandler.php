@@ -26,7 +26,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyYubikeySecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 
 class IdentityCommandHandler extends CommandHandler
 {
@@ -50,12 +50,12 @@ class IdentityCommandHandler extends CommandHandler
         $this->repository->add($identity);
     }
 
-    public function handleVerifyYubikeySecondFactorCommand(VerifyYubikeySecondFactorCommand $command)
+    public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
     {
         /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
-        $identity->verifyYubikeySecondFactor(
+        $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId)
         );

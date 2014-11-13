@@ -22,10 +22,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
-class YubikeySecondFactorVerifiedEvent extends IdentityEvent
+class YubikeyPossessionProvenEvent extends IdentityEvent
 {
     /**
-     * The UUID of the verified second factor.
+     * The UUID of the second factor that has been proven to be in possession of the registrant.
      *
      * @var SecondFactorId
      */

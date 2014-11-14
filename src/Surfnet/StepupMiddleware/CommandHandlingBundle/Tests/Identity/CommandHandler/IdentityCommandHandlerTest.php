@@ -73,7 +73,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([new YubikeyPossessionProvenEvent($id, $secFacId, $pubId)]);
     }
 
-    public function testYubikeyPossessioncannotBeProvenTwice()
+    public function testYubikeyPossessionCannotBeProvenTwice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 

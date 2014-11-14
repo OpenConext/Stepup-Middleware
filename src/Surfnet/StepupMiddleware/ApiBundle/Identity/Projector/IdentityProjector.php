@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class IdentityProjector extends Projector

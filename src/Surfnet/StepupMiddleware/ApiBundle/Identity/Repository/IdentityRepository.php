@@ -21,10 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
 
 class IdentityRepository extends EntityRepository
 {

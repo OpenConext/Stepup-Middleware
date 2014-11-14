@@ -3,3 +3,13 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentityProjector
         arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
         tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_api.projector.second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SecondFactorProjector
+        arguments: [ @surfnet_stepup_middleware_api.repository.second_factor ]
+        tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_api.projector.unverified_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\UnverifiedSecondFactorProjector
+        arguments: [ @surfnet_stepup_middleware_api.repository.unverified_second_factor ]
+        tags: [{ name: event_bus.event_listener }]

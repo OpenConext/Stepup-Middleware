@@ -23,13 +23,13 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 
-class SecondFactorRepository extends EntityRepository
+class UnverifiedSecondFactorRepository extends EntityRepository
 {
     /**
      * @param string $identityId
-     * @return SecondFactor[]
+     * @return UnverifiedSecondFactor[]
      */
     public function findByIdentity($identityId)
     {
@@ -53,8 +53,8 @@ class SecondFactorRepository extends EntityRepository
             (string) $identityId
         );
 
-        $secondFactor = new SecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
-        $identity->addSecondFactor($secondFactor);
+        $secondFactor = new UnverifiedSecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
+        $identity->addUnverifiedSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);
         $entityManager->flush();

@@ -20,20 +20,28 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 
 class SecondFactorService
 {
     /**
      * @var SecondFactorRepository
      */
-    private $repository;
+    private $all;
 
     /**
-     * @param SecondFactorRepository $repository
+     * @var UnverifiedSecondFactorRepository
      */
-    public function __construct(SecondFactorRepository $repository)
+    private $unverifieds;
+
+    /**
+     * @param SecondFactorRepository $all
+     * @param UnverifiedSecondFactorRepository $unverifieds
+     */
+    public function __construct(SecondFactorRepository $all, UnverifiedSecondFactorRepository $unverifieds)
     {
-        $this->repository = $repository;
+        $this->all = $all;
+        $this->unverifieds = $unverifieds;
     }
 
     /**
@@ -42,6 +50,15 @@ class SecondFactorService
      */
     public function findByIdentity($identityId)
     {
-        return $this->repository->findByIdentity($identityId);
+        return $this->all->findByIdentity($identityId);
+    }
+
+    /**
+     * @param string $identityId
+     * @return SecondFactor[]
+     */
+    public function findUnverifiedByIdentity($identityId)
+    {
+        return $this->unverifieds->findByIdentity($identityId);
     }
 }

@@ -54,21 +54,4 @@ class IdentityRepository extends EntityRepository
     {
         $this->save(new Identity((string) $identityId, (string) $nameId));
     }
-
-    public function proveYubikeyPossession(
-        IdentityId $identityId,
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId
-    ) {
-        $identity = $this->find((string) $identityId);
-
-        if (!$identity instanceof Identity) {
-            return;
-        }
-
-        $secondFactor = new SecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
-        $identity->addSecondFactor($secondFactor);
-
-        $this->save($identity);
-    }
 }

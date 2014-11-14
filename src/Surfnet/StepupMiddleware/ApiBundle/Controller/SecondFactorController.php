@@ -47,6 +47,23 @@ class SecondFactorController extends Controller
     }
 
     /**
+     * Lists the unverified second factors belonging to the given Identity.
+     *
+     * @param string $identityId
+     * @return Response
+     */
+    public function findUnverifiedByIdentityAction($identityId)
+    {
+        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
+            throw new AccessDeniedHttpException('Client is not authorised to access resource');
+        }
+
+        $secondFactors = $this->getService()->findUnverifiedByIdentity($identityId);
+
+        return new JsonResponse($secondFactors);
+    }
+
+    /**
      * @return SecondFactorService
      */
     private function getService()

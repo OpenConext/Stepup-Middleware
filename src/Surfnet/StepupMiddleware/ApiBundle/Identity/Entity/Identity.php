@@ -51,6 +51,13 @@ class Identity implements JsonSerializable
      */
     private $secondFactors;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|UnverifiedSecondFactor[]
+     */
+    private $unverifiedSecondFactors;
+
     public function __construct($id, $nameId)
     {
         if (!is_string($id)) {
@@ -64,6 +71,7 @@ class Identity implements JsonSerializable
         $this->id = $id;
         $this->nameId = $nameId;
         $this->secondFactors = new ArrayCollection();
+        $this->unverifiedSecondFactors = new ArrayCollection();
     }
 
     /**
@@ -87,8 +95,18 @@ class Identity implements JsonSerializable
         $this->secondFactors->add($secondFactor);
     }
 
+    public function addUnverifiedSecondFactor(UnverifiedSecondFactor $secondFactor)
+    {
+        $this->unverifiedSecondFactors->add($secondFactor);
+    }
+
     public function jsonSerialize()
     {
-        return ['id' => $this->id, 'name_id' => $this->nameId, 'secondFactors' => $this->secondFactors->toArray()];
+        return [
+            'id'                        => $this->id,
+            'name_id'                   => $this->nameId,
+            'second_factors'            => $this->secondFactors->toArray(),
+            'unverified_second_factors' => $this->unverifiedSecondFactors->toArray()
+        ];
     }
 }

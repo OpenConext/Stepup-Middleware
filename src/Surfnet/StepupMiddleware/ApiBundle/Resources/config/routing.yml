@@ -15,3 +15,9 @@ identity_second_factors:
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:SecondFactor:findByIdentity }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+identity_unverified_second_factors:
+    path:     /identity/{identityId}/unverified-second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:SecondFactor:findUnverifiedByIdentity }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

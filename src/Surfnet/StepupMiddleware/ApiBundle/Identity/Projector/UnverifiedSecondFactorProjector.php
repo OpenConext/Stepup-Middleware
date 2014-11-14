@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 
@@ -40,6 +41,15 @@ class UnverifiedSecondFactorProjector extends Projector
             $event->identityId,
             $event->secondFactorId,
             $event->yubikeyPublicId
+        );
+    }
+
+    public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    {
+        $this->unverifiedSecondFactorRepository->provePhonePossession(
+            $event->identityId,
+            $event->secondFactorId,
+            $event->phoneNumber
         );
     }
 }

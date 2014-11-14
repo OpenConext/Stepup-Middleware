@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -54,6 +55,26 @@ class SecondFactorRepository extends EntityRepository
         );
 
         $secondFactor = new SecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
+        $identity->addSecondFactor($secondFactor);
+
+        $entityManager->persist($secondFactor);
+        $entityManager->flush();
+    }
+
+    public function provePhonePossession(
+        IdentityId $identityId,
+        SecondFactorId $secondFactorId,
+        PhoneNumber $phoneNumber
+    ) {
+        $entityManager = $this->getEntityManager();
+
+        /** @var Identity $identity */
+        $identity = $entityManager->getReference(
+            'Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity',
+            (string) $identityId
+        );
+
+        $secondFactor = new SecondFactor($identity, (string) $secondFactorId, 'sms', (string) $phoneNumber);
         $identity->addSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);

@@ -22,9 +22,11 @@ use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
@@ -59,11 +61,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
     {
-        if ($this->tokenCount > 0) {
-            throw new DomainException('User may not have more than one token');
-        }
-
+        $this->assertUserMayAddSecondFactor();
         $this->apply(new YubikeyPossessionProvenEvent($this->id, $secondFactorId, $yubikeyPublicId));
+    }
+
+    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
+    {
+        $this->assertUserMayAddSecondFactor();
+        $this->apply(new PhonePossessionProvenEvent($this->id, $secondFactorId, $phoneNumber));
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -78,11 +83,26 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->tokenCount++;
     }
 
+    protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    {
+        $this->tokenCount++;
+    }
+
     /**
      * @return string
      */
     public function getAggregateRootId()
     {
         return (string) $this->id;
+    }
+
+    /**
+     * @throws DomainException
+     */
+    private function assertUserMayAddSecondFactor()
+    {
+        if ($this->tokenCount > 0) {
+            throw new DomainException('User may not have more than one token');
+        }
     }
 }

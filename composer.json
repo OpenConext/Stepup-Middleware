@@ -16,9 +16,9 @@
     "require": {
         "php": ">=5.4",
         "symfony/symfony": "dev-bugfix/default-entry-point as 2.5.5",
-        "doctrine/dbal": "~2.2,>=2.2.3",
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
+        "doctrine/dbal": "~2.5@beta",
+        "doctrine/orm": "dev-master",
+        "doctrine/doctrine-bundle": "dev-master",
         "twig/extensions": "~1.0",
         "symfony/assetic-bundle": "~2.3",
         "symfony/swiftmailer-bundle": "~2.3",
@@ -31,7 +31,8 @@
         "doctrine/migrations": "~1.0.0|1.0.0@dev",
         "broadway/broadway": "~0.2.0",
         "mockery/mockery": "~0.9",
-        "surfnet/stepup-bundle": "dev-develop"
+        "surfnet/stepup-bundle": "dev-develop",
+        "pagerfanta/pagerfanta": "~1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

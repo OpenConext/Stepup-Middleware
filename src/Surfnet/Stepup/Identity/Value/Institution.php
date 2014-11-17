@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class Institution
+class Institution implements JsonSerializable
 {
     /**
      * @var string
@@ -46,6 +47,11 @@ class Institution
     public function equals(Institution $otherInstitution)
     {
         return $this->institution === $otherInstitution->institution;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
     }
 
     public function __toString()

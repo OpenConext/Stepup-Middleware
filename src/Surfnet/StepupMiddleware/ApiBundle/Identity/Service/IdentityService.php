@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Exception\EntityNotFoundException;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
 
 class IdentityService
 {
@@ -39,10 +40,26 @@ class IdentityService
 
     /**
      * @param string $id
-     * @return Identity|null
+     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity|null
      */
     public function find($id)
     {
         return $this->repository->find($id);
+    }
+
+    /**
+     * @param SearchIdentityCommand $command
+     * @return Pagerfanta
+     */
+    public function search(SearchIdentityCommand $command)
+    {
+        $searchQuery = $this->repository->createSearchQuery($command);
+
+        $adapter  = new DoctrineORMAdapter($searchQuery);
+        $paginator = new Pagerfanta($adapter);
+        $paginator->setMaxPerPage($command->itemsPerPage);
+        $paginator->setCurrentPage($command->pageNumber);
+
+        return $paginator;
     }
 }

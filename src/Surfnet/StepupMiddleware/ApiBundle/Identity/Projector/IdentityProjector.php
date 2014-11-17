@@ -37,6 +37,12 @@ class IdentityProjector extends Projector
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
-        $this->identityRepository->save(new Identity((string) $event->id, (string) $event->nameId));
+        $this->identityRepository->save(Identity::create(
+            (string) $event->id,
+            $event->institution,
+            (string) $event->nameId,
+            $event->email,
+            $event->commonName
+        ));
     }
 }

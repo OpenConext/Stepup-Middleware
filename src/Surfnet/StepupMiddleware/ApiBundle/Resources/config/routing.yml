@@ -8,4 +8,12 @@ identity:
     path:     /identity/{id}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:get }
     methods:  [GET]
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+identity_collection:
+    path:     /identity
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:collection }
+    methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

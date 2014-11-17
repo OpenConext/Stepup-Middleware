@@ -46,4 +46,28 @@ class CreateIdentityCommand implements Command
      * @var string
      */
     public $nameId;
+
+    /**
+     * @Assert\NotBlank(message="stepup.command.create_identity.email.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.email.must_be_string")
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @Assert\NotBlank(message="stepup.command.create_identity.institution.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.institution.must_be_string")
+     *
+     * @var string
+     */
+    public $institution;
+
+    /**
+     * @Assert\NotBlank(message="stepup.command.create_identity.common_name.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.common_name.must_be_string")
+     *
+     * @var string
+     */
+    public $commonName;
 }

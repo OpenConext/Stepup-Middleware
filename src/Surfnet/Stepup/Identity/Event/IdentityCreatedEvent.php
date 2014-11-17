@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 class IdentityCreatedEvent extends IdentityEvent
@@ -28,17 +29,45 @@ class IdentityCreatedEvent extends IdentityEvent
      */
     public $nameId;
 
-    public function __construct(IdentityId $id, NameId $nameId)
-    {
+    /**
+     * @var Institution
+     */
+    public $institution;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var string
+     */
+    public $commonName;
+
+    public function __construct(
+        IdentityId $id,
+        Institution $institution,
+        NameId $nameId,
+        $email,
+        $commonName
+    ) {
         parent::__construct($id);
 
+        $this->institution = $institution;
         $this->nameId = $nameId;
+        $this->email = $email;
+        $this->commonName = $commonName;
     }
-
 
     public static function deserialize(array $data)
     {
-        return new self(new IdentityId($data['id']), new NameId($data['name_id']));
+        return new self(
+            new IdentityId($data['id']),
+            new Institution($data['institution']),
+            new NameId($data['name_id']),
+            $data['email'],
+            $data['common_name']
+        );
     }
 
     /**
@@ -46,6 +75,12 @@ class IdentityCreatedEvent extends IdentityEvent
      */
     public function serialize()
     {
-        return ['id' => (string) $this->id, 'name_id' => (string) $this->nameId];
+        return [
+            'id' => (string) $this->id,
+            'institution' => (string) $this->institution,
+            'name_id' => (string) $this->nameId,
+            'email' => $this->email,
+            'common_name' => $this->commonName
+        ];
     }
 }

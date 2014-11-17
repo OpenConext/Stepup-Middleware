@@ -49,8 +49,8 @@ class ProvePhonePossessionCommand extends AbstractCommand
      * @Assert\NotBlank(message="stepup.command.prove_phone_possession.phone_number.must_not_be_blank")
      * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.phone_number.must_be_string")
      * @Assert\Regex(
-     *     pattern="~^\d+$~",
-     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_digits"
+     *     pattern="~^\+\d+$~",
+     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_plus_and_digits"
      * )
      *
      * @var string

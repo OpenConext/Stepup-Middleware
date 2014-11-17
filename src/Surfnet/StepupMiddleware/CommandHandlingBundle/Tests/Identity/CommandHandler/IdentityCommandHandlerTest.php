@@ -104,7 +104,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId = new SecondFactorId(self::uuid());
-        $pubId = new PhoneNumber('31612345678');
+        $pubId = new PhoneNumber('+31612345678');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -126,8 +126,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $secFacId1 = new SecondFactorId(self::uuid());
         $secFacId2 = new SecondFactorId(self::uuid());
-        $phoneNumber1 = new PhoneNumber('31612345678');
-        $phoneNumber2 = new PhoneNumber('31676543210');
+        $phoneNumber1 = new PhoneNumber('+31612345678');
+        $phoneNumber2 = new PhoneNumber('+31676543210');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -150,7 +150,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId1 = new SecondFactorId(self::uuid());
         $secFacId2 = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
-        $phoneNumber = new PhoneNumber('31676543210');
+        $phoneNumber = new PhoneNumber('+31676543210');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;

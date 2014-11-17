@@ -30,8 +30,14 @@ class PhoneNumber implements Id
 
     public function __construct($value)
     {
-        if (!is_string($value) || !preg_match('~^\d+$~', $value)) {
-            throw InvalidArgumentException::invalidType('string of digits', 'value', $value);
+        if (!is_string($value)) {
+            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        }
+
+        if (!preg_match('~^\+\d+$~', $value)) {
+            throw new InvalidArgumentException(
+                sprintf("Expected phone number ('+######'), got '%s...' (truncated)", substr($value, 0, 5))
+            );
         }
 
         $this->value = $value;

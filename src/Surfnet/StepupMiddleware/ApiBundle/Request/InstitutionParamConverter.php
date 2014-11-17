@@ -21,8 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class InstitutionParamConverter implements ParamConverterInterface
 {
@@ -32,7 +32,7 @@ class InstitutionParamConverter implements ParamConverterInterface
         $institution = $query->get('institution', false);
 
         if ($institution === false) {
-            throw new BadRequestHttpException('This API-call MUST include the institution as get parameter');
+            throw new BadApiRequestException(['This API-call MUST include the institution as get parameter']);
         }
 
         $query->remove('institution');

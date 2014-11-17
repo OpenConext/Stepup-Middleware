@@ -1,19 +1,5 @@
 services:
-    surfnet_stepup_middleware_api.request.command_param_converter:
-        class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
-        tags:
-            - { name: request.param_converter, priority: -1, converter: surfnet_stepup_middleware_api.command }
-
-    surfnet_stepup_middleware_api.listener.bad_command_request_exception_listener:
-        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-
-    surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
-        class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
-        arguments:
-            - ~ # HTTP Basic realm string, see extension
-
+    # Domain
     surfnet_stepup_middleware_api.repository.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
         factory_service: doctrine.orm.middleware_entity_manager
@@ -23,3 +9,31 @@ services:
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
         arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
+
+    # Param Converters
+    surfnet_stepup_middleware_api.request.command_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
+        tags:
+            - { name: request.param_converter, priority: -10, converter: surfnet_stepup_middleware_api.command }
+
+    surfnet_stepup_middleware_api.request.institution_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter
+        tags:
+            - { name: request.param_converter, priority: -5, converter: surfnet_step_middleware.institution }
+
+    # Exception Listeners
+    surfnet_stepup_middleware_api.listener.bad_command_request_exception_listener:
+        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    surfnet_stepup_middleware_api.listener.bad_api_request_exception_listener:
+            class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadApiRequestExceptionListener
+            tags:
+                - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    # Security Entry Point
+    surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
+        class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
+        arguments:
+            - ~ # HTTP Basic realm string, see extension

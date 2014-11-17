@@ -46,7 +46,7 @@ class InstitutionParamConverterTest extends UnitTest
      * @test
      * @group api-bundle
      *
-     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @expectedException \Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException
      */
     public function an_exception_is_thrown_when_the_parameter_is_missing()
     {

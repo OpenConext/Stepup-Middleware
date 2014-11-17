@@ -55,7 +55,7 @@ class SecondFactorController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access resource');
         }
 
-        $secondFactors = $this->getService()->findUnverifiedByIdentity($identityId);
+        $secondFactors = $this->getService()->findUnverifiedByIdentity($identityId); // @TODO Collection structure
 
         return new JsonResponse($secondFactors);
     }

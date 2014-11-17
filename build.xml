@@ -48,7 +48,7 @@
             description="Perform project mess detection using PHPMD creating a log file for the continuous integration server">
         <exec executable="vendor/bin/phpmd" failonerror="true">
             <arg path="src"/>
-            <arg value="xml"/>
+            <arg value="text"/>
             <arg value="phpmd.xml"/>
             <arg value="--exclude"/>
             <arg value="*/Tests/*"/>

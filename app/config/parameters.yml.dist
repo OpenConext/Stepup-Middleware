@@ -16,8 +16,8 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    default_locale:    nl
-    locales:           [nl]
+    default_locale:    nl_NL
+    locales:           [nl_NL]
     secret:            NotSoSecretReplaceMe!
 
     debug_toolbar:          true

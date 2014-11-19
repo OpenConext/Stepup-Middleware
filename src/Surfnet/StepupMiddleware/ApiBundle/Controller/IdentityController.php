@@ -60,7 +60,7 @@ class IdentityController extends Controller
         $command->nameId = $request->get('NameID');
         $command->commonName = $request->get('commonName');
         $command->email = $request->get('email');
-        $command->pageNumber = (int)$request->get('p', 1);
+        $command->pageNumber = (int) $request->get('p', 1);
 
         $paginator = $this->getService()->search($command);
 

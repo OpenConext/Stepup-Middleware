@@ -20,6 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
@@ -44,5 +46,23 @@ class IdentityProjector extends Projector
             $event->email,
             $event->commonName
         ));
+    }
+
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->id);
+
+        $identity->commonName = $event->newName;
+
+        $this->identityRepository->save($identity);
+    }
+
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->id);
+
+        $identity->email = $event->newEmail;
+
+        $this->identityRepository->save($identity);
     }
 }

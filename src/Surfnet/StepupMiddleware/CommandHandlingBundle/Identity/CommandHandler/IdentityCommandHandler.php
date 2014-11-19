@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 
 class IdentityCommandHandler extends CommandHandler
 {
@@ -50,6 +51,17 @@ class IdentityCommandHandler extends CommandHandler
             $command->email,
             $command->commonName
         );
+
+        $this->repository->add($identity);
+    }
+
+    public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
+    {
+        /** @var \Surfnet\Stepup\Identity\Identity $identity */
+        $identity = $this->repository->load($command->id);
+
+        $identity->rename($command->commonName);
+        $identity->changeEmail($command->email);
 
         $this->repository->add($identity);
     }

@@ -21,6 +21,8 @@ namespace Surfnet\Stepup\Identity;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -69,6 +71,24 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
     }
 
+    public function rename($commonName)
+    {
+        if ($commonName === $this->commonName) {
+            return;
+        }
+
+        $this->apply(new IdentityRenamedEvent($this->id, $this->commonName, $commonName));
+    }
+
+    public function changeEmail($email)
+    {
+        if ($email === $this->email) {
+            return;
+        }
+
+        $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
+    }
+
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->id;
@@ -76,6 +96,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->nameId = $event->nameId;
         $this->email = $event->email;
         $this->commonName = $event->commonName;
+    }
+
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    {
+        $this->commonName = $event->newName;
+    }
+
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    {
+        $this->email = $event->newEmail;
     }
 
     /**

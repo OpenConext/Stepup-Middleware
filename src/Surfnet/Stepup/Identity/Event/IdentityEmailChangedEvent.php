@@ -19,54 +19,36 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\NameId;
 
-class IdentityCreatedEvent extends IdentityEvent
+class IdentityEmailChangedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var string
      */
-    public $nameId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
+    public $oldEmail;
 
     /**
      * @var string
      */
-    public $email;
+    public $newEmail;
 
-    /**
-     * @var string
-     */
-    public $commonName;
-
-    public function __construct(
-        IdentityId $id,
-        Institution $institution,
-        NameId $emailId,
-        $email,
-        $commonName
-    ) {
+    public function __construct(IdentityId $id, $oldEmail, $newEmail)
+    {
         parent::__construct($id);
 
-        $this->institution = $institution;
-        $this->nameId = $emailId;
-        $this->email = $email;
-        $this->commonName = $commonName;
+        $this->oldEmail = $oldEmail;
+        $this->newEmail = $newEmail;
     }
 
+    /**
+     * @return mixed The object instance
+     */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
-            new Institution($data['institution']),
-            new NameId($data['name_id']),
-            $data['email'],
-            $data['common_name']
+            $data['old_email'],
+            $data['new_email']
         );
     }
 
@@ -76,11 +58,9 @@ class IdentityCreatedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'id' => (string) $this->id,
-            'institution' => (string) $this->institution,
-            'name_id' => (string) $this->nameId,
-            'email' => $this->email,
-            'common_name' => $this->commonName
+            'id'       => (string)$this->id,
+            'old_email' => $this->oldEmail,
+            'new_email' => $this->newEmail
         ];
     }
 }

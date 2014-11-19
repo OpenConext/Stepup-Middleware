@@ -29,15 +29,15 @@
         "nelmio/security-bundle": "~1.4",
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
         "doctrine/migrations": "~1.0.0|1.0.0@dev",
-        "broadway/broadway": "~0.2.0",
-        "mockery/mockery": "~0.9"
+        "broadway/broadway": "~0.2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*",
         "moontoast/math": "~1.1",
-        "rhumsaa/uuid": "~2.8"
+        "rhumsaa/uuid": "~2.8",
+        "mockery/mockery": "~0.9"
     },
     "scripts": {
         "post-install-cmd": [

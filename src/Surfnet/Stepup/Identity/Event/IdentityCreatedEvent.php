@@ -47,14 +47,14 @@ class IdentityCreatedEvent extends IdentityEvent
     public function __construct(
         IdentityId $id,
         Institution $institution,
-        NameId $emailId,
+        NameId $nameId,
         $email,
         $commonName
     ) {
         parent::__construct($id);
 
         $this->institution = $institution;
-        $this->nameId = $emailId;
+        $this->nameId = $nameId;
         $this->email = $email;
         $this->commonName = $commonName;
     }

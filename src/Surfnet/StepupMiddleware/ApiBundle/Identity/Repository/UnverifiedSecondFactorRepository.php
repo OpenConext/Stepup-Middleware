@@ -41,10 +41,17 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param IdentityId $identityId
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     * @param string $verificationCodeNonce
+     */
     public function proveYubikeyPossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId
+        YubikeyPublicId $yubikeyPublicId,
+        $verificationCodeNonce
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -54,17 +61,30 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             (string) $identityId
         );
 
-        $secondFactor = new UnverifiedSecondFactor($identity, (string) $secondFactorId, 'yubikey', (string) $yubikeyPublicId);
+        $secondFactor = new UnverifiedSecondFactor(
+            $identity,
+            (string) $secondFactorId,
+            'yubikey',
+            (string) $yubikeyPublicId,
+            $verificationCodeNonce
+        );
         $identity->addUnverifiedSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);
         $entityManager->flush();
     }
 
+    /**
+     * @param IdentityId $identityId
+     * @param SecondFactorId $secondFactorId
+     * @param PhoneNumber $phoneNumber
+     * @param string $verificationCodeNonce
+     */
     public function provePhonePossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber
+        PhoneNumber $phoneNumber,
+        $verificationCodeNonce
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -74,7 +94,13 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             (string) $identityId
         );
 
-        $secondFactor = new UnverifiedSecondFactor($identity, (string) $secondFactorId, 'sms', (string) $phoneNumber);
+        $secondFactor = new UnverifiedSecondFactor(
+            $identity,
+            (string) $secondFactorId,
+            'sms',
+            (string) $phoneNumber,
+            $verificationCodeNonce
+        );
         $identity->addUnverifiedSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);

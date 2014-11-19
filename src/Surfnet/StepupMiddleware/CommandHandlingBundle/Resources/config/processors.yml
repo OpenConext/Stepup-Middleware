@@ -1,0 +1,23 @@
+services:
+    surfnet_stepup_middleware_command_handling.processor.email_verification:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor\EmailVerificationProcessor
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
+        tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_command_handling.service.second_factor_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService
+        arguments:
+            - @mailer
+            - @surfnet_stepup_middleware_command_handling.email_sender
+            - @translator
+            - @templating
+            - '' # Verification URL set in bundle extension
+
+    surfnet_stepup_middleware_command_handling.email_sender:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender
+        arguments:
+            - ''
+            - ''

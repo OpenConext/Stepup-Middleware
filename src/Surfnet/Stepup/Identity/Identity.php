@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Token\VerificationCode;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -62,13 +63,33 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
     {
         $this->assertUserMayAddSecondFactor();
-        $this->apply(new YubikeyPossessionProvenEvent($this->id, $secondFactorId, $yubikeyPublicId));
+        $this->apply(
+            new YubikeyPossessionProvenEvent(
+                $this->id,
+                $secondFactorId,
+                $yubikeyPublicId,
+                'Reinier', // @TODO
+                'rkip@ibuildings.nl', // @TODO
+                VerificationCode::generate(8),
+                VerificationCode::generateNonce()
+            )
+        );
     }
 
     public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
     {
         $this->assertUserMayAddSecondFactor();
-        $this->apply(new PhonePossessionProvenEvent($this->id, $secondFactorId, $phoneNumber));
+        $this->apply(
+            new PhonePossessionProvenEvent(
+                $this->id,
+                $secondFactorId,
+                $phoneNumber,
+                'Reinier', // @TODO
+                'rkip@ibuildings.nl', // @TODO
+                VerificationCode::generate(8),
+                VerificationCode::generateNonce()
+            )
+        );
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)

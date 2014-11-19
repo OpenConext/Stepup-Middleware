@@ -37,16 +37,55 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $phoneNumber;
 
     /**
+     * The identity's common name.
+     *
+     * @var string
+     */
+    public $commonName;
+
+    /**
+     * The identity's email address.
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var string
+     */
+    public $verificationCode;
+
+    /**
+     * @var string
+     */
+    public $verificationCodeNonce;
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
+     * @param string $commonName
+     * @param string $email
+     * @param string $verificationCode
+     * @param string $verificationCodeNonce
      */
-    public function __construct(IdentityId $identityId, SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
-    {
+    public function __construct(
+        IdentityId $identityId,
+        SecondFactorId $secondFactorId,
+        PhoneNumber $phoneNumber,
+        $commonName,
+        $email,
+        $verificationCode,
+        $verificationCodeNonce
+    ) {
         parent::__construct($identityId);
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->verificationCode = $verificationCode;
+        $this->verificationCodeNonce = $verificationCodeNonce;
     }
 
     public static function deserialize(array $data)
@@ -54,16 +93,24 @@ class PhonePossessionProvenEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
-            new PhoneNumber($data['phone_number'])
+            new PhoneNumber($data['phone_number']),
+            $data['common_name'],
+            $data['email'],
+            $data['verification_code'],
+            $data['verification_code_nonce']
         );
     }
 
     public function serialize()
     {
         return [
-            'identity_id'      => (string) $this->identityId,
-            'second_factor_id' => (string) $this->secondFactorId,
-            'phone_number'     => (string) $this->phoneNumber
+            'identity_id'             => (string) $this->identityId,
+            'second_factor_id'        => (string) $this->secondFactorId,
+            'phone_number'            => (string) $this->phoneNumber,
+            'common_name'             => (string) $this->commonName,
+            'email'                   => (string) $this->email,
+            'verification_code'       => (string) $this->verificationCode,
+            'verification_code_nonce' => (string) $this->verificationCodeNonce,
         ];
     }
 }

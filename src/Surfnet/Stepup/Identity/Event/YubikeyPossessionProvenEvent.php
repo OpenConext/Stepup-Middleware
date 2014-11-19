@@ -39,19 +39,55 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     public $yubikeyPublicId;
 
     /**
+     * The identity's common name.
+     *
+     * @var string
+     */
+    public $commonName;
+
+    /**
+     * The identity's email address.
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var string
+     */
+    public $verificationCode;
+
+    /**
+     * @var string
+     */
+    public $verificationCodeNonce;
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
+     * @param string $commonName
+     * @param string $email
+     * @param string $verificationCode
+     * @param string $verificationCodeNonce
      */
     public function __construct(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId
+        YubikeyPublicId $yubikeyPublicId,
+        $commonName,
+        $email,
+        $verificationCode,
+        $verificationCodeNonce
     ) {
         parent::__construct($identityId);
 
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->verificationCode = $verificationCode;
+        $this->verificationCodeNonce = $verificationCodeNonce;
     }
 
     public static function deserialize(array $data)
@@ -59,16 +95,24 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
-            new YubikeyPublicId($data['yubikey_public_id'])
+            new YubikeyPublicId($data['yubikey_public_id']),
+            $data['common_name'],
+            $data['email'],
+            $data['verification_code'],
+            $data['verification_code_nonce']
         );
     }
 
     public function serialize()
     {
         return [
-            'identity_id'       => (string) $this->identityId,
-            'second_factor_id'  => (string) $this->secondFactorId,
-            'yubikey_public_id' => (string) $this->yubikeyPublicId
+            'identity_id'             => (string) $this->identityId,
+            'second_factor_id'        => (string) $this->secondFactorId,
+            'yubikey_public_id'       => (string) $this->yubikeyPublicId,
+            'common_name'             => (string) $this->commonName,
+            'email'                   => (string) $this->email,
+            'verification_code'       => (string) $this->verificationCode,
+            'verification_code_nonce' => (string) $this->verificationCodeNonce,
         ];
     }
 }

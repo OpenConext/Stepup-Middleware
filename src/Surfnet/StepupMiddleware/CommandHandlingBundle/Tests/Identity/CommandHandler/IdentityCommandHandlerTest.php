@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandH
 
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
+use Mockery as m;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
@@ -57,8 +58,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([new IdentityCreatedEvent(new IdentityId($id), new NameId($nameId))]);
     }
 
+    /** @runInSeparateProcess */
     public function testAYubikeyPossessionCanBeProven()
     {
+        m::mock('alias:Surfnet\Stepup\Identity\Token\VerificationCode')
+            ->shouldReceive('generate')->once()->andReturn('code')
+            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
+
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId = new SecondFactorId(self::uuid());
@@ -73,7 +79,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([new IdentityCreatedEvent($id, $nameId)])
             ->when($command)
-            ->then([new YubikeyPossessionProvenEvent($id, $secFacId, $pubId)]);
+            ->then([
+                new YubikeyPossessionProvenEvent($id, $secFacId, $pubId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+            ]);
     }
 
     public function testYubikeyPossessionCannotBeProvenTwice()
@@ -83,9 +91,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId1 = new SecondFactorId(self::uuid());
-        $secFacId2 = new SecondFactorId(self::uuid());
         $pubId1 = new YubikeyPublicId('ccccvfeghijk');
-        $pubId2 = new YubikeyPublicId('ccccvfeghidd');
 
         $command = new ProveYubikeyPossessionCommand();
         $command->identityId = (string) $id;
@@ -94,13 +100,20 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId), new YubikeyPossessionProvenEvent($id, $secFacId1, $pubId1)])
-            ->when($command)
-            ->then([new YubikeyPossessionProvenEvent($id, $secFacId2, $pubId2)]);
+            ->given([
+                new IdentityCreatedEvent($id, $nameId),
+                new YubikeyPossessionProvenEvent($id, $secFacId1, $pubId1, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+            ])
+            ->when($command);
     }
 
+    /** @runInSeparateProcess */
     public function testAPhonePossessionCanBeProven()
     {
+        m::mock('alias:Surfnet\Stepup\Identity\Token\VerificationCode')
+            ->shouldReceive('generate')->once()->andReturn('code')
+            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
+
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId = new SecondFactorId(self::uuid());
@@ -115,7 +128,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([new IdentityCreatedEvent($id, $nameId)])
             ->when($command)
-            ->then([new PhonePossessionProvenEvent($id, $secFacId, $pubId)]);
+            ->then([new PhonePossessionProvenEvent($id, $secFacId, $pubId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')]);
     }
 
     public function testPhonePossessionCannotBeProvenTwice()
@@ -125,9 +138,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId1 = new SecondFactorId(self::uuid());
-        $secFacId2 = new SecondFactorId(self::uuid());
         $phoneNumber1 = new PhoneNumber('+31612345678');
-        $phoneNumber2 = new PhoneNumber('+31676543210');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -136,9 +147,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId), new PhonePossessionProvenEvent($id, $secFacId1, $phoneNumber1)])
-            ->when($command)
-            ->then([new PhonePossessionProvenEvent($id, $secFacId2, $phoneNumber2)]);
+            ->given([
+                new IdentityCreatedEvent($id, $nameId),
+                new PhonePossessionProvenEvent($id, $secFacId1, $phoneNumber1, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+            ])
+            ->when($command);
     }
 
     public function testCannotProvePossessionOfArbitrarySecondFactorTypeTwice()
@@ -148,7 +161,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $secFacId1 = new SecondFactorId(self::uuid());
-        $secFacId2 = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
         $phoneNumber = new PhoneNumber('+31676543210');
 
@@ -159,8 +171,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId), new YubikeyPossessionProvenEvent($id, $secFacId1, $publicId)])
-            ->when($command)
-            ->then([new PhonePossessionProvenEvent($id, $secFacId2, $phoneNumber)]);
+            ->given([
+                new IdentityCreatedEvent($id, $nameId),
+                new YubikeyPossessionProvenEvent($id, $secFacId1, $publicId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+            ])
+            ->when($command);
     }
 }

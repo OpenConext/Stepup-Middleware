@@ -41,6 +41,11 @@ class SecondFactorRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param IdentityId $identityId
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     */
     public function proveYubikeyPossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,

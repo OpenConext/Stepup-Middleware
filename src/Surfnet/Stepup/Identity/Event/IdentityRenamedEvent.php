@@ -19,54 +19,36 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\NameId;
 
-class IdentityCreatedEvent extends IdentityEvent
+class IdentityRenamedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var string
      */
-    public $nameId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
+    public $oldName;
 
     /**
      * @var string
      */
-    public $email;
+    public $newName;
 
-    /**
-     * @var string
-     */
-    public $commonName;
-
-    public function __construct(
-        IdentityId $id,
-        Institution $institution,
-        NameId $nameId,
-        $email,
-        $commonName
-    ) {
+    public function __construct(IdentityId $id, $oldEmail, $newEmail)
+    {
         parent::__construct($id);
 
-        $this->institution = $institution;
-        $this->nameId = $nameId;
-        $this->email = $email;
-        $this->commonName = $commonName;
+        $this->oldName = $oldEmail;
+        $this->newName = $newEmail;
     }
 
+    /**
+     * @return mixed The object instance
+     */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
-            new Institution($data['institution']),
-            new NameId($data['name_id']),
-            $data['email'],
-            $data['common_name']
+            $data['old_name'],
+            $data['new_name']
         );
     }
 
@@ -76,11 +58,9 @@ class IdentityCreatedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'id' => (string) $this->id,
-            'institution' => (string) $this->institution,
-            'name_id' => (string) $this->nameId,
-            'email' => $this->email,
-            'common_name' => $this->commonName
+            'id'       => (string) $this->id,
+            'old_name' => $this->oldName,
+            'new_name' => $this->newName
         ];
     }
 }

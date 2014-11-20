@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
 
 class IdentityRepository extends EntityRepository
 {
@@ -43,5 +44,38 @@ class IdentityRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($identity);
         $entityManager->flush();
+    }
+
+    /**
+     * @param SearchIdentityCommand $command
+     * @return \Doctrine\ORM\Query
+     */
+    public function createSearchQuery(SearchIdentityCommand $command)
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        $queryBuilder
+            ->where('i.institution = :institution')
+            ->setParameter('institution', $command->institution);
+
+        if ($command->nameId) {
+            $queryBuilder
+                ->andWhere('i.nameId = :nameId')
+                ->setParameter('nameId', $command->nameId);
+        }
+
+        if ($command->email) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
+                ->setParameter('email', $command->email);
+        }
+
+        if ($command->commonName) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
+                ->setParameter('commonName', $command->commonName);
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

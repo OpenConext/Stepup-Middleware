@@ -22,8 +22,10 @@ use Broadway\CommandHandling\CommandHandler;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 
 class IdentityCommandHandler extends CommandHandler
 {
@@ -42,7 +44,24 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
     {
-        $identity = Identity::create(new IdentityId($command->id), new NameId($command->nameId));
+        $identity = Identity::create(
+            new IdentityId($command->id),
+            new Institution($command->institution),
+            new NameId($command->nameId),
+            $command->email,
+            $command->commonName
+        );
+
+        $this->repository->add($identity);
+    }
+
+    public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
+    {
+        /** @var \Surfnet\Stepup\Identity\Identity $identity */
+        $identity = $this->repository->load($command->id);
+
+        $identity->rename($command->commonName);
+        $identity->changeEmail($command->email);
 
         $this->repository->add($identity);
     }

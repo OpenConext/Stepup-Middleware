@@ -15,3 +15,17 @@ Step-up Middleware
 ## Installation
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
+
+## Management API
+
+### Configuration API
+
+Example cURL usage:
+```
+curl -XPOST -v \
+    -u username:password \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -d @new_configuration.json \
+    http://middleware.tld/management/configuration
+```

@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class EmailVerifiedEvent implements SerializableInterface

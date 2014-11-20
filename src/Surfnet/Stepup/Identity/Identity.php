@@ -149,9 +149,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    /**
-     * @return string
-     */
     public function getAggregateRootId()
     {
         return (string) $this->id;

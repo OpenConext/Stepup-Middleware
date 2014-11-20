@@ -45,13 +45,11 @@ class UnverifiedSecondFactorRepository extends EntityRepository
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
-     * @param string $verificationCodeNonce
      */
     public function proveYubikeyPossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        $verificationCodeNonce
+        YubikeyPublicId $yubikeyPublicId
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -65,8 +63,7 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             $identity,
             (string) $secondFactorId,
             'yubikey',
-            (string) $yubikeyPublicId,
-            $verificationCodeNonce
+            (string) $yubikeyPublicId
         );
         $identity->addUnverifiedSecondFactor($secondFactor);
 
@@ -78,13 +75,11 @@ class UnverifiedSecondFactorRepository extends EntityRepository
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
-     * @param string $verificationCodeNonce
      */
     public function provePhonePossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber,
-        $verificationCodeNonce
+        PhoneNumber $phoneNumber
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -94,16 +89,24 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             (string) $identityId
         );
 
-        $secondFactor = new UnverifiedSecondFactor(
-            $identity,
-            (string) $secondFactorId,
-            'sms',
-            (string) $phoneNumber,
-            $verificationCodeNonce
-        );
+        $secondFactor = new UnverifiedSecondFactor($identity, (string) $secondFactorId, 'sms', (string) $phoneNumber);
         $identity->addUnverifiedSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);
         $entityManager->flush();
+    }
+
+    public function verifyEmail($secondFactorId)
+    {
+        /** @var UnverifiedSecondFactor|null $secondFactor */
+        $secondFactor = $this->find($secondFactorId);
+
+        if (!$secondFactor) {
+            return;
+        }
+
+        $secondFactor->emailVerified = true;
+
+        $this->getEntityManager()->flush();
     }
 }

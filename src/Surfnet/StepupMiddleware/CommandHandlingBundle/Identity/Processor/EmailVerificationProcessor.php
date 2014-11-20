@@ -45,8 +45,8 @@ class EmailVerificationProcessor extends Processor
             $event->secondFactorId,
             $event->commonName,
             $event->email,
-            $event->verificationCode,
-            $event->verificationCodeNonce
+            $event->emailVerificationCode,
+            $event->emailVerificationNonce
         );
     }
 
@@ -57,8 +57,8 @@ class EmailVerificationProcessor extends Processor
             $event->secondFactorId,
             $event->commonName,
             $event->email,
-            $event->verificationCode,
-            $event->verificationCodeNonce
+            $event->emailVerificationCode,
+            $event->emailVerificationNonce
         );
     }
 }

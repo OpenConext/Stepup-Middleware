@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Broadway\Domain\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -37,6 +38,21 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $phoneNumber;
 
     /**
+     * @var DateTime
+     */
+    public $emailVerificationRequestedAt;
+
+    /**
+     * @var string
+     */
+    public $emailVerificationCode;
+
+    /**
+     * @var string
+     */
+    public $emailVerificationNonce;
+
+    /**
      * The identity's common name.
      *
      * @var string
@@ -51,41 +67,34 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $email;
 
     /**
-     * @var string
-     */
-    public $verificationCode;
-
-    /**
-     * @var string
-     */
-    public $verificationCodeNonce;
-
-    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
+     * @param DateTime $emailVerificationRequestedAt
+     * @param string $emailVerificationCode
+     * @param string $emailVerificationNonce
      * @param string $commonName
      * @param string $email
-     * @param string $verificationCode
-     * @param string $verificationCodeNonce
      */
     public function __construct(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
+        DateTime $emailVerificationRequestedAt,
+        $emailVerificationCode,
+        $emailVerificationNonce,
         $commonName,
-        $email,
-        $verificationCode,
-        $verificationCodeNonce
+        $email
     ) {
         parent::__construct($identityId);
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
+        $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
+        $this->emailVerificationCode = $emailVerificationCode;
+        $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
-        $this->verificationCode = $verificationCode;
-        $this->verificationCodeNonce = $verificationCodeNonce;
     }
 
     public static function deserialize(array $data)
@@ -94,23 +103,25 @@ class PhonePossessionProvenEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
+            DateTime::fromString($data['email_verification_requested_at']),
+            $data['email_verification_code'],
+            $data['email_verification_nonce'],
             $data['common_name'],
-            $data['email'],
-            $data['verification_code'],
-            $data['verification_code_nonce']
+            $data['email']
         );
     }
 
     public function serialize()
     {
         return [
-            'identity_id'             => (string) $this->identityId,
-            'second_factor_id'        => (string) $this->secondFactorId,
-            'phone_number'            => (string) $this->phoneNumber,
-            'common_name'             => (string) $this->commonName,
-            'email'                   => (string) $this->email,
-            'verification_code'       => (string) $this->verificationCode,
-            'verification_code_nonce' => (string) $this->verificationCodeNonce,
+            'identity_id'                     => (string) $this->identityId,
+            'second_factor_id'                => (string) $this->secondFactorId,
+            'phone_number'                    => (string) $this->phoneNumber,
+            'email_verification_requested_at' => $this->emailVerificationRequestedAt->toString(),
+            'email_verification_code'         => (string) $this->emailVerificationCode,
+            'email_verification_nonce'        => (string) $this->emailVerificationNonce,
+            'common_name'                     => (string) $this->commonName,
+            'email'                           => (string) $this->email,
         ];
     }
 }

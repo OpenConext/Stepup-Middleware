@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 
 class IdentityCommandHandler extends CommandHandler
 {
@@ -76,6 +77,20 @@ class IdentityCommandHandler extends CommandHandler
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
             new PhoneNumber($command->phoneNumber)
+        );
+
+        $this->repository->add($identity);
+    }
+
+    public function handleVerifyEmailCommand(VerifyEmailCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->verifyEmail(
+            new SecondFactorId($command->secondFactorId),
+            $command->verificationCode,
+            $command->verificationNonce
         );
 
         $this->repository->add($identity);

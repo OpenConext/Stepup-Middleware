@@ -79,7 +79,7 @@ class SecondFactorMailService
      * @param string $commonName
      * @param string $email
      * @param string $verificationCode
-     * @param string $verificationCodeNonce
+     * @param string $verificationNonce
      */
     public function sendEmailVerificationEmail(
         $locale,
@@ -87,7 +87,7 @@ class SecondFactorMailService
         $commonName,
         $email,
         $verificationCode,
-        $verificationCodeNonce
+        $verificationNonce
     ) {
         $subject = $this->translator->trans(
             'ss.mail.email_verification_email.subject',
@@ -96,7 +96,7 @@ class SecondFactorMailService
 
         $verificationUrl = str_replace(
             ['{nonce}', '{second_factor_id}'],
-            [urlencode($verificationCodeNonce), urlencode((string) $secondFactorId)],
+            [urlencode($verificationNonce), urlencode((string) $secondFactorId)],
             $this->selfServiceEmailVerificationUrlTemplate
         );
         $parameters = [

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
+use Broadway\Domain\DateTime;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
@@ -34,6 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\BroadwayFixedDateTimeNow;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
@@ -61,6 +63,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAYubikeyPossessionCanBeProven()
     {
+        BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
+
         m::mock('alias:Surfnet\Stepup\Identity\Token\VerificationCode')
             ->shouldReceive('generate')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
@@ -80,7 +84,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->given([new IdentityCreatedEvent($id, $nameId)])
             ->when($command)
             ->then([
-                new YubikeyPossessionProvenEvent($id, $secFacId, $pubId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secFacId,
+                    $pubId,
+                    DateTime::fromString('@12345'),
+                    'code',
+                    'nonce',
+                    'Reinier',
+                    'rkip@ibuildings.nl'
+                )
             ]);
     }
 
@@ -102,7 +115,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([
                 new IdentityCreatedEvent($id, $nameId),
-                new YubikeyPossessionProvenEvent($id, $secFacId1, $pubId1, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secFacId1,
+                    $pubId1,
+                    DateTime::now(),
+                    'code',
+                    'nonce',
+                    'Reinier',
+                    'rkip@ibuildings.nl'
+                )
             ])
             ->when($command);
     }
@@ -128,7 +150,18 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([new IdentityCreatedEvent($id, $nameId)])
             ->when($command)
-            ->then([new PhonePossessionProvenEvent($id, $secFacId, $pubId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')]);
+            ->then([
+                new PhonePossessionProvenEvent(
+                    $id,
+                    $secFacId,
+                    $pubId,
+                    DateTime::now(),
+                    'code',
+                    'nonce',
+                    'Reinier',
+                    'rkip@ibuildings.nl'
+                )
+            ]);
     }
 
     public function testPhonePossessionCannotBeProvenTwice()
@@ -149,7 +182,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([
                 new IdentityCreatedEvent($id, $nameId),
-                new PhonePossessionProvenEvent($id, $secFacId1, $phoneNumber1, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+                new PhonePossessionProvenEvent(
+                    $id,
+                    $secFacId1,
+                    $phoneNumber1,
+                    DateTime::now(),
+                    'code',
+                    'nonce',
+                    'Reinier',
+                    'rkip@ibuildings.nl'
+                )
             ])
             ->when($command);
     }
@@ -173,7 +215,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->withAggregateId($id)
             ->given([
                 new IdentityCreatedEvent($id, $nameId),
-                new YubikeyPossessionProvenEvent($id, $secFacId1, $publicId, 'Reinier', 'rkip@ibuildings.nl', 'code', 'nonce')
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secFacId1,
+                    $publicId,
+                    DateTime::now(),
+                    'code',
+                    'nonce',
+                    'Reinier',
+                    'rkip@ibuildings.nl'
+                )
             ])
             ->when($command);
     }

@@ -18,9 +18,12 @@
 
 namespace Surfnet\Stepup\Identity;
 
+use Broadway\Domain\DateTime;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
@@ -31,6 +34,9 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
     /**
@@ -44,9 +50,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $nameId;
 
     /**
-     * @var int
+     * @var SecondFactor|null
      */
-    private $tokenCount;
+    private $secondFactor;
 
     public static function create(IdentityId $id, NameId $nameId)
     {
@@ -68,10 +74,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $secondFactorId,
                 $yubikeyPublicId,
-                'Reinier', // @TODO
-                'rkip@ibuildings.nl', // @TODO
+                DateTime::now(),
                 VerificationCode::generate(8),
-                VerificationCode::generateNonce()
+                VerificationCode::generateNonce(),
+                'Reinier',
+                'rkip@ibuildings.nl'
             )
         );
     }
@@ -84,29 +91,62 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $secondFactorId,
                 $phoneNumber,
-                'Reinier', // @TODO
-                'rkip@ibuildings.nl', // @TODO
+                DateTime::now(),
                 VerificationCode::generate(8),
-                VerificationCode::generateNonce()
+                VerificationCode::generateNonce(),
+                'Reinier',
+                'rkip@ibuildings.nl'
             )
         );
+    }
+
+    public function verifyEmail(SecondFactorId $secondFactorId, $verificationCode, $verificationNonce)
+    {
+        if (!is_string($verificationCode)) {
+            throw InvalidArgumentException::invalidType('string', 'verificationCode', $verificationCode);
+        }
+
+        if (!is_string($verificationNonce)) {
+            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
+        }
+
+        if ($this->secondFactor === null || !$this->secondFactor->isIdentifiedBy($secondFactorId)) {
+            throw new DomainException(
+                sprintf(
+                    "Cannot verify second factor '%s' with given verification code: registrant does not have second " .
+                    "factor in possession.",
+                    (string) $secondFactorId
+                )
+            );
+        }
+
+        $this->secondFactor->verifyEmail($verificationCode, $verificationNonce);
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
         $this->nameId = $event->nameId;
-        $this->tokenCount = 0;
     }
 
     protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->tokenCount++;
+        $this->secondFactor = SecondFactor::createUnverified(
+            $event->secondFactorId,
+            $event->emailVerificationRequestedAt,
+            $event->emailVerificationCode,
+            $event->emailVerificationNonce
+        );
     }
 
     protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->tokenCount++;
+        $this->secondFactor = SecondFactor::createUnverified(
+            $event->secondFactorId,
+            $event->emailVerificationRequestedAt,
+            $event->emailVerificationCode,
+            $event->emailVerificationNonce
+        );
     }
 
     /**
@@ -117,12 +157,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return (string) $this->id;
     }
 
+    protected function getChildEntities()
+    {
+        return $this->secondFactor ? [$this->secondFactor] : [];
+    }
+
     /**
      * @throws DomainException
      */
     private function assertUserMayAddSecondFactor()
     {
-        if ($this->tokenCount > 0) {
+        if ($this->secondFactor !== null) {
             throw new DomainException('User may not have more than one token');
         }
     }

@@ -18,11 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateIdentityCommand extends AbstractCommand
+class UpdateIdentityCommand implements Command
 {
+    /**
+     * @Assert\NotBlank(message="stepup.command.create_identity.command_uuid.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.create_identity.command_uuid.must_be_string")
+     *
+     * @var string
+     */
+    public $UUID;
+
     /**
      * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
      * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
@@ -32,28 +40,12 @@ class CreateIdentityCommand extends AbstractCommand
     public $id;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.name_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.name_id.must_be_string")
-     *
-     * @var string
-     */
-    public $nameId;
-
-    /**
      * @Assert\NotBlank(message="stepup.command.create_identity.email.must_not_be_blank")
      * @Assert\Type(type="string", message="stepup.command.create_identity.email.must_be_string")
      *
      * @var string
      */
     public $email;
-
-    /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.institution.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.institution.must_be_string")
-     *
-     * @var string
-     */
-    public $institution;
 
     /**
      * @Assert\NotBlank(message="stepup.command.create_identity.common_name.must_not_be_blank")

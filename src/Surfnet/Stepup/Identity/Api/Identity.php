@@ -20,16 +20,26 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 interface Identity extends AggregateRoot
 {
     /**
-     * @param IdentityId $id
-     * @param NameId $nameId
+     * @param IdentityId  $id
+     * @param Institution $institution
+     * @param NameId      $nameId
+     * @param string      $email
+     * @param string      $commonName
      * @return Identity
      */
-    public static function create(IdentityId $id, NameId $nameId);
+    public static function create(
+        IdentityId $id,
+        Institution $institution,
+        NameId $nameId,
+        $email,
+        $commonName
+    );
 
     /**
      * Construct a new aggregate root. Aggregate roots can only be affected by events, so no parameters are allowed.

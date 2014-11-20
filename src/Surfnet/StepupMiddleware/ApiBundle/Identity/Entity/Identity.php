@@ -22,10 +22,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
+ * @ORM\Table(
+ *      indexes={
+ *          @ORM\Index(name="idx_identity_institution", columns={"institution"}),
+ *          @ORM\Index(name="idxft_identity_email", columns={"email"}, flags={"FULLTEXT"}),
+ *          @ORM\Index(name="idxft_identity_commonname", columns={"common_name"}, flags={"FULLTEXT"})
+ *      }
+ * )
  */
 class Identity implements JsonSerializable
 {
@@ -35,14 +43,35 @@ class Identity implements JsonSerializable
      *
      * @var string
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\Column
      *
      * @var string
      */
-    private $nameId;
+    public $nameId;
+
+    /**
+     * @ORM\Column
+     *
+     * @var string
+     */
+    public $commonName;
+
+    /**
+     * @ORM\Column(type="institution")
+     *
+     * @var string
+     */
+    public $institution;
+
+    /**
+     * @ORM\Column
+     *
+     * @var string
+     */
+    public $email;
 
     /**
      * @ORM\OneToMany(targetEntity="SecondFactor", mappedBy="identity", cascade={"persist"})
@@ -58,8 +87,13 @@ class Identity implements JsonSerializable
      */
     private $unverifiedSecondFactors;
 
-    public function __construct($id, $nameId)
-    {
+    public static function create(
+        $id,
+        Institution $institution,
+        $nameId,
+        $email,
+        $commonName
+    ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
@@ -68,26 +102,25 @@ class Identity implements JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
-        $this->id = $id;
-        $this->nameId = $nameId;
-        $this->secondFactors = new ArrayCollection();
-        $this->unverifiedSecondFactors = new ArrayCollection();
-    }
+        if (!is_string($email)) {
+            throw InvalidArgumentException::invalidType('string', 'email', $email);
+        }
 
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+        if (!is_string($commonName)) {
+            throw InvalidArgumentException::invalidType('string', 'commonName', $commonName);
+        }
 
-    /**
-     * @return string
-     */
-    public function getNameId()
-    {
-        return $this->nameId;
+        $identity = new self();
+
+        $identity->id = $id;
+        $identity->nameId = $nameId;
+        $identity->institution = $institution;
+        $identity->email = $email;
+        $identity->commonName = $commonName;
+        $identity->secondFactors = new ArrayCollection();
+        $identity->unverifiedSecondFactors = new ArrayCollection();
+
+        return $identity;
     }
 
     public function addSecondFactor(SecondFactor $secondFactor)
@@ -105,6 +138,9 @@ class Identity implements JsonSerializable
         return [
             'id'                        => $this->id,
             'name_id'                   => $this->nameId,
+            'institution'               => $this->institution,
+            'email'                     => $this->email,
+            'common_name'               => $this->commonName,
             'second_factors'            => $this->secondFactors->toArray(),
             'unverified_second_factors' => $this->unverifiedSecondFactors->toArray()
         ];

@@ -72,6 +72,8 @@ doctrine:
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
+        types:
+            institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -86,6 +88,9 @@ doctrine:
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
                         prefix: Surfnet\StepupMiddleware\ApiBundle
                         is_bundle: false
+                dql:
+                    string_functions:
+                        MATCH_AGAINST: \Surfnet\StepupMiddleware\ApiBundle\Doctrine\Query\MatchAgainst
             gateway:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore

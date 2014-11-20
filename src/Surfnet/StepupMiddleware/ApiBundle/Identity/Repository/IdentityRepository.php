@@ -22,6 +22,7 @@ use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
 
 class IdentityRepository extends EntityRepository
 {
@@ -40,15 +41,43 @@ class IdentityRepository extends EntityRepository
     /**
      * @param Identity $identity
      */
-    private function save(Identity $identity)
+    public function save(Identity $identity)
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($identity);
         $entityManager->flush();
     }
 
-    public function create(IdentityId $identityId, NameId $nameId)
+    /**
+     * @param SearchIdentityCommand $command
+     * @return \Doctrine\ORM\Query
+     */
+    public function createSearchQuery(SearchIdentityCommand $command)
     {
-        $this->save(new Identity((string) $identityId, (string) $nameId));
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        $queryBuilder
+            ->where('i.institution = :institution')
+            ->setParameter('institution', $command->institution);
+
+        if ($command->nameId) {
+            $queryBuilder
+                ->andWhere('i.nameId = :nameId')
+                ->setParameter('nameId', $command->nameId);
+        }
+
+        if ($command->email) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
+                ->setParameter('email', $command->email);
+        }
+
+        if ($command->commonName) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
+                ->setParameter('commonName', $command->commonName);
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

@@ -36,6 +36,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\BroadwayFixedDateTimeNow;
+use Broadway\CommandHandling\CommandHandlerInterface;
+use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
@@ -47,17 +53,31 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     public function testAnIdentityCanBeCreated()
     {
         $id = self::uuid();
+        $institution = 'A Corp.';
         $nameId = md5(__METHOD__);
+        $email = 'a@b.c';
+        $commonName = 'foobar';
 
         $command = new CreateIdentityCommand();
         $command->id = $id;
+        $command->institution = $institution;
         $command->nameId = $nameId;
+        $command->email = $email;
+        $command->commonName = $commonName;
 
         $this->scenario
             ->withAggregateId($id)
             ->given([])
             ->when($command)
-            ->then([new IdentityCreatedEvent(new IdentityId($id), new NameId($nameId))]);
+            ->then([
+                new IdentityCreatedEvent(
+                    new IdentityId($id),
+                    new Institution($institution),
+                    new NameId($nameId),
+                    $email,
+                    $commonName
+                )
+            ]);
     }
 
     /** @runInSeparateProcess */
@@ -71,6 +91,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'foobar';
         $secFacId = new SecondFactorId(self::uuid());
         $pubId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -81,7 +104,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId)])
+            ->given([new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName)])
             ->when($command)
             ->then([
                 new YubikeyPossessionProvenEvent(
@@ -103,6 +126,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'foobar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $pubId1 = new YubikeyPublicId('ccccvfeghijk');
 
@@ -114,7 +140,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->scenario
             ->withAggregateId($id)
             ->given([
-                new IdentityCreatedEvent($id, $nameId),
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
                     $secFacId1,
@@ -138,6 +164,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'foobar';
         $secFacId = new SecondFactorId(self::uuid());
         $pubId = new PhoneNumber('+31612345678');
 
@@ -148,7 +177,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent($id, $nameId)])
+            ->given([new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName)])
             ->when($command)
             ->then([
                 new PhonePossessionProvenEvent(
@@ -170,6 +199,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'foobar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $phoneNumber1 = new PhoneNumber('+31612345678');
 
@@ -181,7 +213,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->scenario
             ->withAggregateId($id)
             ->given([
-                new IdentityCreatedEvent($id, $nameId),
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new PhonePossessionProvenEvent(
                     $id,
                     $secFacId1,
@@ -202,6 +234,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'foobar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
         $phoneNumber = new PhoneNumber('+31676543210');
@@ -214,7 +249,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->scenario
             ->withAggregateId($id)
             ->given([
-                new IdentityCreatedEvent($id, $nameId),
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
                     $secFacId1,
@@ -227,5 +262,63 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 )
             ])
             ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function it_can_create_a_new_identity()
+    {
+        $createCommand = new CreateIdentityCommand();
+        $createCommand->UUID = '1';
+        $createCommand->id = '2';
+        $createCommand->institution = 'A Corp.';
+        $createCommand->nameId = '3';
+        $createCommand->email = 'a@b.c';
+        $createCommand->commonName = 'foobar';
+
+        $createdEvent = new IdentityCreatedEvent(
+            new IdentityId('2'),
+            new Institution('A Corp.'),
+            new NameId('3'),
+            'a@b.c',
+            'foobar'
+        );
+
+        $this->scenario
+            ->given([])
+            ->when($createCommand)
+            ->then([$createdEvent]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_identity_can_be_updated()
+    {
+        $id = new IdentityId('42');
+        $createdEvent = new IdentityCreatedEvent(
+            $id,
+            new Institution('A Corp.'),
+            new NameId('3'),
+            'a@b.c',
+            'foobar'
+        );
+
+        $updateCommand = new UpdateIdentityCommand();
+        $updateCommand->id = $id;
+        $updateCommand->email = 'new@email.com';
+        $updateCommand->commonName = 'Henk';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([$createdEvent])
+            ->when($updateCommand)
+            ->then([
+                new IdentityRenamedEvent($id, 'foobar', 'Henk'),
+                new IdentityEmailChangedEvent($id, 'a@b.c', 'new@email.com')
+            ]);
     }
 }

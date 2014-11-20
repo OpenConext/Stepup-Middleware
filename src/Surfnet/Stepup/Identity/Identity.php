@@ -28,7 +28,10 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Token\VerificationCode;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -36,6 +39,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -45,25 +49,63 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $id;
 
     /**
+     * @var Institution
+     */
+    private $institution;
+
+    /**
      * @var NameId
      */
     private $nameId;
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $commonName;
 
     /**
      * @var SecondFactor|null
      */
     private $secondFactor;
 
-    public static function create(IdentityId $id, NameId $nameId)
-    {
+    public static function create(
+        IdentityId $id,
+        Institution $institution,
+        NameId $nameId,
+        $email,
+        $commonName
+    ) {
         $identity = new self();
-        $identity->apply(new IdentityCreatedEvent($id, $nameId));
+        $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName));
 
         return $identity;
     }
 
     final public function __construct()
     {
+    }
+
+    public function rename($commonName)
+    {
+        if ($commonName === $this->commonName) {
+            return;
+        }
+
+        $this->apply(new IdentityRenamedEvent($this->id, $this->commonName, $commonName));
+    }
+
+    public function changeEmail($email)
+    {
+        if ($email === $this->email) {
+            return;
+        }
+
+        $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
     }
 
     public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
@@ -123,10 +165,23 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->secondFactor->verifyEmail($verificationCode, $verificationNonce);
     }
 
-    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
+        $this->institution = $event->institution;
         $this->nameId = $event->nameId;
+        $this->email = $event->email;
+        $this->commonName = $event->commonName;
+    }
+
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    {
+        $this->commonName = $event->newName;
+    }
+
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    {
+        $this->email = $event->newEmail;
     }
 
     protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)

@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConfigurationController extends Controller
 {
-    public function updateConfigurationAction()
+    public function updateAction()
     {
-        // stub
+        return new JsonResponse();
     }
 }

@@ -9,7 +9,8 @@
         }
     },
     "autoload-dev": {
-        "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"]
+        "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"],
+        "files": ["src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/microtime.php"]
     },
     "minimum-stability": "stable",
     "repositories": [{"type":"vcs","url":"https://github.com/rjkip/symfony"}],

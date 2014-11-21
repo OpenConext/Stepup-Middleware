@@ -1,6 +1,6 @@
 parameters:
     database_driver:   pdo_mysql
-    database_host:     10.0.0.100
+    database_host:     10.10.0.100
     database_port:     ~
     database_middleware_name:     middleware
     database_middleware_user:     middleware

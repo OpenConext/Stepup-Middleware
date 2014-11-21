@@ -93,7 +93,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
         $email = 'a@b.c';
-        $commonName = 'foobar';
+        $commonName = 'Foo bar';
         $secFacId = new SecondFactorId(self::uuid());
         $pubId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -114,8 +114,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::fromString('@12345'),
                     'code',
                     'nonce',
-                    'Reinier',
-                    'rkip@ibuildings.nl'
+                    'Foo bar',
+                    'a@b.c'
                 )
             ]);
     }
@@ -128,7 +128,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
         $email = 'a@b.c';
-        $commonName = 'foobar';
+        $commonName = 'Foo bar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $pubId1 = new YubikeyPublicId('ccccvfeghijk');
 
@@ -148,8 +148,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'code',
                     'nonce',
-                    'Reinier',
-                    'rkip@ibuildings.nl'
+                    'Foo bar',
+                    'a@b.c'
                 )
             ])
             ->when($command);
@@ -166,7 +166,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
         $email = 'a@b.c';
-        $commonName = 'foobar';
+        $commonName = 'Foo bar';
         $secFacId = new SecondFactorId(self::uuid());
         $pubId = new PhoneNumber('+31612345678');
 
@@ -187,8 +187,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'code',
                     'nonce',
-                    'Reinier',
-                    'rkip@ibuildings.nl'
+                    'Foo bar',
+                    'a@b.c'
                 )
             ]);
     }
@@ -201,7 +201,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
         $email = 'a@b.c';
-        $commonName = 'foobar';
+        $commonName = 'Foo bar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $phoneNumber1 = new PhoneNumber('+31612345678');
 
@@ -221,8 +221,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'code',
                     'nonce',
-                    'Reinier',
-                    'rkip@ibuildings.nl'
+                    'Foo bar',
+                    'a@b.c'
                 )
             ])
             ->when($command);
@@ -236,7 +236,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
         $email = 'a@b.c';
-        $commonName = 'foobar';
+        $commonName = 'Foo bar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
         $phoneNumber = new PhoneNumber('+31676543210');
@@ -257,8 +257,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'code',
                     'nonce',
-                    'Reinier',
-                    'rkip@ibuildings.nl'
+                    'Foo bar',
+                    'a@b.c'
                 )
             ])
             ->when($command);

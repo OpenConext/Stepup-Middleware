@@ -119,8 +119,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 DateTime::now(),
                 VerificationCode::generate(8),
                 VerificationCode::generateNonce(),
-                'Reinier',
-                'rkip@ibuildings.nl'
+                $this->commonName,
+                $this->email
             )
         );
     }
@@ -136,8 +136,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 DateTime::now(),
                 VerificationCode::generate(8),
                 VerificationCode::generateNonce(),
-                'Reinier',
-                'rkip@ibuildings.nl'
+                $this->commonName,
+                $this->email
             )
         );
     }

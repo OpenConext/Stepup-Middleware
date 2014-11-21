@@ -30,4 +30,3 @@ parameters:
     self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/registration/{second_factor_id}/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl
-    email_dev_catchall: ~

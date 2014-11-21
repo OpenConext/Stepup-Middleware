@@ -105,7 +105,7 @@ class SecondFactor extends EventSourcedEntity
             );
         }
 
-        if ($this->emailVerificationCode !== $verificationCode) {
+        if (strcasecmp($this->emailVerificationCode, $verificationCode) !== 0) {
             throw new DomainException(
                 sprintf(
                     "Cannot verify second factor '%s': verification code does not match.",

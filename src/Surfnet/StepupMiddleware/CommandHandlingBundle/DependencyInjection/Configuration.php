@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                             ->thenInvalid(
                                 "Invalid Self-Service e-mail verification URL template: " .
                                 "must be full Self-Service URL with scheme, host and path, '%s' given." .
-                                "The URL should contain a '{second_factor_id}' and '{nonce}' parameter."
+                                "The URL should contain a '{identityId}', '{secondFactorId}' and '{nonce}' parameter."
                             )
                         ->end()
                     ->end()

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
@@ -75,6 +76,7 @@ class SecondFactorMailService
 
     /**
      * @param string $locale
+     * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param string $commonName
      * @param string $email
@@ -83,6 +85,7 @@ class SecondFactorMailService
      */
     public function sendEmailVerificationEmail(
         $locale,
+        IdentityId $identityId,
         SecondFactorId $secondFactorId,
         $commonName,
         $email,
@@ -95,8 +98,8 @@ class SecondFactorMailService
         );
 
         $verificationUrl = str_replace(
-            ['{nonce}', '{second_factor_id}'],
-            [urlencode($verificationNonce), urlencode((string) $secondFactorId)],
+            ['{identityId}', '{secondFactorId}', '{nonce}'],
+            array_map('urlencode', [$identityId, $secondFactorId, $verificationNonce]),
             $this->selfServiceEmailVerificationUrlTemplate
         );
         $parameters = [

@@ -87,8 +87,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
 
-        m::mock('alias:Surfnet\Stepup\Identity\Token\VerificationCode')
-            ->shouldReceive('generate')->once()->andReturn('code')
+        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+            ->shouldReceive('generateHumanToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -160,8 +160,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAPhonePossessionCanBeProven()
     {
-        m::mock('alias:Surfnet\Stepup\Identity\Token\VerificationCode')
-            ->shouldReceive('generate')->once()->andReturn('code')
+        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+            ->shouldReceive('generateHumanToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -266,8 +266,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
+    /** @runInSeparateProcess */
     public function testAnUnverifiedSecondFactorsEmailCanBeVerified()
     {
+        BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
+
+        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+            ->shouldReceive('generateHumanToken')->once()->andReturn('regcode')
+            ->shouldReceive('generateNonce')->once()->andReturn('regnonce');
+
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
@@ -298,7 +305,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     )
                 ])
             ->when($command)
-            ->then([new EmailVerifiedEvent($secondFactorId)]);
+            ->then([new EmailVerifiedEvent($secondFactorId, DateTime::fromString('@12345'), 'regcode', 'regnonce')]);
     }
 
     public function testAVerifiedSecondFactorsEmailCannotBeVerified()
@@ -333,7 +340,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'Foo bar',
                     'a@b.c'
                 ),
-                new EmailVerifiedEvent($secondFactorId)
+                new EmailVerifiedEvent($secondFactorId, DateTime::now(), 'regcode', 'regnonce')
             ])
             ->when($command);
     }

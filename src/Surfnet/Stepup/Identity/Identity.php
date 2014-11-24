@@ -27,7 +27,7 @@ use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\Stepup\Identity\Token\VerificationCode;
+use Surfnet\Stepup\Identity\Token\Token;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -117,8 +117,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $yubikeyPublicId,
                 DateTime::now(),
-                VerificationCode::generate(8),
-                VerificationCode::generateNonce(),
+                Token::generateHumanToken(8),
+                Token::generateNonce(),
                 $this->commonName,
                 $this->email
             )
@@ -134,8 +134,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $phoneNumber,
                 DateTime::now(),
-                VerificationCode::generate(8),
-                VerificationCode::generateNonce(),
+                Token::generateHumanToken(8),
+                Token::generateNonce(),
                 $this->commonName,
                 $this->email
             )

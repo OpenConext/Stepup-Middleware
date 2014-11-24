@@ -18,13 +18,13 @@
 
 namespace Surfnet\Stepup\Identity\Token;
 
-class VerificationCode
+class Token
 {
     /**
      * @param int $length
      * @return string
      */
-    public static function generate($length)
+    public static function generateHumanToken($length)
     {
         $randomCharacters = function () {
             $chr = rand(50, 81);

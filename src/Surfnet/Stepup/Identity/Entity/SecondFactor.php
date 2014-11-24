@@ -23,6 +23,7 @@ use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Token\Token;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class SecondFactor extends EventSourcedEntity
@@ -131,7 +132,9 @@ class SecondFactor extends EventSourcedEntity
             );
         }
 
-        $this->apply(new EmailVerifiedEvent($this->id));
+        $this->apply(
+            new EmailVerifiedEvent($this->id, DateTime::now(), Token::generateHumanToken(8), Token::generateNonce())
+        );
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)

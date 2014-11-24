@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Broadway\Domain\DateTime;
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
@@ -29,20 +30,53 @@ class EmailVerifiedEvent implements SerializableInterface
     public $secondFactorId;
 
     /**
-     * @param SecondFactorId $secondFactorId
+     * @var DateTime
      */
-    public function __construct(SecondFactorId $secondFactorId)
+    public $registrationRequestedAt;
+
+    /**
+     * @var string
+     */
+    public $registrationCode;
+
+    /**
+     * @var string
+     */
+    public $registrationNonce;
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @param DateTime $registrationRequestedAt
+     * @param string $registrationCode
+     * @param string $registrationNonce
+     */
+    public function __construct(SecondFactorId $secondFactorId, DateTime $registrationRequestedAt, $registrationCode, $registrationNonce)
     {
         $this->secondFactorId = $secondFactorId;
+        $this->registrationRequestedAt = $registrationRequestedAt;
+        $this->registrationCode = $registrationCode;
+        $this->registrationNonce = $registrationNonce;
     }
 
     public static function deserialize(array $data)
     {
-        return new self(new SecondFactorId($data['second_factor_id']));
+        return new self(
+            new SecondFactorId(
+                $data['second_factor_id']
+            ),
+            DateTime::fromString($data['registration_requested_at']),
+            $data['registration_code'],
+            $data['registration_nonce']
+        );
     }
 
     public function serialize()
     {
-        return ['second_factor_id' => (string) $this->secondFactorId];
+        return [
+            'second_factor_id' => (string) $this->secondFactorId,
+            'registration_requested_at' => $this->registrationRequestedAt->toString(),
+            'registration_code' => $this->registrationCode,
+            'registration_nonce' => $this->registrationNonce,
+        ];
     }
 }

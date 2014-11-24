@@ -96,10 +96,18 @@ class SecondFactor extends EventSourcedEntity
      */
     public function verifyEmail($verificationCode, $verificationNonce)
     {
+        if ($this->emailVerificationCode === null || $this->emailVerificationNonce === null) {
+            throw new DomainException(sprintf(
+                "Cannot verify possession of e-mail for second factor '%s': possession already verified",
+                (string) $this->id
+            ));
+        }
+
         if (DateTime::now()->comesAfter($this->emailVerificationRequestedAt->add('P1D'))) {
             throw new DomainException(
                 sprintf(
-                    "Cannot verify second factor '%s': verification window of one day has closed.",
+                    "Cannot verify possession of e-mail for second factor '%s': " .
+                    "verification window of one day has closed.",
                     (string) $this->id
                 )
             );
@@ -108,7 +116,7 @@ class SecondFactor extends EventSourcedEntity
         if (strcasecmp($this->emailVerificationCode, $verificationCode) !== 0) {
             throw new DomainException(
                 sprintf(
-                    "Cannot verify second factor '%s': verification code does not match.",
+                    "Cannot verify possession of e-mail second factor '%s': verification code does not match.",
                     (string) $this->id
                 )
             );

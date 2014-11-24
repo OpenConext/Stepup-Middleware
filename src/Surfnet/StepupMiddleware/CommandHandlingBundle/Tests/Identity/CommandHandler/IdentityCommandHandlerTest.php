@@ -22,6 +22,7 @@ use Broadway\Domain\DateTime;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
@@ -34,6 +35,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\BroadwayFixedDateTimeNow;
 use Broadway\CommandHandling\CommandHandlerInterface;
@@ -260,6 +262,78 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'Foo bar',
                     'a@b.c'
                 )
+            ])
+            ->when($command);
+    }
+
+    public function testAnUnverifiedSecondFactorsEmailCanBeVerified()
+    {
+        $id = new IdentityId(self::uuid());
+        $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'Foo bar';
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $publicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $command = new VerifyEmailCommand();
+        $command->identityId = (string) $id;
+        $command->secondFactorId = (string) $secondFactorId;
+        $command->verificationCode = 'code';
+        $command->verificationNonce = 'nonce';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([
+                    new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
+                    new YubikeyPossessionProvenEvent(
+                        $id,
+                        $secondFactorId,
+                        $publicId,
+                        DateTime::now(),
+                        'code',
+                        'nonce',
+                        'Foo bar',
+                        'a@b.c'
+                    )
+                ])
+            ->when($command)
+            ->then([new EmailVerifiedEvent($secondFactorId)]);
+    }
+
+    public function testAVerifiedSecondFactorsEmailCannotBeVerified()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'possession already verified');
+
+        $id = new IdentityId(self::uuid());
+        $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'Foo bar';
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $publicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $command = new VerifyEmailCommand();
+        $command->identityId = (string) $id;
+        $command->secondFactorId = (string) $secondFactorId;
+        $command->verificationCode = 'code';
+        $command->verificationNonce = 'nonce';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secondFactorId,
+                    $publicId,
+                    DateTime::now(),
+                    'code',
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c'
+                ),
+                new EmailVerifiedEvent($secondFactorId)
             ])
             ->when($command);
     }

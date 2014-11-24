@@ -188,6 +188,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->secondFactor = SecondFactor::createUnverified(
             $event->secondFactorId,
+            $event->identityId,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationCode,
             $event->emailVerificationNonce
@@ -198,6 +199,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->secondFactor = SecondFactor::createUnverified(
             $event->secondFactorId,
+            $event->identityId,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationCode,
             $event->emailVerificationNonce

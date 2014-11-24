@@ -305,7 +305,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     )
                 ])
             ->when($command)
-            ->then([new EmailVerifiedEvent($secondFactorId, DateTime::fromString('@12345'), 'regcode', 'regnonce')]);
+            ->then([
+                new EmailVerifiedEvent(
+                    $id,
+                    $secondFactorId,
+                    DateTime::fromString('@12345'),
+                    'regcode',
+                    'regnonce'
+                )
+            ]);
     }
 
     public function testAVerifiedSecondFactorsEmailCannotBeVerified()
@@ -340,7 +348,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'Foo bar',
                     'a@b.c'
                 ),
-                new EmailVerifiedEvent($secondFactorId, DateTime::now(), 'regcode', 'regnonce')
+                new EmailVerifiedEvent($id, $secondFactorId, DateTime::now(), 'regcode', 'regnonce')
             ])
             ->when($command);
     }

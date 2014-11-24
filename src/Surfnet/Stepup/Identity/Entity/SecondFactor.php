@@ -24,10 +24,16 @@ use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Token\Token;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class SecondFactor extends EventSourcedEntity
 {
+    /**
+     * @var IdentityId
+     */
+    private $identityId;
+
     /**
      * @var SecondFactorId
      */
@@ -50,6 +56,7 @@ class SecondFactor extends EventSourcedEntity
 
     /**
      * @param SecondFactorId $id
+     * @param IdentityId $identityId
      * @param DateTime $emailVerificationRequestedAt
      * @param string $emailVerificationCode
      * @param string $emailVerificationNonce
@@ -57,6 +64,7 @@ class SecondFactor extends EventSourcedEntity
      */
     public static function createUnverified(
         SecondFactorId $id,
+        IdentityId $identityId,
         DateTime $emailVerificationRequestedAt,
         $emailVerificationCode,
         $emailVerificationNonce
@@ -71,6 +79,7 @@ class SecondFactor extends EventSourcedEntity
 
         $secondFactor = new self();
         $secondFactor->id = $id;
+        $secondFactor->identityId = $identityId;
         $secondFactor->emailVerificationRequestedAt = $emailVerificationRequestedAt;
         $secondFactor->emailVerificationCode = $emailVerificationCode;
         $secondFactor->emailVerificationNonce = $emailVerificationNonce;
@@ -133,7 +142,13 @@ class SecondFactor extends EventSourcedEntity
         }
 
         $this->apply(
-            new EmailVerifiedEvent($this->id, DateTime::now(), Token::generateHumanToken(8), Token::generateNonce())
+            new EmailVerifiedEvent(
+                $this->identityId,
+                $this->id,
+                DateTime::now(),
+                Token::generateHumanToken(8),
+                Token::generateNonce()
+            )
         );
     }
 

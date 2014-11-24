@@ -20,9 +20,10 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Broadway\Domain\DateTime;
 use Broadway\Serializer\SerializableInterface;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
-class EmailVerifiedEvent implements SerializableInterface
+class EmailVerifiedEvent extends IdentityEvent
 {
     /**
      * @var SecondFactorId
@@ -45,25 +46,33 @@ class EmailVerifiedEvent implements SerializableInterface
     public $registrationNonce;
 
     /**
+     * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @param string $registrationNonce
      */
-    public function __construct(SecondFactorId $secondFactorId, DateTime $registrationRequestedAt, $registrationCode, $registrationNonce)
-    {
+    public function __construct(
+        IdentityId $identityId,
+        SecondFactorId $secondFactorId,
+        DateTime $registrationRequestedAt,
+        $registrationCode,
+        $registrationNonce
+    ) {
+        parent::__construct($identityId);
+
         $this->secondFactorId = $secondFactorId;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
         $this->registrationNonce = $registrationNonce;
+        $this->identityId = $identityId;
     }
 
     public static function deserialize(array $data)
     {
         return new self(
-            new SecondFactorId(
-                $data['second_factor_id']
-            ),
+            new IdentityId($data['identity_id']),
+            new SecondFactorId($data['second_factor_id']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
             $data['registration_nonce']
@@ -73,6 +82,7 @@ class EmailVerifiedEvent implements SerializableInterface
     public function serialize()
     {
         return [
+            'identity_id' => (string) $this->identityId,
             'second_factor_id' => (string) $this->secondFactorId,
             'registration_requested_at' => $this->registrationRequestedAt->toString(),
             'registration_code' => $this->registrationCode,

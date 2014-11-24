@@ -311,7 +311,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     DateTime::fromString('@12345'),
                     'regcode',
-                    'regnonce'
+                    'regnonce',
+                    $commonName,
+                    $email
                 )
             ]);
     }
@@ -348,7 +350,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'Foo bar',
                     'a@b.c'
                 ),
-                new EmailVerifiedEvent($id, $secondFactorId, DateTime::now(), 'regcode', 'regnonce')
+                new EmailVerifiedEvent(
+                    $id,
+                    $secondFactorId,
+                    DateTime::now(),
+                    'regcode',
+                    'regnonce',
+                    $commonName,
+                    $email
+                )
             ])
             ->when($command);
     }

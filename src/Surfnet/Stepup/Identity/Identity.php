@@ -188,7 +188,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->secondFactor = SecondFactor::createUnverified(
             $event->secondFactorId,
-            $event->identityId,
+            $this,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationCode,
             $event->emailVerificationNonce
@@ -199,7 +199,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->secondFactor = SecondFactor::createUnverified(
             $event->secondFactorId,
-            $event->identityId,
+            $this,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationCode,
             $event->emailVerificationNonce
@@ -224,5 +224,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         if ($this->secondFactor !== null) {
             throw new DomainException('User may not have more than one token');
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommonName()
+    {
+        return $this->commonName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

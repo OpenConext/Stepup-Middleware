@@ -46,18 +46,32 @@ class EmailVerifiedEvent extends IdentityEvent
     public $registrationNonce;
 
     /**
+     * @var string
+     */
+    public $commonName;
+
+    /**
+     * @var string
+     */
+    public $email;
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @param string $registrationNonce
+     * @param string $commonName
+     * @param string $email
      */
     public function __construct(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
         DateTime $registrationRequestedAt,
         $registrationCode,
-        $registrationNonce
+        $registrationNonce,
+        $commonName,
+        $email
     ) {
         parent::__construct($identityId);
 
@@ -66,6 +80,8 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->registrationCode = $registrationCode;
         $this->registrationNonce = $registrationNonce;
         $this->identityId = $identityId;
+        $this->commonName = $commonName;
+        $this->email = $email;
     }
 
     public static function deserialize(array $data)
@@ -75,7 +91,9 @@ class EmailVerifiedEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
-            $data['registration_nonce']
+            $data['registration_nonce'],
+            $data['common_name'],
+            $data['email']
         );
     }
 
@@ -87,6 +105,8 @@ class EmailVerifiedEvent extends IdentityEvent
             'registration_requested_at' => $this->registrationRequestedAt->toString(),
             'registration_code' => $this->registrationCode,
             'registration_nonce' => $this->registrationNonce,
+            'common_name' => $this->commonName,
+            'email' => $this->email,
         ];
     }
 }

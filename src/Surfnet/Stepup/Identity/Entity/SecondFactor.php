@@ -23,6 +23,7 @@ use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Token\Token;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -30,9 +31,9 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 class SecondFactor extends EventSourcedEntity
 {
     /**
-     * @var IdentityId
+     * @var Identity
      */
-    private $identityId;
+    private $identity;
 
     /**
      * @var SecondFactorId
@@ -71,7 +72,7 @@ class SecondFactor extends EventSourcedEntity
 
     /**
      * @param SecondFactorId $id
-     * @param IdentityId $identityId
+     * @param Identity $identity
      * @param DateTime $emailVerificationRequestedAt
      * @param string $emailVerificationCode
      * @param string $emailVerificationNonce
@@ -79,7 +80,7 @@ class SecondFactor extends EventSourcedEntity
      */
     public static function createUnverified(
         SecondFactorId $id,
-        IdentityId $identityId,
+        Identity $identity,
         DateTime $emailVerificationRequestedAt,
         $emailVerificationCode,
         $emailVerificationNonce
@@ -94,7 +95,7 @@ class SecondFactor extends EventSourcedEntity
 
         $secondFactor = new self();
         $secondFactor->id = $id;
-        $secondFactor->identityId = $identityId;
+        $secondFactor->identity = $identity;
         $secondFactor->emailVerificationRequestedAt = $emailVerificationRequestedAt;
         $secondFactor->emailVerificationCode = $emailVerificationCode;
         $secondFactor->emailVerificationNonce = $emailVerificationNonce;
@@ -158,11 +159,13 @@ class SecondFactor extends EventSourcedEntity
 
         $this->apply(
             new EmailVerifiedEvent(
-                $this->identityId,
+                new IdentityId($this->identity->getAggregateRootId()),
                 $this->id,
                 DateTime::now(),
                 Token::generateHumanToken(8),
-                Token::generateNonce()
+                Token::generateNonce(),
+                $this->identity->getCommonName(),
+                $this->identity->getEmail()
             )
         );
     }

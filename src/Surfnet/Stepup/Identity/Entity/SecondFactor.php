@@ -55,6 +55,21 @@ class SecondFactor extends EventSourcedEntity
     private $emailVerificationNonce;
 
     /**
+     * @var DateTime
+     */
+    private $registrationRequestedAt;
+
+    /**
+     * @var string|null
+     */
+    private $registrationCode;
+
+    /**
+     * @var string|null
+     */
+    private $registrationNonce;
+
+    /**
      * @param SecondFactorId $id
      * @param IdentityId $identityId
      * @param DateTime $emailVerificationRequestedAt
@@ -156,5 +171,9 @@ class SecondFactor extends EventSourcedEntity
     {
         $this->emailVerificationCode = null;
         $this->emailVerificationNonce = null;
+
+        $this->registrationRequestedAt = $event->registrationRequestedAt;
+        $this->registrationCode = $event->registrationCode;
+        $this->registrationNonce = $event->registrationNonce;
     }
 }

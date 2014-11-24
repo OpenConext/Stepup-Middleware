@@ -1,6 +1,6 @@
 services:
     surfnet_stepup_middleware_command_handling.processor.email_verification:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor\EmailVerificationProcessor
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor\EmailVerificationEmailProcessor
         arguments:
             - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
         tags: [{ name: event_bus.event_listener }]

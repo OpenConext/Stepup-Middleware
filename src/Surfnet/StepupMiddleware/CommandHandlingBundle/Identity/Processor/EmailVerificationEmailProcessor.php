@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
-class EmailVerificationProcessor extends Processor
+class EmailVerificationEmailProcessor extends Processor
 {
     /**
      * @var SecondFactorMailService

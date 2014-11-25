@@ -272,8 +272,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
-            ->shouldReceive('generateHumanToken')->once()->andReturn('regcode')
-            ->shouldReceive('generateNonce')->once()->andReturn('regnonce');
+            ->shouldReceive('generateHumanToken')->once()->andReturn('regcode');
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
@@ -311,7 +310,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     DateTime::fromString('@12345'),
                     'regcode',
-                    'regnonce',
                     $commonName,
                     $email
                 )
@@ -355,7 +353,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     DateTime::now(),
                     'regcode',
-                    'regnonce',
                     $commonName,
                     $email
                 )

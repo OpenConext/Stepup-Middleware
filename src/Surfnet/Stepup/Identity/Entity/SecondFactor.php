@@ -66,11 +66,6 @@ class SecondFactor extends EventSourcedEntity
     private $registrationCode;
 
     /**
-     * @var string|null
-     */
-    private $registrationNonce;
-
-    /**
      * @param SecondFactorId $id
      * @param Identity $identity
      * @param DateTime $emailVerificationRequestedAt
@@ -163,7 +158,6 @@ class SecondFactor extends EventSourcedEntity
                 $this->id,
                 DateTime::now(),
                 Token::generateHumanToken(8),
-                Token::generateNonce(),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail()
             )
@@ -177,6 +171,5 @@ class SecondFactor extends EventSourcedEntity
 
         $this->registrationRequestedAt = $event->registrationRequestedAt;
         $this->registrationCode = $event->registrationCode;
-        $this->registrationNonce = $event->registrationNonce;
     }
 }

@@ -43,11 +43,6 @@ class EmailVerifiedEvent extends IdentityEvent
     /**
      * @var string
      */
-    public $registrationNonce;
-
-    /**
-     * @var string
-     */
     public $commonName;
 
     /**
@@ -60,7 +55,6 @@ class EmailVerifiedEvent extends IdentityEvent
      * @param SecondFactorId $secondFactorId
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
-     * @param string $registrationNonce
      * @param string $commonName
      * @param string $email
      */
@@ -69,7 +63,6 @@ class EmailVerifiedEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         DateTime $registrationRequestedAt,
         $registrationCode,
-        $registrationNonce,
         $commonName,
         $email
     ) {
@@ -78,7 +71,6 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->secondFactorId = $secondFactorId;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
-        $this->registrationNonce = $registrationNonce;
         $this->identityId = $identityId;
         $this->commonName = $commonName;
         $this->email = $email;
@@ -91,7 +83,6 @@ class EmailVerifiedEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
-            $data['registration_nonce'],
             $data['common_name'],
             $data['email']
         );
@@ -104,7 +95,6 @@ class EmailVerifiedEvent extends IdentityEvent
             'second_factor_id' => (string) $this->secondFactorId,
             'registration_requested_at' => $this->registrationRequestedAt->toString(),
             'registration_code' => $this->registrationCode,
-            'registration_nonce' => $this->registrationNonce,
             'common_name' => $this->commonName,
             'email' => $this->email,
         ];

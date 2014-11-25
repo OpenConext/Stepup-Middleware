@@ -18,9 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
+use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -46,18 +50,24 @@ class SecondFactorController extends Controller
     /**
      * Lists the unverified second factors belonging to the given Identity.
      *
+     * @param Request $request
      * @param string $identityId
      * @return Response
      */
-    public function findUnverifiedByIdentityAction($identityId)
+    public function unverifiedCollectionAction(Request $request, $identityId)
     {
         if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
             throw new AccessDeniedHttpException('Client is not authorised to access resource');
         }
 
-        $secondFactors = $this->getService()->findUnverifiedByIdentity($identityId); // @TODO Collection structure
+        $command = new SearchUnverifiedSecondFactorCommand();
+        $command->identityId = new IdentityId($identityId);
+        $command->emailVerificationNonce = $request->get('emailVerificationNonce', '');
+        $command->pageNumber = max(1, (int) $request->get('p', 1));
 
-        return new JsonResponse($secondFactors);
+        $paginator = $this->getService()->search($command);
+
+        return JsonCollectionResponse::fromPaginator($paginator);
     }
 
     /**

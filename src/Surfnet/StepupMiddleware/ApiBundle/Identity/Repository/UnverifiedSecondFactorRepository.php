@@ -19,10 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 
@@ -42,14 +44,29 @@ class UnverifiedSecondFactorRepository extends EntityRepository
     }
 
     /**
+     * @param string $nonce
+     * @return UnverifiedSecondFactor[]
+     */
+    public function findByEmailVerificationNonce($nonce)
+    {
+        return $this->createQueryBuilder('sf')
+            ->where('sf.emailVerificationNonce = :nonce')
+            ->setParameter('nonce', $nonce)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
+     * @param string $verificationNonce
      */
     public function proveYubikeyPossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId
+        YubikeyPublicId $yubikeyPublicId,
+        $verificationNonce
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -63,7 +80,8 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             $identity,
             (string) $secondFactorId,
             'yubikey',
-            (string) $yubikeyPublicId
+            (string) $yubikeyPublicId,
+            $verificationNonce
         );
         $identity->addUnverifiedSecondFactor($secondFactor);
 
@@ -75,11 +93,13 @@ class UnverifiedSecondFactorRepository extends EntityRepository
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
+     * @param string $verificationNonce
      */
     public function provePhonePossession(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber
+        PhoneNumber $phoneNumber,
+        $verificationNonce
     ) {
         $entityManager = $this->getEntityManager();
 
@@ -89,7 +109,13 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             (string) $identityId
         );
 
-        $secondFactor = new UnverifiedSecondFactor($identity, (string) $secondFactorId, 'sms', (string) $phoneNumber);
+        $secondFactor = new UnverifiedSecondFactor(
+            $identity,
+            (string) $secondFactorId,
+            'sms',
+            (string) $phoneNumber,
+            $verificationNonce
+        );
         $identity->addUnverifiedSecondFactor($secondFactor);
 
         $entityManager->persist($secondFactor);
@@ -105,8 +131,31 @@ class UnverifiedSecondFactorRepository extends EntityRepository
             return;
         }
 
-        $secondFactor->emailVerified = true;
+        $secondFactor->emailVerificationNonce = null;
 
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param SearchUnverifiedSecondFactorCommand $command
+     * @return Query
+     */
+    public function createSearchQuery(SearchUnverifiedSecondFactorCommand $command)
+    {
+        $queryBuilder = $this->createQueryBuilder('sf');
+
+        if ($command->identityId) {
+            $queryBuilder
+                ->andWhere('sf.identity = :identityId')
+                ->setParameter('identityId', (string) $command->identityId);
+        }
+
+        if ($command->emailVerificationNonce) {
+            $queryBuilder
+                ->andWhere('sf.emailVerificationNonce = :emailVerificationNonce')
+                ->setParameter('emailVerificationNonce', $command->emailVerificationNonce);
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

@@ -60,23 +60,25 @@ class UnverifiedSecondFactor implements \JsonSerializable
     private $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(length=32)
      *
-     * @var bool
+     * @var string
      */
-    public $emailVerified;
+    public $emailVerificationNonce;
 
     /**
      * @param Identity $identity
      * @param string $id
      * @param string $type
      * @param string $secondFactorIdentifier
+     * @param string $emailVerificationNonce
      */
     public function __construct(
         Identity $identity,
         $id,
         $type,
-        $secondFactorIdentifier
+        $secondFactorIdentifier,
+        $emailVerificationNonce
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
@@ -90,11 +92,15 @@ class UnverifiedSecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
         }
 
+        if (!is_string($emailVerificationNonce)) {
+            throw InvalidArgumentException::invalidType('string', 'emailVerificationNonce', $emailVerificationNonce);
+        }
+
         $this->identity = $identity;
         $this->id = $id;
         $this->type = $type;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->emailVerified = false;
+        $this->emailVerificationNonce = $emailVerificationNonce;
     }
 
     public function jsonSerialize()

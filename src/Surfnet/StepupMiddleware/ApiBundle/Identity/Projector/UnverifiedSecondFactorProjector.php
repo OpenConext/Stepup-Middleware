@@ -41,7 +41,8 @@ class UnverifiedSecondFactorProjector extends Projector
         $this->unverifiedSecondFactorRepository->proveYubikeyPossession(
             $event->identityId,
             $event->secondFactorId,
-            $event->yubikeyPublicId
+            $event->yubikeyPublicId,
+            $event->emailVerificationNonce
         );
     }
 
@@ -50,7 +51,8 @@ class UnverifiedSecondFactorProjector extends Projector
         $this->unverifiedSecondFactorRepository->provePhonePossession(
             $event->identityId,
             $event->secondFactorId,
-            $event->phoneNumber
+            $event->phoneNumber,
+            $event->emailVerificationNonce
         );
     }
 

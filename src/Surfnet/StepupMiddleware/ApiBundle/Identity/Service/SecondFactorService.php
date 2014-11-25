@@ -18,7 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 
@@ -60,5 +64,21 @@ class SecondFactorService
     public function findUnverifiedByIdentity($identityId)
     {
         return $this->unverifieds->findByIdentity($identityId);
+    }
+
+    /**
+     * @param SearchUnverifiedSecondFactorCommand $command
+     * @return Pagerfanta
+     */
+    public function search(SearchUnverifiedSecondFactorCommand $command)
+    {
+        $searchQuery = $this->unverifieds->createSearchQuery($command);
+
+        $adapter  = new DoctrineORMAdapter($searchQuery);
+        $paginator = new Pagerfanta($adapter);
+        $paginator->setMaxPerPage($command->itemsPerPage);
+        $paginator->setCurrentPage($command->pageNumber);
+
+        return $paginator;
     }
 }

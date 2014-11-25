@@ -19,11 +19,12 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor;
 
 use Broadway\Processor\Processor;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
-class EmailVerificationEmailProcessor extends Processor
+class EmailProcessor extends Processor
 {
     /**
      * @var SecondFactorMailService
@@ -61,6 +62,16 @@ class EmailVerificationEmailProcessor extends Processor
             $event->email,
             $event->emailVerificationCode,
             $event->emailVerificationNonce
+        );
+    }
+
+    public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $this->service->sendRegistrationEmail(
+            'en_GB',
+            $event->commonName,
+            $event->email,
+            $event->registrationCode
         );
     }
 }

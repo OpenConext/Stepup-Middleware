@@ -127,4 +127,48 @@ class SecondFactorMailService
 
         $this->mailer->send($message);
     }
+
+    /**
+     * @param string $locale
+     * @param string $commonName
+     * @param string $email
+     * @param string $registrationCode
+     * @internal param SecondFactorId $secondFactorId
+     * @internal param IdentityId $identityId
+     */
+    public function sendRegistrationEmail(
+        $locale,
+        $commonName,
+        $email,
+        $registrationCode
+    ) {
+        $subject = $this->translator->trans(
+            'ss.mail.registration_email.subject',
+            ['%commonName%' => $commonName]
+        );
+
+        $parameters = [
+            'locale'           => $locale,
+            'commonName'       => $commonName,
+            'email'            => $email,
+            'registrationCode' => $registrationCode,
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:registrationEmail.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email, $commonName)
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
 }

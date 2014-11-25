@@ -113,7 +113,7 @@ class SecondFactorMailService
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
         $body = $this->templateEngine->render(
-            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:confirmEmail.html.twig',
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:emailRegistrationEmail.html.twig',
             $parameters
         );
 

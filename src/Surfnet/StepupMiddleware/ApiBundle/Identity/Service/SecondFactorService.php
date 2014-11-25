@@ -59,7 +59,7 @@ class SecondFactorService
 
     /**
      * @param string $identityId
-     * @return SecondFactor[]
+     * @return UnverifiedSecondFactor[]
      */
     public function findUnverifiedByIdentity($identityId)
     {

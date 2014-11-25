@@ -96,8 +96,8 @@ class SecondFactorMailService
         );
 
         $verificationUrl = str_replace(
-            ['{identityId}', '{secondFactorId}', '{nonce}'],
-            array_map('urlencode', [$identityId, $secondFactorId, $verificationNonce]),
+            '{nonce}',
+            urlencode($verificationNonce),
             $this->selfServiceEmailVerificationUrlTemplate
         );
         $parameters = [

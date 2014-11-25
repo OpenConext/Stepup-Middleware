@@ -27,6 +27,6 @@ parameters:
     selfservice_api_password: ~
     registration_authority_api_password: ~
 
-    self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/registration/verify-email/{identityId}/{secondFactorId}?n={nonce}
+    self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl

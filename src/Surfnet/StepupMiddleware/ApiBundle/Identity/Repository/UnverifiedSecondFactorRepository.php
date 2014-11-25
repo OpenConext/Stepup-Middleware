@@ -150,12 +150,6 @@ class UnverifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('identityId', (string) $command->identityId);
         }
 
-        if ($command->emailVerificationNonce) {
-            $queryBuilder
-                ->andWhere('sf.emailVerificationNonce = :emailVerificationNonce')
-                ->setParameter('emailVerificationNonce', $command->emailVerificationNonce);
-        }
-
         return $queryBuilder->getQuery();
     }
 }

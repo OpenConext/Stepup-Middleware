@@ -28,11 +28,6 @@ class SearchUnverifiedSecondFactorCommand
     public $identityId;
 
     /**
-     * @var string
-     */
-    public $emailVerificationNonce;
-
-    /**
      * @var int
      */
     public $pageNumber;

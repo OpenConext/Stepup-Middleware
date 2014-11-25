@@ -62,7 +62,6 @@ class SecondFactorController extends Controller
 
         $command = new SearchUnverifiedSecondFactorCommand();
         $command->identityId = new IdentityId($identityId);
-        $command->emailVerificationNonce = $request->get('emailVerificationNonce', '');
         $command->pageNumber = max(1, (int) $request->get('p', 1));
 
         $paginator = $this->getService()->search($command);

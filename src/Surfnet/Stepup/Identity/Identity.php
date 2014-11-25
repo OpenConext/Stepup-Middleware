@@ -140,18 +140,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function verifyEmail(SecondFactorId $secondFactorId, $verificationNonce)
+    public function verifyEmail($verificationNonce)
     {
         if (!is_string($verificationNonce)) {
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
         }
 
-        if ($this->secondFactor === null || !$this->secondFactor->isIdentifiedBy($secondFactorId)) {
+        if ($this->secondFactor === null) {
             throw new DomainException(
                 sprintf(
                     "Cannot verify second factor '%s' with given verification nonce: registrant does not have second " .
                     "factor in possession.",
-                    (string) $secondFactorId
+                    (string) $this->secondFactor->getId()
                 )
             );
         }

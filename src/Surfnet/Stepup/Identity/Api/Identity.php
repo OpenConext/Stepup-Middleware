@@ -72,10 +72,9 @@ interface Identity extends AggregateRoot
     public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber);
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @param string $verificationNonce
      */
-    public function verifyEmail(SecondFactorId $secondFactorId, $verificationNonce);
+    public function verifyEmail($verificationNonce);
 
     /**
      * @return string

@@ -34,16 +34,6 @@ class VerifyEmailCommand extends AbstractCommand
     public $identityId;
 
     /**
-     * The ID of the second factor to create.
-     *
-     * @Assert\NotBlank(message="stepup.command.verify_email.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.second_factor_id.must_be_string")
-     *
-     * @var string
-     */
-    public $secondFactorId;
-
-    /**
      * @Assert\NotBlank(message="stepup.command.verify_email.verification_nonce.must_not_be_blank")
      * @Assert\Type(type="string", message="stepup.command.verify_email.verification_nonce.must_be_string")
      *

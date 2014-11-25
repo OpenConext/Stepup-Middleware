@@ -279,7 +279,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
-        $command->secondFactorId = (string) $secondFactorId;
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -323,7 +322,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
-        $command->secondFactorId = (string) $secondFactorId;
         $command->verificationNonce = 'nonce';
 
         $this->scenario

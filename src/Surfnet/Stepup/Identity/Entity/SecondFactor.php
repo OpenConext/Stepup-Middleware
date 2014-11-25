@@ -95,12 +95,11 @@ class SecondFactor extends EventSourcedEntity
     }
 
     /**
-     * @param SecondFactorId $id
-     * @return bool
+     * @return SecondFactorId
      */
-    public function isIdentifiedBy(SecondFactorId $id)
+    public function getId()
     {
-        return $this->id->equals($id);
+        return $this->id;
     }
 
     /**

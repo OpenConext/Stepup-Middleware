@@ -45,11 +45,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
     /**
      * @var string
      */
-    public $emailVerificationCode;
-
-    /**
-     * @var string
-     */
     public $emailVerificationNonce;
 
     /**
@@ -71,7 +66,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
      * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationCode
      * @param string $emailVerificationNonce
      * @param string $commonName
      * @param string $email
@@ -81,7 +75,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
         DateTime $emailVerificationRequestedAt,
-        $emailVerificationCode,
         $emailVerificationNonce,
         $commonName,
         $email
@@ -91,7 +84,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
         $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
-        $this->emailVerificationCode = $emailVerificationCode;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
@@ -104,7 +96,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
             DateTime::fromString($data['email_verification_requested_at']),
-            $data['email_verification_code'],
             $data['email_verification_nonce'],
             $data['common_name'],
             $data['email']
@@ -118,7 +109,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
             'second_factor_id'                => (string) $this->secondFactorId,
             'phone_number'                    => (string) $this->phoneNumber,
             'email_verification_requested_at' => $this->emailVerificationRequestedAt->toString(),
-            'email_verification_code'         => (string) $this->emailVerificationCode,
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

@@ -48,11 +48,6 @@ class SecondFactor extends EventSourcedEntity
     /**
      * @var string|null
      */
-    private $emailVerificationCode;
-
-    /**
-     * @var string|null
-     */
     private $emailVerificationNonce;
 
     /**
@@ -69,7 +64,6 @@ class SecondFactor extends EventSourcedEntity
      * @param SecondFactorId $id
      * @param Identity $identity
      * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationCode
      * @param string $emailVerificationNonce
      * @return self
      */
@@ -77,22 +71,20 @@ class SecondFactor extends EventSourcedEntity
         SecondFactorId $id,
         Identity $identity,
         DateTime $emailVerificationRequestedAt,
-        $emailVerificationCode,
         $emailVerificationNonce
     ) {
-        if (!is_string($emailVerificationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'emailVerificationCode', $emailVerificationCode);
+        if (!is_string($emailVerificationNonce)) {
+            throw InvalidArgumentException::invalidType('string', 'emailVerificationNonce', $emailVerificationNonce);
         }
 
-        if (empty($emailVerificationCode)) {
-            throw new InvalidArgumentException("'emailVerificationCode' may not be empty");
+        if (empty($emailVerificationNonce)) {
+            throw new InvalidArgumentException("'emailVerificationNonce' may not be empty");
         }
 
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
         $secondFactor->emailVerificationRequestedAt = $emailVerificationRequestedAt;
-        $secondFactor->emailVerificationCode = $emailVerificationCode;
         $secondFactor->emailVerificationNonce = $emailVerificationNonce;
 
         return $secondFactor;
@@ -112,12 +104,11 @@ class SecondFactor extends EventSourcedEntity
     }
 
     /**
-     * @param string $verificationCode
      * @param string $verificationNonce
      */
-    public function verifyEmail($verificationCode, $verificationNonce)
+    public function verifyEmail($verificationNonce)
     {
-        if ($this->emailVerificationCode === null || $this->emailVerificationNonce === null) {
+        if ($this->emailVerificationNonce === null) {
             throw new DomainException(sprintf(
                 "Cannot verify possession of e-mail for second factor '%s': possession already verified",
                 (string) $this->id
@@ -129,15 +120,6 @@ class SecondFactor extends EventSourcedEntity
                 sprintf(
                     "Cannot verify possession of e-mail for second factor '%s': " .
                     "verification window of one day has closed.",
-                    (string) $this->id
-                )
-            );
-        }
-
-        if (strcasecmp($this->emailVerificationCode, $verificationCode) !== 0) {
-            throw new DomainException(
-                sprintf(
-                    "Cannot verify possession of e-mail second factor '%s': verification code does not match.",
                     (string) $this->id
                 )
             );
@@ -166,7 +148,6 @@ class SecondFactor extends EventSourcedEntity
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->emailVerificationCode = null;
         $this->emailVerificationNonce = null;
 
         $this->registrationRequestedAt = $event->registrationRequestedAt;

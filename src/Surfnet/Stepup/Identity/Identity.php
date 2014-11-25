@@ -117,7 +117,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $yubikeyPublicId,
                 DateTime::now(),
-                Token::generateHumanToken(8),
                 Token::generateNonce(),
                 $this->commonName,
                 $this->email
@@ -134,7 +133,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $phoneNumber,
                 DateTime::now(),
-                Token::generateHumanToken(8),
                 Token::generateNonce(),
                 $this->commonName,
                 $this->email
@@ -142,12 +140,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function verifyEmail(SecondFactorId $secondFactorId, $verificationCode, $verificationNonce)
+    public function verifyEmail(SecondFactorId $secondFactorId, $verificationNonce)
     {
-        if (!is_string($verificationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'verificationCode', $verificationCode);
-        }
-
         if (!is_string($verificationNonce)) {
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
         }
@@ -155,14 +149,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         if ($this->secondFactor === null || !$this->secondFactor->isIdentifiedBy($secondFactorId)) {
             throw new DomainException(
                 sprintf(
-                    "Cannot verify second factor '%s' with given verification code: registrant does not have second " .
+                    "Cannot verify second factor '%s' with given verification nonce: registrant does not have second " .
                     "factor in possession.",
                     (string) $secondFactorId
                 )
             );
         }
 
-        $this->secondFactor->verifyEmail($verificationCode, $verificationNonce);
+        $this->secondFactor->verifyEmail($verificationNonce);
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -190,7 +184,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             $event->emailVerificationRequestedAt,
-            $event->emailVerificationCode,
             $event->emailVerificationNonce
         );
     }
@@ -201,7 +194,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             $event->emailVerificationRequestedAt,
-            $event->emailVerificationCode,
             $event->emailVerificationNonce
         );
     }

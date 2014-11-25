@@ -39,10 +39,12 @@ class Token
     }
 
     /**
+     * Generates a 32-character nonce.
+     *
      * @return string
      */
     public static function generateNonce()
     {
-        return hash('sha256', openssl_random_pseudo_bytes(50));
+        return md5(openssl_random_pseudo_bytes(50));
     }
 }

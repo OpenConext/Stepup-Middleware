@@ -114,7 +114,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId,
                     $pubId,
                     DateTime::fromString('@12345'),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -148,7 +147,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $pubId1,
                     DateTime::now(),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -187,7 +185,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId,
                     $pubId,
                     DateTime::now(),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -221,7 +218,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $phoneNumber1,
                     DateTime::now(),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -257,7 +253,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $publicId,
                     DateTime::now(),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -285,7 +280,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
         $command->secondFactorId = (string) $secondFactorId;
-        $command->verificationCode = 'code';
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -297,7 +291,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                         $secondFactorId,
                         $publicId,
                         DateTime::now(),
-                        'code',
                         'nonce',
                         'Foo bar',
                         'a@b.c'
@@ -331,7 +324,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
         $command->secondFactorId = (string) $secondFactorId;
-        $command->verificationCode = 'code';
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -343,7 +335,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $publicId,
                     DateTime::now(),
-                    'code',
                     'nonce',
                     'Foo bar',
                     'a@b.c'

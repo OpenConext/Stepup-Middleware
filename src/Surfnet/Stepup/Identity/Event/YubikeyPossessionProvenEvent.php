@@ -47,11 +47,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     /**
      * @var string
      */
-    public $emailVerificationCode;
-
-    /**
-     * @var string
-     */
     public $emailVerificationNonce;
 
     /**
@@ -73,7 +68,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
      * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationCode
      * @param string $emailVerificationNonce
      * @param string $commonName
      * @param string $email
@@ -83,7 +77,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
         DateTime $emailVerificationRequestedAt,
-        $emailVerificationCode,
         $emailVerificationNonce,
         $commonName,
         $email
@@ -93,7 +86,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
         $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
-        $this->emailVerificationCode = $emailVerificationCode;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
@@ -106,7 +98,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id']),
             DateTime::fromString($data['email_verification_requested_at']),
-            $data['email_verification_code'],
             $data['email_verification_nonce'],
             $data['common_name'],
             $data['email']
@@ -120,7 +111,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'second_factor_id'                => (string) $this->secondFactorId,
             'yubikey_public_id'               => (string) $this->yubikeyPublicId,
             'email_verification_requested_at' => $this->emailVerificationRequestedAt->toString(),
-            'email_verification_code'         => (string) $this->emailVerificationCode,
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

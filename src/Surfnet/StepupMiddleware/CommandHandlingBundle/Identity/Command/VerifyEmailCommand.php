@@ -44,14 +44,6 @@ class VerifyEmailCommand extends AbstractCommand
     public $secondFactorId;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.verify_email.verification_code.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.verification_code.must_be_string")
-     *
-     * @var string
-     */
-    public $verificationCode;
-
-    /**
      * @Assert\NotBlank(message="stepup.command.verify_email.verification_nonce.must_not_be_blank")
      * @Assert\Type(type="string", message="stepup.command.verify_email.verification_nonce.must_be_string")
      *

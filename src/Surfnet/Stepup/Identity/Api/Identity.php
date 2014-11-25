@@ -73,10 +73,9 @@ interface Identity extends AggregateRoot
 
     /**
      * @param SecondFactorId $secondFactorId
-     * @param string $verificationCode
      * @param string $verificationNonce
      */
-    public function verifyEmail(SecondFactorId $secondFactorId, $verificationCode, $verificationNonce);
+    public function verifyEmail(SecondFactorId $secondFactorId, $verificationNonce);
 
     /**
      * @return string

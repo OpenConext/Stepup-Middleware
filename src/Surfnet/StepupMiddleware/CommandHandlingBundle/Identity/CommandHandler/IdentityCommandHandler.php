@@ -109,11 +109,7 @@ class IdentityCommandHandler extends CommandHandler
         /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
-        $identity->verifyEmail(
-            new SecondFactorId($command->secondFactorId),
-            $command->verificationCode,
-            $command->verificationNonce
-        );
+        $identity->verifyEmail(new SecondFactorId($command->secondFactorId), $command->verificationNonce);
 
         $this->repository->add($identity);
     }

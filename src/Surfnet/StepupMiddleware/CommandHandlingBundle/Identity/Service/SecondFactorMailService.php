@@ -80,7 +80,6 @@ class SecondFactorMailService
      * @param SecondFactorId $secondFactorId
      * @param string $commonName
      * @param string $email
-     * @param string $verificationCode
      * @param string $verificationNonce
      */
     public function sendEmailVerificationEmail(
@@ -89,7 +88,6 @@ class SecondFactorMailService
         SecondFactorId $secondFactorId,
         $commonName,
         $email,
-        $verificationCode,
         $verificationNonce
     ) {
         $subject = $this->translator->trans(
@@ -106,7 +104,6 @@ class SecondFactorMailService
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,
-            'verificationCode' => $verificationCode,
             'verificationUrl'  => $verificationUrl
         ];
 

@@ -130,8 +130,6 @@ class SecondFactorMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
-     * @internal param SecondFactorId $secondFactorId
-     * @internal param IdentityId $identityId
      */
     public function sendRegistrationEmail(
         $locale,

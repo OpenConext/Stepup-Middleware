@@ -165,7 +165,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->secondFactor->verifyEmail($verificationCode, $verificationNonce);
     }
 
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
         $this->institution = $event->institution;
@@ -174,12 +174,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->commonName = $event->commonName;
     }
 
-    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
         $this->commonName = $event->newName;
     }
 
-    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    protected function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
         $this->email = $event->newEmail;
     }

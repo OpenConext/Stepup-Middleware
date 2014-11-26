@@ -148,11 +148,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         if ($this->secondFactor === null) {
             throw new DomainException(
-                sprintf(
-                    "Cannot verify second factor '%s' with given verification nonce: registrant does not have second " .
-                    "factor in possession.",
-                    (string) $this->secondFactor->getId()
-                )
+                'Cannot verify second factor: registrant does not have second factor in possession.'
             );
         }
 

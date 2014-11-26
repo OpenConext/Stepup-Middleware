@@ -20,8 +20,6 @@ parameters:
     locales:           [nl_NL]
     secret:            NotSoSecretReplaceMe!
 
-    debug_toolbar:          true
-    debug_redirects:        false
     use_assetic_controller: true
 
     selfservice_api_password: ~

@@ -45,6 +45,12 @@ class AppKernel extends Kernel
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 
+        if ($this->getEnvironment() === 'dev') {
+            $bundles[] = new JMS\TranslationBundle\JMSTranslationBundle();
+            $bundles[] = new JMS\DiExtraBundle\JMSDiExtraBundle($this);
+            $bundles[] = new JMS\AopBundle\JMSAopBundle();
+        }
+
         return $bundles;
     }
 

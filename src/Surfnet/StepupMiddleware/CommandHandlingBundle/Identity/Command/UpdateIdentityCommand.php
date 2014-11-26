@@ -24,32 +24,32 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UpdateIdentityCommand implements Command
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.command_uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.command_uuid.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.update_identity.command_uuid.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.update_identity.command_uuid.must_be_string")
      *
      * @var string
      */
     public $UUID;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.update_identity.id.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.update_identity.id.must_be_string")
      *
      * @var string
      */
     public $id;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.email.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.email.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.update_identity.email.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.update_identity.email.must_be_string")
      *
      * @var string
      */
     public $email;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.common_name.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.common_name.must_be_string")
+     * @Assert\NotBlank(message="stepup.command.update_identity.common_name.must_not_be_blank")
+     * @Assert\Type(type="string", message="stepup.command.update_identity.common_name.must_be_string")
      *
      * @var string
      */

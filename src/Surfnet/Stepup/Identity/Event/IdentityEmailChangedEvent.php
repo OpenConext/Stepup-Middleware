@@ -58,7 +58,7 @@ class IdentityEmailChangedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'id'       => (string)$this->id,
+            'id'       => (string)$this->identityId,
             'old_email' => $this->oldEmail,
             'new_email' => $this->newEmail
         ];

@@ -58,7 +58,7 @@ class IdentityRenamedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'id'       => (string) $this->id,
+            'id'       => (string) $this->identityId,
             'old_name' => $this->oldName,
             'new_name' => $this->newName
         ];

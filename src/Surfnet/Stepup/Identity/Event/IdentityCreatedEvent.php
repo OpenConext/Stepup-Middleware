@@ -25,11 +25,6 @@ use Surfnet\Stepup\Identity\Value\NameId;
 class IdentityCreatedEvent extends IdentityEvent
 {
     /**
-     * @var IdentityId
-     */
-    public $id;
-
-    /**
      * @var NameId
      */
     public $nameId;
@@ -58,7 +53,6 @@ class IdentityCreatedEvent extends IdentityEvent
     ) {
         parent::__construct($id);
 
-        $this->id = $id;
         $this->institution = $institution;
         $this->nameId = $nameId;
         $this->email = $email;
@@ -79,7 +73,7 @@ class IdentityCreatedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'id' => (string) $this->id,
+            'id' => (string) $this->identityId,
             'institution' => (string) $this->institution,
             'name_id' => (string) $this->nameId,
             'email' => $this->email,

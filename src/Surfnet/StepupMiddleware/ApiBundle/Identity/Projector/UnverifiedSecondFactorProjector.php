@@ -29,16 +29,16 @@ class UnverifiedSecondFactorProjector extends Projector
     /**
      * @var UnverifiedSecondFactorRepository
      */
-    private $unverifiedSecondFactorRepository;
+    private $repository;
 
-    public function __construct(UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository)
+    public function __construct(UnverifiedSecondFactorRepository $repository)
     {
-        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
+        $this->repository = $repository;
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->unverifiedSecondFactorRepository->proveYubikeyPossession(
+        $this->repository->proveYubikeyPossession(
             $event->identityId,
             $event->secondFactorId,
             $event->yubikeyPublicId,
@@ -48,7 +48,7 @@ class UnverifiedSecondFactorProjector extends Projector
 
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->unverifiedSecondFactorRepository->provePhonePossession(
+        $this->repository->provePhonePossession(
             $event->identityId,
             $event->secondFactorId,
             $event->phoneNumber,
@@ -58,6 +58,6 @@ class UnverifiedSecondFactorProjector extends Projector
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->unverifiedSecondFactorRepository->verifyEmail($event->secondFactorId);
+        $this->repository->verifyEmail($event->secondFactorId);
     }
 }

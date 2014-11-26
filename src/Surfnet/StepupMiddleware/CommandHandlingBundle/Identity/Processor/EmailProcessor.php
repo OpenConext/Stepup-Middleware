@@ -43,8 +43,6 @@ class EmailProcessor extends Processor
     {
         $this->service->sendEmailVerificationEmail(
             'en_GB', // @TODO Identity preferred locale
-            $event->identityId,
-            $event->secondFactorId,
             $event->commonName,
             $event->email,
             $event->emailVerificationNonce
@@ -55,8 +53,6 @@ class EmailProcessor extends Processor
     {
         $this->service->sendEmailVerificationEmail(
             'en_GB', // @TODO Identity preferred locale
-            $event->identityId,
-            $event->secondFactorId,
             $event->commonName,
             $event->email,
             $event->emailVerificationNonce
@@ -66,7 +62,7 @@ class EmailProcessor extends Processor
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
         $this->service->sendRegistrationEmail(
-            'en_GB',
+            'en_GB', // @TODO Identity preferred locale
             $event->commonName,
             $event->email,
             $event->registrationCode

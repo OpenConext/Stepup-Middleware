@@ -51,41 +51,37 @@ class SecondFactorMailService
     /**
      * @var string
      */
-    private $selfServiceEmailVerificationUrlTemplate;
+    private $emailVerificationUrlTemplate;
 
     /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
-     * @param string $selfServiceEmailVerificationUrlTemplate
+     * @param string $emailVerificationUrlTemplate
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
-        $selfServiceEmailVerificationUrlTemplate
+        $emailVerificationUrlTemplate
     ) {
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
         $this->templateEngine = $templateEngine;
-        $this->selfServiceEmailVerificationUrlTemplate = $selfServiceEmailVerificationUrlTemplate;
+        $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
     }
 
     /**
      * @param string $locale
-     * @param IdentityId $identityId
-     * @param SecondFactorId $secondFactorId
      * @param string $commonName
      * @param string $email
      * @param string $verificationNonce
      */
     public function sendEmailVerificationEmail(
         $locale,
-        IdentityId $identityId,
-        SecondFactorId $secondFactorId,
         $commonName,
         $email,
         $verificationNonce
@@ -98,7 +94,7 @@ class SecondFactorMailService
         $verificationUrl = str_replace(
             '{nonce}',
             urlencode($verificationNonce),
-            $this->selfServiceEmailVerificationUrlTemplate
+            $this->emailVerificationUrlTemplate
         );
         $parameters = [
             'locale'           => $locale,

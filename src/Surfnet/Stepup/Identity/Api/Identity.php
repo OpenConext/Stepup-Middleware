@@ -51,28 +51,33 @@ interface Identity extends AggregateRoot
 
     /**
      * @param string $commonName
+     * @return void
      */
     public function rename($commonName);
 
     /**
      * @param string $email
+     * @return void
      */
     public function changeEmail($email);
 
     /**
      * @param SecondFactorId $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
+     * @return void
      */
     public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
 
     /**
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
+     * @return void
      */
     public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber);
 
     /**
      * @param string $verificationNonce
+     * @return void
      */
     public function verifyEmail($verificationNonce);
 

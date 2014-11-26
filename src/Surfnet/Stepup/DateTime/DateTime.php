@@ -27,7 +27,7 @@ class DateTime extends DateTimeImmutable
      * The 'c' format, expanded in separate format characters. This string can also be used with
      * `DateTime::createFromString()`.
      */
-    const FORMAT = "Y-m-d\\TH:i:sP";
+    const FORMAT = 'Y-m-d\\TH:i:sP';
 
     /**
      * Allows for mocking of time.

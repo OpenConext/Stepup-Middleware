@@ -119,7 +119,7 @@ class SecondFactor extends EventSourcedEntity
             throw new DomainException(
                 sprintf(
                     "Cannot verify possession of e-mail for second factor '%s': " .
-                    "verification window of one day has closed.",
+                    'verification window of one day has closed.',
                     (string) $this->id
                 )
             );

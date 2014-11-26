@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
             ->root('surfnet_stepup_middleware_command_handling')
                 ->children()
                     ->scalarNode('self_service_email_verification_url_template')
-                        ->isRequired(true)
+                        ->isRequired()
                         ->info('Configures the URL where registrants can verify e-mail address ownership.')
                         ->validate()
                             ->ifTrue(function ($url) {
@@ -40,18 +40,18 @@ class Configuration implements ConfigurationInterface
                                 return empty($parts['scheme']) || empty($parts['host']) || empty($parts['path']);
                             })
                             ->thenInvalid(
-                                "Invalid Self-Service e-mail verification URL template: " .
+                                'Invalid Self-Service e-mail verification URL template: ' .
                                 "must be full Self-Service URL with scheme, host and path, '%s' given." .
                                 "The URL should contain a '{identityId}', '{secondFactorId}' and '{nonce}' parameter."
                             )
                         ->end()
                     ->end()
                     ->arrayNode('email_sender')
-                        ->isRequired(true)
+                        ->isRequired()
                         ->info('Configures the sender used for all outgoing e-mail messages')
                         ->children()
                             ->scalarNode('name')
-                                ->isRequired(true)
+                                ->isRequired()
                                 ->validate()
                                     ->ifTrue(function ($name) {
                                         return !is_string($name) || empty($name);
@@ -60,7 +60,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                             ->scalarNode('email')
-                                ->isRequired(true)
+                                ->isRequired()
                                 ->validate()
                                     ->ifTrue(function ($name) {
                                         return !is_string($name) || empty($name);

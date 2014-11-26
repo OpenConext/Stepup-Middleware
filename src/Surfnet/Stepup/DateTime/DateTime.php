@@ -18,10 +18,11 @@
 
 namespace Surfnet\Stepup\DateTime;
 
-use DateTimeImmutable;
+use DateInterval;
+use DateTime as CoreDateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class DateTime extends DateTimeImmutable
+class DateTime
 {
     /**
      * The 'c' format, expanded in separate format characters. This string can also be used with
@@ -37,11 +38,16 @@ class DateTime extends DateTimeImmutable
     private static $now;
 
     /**
+     * @var CoreDateTime
+     */
+    private $dateTime;
+
+    /**
      * @return self
      */
     public static function now()
     {
-        return self::$now ?: new self;
+        return self::$now ?: new self(new CoreDateTime);
     }
 
     /**
@@ -54,7 +60,45 @@ class DateTime extends DateTimeImmutable
             InvalidArgumentException::invalidType('string', 'dateTime', $dateTime);
         }
 
-        return self::createFromFormat(self::FORMAT, $dateTime);
+        return new self(CoreDateTime::createFromFormat(self::FORMAT, $dateTime));
+    }
+
+    /**
+     * @param CoreDateTime|null $dateTime
+     */
+    public function __construct(CoreDateTime $dateTime = null)
+    {
+        $this->dateTime = $dateTime ?: new CoreDateTime();
+    }
+
+    /**
+     * @param string $intervalSpec
+     * @return DateTime
+     */
+    public function add($intervalSpec)
+    {
+        $dateTime = clone $this->dateTime;
+        $dateTime->add(new DateInterval($intervalSpec));
+
+        return new self($dateTime);
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesAfter(DateTime $dateTime)
+    {
+        return $this->dateTime > $dateTime->dateTime;
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesAfterOrIsEqual(DateTime $dateTime)
+    {
+        return $this->dateTime >= $dateTime->dateTime;
     }
 
     /**

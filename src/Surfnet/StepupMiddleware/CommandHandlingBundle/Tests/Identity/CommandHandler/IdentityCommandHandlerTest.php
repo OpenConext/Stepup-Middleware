@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandH
 
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
+use DateTime as CoreDateTime;
 use Mockery as m;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
@@ -85,7 +86,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAYubikeyPossessionCanBeProven()
     {
-        DateTimeHelper::stubNow(new DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
@@ -158,7 +159,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAPhonePossessionCanBeProven()
     {
-        DateTimeHelper::stubNow(new DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
@@ -266,7 +267,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAnUnverifiedSecondFactorsEmailCanBeVerified()
     {
-        DateTimeHelper::stubNow(new DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('regcode');

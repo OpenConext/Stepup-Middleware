@@ -115,7 +115,7 @@ class SecondFactor extends EventSourcedEntity
             ));
         }
 
-        if (DateTime::now() > $this->emailVerificationRequestedAt->add(new DateInterval('P1D'))) {
+        if (DateTime::now()->comesAfter($this->emailVerificationRequestedAt->add('P1D'))) {
             throw new DomainException(
                 sprintf(
                     "Cannot verify possession of e-mail for second factor '%s': " .

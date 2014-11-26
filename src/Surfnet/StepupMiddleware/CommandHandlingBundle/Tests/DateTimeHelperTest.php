@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
+use DateTime as CoreDateTime;
 use Surfnet\Stepup\DateTime\DateTime;
 
 /**
@@ -27,23 +28,23 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
 {
     public function testItMocksNow()
     {
-        DateTimeHelper::stubNow(new DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
-        $this->assertEquals(new DateTime('@12345'), DateTime::now());
+        $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
     }
 
     public function testItCanBeDisabledInTheSameProcess()
     {
-        DateTimeHelper::stubNow(new DateTime('@12345'));
-        $this->assertEquals(new DateTime('@12345'), DateTime::now());
+        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
 
         DateTimeHelper::stubNow(null);
-        $this->assertTrue(new DateTime() >= DateTime::now());
+        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
     }
 
     public function testItWorksWithSeparateProcesses()
     {
         // The stub value has been removed.
-        $this->assertTrue(new DateTime() >= DateTime::now());
+        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
     }
 }

@@ -18,8 +18,8 @@
 
 namespace Surfnet\Stepup\Identity;
 
-use Broadway\Domain\DateTime;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;

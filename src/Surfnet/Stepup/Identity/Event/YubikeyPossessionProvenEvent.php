@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Broadway\Domain\DateTime;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -110,7 +110,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'identity_id'                     => (string) $this->identityId,
             'second_factor_id'                => (string) $this->secondFactorId,
             'yubikey_public_id'               => (string) $this->yubikeyPublicId,
-            'email_verification_requested_at' => $this->emailVerificationRequestedAt->toString(),
+            'email_verification_requested_at' => (string) $this->emailVerificationRequestedAt,
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

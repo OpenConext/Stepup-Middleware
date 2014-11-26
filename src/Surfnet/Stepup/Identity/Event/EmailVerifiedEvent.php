@@ -18,8 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Broadway\Domain\DateTime;
 use Broadway\Serializer\SerializableInterface;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
@@ -93,7 +93,7 @@ class EmailVerifiedEvent extends IdentityEvent
         return [
             'identity_id' => (string) $this->identityId,
             'second_factor_id' => (string) $this->secondFactorId,
-            'registration_requested_at' => $this->registrationRequestedAt->toString(),
+            'registration_requested_at' => (string) $this->registrationRequestedAt,
             'registration_code' => $this->registrationCode,
             'common_name' => $this->commonName,
             'email' => $this->email,

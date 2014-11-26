@@ -18,20 +18,19 @@ Clone the repository or download the archive to a directory. Install the depende
 
 ## Notes
 
-### Mocking Broadway DateTime::now()
+### Mocking time
 
-To help with mocking time, the helper `BroadwayFixedDateTimeNow` was created. Call `::enable(DateTime)` to set a fixed
-date/time, and call `::disable()` to… disable it. It is recommended to run a tests in a separate process (see
-`IdentityCommandHandlerTest::testAYubikeyPossessionCanBeProven()`) when using this helper so the mock doesn't persist
-between tests.
+Due to a limitation of mocking of static methods, to mock time, the helper `DateTimeHelper::stubNow(DateTime $now)` was
+created. Call `::stubNow($now)` to set a fixed date/time, and call `::stubNow(null)` to disable stubbing. It is
+recommended to run tests in a separate process when using this helper so the stub value doesn't persist between tests.
 
 ```php
 /** @runTestInSeparateProcess */
 public function testItWorks()
 {
     # Trick `DateTime::now()` into thinking it is 1970.
-    BroadwayFixedDateTimeNow::enable(new \DateTime('@0'));
+    DateTimeHelper::stubNow(new DateTime('@0'));
 
-    $this->assertEquals('1970-01-01T00:00:00.000000+00:00', \Broadway\Domain\DateTime::now()->toString());
+    $this->assertEquals('1970-01-01T00:00:00+00:00', (string) \Surfnet\Stepup\DateTime\DateTime::now());
 }
 ```

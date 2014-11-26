@@ -16,11 +16,22 @@
  * limitations under the License.
  */
 
-namespace Broadway\Domain;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\BroadwayFixedDateTimeNow;
+use ReflectionProperty;
+use Surfnet\Stepup\DateTime\DateTime;
 
-function microtime($getAsFloat = false)
+class DateTimeHelper
 {
-    return BroadwayFixedDateTimeNow::microtime($getAsFloat);
+    /**
+     * Fixes the `DateTime` returned by `DateTime::now()`.
+     *
+     * @param DateTime|null $now
+     */
+    public static function stubNow(DateTime $now = null)
+    {
+        $nowProperty = new ReflectionProperty('Surfnet\Stepup\DateTime\DateTime', 'now');
+        $nowProperty->setAccessible(true);
+        $nowProperty->setValue($now);
+    }
 }

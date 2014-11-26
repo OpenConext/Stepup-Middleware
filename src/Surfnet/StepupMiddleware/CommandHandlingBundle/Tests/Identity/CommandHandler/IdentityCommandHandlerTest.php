@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\Domain\DateTime;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -37,13 +37,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\BroadwayFixedDateTimeNow;
 use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
@@ -85,7 +85,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAYubikeyPossessionCanBeProven()
     {
-        BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime('@12345'));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
@@ -113,7 +113,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId,
                     $pubId,
-                    DateTime::fromString('@12345'),
+                    DateTime::now(),
                     'nonce',
                     'Foo bar',
                     'a@b.c'
@@ -158,6 +158,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAPhonePossessionCanBeProven()
     {
+        DateTimeHelper::stubNow(new DateTime('@12345'));
+
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
@@ -264,7 +266,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /** @runInSeparateProcess */
     public function testAnUnverifiedSecondFactorsEmailCanBeVerified()
     {
-        BroadwayFixedDateTimeNow::enable(new \DateTime('@12345'));
+        DateTimeHelper::stubNow(new DateTime('@12345'));
 
         m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
             ->shouldReceive('generateHumanToken')->once()->andReturn('regcode');
@@ -284,23 +286,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->scenario
             ->withAggregateId($id)
             ->given([
-                    new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
-                    new YubikeyPossessionProvenEvent(
-                        $id,
-                        $secondFactorId,
-                        $publicId,
-                        DateTime::now(),
-                        'nonce',
-                        'Foo bar',
-                        'a@b.c'
-                    )
-                ])
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secondFactorId,
+                    $publicId,
+                    DateTime::now(),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c'
+                )
+            ])
             ->when($command)
             ->then([
                 new EmailVerifiedEvent(
                     $id,
                     $secondFactorId,
-                    DateTime::fromString('@12345'),
+                    DateTime::now(),
                     'regcode',
                     $commonName,
                     $email

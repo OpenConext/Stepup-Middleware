@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Broadway\Domain\DateTime;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -108,7 +108,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
             'identity_id'                     => (string) $this->identityId,
             'second_factor_id'                => (string) $this->secondFactorId,
             'phone_number'                    => (string) $this->phoneNumber,
-            'email_verification_requested_at' => $this->emailVerificationRequestedAt->toString(),
+            'email_verification_requested_at' => (string) $this->emailVerificationRequestedAt,
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

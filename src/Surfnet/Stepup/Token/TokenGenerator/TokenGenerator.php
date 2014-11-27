@@ -18,6 +18,8 @@
 
 namespace Surfnet\Stepup\Token;
 
+use Surfnet\Stepup\Exception\InvalidArgumentException;
+
 class TokenGenerator
 {
     /**
@@ -26,6 +28,14 @@ class TokenGenerator
      */
     public static function generateHumanReadableToken($length)
     {
+        if (!is_int($length)) {
+            throw InvalidArgumentException::invalidType('int', 'length', $length);
+        }
+
+        if ($length < 1) {
+            throw new InvalidArgumentException('generateHumanReadableToken() expects a positive, integer length.');
+        }
+
         $randomCharacters = function () {
             $chr = rand(50, 81);
 
@@ -33,7 +43,7 @@ class TokenGenerator
             return $chr >= 56 ? $chr + 9 : $chr;
         };
 
-        $token = join('', array_map('chr', array_map($randomCharacters, range(1, max(1, $length)))));
+        $token = join('', array_map('chr', array_map($randomCharacters, range(1, $length))));
 
         return $token;
     }

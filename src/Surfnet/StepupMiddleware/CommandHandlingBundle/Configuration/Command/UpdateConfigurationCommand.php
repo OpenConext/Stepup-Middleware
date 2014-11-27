@@ -28,7 +28,7 @@ class UpdateConfigurationCommand implements Command
     public $UUID;
 
     /**
-     * @var \Surfnet\Stepup\Configuration\Configuration
+     * @var string configuration as json as received in the request
      */
     public $configuration;
 }

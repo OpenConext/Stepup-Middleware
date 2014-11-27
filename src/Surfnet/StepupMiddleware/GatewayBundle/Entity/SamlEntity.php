@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
-use Assert\Assertion as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +26,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SamlEntity
 {
+    /**
+     * Constants denoting the type of SamlEntity. Also used in the gateway to make that distinction
+     */
     const TYPE_IDP = 'idp';
     const TYPE_SP  = 'sp';
 
@@ -48,10 +50,15 @@ class SamlEntity
     /**
      * @ORM\Column(type="text")
      *
-     * @var string
+     * @var string the configuration as json string
      */
     public $configuration;
 
+    /**
+     * @param string $entityId
+     * @param string $type
+     * @param string $configuration
+     */
     private function __construct($entityId, $type, $configuration)
     {
         $this->entityId = $entityId;
@@ -59,6 +66,11 @@ class SamlEntity
         $this->configuration = $configuration;
     }
 
+    /**
+     * @param string $entityId
+     * @param array  $configuration
+     * @return SamlEntity
+     */
     public static function createServiceProvider($entityId, array $configuration)
     {
         return new self($entityId, self::TYPE_SP, json_encode($configuration));

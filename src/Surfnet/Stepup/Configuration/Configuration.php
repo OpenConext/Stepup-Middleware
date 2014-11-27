@@ -26,6 +26,9 @@ use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 
 class Configuration extends EventSourcedAggregateRoot
 {
+    /**
+     * There can ever be only one configuration, so using a fixed UUIDv4
+     */
     const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
 
     /**
@@ -78,6 +81,8 @@ class Configuration extends EventSourcedAggregateRoot
     }
 
     /**
+     * Used to be able to update the gateway configuration within a single transaction.
+     *
      * @return null|ServiceProvidersUpdatedEvent
      */
     public function getLastUncommittedServiceProvidersUpdatedEvent()
@@ -86,6 +91,8 @@ class Configuration extends EventSourcedAggregateRoot
     }
 
     /**
+     * Cleaning up the possible event, as the uncommittedEvents will be removed as well
+     *
      * @return \Broadway\Domain\DomainEventStream
      */
     public function getUncommittedEvents()

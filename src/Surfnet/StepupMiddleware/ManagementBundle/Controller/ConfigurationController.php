@@ -43,6 +43,9 @@ class ConfigurationController extends Controller
 
             $response = new JsonResponse();
             $response
+                // EntityIDs are almost always URLs. Escaping forward slashes is done for ease of use of json within
+                // <script> tags, which is not done here. This increases readability and searching of errors.
+                // hence we allow unescaped slashes.
                 ->setEncodingOptions($response->getEncodingOptions() | JSON_UNESCAPED_SLASHES)
                 ->setData(['configuration-errors' => $errors])
                 ->setStatusCode(400);

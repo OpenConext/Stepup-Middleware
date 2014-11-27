@@ -37,6 +37,7 @@ class ConfigurationControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
     }
+
     /**
      * @test
      * @group management

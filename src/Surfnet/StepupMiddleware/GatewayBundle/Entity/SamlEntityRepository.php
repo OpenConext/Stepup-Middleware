@@ -23,6 +23,9 @@ use Exception;
 
 class SamlEntityRepository extends EntityRepository
 {
+    /**
+     * Remove all configured SamlEntities
+     */
     public function removeAll()
     {
         $this
@@ -33,6 +36,15 @@ class SamlEntityRepository extends EntityRepository
             ->execute();
     }
 
+    /**
+     * Replace all configured SamlEntiies with the new SamlEntities.
+     *
+     * Will be updated later, see https://www.pivotaltracker.com/story/show/83532704
+     *
+     * @param $newSamlEntities
+     * @throws Exception
+     * @throws \Doctrine\DBAL\ConnectionException
+     */
     public function replaceAll($newSamlEntities)
     {
         $connection = $this->getEntityManager()->getConnection();

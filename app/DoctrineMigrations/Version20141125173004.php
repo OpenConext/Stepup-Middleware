@@ -47,7 +47,6 @@ class Version20141125173004 extends AbstractMigration implements ContainerAwareI
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql(sprintf('CREATE TABLE %s.saml_entity (entity_id VARCHAR(255) NOT NULL, type VARCHAR(255) NOT NULL, configuration LONGTEXT NOT NULL, PRIMARY KEY(entity_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB', $gatewaySchema));
-//        $this->addSql(sprintf('GRANT EXECUTE ON %s.* TO %s', $gatewaySchema, $middlewareUser));
         $this->addSql(sprintf("GRANT DELETE,INSERT,SELECT,UPDATE ON %s.saml_entity TO %s", $gatewaySchema, $middlewareUser));
     }
 

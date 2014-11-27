@@ -25,6 +25,9 @@ use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository;
 
 class GatewayConfigurationService extends Projector
 {
+    /**
+     * @var \Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository
+     */
     private $samlEntityRepository;
 
     public function __construct(SamlEntityRepository $samlEntityRepository)
@@ -32,6 +35,9 @@ class GatewayConfigurationService extends Projector
         $this->samlEntityRepository = $samlEntityRepository;
     }
 
+    /**
+     * @param array $serviceProviderConfigurations
+     */
     public function updateServiceProviders(array $serviceProviderConfigurations)
     {
         $spConfigurations = new ArrayCollection();

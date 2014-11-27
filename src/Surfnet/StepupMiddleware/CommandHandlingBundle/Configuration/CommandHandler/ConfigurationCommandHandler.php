@@ -28,12 +28,12 @@ use Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService;
 class ConfigurationCommandHandler extends CommandHandler
 {
     /**
-     * @var ConfigurationRepository
+     * @var \Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository
      */
     private $repository;
 
     /**
-     * @var
+     * @var \Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService
      */
     private $gatewayConfigurationService;
 

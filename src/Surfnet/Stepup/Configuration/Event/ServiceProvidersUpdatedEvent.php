@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 class ServiceProvidersUpdatedEvent extends ConfigurationEvent
 {
+    /**
+     * @var array
+     */
     public $serviceProviders;
 
     public function __construct($configurationId, array $serviceProviders)

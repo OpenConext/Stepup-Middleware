@@ -1,7 +1,7 @@
 security:
     firewalls:
         dev:
-            pattern: ^/(_trans|css|images|js)/
+            pattern: ^/_trans(/|$)
             security: false
         api:
             http_basic: ~

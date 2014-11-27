@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-11-26T12:35:27Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2014-11-27T13:51:21Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -12,6 +12,14 @@
       </trans-unit>
       <trans-unit id="776aa571c936ae996172a99a394d730d77a4c99f" resname="stepup.command.command_uuid.must_not_be_blank">
         <source>stepup.command.command_uuid.must_not_be_blank</source>
+        <target>Het UUID van een commando mag niet leeg zijn.</target>
+      </trans-unit>
+      <trans-unit id="bf08ab753137628943e40ad48e34a125b5475687" resname="stepup.command.create_identity.command_uuid.must_be_string">
+        <source>stepup.command.create_identity.command_uuid.must_be_string</source>
+        <target>Het UUID van een commando moet een tekenreeks zijn.</target>
+      </trans-unit>
+      <trans-unit id="6b8ce3097a0520797a6f9846851bb3dc1310c82a" resname="stepup.command.create_identity.command_uuid.must_not_be_blank">
+        <source>stepup.command.create_identity.command_uuid.must_not_be_blank</source>
         <target>Het UUID van een commando mag niet leeg zijn.</target>
       </trans-unit>
       <trans-unit id="6ac17d3115588001ffcd394c6dd2391a34d61900" resname="stepup.command.create_identity.common_name.must_be_string">
@@ -105,38 +113,6 @@
       <trans-unit id="a33eb070ced7754f05ee370ffdaca5ab97d53e18" resname="stepup.command.prove_yubikey_possession.yubikey_public_id.must_not_be_blank">
         <source>stepup.command.prove_yubikey_possession.yubikey_public_id.must_not_be_blank</source>
         <target>Het publieke Yubikey ID mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="0de169f93fe74f5f17430c23fecfc462d3901d8b" resname="stepup.command.update_identity.command_uuid.must_be_string">
-        <source>stepup.command.update_identity.command_uuid.must_be_string</source>
-        <target>Het UUID van het commando moet een tekenreeks zijn.</target>
-      </trans-unit>
-      <trans-unit id="6b310d8808571a84465e22f472d0a9641591f314" resname="stepup.command.update_identity.command_uuid.must_not_be_blank">
-        <source>stepup.command.update_identity.command_uuid.must_not_be_blank</source>
-        <target>Het UUID van het commando mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="31125766da645d0d4287acf423f5e2d80c6951c9" resname="stepup.command.update_identity.common_name.must_be_string">
-        <source>stepup.command.update_identity.common_name.must_be_string</source>
-        <target>De common name van een nieuwe identiteit moet een tekenreeks zijn.</target>
-      </trans-unit>
-      <trans-unit id="35706244b771eab5ad965ebfdd943fd6b85baaac" resname="stepup.command.update_identity.common_name.must_not_be_blank">
-        <source>stepup.command.update_identity.common_name.must_not_be_blank</source>
-        <target>De common name van een nieuwe identiteit mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="eb20cd99f7eaedbb79219e0ba50fe3fa1a591928" resname="stepup.command.update_identity.email.must_be_string">
-        <source>stepup.command.update_identity.email.must_be_string</source>
-        <target>Het e-mailadres van een nieuwe identiteit moet een tekenreeks zijn.</target>
-      </trans-unit>
-      <trans-unit id="5f204a78fecc1a22f9017fa3c148613c0c23d015" resname="stepup.command.update_identity.email.must_not_be_blank">
-        <source>stepup.command.update_identity.email.must_not_be_blank</source>
-        <target>Het e-mailadres van een nieuwe identiteit mag niet leeg zijn.</target>
-      </trans-unit>
-      <trans-unit id="5a927f08b71068926abcca9681b173095cbff3f5" resname="stepup.command.update_identity.id.must_be_string">
-        <source>stepup.command.update_identity.id.must_be_string</source>
-        <target>Het ID van de identiteit moet een tekenreeks zijn.</target>
-      </trans-unit>
-      <trans-unit id="491c626a03bfb5f5d3d9e85877aba9310d0a1344" resname="stepup.command.update_identity.id.must_not_be_blank">
-        <source>stepup.command.update_identity.id.must_not_be_blank</source>
-        <target>Het ID van de identiteit mag niet leeg zijn.</target>
       </trans-unit>
       <trans-unit id="3332d8697de297adaafca8135f76bb4daf7a2947" resname="stepup.command.verify_email.identity_id.must_be_string">
         <source>stepup.command.verify_email.identity_id.must_be_string</source>

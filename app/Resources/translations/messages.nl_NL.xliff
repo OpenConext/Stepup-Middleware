@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-11-26T12:37:32Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2014-11-27T13:45:51Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
       <trans-unit id="a4ecaec491b38e8084eeaa53a7e5479a7714feb2" resname="ss.mail.email_verification_email.subject">
-        <jms:reference-file line="93">Identity/Service/SecondFactorMailService.php</jms:reference-file>
+        <jms:reference-file line="87">Identity/Service/SecondFactorMailService.php</jms:reference-file>
         <source>ss.mail.email_verification_email.subject</source>
         <target>Bevestig je e-mailadres</target>
       </trans-unit>
       <trans-unit id="0ddb12f14d7aee72840d8a71af5a6547ab9864da" resname="ss.mail.registration_email.subject">
-        <jms:reference-file line="140">Identity/Service/SecondFactorMailService.php</jms:reference-file>
+        <jms:reference-file line="134">Identity/Service/SecondFactorMailService.php</jms:reference-file>
         <source>ss.mail.registration_email.subject</source>
         <target>De laatste stap voor het registreren van je token</target>
       </trans-unit>

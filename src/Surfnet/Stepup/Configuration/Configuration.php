@@ -18,6 +18,80 @@
 
 namespace Surfnet\Stepup\Configuration;
 
-class Configuration
+use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use GuzzleHttp;
+use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
+
+class Configuration extends EventSourcedAggregateRoot
 {
+    const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
+
+    /**
+     * @var array
+     */
+    private $configuration;
+
+    /**
+     * @var null|\Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
+     */
+    private $lastServiceProvidersUpdatedEvent;
+
+    public static function create()
+    {
+        $configuration = new self();
+        $configuration->apply(new NewConfigurationCreatedEvent(self::CONFIGURATION_ID));
+
+        return $configuration;
+    }
+
+    public function update($configurationAsJson)
+    {
+        $decodedConfiguration = GuzzleHttp\json_decode($configurationAsJson, true);
+
+        $this->apply(new ConfigurationUpdatedEvent(
+            self::CONFIGURATION_ID,
+            $decodedConfiguration,
+            $this->configuration
+        ));
+
+        $this->lastServiceProvidersUpdatedEvent = new ServiceProvidersUpdatedEvent(
+            self::CONFIGURATION_ID,
+            $decodedConfiguration['gateway']['service_provider']
+        );
+
+        $this->apply($this->lastServiceProvidersUpdatedEvent);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAggregateRootId()
+    {
+        return self::CONFIGURATION_ID;
+    }
+
+    public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event)
+    {
+        $this->configuration = $event->newConfiguration;
+    }
+
+    /**
+     * @return null|ServiceProvidersUpdatedEvent
+     */
+    public function getLastUncommittedServiceProvidersUpdatedEvent()
+    {
+        return $this->lastServiceProvidersUpdatedEvent;
+    }
+
+    /**
+     * @return \Broadway\Domain\DomainEventStream
+     */
+    public function getUncommittedEvents()
+    {
+        $this->lastServiceProvidersUpdatedEvent = null;
+
+        return parent::getUncommittedEvents();
+    }
 }

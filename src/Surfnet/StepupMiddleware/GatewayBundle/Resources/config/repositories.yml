@@ -1,0 +1,7 @@
+services:
+    middleware.gateway_repository.saml_entities:
+        class:           Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository
+        factory_service: doctrine.orm.gateway_entity_manager
+        factory_method:  getRepository
+        arguments:
+            - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity'

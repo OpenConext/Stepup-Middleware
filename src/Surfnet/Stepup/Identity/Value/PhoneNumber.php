@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
-class PhoneNumber implements Id
+class PhoneNumber
 {
     /**
      * @var string
@@ -48,7 +48,7 @@ class PhoneNumber implements Id
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals($other)
     {
         return $this == $other;
     }

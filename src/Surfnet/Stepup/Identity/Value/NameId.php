@@ -24,7 +24,7 @@ use Surfnet\Stepup\Identity\Api\Id;
 /**
  * The natural identifier of an Identity is the SAML Name ID.
  */
-class NameId implements Id
+class NameId
 {
     /**
      * @var string
@@ -45,7 +45,7 @@ class NameId implements Id
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals($other)
     {
         return $this == $other;
     }

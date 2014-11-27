@@ -33,9 +33,9 @@ class TokenGenerator
             return $chr >= 56 ? $chr + 9 : $chr;
         };
 
-        $challenge = join('', array_map('chr', array_map($randomCharacters, range(1, max(1, $length)))));
+        $token = join('', array_map('chr', array_map($randomCharacters, range(1, max(1, $length)))));
 
-        return $challenge;
+        return $token;
     }
 
     /**

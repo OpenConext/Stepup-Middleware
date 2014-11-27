@@ -62,7 +62,7 @@ class Identity implements JsonSerializable
     /**
      * @ORM\Column(type="institution")
      *
-     * @var string
+     * @var Institution
      */
     public $institution;
 
@@ -138,7 +138,7 @@ class Identity implements JsonSerializable
         return [
             'id'                        => $this->id,
             'name_id'                   => $this->nameId,
-            'institution'               => $this->institution,
+            'institution'               => (string) $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
             'second_factors'            => $this->secondFactors->toArray(),

@@ -24,7 +24,7 @@ class TokenGenerator
      * @param int $length
      * @return string
      */
-    public static function generateHumanToken($length)
+    public static function generateHumanReadableToken($length)
     {
         $randomCharacters = function () {
             $chr = rand(50, 81);

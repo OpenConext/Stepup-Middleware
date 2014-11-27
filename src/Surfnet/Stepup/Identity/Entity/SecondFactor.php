@@ -138,7 +138,7 @@ class SecondFactor extends EventSourcedEntity
                 new IdentityId($this->identity->getAggregateRootId()),
                 $this->id,
                 DateTime::now(),
-                TokenGenerator::generateHumanToken(8),
+                TokenGenerator::generateHumanReadableToken(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail()
             )

@@ -29,13 +29,13 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\Stepup\Identity\Token\Token;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\Stepup\Token\TokenGenerator;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -117,7 +117,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $yubikeyPublicId,
                 DateTime::now(),
-                Token::generateNonce(),
+                TokenGenerator::generateNonce(),
                 $this->commonName,
                 $this->email
             )
@@ -133,7 +133,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $phoneNumber,
                 DateTime::now(),
-                Token::generateNonce(),
+                TokenGenerator::generateNonce(),
                 $this->commonName,
                 $this->email
             )

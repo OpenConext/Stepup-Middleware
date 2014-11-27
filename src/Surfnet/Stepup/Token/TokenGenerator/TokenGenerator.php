@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Token;
+namespace Surfnet\Stepup\Token;
 
-class Token
+class TokenGenerator
 {
     /**
      * @param int $length

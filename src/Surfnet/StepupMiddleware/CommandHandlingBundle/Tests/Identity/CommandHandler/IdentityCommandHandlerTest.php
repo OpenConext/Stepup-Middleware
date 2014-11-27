@@ -86,7 +86,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -159,7 +159,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -267,7 +267,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\Stepup\Identity\Token\Token')
+        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanToken')->once()->andReturn('regcode');
 
         $id = new IdentityId(self::uuid());

@@ -24,9 +24,9 @@ use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
-use Surfnet\Stepup\Identity\Token\Token;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Token\TokenGenerator;
 
 class SecondFactor extends EventSourcedEntity
 {
@@ -138,7 +138,7 @@ class SecondFactor extends EventSourcedEntity
                 new IdentityId($this->identity->getAggregateRootId()),
                 $this->id,
                 DateTime::now(),
-                Token::generateHumanToken(8),
+                TokenGenerator::generateHumanToken(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail()
             )

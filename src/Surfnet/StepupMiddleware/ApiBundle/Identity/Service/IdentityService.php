@@ -20,8 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class IdentityService
 {

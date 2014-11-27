@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;

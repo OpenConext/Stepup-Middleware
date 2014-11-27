@@ -65,7 +65,7 @@ class ConfigurationCommandHandler extends CommandHandler
     }
 
     /**
-     * @return \Surfnet\Stepup\Configuration\Configuration
+     * @return null|\Surfnet\Stepup\Configuration\Configuration
      */
     private function getConfiguration()
     {

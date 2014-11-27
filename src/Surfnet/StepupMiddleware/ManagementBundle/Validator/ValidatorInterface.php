@@ -22,6 +22,7 @@ interface ValidatorInterface
 {
     /**
      * @param array $configuration
+     * @throws \Assert\InvalidArgumentException
      */
     public function validate(array $configuration, $propertyPath);
 }

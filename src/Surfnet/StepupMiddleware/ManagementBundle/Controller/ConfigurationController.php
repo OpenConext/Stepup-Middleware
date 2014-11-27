@@ -47,13 +47,13 @@ class ConfigurationController extends Controller
                 // <script> tags, which is not done here. This increases readability and searching of errors.
                 // hence we allow unescaped slashes.
                 ->setEncodingOptions($response->getEncodingOptions() | JSON_UNESCAPED_SLASHES)
-                ->setData(['configuration-errors' => $errors])
+                ->setData(['errors' => $errors])
                 ->setStatusCode(400);
 
             return $response;
         } catch (CoreInvalidArgumentException $e) {
             // Guzzlehttp/json_decode error (malformed json)
-            $response = new JsonResponse(['json-errors' => [$e->getMessage()]], 400);
+            $response = new JsonResponse(['errors' => [$e->getMessage()]], 400);
 
             return $response;
         } catch (Exception $e) {
@@ -67,7 +67,7 @@ class ConfigurationController extends Controller
         }
 
         $command = new UpdateConfigurationCommand();
-        $command->UUID = Uuid::uuid4();
+        $command->UUID = (string) Uuid::uuid4();
         $command->configuration = $request->getContent();
 
         return $this->handleCommand($request, $command);

@@ -5,6 +5,7 @@ services:
             - @surfnet_stepup_middleware_management.validator.gateway_configuration
 
     surfnet_stepup_middleware_management.validator.gateway_configuration:
+        public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
         arguments:
             - @surfnet_stepup_middleware_management.validator.service_provider_configuration

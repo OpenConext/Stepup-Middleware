@@ -20,9 +20,21 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 class ConfigurationUpdatedEvent extends ConfigurationEvent
 {
+    /**
+     * @var string
+     */
     public $newConfiguration;
+
+    /**
+     * @var string
+     */
     public $oldConfiguration;
 
+    /**
+     * @param string $id
+     * @param string $newConfiguration
+     * @param string $oldConfiguration
+     */
     public function __construct($id, $newConfiguration, $oldConfiguration)
     {
         parent::__construct($id);
@@ -31,9 +43,6 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
         $this->oldConfiguration = $oldConfiguration;
     }
 
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data)
     {
         return new self(
@@ -43,9 +52,6 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [

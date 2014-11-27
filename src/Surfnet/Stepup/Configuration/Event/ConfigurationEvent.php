@@ -20,13 +20,12 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Configuration;
-use Surfnet\Stepup\Identity\Value\IdentityId;
 use Symfony\Component\Form\Exception\LogicException;
 
 abstract class ConfigurationEvent implements SerializableInterface
 {
     /**
-     * @var IdentityId
+     * @var string
      */
     public $id;
 

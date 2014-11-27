@@ -141,8 +141,6 @@ class Identity implements JsonSerializable
             'institution'               => (string) $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
-            'second_factors'            => $this->secondFactors->toArray(),
-            'unverified_second_factors' => $this->unverifiedSecondFactors->toArray()
         ];
     }
 }

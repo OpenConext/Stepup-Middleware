@@ -51,36 +51,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus));
     }
 
-    public function testAnIdentityCanBeCreated()
-    {
-        $id = self::uuid();
-        $institution = 'A Corp.';
-        $nameId = md5(__METHOD__);
-        $email = 'a@b.c';
-        $commonName = 'foobar';
-
-        $command = new CreateIdentityCommand();
-        $command->id = $id;
-        $command->institution = $institution;
-        $command->nameId = $nameId;
-        $command->email = $email;
-        $command->commonName = $commonName;
-
-        $this->scenario
-            ->withAggregateId($id)
-            ->given([])
-            ->when($command)
-            ->then([
-                new IdentityCreatedEvent(
-                    new IdentityId($id),
-                    new Institution($institution),
-                    new NameId($nameId),
-                    $email,
-                    $commonName
-                )
-            ]);
-    }
-
     /** @runInSeparateProcess */
     public function testAYubikeyPossessionCanBeProven()
     {

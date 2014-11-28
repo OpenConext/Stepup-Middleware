@@ -330,6 +330,40 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
+    public function testCannotVerifyAnEmailAfterTheVerificationWindowHasClosed()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'verification window has closed');
+
+        $id = new IdentityId(self::uuid());
+        $nameId = new NameId(md5(__METHOD__));
+        $institution = new Institution('A Corp.');
+        $email = 'a@b.c';
+        $commonName = 'Foo bar';
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $publicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $command = new VerifyEmailCommand();
+        $command->identityId = (string) $id;
+        $command->verificationNonce = 'nonce';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([
+                new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secondFactorId,
+                    $publicId,
+                    new DateTime(new CoreDateTime('-2 days')),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c',
+                    'en_GB'
+                )
+            ])
+            ->when($command);
+    }
+
     /**
      * @test
      * @group command-handler

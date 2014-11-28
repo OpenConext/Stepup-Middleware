@@ -50,12 +50,18 @@ class EmailVerifiedEvent extends IdentityEvent
     public $email;
 
     /**
+     * @var string Eg. "en_GB"
+     */
+    public $preferredLocale;
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @param string $commonName
      * @param string $email
+     * @param string $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
@@ -63,7 +69,8 @@ class EmailVerifiedEvent extends IdentityEvent
         DateTime $registrationRequestedAt,
         $registrationCode,
         $commonName,
-        $email
+        $email,
+        $preferredLocale
     ) {
         parent::__construct($identityId);
 
@@ -73,6 +80,7 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->identityId = $identityId;
         $this->commonName = $commonName;
         $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public static function deserialize(array $data)
@@ -83,7 +91,8 @@ class EmailVerifiedEvent extends IdentityEvent
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
             $data['common_name'],
-            $data['email']
+            $data['email'],
+            'en_GB'
         );
     }
 

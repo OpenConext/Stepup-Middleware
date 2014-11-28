@@ -140,7 +140,8 @@ class SecondFactor extends EventSourcedEntity
                 DateTime::now(),
                 TokenGenerator::generateHumanReadableToken(8),
                 $this->identity->getCommonName(),
-                $this->identity->getEmail()
+                $this->identity->getEmail(),
+                'en_GB'
             )
         );
     }

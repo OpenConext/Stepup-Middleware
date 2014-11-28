@@ -85,7 +85,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ]);
     }
@@ -118,7 +119,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ])
             ->when($command);
@@ -158,7 +160,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ]);
     }
@@ -191,7 +194,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ])
             ->when($command);
@@ -226,7 +230,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ])
             ->when($command);
@@ -263,7 +268,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 )
             ])
             ->when($command)
@@ -274,7 +280,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'regcode',
                     $commonName,
-                    $email
+                    $email,
+                    'en_GB'
                 )
             ]);
     }
@@ -306,15 +313,18 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     DateTime::now(),
                     'nonce',
                     'Foo bar',
-                    'a@b.c'
+                    'a@b.c',
+                    'en_GB'
                 ),
+
                 new EmailVerifiedEvent(
                     $id,
                     $secondFactorId,
                     DateTime::now(),
                     'regcode',
                     $commonName,
-                    $email
+                    $email,
+                    'en_GB'
                 )
             ])
             ->when($command);

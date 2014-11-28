@@ -119,7 +119,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 DateTime::now(),
                 TokenGenerator::generateNonce(),
                 $this->commonName,
-                $this->email
+                $this->email,
+                'en_GB'
             )
         );
     }
@@ -135,7 +136,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 DateTime::now(),
                 TokenGenerator::generateNonce(),
                 $this->commonName,
-                $this->email
+                $this->email,
+                'en_GB'
             )
         );
     }

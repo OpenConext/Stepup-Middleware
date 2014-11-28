@@ -42,7 +42,7 @@ class EmailProcessor extends Processor
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
         $this->service->sendEmailVerificationEmail(
-            'en_GB', // @TODO Identity preferred locale
+            $event->preferredLocale,
             $event->commonName,
             $event->email,
             $event->emailVerificationNonce
@@ -52,7 +52,7 @@ class EmailProcessor extends Processor
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
         $this->service->sendEmailVerificationEmail(
-            'en_GB', // @TODO Identity preferred locale
+            $event->preferredLocale,
             $event->commonName,
             $event->email,
             $event->emailVerificationNonce
@@ -62,7 +62,7 @@ class EmailProcessor extends Processor
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
         $this->service->sendRegistrationEmail(
-            'en_GB', // @TODO Identity preferred locale
+            $event->preferredLocale,
             $event->commonName,
             $event->email,
             $event->registrationCode

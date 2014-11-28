@@ -62,6 +62,11 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $email;
 
     /**
+     * @var string Eg. "en_GB"
+     */
+    public $preferredLocale;
+
+    /**
      * @param IdentityId $identityId
      * @param SecondFactorId $secondFactorId
      * @param PhoneNumber $phoneNumber
@@ -69,6 +74,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
      * @param string $emailVerificationNonce
      * @param string $commonName
      * @param string $email
+     * @param string $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
@@ -77,7 +83,8 @@ class PhonePossessionProvenEvent extends IdentityEvent
         DateTime $emailVerificationRequestedAt,
         $emailVerificationNonce,
         $commonName,
-        $email
+        $email,
+        $preferredLocale
     ) {
         parent::__construct($identityId);
 
@@ -87,6 +94,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public static function deserialize(array $data)
@@ -98,7 +106,8 @@ class PhonePossessionProvenEvent extends IdentityEvent
             DateTime::fromString($data['email_verification_requested_at']),
             $data['email_verification_nonce'],
             $data['common_name'],
-            $data['email']
+            $data['email'],
+            'en_GB'
         );
     }
 

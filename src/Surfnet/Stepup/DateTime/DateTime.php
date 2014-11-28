@@ -106,6 +106,6 @@ class DateTime
      */
     public function __toString()
     {
-        return $this->format(self::FORMAT);
+        return $this->dateTime->format(self::FORMAT);
     }
 }

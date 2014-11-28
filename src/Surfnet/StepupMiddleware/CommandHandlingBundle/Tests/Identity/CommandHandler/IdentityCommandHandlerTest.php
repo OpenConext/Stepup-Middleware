@@ -288,7 +288,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
     public function testAVerifiedSecondFactorsEmailCannotBeVerified()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'possession already verified');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'does not apply to any unverified');
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));

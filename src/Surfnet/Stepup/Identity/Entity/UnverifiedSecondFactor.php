@@ -28,7 +28,11 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Token\TokenGenerator;
 
-class SecondFactor extends EventSourcedEntity
+/**
+ * A second factor whose possession has been proven by the registrant. The registrant must verify his/her e-mail
+ * address to verify this second factor.
+ */
+class UnverifiedSecondFactor extends EventSourcedEntity
 {
     /**
      * @var Identity
@@ -43,49 +47,39 @@ class SecondFactor extends EventSourcedEntity
     /**
      * @var DateTime
      */
-    private $emailVerificationRequestedAt;
+    private $verificationRequestedAt;
 
     /**
-     * @var string|null
+     * @var string
      */
-    private $emailVerificationNonce;
-
-    /**
-     * @var DateTime
-     */
-    private $registrationRequestedAt;
-
-    /**
-     * @var string|null
-     */
-    private $registrationCode;
+    private $verificationNonce;
 
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
-     * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationNonce
-     * @return self
+     * @param DateTime $verificationRequestedAt
+     * @param string $verificationNonce
+     * @return UnverifiedSecondFactor
      */
-    public static function createUnverified(
+    public static function create(
         SecondFactorId $id,
         Identity $identity,
-        DateTime $emailVerificationRequestedAt,
-        $emailVerificationNonce
+        DateTime $verificationRequestedAt,
+        $verificationNonce
     ) {
-        if (!is_string($emailVerificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'emailVerificationNonce', $emailVerificationNonce);
+        if (!is_string($verificationNonce)) {
+            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
         }
 
-        if (empty($emailVerificationNonce)) {
-            throw new InvalidArgumentException("'emailVerificationNonce' may not be empty");
+        if (empty($verificationNonce)) {
+            throw new InvalidArgumentException("'verificationNonce' may not be empty");
         }
 
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
-        $secondFactor->emailVerificationRequestedAt = $emailVerificationRequestedAt;
-        $secondFactor->emailVerificationNonce = $emailVerificationNonce;
+        $secondFactor->verificationRequestedAt = $verificationRequestedAt;
+        $secondFactor->verificationNonce = $verificationNonce;
 
         return $secondFactor;
     }
@@ -104,30 +98,33 @@ class SecondFactor extends EventSourcedEntity
 
     /**
      * @param string $verificationNonce
+     * @return bool
+     */
+    public function wouldVerifyEmail($verificationNonce)
+    {
+        return $this->verificationNonce === $verificationNonce
+            && !DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'));
+    }
+
+    /**
+     * @param string $verificationNonce
      */
     public function verifyEmail($verificationNonce)
     {
-        if ($this->emailVerificationNonce === null) {
-            throw new DomainException(sprintf(
-                "Cannot verify possession of e-mail for second factor '%s': possession already verified",
-                (string) $this->id
-            ));
-        }
-
-        if (DateTime::now()->comesAfter($this->emailVerificationRequestedAt->add('P1D'))) {
+        if ($this->verificationNonce !== $verificationNonce) {
             throw new DomainException(
                 sprintf(
-                    "Cannot verify possession of e-mail for second factor '%s': " .
-                    'verification window of one day has closed.',
+                    "Cannot verify second factor '%s': verification nonce does not match.",
                     (string) $this->id
                 )
             );
         }
 
-        if ($this->emailVerificationNonce !== $verificationNonce) {
+        if (DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'))) {
             throw new DomainException(
                 sprintf(
-                    "Cannot verify second factor '%s': verification nonce does not match.",
+                    "Cannot verify possession of e-mail for second factor '%s': " .
+                    'verification window of one day has closed.',
                     (string) $this->id
                 )
             );
@@ -144,13 +141,5 @@ class SecondFactor extends EventSourcedEntity
                 'en_GB'
             )
         );
-    }
-
-    protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
-    {
-        $this->emailVerificationNonce = null;
-
-        $this->registrationRequestedAt = $event->registrationRequestedAt;
-        $this->registrationCode = $event->registrationCode;
     }
 }

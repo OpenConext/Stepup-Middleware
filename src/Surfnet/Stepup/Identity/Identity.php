@@ -19,11 +19,14 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
-use Surfnet\Stepup\Identity\Entity\SecondFactor;
+use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -69,9 +72,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $commonName;
 
     /**
-     * @var SecondFactor|null
+     * @var Collection|UnverifiedSecondFactor[]
      */
-    private $secondFactor;
+    private $unverifiedSecondFactors;
+
+    /**
+     * @var Collection|VerifiedSecondFactor[]
+     */
+    private $verifiedSecondFactors;
 
     public static function create(
         IdentityId $id,
@@ -144,17 +152,19 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function verifyEmail($verificationNonce)
     {
-        if (!is_string($verificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
+        foreach ($this->unverifiedSecondFactors as $secondFactor) {
+            if (!$secondFactor->wouldVerifyEmail($verificationNonce)) {
+                continue;
+            }
+
+            $secondFactor->verifyEmail($verificationNonce);
+            return;
         }
 
-        if ($this->secondFactor === null) {
-            throw new DomainException(
-                'Cannot verify second factor: registrant does not have second factor in possession.'
-            );
-        }
-
-        $this->secondFactor->verifyEmail($verificationNonce);
+        throw new DomainException(
+            "Cannot verify second factor: verification nonce does not apply to any unverified second factors or the " .
+            "verification window has closed."
+        );
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -164,6 +174,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->nameId = $event->nameId;
         $this->email = $event->email;
         $this->commonName = $event->commonName;
+        $this->unverifiedSecondFactors = new ArrayCollection();
+        $this->verifiedSecondFactors = new ArrayCollection();
     }
 
     protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -178,21 +190,40 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->secondFactor = SecondFactor::createUnverified(
+        $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationNonce
         );
+
+        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
     protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->secondFactor = SecondFactor::createUnverified(
+        $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->add($secondFactor);
+    }
+
+    protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $this->unverifiedSecondFactors->remove((string) $event->secondFactorId);
+
+        $this->verifiedSecondFactors->set(
+            (string) $event->secondFactorId,
+            VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $event->registrationRequestedAt,
+                $event->registrationCode
+            )
         );
     }
 
@@ -203,7 +234,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function getChildEntities()
     {
-        return $this->secondFactor ? [$this->secondFactor] : [];
+        return array_merge($this->unverifiedSecondFactors->getValues(), $this->verifiedSecondFactors->getValues());
     }
 
     /**
@@ -211,7 +242,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private function assertUserMayAddSecondFactor()
     {
-        if ($this->secondFactor !== null) {
+        if (count($this->unverifiedSecondFactors) + count($this->verifiedSecondFactors) > 0) {
             throw new DomainException('User may not have more than one token');
         }
     }

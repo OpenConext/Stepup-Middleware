@@ -21,60 +21,60 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
 class SecondFactorService
 {
     /**
-     * @var SecondFactorRepository
-     */
-    private $all;
-
-    /**
      * @var UnverifiedSecondFactorRepository
      */
-    private $unverifieds;
+    private $unverifiedRepository;
 
     /**
-     * @param SecondFactorRepository $all
-     * @param UnverifiedSecondFactorRepository $unverifieds
+     * @var VerifiedSecondFactorRepository
      */
-    public function __construct(SecondFactorRepository $all, UnverifiedSecondFactorRepository $unverifieds)
-    {
-        $this->all = $all;
-        $this->unverifieds = $unverifieds;
-    }
+    private $verifiedRepository;
 
     /**
-     * @param string $identityId
-     * @return SecondFactor[]
+     * @param UnverifiedSecondFactorRepository $unverifiedRepository
+     * @param VerifiedSecondFactorRepository $verifiedRepository
      */
-    public function findByIdentity($identityId)
-    {
-        return $this->all->findByIdentity($identityId);
-    }
-
-    /**
-     * @param string $identityId
-     * @return UnverifiedSecondFactor[]
-     */
-    public function findUnverifiedByIdentity($identityId)
-    {
-        return $this->unverifieds->findByIdentity($identityId);
+    public function __construct(
+        UnverifiedSecondFactorRepository $unverifiedRepository,
+        VerifiedSecondFactorRepository $verifiedRepository
+    ) {
+        $this->unverifiedRepository = $unverifiedRepository;
+        $this->verifiedRepository = $verifiedRepository;
     }
 
     /**
      * @param SearchUnverifiedSecondFactorCommand $command
      * @return Pagerfanta
      */
-    public function search(SearchUnverifiedSecondFactorCommand $command)
+    public function searchUnverifiedSecondFactors(SearchUnverifiedSecondFactorCommand $command)
     {
-        $searchQuery = $this->unverifieds->createSearchQuery($command);
+        $query = $this->unverifiedRepository->createSearchQuery($command);
 
-        $adapter  = new DoctrineORMAdapter($searchQuery);
+        $adapter  = new DoctrineORMAdapter($query);
+        $paginator = new Pagerfanta($adapter);
+        $paginator->setMaxPerPage($command->itemsPerPage);
+        $paginator->setCurrentPage($command->pageNumber);
+
+        return $paginator;
+    }
+
+    /**
+     * @param SearchVerifiedSecondFactorCommand $command
+     * @return Pagerfanta
+     */
+    public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
+    {
+        $query = $this->verifiedRepository->createSearchQuery($command);
+
+        $adapter  = new DoctrineORMAdapter($query);
         $paginator = new Pagerfanta($adapter);
         $paginator->setMaxPerPage($command->itemsPerPage);
         $paginator->setCurrentPage($command->pageNumber);

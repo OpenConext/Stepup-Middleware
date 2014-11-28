@@ -34,21 +34,21 @@ class UnverifiedSecondFactor implements \JsonSerializable
      *
      * @var string
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="Identity", inversedBy="unverifiedSecondFactors")
      *
      * @var Identity
      */
-    private $identity;
+    public $identity;
 
     /**
      * @ORM\Column(length=16)
      *
      * @var string
      */
-    private $type;
+    public $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
@@ -57,29 +57,17 @@ class UnverifiedSecondFactor implements \JsonSerializable
      *
      * @var string
      */
-    private $secondFactorIdentifier;
-
-    /**
-     * @ORM\Column(length=32)
-     *
-     * @var string
-     */
-    public $emailVerificationNonce;
+    public $secondFactorIdentifier;
 
     /**
      * @param Identity $identity
      * @param string $id
      * @param string $type
      * @param string $secondFactorIdentifier
-     * @param string $emailVerificationNonce
+     * @return self
      */
-    public function __construct(
-        Identity $identity,
-        $id,
-        $type,
-        $secondFactorIdentifier,
-        $emailVerificationNonce
-    ) {
+    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier)
+    {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
@@ -92,15 +80,32 @@ class UnverifiedSecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
         }
 
-        if (!is_string($emailVerificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'emailVerificationNonce', $emailVerificationNonce);
-        }
+        $secondFactor = new self;
+        $secondFactor->identity = $identity;
+        $secondFactor->id = $id;
+        $secondFactor->type = $type;
+        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
 
-        $this->identity = $identity;
-        $this->id = $id;
-        $this->type = $type;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->emailVerificationNonce = $emailVerificationNonce;
+        $identity->unverifiedSecondFactors->add($secondFactor);
+
+        return $secondFactor;
+    }
+
+    final private function __construct()
+    {
+    }
+
+    /**
+     * @return VerifiedSecondFactor
+     */
+    public function verifyEmail()
+    {
+        $identity = $this->identity;
+
+        $this->identity->unverifiedSecondFactors->removeElement($this);
+        $this->identity = null;
+
+        return VerifiedSecondFactor::addToIdentity($identity, $this->id, $this->type, $this->secondFactorIdentifier);
     }
 
     public function jsonSerialize()

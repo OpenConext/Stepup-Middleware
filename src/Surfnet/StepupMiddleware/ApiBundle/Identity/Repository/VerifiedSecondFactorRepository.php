@@ -20,28 +20,28 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 
-class UnverifiedSecondFactorRepository extends EntityRepository
+class VerifiedSecondFactorRepository extends EntityRepository
 {
     /**
      * @param string $id
-     * @return UnverifiedSecondFactor
+     * @return VerifiedSecondFactor|null
      */
     public function find($id)
     {
-        /** @var UnverifiedSecondFactor|null $secondFactor */
+        /** @var VerifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
 
         return $secondFactor;
     }
 
     /**
-     * @param SearchUnverifiedSecondFactorCommand $command
+     * @param SearchVerifiedSecondFactorCommand $command
      * @return Query
      */
-    public function createSearchQuery(SearchUnverifiedSecondFactorCommand $command)
+    public function createSearchQuery(SearchVerifiedSecondFactorCommand $command)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
@@ -55,17 +55,11 @@ class UnverifiedSecondFactorRepository extends EntityRepository
     }
 
     /**
-     * @param UnverifiedSecondFactor $secondFactor
+     * @param VerifiedSecondFactor $secondFactor
      */
-    public function save(UnverifiedSecondFactor $secondFactor)
+    public function save(VerifiedSecondFactor $secondFactor)
     {
         $this->getEntityManager()->persist($secondFactor);
-        $this->getEntityManager()->flush();
-    }
-
-    public function remove(UnverifiedSecondFactor $secondFactor)
-    {
-        $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();
     }
 }

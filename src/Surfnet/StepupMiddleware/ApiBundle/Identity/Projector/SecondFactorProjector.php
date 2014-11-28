@@ -19,37 +19,75 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
 class SecondFactorProjector extends Projector
 {
     /**
-     * @var SecondFactorRepository
+     * @var UnverifiedSecondFactorRepository
      */
-    private $secondFactorRepository;
+    private $unverifiedRepository;
 
-    public function __construct(SecondFactorRepository $secondFactorRepository)
-    {
-        $this->secondFactorRepository = $secondFactorRepository;
+    /**
+     * @var VerifiedSecondFactorRepository
+     */
+    private $verifiedRepository;
+
+    /**
+     * @var IdentityRepository
+     */
+    private $identityRepository;
+
+    public function __construct(
+        UnverifiedSecondFactorRepository $unverifiedRepository,
+        VerifiedSecondFactorRepository $verifiedRepository,
+        IdentityRepository $identityRepository
+    ) {
+        $this->unverifiedRepository = $unverifiedRepository;
+        $this->verifiedRepository = $verifiedRepository;
+        $this->identityRepository = $identityRepository;
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->secondFactorRepository->proveYubikeyPossession(
-            $event->identityId,
-            $event->secondFactorId,
-            $event->yubikeyPublicId
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->unverifiedRepository->save(
+            UnverifiedSecondFactor::addToIdentity(
+                $identity,
+                (string) $event->secondFactorId,
+                'yubikey',
+                (string) $event->yubikeyPublicId
+            )
         );
     }
 
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->secondFactorRepository->provePhonePossession(
-            $event->identityId,
-            $event->secondFactorId,
-            $event->phoneNumber
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->unverifiedRepository->save(
+            UnverifiedSecondFactor::addToIdentity(
+                $identity,
+                (string) $event->secondFactorId,
+                'sms',
+                (string) $event->phoneNumber
+            )
         );
+    }
+
+    public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $unverified = $this->unverifiedRepository->find((string) $event->secondFactorId);
+
+        $this->verifiedRepository->save($unverified->verifyEmail());
+        $this->unverifiedRepository->remove($unverified);
     }
 }

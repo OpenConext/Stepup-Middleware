@@ -74,18 +74,22 @@ class Identity implements JsonSerializable
     public $email;
 
     /**
-     * @ORM\OneToMany(targetEntity="SecondFactor", mappedBy="identity", cascade={"persist"})
+     * A list of all second factors, whose e-mails haven't been verified.
      *
-     * @var Collection|SecondFactor[]
-     */
-    private $secondFactors;
-
-    /**
      * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
      *
      * @var Collection|UnverifiedSecondFactor[]
      */
-    private $unverifiedSecondFactors;
+    public $unverifiedSecondFactors;
+
+    /**
+     * A list of all second factors, whose e-mails have been verified and are awaiting vetting by an RA.
+     *
+     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|VerifiedSecondFactor[]
+     */
+    public $verifiedSecondFactors;
 
     public static function create(
         $id,
@@ -117,20 +121,10 @@ class Identity implements JsonSerializable
         $identity->institution = $institution;
         $identity->email = $email;
         $identity->commonName = $commonName;
-        $identity->secondFactors = new ArrayCollection();
         $identity->unverifiedSecondFactors = new ArrayCollection();
+        $identity->verifiedSecondFactors = new ArrayCollection();
 
         return $identity;
-    }
-
-    public function addSecondFactor(SecondFactor $secondFactor)
-    {
-        $this->secondFactors->add($secondFactor);
-    }
-
-    public function addUnverifiedSecondFactor(UnverifiedSecondFactor $secondFactor)
-    {
-        $this->unverifiedSecondFactors->add($secondFactor);
     }
 
     public function jsonSerialize()

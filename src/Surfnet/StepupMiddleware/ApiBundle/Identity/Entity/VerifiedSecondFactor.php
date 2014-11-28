@@ -22,9 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository")
  */
-class SecondFactor implements \JsonSerializable
+class VerifiedSecondFactor implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -32,21 +32,21 @@ class SecondFactor implements \JsonSerializable
      *
      * @var string
      */
-    private $id;
+    public $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="secondFactors")
+     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="verifiedSecondFactors")
      *
      * @var Identity
      */
-    private $identity;
+    public $identity;
 
     /**
      * @ORM\Column(length=16)
      *
      * @var string
      */
-    private $type;
+    public $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
@@ -55,10 +55,21 @@ class SecondFactor implements \JsonSerializable
      *
      * @var string
      */
-    private $secondFactorIdentifier;
+    public $secondFactorIdentifier;
 
-    public function __construct(Identity $identity, $id, $type, $secondFactorIdentifier)
-    {
+    /**
+     * @param Identity $identity
+     * @param string $id
+     * @param string $type
+     * @param string $secondFactorIdentifier
+     * @return self
+     */
+    public static function addToIdentity(
+        Identity $identity,
+        $id,
+        $type,
+        $secondFactorIdentifier
+    ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
@@ -71,10 +82,19 @@ class SecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
         }
 
-        $this->identity = $identity;
-        $this->id = $id;
-        $this->type = $type;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
+        $secondFactor = new self;
+        $secondFactor->identity = $identity;
+        $secondFactor->id = $id;
+        $secondFactor->type = $type;
+        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
+
+        $identity->verifiedSecondFactors->add($secondFactor);
+
+        return $secondFactor;
+    }
+
+    final private function __construct()
+    {
     }
 
     public function jsonSerialize()

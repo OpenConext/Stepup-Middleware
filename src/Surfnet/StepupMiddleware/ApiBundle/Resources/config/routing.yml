@@ -18,14 +18,14 @@ identity_collection:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
-identity_second_factors:
-    path:     /identity/{identityId}/second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:SecondFactor:findByIdentity }
+identity_unverified_second_factors:
+    path:     /identity/{identityId}/unverified-second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:findUnverifiedSecondFactors }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
-identity_unverified_second_factors:
-    path:      /identity/{identityId}/unverified-second-factors
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:SecondFactor:unverifiedCollection }
-    methods:   [GET]
+identity_verified_second_factors:
+    path:     /identity/{identityId}/verified-second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:findVerifiedSecondFactors }
+    methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

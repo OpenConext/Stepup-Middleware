@@ -40,7 +40,7 @@ class IdentityProjector extends Projector
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->identityRepository->save(Identity::create(
-            (string) $event->id,
+            (string) $event->identityId,
             $event->institution,
             (string) $event->nameId,
             $event->email,
@@ -50,7 +50,7 @@ class IdentityProjector extends Projector
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->id);
+        $identity = $this->identityRepository->find((string) $event->identityId);
 
         $identity->commonName = $event->newName;
 
@@ -59,7 +59,7 @@ class IdentityProjector extends Projector
 
     public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->id);
+        $identity = $this->identityRepository->find((string) $event->identityId);
 
         $identity->email = $event->newEmail;
 

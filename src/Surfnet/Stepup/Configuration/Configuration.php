@@ -20,11 +20,12 @@ namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use GuzzleHttp;
+use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 
-class Configuration extends EventSourcedAggregateRoot
+class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
 {
     /**
      * There can ever be only one configuration, so using a fixed UUIDv4
@@ -32,7 +33,7 @@ class Configuration extends EventSourcedAggregateRoot
     const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
 
     /**
-     * @var array
+     * @var string
      */
     private $configuration;
 
@@ -67,9 +68,6 @@ class Configuration extends EventSourcedAggregateRoot
         $this->apply($this->lastServiceProvidersUpdatedEvent);
     }
 
-    /**
-     * @return string
-     */
     public function getAggregateRootId()
     {
         return self::CONFIGURATION_ID;
@@ -80,20 +78,13 @@ class Configuration extends EventSourcedAggregateRoot
         $this->configuration = $event->newConfiguration;
     }
 
-    /**
-     * Used to be able to update the gateway configuration within a single transaction.
-     *
-     * @return null|ServiceProvidersUpdatedEvent
-     */
     public function getLastUncommittedServiceProvidersUpdatedEvent()
     {
         return $this->lastServiceProvidersUpdatedEvent;
     }
 
     /**
-     * Cleaning up the possible event, as the uncommittedEvents will be removed as well
-     *
-     * @return \Broadway\Domain\DomainEventStream
+     * {@inheritDoc} Cleaning up the possible event, as the uncommittedEvents will be removed as well
      */
     public function getUncommittedEvents()
     {

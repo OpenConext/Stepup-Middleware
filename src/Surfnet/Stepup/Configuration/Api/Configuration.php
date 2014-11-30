@@ -16,14 +16,26 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
+namespace Surfnet\Stepup\Configuration\Api;
 
-interface ConfigurationValidatorInterface
+use Broadway\Domain\AggregateRoot;
+
+interface Configuration extends AggregateRoot
 {
     /**
-     * @param array $configuration
-     * @return void
-     * @throws \Assert\InvalidArgumentException
+     * @return Configuration
      */
-    public function validate(array $configuration, $propertyPath);
+    public static function create();
+
+    /**
+     * @param string $newConfiguration
+     */
+    public function update($newConfiguration);
+
+    /**
+     * Used to be able to update the gateway configuration within a single transaction.
+     *
+     * @return null|\Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
+     */
+    public function getLastUncommittedServiceProvidersUpdatedEvent();
 }

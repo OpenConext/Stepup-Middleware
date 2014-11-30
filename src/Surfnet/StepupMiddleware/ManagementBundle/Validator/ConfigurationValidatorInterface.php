@@ -16,22 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
-
-class UpdateConfigurationCommand implements Command
+interface ConfigurationValidatorInterface
 {
     /**
-     * @var string UUID
+     * @param array $configuration
+     * @throws \Assert\InvalidArgumentException
      */
-    public $UUID;
-
-    /**
-     * @var string configuration as json as received in the request
-     *
-     * @ManagementAssert\HasValidConfigurationStructure
-     */
-    public $configuration;
+    public function validate(array $configuration, $propertyPath);
 }

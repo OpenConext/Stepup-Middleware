@@ -19,12 +19,17 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
+use Assert\InvalidArgumentException as AssertionException;
+use GuzzleHttp;
+use InvalidArgumentException as CoreInvalidArgumentException;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
 
 /**
  * Once the Assert 2.0 library has been built this should be converted to the lazy assertions so we can report
  * all errors at once.
  */
-class ConfigurationValidator implements ValidatorInterface
+class ConfigurationStructureValidator extends ConstraintValidator
 {
     private $gatewayConfigurationValidator;
 
@@ -34,10 +39,35 @@ class ConfigurationValidator implements ValidatorInterface
         $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
     }
 
-    public function validate(array $configuration, $propertyPath)
+    public function validate($value, Constraint $constraint)
     {
-        Assert::isArray($configuration, 'Invalid body structure, must be an object', $propertyPath);
-        Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", $propertyPath);
+        /** @var \Symfony\Component\Validator\Violation\ConstraintViolationBuilder|false $violation */
+        $violation = false;
+
+        try {
+            $decoded = $this->decodeJson($value);
+            $this->validateRoot($decoded);
+        } catch (AssertionException $exception) {
+            // method is not in the interface yet, but the old method is deprecated.
+            $violation = $this->context->buildViolation($exception->getMessage());
+        } catch (CoreInvalidArgumentException $exception) {
+            $violation = $this->context->buildViolation($exception->getMessage());
+        }
+
+        if ($violation) {
+            $violation->atPath('configuration')->addViolation();
+        }
+    }
+
+    private function decodeJson($rawValue)
+    {
+        return GuzzleHttp\json_decode($rawValue, true);
+    }
+
+    public function validateRoot(array $configuration)
+    {
+        Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
+        Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
         $this->validateGatewayConfiguration($configuration, 'gateway');
     }
 

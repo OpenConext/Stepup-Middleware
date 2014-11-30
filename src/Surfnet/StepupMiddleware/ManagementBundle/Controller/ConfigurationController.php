@@ -18,11 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
-use Assert\InvalidArgumentException;
 use DateTime;
-use Exception;
-use GuzzleHttp;
-use InvalidArgumentException as CoreInvalidArgumentException;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
@@ -34,38 +30,6 @@ class ConfigurationController extends Controller
 {
     public function updateAction(Request $request)
     {
-        try {
-            $decodedConfiguration = GuzzleHttp\json_decode($request->getContent(), true);
-            $this->getConfigurationValidator()->validate($decodedConfiguration, '');
-        } catch (InvalidArgumentException $assertionException) {
-            // Assertion Error
-            $errors[$assertionException->getPropertyPath()] = $assertionException->getMessage();
-
-            $response = new JsonResponse();
-            $response
-                // EntityIDs are almost always URLs. Escaping forward slashes is done for ease of use of json within
-                // <script> tags, which is not done here. This increases readability and searching of errors.
-                // hence we allow unescaped slashes.
-                ->setEncodingOptions($response->getEncodingOptions() | JSON_UNESCAPED_SLASHES)
-                ->setData(['errors' => $errors])
-                ->setStatusCode(400);
-
-            return $response;
-        } catch (CoreInvalidArgumentException $e) {
-            // Guzzlehttp/json_decode error (malformed json)
-            $response = new JsonResponse(['errors' => [$e->getMessage()]], 400);
-
-            return $response;
-        } catch (Exception $e) {
-            // any other errors
-            /** @var \Monolog\Logger $logger */
-            $logger  = $this->get('logger');
-            $context = ['location' => $e->getFile() . '::' . $e->getFile(), 'trace' => $e->getTraceAsString()];
-            $logger->critical($e->getMessage(), $context);
-
-            return new JsonResponse(['Internal Server Error'], 500);
-        }
-
         $command = new UpdateConfigurationCommand();
         $command->UUID = (string) Uuid::uuid4();
         $command->configuration = $request->getContent();
@@ -88,17 +52,9 @@ class ConfigurationController extends Controller
         $response   = new JsonResponse([
             'status'       => 'OK',
             'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format('c')
+            'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
         ]);
 
         return $response;
-    }
-
-    /**
-     * @return \Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationValidator
-     */
-    private function getConfigurationValidator()
-    {
-        return $this->get('surfnet_stepup_middleware_management.validator.configuration');
     }
 }

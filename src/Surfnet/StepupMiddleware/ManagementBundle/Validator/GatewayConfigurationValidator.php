@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
 
-class GatewayConfigurationValidator implements ValidatorInterface
+class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 {
     private $serviceProviderConfigurationValidator;
 
@@ -44,7 +44,7 @@ class GatewayConfigurationValidator implements ValidatorInterface
     {
         Assert::isArray(
             $serviceProviders,
-            'service_provider must have an object as value',
+            'service_provider must have an array of service provider configurations as value',
             'gateway.service_provider'
         );
         Assert::true(

@@ -16,13 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints;
 
-interface ValidatorInterface
+use Symfony\Component\Validator\Constraint;
+
+/**
+ * @Annotation
+ */
+class HasValidConfigurationStructure extends Constraint
 {
-    /**
-     * @param array $configuration
-     * @throws \Assert\InvalidArgumentException
-     */
-    public function validate(array $configuration, $propertyPath);
+    public $message = 'Invalid Configuration Structure';
+
+    public function validatedBy()
+    {
+        return 'configuration_structure_validator';
+    }
 }

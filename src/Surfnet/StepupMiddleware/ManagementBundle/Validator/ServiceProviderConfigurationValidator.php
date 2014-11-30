@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
 
-class ServiceProviderConfigurationValidator
+class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
     public function validate(array $configuration, $propertyPath)
     {

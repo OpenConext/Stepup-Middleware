@@ -5,6 +5,7 @@ security:
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
 
     access_control:
+        - { path: ^/management, roles: [ROLE_MANAGEMENT] } # can be expanded with hosts: or ip:
         - { roles: [ROLE_SS,ROLE_RA] }
 
     providers:
@@ -17,6 +18,9 @@ security:
                     ra:
                         password: %registration_authority_api_password%
                         roles: 'ROLE_RA'
+                    management:
+                        password: %management_password%
+                        roles: 'ROLE_MANAGEMENT'
 
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext

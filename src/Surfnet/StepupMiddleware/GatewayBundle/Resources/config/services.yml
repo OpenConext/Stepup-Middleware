@@ -1,0 +1,5 @@
+services:
+    surfnet_stepup_middleware_gateway.service.gateway_configuration:
+        class: Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService
+        arguments:
+            - @middleware.gateway_repository.saml_entities

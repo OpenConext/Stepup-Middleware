@@ -1,0 +1,17 @@
+services:
+    surfnet_stepup_middleware_management.validator.configuration:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
+        arguments:
+            - @surfnet_stepup_middleware_management.validator.gateway_configuration
+        tags:
+            - { name: validator.constraint_validator, alias: configuration_structure_validator }
+
+    surfnet_stepup_middleware_management.validator.gateway_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
+        arguments:
+            - @surfnet_stepup_middleware_management.validator.service_provider_configuration
+
+    surfnet_stepup_middleware_management.validator.service_provider_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator

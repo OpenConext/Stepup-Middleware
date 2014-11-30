@@ -15,3 +15,38 @@ Step-up Middleware
 ## Installation
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
+
+## Management API
+
+### Configuration API
+
+Example cURL usage:
+```
+curl -XPOST -v \
+    -u username:password \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -d @new_configuration.json \
+    http://middleware.tld/management/configuration
+```
+
+### Configuration Structure
+
+```json
+{
+  "gateway": {
+    "service_provider": [
+      {
+        "entity_id": "https://example.serviceprovider.tld/authentication/metadata",
+        "public_key": "the public key contents (certificate data only)",
+        "acs": [
+          "https://example.serviceprovider.tld/authentication/consume-assertion"
+        ],
+        "loa": {
+          "__default__": "https://example.gateway.tld/authentication/loa2"
+        }
+      }
+    ]
+  }
+}
+```

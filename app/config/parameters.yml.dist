@@ -1,6 +1,6 @@
 parameters:
     database_driver:   pdo_mysql
-    database_host:     10.0.0.100
+    database_host:     10.10.0.100
     database_port:     ~
     database_middleware_name:     middleware
     database_middleware_user:     middleware
@@ -16,12 +16,10 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    default_locale:    nl
-    locales:           [nl]
+    default_locale:    nl_NL
+    locales:           [nl_NL]
     secret:            NotSoSecretReplaceMe!
 
-    debug_toolbar:          true
-    debug_redirects:        false
     use_assetic_controller: true
 
     selfservice_api_password: ~
@@ -29,3 +27,7 @@ parameters:
     management_password: ~
 
     graylog_hostname: graylog.host.tld
+
+    self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/verify-email?n={nonce}
+    email_sender_name: SURFnet bv
+    email_sender_email: noreply@surfnet.nl

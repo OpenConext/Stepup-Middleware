@@ -22,6 +22,9 @@ use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 interface Identity extends AggregateRoot
 {
@@ -45,4 +48,46 @@ interface Identity extends AggregateRoot
      * Construct a new aggregate root. Aggregate roots can only be affected by events, so no parameters are allowed.
      */
     public function __construct();
+
+    /**
+     * @param string $commonName
+     * @return void
+     */
+    public function rename($commonName);
+
+    /**
+     * @param string $email
+     * @return void
+     */
+    public function changeEmail($email);
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     * @return void
+     */
+    public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @param PhoneNumber $phoneNumber
+     * @return void
+     */
+    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber);
+
+    /**
+     * @param string $verificationNonce
+     * @return void
+     */
+    public function verifyEmail($verificationNonce);
+
+    /**
+     * @return string
+     */
+    public function getCommonName();
+
+    /**
+     * @return string
+     */
+    public function getEmail();
 }

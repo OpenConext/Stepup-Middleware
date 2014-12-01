@@ -48,5 +48,25 @@ curl -XPOST -v \
       }
     ]
   }
+>>>>>>> develop
+}
+```
+
+## Notes
+
+### Mocking time
+
+Due to a limitation of mocking of static methods, to mock time, the helper `DateTimeHelper::stubNow(DateTime $now)` was
+created. Call `::stubNow($now)` to set a fixed date/time, and call `::stubNow(null)` to disable stubbing. It is
+recommended to run tests in a separate process when using this helper so the stub value doesn't persist between tests.
+
+```php
+/** @runTestInSeparateProcess */
+public function testItWorks()
+{
+    # Trick `DateTime::now()` into thinking it is 1970.
+    DateTimeHelper::stubNow(new DateTime('@0'));
+
+    $this->assertEquals('1970-01-01T00:00:00+00:00', (string) \Surfnet\Stepup\DateTime\DateTime::now());
 }
 ```

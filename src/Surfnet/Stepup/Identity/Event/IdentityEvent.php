@@ -26,10 +26,10 @@ abstract class IdentityEvent implements SerializableInterface
     /**
      * @var IdentityId
      */
-    public $id;
+    public $identityId;
 
-    public function __construct(IdentityId $id)
+    public function __construct(IdentityId $identityId)
     {
-        $this->id = $id;
+        $this->identityId = $identityId;
     }
 }

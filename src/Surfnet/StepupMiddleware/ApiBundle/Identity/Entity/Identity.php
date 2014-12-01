@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -60,7 +62,7 @@ class Identity implements JsonSerializable
     /**
      * @ORM\Column(type="institution")
      *
-     * @var string
+     * @var Institution
      */
     public $institution;
 
@@ -70,6 +72,24 @@ class Identity implements JsonSerializable
      * @var string
      */
     public $email;
+
+    /**
+     * A list of all second factors, whose e-mails haven't been verified.
+     *
+     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|UnverifiedSecondFactor[]
+     */
+    public $unverifiedSecondFactors;
+
+    /**
+     * A list of all second factors, whose e-mails have been verified and are awaiting vetting by an RA.
+     *
+     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|VerifiedSecondFactor[]
+     */
+    public $verifiedSecondFactors;
 
     public static function create(
         $id,
@@ -101,6 +121,8 @@ class Identity implements JsonSerializable
         $identity->institution = $institution;
         $identity->email = $email;
         $identity->commonName = $commonName;
+        $identity->unverifiedSecondFactors = new ArrayCollection();
+        $identity->verifiedSecondFactors = new ArrayCollection();
 
         return $identity;
     }
@@ -108,11 +130,11 @@ class Identity implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id' => $this->id,
-            'name_id' => $this->nameId,
-            'institution' => $this->institution,
-            'email' => $this->email,
-            'common_name' => $this->commonName
+            'id'                        => $this->id,
+            'name_id'                   => $this->nameId,
+            'institution'               => (string) $this->institution,
+            'email'                     => $this->email,
+            'common_name'               => $this->commonName,
         ];
     }
 }

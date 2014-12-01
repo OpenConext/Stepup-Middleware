@@ -19,14 +19,31 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\Stepup\Token\TokenGenerator;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
     /**
@@ -53,6 +70,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var string
      */
     private $commonName;
+
+    /**
+     * @var Collection|UnverifiedSecondFactor[]
+     */
+    private $unverifiedSecondFactors;
+
+    /**
+     * @var Collection|VerifiedSecondFactor[]
+     */
+    private $verifiedSecondFactors;
 
     public static function create(
         IdentityId $id,
@@ -89,30 +116,150 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
     }
 
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
     {
-        $this->id = $event->id;
+        $this->assertUserMayAddSecondFactor();
+        $this->apply(
+            new YubikeyPossessionProvenEvent(
+                $this->id,
+                $secondFactorId,
+                $yubikeyPublicId,
+                DateTime::now(),
+                TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
+                'en_GB'
+            )
+        );
+    }
+
+    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
+    {
+        $this->assertUserMayAddSecondFactor();
+        $this->apply(
+            new PhonePossessionProvenEvent(
+                $this->id,
+                $secondFactorId,
+                $phoneNumber,
+                DateTime::now(),
+                TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
+                'en_GB'
+            )
+        );
+    }
+
+    public function verifyEmail($verificationNonce)
+    {
+        foreach ($this->unverifiedSecondFactors as $secondFactor) {
+            if (!$secondFactor->wouldVerifyEmail($verificationNonce)) {
+                continue;
+            }
+
+            $secondFactor->verifyEmail($verificationNonce);
+            return;
+        }
+
+        throw new DomainException(
+            "Cannot verify second factor: verification nonce does not apply to any unverified second factors or the " .
+            "verification window has closed."
+        );
+    }
+
+    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    {
+        $this->id = $event->identityId;
         $this->institution = $event->institution;
         $this->nameId = $event->nameId;
         $this->email = $event->email;
         $this->commonName = $event->commonName;
+        $this->unverifiedSecondFactors = new ArrayCollection();
+        $this->verifiedSecondFactors = new ArrayCollection();
     }
 
-    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
         $this->commonName = $event->newName;
     }
 
-    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    protected function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
         $this->email = $event->newEmail;
+    }
+
+    protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    {
+        $secondFactor = UnverifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            $event->emailVerificationRequestedAt,
+            $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    {
+        $secondFactor = UnverifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            $event->emailVerificationRequestedAt,
+            $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->add($secondFactor);
+    }
+
+    protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $this->unverifiedSecondFactors->remove((string) $event->secondFactorId);
+
+        $this->verifiedSecondFactors->set(
+            (string) $event->secondFactorId,
+            VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $event->registrationRequestedAt,
+                $event->registrationCode
+            )
+        );
+    }
+
+    public function getAggregateRootId()
+    {
+        return (string) $this->id;
+    }
+
+    protected function getChildEntities()
+    {
+        return array_merge($this->unverifiedSecondFactors->getValues(), $this->verifiedSecondFactors->getValues());
+    }
+
+    /**
+     * @throws DomainException
+     */
+    private function assertUserMayAddSecondFactor()
+    {
+        if (count($this->unverifiedSecondFactors) + count($this->verifiedSecondFactors) > 0) {
+            throw new DomainException('User may not have more than one token');
+        }
     }
 
     /**
      * @return string
      */
-    public function getAggregateRootId()
+    public function getCommonName()
     {
-        return (string) $this->id;
+        return $this->commonName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 }

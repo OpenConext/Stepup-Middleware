@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -34,5 +35,18 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
         $loader->load('command_handlers.yml');
         $loader->load('event_sourcing.yml');
         $loader->load('pipeline.yml');
+        $loader->load('processors.yml');
+
+        $processor = new Processor();
+        $config = $processor->processConfiguration(new Configuration(), $config);
+
+        $container
+            ->getDefinition('surfnet_stepup_middleware_command_handling.email_sender')
+            ->replaceArgument(0, $config['email_sender']['name'])
+            ->replaceArgument(1, $config['email_sender']['email']);
+
+        $container
+            ->getDefinition('surfnet_stepup_middleware_command_handling.service.second_factor_mail')
+            ->replaceArgument(4, $config['self_service_email_verification_url_template']);
     }
 }

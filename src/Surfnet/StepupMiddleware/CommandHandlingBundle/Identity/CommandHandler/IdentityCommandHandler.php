@@ -19,14 +19,23 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class IdentityCommandHandler extends CommandHandler
 {
     /**
@@ -62,6 +71,45 @@ class IdentityCommandHandler extends CommandHandler
 
         $identity->rename($command->commonName);
         $identity->changeEmail($command->email);
+
+        $this->repository->add($identity);
+    }
+
+    public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->provePossessionOfYubikey(
+            new SecondFactorId($command->secondFactorId),
+            new YubikeyPublicId($command->yubikeyPublicId)
+        );
+
+        $this->repository->add($identity);
+    }
+
+    /**
+     * @param ProvePhonePossessionCommand $command
+     */
+    public function handleProvePhonePossessionCommand(ProvePhonePossessionCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->provePossessionOfPhone(
+            new SecondFactorId($command->secondFactorId),
+            new PhoneNumber($command->phoneNumber)
+        );
+
+        $this->repository->add($identity);
+    }
+
+    public function handleVerifyEmailCommand(VerifyEmailCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->verifyEmail($command->verificationNonce);
 
         $this->repository->add($identity);
     }

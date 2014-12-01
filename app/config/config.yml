@@ -143,7 +143,6 @@ nelmio_security:
     forced_ssl:
         enabled: false
 
-
 surfnet_stepup:
     logging:
         application_name: middleware
@@ -168,3 +167,9 @@ monolog:
             type: gelf
             publisher: { hostname: %graylog_hostname% }
             formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
+
+surfnet_stepup_middleware_command_handling:
+    self_service_email_verification_url_template: %self_service_email_verification_url_template%
+    email_sender:
+        name: %email_sender_name%
+        email: %email_sender_email%

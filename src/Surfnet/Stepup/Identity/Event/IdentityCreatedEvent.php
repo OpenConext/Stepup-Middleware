@@ -70,13 +70,10 @@ class IdentityCreatedEvent extends IdentityEvent
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [
-            'id' => (string) $this->id,
+            'id' => (string) $this->identityId,
             'institution' => (string) $this->institution,
             'name_id' => (string) $this->nameId,
             'email' => $this->email,

@@ -45,6 +45,6 @@ class FlushEventBufferEventListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return [KernelEvents::TERMINATE => 'onKernelTerminate'];
+        return [KernelEvents::TERMINATE => ['onKernelTerminate', 100]];
     }
 }

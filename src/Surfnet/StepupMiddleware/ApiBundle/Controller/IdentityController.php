@@ -18,11 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,6 +33,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class IdentityController extends Controller
 {
     public function getAction($id)
@@ -68,10 +74,62 @@ class IdentityController extends Controller
     }
 
     /**
+     * Lists the unverified second factors belonging to the given Identity.
+     *
+     * @param Request $request
+     * @param string $identityId
+     * @return Response
+     */
+    public function findUnverifiedSecondFactorsAction(Request $request, $identityId)
+    {
+        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
+            throw new AccessDeniedHttpException('Client is not authorised to access resource');
+        }
+
+        $command = new SearchUnverifiedSecondFactorCommand();
+        $command->identityId = new IdentityId($identityId);
+        $command->pageNumber = (int) $request->get('p', 1);
+
+        $secondFactors = $this->getSecondFactorService()->searchUnverifiedSecondFactors($command);
+
+        return JsonCollectionResponse::fromPaginator($secondFactors);
+    }
+
+    /**
+     * Lists the verified second factors belonging to the given Identity.
+     *
+     * @param Request $request
+     * @param string $identityId
+     * @return Response
+     */
+    public function findVerifiedSecondFactorsAction(Request $request, $identityId)
+    {
+        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
+            throw new AccessDeniedHttpException('Client is not authorised to access resource');
+        }
+
+        $command = new SearchVerifiedSecondFactorCommand();
+        $command->identityId = new IdentityId($identityId);
+        $command->pageNumber = (int) $request->get('p', 1);
+
+        $secondFactors = $this->getSecondFactorService()->searchVerifiedSecondFactors($command);
+
+        return JsonCollectionResponse::fromPaginator($secondFactors);
+    }
+
+    /**
      * @return IdentityService
      */
     private function getService()
     {
         return $this->get('surfnet_stepup_middleware_api.service.identity');
+    }
+
+    /**
+     * @return SecondFactorService
+     */
+    private function getSecondFactorService()
+    {
+        return $this->get('surfnet_stepup_middleware_api.service.second_factor');
     }
 }

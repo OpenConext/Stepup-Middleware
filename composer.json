@@ -11,10 +11,9 @@
         "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"]
     },
     "minimum-stability": "stable",
-    "repositories": [{"type":"vcs","url":"https://github.com/rjkip/symfony"}],
     "require": {
         "php": ">=5.4",
-        "symfony/symfony": "dev-bugfix/default-entry-point as 2.5.5",
+        "symfony/symfony": "~2.6",
         "doctrine/dbal": "~2.5@beta",
         "doctrine/orm": "dev-master",
         "doctrine/doctrine-bundle": "dev-master",
@@ -36,7 +35,13 @@
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
-        "liip/rmt": "1.1.*"
+        "liip/rmt": "1.1.*",
+        "moontoast/math": "~1.1",
+        "rhumsaa/uuid": "~2.8",
+        "mockery/mockery": "~0.9",
+        "jms/translation-bundle": "~1.1",
+        "jms/di-extra-bundle": "~1.5",
+        "jms/aop-bundle": "~1.0"
     },
     "scripts": {
         "post-install-cmd": [

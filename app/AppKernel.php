@@ -37,6 +37,9 @@ class AppKernel extends Kernel
             new Surfnet\StepupMiddleware\CommandHandlingBundle\SurfnetStepupMiddlewareCommandHandlingBundle(),
             new Surfnet\StepupMiddleware\ApiBundle\SurfnetStepupMiddlewareApiBundle(),
             new Surfnet\StepupMiddleware\MiddlewareBundle\MiddlewareBundle(),
+            new Surfnet\StepupBundle\SurfnetStepupBundle(),
+            new Surfnet\StepupMiddleware\GatewayBundle\SurfnetStepupMiddlewareGatewayBundle(),
+            new Surfnet\StepupMiddleware\ManagementBundle\SurfnetStepupMiddlewareManagementBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

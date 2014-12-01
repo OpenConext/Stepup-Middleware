@@ -5,6 +5,12 @@ services:
             - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
 
+    surfnet_stepup.repository.configuration:
+        class: Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository
+        arguments:
+            - @surfnet_stepup.event_store.dbal
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+
     surfnet_stepup.event_store.in_memory:
         public: false
         class: Broadway\EventStore\InMemoryEventStore

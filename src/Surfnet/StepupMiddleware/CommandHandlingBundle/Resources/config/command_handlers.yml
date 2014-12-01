@@ -4,3 +4,11 @@ services:
         arguments:
             - @surfnet_stepup.repository.identity
         tags: [{ name: command_bus.command_handler }]
+
+    surfnet_stepup_middleware_command_handling.command_handler.configuration:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler
+        arguments:
+            - @surfnet_stepup.repository.configuration
+            - @surfnet_stepup_middleware_gateway.service.gateway_configuration
+        tags: [{ name: command_bus.command_handler }]
+

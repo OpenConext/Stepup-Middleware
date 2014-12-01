@@ -1,0 +1,5 @@
+management_configuration_update:
+    path:     /configuration
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Configuration:update }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

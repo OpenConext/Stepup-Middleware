@@ -94,7 +94,11 @@ doctrine:
             gateway:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings: []
+                mappings:
+                    SurfnetStepupMiddlewareGatewayBundle:
+                        mapping: true
+                        type: annotation
+                        is_bundle: true
             deploy:
                 connection: deploy
                 naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -105,6 +109,10 @@ doctrine:
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
                         prefix: Surfnet\StepupMiddleware\ApiBundle
                         is_bundle: false
+                    SurfnetStepupMiddlewareGatewayBundle:
+                        mapping: true
+                        type: annotation
+                        is_bundle: true
 
 doctrine_migrations:
     namespace: Surfnet\StepupMiddleware\Migrations
@@ -134,6 +142,31 @@ nelmio_security:
         names: ['*']
     forced_ssl:
         enabled: false
+
+surfnet_stepup:
+    logging:
+        application_name: middleware
+
+monolog:
+    handlers:
+        main:
+            type: group
+            members:
+                - main_graylog
+                - main_logfile
+        main_graylog:
+            type: buffer
+            handler: graylog
+            level: NOTICE
+        main_logfile:
+            type: stream
+            handler: logfile
+            level: NOTICE
+            path: %kernel.logs_dir%/%kernel.environment%.log
+        graylog:
+            type: gelf
+            publisher: { hostname: %graylog_hostname% }
+            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
 
 surfnet_stepup_middleware_command_handling:
     self_service_email_verification_url_template: %self_service_email_verification_url_template%

@@ -8,7 +8,7 @@ Step-up Middleware
  * PHP 5.4+
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
- * MariaDB 5.5+ (MySQL should work as well)
+ * MariaDB 10
  * Graylog2 (or disable this Monolog handler)
  * A working [Gateway](https://github.com/SURFnet/Stepup-Gateway)
 

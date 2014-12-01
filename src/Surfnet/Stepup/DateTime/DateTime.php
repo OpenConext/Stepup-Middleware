@@ -51,16 +51,22 @@ class DateTime
     }
 
     /**
-     * @param string $dateTime A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
+     * @param string $string A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
      * @return self
      */
-    public static function fromString($dateTime)
+    public static function fromString($string)
     {
-        if (!is_string($dateTime)) {
-            InvalidArgumentException::invalidType('string', 'dateTime', $dateTime);
+        if (!is_string($string)) {
+            InvalidArgumentException::invalidType('string', 'dateTime', $string);
         }
 
-        return new self(CoreDateTime::createFromFormat(self::FORMAT, $dateTime));
+        $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string);
+
+        if ($dateTime === false) {
+            throw new InvalidArgumentException('Date-time string could not be parsed: is it formatted correctly?');
+        }
+
+        return new self($dateTime);
     }
 
     /**

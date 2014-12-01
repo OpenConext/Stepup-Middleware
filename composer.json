@@ -11,10 +11,9 @@
         "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"]
     },
     "minimum-stability": "stable",
-    "repositories": [{"type":"vcs","url":"https://github.com/rjkip/symfony"}],
     "require": {
         "php": ">=5.4",
-        "symfony/symfony": "dev-bugfix/default-entry-point as 2.5.5",
+        "symfony/symfony": "~2.6",
         "doctrine/dbal": "~2.5@beta",
         "doctrine/orm": "dev-master",
         "doctrine/doctrine-bundle": "dev-master",

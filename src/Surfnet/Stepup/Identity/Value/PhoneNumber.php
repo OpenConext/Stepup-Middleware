@@ -34,9 +34,9 @@ class PhoneNumber
             throw InvalidArgumentException::invalidType('string', 'value', $value);
         }
 
-        if (!preg_match('~^\+\d+$~', $value)) {
+        if (!preg_match('~^\d+$~', $value)) {
             throw new InvalidArgumentException(
-                sprintf("Expected phone number ('+######'), got '%s...' (truncated)", substr($value, 0, 5))
+                sprintf("Expected phone number ('######'), got '%s...' (truncated)", substr($value, 0, 5))
             );
         }
 

@@ -101,18 +101,6 @@ doctrine:
                         is_bundle: true
             deploy:
                 connection: deploy
-                naming_strategy: doctrine.orm.naming_strategy.underscore
-                mappings:
-                    api:
-                        mapping: true
-                        type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
-                        prefix: Surfnet\StepupMiddleware\ApiBundle
-                        is_bundle: false
-                    SurfnetStepupMiddlewareGatewayBundle:
-                        mapping: true
-                        type: annotation
-                        is_bundle: true
 
 doctrine_migrations:
     namespace: Surfnet\StepupMiddleware\Migrations

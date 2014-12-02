@@ -22,6 +22,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\ProcessBuilder;
 
 class MigrationsDiffDoctrineCommand extends Command
 {
@@ -33,9 +34,24 @@ class MigrationsDiffDoctrineCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getApplication()->doRun(
-            new StringInput("doc:mig:diff --em=deploy --filter-expression='~^(?!event_stream).*$~'"),
-            $output
-        );
+        $output->writeln(['<info>Generating diff for Middleware...</info>', '']);
+
+        // Cannae run migrations command twice in the same process: registers the migration classes twice with
+        // Doctrine\DBAL\Migrations\Version.
+        ProcessBuilder::create(
+            ['app/console', 'doc:mig:diff', '--em=middleware', '--filter-expression=~^(?!event_stream).*$~']
+        )
+            ->getProcess()
+            ->run(function ($type, $data) use ($output) {
+                $output->write($data);
+            });
+
+        $output->writeln(['<info>Generating diff for Gateway...</info>', '']);
+
+        ProcessBuilder::create(['app/console', 'doc:mig:diff', '--em=gateway'])
+            ->getProcess()
+            ->run(function ($type, $data) use ($output) {
+                $output->write($data);
+            });
     }
 }

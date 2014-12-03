@@ -36,21 +36,21 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
      */
     public function validate(array $gatewayConfiguration, $propertyPath)
     {
-        Assert::keyExists($gatewayConfiguration, 'service_provider', 'missing key service_provider', $propertyPath);
-        $this->validateServiceProviders($gatewayConfiguration['service_provider'], $propertyPath . '.service_provider');
+        Assert::keyExists($gatewayConfiguration, 'service_providers', 'missing key service_provider', $propertyPath);
+        $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
     }
 
     private function validateServiceProviders($serviceProviders, $propertyPath)
     {
         Assert::isArray(
             $serviceProviders,
-            'service_provider must have an array of service provider configurations as value',
-            'gateway.service_provider'
+            'service_providers must have an array of service provider configurations as value',
+            'gateway.service_providers'
         );
         Assert::true(
             count($serviceProviders) >= 1,
             'at least one service_provider must be configured',
-            'gateway.service_provider'
+            'gateway.service_providers'
         );
 
         foreach ($serviceProviders as $index => $serviceProvider) {

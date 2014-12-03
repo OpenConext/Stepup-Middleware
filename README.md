@@ -48,7 +48,6 @@ curl -XPOST -v \
       }
     ]
   }
->>>>>>> develop
 }
 ```
 

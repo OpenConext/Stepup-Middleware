@@ -141,7 +141,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $email = 'a@b.c';
         $commonName = 'Foo bar';
         $secFacId = new SecondFactorId(self::uuid());
-        $pubId = new PhoneNumber('+31612345678');
+        $pubId = new PhoneNumber('31612345678');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -176,7 +176,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $email = 'a@b.c';
         $commonName = 'Foo bar';
         $secFacId1 = new SecondFactorId(self::uuid());
-        $phoneNumber1 = new PhoneNumber('+31612345678');
+        $phoneNumber1 = new PhoneNumber('31612345678');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -212,7 +212,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName = 'Foo bar';
         $secFacId1 = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
-        $phoneNumber = new PhoneNumber('+31676543210');
+        $phoneNumber = new PhoneNumber('31676543210');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;

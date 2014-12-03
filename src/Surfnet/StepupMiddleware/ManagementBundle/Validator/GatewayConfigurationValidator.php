@@ -36,7 +36,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
      */
     public function validate(array $gatewayConfiguration, $propertyPath)
     {
-        Assert::keyExists($gatewayConfiguration, 'service_providers', 'missing key service_provider', $propertyPath);
+        Assert::keyExists($gatewayConfiguration, 'service_providers', 'missing key service_providers', $propertyPath);
         $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
     }
 

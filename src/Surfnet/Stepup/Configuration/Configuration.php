@@ -62,7 +62,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
 
         $this->lastServiceProvidersUpdatedEvent = new ServiceProvidersUpdatedEvent(
             self::CONFIGURATION_ID,
-            $decodedConfiguration['gateway']['service_provider']
+            $decodedConfiguration['gateway']['service_providers']
         );
 
         $this->apply($this->lastServiceProvidersUpdatedEvent);

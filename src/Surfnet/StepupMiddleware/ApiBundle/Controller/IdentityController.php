@@ -110,6 +110,7 @@ class IdentityController extends Controller
 
         $command = new SearchVerifiedSecondFactorCommand();
         $command->identityId = new IdentityId($identityId);
+        $command->registrationCode = (string) $request->get('registrationCode') ?: null;
         $command->pageNumber = (int) $request->get('p', 1);
 
         $secondFactors = $this->getSecondFactorService()->searchVerifiedSecondFactors($command);

@@ -28,6 +28,11 @@ class SearchVerifiedSecondFactorCommand
     public $identityId;
 
     /**
+     * @var string|null
+     */
+    public $registrationCode;
+
+    /**
      * @var int
      */
     public $pageNumber;

@@ -16,8 +16,8 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
-    default_locale:    nl_NL
-    locales:           [nl_NL]
+    default_locale:    en_GB
+    locales:           [nl_NL, en_GB]
     secret:            NotSoSecretReplaceMe!
 
     use_assetic_controller: true

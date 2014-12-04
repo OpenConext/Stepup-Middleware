@@ -87,7 +87,7 @@ class SecondFactorProjector extends Projector
     {
         $unverified = $this->unverifiedRepository->find((string) $event->secondFactorId);
 
-        $this->verifiedRepository->save($unverified->verifyEmail());
+        $this->verifiedRepository->save($unverified->verifyEmail($event->registrationCode));
         $this->unverifiedRepository->remove($unverified);
     }
 }

@@ -96,16 +96,23 @@ class UnverifiedSecondFactor implements \JsonSerializable
     }
 
     /**
+     * @param string $registrationCode
      * @return VerifiedSecondFactor
      */
-    public function verifyEmail()
+    public function verifyEmail($registrationCode)
     {
         $identity = $this->identity;
 
         $this->identity->unverifiedSecondFactors->removeElement($this);
         $this->identity = null;
 
-        return VerifiedSecondFactor::addToIdentity($identity, $this->id, $this->type, $this->secondFactorIdentifier);
+        return VerifiedSecondFactor::addToIdentity(
+            $identity,
+            $this->id,
+            $this->type,
+            $this->secondFactorIdentifier,
+            $registrationCode
+        );
     }
 
     public function jsonSerialize()

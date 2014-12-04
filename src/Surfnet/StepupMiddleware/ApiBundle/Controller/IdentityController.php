@@ -74,63 +74,10 @@ class IdentityController extends Controller
     }
 
     /**
-     * Lists the unverified second factors belonging to the given Identity.
-     *
-     * @param Request $request
-     * @param string $identityId
-     * @return Response
-     */
-    public function findUnverifiedSecondFactorsAction(Request $request, $identityId)
-    {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
-
-        $command = new SearchUnverifiedSecondFactorCommand();
-        $command->identityId = new IdentityId($identityId);
-        $command->pageNumber = (int) $request->get('p', 1);
-
-        $secondFactors = $this->getSecondFactorService()->searchUnverifiedSecondFactors($command);
-
-        return JsonCollectionResponse::fromPaginator($secondFactors);
-    }
-
-    /**
-     * Lists the verified second factors belonging to the given Identity.
-     *
-     * @param Request $request
-     * @param string $identityId
-     * @return Response
-     */
-    public function findVerifiedSecondFactorsAction(Request $request, $identityId)
-    {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
-
-        $command = new SearchVerifiedSecondFactorCommand();
-        $command->identityId = new IdentityId($identityId);
-        $command->registrationCode = (string) $request->get('registrationCode') ?: null;
-        $command->pageNumber = (int) $request->get('p', 1);
-
-        $secondFactors = $this->getSecondFactorService()->searchVerifiedSecondFactors($command);
-
-        return JsonCollectionResponse::fromPaginator($secondFactors);
-    }
-
-    /**
      * @return IdentityService
      */
     private function getService()
     {
         return $this->get('surfnet_stepup_middleware_api.service.identity');
-    }
-
-    /**
-     * @return SecondFactorService
-     */
-    private function getSecondFactorService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.second_factor');
     }
 }

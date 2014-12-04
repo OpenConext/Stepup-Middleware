@@ -60,6 +60,7 @@ class ConfigurationCommandHandler extends CommandHandler
 
         $event = $configuration->getLastUncommittedServiceProvidersUpdatedEvent();
         $this->gatewayConfigurationService->updateServiceProviders($event->serviceProviders);
+        $this->gatewayConfigurationService->updateRaas($event->raas);
 
         $this->repository->add($configuration);
     }

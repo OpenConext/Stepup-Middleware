@@ -31,12 +31,22 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ConfigurationStructureValidator extends ConstraintValidator
 {
+    /**
+     * @var GatewayConfigurationValidator
+     */
     private $gatewayConfigurationValidator;
 
+    /**
+     * @var RaaConfigurationValidator
+     */
+    private $raaConfigurationValidator;
+
     public function __construct(
-        GatewayConfigurationValidator $gatewayConfigurationValidator
+        GatewayConfigurationValidator $gatewayConfigurationValidator,
+        RaaConfigurationValidator $raaConfigurationValidator
     ) {
         $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
+        $this->raaConfigurationValidator = $raaConfigurationValidator;
     }
 
     public function validate($value, Constraint $constraint)
@@ -50,12 +60,14 @@ class ConfigurationStructureValidator extends ConstraintValidator
         } catch (AssertionException $exception) {
             // method is not in the interface yet, but the old method is deprecated.
             $violation = $this->context->buildViolation($exception->getMessage());
+            $violation->atPath($exception->getPropertyPath());
         } catch (CoreInvalidArgumentException $exception) {
             $violation = $this->context->buildViolation($exception->getMessage());
         }
 
         if ($violation) {
-            $violation->atPath('configuration')->addViolation();
+            // ensure we have a sensible path.
+            $violation->addViolation();
         }
     }
 
@@ -68,13 +80,22 @@ class ConfigurationStructureValidator extends ConstraintValidator
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
+        Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
         $this->validateGatewayConfiguration($configuration, 'gateway');
+        $this->validateRaaConfiguration($configuration, 'raa');
     }
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
     {
-        Assert::isArray($configuration['gateway'], 'Property "gateway" should have an object as value', $propertyPath);
+        Assert::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
 
         $this->gatewayConfigurationValidator->validate($configuration['gateway'], $propertyPath);
+    }
+
+    private function validateRaaConfiguration($configuration, $propertyPath)
+    {
+        Assert::isArray($configuration['raa'], 'Property "raa" must have an object as value', $propertyPath);
+
+        $this->raaConfigurationValidator->validate($configuration['raa'], $propertyPath);
     }
 }

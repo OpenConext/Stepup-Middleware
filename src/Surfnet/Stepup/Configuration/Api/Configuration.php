@@ -39,4 +39,11 @@ interface Configuration extends AggregateRoot
      * @return null|\Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
      */
     public function getLastUncommittedServiceProvidersUpdatedEvent();
+
+    /**
+     * Used to be able to update the raa configuration within a single transaction.
+     *
+     * @return null|\Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent
+     */
+    public function getLastUncommittedRaaUpdatedEvent();
 }

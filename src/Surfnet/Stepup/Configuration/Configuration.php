@@ -23,6 +23,7 @@ use GuzzleHttp;
 use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 
 class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
@@ -41,6 +42,11 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
      * @var null|\Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
      */
     private $lastServiceProvidersUpdatedEvent;
+
+    /**
+     * @var null|\Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent
+     */
+    private $lastRaaUpdatedEvent;
 
     public static function create()
     {
@@ -65,7 +71,13 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
             $decodedConfiguration['gateway']['service_providers']
         );
 
+        $this->lastRaaUpdatedEvent = new RaaUpdatedEvent(
+            self::CONFIGURATION_ID,
+            $decodedConfiguration['raa']
+        );
+
         $this->apply($this->lastServiceProvidersUpdatedEvent);
+        $this->apply($this->lastRaaUpdatedEvent);
     }
 
     public function getAggregateRootId()
@@ -81,6 +93,11 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     public function getLastUncommittedServiceProvidersUpdatedEvent()
     {
         return $this->lastServiceProvidersUpdatedEvent;
+    }
+
+    public function getLastUncommittedRaaUpdatedEvent()
+    {
+        return $this->lastRaaUpdatedEvent;
     }
 
     /**

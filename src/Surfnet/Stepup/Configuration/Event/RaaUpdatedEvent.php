@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
-class RaasUpdatedEvent extends ConfigurationEvent
+class RaaUpdatedEvent extends ConfigurationEvent
 {
     /**
      * @var array

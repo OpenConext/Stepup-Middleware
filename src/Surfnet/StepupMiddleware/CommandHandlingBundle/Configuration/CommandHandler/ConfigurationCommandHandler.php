@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService;
 
@@ -38,15 +39,23 @@ class ConfigurationCommandHandler extends CommandHandler
     private $gatewayConfigurationService;
 
     /**
+     * @var RaaProjector
+     */
+    private $raaProjector;
+
+    /**
      * @param ConfigurationRepository     $repository
      * @param GatewayConfigurationService $gatewayConfigurationService
+     * @param RaaProjector                $raaProjector
      */
     public function __construct(
         ConfigurationRepository $repository,
-        GatewayConfigurationService $gatewayConfigurationService
+        GatewayConfigurationService $gatewayConfigurationService,
+        RaaProjector $raaProjector
     ) {
         $this->repository = $repository;
         $this->gatewayConfigurationService = $gatewayConfigurationService;
+        $this->raaProjector = $raaProjector;
     }
 
     public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command)
@@ -60,7 +69,9 @@ class ConfigurationCommandHandler extends CommandHandler
 
         $event = $configuration->getLastUncommittedServiceProvidersUpdatedEvent();
         $this->gatewayConfigurationService->updateServiceProviders($event->serviceProviders);
-        $this->gatewayConfigurationService->updateRaas($event->raas);
+
+        $event = $configuration->getLastUncommittedRaaUpdatedEvent();
+        $this->raaProjector->updateRaaConfiguration($event);
 
         $this->repository->add($configuration);
     }

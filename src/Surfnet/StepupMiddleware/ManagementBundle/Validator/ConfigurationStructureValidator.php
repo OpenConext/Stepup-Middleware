@@ -60,12 +60,14 @@ class ConfigurationStructureValidator extends ConstraintValidator
         } catch (AssertionException $exception) {
             // method is not in the interface yet, but the old method is deprecated.
             $violation = $this->context->buildViolation($exception->getMessage());
+            $violation->atPath($exception->getPropertyPath());
         } catch (CoreInvalidArgumentException $exception) {
             $violation = $this->context->buildViolation($exception->getMessage());
         }
 
         if ($violation) {
-            $violation->atPath('configuration')->addViolation();
+            // ensure we have a sensible path.
+            $violation->addViolation();
         }
     }
 

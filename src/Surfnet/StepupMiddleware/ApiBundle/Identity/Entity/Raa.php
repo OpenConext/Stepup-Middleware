@@ -92,6 +92,7 @@ class Raa implements JsonSerializable
         }
 
         $raa = new self($institution, $nameId);
+
         return $raa;
     }
 

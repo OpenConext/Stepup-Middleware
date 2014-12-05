@@ -34,6 +34,9 @@ curl -XPOST -v \
 
 ```json
 {
+  "raa": {
+    "Example Inc": ["3858f62230ac3c915f300c664312c63f"]
+  },
   "gateway": {
     "service_provider": [
       {

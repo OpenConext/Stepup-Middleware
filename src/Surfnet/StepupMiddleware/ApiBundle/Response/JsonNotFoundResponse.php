@@ -27,8 +27,6 @@ class JsonNotFoundResponse extends JsonResponse
      */
     public function __construct($headers = array())
     {
-        // using an empty string rather than null, null is converted to an ArrayObject (thus [] in the responsebody)
-        // in the constructor of the json response :(
-        parent::__construct('', 404, $headers);
+        parent::__construct(null, 404, $headers);
     }
 }

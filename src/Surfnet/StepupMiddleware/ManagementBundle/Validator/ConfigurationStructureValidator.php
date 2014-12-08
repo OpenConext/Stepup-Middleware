@@ -81,8 +81,11 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
         Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
+        Assert::keyExists($configuration, 'sraa', "Required property 'sraa' is missing", '(root)');
+
         $this->validateGatewayConfiguration($configuration, 'gateway');
         $this->validateRaaConfiguration($configuration, 'raa');
+        $this->validateSraaConfiguration($configuration, 'sraa');
     }
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
@@ -97,5 +100,22 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assert::isArray($configuration['raa'], 'Property "raa" must have an object as value', $propertyPath);
 
         $this->raaConfigurationValidator->validate($configuration['raa'], $propertyPath);
+    }
+
+    private function validateSraaConfiguration($configuration, $propertyPath)
+    {
+        Assert::isArray(
+            $configuration['sraa'],
+            'Property sraa must have an array of name_ids (string) as value',
+            $propertyPath
+        );
+
+        foreach ($configuration['sraa'] as $index => $value) {
+            Assert::string(
+                $value,
+                'value must be a string (the name_id of the SRAA)',
+                $propertyPath . '[' . $index. ']'
+            );
+        }
     }
 }

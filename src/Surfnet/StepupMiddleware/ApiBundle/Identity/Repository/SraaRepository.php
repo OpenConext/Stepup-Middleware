@@ -20,40 +20,26 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
-class RaaRepository extends EntityRepository
+class SraaRepository extends EntityRepository
 {
-    public function getAllNameIdsRegisteredFor($institution)
+    public function removeAll()
     {
-        $query = $this
+        $this
             ->getEntityManager()
-            ->createQuery("
-                SELECT
-                    raa.nameId
-                FROM
-                    Surfnet\\StepupMiddleware\\ApiBundle\\Identity\\Entity\\Raa raa
-                WHERE
-                    raa.institution = :institution
-            ");
-
-        $query->setParameter('institution', $institution);
-
-        $result = $query->getScalarResult();
-        return array_map(function ($value) {
-            return $value['nameId'];
-        }, $result);
+            ->createQuery(
+                'DELETE FROM Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa'
+            )
+            ->execute();
     }
 
-    /**
-     * @param array $raaCollection
-     */
-    public function saveAll(array $raaCollection)
+    public function saveAll($sraaList)
     {
         $invalid = [];
-        foreach ($raaCollection as $index => $raa) {
-            if (!$raa instanceof Raa) {
-                $invalid[$index] = $raa;
+        foreach ($sraaList as $index => $sraa) {
+            if (!$sraa instanceof Sraa) {
+                $invalid[$index] = $sraa;
             }
         }
 
@@ -66,16 +52,18 @@ class RaaRepository extends EntityRepository
                 );
             }
 
-            throw new InvalidArgumentException(sprintf(
-                'Expected array of Raa Objects, got %s',
-                implode(', ', $invalidIndications)
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Expected array of Raa Objects, got %s',
+                    implode(', ', $invalidIndications)
+                )
+            );
         }
 
         $entityManager = $this->getEntityManager();
 
-        foreach ($raaCollection as $raa) {
-            $entityManager->persist($raa);
+        foreach ($sraaList as $sraa) {
+            $entityManager->persist($sraa);
         }
 
         $entityManager->flush();

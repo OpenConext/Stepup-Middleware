@@ -27,8 +27,29 @@ class RaaConfigurationValidator implements ConfigurationValidatorInterface
         foreach ($configuration as $entityId => $raaCollection) {
             $path = $propertyPath . '[' . $entityId . ']';
             Assert::string($entityId, 'raa configuration must have entityIds as strings as property', $path);
-            Assert::isArray($raaCollection, 'each entityId must have an array of (string) nameIds as value', $path);
-            Assert::allString($raaCollection, 'each entityId must have an array of (string) nameIds as value', $path);
+            Assert::isArray($raaCollection, 'each entityId must have an array of raa configurations as value', $path);
+
+            foreach ($raaCollection as $index => $raaConfiguration) {
+                $subPath = $path . '[' . $index . ']';
+                $this->validateRaaConfiguration($raaConfiguration, $subPath);
+            }
         }
+    }
+
+    public function validateRaaConfiguration($raaConfiguration, $subPath)
+    {
+        Assert::isArray(
+            $raaConfiguration,
+            "each raa configuration must be an object with properties 'name_id', 'location' and 'contact_info' as value",
+            $subPath
+        );
+
+        Assert::keyExists($raaConfiguration, 'name_id', 'required property name_id is missing', $subPath);
+        Assert::keyExists($raaConfiguration, 'location', 'required property location is missing', $subPath);
+        Assert::keyExists($raaConfiguration, 'contact_info', 'required property contact_info is missing', $subPath);
+
+        Assert::string($raaConfiguration['name_id'], 'value must be a string', $subPath . '.name_id');
+        Assert::string($raaConfiguration['location'], 'value must be a string', $subPath . '.location');
+        Assert::string($raaConfiguration['contact_info'], 'value must be a string', $subPath . '.contact_info');
     }
 }

@@ -40,9 +40,11 @@ class RaaRepository extends EntityRepository
         $query->setParameter('institution', $institution);
 
         $result = $query->getScalarResult();
-        return array_map(function ($value) {
+        $scalarList = array_map(function ($value) {
             return $value['nameId'];
         }, $result);
+
+        return $scalarList;
     }
 
     /**

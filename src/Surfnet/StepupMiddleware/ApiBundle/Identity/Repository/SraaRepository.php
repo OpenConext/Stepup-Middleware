@@ -76,4 +76,13 @@ class SraaRepository extends EntityRepository
 
         $entityManager->flush();
     }
+
+    /**
+     * @param $nameId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa
+     */
+    public function findByNameId($nameId)
+    {
+        return $this->findOneBy(['nameId' => $nameId]);
+    }
 }

@@ -6,6 +6,12 @@ services:
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
 
+    surfnet_stepup_middleware_api.repository.ra:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra ]
+
     surfnet_stepup_middleware_api.repository.raa:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository
         factory_service: doctrine.orm.middleware_entity_manager
@@ -47,6 +53,9 @@ services:
         parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - @surfnet_stepup_middleware_api.repository.identity
+            - @surfnet_stepup_middleware_api.repository.ra
+            - @surfnet_stepup_middleware_api.repository.raa
+            - @surfnet_stepup_middleware_api.repository.sraa
 
     surfnet_stepup_middleware_api.service.raa:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaaService

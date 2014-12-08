@@ -103,4 +103,13 @@ class RaaRepository extends EntityRepository
 
         return $queryBuilder->getQuery();
     }
+
+    /**
+     * @param string $nameId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa
+     */
+    public function findByNameId($nameId)
+    {
+        return $this->findOneBy(['nameId' => $nameId]);
+    }
 }

@@ -26,6 +26,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFact
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
+use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -114,6 +115,23 @@ class IdentityController extends Controller
         $secondFactors = $this->getSecondFactorService()->searchVerifiedSecondFactors($command);
 
         return JsonCollectionResponse::fromPaginator($secondFactors);
+    }
+
+    /**
+     * @param string $identityId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getRegistrationAuthorityCredentialsAction($identityId)
+    {
+        $identityService = $this->getService();
+
+        $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
+
+        if (!$credentials) {
+            return new JsonNotFoundResponse();
+        }
+
+        return new JsonResponse($credentials);
     }
 
     /**

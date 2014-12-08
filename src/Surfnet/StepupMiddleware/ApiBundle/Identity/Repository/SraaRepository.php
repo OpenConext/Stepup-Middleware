@@ -24,6 +24,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
 class SraaRepository extends EntityRepository
 {
+    /**
+     * Removes all SRAA's from the database
+     */
     public function removeAll()
     {
         $this
@@ -34,7 +37,12 @@ class SraaRepository extends EntityRepository
             ->execute();
     }
 
-    public function saveAll($sraaList)
+    /**
+     * Saves all SRAAs to the database, using inserts only
+     *
+     * @param array $sraaList
+     */
+    public function saveAll(array $sraaList)
     {
         $invalid = [];
         foreach ($sraaList as $index => $sraa) {

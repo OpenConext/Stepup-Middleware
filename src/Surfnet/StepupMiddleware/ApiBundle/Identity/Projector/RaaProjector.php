@@ -35,6 +35,9 @@ class RaaProjector extends Projector
         $this->raaRepository = $raaRepository;
     }
 
+    /**
+     * @param RaaUpdatedEvent $event
+     */
     public function updateRaaConfiguration(RaaUpdatedEvent $event)
     {
         foreach ($event->raas as $institution => $raaList) {
@@ -42,6 +45,10 @@ class RaaProjector extends Projector
         }
     }
 
+    /**
+     * @param string $institution
+     * @param array  $raaList
+     */
     private function updateRaaListForInstitution($institution, $raaList)
     {
         $existingNameIds = $this->raaRepository->getAllNameIdsRegisteredFor($institution);
@@ -54,10 +61,19 @@ class RaaProjector extends Projector
             return in_array($raa['name_id'], $toBeInsertedNameIds);
         });
 
+        $this->insertNewRaas($institution, $toBeInserted);
+    }
+
+    /**
+     * @param string $institution
+     * @param array $toBeInserted
+     */
+    private function insertNewRaas($institution, array $toBeInserted)
+    {
         $raaCollection = [];
         foreach ($toBeInserted as $raaConfiguration) {
-            $raa = Raa::create($institution, $raaConfiguration['name_id']);
-            $raa->location = $raaConfiguration['location'];
+            $raa                     = Raa::create($institution, $raaConfiguration['name_id']);
+            $raa->location           = $raaConfiguration['location'];
             $raa->contactInformation = $raaConfiguration['contact_info'];
 
             $raaCollection[] = $raa;

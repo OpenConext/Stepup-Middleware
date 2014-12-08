@@ -83,7 +83,7 @@ class ConfigurationCommandHandler extends CommandHandler
         $this->raaProjector->updateRaaConfiguration($event);
 
         $event = $configuration->getLastUncommittedSraaUpdatedEvent();
-        $this->sraaProjector->updateSraaConfiguration($event);
+        $this->sraaProjector->replaceSraaConfiguration($event);
 
         $this->repository->add($configuration);
     }

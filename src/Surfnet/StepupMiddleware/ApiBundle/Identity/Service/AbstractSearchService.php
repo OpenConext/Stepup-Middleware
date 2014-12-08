@@ -27,6 +27,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\AbstractSearchCommand;
 
 class AbstractSearchService
 {
+    /**
+     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $searchQuery
+     * @param AbstractSearchCommand                          $command
+     * @return Pagerfanta
+     */
     protected function createPaginatorFrom($searchQuery, AbstractSearchCommand $command)
     {
         $query = $searchQuery;

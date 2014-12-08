@@ -77,7 +77,7 @@ class IdentityController extends Controller
      *
      * @param Request $request
      * @param string $identityId
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function findUnverifiedSecondFactorsAction(Request $request, $identityId)
     {

@@ -35,7 +35,7 @@ class RaaService extends AbstractSearchService
 
     /**
      * @param SearchRaaCommand $searchRaaCommand
-     * @return \Pagerfanta\PagerfantaInterface
+     * @return \Pagerfanta\Pagerfanta
      */
     public function search(SearchRaaCommand $searchRaaCommand)
     {

@@ -47,7 +47,7 @@ class IdentityService extends AbstractSearchService
 
     /**
      * @param SearchIdentityCommand $command
-     * @return \Pagerfanta\PagerfantaInterface
+     * @return \Pagerfanta\Pagerfanta
      */
     public function search(SearchIdentityCommand $command)
     {

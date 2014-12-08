@@ -49,7 +49,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param SearchUnverifiedSecondFactorCommand $command
-     * @return \Pagerfanta\PagerfantaInterface
+     * @return \Pagerfanta\Pagerfanta
      */
     public function searchUnverifiedSecondFactors(SearchUnverifiedSecondFactorCommand $command)
     {
@@ -62,7 +62,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param SearchVerifiedSecondFactorCommand $command
-     * @return \Pagerfanta\PagerfantaInterface
+     * @return \Pagerfanta\Pagerfanta
      */
     public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
     {

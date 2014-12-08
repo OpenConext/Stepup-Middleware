@@ -16,17 +16,18 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Response;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\EntityRepository;
 
-class JsonNotFoundResponse extends JsonResponse
+class RaRepository extends EntityRepository
 {
     /**
-     * @param array $headers
+     * @param string $nameId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra
      */
-    public function __construct($headers = array())
+    public function findByNameId($nameId)
     {
-        parent::__construct(null, 404, $headers);
+        return $this->findOneBy(['nameId' => $nameId]);
     }
 }

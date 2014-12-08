@@ -35,7 +35,7 @@ class RaaController extends Controller
 
         $command = new SearchRaaCommand();
         $command->institution = $institution;
-        $command->nameId = $request->get('name_id');
+        $command->nameId = $request->get('NameID');
         $command->pageNumber = (int) $request->get('p', 1);
 
         $paginator = $this->getService()->search($command);

@@ -31,14 +31,20 @@ services:
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor ]
 
     # Domain Services
+    surfnet_stepup_middleware_api.service.abstract_search:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
+        abstract: true
+
     surfnet_stepup_middleware_api.service.second_factor:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - @surfnet_stepup_middleware_api.repository.unverified_second_factor
             - @surfnet_stepup_middleware_api.repository.verified_second_factor
 
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
 
     # Param Converters

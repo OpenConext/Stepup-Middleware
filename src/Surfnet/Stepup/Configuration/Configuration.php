@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 
 class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
 {
@@ -47,6 +48,11 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
      * @var null|\Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent
      */
     private $lastRaaUpdatedEvent;
+
+    /**
+     * @var null|\Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent
+     */
+    private $lastSraaUpdatedEvent;
 
     public static function create()
     {
@@ -76,8 +82,14 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
             $decodedConfiguration['raa']
         );
 
+        $this->lastSraaUpdatedEvent = new SraaUpdatedEvent(
+            self::CONFIGURATION_ID,
+            $decodedConfiguration['sraa']
+        );
+
         $this->apply($this->lastServiceProvidersUpdatedEvent);
         $this->apply($this->lastRaaUpdatedEvent);
+        $this->apply($this->lastSraaUpdatedEvent);
     }
 
     public function getAggregateRootId()
@@ -100,12 +112,19 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         return $this->lastRaaUpdatedEvent;
     }
 
+    public function getLastUncommittedSraaUpdatedEvent()
+    {
+        return $this->lastSraaUpdatedEvent;
+    }
+
     /**
      * {@inheritDoc} Cleaning up the possible event, as the uncommittedEvents will be removed as well
      */
     public function getUncommittedEvents()
     {
         $this->lastServiceProvidersUpdatedEvent = null;
+        $this->lastRaaUpdatedEvent = null;
+        $this->lastSraaUpdatedEvent = null;
 
         return parent::getUncommittedEvents();
     }

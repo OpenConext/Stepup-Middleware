@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 
-class SearchIdentityCommand
+class SearchIdentityCommand extends AbstractSearchCommand
 {
     /**
      * @var string
@@ -39,14 +39,4 @@ class SearchIdentityCommand
      * @var string
      */
     public $email;
-
-    /**
-     * @var int
-     */
-    public $pageNumber;
-
-    /**
-     * @var int
-     */
-    public $itemsPerPage = 25;
 }

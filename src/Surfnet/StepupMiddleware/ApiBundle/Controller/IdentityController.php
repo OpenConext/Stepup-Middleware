@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
@@ -78,7 +77,7 @@ class IdentityController extends Controller
      *
      * @param Request $request
      * @param string $identityId
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function findUnverifiedSecondFactorsAction(Request $request, $identityId)
     {
@@ -100,7 +99,7 @@ class IdentityController extends Controller
      *
      * @param Request $request
      * @param string $identityId
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function findVerifiedSecondFactorsAction(Request $request, $identityId)
     {

@@ -18,12 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
-class IdentityService
+class IdentityService extends AbstractSearchService
 {
     /**
      * @var IdentityRepository
@@ -49,16 +47,13 @@ class IdentityService
 
     /**
      * @param SearchIdentityCommand $command
-     * @return Pagerfanta
+     * @return \Pagerfanta\Pagerfanta
      */
     public function search(SearchIdentityCommand $command)
     {
         $searchQuery = $this->repository->createSearchQuery($command);
 
-        $adapter  = new DoctrineORMAdapter($searchQuery);
-        $paginator = new Pagerfanta($adapter);
-        $paginator->setMaxPerPage($command->itemsPerPage);
-        $paginator->setCurrentPage($command->pageNumber);
+        $paginator = $this->createPaginatorFrom($searchQuery, $command);
 
         return $paginator;
     }

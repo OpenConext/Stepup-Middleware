@@ -29,3 +29,17 @@ identity_verified_second_factors:
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:findVerifiedSecondFactors }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+identity_raa_search:
+    path:      /raa
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Raa:search }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+identity_sraa_get:
+    path:      /sraa/{nameId}
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Sraa:get }
+    methods:   [GET]
+    requirements:
+        nameId: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

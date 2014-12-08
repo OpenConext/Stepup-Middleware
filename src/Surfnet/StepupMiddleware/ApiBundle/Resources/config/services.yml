@@ -45,7 +45,20 @@ services:
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
         parent: surfnet_stepup_middleware_api.service.abstract_search
-        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.identity
+
+    surfnet_stepup_middleware_api.service.raa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaaService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.raa
+
+    surfnet_stepup_middleware_api.service.sraa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.sraa
 
     # Param Converters
     surfnet_stepup_middleware_api.request.command_param_converter:

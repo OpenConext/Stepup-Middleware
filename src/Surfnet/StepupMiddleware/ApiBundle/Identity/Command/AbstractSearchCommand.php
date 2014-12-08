@@ -18,12 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
-
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+abstract class AbstractSearchCommand
 {
     /**
-     * @var IdentityId
+     * @var int
      */
-    public $identityId;
+    public $pageNumber;
+
+    /**
+     * @var int
+     */
+    public $itemsPerPage = 25;
 }

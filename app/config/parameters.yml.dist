@@ -22,12 +22,20 @@ parameters:
 
     use_assetic_controller: true
 
+    # Passwords for authentcation to the api exposed by this (i.e. the middleware) component
+    # API: https://middleware.tld/
+    # Command API: https://middleware.tld/command
+    # Usernames for the three accounts below are:
+    # - selfservice - user "ss"
+    # - registration - user "ra"
+    # - management - user "management"
     selfservice_api_password: ~
     registration_authority_api_password: ~
     management_password: ~
 
+    # Hostname for the graylog server. Prolocol GELF UDP, Port 12200
     graylog_hostname: graylog.host.tld
-
-    self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/verify-email?n={nonce}
+    
+    self_service_email_verification_url_template: https://selfservice.tld/app.php/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl

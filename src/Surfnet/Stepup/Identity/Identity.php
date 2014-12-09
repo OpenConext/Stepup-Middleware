@@ -242,9 +242,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private function assertUserMayAddSecondFactor()
     {
-        if (count($this->unverifiedSecondFactors) + count($this->verifiedSecondFactors) > 0) {
+        if (count($this->unverifiedSecondFactors) +
+            count($this->verifiedSecondFactors) +
+            count($this->vettedSecondFactors) > 0
+        ) {
             throw new DomainException('User may not have more than one token');
         }
+    }
+
+    /**
+     * @return Institution
+     */
+    public function getInstitution()
+    {
+        return $this->institution;
     }
 
     /**

@@ -22,9 +22,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository")
+ * @ORM\Entity(
+ *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository"
+ * )
  */
-class VerifiedSecondFactor implements \JsonSerializable
+class VettedSecondFactor implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -35,7 +37,7 @@ class VerifiedSecondFactor implements \JsonSerializable
     public $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="verifiedSecondFactors")
+     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="vettedSecondFactors")
      *
      * @var Identity
      */
@@ -58,27 +60,14 @@ class VerifiedSecondFactor implements \JsonSerializable
     public $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(length=8)
-     *
-     * @var string
-     */
-    public $registrationCode;
-
-    /**
      * @param Identity $identity
      * @param string $id
      * @param string $type
      * @param string $secondFactorIdentifier
-     * @param string $registrationCode
      * @return self
      */
-    public static function addToIdentity(
-        Identity $identity,
-        $id,
-        $type,
-        $secondFactorIdentifier,
-        $registrationCode
-    ) {
+    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier)
+    {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
@@ -91,18 +80,13 @@ class VerifiedSecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
         }
 
-        if (!is_string($registrationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
-        }
-
         $secondFactor = new self;
         $secondFactor->identity = $identity;
         $secondFactor->id = $id;
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
-        $secondFactor->registrationCode = $registrationCode;
 
-        $identity->verifiedSecondFactors->add($secondFactor);
+        $identity->vettedSecondFactors->add($secondFactor);
 
         return $secondFactor;
     }
@@ -111,30 +95,12 @@ class VerifiedSecondFactor implements \JsonSerializable
     {
     }
 
-    public function vet()
-    {
-        $identity = $this->identity;
-
-        $this->identity->verifiedSecondFactors->removeElement($this);
-        $this->identity = null;
-
-        return VettedSecondFactor::addToIdentity(
-            $identity,
-            $this->id,
-            $this->type,
-            $this->secondFactorIdentifier
-        );
-    }
-
     public function jsonSerialize()
     {
         return [
             'id'   => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'identity_id' => $this->identity->id,
-            'institution' => (string) $this->identity->institution,
-            'common_name' => $this->identity->commonName,
         ];
     }
 }

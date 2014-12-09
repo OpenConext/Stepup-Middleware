@@ -20,8 +20,11 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 /**
@@ -96,5 +99,70 @@ class VerifiedSecondFactor extends EventSourcedEntity
 
     final private function __construct()
     {
+    }
+
+    /**
+     * @param string $registrationCode
+     * @param string $secondFactorIdentifier
+     * @param string $documentNumber
+     * @param bool $identityVerified
+     * @return bool
+     */
+    public function wouldBeVettedBy($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    {
+        return $registrationCode === $this->registrationCode
+            && $secondFactorIdentifier === $this->secondFactorIdentifier
+            && $identityVerified === true
+            && !DateTime::now()->comesAfter($this->registrationRequestedAt->add('P14D'));
+    }
+
+    /**
+     * @param string $registrationCode
+     * @param string $secondFactorIdentifier
+     * @param string $documentNumber
+     * @param bool $identityVerified
+     */
+    public function vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    {
+        if ($registrationCode !== $this->registrationCode) {
+            throw new DomainException('Cannot vet this second factor: registration code mismatch.');
+        }
+
+        if ($secondFactorIdentifier !== $this->secondFactorIdentifier) {
+            throw new DomainException('Cannot vet this second factor: second factor identifier mismatch.');
+        }
+
+        if ($identityVerified !== true) {
+            throw new DomainException("Cannot vet this second factor: real identity wasn't verified by an RA.");
+        }
+
+        if (DateTime::now()->comesAfter($this->registrationRequestedAt->add('P14D'))) {
+            throw new DomainException('Cannot vet this second factor: registration window has closed.');
+        }
+
+        $this->apply(
+            new SecondFactorVettedEvent(
+                new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getInstitution(),
+                $this->id,
+                $documentNumber,
+                $this->identity->getCommonName(),
+                $this->identity->getEmail(),
+                'en_GB'
+            )
+        );
+    }
+
+    /**
+     * @return VettedSecondFactor
+     */
+    public function asVetted()
+    {
+        return VettedSecondFactor::create(
+            $this->id,
+            $this->identity,
+            $this->type,
+            $this->secondFactorIdentifier
+        );
     }
 }

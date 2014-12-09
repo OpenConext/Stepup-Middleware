@@ -32,6 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -110,6 +111,20 @@ class IdentityCommandHandler extends CommandHandler
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->verifyEmail($command->verificationNonce);
+
+        $this->repository->add($identity);
+    }
+
+    public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->vetSecondFactor(
+            $command->registrationCode,
+            $command->secondFactorIdentifier,
+            $command->documentNumber,
+            $command->identityVerified
+        );
 
         $this->repository->add($identity);
     }

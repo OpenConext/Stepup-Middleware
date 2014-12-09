@@ -20,28 +20,28 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 
-class VerifiedSecondFactorRepository extends EntityRepository
+class VettedSecondFactorRepository extends EntityRepository
 {
     /**
      * @param string $id
-     * @return VerifiedSecondFactor|null
+     * @return VettedSecondFactor|null
      */
     public function find($id)
     {
-        /** @var VerifiedSecondFactor|null $secondFactor */
+        /** @var VettedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
 
         return $secondFactor;
     }
 
     /**
-     * @param SearchVerifiedSecondFactorCommand $command
+     * @param SearchVettedSecondFactorCommand $command
      * @return Query
      */
-    public function createSearchQuery(SearchVerifiedSecondFactorCommand $command)
+    public function createSearchQuery(SearchVettedSecondFactorCommand $command)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
@@ -51,27 +51,15 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('identityId', (string) $command->identityId);
         }
 
-        if (is_string($command->registrationCode)) {
-            $queryBuilder
-                ->andWhere('sf.registrationCode = :registrationCode')
-                ->setParameter('registrationCode', $command->registrationCode);
-        }
-
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param VerifiedSecondFactor $secondFactor
+     * @param VettedSecondFactor $secondFactor
      */
-    public function save(VerifiedSecondFactor $secondFactor)
+    public function save(VettedSecondFactor $secondFactor)
     {
         $this->getEntityManager()->persist($secondFactor);
-        $this->getEntityManager()->flush();
-    }
-
-    public function remove(VerifiedSecondFactor $secondFactor)
-    {
-        $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();
     }
 }

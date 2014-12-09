@@ -22,9 +22,11 @@ use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
 class SecondFactorService
 {
@@ -39,15 +41,23 @@ class SecondFactorService
     private $verifiedRepository;
 
     /**
+     * @var VettedSecondFactorRepository
+     */
+    private $vettedRepository;
+
+    /**
      * @param UnverifiedSecondFactorRepository $unverifiedRepository
      * @param VerifiedSecondFactorRepository $verifiedRepository
+     * @param VettedSecondFactorRepository $vettedRepository
      */
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
-        VerifiedSecondFactorRepository $verifiedRepository
+        VerifiedSecondFactorRepository $verifiedRepository,
+        VettedSecondFactorRepository $vettedRepository
     ) {
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
+        $this->vettedRepository = $vettedRepository;
     }
 
     /**
@@ -73,6 +83,22 @@ class SecondFactorService
     public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
     {
         $query = $this->verifiedRepository->createSearchQuery($command);
+
+        $adapter  = new DoctrineORMAdapter($query);
+        $paginator = new Pagerfanta($adapter);
+        $paginator->setMaxPerPage($command->itemsPerPage);
+        $paginator->setCurrentPage($command->pageNumber);
+
+        return $paginator;
+    }
+
+    /**
+     * @param SearchVettedSecondFactorCommand $command
+     * @return Pagerfanta
+     */
+    public function searchVettedSecondFactors(SearchVettedSecondFactorCommand $command)
+    {
+        $query = $this->vettedRepository->createSearchQuery($command);
 
         $adapter  = new DoctrineORMAdapter($query);
         $paginator = new Pagerfanta($adapter);

@@ -26,11 +26,13 @@ use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -80,6 +82,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var Collection|VerifiedSecondFactor[]
      */
     private $verifiedSecondFactors;
+
+    /**
+     * @var Collection|VettedSecondFactor[]
+     */
+    private $vettedSecondFactors;
 
     public static function create(
         IdentityId $id,
@@ -167,6 +174,33 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    /**
+     * @param string $registrationCode
+     * @param string $secondFactorIdentifier
+     * @param string $documentNumber
+     * @param bool $identityVerified
+     */
+    public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    {
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            if (!$secondFactor->wouldBeVettedBy(
+                $registrationCode,
+                $secondFactorIdentifier,
+                $documentNumber,
+                $identityVerified
+            )) {
+                continue;
+            }
+
+            $secondFactor->vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
+            return;
+        }
+
+        throw new DomainException(
+            "Cannot vet second factor: no second factor with given registration code or registration window has closed."
+        );
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
@@ -176,6 +210,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->commonName = $event->commonName;
         $this->unverifiedSecondFactors = new ArrayCollection();
         $this->verifiedSecondFactors = new ArrayCollection();
+        $this->vettedSecondFactors = new ArrayCollection();
     }
 
     protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -228,6 +263,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set($secondFactorId, $verified);
     }
 
+    protected function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $secondFactorId = (string) $event->secondFactorId;
+
+        /** @var VerifiedSecondFactor $verified */
+        $verified = $this->verifiedSecondFactors->get($secondFactorId);
+        $vetted = $verified->asVetted();
+
+        $this->verifiedSecondFactors->remove($secondFactorId);
+        $this->vettedSecondFactors->set($secondFactorId, $vetted);
+    }
+
     public function getAggregateRootId()
     {
         return (string) $this->id;
@@ -235,7 +282,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function getChildEntities()
     {
-        return array_merge($this->unverifiedSecondFactors->getValues(), $this->verifiedSecondFactors->getValues());
+        return array_merge(
+            $this->unverifiedSecondFactors->getValues(),
+            $this->verifiedSecondFactors->getValues(),
+            $this->vettedSecondFactors->getValues()
+        );
     }
 
     /**

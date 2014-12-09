@@ -29,3 +29,9 @@ verified_second_factors:
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:collection }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+vetted_second_factors:
+    path:     /vetted-second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:collection }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

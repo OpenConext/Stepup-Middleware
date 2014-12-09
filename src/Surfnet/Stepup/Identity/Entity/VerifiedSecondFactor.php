@@ -43,6 +43,16 @@ class VerifiedSecondFactor extends EventSourcedEntity
     private $identity;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var string
+     */
+    private $secondFactorIdentifier;
+
+    /**
      * @var DateTime
      */
     private $registrationRequestedAt;
@@ -55,6 +65,8 @@ class VerifiedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
+     * @param string $type
+     * @param string $secondFactorIdentifier
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @return self
@@ -62,6 +74,8 @@ class VerifiedSecondFactor extends EventSourcedEntity
     public static function create(
         SecondFactorId $id,
         Identity $identity,
+        $type,
+        $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode
     ) {
@@ -72,6 +86,8 @@ class VerifiedSecondFactor extends EventSourcedEntity
         $secondFactor = new self;
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
+        $secondFactor->type = $type;
+        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
         $secondFactor->registrationRequestedAt = $registrationRequestedAt;
         $secondFactor->registrationCode = $registrationCode;
 

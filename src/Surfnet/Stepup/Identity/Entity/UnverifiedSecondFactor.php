@@ -45,6 +45,16 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     private $id;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var string
+     */
+    private $secondFactorIdentifier;
+
+    /**
      * @var DateTime
      */
     private $verificationRequestedAt;
@@ -57,6 +67,8 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
+     * @param string $type
+     * @param string $secondFactorIdentifier
      * @param DateTime $verificationRequestedAt
      * @param string $verificationNonce
      * @return UnverifiedSecondFactor
@@ -64,6 +76,8 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     public static function create(
         SecondFactorId $id,
         Identity $identity,
+        $type,
+        $secondFactorIdentifier,
         DateTime $verificationRequestedAt,
         $verificationNonce
     ) {
@@ -78,6 +92,8 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
+        $secondFactor->type = $type;
+        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
         $secondFactor->verificationRequestedAt = $verificationRequestedAt;
         $secondFactor->verificationNonce = $verificationNonce;
 
@@ -140,6 +156,23 @@ class UnverifiedSecondFactor extends EventSourcedEntity
                 $this->identity->getEmail(),
                 'en_GB'
             )
+        );
+    }
+
+    /**
+     * @param DateTime $registrationRequestedAt
+     * @param string $registrationCode
+     * @return VerifiedSecondFactor
+     */
+    public function asVerified($registrationRequestedAt, $registrationCode)
+    {
+        return VerifiedSecondFactor::create(
+            $this->id,
+            $this->identity,
+            $this->type,
+            $this->secondFactorIdentifier,
+            $registrationRequestedAt,
+            $registrationCode
         );
     }
 }

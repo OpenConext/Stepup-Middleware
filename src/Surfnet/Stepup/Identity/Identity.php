@@ -193,6 +193,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
+            'sms',
+            (string) $event->phoneNumber,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationNonce
         );
@@ -205,6 +207,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
+            'yubikey',
+            (string) $event->yubikeyPublicId,
             $event->emailVerificationRequestedAt,
             $event->emailVerificationNonce
         );
@@ -214,17 +218,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->unverifiedSecondFactors->remove((string) $event->secondFactorId);
+        $secondFactorId = (string) $event->secondFactorId;
 
-        $this->verifiedSecondFactors->set(
-            (string) $event->secondFactorId,
-            VerifiedSecondFactor::create(
-                $event->secondFactorId,
-                $this,
-                $event->registrationRequestedAt,
-                $event->registrationCode
-            )
-        );
+        /** @var UnverifiedSecondFactor $unverified */
+        $unverified = $this->unverifiedSecondFactors->get($secondFactorId);
+        $verified = $unverified->asVerified($event->registrationRequestedAt, $event->registrationCode);
+
+        $this->unverifiedSecondFactors->remove($secondFactorId);
+        $this->verifiedSecondFactors->set($secondFactorId, $verified);
     }
 
     public function getAggregateRootId()

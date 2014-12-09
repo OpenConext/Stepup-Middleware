@@ -91,7 +91,7 @@ class EmailVerifiedEvent extends IdentityEvent
             $data['registration_code'],
             $data['common_name'],
             $data['email'],
-            'en_GB'
+            $data['preferred_locale']
         );
     }
 
@@ -104,6 +104,7 @@ class EmailVerifiedEvent extends IdentityEvent
             'registration_code' => $this->registrationCode,
             'common_name' => $this->commonName,
             'email' => $this->email,
+            'preferred_locale' => $this->preferredLocale,
         ];
     }
 }

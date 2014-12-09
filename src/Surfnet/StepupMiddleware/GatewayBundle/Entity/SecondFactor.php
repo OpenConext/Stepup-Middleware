@@ -22,7 +22,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table
+ * @ORM\Table(
+ *      indexes={
+ *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
+ *      }
+ * )
  */
 class SecondFactor
 {
@@ -33,6 +37,13 @@ class SecondFactor
      * @ORM\Column(length=36)
      */
     private $identityId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(length=200)
+     */
+    private $nameId;
 
     /**
      * @var string
@@ -62,9 +73,10 @@ class SecondFactor
      */
     private $secondFactorIdentifier;
 
-    public function __construct($identityId, $institution, $secondFactorId, $secondFactorIdentifier, $secondFactorType)
+    public function __construct($identityId, $nameId, $institution, $secondFactorId, $secondFactorIdentifier, $secondFactorType)
     {
         $this->identityId             = $identityId;
+        $this->nameId                 = $nameId;
         $this->institution            = $institution;
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorIdentifier = $secondFactorIdentifier;

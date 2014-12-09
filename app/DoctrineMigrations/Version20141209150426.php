@@ -30,7 +30,7 @@ class Version20141209150426 extends AbstractMigration implements ContainerAwareI
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql(sprintf(
-            'CREATE TABLE %s.second_factor (identity_id VARCHAR(36) NOT NULL, institution VARCHAR(200) NOT NULL, second_factor_id VARCHAR(36) NOT NULL, second_factor_type VARCHAR(50) NOT NULL, second_factor_identifier VARCHAR(100) NOT NULL, PRIMARY KEY(identity_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB',
+            'CREATE TABLE %s.second_factor (identity_id VARCHAR(36) NOT NULL, name_id VARCHAR(200) NOT NULL, institution VARCHAR(200) NOT NULL, second_factor_id VARCHAR(36) NOT NULL, second_factor_type VARCHAR(50) NOT NULL, second_factor_identifier VARCHAR(100) NOT NULL, INDEX idx_secondfactor_nameid (name_id), PRIMARY KEY(identity_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB',
             $gatewaySchema
         ));
         $this->addSql(sprintf(

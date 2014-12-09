@@ -33,4 +33,4 @@ monolog:
     # these email addresses should be configurable and configured correctly
             from_email: stepup-error@surfnet.nl
             to_email:   error@example.com
-            subject:    "[StepUp][%kernel.environment%] An Error Occurred!"
+            subject:    "[StepUp][Middleware][%kernel.environment%] An Error Occurred!"

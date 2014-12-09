@@ -77,7 +77,6 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->secondFactorId = $secondFactorId;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
-        $this->identityId = $identityId;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;

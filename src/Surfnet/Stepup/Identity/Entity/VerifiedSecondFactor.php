@@ -110,7 +110,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
      */
     public function wouldBeVettedBy($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
     {
-        return $registrationCode === $this->registrationCode
+        return strcasecmp($registrationCode, $this->registrationCode) === 0
             && $secondFactorIdentifier === $this->secondFactorIdentifier
             && $identityVerified === true
             && !DateTime::now()->comesAfter($this->registrationRequestedAt->add('P14D'));
@@ -124,7 +124,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
      */
     public function vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
     {
-        if ($registrationCode !== $this->registrationCode) {
+        if (strcasecmp($registrationCode, $this->registrationCode) !== 0) {
             throw new DomainException('Cannot vet this second factor: registration code mismatch.');
         }
 

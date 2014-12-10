@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),

@@ -3,3 +3,9 @@ services:
         class: Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService
         arguments:
             - @middleware.gateway_repository.saml_entities
+
+    surfnet_stepup_middleware_gateway.projector.second_factor:
+        class: Surfnet\StepupMiddleware\GatewayBundle\Projector\SecondFactorProjector
+        arguments:
+            - @middleware.gateway_repository.second_factors
+        tags: [{ name: event_bus.event_listener }]

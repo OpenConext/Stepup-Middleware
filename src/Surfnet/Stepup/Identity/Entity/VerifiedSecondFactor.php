@@ -143,8 +143,11 @@ class VerifiedSecondFactor extends EventSourcedEntity
         $this->apply(
             new SecondFactorVettedEvent(
                 new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getNameId(),
                 $this->identity->getInstitution(),
                 $this->id,
+                $this->type,
+                $this->secondFactorIdentifier,
                 $documentNumber,
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),

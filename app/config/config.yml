@@ -85,8 +85,8 @@ doctrine:
                     api:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
-                        prefix: Surfnet\StepupMiddleware\ApiBundle
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
+                        prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
                 dql:
                     string_functions:

@@ -34,6 +34,18 @@ curl -XPOST -v \
 
 ```json
 {
+  "sraa": [
+    "3858f62230ac3c915f300c664312c63f"
+  ],
+  "raa": {
+    "Example Inc": [
+      {
+        "name_id": "3858f62230ac3c915f300c664312c63f",
+        "location": "Achter je, schrikt niet",
+        "contact_info": "Heul hard roepen!"
+      }
+    ]
+  },
   "gateway": {
     "service_provider": [
       {
@@ -48,7 +60,6 @@ curl -XPOST -v \
       }
     ]
   }
->>>>>>> develop
 }
 ```
 

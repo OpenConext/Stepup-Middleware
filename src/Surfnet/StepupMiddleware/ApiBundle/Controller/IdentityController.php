@@ -18,15 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
+use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,6 +67,23 @@ class IdentityController extends Controller
         $paginator = $this->getService()->search($command);
 
         return JsonCollectionResponse::fromPaginator($paginator);
+    }
+
+    /**
+     * @param string $identityId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getRegistrationAuthorityCredentialsAction($identityId)
+    {
+        $identityService = $this->getService();
+
+        $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
+
+        if (!$credentials) {
+            return new JsonNotFoundResponse();
+        }
+
+        return new JsonResponse($credentials);
     }
 
     /**

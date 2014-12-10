@@ -16,14 +16,33 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\Stepup\Configuration\Event;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
-
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+class SraaUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var IdentityId
+     * @var array
      */
-    public $identityId;
+    public $sraaList;
+
+    /**
+     * @param string $configurationId
+     * @param array  $sraaList
+     */
+    public function __construct($configurationId, array $sraaList)
+    {
+        parent::__construct($configurationId);
+
+        $this->sraaList = $sraaList;
+    }
+
+    public static function deserialize(array $data)
+    {
+        return new self($data['id'], $data['sraa_list']);
+    }
+
+    public function serialize()
+    {
+        return ['id' => $this->id, 'sraa_list' => $this->sraaList];
+    }
 }

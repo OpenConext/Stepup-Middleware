@@ -16,14 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Response;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+class JsonNotFoundResponse extends JsonResponse
 {
     /**
-     * @var IdentityId
+     * @param array $headers
      */
-    public $identityId;
+    public function __construct($headers = array())
+    {
+        parent::__construct(null, 404, $headers);
+    }
 }

@@ -22,6 +22,8 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\GatewayBundle\Service\GatewayConfigurationService;
 
@@ -38,15 +40,31 @@ class ConfigurationCommandHandler extends CommandHandler
     private $gatewayConfigurationService;
 
     /**
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector
+     */
+    private $raaProjector;
+
+    /**
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector
+     */
+    private $sraaProjector;
+
+    /**
      * @param ConfigurationRepository     $repository
      * @param GatewayConfigurationService $gatewayConfigurationService
+     * @param RaaProjector                $raaProjector
+     * @param SraaProjector               $sraaProjector
      */
     public function __construct(
         ConfigurationRepository $repository,
-        GatewayConfigurationService $gatewayConfigurationService
+        GatewayConfigurationService $gatewayConfigurationService,
+        RaaProjector $raaProjector,
+        SraaProjector $sraaProjector
     ) {
         $this->repository = $repository;
         $this->gatewayConfigurationService = $gatewayConfigurationService;
+        $this->raaProjector = $raaProjector;
+        $this->sraaProjector = $sraaProjector;
     }
 
     public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command)
@@ -60,6 +78,12 @@ class ConfigurationCommandHandler extends CommandHandler
 
         $event = $configuration->getLastUncommittedServiceProvidersUpdatedEvent();
         $this->gatewayConfigurationService->updateServiceProviders($event->serviceProviders);
+
+        $event = $configuration->getLastUncommittedRaaUpdatedEvent();
+        $this->raaProjector->updateRaaConfiguration($event);
+
+        $event = $configuration->getLastUncommittedSraaUpdatedEvent();
+        $this->sraaProjector->replaceSraaConfiguration($event);
 
         $this->repository->add($configuration);
     }

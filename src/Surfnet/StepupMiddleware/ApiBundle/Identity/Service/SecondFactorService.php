@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
@@ -28,7 +26,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFacto
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
-class SecondFactorService
+class SecondFactorService extends AbstractSearchService
 {
     /**
      * @var UnverifiedSecondFactorRepository
@@ -62,32 +60,26 @@ class SecondFactorService
 
     /**
      * @param SearchUnverifiedSecondFactorCommand $command
-     * @return Pagerfanta
+     * @return \Pagerfanta\Pagerfanta
      */
     public function searchUnverifiedSecondFactors(SearchUnverifiedSecondFactorCommand $command)
     {
         $query = $this->unverifiedRepository->createSearchQuery($command);
 
-        $adapter  = new DoctrineORMAdapter($query);
-        $paginator = new Pagerfanta($adapter);
-        $paginator->setMaxPerPage($command->itemsPerPage);
-        $paginator->setCurrentPage($command->pageNumber);
+        $paginator = $this->createPaginatorFrom($query, $command);
 
         return $paginator;
     }
 
     /**
      * @param SearchVerifiedSecondFactorCommand $command
-     * @return Pagerfanta
+     * @return \Pagerfanta\Pagerfanta
      */
     public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
     {
         $query = $this->verifiedRepository->createSearchQuery($command);
 
-        $adapter  = new DoctrineORMAdapter($query);
-        $paginator = new Pagerfanta($adapter);
-        $paginator->setMaxPerPage($command->itemsPerPage);
-        $paginator->setCurrentPage($command->pageNumber);
+        $paginator = $this->createPaginatorFrom($query, $command);
 
         return $paginator;
     }
@@ -100,10 +92,7 @@ class SecondFactorService
     {
         $query = $this->vettedRepository->createSearchQuery($command);
 
-        $adapter  = new DoctrineORMAdapter($query);
-        $paginator = new Pagerfanta($adapter);
-        $paginator->setMaxPerPage($command->itemsPerPage);
-        $paginator->setCurrentPage($command->pageNumber);
+        $paginator = $this->createPaginatorFrom($query, $command);
 
         return $paginator;
     }

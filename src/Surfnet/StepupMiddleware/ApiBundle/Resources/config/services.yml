@@ -1,14 +1,80 @@
 services:
-    # Domain
+    # Repositories
     surfnet_stepup_middleware_api.repository.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
         factory_service: doctrine.orm.middleware_entity_manager
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
 
+    surfnet_stepup_middleware_api.repository.ra:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra ]
+
+    surfnet_stepup_middleware_api.repository.raa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa ]
+
+    surfnet_stepup_middleware_api.repository.sraa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa ]
+
+    surfnet_stepup_middleware_api.repository.unverified_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor ]
+
+    surfnet_stepup_middleware_api.repository.verified_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor ]
+
+    surfnet_stepup_middleware_api.repository.vetted_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor ]
+
+    # Domain Services
+    surfnet_stepup_middleware_api.service.abstract_search:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
+        abstract: true
+
+    surfnet_stepup_middleware_api.service.second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.unverified_second_factor
+            - @surfnet_stepup_middleware_api.repository.verified_second_factor
+            - @surfnet_stepup_middleware_api.repository.vetted_second_factor
+
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
-        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.identity
+            - @surfnet_stepup_middleware_api.repository.ra
+            - @surfnet_stepup_middleware_api.repository.raa
+            - @surfnet_stepup_middleware_api.repository.sraa
+
+    surfnet_stepup_middleware_api.service.raa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaaService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.raa
+
+    surfnet_stepup_middleware_api.service.sraa:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.sraa
 
     # Param Converters
     surfnet_stepup_middleware_api.request.command_param_converter:
@@ -37,38 +103,3 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
         arguments:
             - ~ # HTTP Basic realm string, see extension
-
-    surfnet_stepup_middleware_api.repository.identity:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
-        factory_service: doctrine.orm.middleware_entity_manager
-        factory_method: getRepository
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
-
-    surfnet_stepup_middleware_api.service.identity:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
-        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
-
-    surfnet_stepup_middleware_api.repository.unverified_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository
-        factory_service: doctrine.orm.middleware_entity_manager
-        factory_method: getRepository
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.verified_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository
-        factory_service: doctrine.orm.middleware_entity_manager
-        factory_method: getRepository
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.vetted_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
-        factory_service: doctrine.orm.middleware_entity_manager
-        factory_method: getRepository
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor ]
-
-    surfnet_stepup_middleware_api.service.second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService
-        arguments:
-            - @surfnet_stepup_middleware_api.repository.unverified_second_factor
-            - @surfnet_stepup_middleware_api.repository.verified_second_factor
-            - @surfnet_stepup_middleware_api.repository.vetted_second_factor

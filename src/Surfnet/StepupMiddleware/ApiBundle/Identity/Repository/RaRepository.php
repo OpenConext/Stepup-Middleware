@@ -16,14 +16,18 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Doctrine\ORM\EntityRepository;
 
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+class RaRepository extends EntityRepository
 {
     /**
-     * @var IdentityId
+     * @param string $nameId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra
      */
-    public $identityId;
+    public function findByNameId($nameId)
+    {
+        return $this->findOneBy(['nameId' => $nameId]);
+    }
 }

@@ -16,14 +16,28 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Doctrine\ORM\Mapping as ORM;
 
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+/**
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository")
+ */
+class Sraa
 {
     /**
-     * @var IdentityId
+     * @var string
+     *
+     * @ORM\Id
+     * @ORM\Column(length=200)
      */
-    public $identityId;
+    public $nameId;
+
+    /**
+     * @param string $nameId
+     */
+    public function __construct($nameId)
+    {
+        $this->nameId = $nameId;
+    }
 }

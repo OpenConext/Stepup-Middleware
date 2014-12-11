@@ -109,7 +109,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             $data['email_verification_nonce'],
             $data['common_name'],
             $data['email'],
-            'en_GB'
+            $data['preferred_locale']
         );
     }
 
@@ -123,6 +123,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,
+            'preferred_locale'                => $this->preferredLocale,
         ];
     }
 }

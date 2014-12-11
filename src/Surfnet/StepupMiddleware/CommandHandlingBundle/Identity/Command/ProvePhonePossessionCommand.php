@@ -50,7 +50,7 @@ class ProvePhonePossessionCommand extends AbstractCommand
      * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.phone_number.must_be_string")
      * @Assert\Regex(
      *     pattern="~^\d+$~",
-     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_plus_and_digits"
+     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_digits"
      * )
      *
      * @var string

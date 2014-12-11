@@ -5,3 +5,10 @@ services:
         factory_method:  getRepository
         arguments:
             - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity'
+
+    middleware.gateway_repository.second_factors:
+        class:           Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository
+        factory_service: doctrine.orm.gateway_entity_manager
+        factory_method:  getRepository
+        arguments:
+            - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor'

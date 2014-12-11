@@ -16,19 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\GatewayBundle\Repository;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Doctrine\ORM\EntityRepository;
+use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 
-class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
+class SecondFactorRepository extends EntityRepository
 {
     /**
-     * @var IdentityId
+     * @param SecondFactor $secondFactor
      */
-    public $identityId;
-
-    /**
-     * @var string|null
-     */
-    public $registrationCode;
+    public function save(SecondFactor $secondFactor)
+    {
+        $this->getEntityManager()->persist($secondFactor);
+        $this->getEntityManager()->flush();
+    }
 }

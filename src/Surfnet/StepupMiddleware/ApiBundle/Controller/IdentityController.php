@@ -18,13 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -74,50 +70,6 @@ class IdentityController extends Controller
     }
 
     /**
-     * Lists the unverified second factors belonging to the given Identity.
-     *
-     * @param Request $request
-     * @param string $identityId
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function findUnverifiedSecondFactorsAction(Request $request, $identityId)
-    {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
-
-        $command = new SearchUnverifiedSecondFactorCommand();
-        $command->identityId = new IdentityId($identityId);
-        $command->pageNumber = (int) $request->get('p', 1);
-
-        $secondFactors = $this->getSecondFactorService()->searchUnverifiedSecondFactors($command);
-
-        return JsonCollectionResponse::fromPaginator($secondFactors);
-    }
-
-    /**
-     * Lists the verified second factors belonging to the given Identity.
-     *
-     * @param Request $request
-     * @param string $identityId
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function findVerifiedSecondFactorsAction(Request $request, $identityId)
-    {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
-
-        $command = new SearchVerifiedSecondFactorCommand();
-        $command->identityId = new IdentityId($identityId);
-        $command->pageNumber = (int) $request->get('p', 1);
-
-        $secondFactors = $this->getSecondFactorService()->searchVerifiedSecondFactors($command);
-
-        return JsonCollectionResponse::fromPaginator($secondFactors);
-    }
-
-    /**
      * @param string $identityId
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -140,13 +92,5 @@ class IdentityController extends Controller
     private function getService()
     {
         return $this->get('surfnet_stepup_middleware_api.service.identity');
-    }
-
-    /**
-     * @return SecondFactorService
-     */
-    private function getSecondFactorService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.second_factor');
     }
 }

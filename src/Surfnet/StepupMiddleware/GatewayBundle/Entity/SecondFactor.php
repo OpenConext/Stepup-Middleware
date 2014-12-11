@@ -21,19 +21,28 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
  *      }
  * )
+ * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
 class SecondFactor
 {
     /**
-     * @var string
+     * @var int
      *
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(length=36)
      */
     private $identityId;

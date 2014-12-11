@@ -21,12 +21,14 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
 class SecondFactorProjector extends Projector
 {
@@ -41,6 +43,11 @@ class SecondFactorProjector extends Projector
     private $verifiedRepository;
 
     /**
+     * @var VettedSecondFactorRepository
+     */
+    private $vettedRepository;
+
+    /**
      * @var IdentityRepository
      */
     private $identityRepository;
@@ -48,10 +55,12 @@ class SecondFactorProjector extends Projector
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
         VerifiedSecondFactorRepository $verifiedRepository,
+        VettedSecondFactorRepository $vettedRepository,
         IdentityRepository $identityRepository
     ) {
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
+        $this->vettedRepository = $vettedRepository;
         $this->identityRepository = $identityRepository;
     }
 
@@ -87,7 +96,15 @@ class SecondFactorProjector extends Projector
     {
         $unverified = $this->unverifiedRepository->find((string) $event->secondFactorId);
 
-        $this->verifiedRepository->save($unverified->verifyEmail());
+        $this->verifiedRepository->save($unverified->verifyEmail($event->registrationCode));
         $this->unverifiedRepository->remove($unverified);
+    }
+
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $verified = $this->verifiedRepository->find((string) $event->secondFactorId);
+
+        $this->vettedRepository->save($verified->vet());
+        $this->verifiedRepository->remove($verified);
     }
 }

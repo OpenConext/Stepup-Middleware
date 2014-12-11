@@ -20,15 +20,10 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 
-class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
+class SearchVettedSecondFactorCommand extends AbstractSearchCommand
 {
     /**
      * @var IdentityId
      */
     public $identityId;
-
-    /**
-     * @var string|null
-     */
-    public $registrationCode;
 }

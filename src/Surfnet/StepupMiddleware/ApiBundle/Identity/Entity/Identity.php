@@ -91,6 +91,15 @@ class Identity implements JsonSerializable
      */
     public $verifiedSecondFactors;
 
+    /**
+     * A list of all second factors that, along with their identities, have been vetted by a Registration Authority.
+     *
+     * @ORM\OneToMany(targetEntity="VettedSecondFactor", mappedBy="identity", cascade={"persist"})
+     *
+     * @var Collection|VettedSecondFactor[]
+     */
+    public $vettedSecondFactors;
+
     public static function create(
         $id,
         Institution $institution,
@@ -123,6 +132,7 @@ class Identity implements JsonSerializable
         $identity->commonName = $commonName;
         $identity->unverifiedSecondFactors = new ArrayCollection();
         $identity->verifiedSecondFactors = new ArrayCollection();
+        $identity->vettedSecondFactors = new ArrayCollection();
 
         return $identity;
     }

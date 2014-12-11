@@ -37,7 +37,7 @@ services:
         tags: [{ name: twig.extension }]
 
 jms_translation:
-    locales: [nl_NL]
+    locales: %locales%
     configs:
         default:
             dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]

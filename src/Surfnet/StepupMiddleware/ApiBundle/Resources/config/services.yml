@@ -36,6 +36,12 @@ services:
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor ]
 
+    surfnet_stepup_middleware_api.repository.vetted_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor ]
+
     # Domain Services
     surfnet_stepup_middleware_api.service.abstract_search:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
@@ -47,6 +53,7 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.unverified_second_factor
             - @surfnet_stepup_middleware_api.repository.verified_second_factor
+            - @surfnet_stepup_middleware_api.repository.vetted_second_factor
 
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService

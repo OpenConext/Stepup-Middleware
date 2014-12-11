@@ -23,10 +23,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository"
+ *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository"
  * )
  */
-class UnverifiedSecondFactor implements \JsonSerializable
+class VettedSecondFactor implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -37,7 +37,7 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="unverifiedSecondFactors")
+     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="vettedSecondFactors")
      *
      * @var Identity
      */
@@ -86,33 +86,13 @@ class UnverifiedSecondFactor implements \JsonSerializable
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
 
-        $identity->unverifiedSecondFactors->add($secondFactor);
+        $identity->vettedSecondFactors->add($secondFactor);
 
         return $secondFactor;
     }
 
     final private function __construct()
     {
-    }
-
-    /**
-     * @param string $registrationCode
-     * @return VerifiedSecondFactor
-     */
-    public function verifyEmail($registrationCode)
-    {
-        $identity = $this->identity;
-
-        $this->identity->unverifiedSecondFactors->removeElement($this);
-        $this->identity = null;
-
-        return VerifiedSecondFactor::addToIdentity(
-            $identity,
-            $this->id,
-            $this->type,
-            $this->secondFactorIdentifier,
-            $registrationCode
-        );
     }
 
     public function jsonSerialize()

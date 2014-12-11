@@ -20,8 +20,11 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
 class SecondFactorService extends AbstractSearchService
 {
@@ -36,15 +39,23 @@ class SecondFactorService extends AbstractSearchService
     private $verifiedRepository;
 
     /**
+     * @var VettedSecondFactorRepository
+     */
+    private $vettedRepository;
+
+    /**
      * @param UnverifiedSecondFactorRepository $unverifiedRepository
-     * @param VerifiedSecondFactorRepository   $verifiedRepository
+     * @param VerifiedSecondFactorRepository $verifiedRepository
+     * @param VettedSecondFactorRepository $vettedRepository
      */
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
-        VerifiedSecondFactorRepository $verifiedRepository
+        VerifiedSecondFactorRepository $verifiedRepository,
+        VettedSecondFactorRepository $vettedRepository
     ) {
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
+        $this->vettedRepository = $vettedRepository;
     }
 
     /**
@@ -67,6 +78,19 @@ class SecondFactorService extends AbstractSearchService
     public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
     {
         $query = $this->verifiedRepository->createSearchQuery($command);
+
+        $paginator = $this->createPaginatorFrom($query, $command);
+
+        return $paginator;
+    }
+
+    /**
+     * @param SearchVettedSecondFactorCommand $command
+     * @return Pagerfanta
+     */
+    public function searchVettedSecondFactors(SearchVettedSecondFactorCommand $command)
+    {
+        $query = $this->vettedRepository->createSearchQuery($command);
 
         $paginator = $this->createPaginatorFrom($query, $command);
 

@@ -88,13 +88,10 @@ services:
             - { name: request.param_converter, priority: -5, converter: surfnet_step_middleware.institution }
 
     # Exception Listeners
-    surfnet_stepup_middleware_api.listener.bad_command_request_exception_listener:
-        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadCommandRequestExceptionListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-
-    surfnet_stepup_middleware_api.listener.bad_api_request_exception_listener:
-            class: Surfnet\StepupMiddleware\ApiBundle\EventListener\BadApiRequestExceptionListener
+    surfnet_stepup_middleware_api.listener.exception_listener:
+            class: Surfnet\StepupMiddleware\ApiBundle\EventListener\ExceptionListener
+            arguments:
+                - @logger
             tags:
                 - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 

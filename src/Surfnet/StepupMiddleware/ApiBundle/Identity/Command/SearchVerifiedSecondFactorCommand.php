@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
 {
     /**
-     * @var IdentityId
+     * @var IdentityId|null
      */
     public $identityId;
 

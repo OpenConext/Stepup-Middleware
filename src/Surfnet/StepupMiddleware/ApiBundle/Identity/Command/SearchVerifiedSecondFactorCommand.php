@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
 {
@@ -26,6 +27,11 @@ class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
      * @var IdentityId|null
      */
     public $identityId;
+
+    /**
+     * @var SecondFactorId|null
+     */
+    public $secondFactorId;
 
     /**
      * @var string|null

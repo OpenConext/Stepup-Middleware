@@ -162,4 +162,60 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
             ]
         ];
     }
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstitution()
+    {
+        return $this->institution;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommonName()
+    {
+        return $this->commonName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContactInformation()
+    {
+        return $this->contactInformation;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRaa()
+    {
+        return $this->isRaa;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSraa()
+    {
+        return $this->isSraa;
+    }
 }

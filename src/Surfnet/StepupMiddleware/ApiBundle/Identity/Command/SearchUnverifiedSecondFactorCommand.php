@@ -26,4 +26,9 @@ class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
      * @var IdentityId
      */
     public $identityId;
+
+    /**
+     * @var string|null
+     */
+    public $verificationNonce;
 }

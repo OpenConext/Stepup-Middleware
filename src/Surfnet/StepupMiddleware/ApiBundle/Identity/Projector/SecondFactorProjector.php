@@ -73,7 +73,8 @@ class SecondFactorProjector extends Projector
                 $identity,
                 (string) $event->secondFactorId,
                 'yubikey',
-                (string) $event->yubikeyPublicId
+                (string) $event->yubikeyPublicId,
+                $event->emailVerificationNonce
             )
         );
     }
@@ -87,7 +88,8 @@ class SecondFactorProjector extends Projector
                 $identity,
                 (string) $event->secondFactorId,
                 'sms',
-                (string) $event->phoneNumber
+                (string) $event->phoneNumber,
+                $event->emailVerificationNonce
             )
         );
     }

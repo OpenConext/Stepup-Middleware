@@ -36,6 +36,12 @@ vetted_second_factors:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+identity_ra_list:
+    path:      /registration-authority
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Ra:list }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_raa_search:
     path:      /raa
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Raa:search }

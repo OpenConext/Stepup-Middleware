@@ -78,4 +78,19 @@ class IdentityRepository extends EntityRepository
 
         return $queryBuilder->getQuery();
     }
+
+    /**
+     * @param string[] $nameIds
+     * @return Identity[] Indexed by NameID.
+     */
+    public function findIdentitiesForNameIdsIndexedByNameIds(array $nameIds)
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('i')
+            ->from('Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity', 'i', 'i.nameId')
+            ->where('i.nameId IN (:nameIds)')
+            ->setParameter('nameIds', $nameIds)
+            ->getQuery()
+            ->getResult();
+    }
 }

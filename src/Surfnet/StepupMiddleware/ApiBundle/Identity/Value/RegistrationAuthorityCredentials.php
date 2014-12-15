@@ -39,6 +39,11 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     /**
      * @var string
      */
+    private $commonName;
+
+    /**
+     * @var string
+     */
     private $location;
 
     /**
@@ -83,6 +88,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
         $credentials = new self($identity->id, false, false);
 
         $credentials->institution        = $ra->institution;
+        $credentials->commonName         = $identity->commonName;
         $credentials->location           = $ra->location;
         $credentials->contactInformation = $ra->contactInformation;
 
@@ -101,6 +107,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
         $credentials = new self($identity->id, true, false);
 
         $credentials->institution        = $raa->institution;
+        $credentials->commonName         = $identity->commonName;
         $credentials->location           = $raa->location;
         $credentials->contactInformation = $raa->contactInformation;
 
@@ -117,6 +124,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
         static::assertEquals($sraa->nameId, $identity->nameId);
 
         $credentials = new self($identity->id, true, true);
+        $credentials->commonName = $identity->commonName;
 
         return $credentials;
     }
@@ -146,6 +154,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
             'id' => $this->identityId,
             'attributes' => [
                 'institution'         => $this->institution,
+                'common_name'         => $this->commonName,
                 'location'            => $this->location,
                 'contact_information' => $this->contactInformation,
                 'is_raa'              => ($this->isRaa || $this->isSraa),

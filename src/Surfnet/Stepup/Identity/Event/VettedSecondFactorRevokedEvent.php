@@ -18,9 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\SecondFactorId;
-
 class VettedSecondFactorRevokedEvent extends SecondFactorRevokedEvent
 {
 }

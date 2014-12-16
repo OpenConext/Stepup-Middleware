@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;

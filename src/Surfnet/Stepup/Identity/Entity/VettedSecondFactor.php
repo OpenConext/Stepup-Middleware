@@ -19,16 +19,11 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
-use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
-use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\Stepup\Token\TokenGenerator;
 
 /**
  * A second factor whose possession and its Registrant's identity has been vetted by a Registration Authority.

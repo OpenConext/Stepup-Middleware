@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\Identity\Api\Id;
 
 /**
  * The natural identifier of an Identity is the SAML Name ID.

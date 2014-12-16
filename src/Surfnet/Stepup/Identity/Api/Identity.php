@@ -82,6 +82,11 @@ interface Identity extends AggregateRoot
     public function verifyEmail($verificationNonce);
 
     /**
+     * @return IdentityId
+     */
+    public function getId();
+
+    /**
      * @return NameId
      */
     public function getNameId();

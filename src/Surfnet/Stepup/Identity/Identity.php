@@ -302,6 +302,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     /**
      * @return NameId
      */

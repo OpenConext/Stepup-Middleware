@@ -22,6 +22,7 @@ use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
 class EmailProcessor extends Processor
@@ -29,19 +30,28 @@ class EmailProcessor extends Processor
     /**
      * @var SecondFactorMailService
      */
-    private $service;
+    private $mailService;
 
     /**
-     * @param SecondFactorMailService $service
+     * @var RaService
      */
-    public function __construct(SecondFactorMailService $service)
-    {
-        $this->service = $service;
+    private $raService;
+
+    /**
+     * @param SecondFactorMailService $mailService
+     * @param RaService $raService
+     */
+    public function __construct(
+        SecondFactorMailService $mailService,
+        RaService $raService
+    ) {
+        $this->mailService = $mailService;
+        $this->raService = $raService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->service->sendEmailVerificationEmail(
+        $this->mailService->sendEmailVerificationEmail(
             $event->preferredLocale,
             $event->commonName,
             $event->email,
@@ -51,7 +61,7 @@ class EmailProcessor extends Processor
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->service->sendEmailVerificationEmail(
+        $this->mailService->sendEmailVerificationEmail(
             $event->preferredLocale,
             $event->commonName,
             $event->email,
@@ -61,11 +71,12 @@ class EmailProcessor extends Processor
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->service->sendRegistrationEmail(
+        $this->mailService->sendRegistrationEmail(
             $event->preferredLocale,
             $event->commonName,
             $event->email,
-            $event->registrationCode
+            $event->registrationCode,
+            $this->raService->listRas($event->institution)
         );
     }
 }

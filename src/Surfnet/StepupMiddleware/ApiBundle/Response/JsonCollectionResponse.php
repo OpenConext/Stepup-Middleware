@@ -33,6 +33,13 @@ class JsonCollectionResponse extends JsonResponse
         );
     }
 
+    /**
+     * @param int $totalItems
+     * @param int $page
+     * @param int $pageSize
+     * @param array $collection
+     * @param array $headers
+     */
     public function __construct($totalItems, $page, $pageSize, array $collection, $headers = array())
     {
         $data = array(

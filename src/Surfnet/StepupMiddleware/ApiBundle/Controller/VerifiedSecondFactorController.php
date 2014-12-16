@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
@@ -54,7 +55,15 @@ class VerifiedSecondFactorController extends Controller
         }
 
         $command = new SearchVerifiedSecondFactorCommand();
-        $command->identityId = $request->get('identityId');
+
+        if ($request->get('identityId')) {
+            $command->identityId = new IdentityId($request->get('identityId'));
+        }
+
+        if ($request->get('secondFactorId')) {
+            $command->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
+        }
+
         $command->registrationCode = $request->get('registrationCode');
         $command->pageNumber = (int) $request->get('p', 1);
 

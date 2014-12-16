@@ -56,6 +56,7 @@ class UnverifiedSecondFactorController extends Controller
 
         $command = new SearchUnverifiedSecondFactorCommand();
         $command->identityId = $request->get('identityId');
+        $command->verificationNonce = $request->get('verificationNonce');
         $command->pageNumber = (int) $request->get('p', 1);
 
         $paginator = $this->getService()->searchUnverifiedSecondFactors($command);

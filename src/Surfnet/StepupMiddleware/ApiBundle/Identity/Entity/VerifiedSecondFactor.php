@@ -132,6 +132,7 @@ class VerifiedSecondFactor implements \JsonSerializable
             'id'   => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
+            'registration_code' => $this->registrationCode,
             'identity_id' => $this->identity->id,
             'institution' => (string) $this->identity->institution,
             'common_name' => $this->identity->commonName,

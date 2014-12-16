@@ -60,13 +60,21 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $secondFactorIdentifier;
 
     /**
+     * @ORM\Column(length=32)
+     *
+     * @var string
+     */
+    public $verificationNonce;
+
+    /**
      * @param Identity $identity
      * @param string $id
      * @param string $type
      * @param string $secondFactorIdentifier
+     * @param string $verificationNonce
      * @return self
      */
-    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier)
+    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier, $verificationNonce)
     {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
@@ -80,11 +88,16 @@ class UnverifiedSecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
         }
 
+        if (!is_string($verificationNonce)) {
+            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
+        }
+
         $secondFactor = new self;
         $secondFactor->identity = $identity;
         $secondFactor->id = $id;
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
+        $secondFactor->verificationNonce = $verificationNonce;
 
         $identity->unverifiedSecondFactors->add($secondFactor);
 

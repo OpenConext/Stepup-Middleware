@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaaCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
@@ -111,5 +112,16 @@ class RaaRepository extends EntityRepository
     public function findByNameId($nameId)
     {
         return $this->findOneBy(['nameId' => $nameId]);
+    }
+
+
+
+    /**
+     * @param Institution $institution
+     * @return Raa[]
+     */
+    public function findByInstitution(Institution $institution)
+    {
+        return $this->findBy(['institution' => $institution]);
     }
 }

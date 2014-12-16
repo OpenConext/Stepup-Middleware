@@ -34,6 +34,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
  * verified. The registrant must visit a registration authority next.
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class VerifiedSecondFactor extends EventSourcedEntity
 {

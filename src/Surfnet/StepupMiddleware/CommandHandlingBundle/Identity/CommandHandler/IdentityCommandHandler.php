@@ -30,6 +30,8 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -125,6 +127,24 @@ class IdentityCommandHandler extends CommandHandler
             $command->documentNumber,
             $command->identityVerified
         );
+
+        $this->repository->add($identity);
+    }
+
+    public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
+
+        $this->repository->add($identity);
+    }
+
+    public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
+    {
+        /** @var Identity $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->complyWithSecondFactorRevocation(new SecondFactorId($command->secondFactorId), new IdentityId($command->authority));
 
         $this->repository->add($identity);
     }

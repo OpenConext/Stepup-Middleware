@@ -23,7 +23,9 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
+use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Token\TokenGenerator;
@@ -156,6 +158,18 @@ class UnverifiedSecondFactor extends EventSourcedEntity
                 $this->identity->getEmail(),
                 'en_GB'
             )
+        );
+    }
+
+    public function revoke()
+    {
+        $this->apply(new UnverifiedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
+    }
+
+    public function complyWithRevocation(IdentityId $authorityId)
+    {
+        $this->apply(
+            new CompliedWithUnverifiedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
         );
     }
 

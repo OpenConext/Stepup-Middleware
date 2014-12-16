@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
@@ -50,5 +52,16 @@ class SecondFactorProjector extends Projector
                 $event->secondFactorType
             )
         );
+    }
+
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    {
+        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
+    }
+
+    protected function applyCompliedWithVettedSecondFactorRevocationEvent(
+        CompliedWithVettedSecondFactorRevocationEvent $event
+    ) {
+        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
     }
 }

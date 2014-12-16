@@ -62,4 +62,10 @@ class VettedSecondFactorRepository extends EntityRepository
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
+
+    public function remove(VettedSecondFactor $secondFactor)
+    {
+        $this->getEntityManager()->remove($secondFactor);
+        $this->getEntityManager()->flush();
+    }
 }

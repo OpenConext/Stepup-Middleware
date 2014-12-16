@@ -18,9 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
@@ -95,5 +99,34 @@ class SecondFactorService extends AbstractSearchService
         $paginator = $this->createPaginatorFrom($query, $command);
 
         return $paginator;
+    }
+
+    /**
+     * @param SecondFactorId $id
+     * @return null|UnverifiedSecondFactor
+     */
+    public function findUnverified(SecondFactorId $id)
+    {
+        return $this->unverifiedRepository->find($id);
+    }
+
+
+    /**
+     * @param SecondFactorId $id
+     * @return null|VerifiedSecondFactor
+     */
+    public function findVerified(SecondFactorId $id)
+    {
+        return $this->verifiedRepository->find($id);
+    }
+
+
+    /**
+     * @param SecondFactorId $id
+     * @return null|VettedSecondFactor
+     */
+    public function findVetted(SecondFactorId $id)
+    {
+        return $this->vettedRepository->find($id);
     }
 }

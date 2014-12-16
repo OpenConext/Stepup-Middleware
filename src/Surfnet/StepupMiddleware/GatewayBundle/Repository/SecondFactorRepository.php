@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 
 class SecondFactorRepository extends EntityRepository
@@ -29,6 +30,24 @@ class SecondFactorRepository extends EntityRepository
     public function save(SecondFactor $secondFactor)
     {
         $this->getEntityManager()->persist($secondFactor);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @return SecondFactor|null
+     */
+    public function findOneBySecondFactorId(SecondFactorId $secondFactorId)
+    {
+        return $this->findOneBy(['secondFactorId' => (string) $secondFactorId]);
+    }
+
+    /**
+     * @param SecondFactor $secondFactor
+     */
+    public function remove(SecondFactor $secondFactor)
+    {
+        $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();
     }
 }

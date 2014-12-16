@@ -16,36 +16,8 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Value;
+namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\Exception\InvalidArgumentException;
-
-/**
- * The natural identifier of an Identity is the SAML Name ID.
- */
-class NameId
+class CompliedWithVettedSecondFactorRevocationEvent extends CompliedWithRevocationEvent
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    public function __construct($value)
-    {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
-        $this->value = $value;
-    }
-
-    public function __toString()
-    {
-        return $this->value;
-    }
-
-    public function equals($other)
-    {
-        return $this == $other;
-    }
 }

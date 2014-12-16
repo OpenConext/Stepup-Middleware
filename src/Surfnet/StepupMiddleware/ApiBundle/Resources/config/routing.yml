@@ -36,6 +36,24 @@ vetted_second_factors:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+unverified_second_factor:
+    path:     /unverified-second-factor/{id}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:UnverifiedSecondFactor:get }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+verified_second_factor:
+    path:     /verified-second-factor/{id}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:get }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+vetted_second_factor:
+    path:     /vetted-second-factor/{id}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:get }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_ra_list:
     path:      /registration-authority
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Ra:list }

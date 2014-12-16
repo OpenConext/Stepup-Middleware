@@ -27,12 +27,18 @@ use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -201,6 +207,62 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    public function revokeSecondFactor(SecondFactorId $secondFactorId)
+    {
+        /** @var UnverifiedSecondFactor|null $unverifiedSecondFactor */
+        $unverifiedSecondFactor = $this->unverifiedSecondFactors->get((string) $secondFactorId);
+        /** @var VerifiedSecondFactor|null $verifiedSecondFactor */
+        $verifiedSecondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
+        /** @var VettedSecondFactor|null $vettedSecondFactor */
+        $vettedSecondFactor = $this->vettedSecondFactors->get((string) $secondFactorId);
+
+        if (!$unverifiedSecondFactor && !$verifiedSecondFactor && !$vettedSecondFactor) {
+            throw new DomainException('Cannot revoke second factor: no second factor with given id exists.');
+        }
+
+        if ($unverifiedSecondFactor) {
+            $unverifiedSecondFactor->revoke();
+
+            return;
+        }
+
+        if ($verifiedSecondFactor) {
+            $verifiedSecondFactor->revoke();
+
+            return;
+        }
+
+        $vettedSecondFactor->revoke();
+    }
+
+    public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId)
+    {
+        /** @var UnverifiedSecondFactor|null $unverifiedSecondFactor */
+        $unverifiedSecondFactor = $this->unverifiedSecondFactors->get((string) $secondFactorId);
+        /** @var VerifiedSecondFactor|null $verifiedSecondFactor */
+        $verifiedSecondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
+        /** @var VettedSecondFactor|null $vettedSecondFactor */
+        $vettedSecondFactor = $this->vettedSecondFactors->get((string) $secondFactorId);
+
+        if (!$unverifiedSecondFactor && !$verifiedSecondFactor && !$vettedSecondFactor) {
+            throw new DomainException('Cannot revoke second factor: no second factor with given id exists.');
+        }
+
+        if ($unverifiedSecondFactor) {
+            $unverifiedSecondFactor->complyWithRevocation($authorityId);
+
+            return;
+        }
+
+        if ($verifiedSecondFactor) {
+            $verifiedSecondFactor->complyWithRevocation($authorityId);
+
+            return;
+        }
+
+        $vettedSecondFactor->complyWithRevocation($authorityId);
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
@@ -275,6 +337,39 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
 
+    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
+    {
+        $this->unverifiedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
+        CompliedWithUnverifiedSecondFactorRevocationEvent $event
+    ) {
+        $this->unverifiedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
+    {
+        $this->verifiedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
+        CompliedWithVerifiedSecondFactorRevocationEvent $event
+    ) {
+        $this->verifiedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    {
+        $this->vettedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyCompliedWithVettedSecondFactorRevocationEvent(
+        CompliedWithVettedSecondFactorRevocationEvent $event
+    ) {
+        $this->vettedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
     public function getAggregateRootId()
     {
         return (string) $this->id;
@@ -300,6 +395,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ) {
             throw new DomainException('User may not have more than one token');
         }
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

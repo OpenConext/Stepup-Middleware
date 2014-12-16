@@ -276,6 +276,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new EmailVerifiedEvent(
                     $id,
+                    $institution,
                     $secondFactorId,
                     DateTime::now(),
                     'regcode',
@@ -316,9 +317,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'a@b.c',
                     'en_GB'
                 ),
-
                 new EmailVerifiedEvent(
                     $id,
+                    $institution,
                     $secondFactorId,
                     DateTime::now(),
                     'regcode',

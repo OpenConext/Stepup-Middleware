@@ -149,6 +149,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         $this->apply(
             new EmailVerifiedEvent(
                 new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getInstitution(),
                 $this->id,
                 DateTime::now(),
                 TokenGenerator::generateHumanReadableToken(8),

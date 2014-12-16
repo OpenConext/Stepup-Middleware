@@ -51,6 +51,12 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('identityId', (string) $command->identityId);
         }
 
+        if ($command->secondFactorId) {
+            $queryBuilder
+                ->andWhere('sf.id = :secondFactorId')
+                ->setParameter('secondFactorId', (string) $command->secondFactorId);
+        }
+
         if (is_string($command->registrationCode)) {
             $queryBuilder
                 ->andWhere('sf.registrationCode = :registrationCode')

@@ -21,15 +21,21 @@
 
 <h2>List of registration officers</h2>
 
-<ul>
-    <li>
-        <address>
-            John Doe<br>
-            Room 14<br>
-            University Foo<br>
-        </address>
-    </li>
-</ul>
+{% if ras is empty %}
+    <p>No registration officers are available within your institution.</p>
+{% else %}
+    <ul>
+        {% for ra in ras %}
+            <li>
+                <address>
+                    <strong>{{ ra.commonName }}</strong><br>
+                    {{ ra.location }}<br>
+                    {{ ra.contactInformation }}
+                </address>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 </body>
 </html>

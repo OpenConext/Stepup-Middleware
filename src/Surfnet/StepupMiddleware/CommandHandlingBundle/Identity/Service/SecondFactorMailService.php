@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
@@ -124,12 +125,14 @@ class SecondFactorMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
+     * @param RegistrationAuthorityCredentials[] $ras
      */
     public function sendRegistrationEmail(
         $locale,
         $commonName,
         $email,
-        $registrationCode
+        $registrationCode,
+        array $ras
     ) {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
@@ -141,6 +144,7 @@ class SecondFactorMailService
             'commonName'       => $commonName,
             'email'            => $email,
             'registrationCode' => $registrationCode,
+            'ras'              => $ras,
         ];
 
         // Rendering file template instead of string

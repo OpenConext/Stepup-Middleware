@@ -27,7 +27,7 @@ class UnverifiedSecondFactorRepository extends EntityRepository
 {
     /**
      * @param string $id
-     * @return UnverifiedSecondFactor
+     * @return UnverifiedSecondFactor|null
      */
     public function find($id)
     {

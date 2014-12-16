@@ -20,15 +20,35 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VerifiedSecondFactorController extends Controller
 {
+    public function getAction($id)
+    {
+        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
+            throw new AccessDeniedHttpException('Client is not authorised to access verified second factor');
+        }
+
+        $secondFactor = $this->getService()->findVerified(new SecondFactorId($id));
+
+        if ($secondFactor === null) {
+            throw new NotFoundHttpException(
+                sprintf("Verified second factor '%s' does not exist", $id)
+            );
+        }
+
+        return new JsonResponse($secondFactor);
+    }
+
     public function collectionAction(Request $request)
     {
         if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {

@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHa
 
 use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
+use Doctrine\DBAL\Driver\Connection;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector;
@@ -50,21 +51,37 @@ class ConfigurationCommandHandler extends CommandHandler
     private $sraaProjector;
 
     /**
+     * @var \Doctrine\DBAL\Driver\Connection
+     */
+    private $middlewareConnection;
+
+    /**
+     * @var \Doctrine\DBAL\Driver\Connection
+     */
+    private $gatewayConnection;
+
+    /**
      * @param ConfigurationRepository     $repository
      * @param GatewayConfigurationService $gatewayConfigurationService
      * @param RaaProjector                $raaProjector
      * @param SraaProjector               $sraaProjector
+     * @param Connection                  $middlewareConnection
+     * @param Connection                  $gatewayConnection
      */
     public function __construct(
         ConfigurationRepository $repository,
         GatewayConfigurationService $gatewayConfigurationService,
         RaaProjector $raaProjector,
-        SraaProjector $sraaProjector
+        SraaProjector $sraaProjector,
+        Connection $middlewareConnection,
+        Connection $gatewayConnection
     ) {
         $this->repository = $repository;
         $this->gatewayConfigurationService = $gatewayConfigurationService;
         $this->raaProjector = $raaProjector;
         $this->sraaProjector = $sraaProjector;
+        $this->middlewareConnection = $middlewareConnection;
+        $this->gatewayConnection = $gatewayConnection;
     }
 
     public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command)
@@ -74,18 +91,31 @@ class ConfigurationCommandHandler extends CommandHandler
             $configuration = Configuration::create();
         }
 
-        $configuration->update($command->configuration);
+        $this->middlewareConnection->beginTransaction();
+        $this->gatewayConnection->beginTransaction();
 
-        $event = $configuration->getLastUncommittedServiceProvidersUpdatedEvent();
-        $this->gatewayConfigurationService->updateServiceProviders($event->serviceProviders);
+        try {
+            $configuration->update($command->configuration);
 
-        $event = $configuration->getLastUncommittedRaaUpdatedEvent();
-        $this->raaProjector->updateRaaConfiguration($event);
+            $event = $configuration->getLastUncommittedServiceProvidersUpdatedEvent();
+            $this->gatewayConfigurationService->updateServiceProviders($event->serviceProviders);
 
-        $event = $configuration->getLastUncommittedSraaUpdatedEvent();
-        $this->sraaProjector->replaceSraaConfiguration($event);
+            $event = $configuration->getLastUncommittedRaaUpdatedEvent();
+            $this->raaProjector->updateRaaConfiguration($event);
 
-        $this->repository->add($configuration);
+            $event = $configuration->getLastUncommittedSraaUpdatedEvent();
+            $this->sraaProjector->replaceSraaConfiguration($event);
+
+            $this->repository->add($configuration);
+        } catch (\Exception $e) {
+            $this->middlewareConnection->rollBack();
+            $this->gatewayConnection->rollBack();
+
+            throw $e;
+        }
+
+        $this->middlewareConnection->commit();
+        $this->gatewayConnection->commit();
     }
 
     /**

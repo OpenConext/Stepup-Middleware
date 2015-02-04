@@ -22,12 +22,14 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
+use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -39,6 +41,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
@@ -46,9 +49,27 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
+    /** @var MockInterface */
+    private $eventBus;
+
+    /** @var MockInterface */
+    private $middlewareConnection;
+
+    /** @var MockInterface */
+    private $gatewayConnection;
+
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
-        return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus));
+        $this->eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus');
+        $this->middlewareConnection = m::mock('Doctrine\DBAL\Driver\Connection');
+        $this->gatewayConnection = m::mock('Doctrine\DBAL\Driver\Connection');
+
+        return new IdentityCommandHandler(
+            new IdentityRepository($eventStore, $eventBus),
+            $this->eventBus,
+            $this->middlewareConnection,
+            $this->gatewayConnection
+        );
     }
 
     /** @runInSeparateProcess */
@@ -420,6 +441,49 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new IdentityRenamedEvent($id, 'foobar', 'Henk'),
                 new IdentityEmailChangedEvent($id, 'a@b.c', 'new@email.com')
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_unverified_second_factor_can_be_revoked()
+    {
+        $command = new RevokeOwnSecondFactorCommand();
+        $command->identityId = '42';
+        $command->secondFactorId = self::uuid();
+
+        $this->eventBus->shouldReceive('flush')->once();
+        $this->middlewareConnection->shouldReceive('beginTransaction')->once();
+        $this->middlewareConnection->shouldReceive('commit')->once();
+        $this->gatewayConnection->shouldReceive('beginTransaction')->once();
+        $this->gatewayConnection->shouldReceive('commit')->once();
+
+        $this->scenario
+            ->withAggregateId($id = new IdentityId($command->identityId))
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    new Institution('A Corp.'),
+                    new NameId('3'),
+                    'a@b.c',
+                    'foobar'
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $id,
+                    $secFacId = new SecondFactorId($command->secondFactorId),
+                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    DateTime::now(),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c',
+                    'en_GB'
+                )
+            ])
+            ->when($command)
+            ->then([
+                new UnverifiedSecondFactorRevokedEvent($id, $secFacId)
             ]);
     }
 }

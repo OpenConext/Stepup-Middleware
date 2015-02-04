@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 use Broadway\CommandHandling\CommandHandler;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
+use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -69,7 +70,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
     {
-        /** @var \Surfnet\Stepup\Identity\Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load($command->id);
 
         $identity->rename($command->commonName);
@@ -80,7 +81,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->provePossessionOfYubikey(
@@ -96,7 +97,7 @@ class IdentityCommandHandler extends CommandHandler
      */
     public function handleProvePhonePossessionCommand(ProvePhonePossessionCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->provePossessionOfPhone(
@@ -109,7 +110,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleVerifyEmailCommand(VerifyEmailCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->verifyEmail($command->verificationNonce);
@@ -119,7 +120,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $identity->vetSecondFactor(
             $command->registrationCode,
@@ -133,7 +134,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
 
@@ -142,7 +143,7 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
     {
-        /** @var Identity $identity */
+        /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $identity->complyWithSecondFactorRevocation(new SecondFactorId($command->secondFactorId), new IdentityId($command->authority));
 

@@ -180,12 +180,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    /**
-     * @param string $registrationCode
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
-     */
     public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
     {
         foreach ($this->verifiedSecondFactors as $secondFactor) {

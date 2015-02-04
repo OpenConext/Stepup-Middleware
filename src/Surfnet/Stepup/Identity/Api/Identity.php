@@ -82,6 +82,14 @@ interface Identity extends AggregateRoot
     public function verifyEmail($verificationNonce);
 
     /**
+     * @param string $registrationCode
+     * @param string $secondFactorIdentifier
+     * @param string $documentNumber
+     * @param bool $identityVerified
+     */
+    public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
+
+    /**
      * @param SecondFactorId $secondFactorId
      * @return void
      */

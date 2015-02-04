@@ -48,12 +48,13 @@ class TransactionAwarePipeline implements Pipeline
 
         try {
             $command = $this->innerPipeline->process($command);
-            $this->connection->commit();
         } catch (\Exception $e) {
             $this->connection->rollBack();
 
             throw $e;
         }
+
+        $this->connection->commit();
 
         return $command;
     }

@@ -24,6 +24,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -78,7 +79,10 @@ class ExceptionListener
      */
     private function createJsonErrorResponse(Exception $exception, $statusCode)
     {
-        if ($exception instanceof BadApiRequestException || $exception instanceof BadCommandRequestException) {
+        if ($exception instanceof BadApiRequestException
+            || $exception instanceof BadCommandRequestException
+            || $exception instanceof InvalidCommandException
+        ) {
             $errors = $exception->getErrors();
         } else {
             $errors = [$exception->getMessage()];

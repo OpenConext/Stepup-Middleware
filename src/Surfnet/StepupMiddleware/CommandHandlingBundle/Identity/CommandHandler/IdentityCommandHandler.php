@@ -145,7 +145,7 @@ class IdentityCommandHandler extends CommandHandler
     {
         /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
-        $identity->complyWithSecondFactorRevocation(new SecondFactorId($command->secondFactorId), new IdentityId($command->authority));
+        $identity->complyWithSecondFactorRevocation(new SecondFactorId($command->secondFactorId), new IdentityId($command->authorityId));
 
         $this->repository->add($identity);
     }

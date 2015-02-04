@@ -49,6 +49,10 @@ class ExceptionListener
 
         $this->logException($exception);
 
+        if ($exception instanceof HttpExceptionInterface) {
+            return;
+        }
+
         $statusCode = $exception instanceof BadApiRequestException
                 || $exception instanceof BadCommandRequestException
                 || $exception instanceof DomainException

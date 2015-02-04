@@ -38,7 +38,6 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -50,18 +49,27 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
-    /**
-     * @var MockInterface|TransactionAwareEventFlusher
-     */
-    private $flusher;
+    /** @var MockInterface */
+    private $eventBus;
+
+    /** @var MockInterface */
+    private $middlewareConnection;
+
+    /** @var MockInterface */
+    private $gatewayConnection;
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
-        $this->flusher =
-            m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher');
-        $this->flusher->shouldIgnoreMissing();
+        $this->eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus');
+        $this->middlewareConnection = m::mock('Doctrine\DBAL\Driver\Connection');
+        $this->gatewayConnection = m::mock('Doctrine\DBAL\Driver\Connection');
 
-        return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus), $this->flusher);
+        return new IdentityCommandHandler(
+            new IdentityRepository($eventStore, $eventBus),
+            $this->eventBus,
+            $this->middlewareConnection,
+            $this->gatewayConnection
+        );
     }
 
     /** @runInSeparateProcess */
@@ -446,7 +454,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId = '42';
         $command->secondFactorId = self::uuid();
 
-        $this->flusher->shouldReceive('flush')->once();
+        $this->eventBus->shouldReceive('flush')->once();
+        $this->middlewareConnection->shouldReceive('beginTransaction')->once();
+        $this->middlewareConnection->shouldReceive('commit')->once();
+        $this->gatewayConnection->shouldReceive('beginTransaction')->once();
+        $this->gatewayConnection->shouldReceive('commit')->once();
 
         $this->scenario
             ->withAggregateId($id = new IdentityId($command->identityId))

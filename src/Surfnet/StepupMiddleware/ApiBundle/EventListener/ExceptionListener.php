@@ -49,18 +49,21 @@ class ExceptionListener
 
         $this->logException($exception);
 
-        if ($exception instanceof HttpExceptionInterface) {
-            return;
+        if ($exception instanceof HttpExceptionInterface && $exception instanceof Exception) {
+            $statusCode = $exception->getStatusCode();
+            $headers = $exception->getHeaders();
+        } else {
+            $statusCode = $exception instanceof BadApiRequestException
+                    || $exception instanceof BadCommandRequestException
+                    || $exception instanceof DomainException
+                    || $exception instanceof AggregateNotFoundException
+                ? 400
+                : 500;
+
+            $headers = [];
         }
 
-        $statusCode = $exception instanceof BadApiRequestException
-                || $exception instanceof BadCommandRequestException
-                || $exception instanceof DomainException
-                || $exception instanceof AggregateNotFoundException
-            ? 400
-            : 500;
-
-        $event->setResponse($this->createJsonErrorResponse($exception, $statusCode));
+        $event->setResponse($this->createJsonErrorResponse($exception, $statusCode, $headers));
     }
 
     private function logException(Exception $exception)
@@ -78,9 +81,10 @@ class ExceptionListener
     /**
      * @param Exception $exception
      * @param int $statusCode
+     * @param array $headers OPTIONAL
      * @return JsonResponse
      */
-    private function createJsonErrorResponse(Exception $exception, $statusCode)
+    private function createJsonErrorResponse(Exception $exception, $statusCode, $headers = [])
     {
         if ($exception instanceof BadApiRequestException || $exception instanceof BadCommandRequestException) {
             $errors = $exception->getErrors();
@@ -88,6 +92,6 @@ class ExceptionListener
             $errors = [$exception->getMessage()];
         }
 
-        return new JsonResponse(['errors' => $errors], $statusCode);
+        return new JsonResponse(['errors' => $errors], $statusCode, $headers);
     }
 }

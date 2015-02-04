@@ -22,6 +22,7 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
+use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -36,6 +37,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -46,9 +48,18 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
+    /**
+     * @var MockInterface|TransactionAwareEventFlusher
+     */
+    private $flusher;
+
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
-        return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus));
+        $this->flusher =
+            m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher');
+        $this->flusher->shouldIgnoreMissing();
+
+        return new IdentityCommandHandler(new IdentityRepository($eventStore, $eventBus), $this->flusher);
     }
 
     /** @runInSeparateProcess */

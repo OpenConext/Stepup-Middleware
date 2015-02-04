@@ -28,6 +28,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -48,11 +49,18 @@ class IdentityCommandHandler extends CommandHandler
     private $repository;
 
     /**
-     * @param IdentityRepository $repository
+     * @var TransactionAwareEventFlusher
      */
-    public function __construct(IdentityRepository $repository)
+    private $eventBusFlusher;
+
+    /**
+     * @param IdentityRepository $repository
+     * @param TransactionAwareEventFlusher $flusher
+     */
+    public function __construct(IdentityRepository $repository, TransactionAwareEventFlusher $flusher)
     {
         $this->repository = $repository;
+        $this->eventBusFlusher = $flusher;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -139,6 +147,7 @@ class IdentityCommandHandler extends CommandHandler
         $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
 
         $this->repository->add($identity);
+        $this->eventBusFlusher->flush();
     }
 
     public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
@@ -148,5 +157,6 @@ class IdentityCommandHandler extends CommandHandler
         $identity->complyWithSecondFactorRevocation(new SecondFactorId($command->secondFactorId), new IdentityId($command->authorityId));
 
         $this->repository->add($identity);
+        $this->eventBusFlusher->flush();
     }
 }

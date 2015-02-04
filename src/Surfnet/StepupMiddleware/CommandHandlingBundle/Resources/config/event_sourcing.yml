@@ -32,6 +32,14 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus
 
+    surfnet_stepup_middleware_command_handling.event_bus.transaction_aware_event_flusher:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\TransactionAwareEventFlusher
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @doctrine.dbal.middleware_connection
+            - @doctrine.dbal.gateway_connection
+
     surfnet_stepup_middleware_command_handling.listener.flush_event_buffer:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\FlushEventBufferEventListener
         arguments: [ @surfnet_stepup_middleware_command_handling.event_bus.buffered ]

@@ -3,6 +3,7 @@ services:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler
         arguments:
             - @surfnet_stepup.repository.identity
+            - @surfnet_stepup_middleware_command_handling.event_bus.transaction_aware_event_flusher
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.configuration:

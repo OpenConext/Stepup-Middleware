@@ -23,7 +23,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
 
 class ValidationStageTest extends \PHPUnit_Framework_TestCase
 {
-    public function testItValidatesCommands()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_validates_commands()
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')
@@ -38,7 +42,11 @@ class ValidationStageTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($command, $stage->process($command));
     }
 
-    public function testItThrowsAnExceptionWhenValidationFails()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_throws_an_exception_when_validation_fails()
     {
         $this->setExpectedException(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException'

@@ -24,10 +24,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
 class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @test
+     * @group api
      * @dataProvider invalidCommandJsonStructures
      * @param string $commandJson
      */
-    public function testItValidatesTheCommandStructure($commandJson)
+    public function it_validates_the_command_structure($commandJson)
     {
         $this->setExpectedException('Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException');
 
@@ -41,11 +43,13 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @group api
      * @dataProvider convertibleCommandNames
      * @param string $expectedCommandClass
      * @param string $commandName
      */
-    public function testItCanConvertCommandNameNotation($expectedCommandClass, $commandName)
+    public function it_can_convert_command_name_notation($expectedCommandClass, $commandName)
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new \stdClass]];
 
@@ -61,7 +65,11 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $converter->apply($request, $configuration);
     }
 
-    public function testItSetsUuid()
+    /**
+     * @test
+     * @group api
+     */
+    public function it_sets_uuid()
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new \stdClass]];
 
@@ -79,7 +87,11 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('abcdef', $spiedCommand->UUID, 'UUID mismatch');
     }
 
-    public function testItSetsPayload()
+    /**
+     * @test
+     * @group api
+     */
+    public function it_sets_payload()
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 

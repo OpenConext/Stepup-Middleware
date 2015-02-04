@@ -23,7 +23,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline;
 
 class StagedPipelineTest extends \PHPUnit_Framework_TestCase
 {
-    public function testItPassesACommandThroughASingleStage()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_passes_a_command_through_a_single_stage()
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $stage = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
@@ -36,7 +40,11 @@ class StagedPipelineTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    public function testItPassesACommandThroughMultipleStages()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_passes_a_command_through_multiple_stages()
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $stage1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
@@ -53,7 +61,11 @@ class StagedPipelineTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($command, $pipeline->process($command));
     }
 
-    public function testItPassesTheCommandReturnedFromAnEarlierStageOnToTheNext()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next()
     {
         $command1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $command2 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');

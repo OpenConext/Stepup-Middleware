@@ -26,14 +26,22 @@ use Surfnet\Stepup\DateTime\DateTime;
  */
 class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
 {
-    public function testItMocksNow()
+    /**
+     * @test
+     * @group testing
+     */
+    public function it_mocks_now()
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
     }
 
-    public function testItCanBeDisabledInTheSameProcess()
+    /**
+     * @test
+     * @group testing
+     */
+    public function it_can_be_disabled_in_the_same_process()
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
@@ -42,7 +50,11 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
     }
 
-    public function testItWorksWithSeparateProcesses()
+    /**
+     * @test
+     * @group testing
+     */
+    public function it_works_with_separate_processes()
     {
         // The stub value has been removed.
         $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));

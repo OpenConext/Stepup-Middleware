@@ -72,8 +72,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    /** @runInSeparateProcess */
-    public function testAYubikeyPossessionCanBeProven()
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_yubikey_possession_can_be_proven()
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
@@ -112,7 +116,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    public function testYubikeyPossessionCannotBeProvenTwice()
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function yubikey_possession_cannot_be_proven_twice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
@@ -147,8 +155,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /** @runInSeparateProcess */
-    public function testAPhonePossessionCanBeProven()
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_phone_possession_can_be_proven()
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
@@ -187,7 +199,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    public function testPhonePossessionCannotBeProvenTwice()
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function phone_possession_cannot_be_proven_twice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
@@ -222,7 +238,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    public function testCannotProvePossessionOfArbitrarySecondFactorTypeTwice()
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function cannot_prove_possession_of_arbitrary_second_factor_type_twice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
@@ -258,8 +278,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    /** @runInSeparateProcess */
-    public function testAnUnverifiedSecondFactorsEmailCanBeVerified()
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function an_unverified_second_factors_email_can_be_verified()
     {
         DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
 
@@ -308,7 +332,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ]);
     }
 
-    public function testAVerifiedSecondFactorsEmailCannotBeVerified()
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function a_verified_second_factors_email_cannot_be_verified()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'does not apply to any unverified');
 
@@ -352,7 +380,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command);
     }
 
-    public function testCannotVerifyAnEmailAfterTheVerificationWindowHasClosed()
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function cannot_verify_an_email_after_the_verification_window_has_closed()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'verification window has closed');
 

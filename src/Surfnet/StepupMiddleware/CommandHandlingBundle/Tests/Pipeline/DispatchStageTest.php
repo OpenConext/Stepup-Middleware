@@ -23,7 +23,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage;
 
 class DispatchStageTest extends \PHPUnit_Framework_TestCase
 {
-    public function testItDispatchesCommands()
+    /**
+     * @test
+     * @group pipeline
+     */
+    public function it_dispatches_commands()
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $commandBus = m::mock('Broadway\CommandHandling\CommandBusInterface')

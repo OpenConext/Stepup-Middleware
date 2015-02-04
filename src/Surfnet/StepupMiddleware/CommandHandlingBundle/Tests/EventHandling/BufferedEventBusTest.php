@@ -24,7 +24,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 
 class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
 {
-    public function testItBuffersEvents()
+    /**
+     * @test
+     * @group event-handling
+     */
+    public function it_buffers_events()
     {
         $event = m::mock('Broadway\Domain\DomainMessageInterface');
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
@@ -38,7 +42,11 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $bus->publish(new DomainEventStream([$event]));
     }
 
-    public function testItFlushesEvents()
+    /**
+     * @test
+     * @group event-handling
+     */
+    public function it_flushes_events()
     {
         $event = m::mock('Broadway\Domain\DomainMessageInterface');
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')

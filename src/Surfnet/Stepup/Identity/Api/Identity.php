@@ -86,6 +86,7 @@ interface Identity extends AggregateRoot
      * @param string $secondFactorIdentifier
      * @param string $documentNumber
      * @param bool $identityVerified
+     * @return void
      */
     public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
 

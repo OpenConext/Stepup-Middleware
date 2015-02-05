@@ -31,3 +31,5 @@ parameters:
     self_service_email_verification_url_template: https://ss-dev.stepup.coin.surf.net/app_dev.php/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl
+
+    email_verification_window: 3600 # the amout of seconds the email verification email/url is valid

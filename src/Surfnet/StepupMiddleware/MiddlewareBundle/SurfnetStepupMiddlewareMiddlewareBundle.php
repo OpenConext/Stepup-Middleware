@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrationsMigrateD
 use Symfony\Component\Console\Application;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MiddlewareBundle extends Bundle
+class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
 {
     public function registerCommands(Application $application)
     {

@@ -26,13 +26,13 @@ class InstitutionTest extends UnitTest
     /**
      * @test
      * @group domain
-     *
      * @dataProvider invalidValueProvider
+     *
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string()
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
-        new Institution('');
+        new Institution($invalidValue);
     }
 
     /**
@@ -54,11 +54,11 @@ class InstitutionTest extends UnitTest
      */
     public function invalidValueProvider()
     {
-        [
+        return [
             'empty string'  => [''],
             'array'         => [[]],
             'integer'       => [1],
-            'object'        => [new \StdClass()]
+            'object'        => [new \StdClass()],
         ];
     }
 }

@@ -60,9 +60,9 @@
         <loadresource property="changeset.php.absolute.notests">
             <propertyresource name="changeset.php.absolute.newlinesep"/>
             <filterchain>
-                <tokenfilter>
-                    <containsregex pattern="src/(?!Tests).*$"/>
-                </tokenfilter>
+                <linecontains negate="true">
+                    <contains value="Tests"/>
+                </linecontains>
                 <trim/>
                 <ignoreblank/>
                 <tokenfilter delimoutput=","/>
@@ -118,7 +118,13 @@
         <echo message="OK"/>
     </target>
 
-    <target name="phpmd" depends="get-changeset.php-commasep.notests" if="changeset.php.notempty">
+    <target name="get-changeset.without-tests" depends="get-changeset.php-commasep.notests" if="changeset.php.notempty">
+        <condition property="changeset.php.absolute.notests.notempty">
+            <isset property="changeset.php.absolute.notests"/>
+        </condition>
+    </target>
+
+    <target name="phpmd" depends="get-changeset.without-tests" if="changeset.php.absolute.notests.notempty">
         <exec executable="${test-tree-location}/vendor/bin/phpmd" failonerror="true">
             <arg line="${changeset.php.absolute.notests} text ${test-tree-location}/phpmd-pre-commit.xml" />
         </exec>

@@ -78,15 +78,24 @@ class DateTime
     }
 
     /**
-     * @param DateInterval $intervalSpec
+     * @param DateInterval $interval
      * @return DateTime
      */
-    public function add(DateInterval $intervalSpec)
+    public function add(DateInterval $interval)
     {
         $dateTime = clone $this->dateTime;
-        $dateTime->add($intervalSpec);
+        $dateTime->add($interval);
 
         return new self($dateTime);
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesBefore(DateTime $dateTime)
+    {
+        return $this->dateTime < $dateTime->dateTime;
     }
 
     /**

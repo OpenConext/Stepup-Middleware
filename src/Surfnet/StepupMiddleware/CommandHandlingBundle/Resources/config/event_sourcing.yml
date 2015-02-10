@@ -4,12 +4,18 @@ services:
         arguments:
             - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @surfnet_stepup.aggregate_factory.public_constructor
 
     surfnet_stepup.repository.configuration:
         class: Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository
         arguments:
             - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @surfnet_stepup.aggregate_factory.public_constructor
+
+    surfnet_stepup.aggregate_factory.public_constructor:
+        public: false
+        class: Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory
 
     surfnet_stepup.event_store.in_memory:
         public: false

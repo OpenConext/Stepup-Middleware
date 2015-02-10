@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
@@ -29,6 +30,11 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
 
-        $container->setParameter('middleware.config.email_validation_window', $config['email_verification_window']);
+        $definition = (new Definition())
+            ->setClass('Surfnet\Stepup\Identity\Value\EmailVerificationWindow')
+            ->setFactory('Surfnet\Stepup\Identity\Value\EmailVerificationWindow::fromSeconds')
+            ->setArguments([$config['email_verification_window']]);
+
+        $container->setDefinition('identity.config.email_validation_window', $definition);
     }
 }

@@ -32,7 +32,7 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_mocks_now()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
     }
@@ -43,10 +43,10 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_can_be_disabled_in_the_same_process()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
 
-        DateTimeHelper::stubNow(null);
+        DateTimeHelper::setCurrentTime(null);
         $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
     }
 

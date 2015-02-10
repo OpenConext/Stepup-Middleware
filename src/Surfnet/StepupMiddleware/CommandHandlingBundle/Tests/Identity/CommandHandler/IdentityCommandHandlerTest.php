@@ -47,6 +47,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailC
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
     /** @var MockInterface */
@@ -79,7 +82,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_yubikey_possession_can_be_proven()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
@@ -162,7 +165,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_phone_possession_can_be_proven()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
@@ -285,7 +288,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_unverified_second_factors_email_can_be_verified()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('regcode');

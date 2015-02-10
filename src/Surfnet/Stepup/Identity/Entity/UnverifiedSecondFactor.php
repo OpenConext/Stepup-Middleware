@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
+use DateInterval;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -123,7 +124,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     public function wouldVerifyEmail($verificationNonce)
     {
         return $this->verificationNonce === $verificationNonce
-            && !DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'));
+            && !DateTime::now()->comesAfter($this->verificationRequestedAt->add(new DateInterval('P1D')));
     }
 
     /**
@@ -140,7 +141,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
             );
         }
 
-        if (DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'))) {
+        if (DateTime::now()->comesAfter($this->verificationRequestedAt->add(new DateInterval('P1D')))) {
             throw new DomainException(
                 sprintf(
                     "Cannot verify possession of e-mail for second factor '%s': " .

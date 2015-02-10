@@ -78,13 +78,13 @@ class DateTime
     }
 
     /**
-     * @param string $intervalSpec
+     * @param DateInterval $intervalSpec
      * @return DateTime
      */
-    public function add($intervalSpec)
+    public function add(DateInterval $intervalSpec)
     {
         $dateTime = clone $this->dateTime;
-        $dateTime->add(new DateInterval($intervalSpec));
+        $dateTime->add($intervalSpec);
 
         return new self($dateTime);
     }

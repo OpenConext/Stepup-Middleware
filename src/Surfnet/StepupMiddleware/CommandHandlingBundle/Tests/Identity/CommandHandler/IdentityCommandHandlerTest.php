@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
 use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
@@ -63,12 +64,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
+        $aggregateFactory = new PublicConstructorAggregateFactory();
         $this->eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus');
         $this->middlewareConnection = m::mock('Doctrine\DBAL\Driver\Connection');
         $this->gatewayConnection = m::mock('Doctrine\DBAL\Driver\Connection');
 
         return new IdentityCommandHandler(
-            new IdentityRepository($eventStore, $eventBus),
+            new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
             $this->eventBus,
             $this->middlewareConnection,
             $this->gatewayConnection

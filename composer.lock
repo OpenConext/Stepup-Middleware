@@ -4,30 +4,38 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a9ceb925ed1b96d20ffa01f56f9620bc",
+    "hash": "36b159a5374067871173768bc66decfd",
     "packages": [
         {
             "name": "beberlei/assert",
-            "version": "v1.7",
+            "version": "v2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/assert.git",
-                "reference": "97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4"
+                "reference": "160eba4d1fbe692e42b3cf8a20b92ab23e3a8759"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/assert/zipball/97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4",
-                "reference": "97515db6b6c8fb254f5c3ce5730cdfa5a1e3fbf4",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/160eba4d1fbe692e42b3cf8a20b92ab23e3a8759",
+                "reference": "160eba4d1fbe692e42b3cf8a20b92ab23e3a8759",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Assert": "lib/"
-                }
+                },
+                "files": [
+                    "lib/Assert/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -45,24 +53,24 @@
                 "assertion",
                 "validation"
             ],
-            "time": "2014-01-25 08:48:48"
+            "time": "2014-12-18 19:12:40"
         },
         {
             "name": "broadway/broadway",
-            "version": "0.2.1",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qandidate-labs/broadway.git",
-                "reference": "b0ef27ec40f89a60f201e9dada0765b14a801500"
+                "reference": "b875bddde981514001ea1551c3e08976da2568a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qandidate-labs/broadway/zipball/b0ef27ec40f89a60f201e9dada0765b14a801500",
-                "reference": "b0ef27ec40f89a60f201e9dada0765b14a801500",
+                "url": "https://api.github.com/repos/qandidate-labs/broadway/zipball/b875bddde981514001ea1551c3e08976da2568a1",
+                "reference": "b875bddde981514001ea1551c3e08976da2568a1",
                 "shasum": ""
             },
             "require": {
-                "beberlei/assert": "~1.6",
+                "beberlei/assert": "~2.0",
                 "broadway/uuid-generator": "~0.1.0",
                 "php": ">=5.3.3",
                 "rhumsaa/uuid": "~2.4"
@@ -87,7 +95,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.3.x-dev"
+                    "dev-master": "0.4.x-dev"
                 }
             },
             "autoload": {
@@ -132,7 +140,7 @@
                 "domain-driven design",
                 "event sourcing"
             ],
-            "time": "2014-09-23 15:31:03"
+            "time": "2015-01-02 09:18:58"
         },
         {
             "name": "broadway/uuid-generator",
@@ -4695,6 +4703,7 @@
         "surfnet/stepup-bundle": 20
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.4"
     },

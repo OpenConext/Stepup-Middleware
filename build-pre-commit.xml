@@ -66,6 +66,11 @@
                 <trim/>
                 <ignoreblank/>
                 <tokenfilter delimoutput=","/>
+                <tokenfilter>
+                    <replaceregex pattern="(.*),$"
+                                  flags="s"
+                                  replace="\1"/>
+                </tokenfilter>
             </filterchain>
         </loadresource>
     </target>

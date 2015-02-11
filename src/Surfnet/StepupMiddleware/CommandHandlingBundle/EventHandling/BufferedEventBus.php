@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling;
 
-use Broadway\Domain\DomainEventStream;
+use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessageInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventHandling\EventListenerInterface;
@@ -47,7 +47,7 @@ class BufferedEventBus implements EventBusInterface
         $this->eventListeners[] = $eventListener;
     }
 
-    public function publish(DomainEventStream $domainMessages)
+    public function publish(DomainEventStreamInterface $domainMessages)
     {
         foreach ($domainMessages as $domainMessage) {
             $this->buffer[] = $domainMessage;

@@ -40,6 +40,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -129,8 +130,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
     }
 
-    public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
-    {
+    public function provePossessionOfYubikey(
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
         $this->assertUserMayAddSecondFactor();
         $this->apply(
             new YubikeyPossessionProvenEvent(
@@ -146,8 +150,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
-    {
+    public function provePossessionOfPhone(
+        SecondFactorId $secondFactorId,
+        PhoneNumber $phoneNumber,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
         $this->assertUserMayAddSecondFactor();
         $this->apply(
             new PhonePossessionProvenEvent(

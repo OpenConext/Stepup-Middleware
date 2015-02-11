@@ -6,6 +6,7 @@ services:
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
             - @doctrine.dbal.middleware_connection
             - @doctrine.dbal.gateway_connection
+            - @identity.entity.configurable_settings
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.configuration:

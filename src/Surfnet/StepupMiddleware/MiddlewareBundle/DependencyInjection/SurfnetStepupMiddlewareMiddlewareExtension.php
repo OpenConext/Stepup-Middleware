@@ -31,10 +31,10 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
         $config = $processor->processConfiguration(new Configuration(), $config);
 
         $definition = (new Definition())
-            ->setClass('Surfnet\Stepup\Identity\Value\EmailVerificationWindow')
-            ->setFactory('Surfnet\Stepup\Identity\Value\EmailVerificationWindow::fromSeconds')
+            ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')
+            ->setFactory('Surfnet\Stepup\Identity\Entity\ConfigurableSettings::create')
             ->setArguments([$config['email_verification_window']]);
 
-        $container->setDefinition('identity.config.email_validation_window', $definition);
+        $container->setDefinition('identity.entity.configurable_settings', $definition);
     }
 }

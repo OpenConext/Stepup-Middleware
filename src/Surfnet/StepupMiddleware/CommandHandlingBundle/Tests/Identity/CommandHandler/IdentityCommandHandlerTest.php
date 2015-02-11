@@ -25,6 +25,7 @@ use DateTime as CoreDateTime;
 use Mockery as m;
 use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
@@ -73,7 +74,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
             $this->eventBus,
             $this->middlewareConnection,
-            $this->gatewayConnection
+            $this->gatewayConnection,
+            ConfigurableSettings::create(3600)
         );
     }
 

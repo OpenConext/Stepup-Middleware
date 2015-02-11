@@ -40,8 +40,8 @@ class EmailVerificationWindow
      */
     public static function fromSeconds($seconds)
     {
-        if (!is_int($seconds)) {
-            throw InvalidArgumentException::invalidType('int', 'seconds', $seconds);
+        if (!is_int($seconds) || $seconds < 1) {
+            throw InvalidArgumentException::invalidType('positive integer', 'seconds', $seconds);
         }
 
         return new EmailVerificationWindow(new DateInterval('PT' . $seconds . 'S'));

@@ -18,9 +18,11 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use DateInterval;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
@@ -28,59 +30,55 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @group domain
-     * @dataProvider invalidValueProvider
-     *
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     */
-    public function it_cannot_be_constructed_with_anything_but_integers($invalidValue)
-    {
-        EmailVerificationWindow::fromSeconds($invalidValue);
-    }
-
-    /**
-     * @test
-     * @group domain
      *
      * @runInSeparateProcess
      */
-    public function window_is_open_for_instructed_amount_of_seconds_after_given_time()
+    public function window_is_open_for_instructed_timeframe_after_given_time()
     {
-        // the valid window therefor is from 1 to 4 second (inclusive)
-        $window = EmailVerificationWindow::fromSeconds(3);
         $startTime = new DateTime(new CoreDateTime('@1'));
+        $timeFrame = TimeFrame::ofSeconds(3);
 
-        // before the starttime, window is not open
+        $window = EmailVerificationWindow::createFromTimeFrameStartingAt($timeFrame, $startTime);
+
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@0')));
-        $this->assertFalse($window->isOpen($startTime));
+        $this->assertFalse($window->isOpen(), 'The window should not be open before the start time');
 
         // at the starttime, window is open
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@1')));
-        $this->assertTrue($window->isOpen($startTime));
+        $this->assertTrue($window->isOpen(), 'The window should be open at the start time');
 
-        // after the starttime but within the specified windowinterval, window is open
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@2')));
-        $this->assertTrue($window->isOpen($startTime));
+        $this->assertTrue($window->isOpen(), 'The window should be open after the start time, before the end time');
 
-        // after the starttime but within the specified windowinterval, window is open
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@4')));
-        $this->assertTrue($window->isOpen($startTime));
+        $this->assertTrue($window->isOpen(), 'The window should be open at the end time');
 
-        // after the starttime and after the specified windowinterval, window is closed
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@5')));
-        $this->assertFalse($window->isOpen($startTime));
+        $this->assertFalse($window->isOpen(), 'The window should be closed after the end time');
     }
 
-    /**
-     * dataprovider
-     */
-    public function invalidValueProvider()
+    public function a_window_is_considered_equal_when_the_start_and_end_are_the_same()
     {
-        return [
-            'empty string' => [''],
-            'string'       => ['abc'],
-            'array'        => [[]],
-            'float'        => [2.718],
-            'object'       => [new \StdClass()],
-        ];
+        // since we work with second precision, we might run issues trusting normal time, so we fixate the time
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
+
+        $base = $this->newEmailVerificationWindow(3);
+        $same = $this->newEmailVerificationWindow(3);
+        $earlier = $this->newEmailVerificationWindow(3);
+//        $earlierOverlapping = $this->newEmailVerificationWindow()
+
+    }
+
+    private function newEmailVerificationWindow($timeFrameSeconds, $offsetIntervalSpec = null)
+    {
+        $start = DateTime::now();
+        if ($offsetIntervalSpec) {
+            $start = $start->add(new DateInterval($offsetIntervalSpec));
+        }
+
+        return EmailVerificationWindow::createFromTimeFrameStartingAt(
+            TimeFrame::ofSeconds($timeFrameSeconds),
+            $start
+        );
     }
 }

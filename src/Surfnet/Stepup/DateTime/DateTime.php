@@ -90,12 +90,33 @@ class DateTime
     }
 
     /**
+     * @param DateInterval $interval
+     * @return DateTime
+     */
+    public function sub(DateInterval $interval)
+    {
+        $dateTime = clone $this->dateTime;
+        $dateTime->sub($interval);
+
+        return new self($dateTime);
+    }
+
+    /**
      * @param DateTime $dateTime
      * @return boolean
      */
     public function comesBefore(DateTime $dateTime)
     {
         return $this->dateTime < $dateTime->dateTime;
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesBeforeOrIsEqual(DateTime $dateTime)
+    {
+        return $this->dateTime <= $dateTime->dateTime;
     }
 
     /**

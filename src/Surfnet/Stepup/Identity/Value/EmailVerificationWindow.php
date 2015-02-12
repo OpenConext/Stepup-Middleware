@@ -18,61 +18,57 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use DateInterval;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class EmailVerificationWindow
 {
     /**
-     * @var DateInterval
+     * @var DateTime
      */
-    private $interval;
+    private $start;
 
-    private function __construct(DateInterval $interval)
+    /**
+     * @var DateTime
+     */
+    private $end;
+
+    private function __construct(DateTime $start, DateTime $end)
     {
-        $this->interval = $interval;
+        $this->start = $start;
+        $this->end   = $end;
     }
 
     /**
-     * @param int $seconds
+     * @param TimeFrame $timeFrame
+     * @param DateTime  $start
      * @return EmailVerificationWindow
      */
-    public static function fromSeconds($seconds)
+    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start)
     {
-        if (!is_int($seconds) || $seconds < 1) {
-            throw InvalidArgumentException::invalidType('positive integer', 'seconds', $seconds);
-        }
-
-        return new EmailVerificationWindow(new DateInterval('PT' . $seconds . 'S'));
+        return new EmailVerificationWindow($start, $timeFrame->getEndWhenStartingAt($start));
     }
 
     /**
-     * @param DateTime $windowStartedAt
      * @return bool
      */
-    public function isOpen(DateTime $windowStartedAt)
+    public function isOpen()
     {
         $now = DateTime::now();
-        $till = $windowStartedAt->add($this->interval);
 
-        return !$now->comesAfter($till) && !$now->comesBefore($windowStartedAt);
+        return $now->comesAfterOrIsEqual($this->start) && $now->comesBeforeOrIsEqual($this->end);
     }
 
     /**
-     * @param EmailVerificationWindow $otherWindow
+     * @param EmailVerificationWindow $other
      * @return bool
      */
-    public function equals(EmailVerificationWindow $otherWindow)
+    public function equals(EmailVerificationWindow $other)
     {
-        return $this->interval->s === $otherWindow->interval->s;
+        return $this->start == $other->start && $this->end == $other->end;
     }
 
-    /**
-     * Do note that this returns the amount of seconds, not so much a human readable format.
-     */
     public function __toString()
     {
-        return $this->interval->format('S');
+        return $this->start . ' - ' . $this->end;
     }
 }

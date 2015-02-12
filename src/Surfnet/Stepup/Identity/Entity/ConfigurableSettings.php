@@ -18,7 +18,9 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 
 /**
  * Entity that contains the User Defined Settings that are relevant to the domain
@@ -26,29 +28,32 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 class ConfigurableSettings
 {
     /**
-     * @var EmailVerificationWindow
+     * @var TimeFrame
      */
-    private $emailVerificationWindow;
+    private $emailVerificationTimeFrame;
 
-    final private function __construct(EmailVerificationWindow $emailVerificationWindow)
+    final private function __construct(TimeFrame $timeFrame)
     {
-        $this->emailVerificationWindow = $emailVerificationWindow;
+        $this->emailVerificationTimeFrame = $timeFrame;
     }
 
     /**
-     * @param int $emailVerificationWindow positive integer, amount of seconds the email verification window is open
+     * @param int $emailVerificationTimeFrame positive integer
      * @return ConfigurableSettings
      */
-    public static function create($emailVerificationWindow)
+    public static function create($emailVerificationTimeFrame)
     {
-        return new self(EmailVerificationWindow::fromSeconds($emailVerificationWindow));
+        return new self(TimeFrame::ofSeconds($emailVerificationTimeFrame));
     }
 
     /**
      * @return EmailVerificationWindow
      */
-    public function getEmailVerificationWindow()
+    public function createNewEmailVerificationWindow()
     {
-        return $this->emailVerificationWindow;
+        return EmailVerificationWindow::createFromTimeFrameStartingAt(
+            $this->emailVerificationTimeFrame,
+            DateTime::now()
+        );
     }
 }

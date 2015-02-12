@@ -73,6 +73,21 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
+    public function sub_returns_a_different_object_that_has_the_interval_substracted()
+    {
+        $base     = new DateTime(new CoreDateTime('@1000'));
+        $interval = new DateInterval('PT1S');
+
+        $result = $base->sub($interval);
+
+        $this->assertFalse($result === $base, 'DateTime::sub must return a different object');
+        $this->assertTrue($result < $base, 'DateTime::sub subtracts the interval to the new object');
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
     public function comes_before_works_with_exclusive_comparison()
     {
         $base   = new DateTime(new CoreDateTime('@1000'));
@@ -83,6 +98,22 @@ class DateTimeTest extends UnitTest
         $this->assertTrue($before->comesBefore($base));
         $this->assertFalse($same->comesBefore($base));
         $this->assertFalse($after->comesBefore($base));
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function comes_before_or_is_equal_works_with_inclusive_comparison()
+    {
+        $base   = new DateTime(new CoreDateTime('@1000'));
+        $before = new DateTime(new CoreDateTime('@999'));
+        $same   = new DateTime(new CoreDateTime('@1000'));
+        $after  = new DateTime(new CoreDateTime('@1001'));
+
+        $this->assertTrue($before->comesBeforeOrIsEqual($base));
+        $this->assertTrue($same->comesBeforeOrIsEqual($base));
+        $this->assertFalse($after->comesBeforeOrIsEqual($base));
     }
 
     /**

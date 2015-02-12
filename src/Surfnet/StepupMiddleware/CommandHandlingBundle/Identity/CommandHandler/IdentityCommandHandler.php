@@ -20,10 +20,12 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Doctrine\DBAL\Driver\Connection;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -123,7 +125,7 @@ class IdentityCommandHandler extends CommandHandler
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId),
-            $this->configurableSettings->getEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
         $this->repository->add($identity);
@@ -140,7 +142,7 @@ class IdentityCommandHandler extends CommandHandler
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
             new PhoneNumber($command->phoneNumber),
-            $this->configurableSettings->getEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
         $this->repository->add($identity);

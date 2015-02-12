@@ -370,7 +370,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_verified_second_factors_email_cannot_be_verified()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'does not apply to any unverified');
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
+        );
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
@@ -422,15 +425,19 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_verify_an_email_after_the_verification_window_has_closed()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'verification window has closed');
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'Cannot verify second factor, the verification window is closed.'
+        );
 
         $id = new IdentityId(self::uuid());
-        $nameId = new NameId(md5(__METHOD__));
-        $institution = new Institution('A Corp.');
-        $email = 'a@b.c';
-        $commonName = 'Foo bar';
         $secondFactorId = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
+        $possessionProvenAt = new DateTime(new CoreDateTime('-2 days'));
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = 'a@b.c';
+        $commonName = 'Foo bar';
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
@@ -444,10 +451,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    new DateTime(new CoreDateTime('-2 days')),
+                    $possessionProvenAt,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        $possessionProvenAt
                     ),
                     'nonce',
                     'Foo bar',

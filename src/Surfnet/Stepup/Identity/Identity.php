@@ -52,6 +52,7 @@ use Surfnet\Stepup\Token\TokenGenerator;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -174,19 +175,26 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function verifyEmail($verificationNonce)
     {
+        $secondFactorToVerify = null;
         foreach ($this->unverifiedSecondFactors as $secondFactor) {
-            if (!$secondFactor->wouldVerifyEmail($verificationNonce)) {
-                continue;
+            /** @var Entity\UnverifiedSecondFactor $secondFactor */
+            if ($secondFactor->hasNonce($verificationNonce)) {
+                $secondFactorToVerify = $secondFactor;
             }
-
-            $secondFactor->verifyEmail($verificationNonce);
-            return;
         }
 
-        throw new DomainException(
-            "Cannot verify second factor: verification nonce does not apply to any unverified second factors or the " .
-            "verification window has closed."
-        );
+        if (!$secondFactorToVerify) {
+            throw new DomainException(
+                'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
+            );
+        }
+
+        /** @var Entity\UnverifiedSecondFactor $secondFactorToVerify */
+        if (!$secondFactorToVerify->canBeVerifiedNow()) {
+            throw new DomainException('Cannot verify second factor, the verification window is closed.');
+        }
+
+        $secondFactorToVerify->verifyEmail();
     }
 
     public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
@@ -296,6 +304,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             'yubikey',
             (string) $event->yubikeyPublicId,
             $event->emailVerificationRequestedAt,
+            $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
 
@@ -310,6 +319,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             'sms',
             (string) $event->phoneNumber,
             $event->emailVerificationRequestedAt,
+            $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
 

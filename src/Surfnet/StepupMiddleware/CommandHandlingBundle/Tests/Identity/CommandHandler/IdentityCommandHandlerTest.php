@@ -34,11 +34,13 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
@@ -54,6 +56,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
  */
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
+    private static $window = 3600;
+
     /** @var MockInterface */
     private $eventBus;
 
@@ -75,7 +79,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->eventBus,
             $this->middlewareConnection,
             $this->gatewayConnection,
-            ConfigurableSettings::create(3600)
+            ConfigurableSettings::create(self::$window)
         );
     }
 
@@ -115,6 +119,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId,
                     $pubId,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(static::$window), DateTime::now()),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -153,6 +158,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $pubId1,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -198,6 +207,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId,
                     $pubId,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -236,6 +249,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $phoneNumber1,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -276,6 +293,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId1,
                     $publicId,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -318,6 +339,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $publicId,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -368,6 +393,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $publicId,
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -416,6 +445,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $publicId,
                     new DateTime(new CoreDateTime('-2 days')),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -514,6 +547,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secFacId = new SecondFactorId($command->secondFactorId),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
                     DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',

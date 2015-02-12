@@ -18,9 +18,11 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class EmailVerificationWindow
+class EmailVerificationWindow implements SerializableInterface
 {
     /**
      * @var DateTime
@@ -49,6 +51,25 @@ class EmailVerificationWindow
     }
 
     /**
+     * @param DateTime $start
+     * @param DateTime $end
+     * @return EmailVerificationWindow
+     */
+    public static function createWindowFromTill(DateTime $start, DateTime $end)
+    {
+        if (!$end->comesAfter($start)) {
+            throw new InvalidArgumentException(sprintf(
+                'An EmailVerificationWindow can only be created with an end time that is after the start time, '
+                . 'given start: "%s", given end: "%s"',
+                (string) $start,
+                (string) $end
+            ));
+        }
+
+        return new EmailVerificationWindow($start, $end);
+    }
+
+    /**
      * @return bool
      */
     public function isOpen()
@@ -67,8 +88,21 @@ class EmailVerificationWindow
         return $this->start == $other->start && $this->end == $other->end;
     }
 
+    public static function deserialize(array $data)
+    {
+        return new EmailVerificationWindow(
+            DateTime::fromString($data['start']),
+            DateTime::fromString($data['end'])
+        );
+    }
+
+    public function serialize()
+    {
+        return ['start' => (string) $this->start, 'end' => (string) $this->end];
+    }
+
     public function __toString()
     {
-        return $this->start . ' - ' . $this->end;
+        return $this->start . '-' . $this->end;
     }
 }

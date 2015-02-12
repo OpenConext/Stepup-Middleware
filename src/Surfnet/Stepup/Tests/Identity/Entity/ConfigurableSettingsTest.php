@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\Entity;
+namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use DateTime as CoreDateTime;
 use PHPUnit_Framework_TestCase as UnitTest;

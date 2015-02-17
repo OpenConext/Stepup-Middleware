@@ -57,23 +57,76 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($window->isOpen(), 'The window should be closed after the end time');
     }
 
+    /**
+     * @test
+     * @group domain
+     *
+     * @runInSeparateProcess
+     */
     public function a_window_is_considered_equal_when_the_start_and_end_are_the_same()
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
 
-        $base = $this->newEmailVerificationWindow(3);
-        $same = $this->newEmailVerificationWindow(3);
-        $earlier = $this->newEmailVerificationWindow(3);
-//        $earlierOverlapping = $this->newEmailVerificationWindow()
+        $base                        = $this->newEmailVerificationWindow(3);
+        $same                        = $this->newEmailVerificationWindow(3);
+        $startsSameEndsEarlier       = $this->newEmailVerificationWindow(2);
+        $startsSameEndsLater         = $this->newEmailVerificationWindow(4);
+        $startsLater                 = $this->newEmailVerificationWindow(3, 'PT1S');
+        $startsLaterEndsAtSameTime   = $this->newEmailVerificationWindow(2, 'PT1S');
+        $startsEarlier               = $this->newEmailVerificationWindow(2, '-PT1S');
+        $startsEarlierEndsAtSameTime = $this->newEmailVerificationWindow(4, '-PT1S');
 
+        $this->assertTrue($base->equals($same));
+        $this->assertFalse($base->equals($startsSameEndsEarlier));
+        $this->assertFalse($base->equals($startsSameEndsLater));
+        $this->assertFalse($base->equals($startsLater));
+        $this->assertFalse($base->equals($startsLaterEndsAtSameTime));
+        $this->assertFalse($base->equals($startsEarlier));
+        $this->assertFalse($base->equals($startsEarlierEndsAtSameTime));
     }
 
-    private function newEmailVerificationWindow($timeFrameSeconds, $offsetIntervalSpec = null)
+    /**
+     * @test
+     * @group domain
+     *
+     * @runInSeparateProcess
+     */
+    public function the_window_correctly_calculates_the_end_datetime()
+    {
+        // since we work with second precision, we might run issues trusting normal time, so we fixate the time
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10')));
+
+        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now());
+
+        $endTime = $window->openUntil();
+        $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTime);
+
+        $window = EmailVerificationWindow::createWindowFromTill(
+            DateTime::now(),
+            DateTime::now()->add(new DateInterval('PT3S'))
+        );
+        $endTimeTwo = $window->openUntil();
+        $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTimeTwo);
+    }
+
+    /**
+     * Helper method for easy EmailVerificationWindow creation
+     *
+     * @param int         $timeFrameSeconds
+     * @param string|null $startTimeOffset
+     * @return EmailVerificationWindow
+     */
+    private function newEmailVerificationWindow($timeFrameSeconds, $startTimeOffset = null)
     {
         $start = DateTime::now();
-        if ($offsetIntervalSpec) {
-            $start = $start->add(new DateInterval($offsetIntervalSpec));
+        if ($startTimeOffset) {
+            if (substr($startTimeOffset, 0, 1) === '-') {
+                $offset = substr($startTimeOffset, 1);
+                $start = $start->sub(new DateInterval($offset));
+            } else {
+                $start = $start->add(new DateInterval($startTimeOffset));
+            }
         }
 
         return EmailVerificationWindow::createFromTimeFrameStartingAt(

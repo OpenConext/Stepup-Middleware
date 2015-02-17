@@ -80,6 +80,14 @@ class EmailVerificationWindow implements SerializableInterface
     }
 
     /**
+     * @return DateTime
+     */
+    public function openUntil()
+    {
+        return $this->end;
+    }
+
+    /**
      * @param EmailVerificationWindow $other
      * @return bool
      */

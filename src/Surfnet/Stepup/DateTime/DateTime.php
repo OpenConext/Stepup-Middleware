@@ -22,6 +22,9 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class DateTime
 {
     /**
@@ -138,10 +141,28 @@ class DateTime
     }
 
     /**
+     * @param $format
+     * @return string
+     */
+    public function format($format)
+    {
+        $formatted = $this->dateTime->format($format);
+
+        if ($formatted === false) {
+            throw new InvalidArgumentException(sprintf(
+                'Given format "%s" is not a valid format for DateTime',
+                $format
+            ));
+        }
+
+        return $formatted;
+    }
+
+    /**
      * @return string An ISO 8601 representation of this DateTime.
      */
     public function __toString()
     {
-        return $this->dateTime->format(self::FORMAT);
+        return $this->format(self::FORMAT);
     }
 }

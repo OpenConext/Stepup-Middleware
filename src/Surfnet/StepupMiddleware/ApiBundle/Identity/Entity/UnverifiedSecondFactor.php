@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
@@ -67,15 +68,29 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $verificationNonce;
 
     /**
-     * @param Identity $identity
-     * @param string $id
-     * @param string $type
-     * @param string $secondFactorIdentifier
-     * @param string $verificationNonce
-     * @return self
+     * @ORM\Column(type="stepup_datetime", nullable=false)
+     *
+     * @var
      */
-    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier, $verificationNonce)
-    {
+    public $verificationNonceValidUntil;
+
+    /**
+     * @param Identity $identity
+     * @param string   $id
+     * @param string   $type
+     * @param string   $secondFactorIdentifier
+     * @param string   $verificationNonce
+     * @param DateTime $verificationNonceValidUntil
+     * @return UnverifiedSecondFactor
+     */
+    public static function addToIdentity(
+        Identity $identity,
+        $id,
+        $type,
+        $secondFactorIdentifier,
+        $verificationNonce,
+        DateTime $verificationNonceValidUntil
+    ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
@@ -98,6 +113,7 @@ class UnverifiedSecondFactor implements \JsonSerializable
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
         $secondFactor->verificationNonce = $verificationNonce;
+        $secondFactor->verificationNonceValidUntil = $verificationNonceValidUntil;
 
         $identity->unverifiedSecondFactors->add($secondFactor);
 
@@ -134,6 +150,7 @@ class UnverifiedSecondFactor implements \JsonSerializable
             'id'   => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
+//            'verification_expires_at' => (string) $this->verificationNonceValidUntil
         ];
     }
 }

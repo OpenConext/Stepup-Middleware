@@ -60,11 +60,6 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     private $secondFactorIdentifier;
 
     /**
-     * @var DateTime
-     */
-    private $verificationRequestedAt;
-
-    /**
      * @var EmailVerificationWindow;
      */
     private $verificationWindow;
@@ -79,7 +74,6 @@ class UnverifiedSecondFactor extends EventSourcedEntity
      * @param Identity                $identity
      * @param string                  $type
      * @param string                  $secondFactorIdentifier
-     * @param DateTime                $verificationRequestedAt
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $verificationNonce
      * @return UnverifiedSecondFactor
@@ -89,7 +83,6 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         Identity $identity,
         $type,
         $secondFactorIdentifier,
-        DateTime $verificationRequestedAt,
         EmailVerificationWindow $emailVerificationWindow,
         $verificationNonce
     ) {
@@ -106,7 +99,6 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         $secondFactor->identity = $identity;
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
-        $secondFactor->verificationRequestedAt = $verificationRequestedAt;
         $secondFactor->verificationWindow = $emailVerificationWindow;
         $secondFactor->verificationNonce = $verificationNonce;
 

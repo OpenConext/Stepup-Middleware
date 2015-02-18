@@ -118,7 +118,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId,
                     $pubId,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(static::$window), DateTime::now()),
                     'nonce',
                     'Foo bar',
@@ -157,7 +156,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $pubId1,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -206,7 +204,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId,
                     $pubId,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -248,7 +245,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $phoneNumber1,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -292,7 +288,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $publicId,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -338,7 +333,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -395,7 +389,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -433,7 +426,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId(self::uuid());
         $secondFactorId = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
-        $possessionProvenAt = new DateTime(new CoreDateTime('-2 days'));
         $institution = new Institution('A Corp.');
         $nameId = new NameId(md5(__METHOD__));
         $email = 'a@b.c';
@@ -451,10 +443,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    $possessionProvenAt,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        $possessionProvenAt
+                        new DateTime(new CoreDateTime('-2 days'))
                     ),
                     'nonce',
                     'Foo bar',
@@ -553,7 +544,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId = new SecondFactorId($command->secondFactorId),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
-                    DateTime::now(),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()

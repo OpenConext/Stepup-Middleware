@@ -39,11 +39,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $phoneNumber;
 
     /**
-     * @var DateTime
-     */
-    public $emailVerificationRequestedAt;
-
-    /**
      * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
@@ -76,7 +71,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
      * @param IdentityId              $identityId
      * @param SecondFactorId          $secondFactorId
      * @param PhoneNumber             $phoneNumber
-     * @param DateTime                $emailVerificationRequestedAt
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $emailVerificationNonce
      * @param string                  $commonName
@@ -87,7 +81,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
-        DateTime $emailVerificationRequestedAt,
         EmailVerificationWindow $emailVerificationWindow,
         $emailVerificationNonce,
         $commonName,
@@ -98,7 +91,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
-        $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
@@ -112,7 +104,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
-            DateTime::fromString($data['email_verification_requested_at']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             $data['common_name'],
@@ -127,7 +118,6 @@ class PhonePossessionProvenEvent extends IdentityEvent
             'identity_id'                     => (string) $this->identityId,
             'second_factor_id'                => (string) $this->secondFactorId,
             'phone_number'                    => (string) $this->phoneNumber,
-            'email_verification_requested_at' => (string) $this->emailVerificationRequestedAt,
             'email_verification_window'       => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,

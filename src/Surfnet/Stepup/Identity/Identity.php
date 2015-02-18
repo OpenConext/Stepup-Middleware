@@ -142,7 +142,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $secondFactorId,
                 $yubikeyPublicId,
-                DateTime::now(),
                 $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
@@ -163,7 +162,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $secondFactorId,
                 $phoneNumber,
-                DateTime::now(),
                 $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
@@ -303,7 +301,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this,
             'yubikey',
             (string) $event->yubikeyPublicId,
-            $event->emailVerificationRequestedAt,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -318,7 +315,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this,
             'sms',
             (string) $event->phoneNumber,
-            $event->emailVerificationRequestedAt,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );

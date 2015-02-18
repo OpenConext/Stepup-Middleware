@@ -35,7 +35,6 @@ use Surfnet\Stepup\Token\TokenGenerator;
  * address to verify this second factor.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
 class UnverifiedSecondFactor extends EventSourcedEntity
 {

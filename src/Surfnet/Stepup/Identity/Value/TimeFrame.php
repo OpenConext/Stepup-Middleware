@@ -23,7 +23,7 @@ use DateInterval;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class TimeFrame
+final class TimeFrame
 {
     /**
      * @var DateInterval

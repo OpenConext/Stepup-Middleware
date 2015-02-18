@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
                                 return !is_int($seconds) || $seconds < 1;
                             })
                             ->thenInvalid(
-                                "The email verification window must be a positive integer"
+                                'The email verification window must be a positive integer'
                             )
                         ->end()
                     ->end()

@@ -25,14 +25,14 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 /**
  * Entity that contains the User Defined Settings that are relevant to the domain
  */
-class ConfigurableSettings
+final class ConfigurableSettings
 {
     /**
      * @var TimeFrame
      */
     private $emailVerificationTimeFrame;
 
-    final private function __construct(TimeFrame $timeFrame)
+    private function __construct(TimeFrame $timeFrame)
     {
         $this->emailVerificationTimeFrame = $timeFrame;
     }

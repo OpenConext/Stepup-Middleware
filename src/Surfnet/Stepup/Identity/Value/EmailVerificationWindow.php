@@ -22,7 +22,7 @@ use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class EmailVerificationWindow implements SerializableInterface
+final class EmailVerificationWindow implements SerializableInterface
 {
     /**
      * @var DateTime

@@ -20,9 +20,12 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Doctrine\DBAL\Driver\Connection;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -65,21 +68,29 @@ class IdentityCommandHandler extends CommandHandler
     private $gatewayConnection;
 
     /**
-     * @param IdentityRepository $repository
-     * @param BufferedEventBus $eventBus
-     * @param Connection $middlewareConnection
-     * @param Connection $gatewayConnection
+     * @var \Surfnet\Stepup\Identity\Entity\ConfigurableSettings
+     */
+    private $configurableSettings;
+
+    /**
+     * @param IdentityRepository   $repository
+     * @param BufferedEventBus     $eventBus
+     * @param Connection           $middlewareConnection
+     * @param Connection           $gatewayConnection
+     * @param ConfigurableSettings $configurableSettings
      */
     public function __construct(
         IdentityRepository $repository,
         BufferedEventBus $eventBus,
         Connection $middlewareConnection,
-        Connection $gatewayConnection
+        Connection $gatewayConnection,
+        ConfigurableSettings $configurableSettings
     ) {
-        $this->repository = $repository;
-        $this->eventBus = $eventBus;
+        $this->repository           = $repository;
+        $this->eventBus             = $eventBus;
         $this->middlewareConnection = $middlewareConnection;
-        $this->gatewayConnection = $gatewayConnection;
+        $this->gatewayConnection    = $gatewayConnection;
+        $this->configurableSettings = $configurableSettings;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -113,7 +124,8 @@ class IdentityCommandHandler extends CommandHandler
 
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
-            new YubikeyPublicId($command->yubikeyPublicId)
+            new YubikeyPublicId($command->yubikeyPublicId),
+            $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
         $this->repository->add($identity);
@@ -129,7 +141,8 @@ class IdentityCommandHandler extends CommandHandler
 
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
-            new PhoneNumber($command->phoneNumber)
+            new PhoneNumber($command->phoneNumber),
+            $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
         $this->repository->add($identity);

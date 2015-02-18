@@ -40,6 +40,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -51,6 +52,7 @@ use Surfnet\Stepup\Token\TokenGenerator;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -129,15 +131,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
     }
 
-    public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
-    {
+    public function provePossessionOfYubikey(
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
         $this->assertUserMayAddSecondFactor();
         $this->apply(
             new YubikeyPossessionProvenEvent(
                 $this->id,
                 $secondFactorId,
                 $yubikeyPublicId,
-                DateTime::now(),
+                $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
                 $this->email,
@@ -146,15 +151,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber)
-    {
+    public function provePossessionOfPhone(
+        SecondFactorId $secondFactorId,
+        PhoneNumber $phoneNumber,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
         $this->assertUserMayAddSecondFactor();
         $this->apply(
             new PhonePossessionProvenEvent(
                 $this->id,
                 $secondFactorId,
                 $phoneNumber,
-                DateTime::now(),
+                $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
                 $this->email,
@@ -165,19 +173,26 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function verifyEmail($verificationNonce)
     {
+        $secondFactorToVerify = null;
         foreach ($this->unverifiedSecondFactors as $secondFactor) {
-            if (!$secondFactor->wouldVerifyEmail($verificationNonce)) {
-                continue;
+            /** @var Entity\UnverifiedSecondFactor $secondFactor */
+            if ($secondFactor->hasNonce($verificationNonce)) {
+                $secondFactorToVerify = $secondFactor;
             }
-
-            $secondFactor->verifyEmail($verificationNonce);
-            return;
         }
 
-        throw new DomainException(
-            "Cannot verify second factor: verification nonce does not apply to any unverified second factors or the " .
-            "verification window has closed."
-        );
+        if (!$secondFactorToVerify) {
+            throw new DomainException(
+                'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
+            );
+        }
+
+        /** @var Entity\UnverifiedSecondFactor $secondFactorToVerify */
+        if (!$secondFactorToVerify->canBeVerifiedNow()) {
+            throw new DomainException('Cannot verify second factor, the verification window is closed.');
+        }
+
+        $secondFactorToVerify->verifyEmail();
     }
 
     public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
@@ -286,7 +301,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this,
             'yubikey',
             (string) $event->yubikeyPublicId,
-            $event->emailVerificationRequestedAt,
+            $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
 
@@ -300,7 +315,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this,
             'sms',
             (string) $event->phoneNumber,
-            $event->emailVerificationRequestedAt,
+            $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
 

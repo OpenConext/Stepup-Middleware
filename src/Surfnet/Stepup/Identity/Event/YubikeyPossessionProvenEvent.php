@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -45,6 +46,11 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     public $emailVerificationRequestedAt;
 
     /**
+     * @var EmailVerificationWindow
+     */
+    public $emailVerificationWindow;
+
+    /**
      * @var string
      */
     public $emailVerificationNonce;
@@ -69,20 +75,20 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param SecondFactorId $secondFactorId
-     * @param YubikeyPublicId $yubikeyPublicId
-     * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationNonce
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId              $identityId
+     * @param SecondFactorId          $secondFactorId
+     * @param YubikeyPublicId         $yubikeyPublicId
+     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param string                  $emailVerificationNonce
+     * @param string                  $commonName
+     * @param string                  $email
+     * @param string                  $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
-        DateTime $emailVerificationRequestedAt,
+        EmailVerificationWindow $emailVerificationWindow,
         $emailVerificationNonce,
         $commonName,
         $email,
@@ -92,7 +98,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
 
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
-        $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
+        $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
@@ -105,7 +111,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id']),
-            DateTime::fromString($data['email_verification_requested_at']),
+            EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             $data['common_name'],
             $data['email'],
@@ -119,7 +125,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'identity_id'                     => (string) $this->identityId,
             'second_factor_id'                => (string) $this->secondFactorId,
             'yubikey_public_id'               => (string) $this->yubikeyPublicId,
-            'email_verification_requested_at' => (string) $this->emailVerificationRequestedAt,
+            'email_verification_window'       => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

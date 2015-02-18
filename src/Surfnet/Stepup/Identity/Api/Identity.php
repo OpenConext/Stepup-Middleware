@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -62,18 +63,28 @@ interface Identity extends AggregateRoot
     public function changeEmail($email);
 
     /**
-     * @param SecondFactorId $secondFactorId
-     * @param YubikeyPublicId $yubikeyPublicId
+     * @param SecondFactorId          $secondFactorId
+     * @param YubikeyPublicId         $yubikeyPublicId
+     * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
-    public function provePossessionOfYubikey(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
+    public function provePossessionOfYubikey(
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId,
+        EmailVerificationWindow $emailVerificationWindow
+    );
 
     /**
-     * @param SecondFactorId $secondFactorId
-     * @param PhoneNumber $phoneNumber
+     * @param SecondFactorId          $secondFactorId
+     * @param PhoneNumber             $phoneNumber
+     * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
-    public function provePossessionOfPhone(SecondFactorId $secondFactorId, PhoneNumber $phoneNumber);
+    public function provePossessionOfPhone(
+        SecondFactorId $secondFactorId,
+        PhoneNumber $phoneNumber,
+        EmailVerificationWindow $emailVerificationWindow
+    );
 
     /**
      * @param string $verificationNonce

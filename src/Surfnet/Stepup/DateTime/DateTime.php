@@ -22,6 +22,9 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class DateTime
 {
     /**
@@ -78,15 +81,45 @@ class DateTime
     }
 
     /**
-     * @param string $intervalSpec
+     * @param DateInterval $interval
      * @return DateTime
      */
-    public function add($intervalSpec)
+    public function add(DateInterval $interval)
     {
         $dateTime = clone $this->dateTime;
-        $dateTime->add(new DateInterval($intervalSpec));
+        $dateTime->add($interval);
 
         return new self($dateTime);
+    }
+
+    /**
+     * @param DateInterval $interval
+     * @return DateTime
+     */
+    public function sub(DateInterval $interval)
+    {
+        $dateTime = clone $this->dateTime;
+        $dateTime->sub($interval);
+
+        return new self($dateTime);
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesBefore(DateTime $dateTime)
+    {
+        return $this->dateTime < $dateTime->dateTime;
+    }
+
+    /**
+     * @param DateTime $dateTime
+     * @return boolean
+     */
+    public function comesBeforeOrIsEqual(DateTime $dateTime)
+    {
+        return $this->dateTime <= $dateTime->dateTime;
     }
 
     /**
@@ -108,10 +141,28 @@ class DateTime
     }
 
     /**
+     * @param $format
+     * @return string
+     */
+    public function format($format)
+    {
+        $formatted = $this->dateTime->format($format);
+
+        if ($formatted === false) {
+            throw new InvalidArgumentException(sprintf(
+                'Given format "%s" is not a valid format for DateTime',
+                $format
+            ));
+        }
+
+        return $formatted;
+    }
+
+    /**
      * @return string An ISO 8601 representation of this DateTime.
      */
     public function __toString()
     {
-        return $this->dateTime->format(self::FORMAT);
+        return $this->format(self::FORMAT);
     }
 }

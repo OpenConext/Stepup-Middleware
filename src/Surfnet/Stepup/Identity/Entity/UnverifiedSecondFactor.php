@@ -20,12 +20,12 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Token\TokenGenerator;
@@ -59,9 +59,9 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     private $secondFactorIdentifier;
 
     /**
-     * @var DateTime
+     * @var EmailVerificationWindow;
      */
-    private $verificationRequestedAt;
+    private $verificationWindow;
 
     /**
      * @var string
@@ -69,12 +69,12 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     private $verificationNonce;
 
     /**
-     * @param SecondFactorId $id
-     * @param Identity $identity
-     * @param string $type
-     * @param string $secondFactorIdentifier
-     * @param DateTime $verificationRequestedAt
-     * @param string $verificationNonce
+     * @param SecondFactorId          $id
+     * @param Identity                $identity
+     * @param string                  $type
+     * @param string                  $secondFactorIdentifier
+     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param string                  $verificationNonce
      * @return UnverifiedSecondFactor
      */
     public static function create(
@@ -82,7 +82,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         Identity $identity,
         $type,
         $secondFactorIdentifier,
-        DateTime $verificationRequestedAt,
+        EmailVerificationWindow $emailVerificationWindow,
         $verificationNonce
     ) {
         if (!is_string($verificationNonce)) {
@@ -98,7 +98,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
         $secondFactor->identity = $identity;
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
-        $secondFactor->verificationRequestedAt = $verificationRequestedAt;
+        $secondFactor->verificationWindow = $emailVerificationWindow;
         $secondFactor->verificationNonce = $verificationNonce;
 
         return $secondFactor;
@@ -120,36 +120,21 @@ class UnverifiedSecondFactor extends EventSourcedEntity
      * @param string $verificationNonce
      * @return bool
      */
-    public function wouldVerifyEmail($verificationNonce)
+    public function hasNonce($verificationNonce)
     {
-        return $this->verificationNonce === $verificationNonce
-            && !DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'));
+        return $this->verificationNonce === $verificationNonce;
     }
 
     /**
-     * @param string $verificationNonce
+     * @return bool
      */
-    public function verifyEmail($verificationNonce)
+    public function canBeVerifiedNow()
     {
-        if ($this->verificationNonce !== $verificationNonce) {
-            throw new DomainException(
-                sprintf(
-                    "Cannot verify second factor '%s': verification nonce does not match.",
-                    (string) $this->id
-                )
-            );
-        }
+        return $this->verificationWindow->isOpen();
+    }
 
-        if (DateTime::now()->comesAfter($this->verificationRequestedAt->add('P1D'))) {
-            throw new DomainException(
-                sprintf(
-                    "Cannot verify possession of e-mail for second factor '%s': " .
-                    'verification window of one day has closed.',
-                    (string) $this->id
-                )
-            );
-        }
-
+    public function verifyEmail()
+    {
         $this->apply(
             new EmailVerifiedEvent(
                 new IdentityId($this->identity->getAggregateRootId()),

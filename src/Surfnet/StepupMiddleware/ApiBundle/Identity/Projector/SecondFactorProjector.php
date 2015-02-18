@@ -31,7 +31,6 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
@@ -43,22 +42,22 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
 class SecondFactorProjector extends Projector
 {
     /**
-     * @var UnverifiedSecondFactorRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository
      */
     private $unverifiedRepository;
 
     /**
-     * @var VerifiedSecondFactorRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository
      */
     private $verifiedRepository;
 
     /**
-     * @var VettedSecondFactorRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
      */
     private $vettedRepository;
 
     /**
-     * @var IdentityRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
      */
     private $identityRepository;
 
@@ -84,7 +83,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 'yubikey',
                 (string) $event->yubikeyPublicId,
-                $event->emailVerificationNonce
+                $event->emailVerificationNonce,
+                $event->emailVerificationWindow->openUntil()
             )
         );
     }
@@ -99,7 +99,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 'sms',
                 (string) $event->phoneNumber,
-                $event->emailVerificationNonce
+                $event->emailVerificationNonce,
+                $event->emailVerificationWindow->openUntil()
             )
         );
     }

@@ -25,6 +25,7 @@ use DateTime as CoreDateTime;
 use Mockery as m;
 use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
@@ -33,11 +34,13 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
@@ -48,8 +51,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailC
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
+    private static $window = 3600;
+
     /** @var MockInterface */
     private $eventBus;
 
@@ -70,7 +78,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
             $this->eventBus,
             $this->middlewareConnection,
-            $this->gatewayConnection
+            $this->gatewayConnection,
+            ConfigurableSettings::create(self::$window)
         );
     }
 
@@ -81,7 +90,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_yubikey_possession_can_be_proven()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
@@ -109,7 +118,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId,
                     $pubId,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(static::$window), DateTime::now()),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -147,7 +156,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $pubId1,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -164,7 +176,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_phone_possession_can_be_proven()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
@@ -192,7 +204,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId,
                     $pubId,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -230,7 +245,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $phoneNumber1,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -270,7 +288,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId1,
                     $publicId,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -287,7 +308,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_unverified_second_factors_email_can_be_verified()
     {
-        DateTimeHelper::stubNow(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('regcode');
@@ -312,7 +333,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -340,7 +364,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_verified_second_factors_email_cannot_be_verified()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'does not apply to any unverified');
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
+        );
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));
@@ -362,7 +389,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -388,15 +418,18 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_verify_an_email_after_the_verification_window_has_closed()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'verification window has closed');
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'Cannot verify second factor, the verification window is closed.'
+        );
 
         $id = new IdentityId(self::uuid());
-        $nameId = new NameId(md5(__METHOD__));
-        $institution = new Institution('A Corp.');
-        $email = 'a@b.c';
-        $commonName = 'Foo bar';
         $secondFactorId = new SecondFactorId(self::uuid());
         $publicId = new YubikeyPublicId('ccccvfeghijk');
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = 'a@b.c';
+        $commonName = 'Foo bar';
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
@@ -410,7 +443,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secondFactorId,
                     $publicId,
-                    new DateTime(new CoreDateTime('-2 days')),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        new DateTime(new CoreDateTime('-2 days'))
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',
@@ -508,7 +544,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $secFacId = new SecondFactorId($command->secondFactorId),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
-                    DateTime::now(),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',

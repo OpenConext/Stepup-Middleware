@@ -19,34 +19,37 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 
-class InstitutionTest extends UnitTest
+class TimeFrameTest extends UnitTest
 {
     /**
      * @test
-     * @group domain
+     * @group        domain
      * @dataProvider invalidValueProvider
      *
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function it_cannot_be_given_an_non_positive_amount_of_seconds($invalidValue)
     {
-        new Institution($invalidValue);
+        TimeFrame::ofSeconds($invalidValue);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function two_institutions_with_the_same_value_are_equal()
+    public function to_string_output_matches_amount_of_seconds_as_string()
     {
-        $institution = new Institution('a');
-        $theSame = new Institution('a');
-        $different = new Institution('A');
+        $seconds = 1000;
 
-        $this->assertTrue($institution->equals($theSame));
-        $this->assertFalse($institution->equals($different));;
+        $timeFrame = TimeFrame::ofSeconds($seconds);
+
+        $this->assertEquals(
+            '1000',
+            (string) $timeFrame,
+            'The amount of seconds as string must match timeFrame::__toString'
+        );
     }
 
     /**
@@ -55,10 +58,13 @@ class InstitutionTest extends UnitTest
     public function invalidValueProvider()
     {
         return [
-            'empty string'  => [''],
-            'array'         => [[]],
-            'integer'       => [1],
-            'object'        => [new \StdClass()],
+            'empty string' => [''],
+            'string'       => ['abc'],
+            'array'        => [[]],
+            'float'        => [2.718],
+            'zero'         => [0],
+            'negative int' => [-1],
+            'object'       => [new \StdClass()],
         ];
     }
 }

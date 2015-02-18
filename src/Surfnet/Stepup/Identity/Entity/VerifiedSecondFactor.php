@@ -116,7 +116,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
         return strcasecmp($registrationCode, $this->registrationCode) === 0
             && $secondFactorIdentifier === $this->secondFactorIdentifier
             && $identityVerified === true
-            && !DateTime::now()->comesAfter($this->registrationRequestedAt->add('P14D'));
+            && !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
     }
 
     /**
@@ -139,7 +139,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
             throw new DomainException("Cannot vet this second factor: real identity wasn't verified by an RA.");
         }
 
-        if (DateTime::now()->comesAfter($this->registrationRequestedAt->add('P14D'))) {
+        if (DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')))) {
             throw new DomainException('Cannot vet this second factor: registration window has closed.');
         }
 

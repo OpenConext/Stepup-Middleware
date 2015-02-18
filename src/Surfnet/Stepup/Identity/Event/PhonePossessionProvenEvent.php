@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -38,9 +39,9 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $phoneNumber;
 
     /**
-     * @var DateTime
+     * @var EmailVerificationWindow
      */
-    public $emailVerificationRequestedAt;
+    public $emailVerificationWindow;
 
     /**
      * @var string
@@ -67,20 +68,20 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param SecondFactorId $secondFactorId
-     * @param PhoneNumber $phoneNumber
-     * @param DateTime $emailVerificationRequestedAt
-     * @param string $emailVerificationNonce
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId              $identityId
+     * @param SecondFactorId          $secondFactorId
+     * @param PhoneNumber             $phoneNumber
+     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param string                  $emailVerificationNonce
+     * @param string                  $commonName
+     * @param string                  $email
+     * @param string                  $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
-        DateTime $emailVerificationRequestedAt,
+        EmailVerificationWindow $emailVerificationWindow,
         $emailVerificationNonce,
         $commonName,
         $email,
@@ -90,7 +91,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
-        $this->emailVerificationRequestedAt = $emailVerificationRequestedAt;
+        $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
@@ -103,7 +104,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
-            DateTime::fromString($data['email_verification_requested_at']),
+            EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             $data['common_name'],
             $data['email'],
@@ -117,7 +118,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
             'identity_id'                     => (string) $this->identityId,
             'second_factor_id'                => (string) $this->secondFactorId,
             'phone_number'                    => (string) $this->phoneNumber,
-            'email_verification_requested_at' => (string) $this->emailVerificationRequestedAt,
+            'email_verification_window'       => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'        => (string) $this->emailVerificationNonce,
             'common_name'                     => (string) $this->commonName,
             'email'                           => (string) $this->email,

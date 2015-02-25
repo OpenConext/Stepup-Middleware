@@ -13,6 +13,13 @@ services:
             - @surfnet_stepup_middleware_api.repository.identity
         tags: [{ name: event_bus.event_listener }]
 
+    surfnet_stepup_middleware_api.projector.ra_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaSecondFactorProjector
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.ra_second_factor
+            - @surfnet_stepup_middleware_api.repository.identity
+        tags: [{ name: event_bus.event_listener }]
+
     surfnet_stepup_middleware_api.projector.raa:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector
         arguments:

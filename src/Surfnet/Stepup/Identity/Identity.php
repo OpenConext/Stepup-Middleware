@@ -21,7 +21,6 @@ namespace Surfnet\Stepup\Identity;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
@@ -31,6 +30,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -41,11 +41,13 @@ use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 
@@ -162,6 +164,29 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $secondFactorId,
                 $phoneNumber,
+                $emailVerificationWindow,
+                TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
+                'en_GB'
+            )
+        );
+    }
+
+    public function provePossessionOfGssf(
+        SecondFactorId $secondFactorId,
+        StepupProvider $provider,
+        GssfId $gssfId,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
+        $this->assertUserMayAddSecondFactor();
+
+        $this->apply(
+            new GssfPossessionProvenEvent(
+                $this->id,
+                $secondFactorId,
+                $provider,
+                $gssfId,
                 $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
@@ -320,6 +345,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
 
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    {
+        $secondFactor = UnverifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            (string) $event->stepupProvider,
+            (string) $event->gssfId,
+            $event->emailVerificationWindow,
+            $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)

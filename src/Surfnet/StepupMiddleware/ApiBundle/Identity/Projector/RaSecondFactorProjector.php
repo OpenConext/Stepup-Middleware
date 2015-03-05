@@ -35,7 +35,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -119,52 +119,52 @@ class RaSecondFactorProjector extends Projector
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_VERIFIED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::verified());
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_VETTED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::vetted());
     }
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event
     ) {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event
     ) {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
-        $this->updateStatus($event->secondFactorId, RaSecondFactor::STATUS_REVOKED);
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     /**
      * @param SecondFactorId $secondFactorId
-     * @param string $status One of the RaSecondFactor::STATUS_* constants.
+     * @param SecondFactorStatus $status
      */
-    private function updateStatus(SecondFactorId $secondFactorId, $status)
+    private function updateStatus(SecondFactorId $secondFactorId, SecondFactorStatus $status)
     {
         $secondFactor = $this->raSecondFactorRepository->find((string) $secondFactorId);
         $secondFactor->status = $status;

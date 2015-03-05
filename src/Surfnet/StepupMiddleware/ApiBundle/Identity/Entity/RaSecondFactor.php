@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
  * A second factor as displayed in the registration authority application. One exists for every second factor,
@@ -38,11 +39,6 @@ use JsonSerializable;
  */
 final class RaSecondFactor implements JsonSerializable
 {
-    const STATUS_UNVERIFIED = 'unverified';
-    const STATUS_VERIFIED = 'verified';
-    const STATUS_VETTED = 'vetted';
-    const STATUS_REVOKED = 'revoked';
-
     /**
      * @ORM\Id
      * @ORM\Column(length=36)
@@ -66,9 +62,9 @@ final class RaSecondFactor implements JsonSerializable
     public $secondFactorId;
 
     /**
-     * @ORM\Column(length=10)
+     * @ORM\Column(type="stepup_second_factor_status")
      *
-     * @var string One of the RaSecondFactor::STATUS_* constants.
+     * @var SecondFactorStatus
      */
     public $status;
 
@@ -118,7 +114,7 @@ final class RaSecondFactor implements JsonSerializable
         $this->id = $id;
         $this->type = $type;
         $this->secondFactorId = $secondFactorId;
-        $this->status = self::STATUS_UNVERIFIED;
+        $this->status = SecondFactorStatus::unverified();
         $this->identityId = $identityId;
         $this->name = $name;
         $this->email = $email;
@@ -131,7 +127,7 @@ final class RaSecondFactor implements JsonSerializable
             'id'               => $this->id,
             'type'             => $this->type,
             'second_factor_id' => $this->secondFactorId,
-            'status'           => $this->status,
+            'status'           => (string) $this->status,
             'identity_id'      => $this->identityId,
             'name'             => $this->name,
             'email'            => $this->email,

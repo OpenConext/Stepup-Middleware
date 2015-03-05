@@ -88,23 +88,8 @@ class RaSecondFactorRepository extends EntityRepository
             case 'type':
             case 'secondFactorId':
             case 'email':
-                $queryBuilder->orderBy("sf.$command->orderBy", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
-                break;
             case 'status':
-                $queryBuilder
-                    ->addSelect('
-                        CASE WHEN sf.status=:unverified THEN 0 ELSE
-                        CASE WHEN sf.status=:verified THEN 1 ELSE
-                        CASE WHEN sf.status=:vetted THEN 2 ELSE
-                        CASE WHEN sf.status=:revoked THEN 3 ELSE 4
-                        END END END END
-                        AS HIDDEN status
-                    ')
-                    ->setParameter('unverified', 'unverified')
-                    ->setParameter('verified', 'verified')
-                    ->setParameter('vetted', 'vetted')
-                    ->setParameter('revoked', 'revoked')
-                    ->orderBy("status", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
+                $queryBuilder->orderBy("sf.$command->orderBy", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
                 break;
         }
 

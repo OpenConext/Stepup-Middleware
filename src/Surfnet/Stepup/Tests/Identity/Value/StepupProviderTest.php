@@ -19,39 +19,39 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 
-class InstitutionTest extends UnitTest
+class StepupProviderTest extends UnitTest
 {
     /**
      * @test
-     * @group domain
+     * @group        domain
      * @dataProvider invalidValueProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
-     * @parma mixed $invalidValue
+     * @param mixed $invalidValue
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
-        new Institution($invalidValue);
+        new StepupProvider($invalidValue);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function two_institutions_with_the_same_value_are_equal()
+    public function two_stepup_providers_with_the_same_value_are_equal()
     {
-        $institution = new Institution('a');
-        $theSame = new Institution('a');
-        $different = new Institution('A');
+        $institution = new StepupProvider('a');
+        $theSame     = new StepupProvider('a');
+        $different   = new StepupProvider('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertFalse($institution->equals($different));
     }
 
     /**
-     * dataprovider
+     * DataProvider for {@see a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
     public function invalidValueProvider()
     {

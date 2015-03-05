@@ -28,13 +28,11 @@ use JsonSerializable;
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository")
  * @ORM\Table(
  *      indexes={
- *          @ORM\Index(name="idx_ra_second_factor_type", columns={"type"}),
  *          @ORM\Index(name="idx_ra_second_factor_second_factor_id", columns={"second_factor_id"}),
- *          @ORM\Index(name="idx_ra_second_factor_status", columns={"status"}),
  *          @ORM\Index(name="idx_ra_second_factor_identity_id", columns={"identity_id"}),
  *          @ORM\Index(name="idx_ra_second_factor_institution", columns={"institution"}),
- *          @ORM\Index(name="idx_ra_second_factor_name", columns={"name"}),
- *          @ORM\Index(name="idx_ra_second_factor_email", columns={"email"}),
+ *          @ORM\Index(name="idx_ra_second_factor_name", columns={"name"}, flags={"FULLTEXT"}),
+ *          @ORM\Index(name="idx_ra_second_factor_email", columns={"email"}, flags={"FULLTEXT"}),
  *      }
  * )
  */

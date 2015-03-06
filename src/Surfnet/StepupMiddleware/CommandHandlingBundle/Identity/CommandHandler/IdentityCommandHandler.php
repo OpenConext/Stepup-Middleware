@@ -20,20 +20,21 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Doctrine\DBAL\Driver\Connection;
-use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
-use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
@@ -148,6 +149,27 @@ class IdentityCommandHandler extends CommandHandler
         $this->repository->add($identity);
     }
 
+    /**
+     * @param ProveGssfPossessionCommand $command
+     */
+    public function handleProveGssfPossessionCommand(ProveGssfPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->provePossessionOfGssf(
+            new SecondFactorId($command->secondFactorId),
+            new StepupProvider($command->stepupProvider),
+            new GssfId($command->gssfId),
+            $this->configurableSettings->createNewEmailVerificationWindow()
+        );
+
+        $this->repository->add($identity);
+    }
+
+    /**
+     * @param VerifyEmailCommand $command
+     */
     public function handleVerifyEmailCommand(VerifyEmailCommand $command)
     {
         /** @var IdentityApi $identity */

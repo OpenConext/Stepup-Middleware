@@ -27,6 +27,7 @@ use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -35,14 +36,17 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
@@ -211,6 +215,57 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'nonce',
                     'Foo bar',
                     'a@b.c',
+                    'en_GB'
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_gssf_possession_can_be_proven()
+    {
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+
+        $nonce = 'nonce';
+        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+            ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
+            ->shouldReceive('generateNonce')->once()->andReturn($nonce);
+
+        $identityId     = new IdentityId(self::uuid());
+        $nameId         = new NameId(md5(__METHOD__));
+        $institution    = new Institution('Surfnet');
+        $email          = 'arthur@example.org';
+        $commonName     = 'Arthur Dent';
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $stepupProvider = new StepupProvider('Surfnet');
+        $gssfId         = new GssfId('_' . md5('Surfnet'));
+
+        $command                 = new ProveGssfPossessionCommand();
+        $command->identityId     = (string) $identityId;
+        $command->secondFactorId = (string) $secondFactorId;
+        $command->stepupProvider = (string) $stepupProvider;
+        $command->gssfId         = (string) $gssfId;
+
+        $this->scenario
+            ->withAggregateId($identityId)
+            ->given([new IdentityCreatedEvent($identityId, $institution, $nameId, $email, $commonName)])
+            ->when($command)
+            ->then([
+                new GssfPossessionProvenEvent(
+                    $identityId,
+                    $secondFactorId,
+                    $stepupProvider,
+                    $gssfId,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    $nonce,
+                    $commonName,
+                    $email,
                     'en_GB'
                 )
             ]);

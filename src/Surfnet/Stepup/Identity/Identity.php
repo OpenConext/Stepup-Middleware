@@ -358,7 +358,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->emailVerificationNonce
         );
 
-        $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)

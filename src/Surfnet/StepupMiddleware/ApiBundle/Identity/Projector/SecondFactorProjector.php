@@ -108,7 +108,7 @@ class SecondFactorProjector extends Projector
 
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string)$event->identityId);
+        $identity = $this->identityRepository->find((string) $event->identityId);
 
         $this->unverifiedRepository->save(
             UnverifiedSecondFactor::addToIdentity(

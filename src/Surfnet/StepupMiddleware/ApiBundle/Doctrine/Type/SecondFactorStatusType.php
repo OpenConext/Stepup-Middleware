@@ -38,6 +38,16 @@ class SecondFactorStatusType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        if (!$value instanceof SecondFactorStatus) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal second factor status of type %s '%s', expected a SecondFactorStatus instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
         if (SecondFactorStatus::unverified()->equals($value)) {
             return 0;
         } elseif (SecondFactorStatus::verified()->equals($value)) {
@@ -48,13 +58,7 @@ class SecondFactorStatusType extends Type
             return 30;
         }
 
-        throw new ConversionException(
-            sprintf(
-                "Encountered illegal second factor status of type %s '%s', expected it to be a SecondFactorStatus instance",
-                is_object($value) ? get_class($value) : gettype($value),
-                is_scalar($value) ? (string) $value : ''
-            )
-        );
+        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

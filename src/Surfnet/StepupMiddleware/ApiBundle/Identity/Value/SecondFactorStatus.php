@@ -54,12 +54,12 @@ final class SecondFactorStatus
     }
 
     /**
-     * @param mixed $other
+     * @param self $other
      * @return bool
      */
-    public function equals($other)
+    public function equals(self $other)
     {
-        return $other instanceof self && $this->status === $other->status;
+        return $this->status === $other->status;
     }
 
     /**

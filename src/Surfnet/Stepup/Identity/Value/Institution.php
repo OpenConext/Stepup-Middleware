@@ -33,11 +33,11 @@ class Institution implements JsonSerializable
      */
     public function __construct($institution)
     {
-        if (!is_string($institution) || $institution === '') {
+        if (!is_string($institution) || strlen(trim($institution)) === 0) {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 
-        $this->institution = $institution;
+        $this->institution = trim($institution);
     }
 
     /**

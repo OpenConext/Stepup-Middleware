@@ -19,41 +19,39 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\GssfId;
 
-class InstitutionTest extends UnitTest
+class GssfIdTest extends UnitTest
 {
     /**
      * @test
-     * @group domain
+     * @group        domain
      * @dataProvider invalidValueProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
-        new Institution($invalidValue);
+        new GssfId($invalidValue);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function two_institutions_with_the_same_value_are_equal()
+    public function two_gssf_ids_with_the_same_value_are_equal()
     {
-        $institution       = new Institution('a');
-        $theSame           = new Institution('a');
-        $theSameWithSpaces = new Institution('  a ');
-        $different         = new Institution('A');
+        $institution = new GssfId('a');
+        $theSame     = new GssfId('a');
+        $different   = new GssfId('A');
 
         $this->assertTrue($institution->equals($theSame));
-        $this->assertTrue($institution->equals($theSameWithSpaces));
         $this->assertFalse($institution->equals($different));
     }
 
     /**
-     * dataprovider
+     * DataProvider for {@see a_gssf_od_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
     public function invalidValueProvider()
     {

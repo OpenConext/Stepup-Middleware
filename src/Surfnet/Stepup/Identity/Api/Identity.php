@@ -20,11 +20,13 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 interface Identity extends AggregateRoot
@@ -83,6 +85,20 @@ interface Identity extends AggregateRoot
     public function provePossessionOfPhone(
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
+        EmailVerificationWindow $emailVerificationWindow
+    );
+
+    /**
+     * @param SecondFactorId          $secondFactorId
+     * @param StepupProvider          $provider
+     * @param GssfId                  $gssfId
+     * @param EmailVerificationWindow $emailVerificationWindow
+     * @return void
+     */
+    public function provePossessionOfGssf(
+        SecondFactorId $secondFactorId,
+        StepupProvider $provider,
+        GssfId $gssfId,
         EmailVerificationWindow $emailVerificationWindow
     );
 

@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -99,6 +100,22 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 'sms',
                 (string) $event->phoneNumber,
+                $event->emailVerificationNonce,
+                $event->emailVerificationWindow->openUntil()
+            )
+        );
+    }
+
+    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->unverifiedRepository->save(
+            UnverifiedSecondFactor::addToIdentity(
+                $identity,
+                (string) $event->secondFactorId,
+                (string) $event->stepupProvider,
+                (string) $event->gssfId,
                 $event->emailVerificationNonce,
                 $event->emailVerificationWindow->openUntil()
             )

@@ -30,7 +30,7 @@ final class RaSecondFactorController extends Controller
     public function collectionAction(Request $request, Institution $institution)
     {
         if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access identity');
+            throw new AccessDeniedHttpException('Client is not authorised to access RA second factor');
         }
 
         $command = new SearchRaSecondFactorCommand();

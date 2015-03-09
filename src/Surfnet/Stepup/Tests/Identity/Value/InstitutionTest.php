@@ -29,7 +29,7 @@ class InstitutionTest extends UnitTest
      * @dataProvider invalidValueProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
-     * @parma mixed $invalidValue
+     * @param mixed $invalidValue
      */
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
@@ -42,11 +42,13 @@ class InstitutionTest extends UnitTest
      */
     public function two_institutions_with_the_same_value_are_equal()
     {
-        $institution = new Institution('a');
-        $theSame = new Institution('a');
-        $different = new Institution('A');
+        $institution       = new Institution('a');
+        $theSame           = new Institution('a');
+        $theSameWithSpaces = new Institution('  a ');
+        $different         = new Institution('A');
 
         $this->assertTrue($institution->equals($theSame));
+        $this->assertTrue($institution->equals($theSameWithSpaces));
         $this->assertFalse($institution->equals($different));
     }
 

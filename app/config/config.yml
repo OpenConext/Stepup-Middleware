@@ -75,6 +75,7 @@ doctrine:
         types:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
+            stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

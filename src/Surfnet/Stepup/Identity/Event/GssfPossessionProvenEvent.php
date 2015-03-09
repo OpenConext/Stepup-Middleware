@@ -124,14 +124,14 @@ class GssfPossessionProvenEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id'               => (string)$this->identityId,
-            'second_factor_id'          => (string)$this->secondFactorId,
-            'stepup_provider'           => (string)$this->stepupProvider,
-            'gssf_id'                   => (string)$this->gssfId,
+            'identity_id'               => (string) $this->identityId,
+            'second_factor_id'          => (string) $this->secondFactorId,
+            'stepup_provider'           => (string) $this->stepupProvider,
+            'gssf_id'                   => (string) $this->gssfId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'  => (string)$this->emailVerificationNonce,
-            'common_name'               => (string)$this->commonName,
-            'email'                     => (string)$this->email,
+            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
+            'common_name'               => (string) $this->commonName,
+            'email'                     => (string) $this->email,
             'preferred_locale'          => $this->preferredLocale,
         ];
     }

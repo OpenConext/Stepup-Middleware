@@ -113,9 +113,9 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save(
             UnverifiedSecondFactor::addToIdentity(
                 $identity,
-                (string)$event->secondFactorId,
-                (string)$event->stepupProvider,
-                (string)$event->gssfId,
+                (string) $event->secondFactorId,
+                (string) $event->stepupProvider,
+                (string) $event->gssfId,
                 $event->emailVerificationNonce,
                 $event->emailVerificationWindow->openUntil()
             )

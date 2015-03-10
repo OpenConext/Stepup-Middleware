@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -109,6 +110,23 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 'sms',
                 (string) $event->phoneNumber,
+                $identity->id,
+                (string) $identity->institution,
+                $identity->commonName,
+                $identity->email
+            )
+        );
+    }
+
+    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->raSecondFactorRepository->save(
+            new RaSecondFactor(
+                (string) $event->secondFactorId,
+                (string) $event->stepupProvider,
+                (string) $event->gssfId,
                 $identity->id,
                 (string) $identity->institution,
                 $identity->commonName,

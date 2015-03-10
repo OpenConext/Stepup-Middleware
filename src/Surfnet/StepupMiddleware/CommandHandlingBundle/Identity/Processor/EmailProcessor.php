@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor;
 
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService;
@@ -60,6 +61,16 @@ class EmailProcessor extends Processor
     }
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    {
+        $this->mailService->sendEmailVerificationEmail(
+            $event->preferredLocale,
+            $event->commonName,
+            $event->email,
+            $event->emailVerificationNonce
+        );
+    }
+
+    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
         $this->mailService->sendEmailVerificationEmail(
             $event->preferredLocale,

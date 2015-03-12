@@ -53,7 +53,7 @@ class VettedSecondFactor implements \JsonSerializable
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
      *
-     * @ORM\Column(length=32)
+     * @ORM\Column(length=255)
      *
      * @var string
      */

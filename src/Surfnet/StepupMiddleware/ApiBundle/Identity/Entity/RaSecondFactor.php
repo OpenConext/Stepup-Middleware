@@ -55,7 +55,7 @@ final class RaSecondFactor implements JsonSerializable
     public $type;
 
     /**
-     * @ORM\Column(length=36)
+     * @ORM\Column(length=255)
      *
      * @var string The ID of the specific instance of second factor type (ie. phone number, Yubikey public ID).
      */

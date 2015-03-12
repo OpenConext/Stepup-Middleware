@@ -24,7 +24,7 @@ class Version20150312162849 extends AbstractMigration implements ContainerAwareI
 
         $gatewaySchema = $this->container->getParameter('database_gateway_name');
         $this->addSql(sprintf(
-            'ALTER TABLE %s.second_factor CHANGE second_factor_id second_factor_id VARCHAR(255) NOT NULL',
+            'ALTER TABLE %s.second_factor CHANGE second_factor_identifier second_factor_identifier VARCHAR(255) NOT NULL',
             $gatewaySchema
         ));
     }
@@ -36,7 +36,7 @@ class Version20150312162849 extends AbstractMigration implements ContainerAwareI
 
         $gatewaySchema = $this->container->getParameter('database_gateway_name');
         $this->addSql(sprintf(
-            'ALTER TABLE %s.second_factor CHANGE second_factor_id second_factor_id VARCHAR(36) NOT NULL COLLATE utf8_unicode_ci',
+            'ALTER TABLE %s.second_factor CHANGE second_factor_identifier second_factor_identifier VARCHAR(36) NOT NULL COLLATE utf8_unicode_ci',
             $gatewaySchema
         ));
     }

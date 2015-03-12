@@ -64,7 +64,7 @@ class SecondFactor
     /**
      * @var string
      *
-     * @ORM\Column(length=36)
+     * @ORM\Column(length=255)
      */
     private $secondFactorId;
 

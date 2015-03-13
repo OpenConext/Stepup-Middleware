@@ -136,6 +136,10 @@ nelmio_security:
 surfnet_stepup:
     logging:
         application_name: middleware
+    loa_definition:
+        loa1: %stepup_loa_loa1%
+        loa2: %stepup_loa_loa2%
+        loa3: %stepup_loa_loa3%
 
 monolog:
     handlers:

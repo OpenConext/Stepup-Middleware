@@ -51,6 +51,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -351,7 +352,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
-            'yubikey',
+            new SecondFactorType('yubikey'),
             (string) $event->yubikeyPublicId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
@@ -365,7 +366,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
-            'sms',
+            new SecondFactorType('sms'),
             (string) $event->phoneNumber,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
@@ -379,7 +380,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
             $this,
-            (string) $event->stepupProvider,
+            new SecondFactorType((string) $event->stepupProvider),
             (string) $event->gssfId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce

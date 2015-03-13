@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * A second factor whose possession has been proven by the registrant. The registrant must verify his/her e-mail
@@ -49,7 +50,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     private $id;
 
     /**
-     * @var string
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     private $type;
 
@@ -71,7 +72,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId          $id
      * @param Identity                $identity
-     * @param string                  $type
+     * @param SecondFactorType        $type
      * @param string                  $secondFactorIdentifier
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $verificationNonce
@@ -80,7 +81,7 @@ class UnverifiedSecondFactor extends EventSourcedEntity
     public static function create(
         SecondFactorId $id,
         Identity $identity,
-        $type,
+        SecondFactorType $type,
         $secondFactorIdentifier,
         EmailVerificationWindow $emailVerificationWindow,
         $verificationNonce

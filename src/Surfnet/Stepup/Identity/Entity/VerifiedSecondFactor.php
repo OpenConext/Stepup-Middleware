@@ -28,6 +28,7 @@ use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * A second factor whose possession has been proven by the registrant and the registrant's e-mail address has been
@@ -49,7 +50,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     private $identity;
 
     /**
-     * @var string
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     private $type;
 
@@ -71,7 +72,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
-     * @param string $type
+     * @param SecondFactorType $type
      * @param string $secondFactorIdentifier
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
@@ -80,7 +81,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     public static function create(
         SecondFactorId $id,
         Identity $identity,
-        $type,
+        SecondFactorType $type,
         $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode

@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * A second factor whose possession and its Registrant's identity has been vetted by a Registration Authority.
@@ -43,7 +44,7 @@ class VettedSecondFactor extends EventSourcedEntity
     private $id;
 
     /**
-     * @var string
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     private $type;
 
@@ -55,14 +56,14 @@ class VettedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
-     * @param string $type
+     * @param SecondFactorType $type
      * @param string $secondFactorIdentifier
      * @return VettedSecondFactor
      */
     public static function create(
         SecondFactorId $id,
         Identity $identity,
-        $type,
+        SecondFactorType $type,
         $secondFactorIdentifier
     ) {
         $secondFactor = new self();

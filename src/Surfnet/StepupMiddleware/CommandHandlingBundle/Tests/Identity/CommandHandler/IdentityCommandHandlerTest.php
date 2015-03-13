@@ -263,7 +263,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $email          = 'arthur@example.org';
         $commonName     = 'Arthur Dent';
         $secondFactorId = new SecondFactorId(self::uuid());
-        $stepupProvider = new StepupProvider('Surfnet');
+        $stepupProvider = new StepupProvider('tiqr');
         $gssfId         = new GssfId('_' . md5('Surfnet'));
 
         $command                 = new ProveGssfPossessionCommand();

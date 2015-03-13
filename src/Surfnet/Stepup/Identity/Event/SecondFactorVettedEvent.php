@@ -22,6 +22,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SecondFactorVettedEvent extends IdentityEvent
 {
@@ -41,7 +42,7 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $secondFactorId;
 
     /**
-     * @var string
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     public $secondFactorType;
 
@@ -75,7 +76,7 @@ class SecondFactorVettedEvent extends IdentityEvent
      * @param NameId $nameId
      * @param Institution $institution
      * @param SecondFactorId $secondFactorId
-     * @param string $secondFactorType
+     * @param SecondFactorType $secondFactorType
      * @param string $secondFactorIdentifier
      * @param string $documentNumber
      * @param string $commonName
@@ -89,7 +90,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         NameId $nameId,
         Institution $institution,
         SecondFactorId $secondFactorId,
-        $secondFactorType,
+        SecondFactorType $secondFactorType,
         $secondFactorIdentifier,
         $documentNumber,
         $commonName,
@@ -116,7 +117,7 @@ class SecondFactorVettedEvent extends IdentityEvent
             new NameId($data['name_id']),
             new Institution($data['institution']),
             new SecondFactorId($data['second_factor_id']),
-            $data['second_factor_type'],
+            new SecondFactorType($data['second_factor_type']),
             $data['second_factor_identifier'],
             $data['document_number'],
             $data['common_name'],
@@ -132,7 +133,7 @@ class SecondFactorVettedEvent extends IdentityEvent
             'name_id' => (string) $this->nameId,
             'institution' => (string) $this->institution,
             'second_factor_id' => (string) $this->secondFactorId,
-            'second_factor_type' => $this->secondFactorType,
+            'second_factor_type' => (string) $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'document_number' => $this->documentNumber,
             'common_name' => $this->commonName,

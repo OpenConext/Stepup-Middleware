@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -43,8 +45,16 @@ class FlushEventBufferEventListener implements EventSubscriberInterface
         $this->eventBus->flush();
     }
 
+    public function onConsoleTerminate(ConsoleTerminateEvent $event)
+    {
+        $this->eventBus->flush();
+    }
+
     public static function getSubscribedEvents()
     {
-        return [KernelEvents::TERMINATE => ['onKernelTerminate', 100]];
+        return [
+            KernelEvents::TERMINATE  => ['onKernelTerminate', 100],
+            ConsoleEvents::TERMINATE => ['onConsoleTerminate', 100]
+        ];
     }
 }

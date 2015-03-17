@@ -65,6 +65,13 @@ interface Identity extends AggregateRoot
     public function changeEmail($email);
 
     /**
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     * @return void
+     */
+    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
+
+    /**
      * @param SecondFactorId          $secondFactorId
      * @param YubikeyPublicId         $yubikeyPublicId
      * @param EmailVerificationWindow $emailVerificationWindow

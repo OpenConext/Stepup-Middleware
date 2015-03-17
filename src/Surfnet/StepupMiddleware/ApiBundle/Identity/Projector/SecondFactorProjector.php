@@ -30,7 +30,9 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
@@ -72,6 +74,20 @@ class SecondFactorProjector extends Projector
         $this->verifiedRepository = $verifiedRepository;
         $this->vettedRepository = $vettedRepository;
         $this->identityRepository = $identityRepository;
+    }
+
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->vettedRepository->save(
+            VettedSecondFactor::addToIdentity(
+                $identity,
+                (string) $event->secondFactorId,
+                'yubikey',
+                (string) $event->yubikeyPublicId
+            )
+        );
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)

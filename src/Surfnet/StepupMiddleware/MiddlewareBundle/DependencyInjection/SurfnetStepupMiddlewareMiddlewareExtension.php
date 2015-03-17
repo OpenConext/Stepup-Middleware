@@ -38,6 +38,9 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
 
+        $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $fileLoader->load('services.yml');
+
         $definition = (new Definition())
             ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')
             ->setFactory('Surfnet\Stepup\Identity\Entity\ConfigurableSettings::create')

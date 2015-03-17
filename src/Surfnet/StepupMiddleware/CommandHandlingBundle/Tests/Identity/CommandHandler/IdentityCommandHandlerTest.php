@@ -34,6 +34,7 @@ use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -45,6 +46,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
@@ -85,6 +87,42 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->gatewayConnection,
             ConfigurableSettings::create(self::$window)
         );
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_identity_can_be_bootstrapped_with_a_yubikey_second_factor()
+    {
+        $command = new BootstrapIdentityWithYubikeySecondFactorCommand();
+        $command->identityId = 'ID-ID';
+        $command->nameId = 'N-ID';
+        $command->institution = 'Institution';
+        $command->commonName = 'Enrique';
+        $command->email = 'foo@bar.baz';
+        $command->secondFactorId = 'SF-ID';
+        $command->yubikeyPublicId = 'Y-ID';
+
+        $this->scenario
+            ->withAggregateId('ID-ID')
+            ->when($command)
+            ->then([
+                new IdentityCreatedEvent(
+                    new IdentityId('ID-ID'),
+                    new Institution('Institution'),
+                    new NameId('N-ID'),
+                    'foo@bar.baz',
+                    'Enrique'
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    new IdentityId('ID-ID'),
+                    new NameId('N-ID'),
+                    new Institution('Institution'),
+                    new SecondFactorId('SF-ID'),
+                    new YubikeyPublicId('Y-ID')
+                )
+            ]);
     }
 
     /**

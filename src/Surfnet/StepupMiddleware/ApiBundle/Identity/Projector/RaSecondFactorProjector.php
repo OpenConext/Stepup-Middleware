@@ -32,6 +32,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -82,6 +83,24 @@ class RaSecondFactorProjector extends Projector
         }
 
         $this->raSecondFactorRepository->saveAll($secondFactors);
+    }
+
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $secondFactor = new RaSecondFactor(
+            (string) $event->secondFactorId,
+            'yubikey',
+            (string) $event->yubikeyPublicId,
+            $identity->id,
+            (string) $identity->institution,
+            $identity->commonName,
+            $identity->email
+        );
+        $secondFactor->status = SecondFactorStatus::vetted();
+
+        $this->raSecondFactorRepository->save($secondFactor);
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)

@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
@@ -38,6 +39,20 @@ class SecondFactorProjector extends Projector
     public function __construct(SecondFactorRepository $repository)
     {
         $this->repository = $repository;
+    }
+
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    {
+        $this->repository->save(
+            new SecondFactor(
+                (string) $event->identityId,
+                (string) $event->nameId,
+                (string) $event->institution,
+                (string) $event->secondFactorId,
+                (string) $event->yubikeyPublicId,
+                'yubikey'
+            )
+        );
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)

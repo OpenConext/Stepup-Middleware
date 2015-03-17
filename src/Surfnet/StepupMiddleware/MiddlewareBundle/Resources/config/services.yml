@@ -1,0 +1,7 @@
+services:
+    surfnet_stepup_middleware_middleware.command.bootstrap_identity_with_yubikey_second_factor:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand
+        arguments:
+            - @pipeline
+        tags:
+            - { name: console.command }

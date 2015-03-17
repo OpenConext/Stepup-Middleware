@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
@@ -29,6 +31,9 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
     {
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
+
+        $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $fileLoader->load('services.yml');
 
         $definition = (new Definition())
             ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')

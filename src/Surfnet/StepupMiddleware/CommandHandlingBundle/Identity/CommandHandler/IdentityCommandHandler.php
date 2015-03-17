@@ -33,6 +33,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
@@ -45,6 +46,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class IdentityCommandHandler extends CommandHandler
 {
@@ -114,6 +116,25 @@ class IdentityCommandHandler extends CommandHandler
 
         $identity->rename($command->commonName);
         $identity->changeEmail($command->email);
+
+        $this->repository->add($identity);
+    }
+
+    public function handleBootstrapIdentityWithYubikeySecondFactorCommand(
+        BootstrapIdentityWithYubikeySecondFactorCommand $command
+    ) {
+        $identity = Identity::create(
+            new IdentityId($command->identityId),
+            new Institution($command->institution),
+            new NameId($command->nameId),
+            $command->email,
+            $command->commonName
+        );
+
+        $identity->bootstrapYubikeySecondFactor(
+            new SecondFactorId($command->secondFactorId),
+            new YubikeyPublicId($command->yubikeyPublicId)
+        );
 
         $this->repository->add($identity);
     }

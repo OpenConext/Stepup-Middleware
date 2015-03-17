@@ -40,6 +40,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -131,6 +132,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
+    }
+
+    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
+    {
+        $this->assertUserMayAddSecondFactor();
+        $this->apply(
+            new YubikeySecondFactorBootstrappedEvent(
+                $this->id,
+                $this->nameId,
+                $this->institution,
+                $secondFactorId,
+                $yubikeyPublicId
+            )
+        );
     }
 
     public function provePossessionOfYubikey(
@@ -317,6 +332,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     protected function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
         $this->email = $event->newEmail;
+    }
+
+    protected function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    {
+        $secondFactor = VettedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            'yubikey',
+            (string) $event->yubikeyPublicId
+        );
+
+        $this->vettedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
     protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)

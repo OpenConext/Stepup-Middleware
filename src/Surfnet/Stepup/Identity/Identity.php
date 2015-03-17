@@ -23,6 +23,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\LoaComparable;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
@@ -51,6 +52,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -236,24 +238,74 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactorToVerify->verifyEmail();
     }
 
-    public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
-    {
-        foreach ($this->verifiedSecondFactors as $secondFactor) {
-            if (!$secondFactor->wouldBeVettedBy(
-                $registrationCode,
-                $secondFactorIdentifier,
-                $documentNumber,
-                $identityVerified
-            )) {
-                continue;
-            }
+    public function vetSecondFactor(
+        IdentityApi $identity,
+        SecondFactorId $secondFactorId,
+        $secondFactorIdentifier,
+        $registrationCode,
+        $documentNumber,
+        $identityVerified
+    ) {
+        /** @var VettedSecondFactor|false $secondFactorWithHighestLoa */
+        $secondFactorWithHighestLoa = array_reduce(
+            $this->vettedSecondFactors->toArray(),
+            function (VettedSecondFactor $carry, VettedSecondFactor $item) {
+                return $carry->hasEqualOrHigherLoaComparedTo($item) ? $carry : $item;
+            },
+            $this->vettedSecondFactors->first()
+        );
 
-            $secondFactor->vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
-            return;
+        $verifiedSecondFactorHasEqualOrLowerLoaComparedTo =
+            $identity->verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
+                $secondFactorId,
+                $secondFactorWithHighestLoa
+            );
+
+        if (!$verifiedSecondFactorHasEqualOrLowerLoaComparedTo) {
+            throw new DomainException('Authority does not have the required LoA to vet the identity\'s second factor');
         }
 
-        throw new DomainException(
-            "Cannot vet second factor: no second factor with given registration code or registration window has closed."
+        $identity->complyWithVettingOfSecondFactor(
+            $secondFactorId,
+            $secondFactorIdentifier,
+            $registrationCode,
+            $documentNumber,
+            $identityVerified
+        );
+    }
+
+    public function complyWithVettingOfSecondFactor(
+        SecondFactorId $secondFactorId,
+        $secondFactorIdentifier,
+        $registrationCode,
+        $documentNumber,
+        $identityVerified
+    ) {
+        if (!$this->verifiedSecondFactors->containsKey((string) $secondFactorId)) {
+            throw new DomainException('Cannot vet second factor: second factor does not exist.');
+        }
+
+        /** @var VerifiedSecondFactor $secondFactor */
+        $secondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
+
+        if (!$secondFactor->wouldBeVettedBy(
+            $registrationCode,
+            $secondFactorIdentifier,
+            $documentNumber,
+            $identityVerified
+        )) {
+            throw new DomainException(
+                'Cannot vet second factor: registration code is incorrect or registration window has closed.'
+            );
+        }
+
+        $secondFactor->vet(
+            $registrationCode,
+            $secondFactorIdentifier,
+            $documentNumber,
+            $identityVerified,
+            $this->vettedSecondFactors,
+            $this->vettedSecondFactors
         );
     }
 
@@ -340,7 +392,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactor = VettedSecondFactor::create(
             $event->secondFactorId,
             $this,
-            'yubikey',
+            new SecondFactorType('yubikey'),
             (string) $event->yubikeyPublicId
         );
 
@@ -508,5 +560,19 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function getEmail()
     {
         return $this->email;
+    }
+
+    public function verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
+        SecondFactorId $secondFactorId,
+        LoaComparable $comparedTo
+    ) {
+        /** @var VerifiedSecondFactor|null $secondFactor */
+        $secondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
+
+        if (!$secondFactor) {
+            throw new DomainException('This identity does not have a verified second factor by that ID.');
+        }
+
+        return $comparedTo->hasEqualOrHigherLoaComparedTo($secondFactor);
     }
 }

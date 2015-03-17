@@ -25,6 +25,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $authorityId;
+
+    /**
      * The ID of an existing identity.
      *
      * @Assert\NotBlank()
@@ -33,6 +41,14 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $identityId;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $secondFactorId;
 
     /**
      * @Assert\NotBlank()

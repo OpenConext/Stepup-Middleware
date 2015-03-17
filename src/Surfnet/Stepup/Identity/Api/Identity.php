@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Identity\Entity\LoaComparable;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -28,6 +30,8 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\Loa;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
 {
@@ -116,13 +120,44 @@ interface Identity extends AggregateRoot
     public function verifyEmail($verificationNonce);
 
     /**
-     * @param string $registrationCode
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
+     * Attempts to vet another identity's verified second factor.
+     *
+     * @param Identity       $identity
+     * @param SecondFactorId $secondFactorId
+     * @param string         $secondFactorIdentifier
+     * @param string         $registrationCode
+     * @param string         $documentNumber
+     * @param bool           $identityVerified
      * @return void
+     * @throws DomainException
      */
-    public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
+    public function vetSecondFactor(
+        Identity $identity,
+        SecondFactorId $secondFactorId,
+        $secondFactorIdentifier,
+        $registrationCode,
+        $documentNumber,
+        $identityVerified
+    );
+
+    /**
+     * Makes the identity comply with an authority's vetting of a verified second factor.
+     *
+     * @param SecondFactorId $secondFactorId
+     * @param string         $secondFactorIdentifier
+     * @param string         $registrationCode
+     * @param string         $documentNumber
+     * @param bool           $identityVerified
+     * @return void
+     * @throws DomainException
+     */
+    public function complyWithVettingOfSecondFactor(
+        SecondFactorId $secondFactorId,
+        $secondFactorIdentifier,
+        $registrationCode,
+        $documentNumber,
+        $identityVerified
+    );
 
     /**
      * @param SecondFactorId $secondFactorId
@@ -161,4 +196,15 @@ interface Identity extends AggregateRoot
      * @return string
      */
     public function getEmail();
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @param LoaComparable $comparedTo
+     * @return bool
+     * @throws DomainException
+     */
+    public function verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
+        SecondFactorId $secondFactorId,
+        LoaComparable $comparedTo
+    );
 }

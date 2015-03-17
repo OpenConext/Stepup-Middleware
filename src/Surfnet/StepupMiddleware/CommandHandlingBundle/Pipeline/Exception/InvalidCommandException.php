@@ -35,7 +35,7 @@ class InvalidCommandException extends \RuntimeException implements ProcessingAbo
 
     public function __construct(array $errors, $code = 0, \Exception $previous = null)
     {
-        parent::__construct('', $code, $previous);
+        parent::__construct(sprintf('Command is invalid: %s', join('; ', $errors)), $code, $previous);
 
         $this->errors = $errors;
     }

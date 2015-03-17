@@ -46,11 +46,11 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
     protected function configure()
     {
         $this->setName('middleware:bootstrap:identity-with-yubikey');
-        $this->setDescription('Creates an identity with a vetted Yubikey second factor.');
-        $this->addOption('name-id', null, InputOption::VALUE_REQUIRED, 'The NameID of the identity to create.');
-        $this->addOption('institution', null, InputOption::VALUE_REQUIRED, 'The institution of the identity to create.');
-        $this->addOption('common-name', null, InputOption::VALUE_REQUIRED, 'The Common Name of the identity to create.');
-        $this->addOption('email', null, InputOption::VALUE_REQUIRED, 'The e-mail address of the identity to create.');
+        $this->setDescription('Creates an identity with a vetted Yubikey second factor');
+        $this->addOption('name-id', null, InputOption::VALUE_REQUIRED, 'The NameID of the identity to create');
+        $this->addOption('institution', null, InputOption::VALUE_REQUIRED, 'The institution of the identity to create');
+        $this->addOption('common-name', null, InputOption::VALUE_REQUIRED, 'The Common Name of the identity to create');
+        $this->addOption('email', null, InputOption::VALUE_REQUIRED, 'The e-mail address of the identity to create');
         $this->addOption(
             'yubikey',
             null,
@@ -75,7 +75,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 
         $output->writeln(
             sprintf(
-                "Successfully created identity with UUID %s and second factor with UUID %s",
+                'Successfully created identity with UUID %s and second factor with UUID %s',
                 $command->identityId,
                 $command->secondFactorId
             )

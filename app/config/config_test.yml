@@ -14,3 +14,14 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    dbal:
+        default_connection: middleware
+        connections:
+            middleware:
+                server_version: 5.6
+            gateway:
+                server_version: 5.6
+            deploy:
+                server_version: 5.6

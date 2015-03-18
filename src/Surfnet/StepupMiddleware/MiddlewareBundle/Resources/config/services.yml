@@ -4,7 +4,5 @@ services:
         arguments:
             - @pipeline
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
-            - @doctrine.dbal.middleware_connection
-            - @doctrine.dbal.gateway_connection
         tags:
             - { name: console.command }

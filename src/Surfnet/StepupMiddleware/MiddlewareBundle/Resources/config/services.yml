@@ -3,5 +3,6 @@ services:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand
         arguments:
             - @pipeline
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
         tags:
             - { name: console.command }

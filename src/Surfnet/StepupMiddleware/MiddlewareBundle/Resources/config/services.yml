@@ -1,13 +1,4 @@
 services:
-    surfnet_stepup_middleware_middleware.command.bootstrap_identity_with_yubikey_second_factor:
-        class: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand
-        arguments:
-            - @pipeline
-            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
-            - @surfnet_stepup_middleware_middleware.dbal_connection_helper
-        tags:
-            - { name: console.command }
-
     surfnet_stepup_middleware_middleware.dbal_connection_helper:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper
         arguments:

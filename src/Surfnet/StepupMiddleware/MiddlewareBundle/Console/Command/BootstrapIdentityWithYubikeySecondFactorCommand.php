@@ -18,46 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Doctrine\DBAL\Connection;
 use Exception;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Container;
 
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
-
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
-
-    public function __construct(Pipeline $pipeline, BufferedEventBus $eventBus, DBALConnectionHelper $connectionHelper)
-    {
-        parent::__construct(null);
-
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connectionHelper = $connectionHelper;
-    }
-
-
     protected function configure()
     {
         $this
@@ -76,6 +48,12 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var Container $container */
+        $container  = $this->getApplication()->getKernel()->getContainer();
+        $pipeline   = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
+        $eventBus   = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
+        $connection = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
+
         $command                  = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
         $command->UUID            = (string) Uuid::uuid4();
         $command->identityId      = (string) Uuid::uuid4();
@@ -86,30 +64,28 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->secondFactorId  = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 
-        $this->connectionHelper->beginTransaction();
+        $connection->beginTransaction();
 
         try {
-            $command = $this->pipeline->process($command);
-            $this->eventBus->flush();
+            $command = $pipeline->process($command);
+            $eventBus->flush();
 
-            $this->connectionHelper->commit();
+            $connection->commit();
         } catch (Exception $e) {
             $output->writeln(sprintf(
                 '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
                 $e->getMessage()
             ));
 
-            $this->connectionHelper->rollBack();
+            $connection->rollBack();
 
             throw $e;
         }
 
-        $output->writeln(
-            sprintf(
-                '<info>Successfully created identity with UUID %s and second factor with UUID %s</info>',
-                $command->identityId,
-                $command->secondFactorId
-            )
-        );
+        $output->writeln(sprintf(
+            '<info>Successfully created identity with UUID %s and second factor with UUID %s</info>',
+            $command->identityId,
+            $command->secondFactorId
+        ));
     }
 }

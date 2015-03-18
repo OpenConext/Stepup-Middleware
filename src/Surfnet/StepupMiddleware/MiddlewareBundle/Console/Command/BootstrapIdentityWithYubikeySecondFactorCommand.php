@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Doctrine\DBAL\Connection;
+use Exception;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,11 +37,23 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
      */
     private $pipeline;
 
-    public function __construct(Pipeline $pipeline)
+    /**
+     * @var BufferedEventBus
+     */
+    private $eventBus;
+
+    /**
+     * @var Connection
+     */
+    private $middlewareConnection;
+
+    public function __construct(Pipeline $pipeline, BufferedEventBus $eventBus, Connection $middlewareConnection)
     {
         parent::__construct(null);
 
         $this->pipeline = $pipeline;
+        $this->eventBus = $eventBus;
+        $this->middlewareConnection = $middlewareConnection;
     }
 
 
@@ -71,11 +85,26 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->secondFactorId = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getOption('yubikey');
 
-        $command = $this->pipeline->process($command);
+        $this->middlewareConnection->beginTransaction();
+
+        try {
+            $command = $this->pipeline->process($command);
+            $this->eventBus->flush();
+
+            $this->middlewareConnection->commit();
+        } catch (Exception $e) {
+            $output->writeln(sprintf(
+                '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
+                $e->getMessage()
+            ));
+
+            $this->middlewareConnection->rollBack();
+            throw $e;
+        }
 
         $output->writeln(
             sprintf(
-                'Successfully created identity with UUID %s and second factor with UUID %s',
+                '<info>Successfully created identity with UUID %s and second factor with UUID %s</info>',
                 $command->identityId,
                 $command->secondFactorId
             )

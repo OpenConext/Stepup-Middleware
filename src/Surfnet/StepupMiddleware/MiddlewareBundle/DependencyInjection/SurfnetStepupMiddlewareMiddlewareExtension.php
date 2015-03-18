@@ -19,14 +19,22 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
 {
     public function load(array $config, ContainerBuilder $container)
     {
+        $loader = new YamlFileLoader(
+            $container,
+            new FileLocator(__DIR__ . '/../Resources/config')
+        );
+        $loader->load('event_replaying.yml');
+
         $processor = new Processor();
         $config = $processor->processConfiguration(new Configuration(), $config);
 

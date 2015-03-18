@@ -71,4 +71,9 @@ class BufferedEventBus implements EventBusInterface
             $this->isPublishing = false;
         }
     }
+
+    public function clear()
+    {
+        $this->buffer = [];
+    }
 }

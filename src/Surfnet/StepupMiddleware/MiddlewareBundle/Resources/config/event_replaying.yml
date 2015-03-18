@@ -1,0 +1,17 @@
+services:
+    middleware.event_replay.dbal_event_hydrator:
+        public: false
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator
+        arguments:
+            - @doctrine.dbal.middleware_connection
+            - @surfnet_stepup.event_store.simple_serializer
+            - @surfnet_stepup.event_store.simple_serializer
+            - 'event_stream'
+
+    middleware.event_replay.event_stream_replayer:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @middleware.event_replay.dbal_event_hydrator
+            - @doctrine.dbal.middleware_connection
+            - @doctrine.dbal.gateway_connection

@@ -47,13 +47,23 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
      */
     private $middlewareConnection;
 
-    public function __construct(Pipeline $pipeline, BufferedEventBus $eventBus, Connection $middlewareConnection)
-    {
+    /**
+     * @var Connection
+     */
+    private $gatewayConnection;
+
+    public function __construct(
+        Pipeline $pipeline,
+        BufferedEventBus $eventBus,
+        Connection $middlewareConnection,
+        Connection $gatewayConnection
+    ) {
         parent::__construct(null);
 
         $this->pipeline = $pipeline;
         $this->eventBus = $eventBus;
         $this->middlewareConnection = $middlewareConnection;
+        $this->gatewayConnection = $gatewayConnection;
     }
 
 
@@ -86,11 +96,13 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->yubikeyPublicId = $input->getOption('yubikey');
 
         $this->middlewareConnection->beginTransaction();
+        $this->gatewayConnection->beginTransaction();
 
         try {
             $command = $this->pipeline->process($command);
             $this->eventBus->flush();
 
+            $this->gatewayConnection->commit();
             $this->middlewareConnection->commit();
         } catch (Exception $e) {
             $output->writeln(sprintf(
@@ -98,6 +110,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
                 $e->getMessage()
             ));
 
+            $this->middlewareConnection->rollBack();
             $this->middlewareConnection->rollBack();
             throw $e;
         }

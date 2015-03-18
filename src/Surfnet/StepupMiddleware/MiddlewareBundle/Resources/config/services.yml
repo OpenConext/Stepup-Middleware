@@ -6,3 +6,7 @@ services:
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
         tags:
             - { name: console.command }
+
+    surfnet_stepup_middleware_middleware.dbal_connection_helper:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper
+        arguments: [@doctrine.dbal.middleware_connection, @doctrine.dbal.gateway_connection]

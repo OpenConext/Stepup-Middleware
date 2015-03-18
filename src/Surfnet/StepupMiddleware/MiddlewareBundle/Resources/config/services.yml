@@ -4,6 +4,7 @@ services:
         arguments:
             - @pipeline
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @surfnet_stepup_middleware_middleware.dbal_connection_helper
         tags:
             - { name: console.command }
 

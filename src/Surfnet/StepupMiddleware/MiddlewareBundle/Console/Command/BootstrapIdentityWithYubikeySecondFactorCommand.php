@@ -25,10 +25,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
@@ -43,12 +43,18 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
      */
     private $eventBus;
 
-    public function __construct(Pipeline $pipeline, BufferedEventBus $eventBus)
+    /**
+     * @var DBALConnectionHelper
+     */
+    private $connectionHelper;
+
+    public function __construct(Pipeline $pipeline, BufferedEventBus $eventBus, DBALConnectionHelper $connectionHelper)
     {
         parent::__construct(null);
 
         $this->pipeline = $pipeline;
         $this->eventBus = $eventBus;
+        $this->connectionHelper = $connectionHelper;
     }
 
 
@@ -70,25 +76,30 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $command = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
-        $command->UUID = (string) Uuid::uuid4();
-        $command->identityId = (string) Uuid::uuid4();
-        $command->nameId = $input->getArgument('name-id');
-        $command->institution = $input->getArgument('institution');
-        $command->commonName = $input->getArgument('common-name');
-        $command->email = $input->getArgument('email');
-        $command->secondFactorId = (string) Uuid::uuid4();
+        $command                  = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
+        $command->UUID            = (string) Uuid::uuid4();
+        $command->identityId      = (string) Uuid::uuid4();
+        $command->nameId          = $input->getArgument('name-id');
+        $command->institution     = $input->getArgument('institution');
+        $command->commonName      = $input->getArgument('common-name');
+        $command->email           = $input->getArgument('email');
+        $command->secondFactorId  = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
+
+        $this->connectionHelper->beginTransaction();
 
         try {
             $command = $this->pipeline->process($command);
             $this->eventBus->flush();
 
+            $this->connectionHelper->commit();
         } catch (Exception $e) {
             $output->writeln(sprintf(
                 '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
                 $e->getMessage()
             ));
+
+            $this->connectionHelper->rollBack();
 
             throw $e;
         }

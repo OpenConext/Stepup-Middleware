@@ -30,7 +30,10 @@
         "broadway/broadway": "~0.4.0",
         "mockery/mockery": "~0.9",
         "surfnet/stepup-bundle": "dev-develop",
-        "pagerfanta/pagerfanta": "~1.0"
+        "pagerfanta/pagerfanta": "~1.0",
+        "jms/translation-bundle": "~1.1",
+        "jms/di-extra-bundle": "~1.5",
+        "jms/aop-bundle": "~1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
@@ -38,10 +41,7 @@
         "liip/rmt": "1.1.*",
         "moontoast/math": "~1.1",
         "rhumsaa/uuid": "~2.8",
-        "mockery/mockery": "~0.9",
-        "jms/translation-bundle": "~1.1",
-        "jms/di-extra-bundle": "~1.5",
-        "jms/aop-bundle": "~1.0"
+        "mockery/mockery": "~0.9"
     },
     "scripts": {
         "post-install-cmd": [

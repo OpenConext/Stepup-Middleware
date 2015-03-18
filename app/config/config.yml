@@ -56,7 +56,6 @@ doctrine:
                 user:     "%database_middleware_user%"
                 password: "%database_middleware_password%"
                 charset:  UTF8
-                server_version: 5.6
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -65,7 +64,6 @@ doctrine:
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
                 charset:  UTF8
-                server_version: 5.6
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -74,7 +72,6 @@ doctrine:
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8
-                server_version: 5.6
         types:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType

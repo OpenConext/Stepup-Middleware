@@ -14,3 +14,9 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    orm:
+        # This disables Doctrine proxy cache warming, which requires the database. When the cache is warmed on
+        # production, the classes will be generated.
+        auto_generate_proxy_classes: true

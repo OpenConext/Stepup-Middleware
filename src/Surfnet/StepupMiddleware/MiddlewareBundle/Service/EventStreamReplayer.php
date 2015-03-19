@@ -22,6 +22,7 @@ use Broadway\Domain\DomainMessage;
 use Exception;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EventStreamReplayer
@@ -68,39 +69,47 @@ class EventStreamReplayer
         $this->eventBus         = $eventBus;
         $this->eventHydrator    = $eventHydrator;
         $this->connectionHelper = $connectionHelper;
+        ProgressBar::setFormatDefinition(
+            'event_replay',
+            "<info> %message%</info>\n"
+            . '<comment>%current%/%max%</comment> [%bar%] <comment>%percent:3s%%</comment></info>%elapsed:6s%/'
+            . "%estimated:-6s%</info>\n %memory:6s%"
+        );
     }
 
     public function replayEvents(OutputInterface $output, $increments)
     {
-        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-            $output->writeln('<info>Starting Transaction</info>');
-        }
+        $preparationProgress = new ProgressBar($output, 3);
+        $preparationProgress->setFormat('event_replay');
 
+        $preparationProgress->setMessage('Starting Transaction');
         $this->connectionHelper->beginTransaction();
+        $preparationProgress->advance();
 
         try {
+            $preparationProgress->setMessage('Removing data from Read Tables');
             $this->wipeReadTables($output);
+            $preparationProgress->advance();
 
+            $preparationProgress->setMessage('Determining amount of events to replay...');
             $totalEvents = $this->eventHydrator->getCount();
 
-            $output->writeln(sprintf(
-                '<info>Found <comment>%s</comment> Events to replay in increments of </info><comment>%d</comment>',
+            $preparationProgress->advance();
+            $defaultMessage = sprintf(
+                'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
                 $totalEvents,
                 $increments
-            ));
+            );
+            $preparationProgress->setMessage($defaultMessage);
+            $preparationProgress->finish();
 
+            $replayProgress = new ProgressBar($output, $totalEvents);
+            $replayProgress->setFormat('event_replay');
+            $replayProgress->setMessage($defaultMessage);
             for ($count = 0; $count < $totalEvents; $count += $increments) {
-                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-                    $till = min(($count + $increments), $totalEvents);
-
-                    $output->writeln(
-                        sprintf('<info>Replaying events </info><comment>%d - %d</comment>', $count, $till)
-                    );
-                }
-
                 $eventStream = $this->eventHydrator->getFromTill($increments, $count);
 
-                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
+                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG) {
                     $messages = [];
                     foreach ($eventStream->getIterator() as $event) {
                         /** @var DomainMessage $event */
@@ -118,19 +127,29 @@ class EventStreamReplayer
                 $this->eventBus->flush();
 
                 unset($eventStream);
+                $steps = (($count + $increments < $totalEvents) ? $increments : ($totalEvents - $count));
+                $replayProgress->advance($steps);
             }
 
             $this->connectionHelper->commit();
+            $replayProgress->finish();
+
+            $output->writeln(['', '<info>Done</info>', '']);
         } catch (Exception $e) {
             $this->connectionHelper->rollBack();
+            if (isset($replayProgress)) {
+                $replayProgress->setMessage(sprintf('<error>ERROR OCCURRED: "%s"</error>', $e->getMessage()));
+                $replayProgress->finish();
+            }
 
             throw $e;
         }
+
     }
 
     private function wipeReadTables(OutputInterface $output)
     {
-        if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
             $output->writeln('<info>Retrieving connections to wipe READ tables</info>');
         }
 
@@ -139,7 +158,7 @@ class EventStreamReplayer
 
         foreach ($this->middlewareTables as $table) {
             $rows = $middlewareConnection->delete($table, [1 => 1]);
-            if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+            if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
                     '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
                     $rows,
@@ -150,7 +169,7 @@ class EventStreamReplayer
 
         foreach ($this->gatewayTables as $table) {
             $rows = $gatewayConnection->delete($table, [1 => 1]);
-            if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+            if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
                     '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
                     $rows,

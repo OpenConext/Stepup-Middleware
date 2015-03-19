@@ -103,7 +103,7 @@ QUESTION;
             return;
         }
 
-        $output->writeln(['', '<info>Starting Replay of Events</info> <comment>DO NOT INTERRUPT THIS!</comment>']);
+        $output->writeln(['', '<info>Starting Replay of Events</info> <comment>DO NOT INTERRUPT THIS!</comment>', '', '']);
 
         /** @var Container $container */
         $container = $kernel->getContainer();

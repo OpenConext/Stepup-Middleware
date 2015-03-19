@@ -72,7 +72,9 @@ class EventStreamReplayer
 
     public function replayEvents(OutputInterface $output, $increments)
     {
-        $output->writeln('<info>Starting Transaction</info>');
+        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $output->writeln('<info>Starting Transaction</info>');
+        }
 
         $this->connectionHelper->beginTransaction();
 
@@ -80,36 +82,42 @@ class EventStreamReplayer
             $this->wipeReadTables($output);
 
             $totalEvents = $this->eventHydrator->getCount();
-            $interval    = 100;
 
             $output->writeln(sprintf(
                 '<info>Found <comment>%s</comment> Events to replay in increments of </info><comment>%d</comment>',
                 $totalEvents,
-                $interval
+                $increments
             ));
 
-            for ($count = 0; $count < $totalEvents; $count += $interval) {
-                $till = min(($count + $interval), $totalEvents);
+            for ($count = 0; $count < $totalEvents; $count += $increments) {
+                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                    $till = min(($count + $increments), $totalEvents);
 
-                $output->writeln(sprintf('<info>Replaying events </info><comment>%d - %d</comment>', $count, $till));
-
-                $eventStream = $this->eventHydrator->getFromTill($interval, $count);
-
-                $messages = [];
-                foreach ($eventStream->getIterator() as $event) {
-                    /** @var DomainMessage $event */
-                    $messages[] = sprintf(
-                        '>> <comment>Publishing Event "%s" for UUID "%s"</comment>',
-                        $event->getType(),
-                        $event->getId()
+                    $output->writeln(
+                        sprintf('<info>Replaying events </info><comment>%d - %d</comment>', $count, $till)
                     );
                 }
 
-                $output->writeln($messages);
+                $eventStream = $this->eventHydrator->getFromTill($increments, $count);
+
+                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
+                    $messages = [];
+                    foreach ($eventStream->getIterator() as $event) {
+                        /** @var DomainMessage $event */
+                        $messages[] = sprintf(
+                            ' > <info>Publishing Event "<comment>%s</comment>" for UUID <comment>"%s</comment>"</info>',
+                            $event->getType(),
+                            $event->getId()
+                        );
+                    }
+
+                    $output->writeln($messages);
+                }
+
                 $this->eventBus->publish($eventStream);
                 $this->eventBus->flush();
 
-                unset($eventStream, $messages);
+                unset($eventStream);
             }
 
             $this->connectionHelper->commit();
@@ -122,26 +130,33 @@ class EventStreamReplayer
 
     private function wipeReadTables(OutputInterface $output)
     {
-        $output->writeln('<info>Retrieving connections to wipe READ tables</info>');
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+            $output->writeln('<info>Retrieving connections to wipe READ tables</info>');
+        }
+
         $middlewareConnection = $this->connectionHelper->getConnection('middleware');
         $gatewayConnection    = $this->connectionHelper->getConnection('gateway');
 
         foreach ($this->middlewareTables as $table) {
             $rows = $middlewareConnection->delete($table, [1 => 1]);
-            $output->writeln(sprintf(
-                '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
-                $rows,
-                $table
-            ));
+            if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+                $output->writeln(sprintf(
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    $rows,
+                    $table
+                ));
+            }
         }
 
         foreach ($this->gatewayTables as $table) {
             $rows = $gatewayConnection->delete($table, [1 => 1]);
-            $output->writeln(sprintf(
-                '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
-                $rows,
-                $table
-            ));
+            if ($output->getVerbosity() === OutputInterface::VERBOSITY_VERY_VERBOSE) {
+                $output->writeln(sprintf(
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    $rows,
+                    $table
+                ));
+            }
         }
     }
 }

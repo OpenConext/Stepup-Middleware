@@ -48,7 +48,7 @@ class DBALEventHydrator
     private $tableName;
 
     /**
-     * @var string
+     * @var \Doctrine\DBAL\Driver\Statement
      */
     private $loadStatement = null;
 
@@ -70,9 +70,13 @@ class DBALEventHydrator
         $this->tableName          = $tableName;
     }
 
+    /**
+     * @return string
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function getCount()
     {
-        $statement = $this->connection->prepare("SELECT COUNT(1) AS cnt FROM " . $this->tableName);
+        $statement = $this->connection->prepare('SELECT COUNT(1) AS cnt FROM ' . $this->tableName);
         $statement->execute();
 
         $row = $statement->fetch();

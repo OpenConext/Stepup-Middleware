@@ -63,7 +63,7 @@ class ReplayEventsCommand extends Command
 
         /** @var QuestionHelper $interrogator */
         $interrogator = $this->getHelper('question');
-        if ($environment === "prod_event_replay") {
+        if ($environment === 'prod_event_replay') {
             $wantToRunOnProd = new ConfirmationQuestion(
                 '<question>You have selected to run this on production. Have you disabled all access to the production '
                 . 'environment? (y/N)</question>',
@@ -103,7 +103,7 @@ QUESTION;
             return;
         }
 
-        $output->writeln(['', '<info>Starting Replay of Events</info> <comment>DO NOT INTERRUPT THIS!</comment>', '', '']);
+        $output->writeln(['', '<info>Starting Event Replay</info> <comment>DO NOT INTERRUPT THIS!</comment>', '', '']);
 
         /** @var Container $container */
         $container = $kernel->getContainer();

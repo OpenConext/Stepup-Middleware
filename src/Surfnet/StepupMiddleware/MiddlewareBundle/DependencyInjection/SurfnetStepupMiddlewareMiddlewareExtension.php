@@ -34,6 +34,7 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
 
         $fileLoader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $fileLoader->load('services.yml');
+        $fileLoader->load('event_replaying.yml');
 
         $definition = (new Definition())
             ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')

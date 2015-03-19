@@ -36,9 +36,9 @@ class ReplayEventsCommand extends Command
             ->setName('middleware:event:replay')
             ->setDescription('wipes all read models and repopulates the tables from the event store')
             ->addOption(
-                'batch-size',
-                'bs',
-                InputOption::VALUE_OPTIONAL,
+                'increments',
+                'i',
+                InputOption::VALUE_REQUIRED,
                 'The amount of events that are replayed at once (repeated until all events are replayed)',
                 1000
             );
@@ -76,6 +76,14 @@ class ReplayEventsCommand extends Command
             }
         }
 
+        $increments = (int) $input->getOption('increments');
+        if ($increments < 1) {
+            $output->writeln($formatter->formatBlock(
+                sprintf('Increments must be a positive integer, "%s" given', $input->getOption('increments')),
+                'error'
+            ));
+            return;
+        }
 
         $output->writeln(['', $formatter->formatBlock(['', 'WARNING!!!!', ''], 'error'), '']);
 
@@ -87,8 +95,7 @@ You are about to WIPE all read data and recreate all data based on the events pr
 Are you sure you wish to continue? (y/N)
 QUESTION;
 
-        $batchSize = (int) $input->getOption('batch-size');
-        $question = sprintf($question, $batchSize, 'error', 'error');
+        $question = sprintf($question, $increments, 'error', 'error');
         $areYouSure = new ConfirmationQuestion(sprintf("<question>%s</question>\n", $question), false);
         if (!$interrogator->ask($input, $output, $areYouSure)) {
             $output->writeln('<comment>Replay cancelled!</comment>');
@@ -101,6 +108,6 @@ QUESTION;
         /** @var Container $container */
         $container = $kernel->getContainer();
         $replayer = $container->get('middleware.event_replay.event_stream_replayer');
-        $replayer->replayEvents($output, $batchSize);
+        $replayer->replayEvents($output, $increments);
     }
 }

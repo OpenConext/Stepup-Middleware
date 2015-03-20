@@ -132,7 +132,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                 new PhonePossessionProvenEvent(
                     new IdentityId(static::UUID()),
                     new SecondFactorId(static::UUID()),
-                    new PhoneNumber('0612345678'),
+                    new PhoneNumber('+31 (0) 612345678'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',
                     'Arthur Dent',

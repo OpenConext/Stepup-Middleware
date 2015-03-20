@@ -59,7 +59,10 @@ class EventStreamReplayer
     /**
      * @var array
      */
-    private $gatewayTables = ['second_factor'];
+    private $gatewayTables = [
+        'second_factor',
+        'saml_entity'
+    ];
 
     public function __construct(
         BufferedEventBus $eventBus,

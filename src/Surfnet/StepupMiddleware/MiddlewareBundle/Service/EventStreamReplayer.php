@@ -72,7 +72,7 @@ class EventStreamReplayer
         ProgressBar::setFormatDefinition(
             'event_replay',
             "<info> %message%</info>\n"
-            . '<comment>%current%/%max%</comment> [%bar%] <comment>%percent:3s%%</comment></info>%elapsed:6s%/'
+            . ' <comment>%current%/%max%</comment> [%bar%] <comment>%percent:3s%%</comment><info>%elapsed:6s%/'
             . "%estimated:-6s%</info>\n %memory:6s%"
         );
     }

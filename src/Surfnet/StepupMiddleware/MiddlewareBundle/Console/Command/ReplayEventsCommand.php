@@ -90,7 +90,7 @@ class ReplayEventsCommand extends Command
         $question = <<<QUESTION
 You are about to WIPE all read data and recreate all data based on the events present, in steps of %d.
 
-  <%s>>> This can take a while and may NOT be interrupted <<</%s>
+  <%s>>> This can take a while and should not be interrupted <<</%s>
 
 Are you sure you wish to continue? (y/N)
 QUESTION;
@@ -103,7 +103,13 @@ QUESTION;
             return;
         }
 
-        $output->writeln(['', '<info>Starting Event Replay</info> <comment>DO NOT INTERRUPT THIS!</comment>', '', '']);
+        $output->writeln(['',$formatter->formatBlock('Starting Event Replay', 'info')]);
+        $output->writeln(
+            $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
+        );
+
+        // ensures the progressbar doesn't overwrite the messages above
+        $output->writeln(['','',''], 'info');
 
         /** @var Container $container */
         $container = $kernel->getContainer();

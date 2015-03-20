@@ -80,7 +80,6 @@ class BufferedEventBus implements EventBusInterface
         } catch (Exception $e) {
             $this->isFlushing = false;
 
-            // @todo discuss if this is what we want (think recoverability)
             array_splice($this->buffer, 0, 0, $buffer);
 
             throw $e;

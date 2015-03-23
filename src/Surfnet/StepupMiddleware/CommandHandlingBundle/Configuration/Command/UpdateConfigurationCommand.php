@@ -18,16 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
 
-class UpdateConfigurationCommand implements Command
+class UpdateConfigurationCommand extends AbstractCommand
 {
-    /**
-     * @var string UUID
-     */
-    public $UUID;
-
     /**
      * @var string configuration as json as received in the request
      *

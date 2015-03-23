@@ -18,23 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
-class AbstractCommandTest extends UnitTest
+class FixedUuidStubCommand extends AbstractCommand implements Command
 {
     /**
-     * @test
-     * @group command
+     * @var string generated using \Rhumsaa\Uuid\Uuid::uuid4()
      */
-    public function to_string_generates_command_identifiable_information()
-    {
-        $command = new FixedUuidStubCommand();
-        $uuid = $command->UUID;
-
-        $this->assertEquals(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand[' . $uuid . ']',
-            (string) $command,
-            'Command cast to string should give F\Q\C\N[UuidOfCommand]'
-        );
-    }
+    public $UUID = '1e8a8dc6-852e-4df8-ba23-8c18061b7c38';
 }

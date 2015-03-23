@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+
 class StagedPipeline implements Pipeline
 {
     /**
@@ -25,11 +27,7 @@ class StagedPipeline implements Pipeline
      */
     private $stages = [];
 
-    /**
-     * @param object $command
-     * @return object
-     */
-    public function process($command)
+    public function process(Command $command)
     {
         foreach ($this->stages as $stage) {
             $command = $stage->process($command);

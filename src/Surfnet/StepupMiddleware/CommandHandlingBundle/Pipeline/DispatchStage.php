@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Broadway\CommandHandling\CommandBusInterface;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class DispatchStage implements Stage
 {
@@ -35,7 +36,7 @@ class DispatchStage implements Stage
         $this->commandBus = $commandBus;
     }
 
-    public function process($command)
+    public function process(Command $command)
     {
         $this->commandBus->dispatch($command);
 

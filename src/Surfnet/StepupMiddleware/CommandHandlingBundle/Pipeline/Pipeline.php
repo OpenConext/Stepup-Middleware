@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+
 /**
  * Describes a linear structure in which commands are processed. For example, authorisation may be checked and
  * validation may take place before actually handling a command.
@@ -25,8 +27,8 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 interface Pipeline
 {
     /**
-     * @param object $command
-     * @return object
+     * @param Command $command
+     * @return Command
      */
-    public function process($command);
+    public function process(Command $command);
 }

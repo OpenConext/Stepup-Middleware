@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Doctrine\DBAL\Driver\Connection;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class TransactionAwarePipeline implements Pipeline
 {
@@ -42,7 +43,7 @@ class TransactionAwarePipeline implements Pipeline
         $this->connection = $connection;
     }
 
-    public function process($command)
+    public function process(Command $command)
     {
         $this->connection->beginTransaction();
 

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -36,7 +37,7 @@ class ValidationStage implements Stage
         $this->validator = $validator;
     }
 
-    public function process($command)
+    public function process(Command $command)
     {
         $violations = $this->validator->validate($command);
 

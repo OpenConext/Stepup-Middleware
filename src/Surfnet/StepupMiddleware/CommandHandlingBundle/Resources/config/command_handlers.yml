@@ -3,9 +3,6 @@ services:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler
         arguments:
             - @surfnet_stepup.repository.identity
-            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
-            - @doctrine.dbal.middleware_connection
-            - @doctrine.dbal.gateway_connection
             - @identity.entity.configurable_settings
         tags: [{ name: command_bus.command_handler }]
 

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class StagedPipeline implements Pipeline
@@ -27,11 +28,29 @@ class StagedPipeline implements Pipeline
      */
     private $stages = [];
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function process(Command $command)
     {
+        $this->logger->debug(sprintf('Processing "%s"', $command));
+
         foreach ($this->stages as $stage) {
+            $this->logger->debug(sprintf('Invoking stage "%s" for %s', get_class($stage), $command));
+
             $command = $stage->process($command);
+
+            $this->logger->debug(sprintf('Stage "%s" finished processing %s', get_class($stage), $command));
         }
+
+        $this->logger->debug(sprintf('Done processing %s in StagedPipeline', $command));
 
         return $command;
     }

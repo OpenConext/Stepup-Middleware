@@ -29,4 +29,9 @@ abstract class AbstractCommand implements Command
      * @var string
      */
     public $UUID;
+
+    public function __toString()
+    {
+        return get_class($this) . '[' . $this->UUID . ']';
+    }
 }

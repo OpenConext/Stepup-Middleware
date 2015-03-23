@@ -10,6 +10,8 @@ services:
 
     surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline
+        arguments:
+            - @logger
 
     surfnet_stepup_middleware_command_handling.pipeline.stage.validation:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage

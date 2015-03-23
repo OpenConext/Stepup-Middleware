@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline;
 
 class StagedPipelineTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +35,7 @@ class StagedPipelineTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
 
-        $pipeline = new StagedPipeline();
+        $pipeline = new StagedPipeline(new NullLogger());
         $pipeline->addStage($stage);
 
         $this->assertSame($command, $pipeline->process($command));
@@ -54,7 +55,7 @@ class StagedPipelineTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
 
-        $pipeline = new StagedPipeline();
+        $pipeline = new StagedPipeline(new NullLogger());
         $pipeline->addStage($stage1);
         $pipeline->addStage($stage2);
 
@@ -76,7 +77,7 @@ class StagedPipelineTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('process')->once()->with($command2)->andReturn($command2)
             ->getMock();
 
-        $pipeline = new StagedPipeline();
+        $pipeline = new StagedPipeline(new NullLogger());
         $pipeline->addStage($stage1);
         $pipeline->addStage($stage2);
 

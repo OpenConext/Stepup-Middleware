@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
 /**
- * Marker interface that must be implemented by all Step-up commands. All Step-up commands MUST sport a $UUID string
- * field.
+ * Interface that must be implemented by all Step-up commands. All Step-up commands MUST sport a $UUID string
+ * field, {@see \Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand}
  */
 interface Command
 {
+    public function __toString();
 }

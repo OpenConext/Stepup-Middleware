@@ -82,7 +82,7 @@ class TransactionAwarePipeline implements Pipeline
         } catch (\Exception $e) {
             // log at highest level if we may have a split head in the db-cluster...
             if (strpos($e->getMessage(), 'ER_UNKNOWN_COM_ERROR')) {
-                $this->logger->critical(sprintf(
+                $this->logger->emergency(sprintf(
                     '[!!!] Critical Database Exception while processing command "%s": "%s"',
                     $command,
                     $e->getMessage()

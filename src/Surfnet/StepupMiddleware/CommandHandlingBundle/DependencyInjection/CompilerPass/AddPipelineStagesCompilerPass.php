@@ -44,7 +44,7 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
                     . '"%s" is already registered at that position',
                     $stageServiceId,
                     $tagAttributes['priority'],
-                    (string) $prioritized[$priority][0]
+                    (string) $prioritized[$priority]
                 ));
             }
 

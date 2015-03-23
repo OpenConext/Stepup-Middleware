@@ -7,6 +7,8 @@ services:
         arguments:
             - @surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline
             - @doctrine.dbal.middleware_connection
+            - @doctrine.dbal.gateway_connection
+            - @logger
 
     surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline

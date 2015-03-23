@@ -43,14 +43,14 @@ class StagedPipeline implements Pipeline
         $this->logger->debug(sprintf('Processing "%s"', $command));
 
         foreach ($this->stages as $stage) {
-            $this->logger->debug(sprintf('Invoking stage "%s" for %s', get_class($stage), $command));
+            $this->logger->debug(sprintf('Invoking stage "%s" for "%s"', get_class($stage), $command));
 
             $command = $stage->process($command);
 
-            $this->logger->debug(sprintf('Stage "%s" finished processing %s', get_class($stage), $command));
+            $this->logger->debug(sprintf('Stage "%s" finished processing "%s"', get_class($stage), $command));
         }
 
-        $this->logger->debug(sprintf('Done processing %s in StagedPipeline', $command));
+        $this->logger->debug(sprintf('Done processing "%s" in StagedPipeline', $command));
 
         return $command;
     }

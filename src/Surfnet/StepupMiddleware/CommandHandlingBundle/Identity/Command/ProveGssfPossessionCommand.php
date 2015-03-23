@@ -26,8 +26,8 @@ class ProveGssfPossessionCommand extends AbstractCommand
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_gssf_possession.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_gssf_possession.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -36,8 +36,8 @@ class ProveGssfPossessionCommand extends AbstractCommand
     /**
      * The ID of the second factor to create.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_gssf_possession.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_gssf_possession.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -46,8 +46,8 @@ class ProveGssfPossessionCommand extends AbstractCommand
     /**
      * The phone number
      *
-     * @Assert\NotBlank(message="stepup.command.prove_gssf_possession.stepup_provider.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_gssf_possession.stepup_provider.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -56,8 +56,8 @@ class ProveGssfPossessionCommand extends AbstractCommand
     /**
      * The phone number
      *
-     * @Assert\NotBlank(message="stepup.command.prove_gssf_possession.gssf_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_gssf_possession.gssf_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

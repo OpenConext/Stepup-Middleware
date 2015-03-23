@@ -26,8 +26,8 @@ class ProvePhonePossessionCommand extends AbstractCommand
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -36,8 +36,8 @@ class ProvePhonePossessionCommand extends AbstractCommand
     /**
      * The ID of the second factor to create.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -46,12 +46,9 @@ class ProvePhonePossessionCommand extends AbstractCommand
     /**
      * The phone number
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.phone_number.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.phone_number.must_be_string")
-     * @Assert\Regex(
-     *     pattern="~^\d+$~",
-     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_digits"
-     * )
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     * @Assert\Regex(pattern="~^\d+$~")
      *
      * @var string
      */

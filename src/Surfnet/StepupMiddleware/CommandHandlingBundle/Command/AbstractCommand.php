@@ -23,8 +23,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractCommand implements Command
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.command_uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.command_uuid.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

@@ -26,16 +26,16 @@ class VerifyEmailCommand extends AbstractCommand
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.verify_email.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $identityId;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.verify_email.verification_nonce.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.verification_nonce.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

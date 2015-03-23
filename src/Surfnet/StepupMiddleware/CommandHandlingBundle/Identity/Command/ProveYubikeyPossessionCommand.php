@@ -26,8 +26,8 @@ class ProveYubikeyPossessionCommand extends AbstractCommand
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_yubikey_possession.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_yubikey_possession.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -36,8 +36,8 @@ class ProveYubikeyPossessionCommand extends AbstractCommand
     /**
      * The ID of the second factor to create.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_yubikey_possession.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_yubikey_possession.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -46,8 +46,8 @@ class ProveYubikeyPossessionCommand extends AbstractCommand
     /**
      * The Yubikey's public ID.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_yubikey_possession.yubikey_public_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_yubikey_possession.yubikey_public_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

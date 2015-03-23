@@ -37,41 +37,28 @@ class SamlEntityRepository extends EntityRepository
     }
 
     /**
-     * Replace all configured SamlEntiies with the new SamlEntities.
+     * Replace all configured SamlEntities with the new SamlEntities.
      *
      * Will be updated later, see https://www.pivotaltracker.com/story/show/83532704
      *
-     * @param $newSamlEntities
-     * @throws Exception
-     * @throws \Doctrine\DBAL\ConnectionException
+     * @param array $newSamlEntities
      */
-    public function replaceAll($newSamlEntities)
+    public function replaceAll(array $newSamlEntities)
     {
-        $connection = $this->getEntityManager()->getConnection();
-        $connection->beginTransaction();
         $entityManager = $this->getEntityManager();
         $counter = 0;
 
-        try {
-            $this->removeAll();
-            $entityManager->flush();
+        $this->removeAll();
+        $entityManager->flush();
 
-            foreach ($newSamlEntities as $samlEntity) {
-                $entityManager->persist($samlEntity);
+        foreach ($newSamlEntities as $samlEntity) {
+            $entityManager->persist($samlEntity);
 
-                if (++$counter % 25 === 0) {
-                    $entityManager->flush();
-                    $counter = 0;
-                }
+            if (++$counter % 25 === 0) {
+                $entityManager->flush();
             }
-
-            $entityManager->flush();
-        } catch (Exception $e) {
-            $connection->rollBack();
-
-            throw $e;
         }
 
-        $connection->commit();
+        $entityManager->flush();
     }
 }

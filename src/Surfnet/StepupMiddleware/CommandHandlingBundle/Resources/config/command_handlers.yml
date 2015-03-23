@@ -10,10 +10,5 @@ services:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler
         arguments:
             - @surfnet_stepup.repository.configuration
-            - @surfnet_stepup_middleware_gateway.service.gateway_configuration
-            - @surfnet_stepup_middleware_api.projector.raa
-            - @surfnet_stepup_middleware_api.projector.sraa
-            - @doctrine.dbal.middleware_connection
-            - @doctrine.dbal.gateway_connection
         tags: [{ name: command_bus.command_handler }]
 

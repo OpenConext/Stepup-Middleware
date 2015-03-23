@@ -16,36 +16,39 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\GatewayBundle\Service;
+namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
-use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository;
 
-class GatewayConfigurationService extends Projector
+class SamlEntityProjector extends Projector
 {
     /**
-     * @var \Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository
+     * @var SamlEntityRepository
      */
     private $samlEntityRepository;
 
+    /**
+     * @param SamlEntityRepository $samlEntityRepository
+     */
     public function __construct(SamlEntityRepository $samlEntityRepository)
     {
         $this->samlEntityRepository = $samlEntityRepository;
     }
 
     /**
-     * @param array $serviceProviderConfigurations
+     * @param ServiceProvidersUpdatedEvent $event
      */
-    public function updateServiceProviders(array $serviceProviderConfigurations)
+    public function applyServiceProvidersUpdatedEvent(ServiceProvidersUpdatedEvent $event)
     {
-        $spConfigurations = new ArrayCollection();
-        foreach ($serviceProviderConfigurations as $configuration) {
+        $spConfigurations = [];
+        foreach ($event->serviceProviders as $configuration) {
             $newConfiguration = $configuration;
             unset($newConfiguration['entity_id']);
 
-            $spConfigurations->add(SamlEntity::createServiceProvider($configuration['entity_id'], $newConfiguration));
+            $spConfigurations[] = SamlEntity::createServiceProvider($configuration['entity_id'], $newConfiguration);
         }
 
         $this->samlEntityRepository->replaceAll($spConfigurations);

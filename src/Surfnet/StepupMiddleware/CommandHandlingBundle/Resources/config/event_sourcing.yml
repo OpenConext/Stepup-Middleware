@@ -37,8 +37,3 @@ services:
     surfnet_stepup_middleware_command_handling.event_bus.buffered:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus
-
-    surfnet_stepup_middleware_command_handling.listener.flush_event_buffer:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\FlushEventBufferEventListener
-        arguments: [ @surfnet_stepup_middleware_command_handling.event_bus.buffered ]
-        tags: [{ name: kernel.event_subscriber }]

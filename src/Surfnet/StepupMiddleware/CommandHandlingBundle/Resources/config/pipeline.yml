@@ -24,6 +24,13 @@ services:
             - @surfnet_stepup_middleware_command_handling.command_bus
         tags: [{ name: pipeline.stage, priority: 50 }]
 
+    surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @logger
+        tags: [{ name: pipeline.stage, priority: 100 }]
+
     surfnet_stepup_middleware_command_handling.command_bus:
         class: Broadway\CommandHandling\SimpleCommandBus
 

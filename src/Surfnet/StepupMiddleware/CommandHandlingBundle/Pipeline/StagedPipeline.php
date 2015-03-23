@@ -55,6 +55,12 @@ class StagedPipeline implements Pipeline
         return $command;
     }
 
+    /**
+     * Adds a strage to the pipeling. Sorting of the stages based on priority has already been done in the
+     * \Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddPipelineStagesCompilerPass
+     *
+     * @param Stage $stage
+     */
     public function addStage(Stage $stage)
     {
         $this->stages[] = $stage;

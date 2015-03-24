@@ -60,4 +60,52 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $bus->publish(new DomainEventStream([$event]));
         $bus->flush();
     }
+
+    /**
+     * This is tested by checking that the mock event listener is invoked once, while flushing twice.
+     * @test
+     * @group event-handling
+     */
+    public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
+    {
+        $event    = m::mock('Broadway\Domain\DomainMessageInterface');
+        $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
+            ->shouldReceive('handle')->once()->with($event)
+            ->getMock();
+
+        $bus = new BufferedEventBus();
+        $bus->subscribe($listener);
+
+        $bus->publish(new DomainEventStream([$event]));
+        $bus->flush();
+        $bus->flush();
+    }
+
+    /**
+     * This is tested by publishing an event when flushing and flushing again afterwards
+     *
+     * @test
+     * @group event-handling
+     */
+    public function new_event_can_be_buffered_while_flushing()
+    {
+        $event = m::mock('Broadway\Domain\DomainMessageInterface');
+        $bus = new BufferedEventBus();
+
+        // in php7 replace this with anonymous class
+        $listener = new OnFirstCallPublishesToBusAndCountingCallsEventListener(
+            $bus,
+            new DomainEventStream([$event])
+        );
+
+        $bus->subscribe($listener);
+
+        $bus->publish(new DomainEventStream([$event]));
+
+        $this->assertEquals(0, $listener->callCount, 'Prior to the first flush, the callcount should be 0');
+        $bus->flush();
+        $bus->flush();
+
+        $this->assertEquals(2, $listener->callCount, 'After flushing twice, the callcount should be 2');
+    }
 }

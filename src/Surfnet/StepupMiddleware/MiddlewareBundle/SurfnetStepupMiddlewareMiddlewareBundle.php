@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrationsDiffDoctrineCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrationsMigrateDoctrineCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -31,5 +32,6 @@ class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
         $application->add(new MigrationsDiffDoctrineCommand());
         $application->add(new MigrationsMigrateDoctrineCommand());
         $application->add(new BootstrapIdentityWithYubikeySecondFactorCommand());
+        $application->add(new ReplayEventsCommand());
     }
 }

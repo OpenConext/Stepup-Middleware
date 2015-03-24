@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Doctrine\DBAL\Connection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\UnknownDBALConnectionException;
 
 class DBALConnectionHelper
 {
@@ -37,9 +38,9 @@ class DBALConnectionHelper
             if (!$connection instanceof Connection) {
                 throw InvalidArgumentException::invalidType('\Doctrine\DBAL\Connection', 'connection', $connection);
             }
-
-            $this->connections[] = $connection;
         }
+
+        $this->connections = $connections;
     }
 
     /**
@@ -54,8 +55,6 @@ class DBALConnectionHelper
 
     /**
      * Commit transaction on each connection
-     *
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function commit()
     {
@@ -66,13 +65,28 @@ class DBALConnectionHelper
 
     /**
      * Roll back the transaction on each connection
-     *
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     public function rollBack()
     {
         foreach ($this->connections as $connection) {
             $connection->rollBack();
         }
+    }
+
+    /**
+     * @param string $connectionName
+     * @return Connection
+     */
+    public function getConnection($connectionName)
+    {
+        if (!is_string($connectionName)) {
+            throw InvalidArgumentException::invalidType('string', 'connectionName', $connectionName);
+        }
+
+        if (!array_key_exists($connectionName, $this->connections)) {
+            throw new UnknownDBALConnectionException($connectionName);
+        }
+
+        return $this->connections[$connectionName];
     }
 }

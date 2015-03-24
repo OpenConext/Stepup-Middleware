@@ -22,6 +22,8 @@ use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessageInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventHandling\EventListenerInterface;
+use Exception;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\AlreadyFlushingException;
 
 class BufferedEventBus implements EventBusInterface
 {
@@ -40,7 +42,7 @@ class BufferedEventBus implements EventBusInterface
      *
      * @var bool
      */
-    private $isPublishing = false;
+    private $isFlushing = false;
 
     public function subscribe(EventListenerInterface $eventListener)
     {
@@ -59,16 +61,32 @@ class BufferedEventBus implements EventBusInterface
      */
     public function flush()
     {
-        if (!$this->isPublishing) {
-            $this->isPublishing = true;
+        if ($this->isFlushing) {
+            throw new AlreadyFlushingException('Cannot flush BufferedEventBus when it is still flushing');
+        }
 
-            while ($domainMessage = array_shift($this->buffer)) {
+        $this->isFlushing = true;
+
+        // swap the buffer so we can still publish new events, during or after flush
+        $buffer = $this->buffer;
+        $this->buffer = [];
+
+        try {
+            while ($domainMessage = array_shift($buffer)) {
                 foreach ($this->eventListeners as $eventListener) {
                     $eventListener->handle($domainMessage);
                 }
             }
+        } catch (Exception $e) {
+            $this->isFlushing = false;
 
-            $this->isPublishing = false;
+            array_splice($this->buffer, 0, 0, $buffer);
+
+            throw $e;
         }
+
+        $this->isFlushing = false;
+
+        unset($buffer);
     }
 }

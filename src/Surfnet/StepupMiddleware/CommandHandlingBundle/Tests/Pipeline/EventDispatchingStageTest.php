@@ -37,7 +37,7 @@ class EventDispatchingStageTest extends UnitTest
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $stage = new EventDispatchingStage($eventBus, new NullLogger());
+        $stage = new EventDispatchingStage(new NullLogger(), $eventBus);
         $stage->process($command);
     }
 
@@ -54,7 +54,7 @@ class EventDispatchingStageTest extends UnitTest
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $stage = new EventDispatchingStage($eventBus, new NullLogger());
+        $stage = new EventDispatchingStage(new NullLogger(), $eventBus);
         $returnedCommand = $stage->process($command);
 
         $this->assertEquals(spl_object_hash($command), spl_object_hash($returnedCommand));

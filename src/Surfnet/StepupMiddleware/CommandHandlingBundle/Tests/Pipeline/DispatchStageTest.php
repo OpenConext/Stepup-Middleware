@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage;
 
 class DispatchStageTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +35,7 @@ class DispatchStageTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('dispatch')->once()->with($command)->andReturnNull()
             ->getMock();
 
-        $stage = new DispatchStage($commandBus);
+        $stage = new DispatchStage(new NullLogger(), $commandBus);
 
         $this->assertSame($command, $stage->process($command));
     }

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
 
 class ValidationStageTest extends \PHPUnit_Framework_TestCase
@@ -37,7 +38,7 @@ class ValidationStageTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 
-        $stage = new ValidationStage($validator);
+        $stage = new ValidationStage(new NullLogger(), $validator);
 
         $this->assertSame($command, $stage->process($command));
     }
@@ -61,7 +62,7 @@ class ValidationStageTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 
-        $stage = new ValidationStage($validator);
+        $stage = new ValidationStage(new NullLogger(), $validator);
         $stage->process($command);
     }
 }

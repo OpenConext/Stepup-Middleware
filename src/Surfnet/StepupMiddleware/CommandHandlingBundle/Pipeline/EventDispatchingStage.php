@@ -34,10 +34,10 @@ class EventDispatchingStage implements Stage
      */
     private $bufferedEventBus;
 
-    public function __construct(BufferedEventBus $bufferedEventBus, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, BufferedEventBus $bufferedEventBus)
     {
-        $this->bufferedEventBus = $bufferedEventBus;
         $this->logger = $logger;
+        $this->bufferedEventBus = $bufferedEventBus;
     }
 
     public function process(Command $command)

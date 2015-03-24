@@ -43,21 +43,21 @@ class TransactionAwarePipeline implements Pipeline
     private $logger;
 
     /**
+     * @param LoggerInterface $logger
      * @param Pipeline        $innerPipeline
      * @param Connection      $middlewareConnection
      * @param Connection      $gatewayConnection
-     * @param LoggerInterface $logger
      */
     public function __construct(
+        LoggerInterface $logger,
         Pipeline $innerPipeline,
         Connection $middlewareConnection,
-        Connection $gatewayConnection,
-        LoggerInterface $logger
+        Connection $gatewayConnection
     ) {
+        $this->logger               = $logger;
         $this->innerPipeline        = $innerPipeline;
         $this->middlewareConnection = $middlewareConnection;
         $this->gatewayConnection    = $gatewayConnection;
-        $this->logger               = $logger;
     }
 
     public function process(Command $command)

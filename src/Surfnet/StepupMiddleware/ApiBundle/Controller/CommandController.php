@@ -50,7 +50,7 @@ class CommandController extends Controller
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName]);
 
-        $logger->notice(sprintf('Command "%s" has been succesfully processed', $command));
+        $logger->notice(sprintf('Command "%s" has been successfully processed', $command));
 
         return $response;
     }

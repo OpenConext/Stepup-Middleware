@@ -28,7 +28,7 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc} Since the priorities cannot be changed runtime but only through configuration, we're doing the
-     * sorting based on priority here. A lower priority means the stage is added earlier.
+     * sorting based on priority here. A higher priority means the stage is added earlier.
      */
     public function process(ContainerBuilder $container)
     {
@@ -54,6 +54,9 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
         if (!ksort($prioritized)) {
             throw new RuntimeException('Could not sort stages based on prioritization (ksort failed)');
         }
+
+        // ksort sorts low -> high, so reversing to get them sorted correctly.
+        $prioritized = array_reverse($prioritized);
 
         foreach ($prioritized as $reference) {
             $definition->addMethodCall('addStage', [$reference]);

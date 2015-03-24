@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CommandController extends Controller
 {
@@ -41,7 +41,10 @@ class CommandController extends Controller
         try {
             $command = $pipeline->process($command);
         } catch (ForbiddenException $e) {
-            throw new HttpException(403, sprintf('Processing of command "%s" is forbidden for this client', $command));
+            throw new AccessDeniedHttpException(
+                sprintf('Processing of command "%s" is forbidden for this client', $command),
+                $e
+            );
         }
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');

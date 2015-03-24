@@ -112,6 +112,29 @@ class AuthorizingStageTest extends UnitTest
         $authorizingStage->process($command);
     }
 
+    /**
+     * @test
+     * @group pipeline
+     * @expectedException \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException
+     */
+    public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown()
+    {
+        $command = m::mock(
+            'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
+            . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable'
+        );
+
+        $this->authorizationChecker
+            ->shouldReceive('isGranted')
+            ->once()
+            ->with(['ROLE_SS'])
+            ->andReturn(false);
+
+        $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
+
+        $authorizingStage->process($command);
+    }
+
     public function interfaceToRoleMappingProvider()
     {
         return  [

@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
 
-class UpdateConfigurationCommand extends AbstractCommand
+class UpdateConfigurationCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
      * @var string configuration as json as received in the request

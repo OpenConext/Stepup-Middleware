@@ -19,12 +19,13 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * May be executed by a Registration Authority to revoke a Registrant's verified or vetted second factor.
  */
-class RevokeRegistrantsSecondFactorCommand extends AbstractCommand
+class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * The ID of the identity that has the authority to issue the revocation of a registrant's second factor.

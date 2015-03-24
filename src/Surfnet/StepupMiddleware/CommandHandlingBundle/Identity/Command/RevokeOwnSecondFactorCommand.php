@@ -19,12 +19,14 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * May be executed by a Registrant to revoke one of his/her own verified or vetted second factors.
  */
-class RevokeOwnSecondFactorCommand extends AbstractCommand
+class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, RaExecutable
 {
     /**
      * The ID of an existing identity.

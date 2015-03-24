@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class VetSecondFactorCommand extends AbstractCommand
+class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * The ID of an existing identity.

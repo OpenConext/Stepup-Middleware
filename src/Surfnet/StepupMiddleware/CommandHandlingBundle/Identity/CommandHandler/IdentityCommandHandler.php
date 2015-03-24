@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Doctrine\DBAL\Driver\Connection;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
@@ -32,7 +31,6 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
@@ -56,43 +54,17 @@ class IdentityCommandHandler extends CommandHandler
     private $repository;
 
     /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus
-     */
-    private $eventBus;
-
-    /**
-     * @var \Doctrine\DBAL\Driver\Connection
-     */
-    private $middlewareConnection;
-
-    /**
-     * @var \Doctrine\DBAL\Driver\Connection
-     */
-    private $gatewayConnection;
-
-    /**
      * @var \Surfnet\Stepup\Identity\Entity\ConfigurableSettings
      */
     private $configurableSettings;
 
     /**
      * @param IdentityRepository   $repository
-     * @param BufferedEventBus     $eventBus
-     * @param Connection           $middlewareConnection
-     * @param Connection           $gatewayConnection
      * @param ConfigurableSettings $configurableSettings
      */
-    public function __construct(
-        IdentityRepository $repository,
-        BufferedEventBus $eventBus,
-        Connection $middlewareConnection,
-        Connection $gatewayConnection,
-        ConfigurableSettings $configurableSettings
-    ) {
+    public function __construct(IdentityRepository $repository, ConfigurableSettings $configurableSettings)
+    {
         $this->repository           = $repository;
-        $this->eventBus             = $eventBus;
-        $this->middlewareConnection = $middlewareConnection;
-        $this->gatewayConnection    = $gatewayConnection;
         $this->configurableSettings = $configurableSettings;
     }
 
@@ -217,50 +189,22 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
     {
-        $this->middlewareConnection->beginTransaction();
-        $this->gatewayConnection->beginTransaction();
+        /** @var IdentityApi $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
 
-        try {
-            /** @var IdentityApi $identity */
-            $identity = $this->repository->load(new IdentityId($command->identityId));
-            $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
-
-            $this->repository->add($identity);
-            $this->eventBus->flush();
-        } catch (\Exception $e) {
-            $this->middlewareConnection->rollBack();
-            $this->gatewayConnection->rollBack();
-
-            throw $e;
-        }
-
-        $this->middlewareConnection->commit();
-        $this->gatewayConnection->commit();
+        $this->repository->add($identity);
     }
 
     public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
     {
-        $this->middlewareConnection->beginTransaction();
-        $this->gatewayConnection->beginTransaction();
+        /** @var IdentityApi $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->complyWithSecondFactorRevocation(
+            new SecondFactorId($command->secondFactorId),
+            new IdentityId($command->authorityId)
+        );
 
-        try {
-            /** @var IdentityApi $identity */
-            $identity = $this->repository->load(new IdentityId($command->identityId));
-            $identity->complyWithSecondFactorRevocation(
-                new SecondFactorId($command->secondFactorId),
-                new IdentityId($command->authorityId)
-            );
-
-            $this->repository->add($identity);
-            $this->eventBus->flush();
-        } catch (\Exception $e) {
-            $this->middlewareConnection->rollBack();
-            $this->gatewayConnection->rollBack();
-
-            throw $e;
-        }
-
-        $this->middlewareConnection->commit();
-        $this->gatewayConnection->commit();
+        $this->repository->add($identity);
     }
 }

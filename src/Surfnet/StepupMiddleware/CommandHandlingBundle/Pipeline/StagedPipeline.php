@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Psr\Log\LoggerInterface;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+
 class StagedPipeline implements Pipeline
 {
     /**
@@ -26,18 +29,38 @@ class StagedPipeline implements Pipeline
     private $stages = [];
 
     /**
-     * @param object $command
-     * @return object
+     * @var LoggerInterface
      */
-    public function process($command)
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
     {
+        $this->logger = $logger;
+    }
+
+    public function process(Command $command)
+    {
+        $this->logger->debug(sprintf('Processing "%s"', $command));
+
         foreach ($this->stages as $stage) {
+            $this->logger->debug(sprintf('Invoking stage "%s" for "%s"', get_class($stage), $command));
+
             $command = $stage->process($command);
+
+            $this->logger->debug(sprintf('Stage "%s" finished processing "%s"', get_class($stage), $command));
         }
+
+        $this->logger->debug(sprintf('Done processing "%s" in StagedPipeline', $command));
 
         return $command;
     }
 
+    /**
+     * Adds a strage to the pipeling. Sorting of the stages based on priority has already been done in the
+     * \Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddPipelineStagesCompilerPass
+     *
+     * @param Stage $stage
+     */
     public function addStage(Stage $stage)
     {
         $this->stages[] = $stage;

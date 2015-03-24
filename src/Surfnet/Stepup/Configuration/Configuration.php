@@ -39,21 +39,6 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
      */
     private $configuration;
 
-    /**
-     * @var null|\Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
-     */
-    private $lastServiceProvidersUpdatedEvent;
-
-    /**
-     * @var null|\Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent
-     */
-    private $lastRaaUpdatedEvent;
-
-    /**
-     * @var null|\Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent
-     */
-    private $lastSraaUpdatedEvent;
-
     public static function create()
     {
         $configuration = new self();
@@ -72,24 +57,12 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
             $this->configuration
         ));
 
-        $this->lastServiceProvidersUpdatedEvent = new ServiceProvidersUpdatedEvent(
+        $this->apply(new ServiceProvidersUpdatedEvent(
             self::CONFIGURATION_ID,
             $decodedConfiguration['gateway']['service_providers']
-        );
-
-        $this->lastRaaUpdatedEvent = new RaaUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration['raa']
-        );
-
-        $this->lastSraaUpdatedEvent = new SraaUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration['sraa']
-        );
-
-        $this->apply($this->lastServiceProvidersUpdatedEvent);
-        $this->apply($this->lastRaaUpdatedEvent);
-        $this->apply($this->lastSraaUpdatedEvent);
+        ));
+        $this->apply(new RaaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['raa']));
+        $this->apply(new SraaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['sraa']));
     }
 
     public function getAggregateRootId()
@@ -100,32 +73,5 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event)
     {
         $this->configuration = $event->newConfiguration;
-    }
-
-    public function getLastUncommittedServiceProvidersUpdatedEvent()
-    {
-        return $this->lastServiceProvidersUpdatedEvent;
-    }
-
-    public function getLastUncommittedRaaUpdatedEvent()
-    {
-        return $this->lastRaaUpdatedEvent;
-    }
-
-    public function getLastUncommittedSraaUpdatedEvent()
-    {
-        return $this->lastSraaUpdatedEvent;
-    }
-
-    /**
-     * {@inheritDoc} Cleaning up the possible event, as the uncommittedEvents will be removed as well
-     */
-    public function getUncommittedEvents()
-    {
-        $this->lastServiceProvidersUpdatedEvent = null;
-        $this->lastRaaUpdatedEvent = null;
-        $this->lastSraaUpdatedEvent = null;
-
-        return parent::getUncommittedEvents();
     }
 }

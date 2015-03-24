@@ -19,23 +19,24 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class VerifyEmailCommand extends AbstractCommand
+class VerifyEmailCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.verify_email.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $identityId;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.verify_email.verification_nonce.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.verify_email.verification_nonce.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

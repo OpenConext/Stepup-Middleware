@@ -38,7 +38,7 @@ class SraaProjector extends Projector
     /**
      * @param SraaUpdatedEvent $event
      */
-    public function replaceSraaConfiguration(SraaUpdatedEvent $event)
+    public function applySraaUpdatedEvent(SraaUpdatedEvent $event)
     {
         $this->sraaRepository->removeAll();
 

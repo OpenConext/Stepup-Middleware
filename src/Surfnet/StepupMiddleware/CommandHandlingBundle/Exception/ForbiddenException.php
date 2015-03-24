@@ -16,18 +16,14 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
+use RuntimeException;
 
-class UpdateConfigurationCommand extends AbstractCommand implements ManagementExecutable
+/**
+ * Named exception used to indicate that the command that is being processed
+ * may not be executed by the requesting client.
+ */
+class ForbiddenException extends RuntimeException implements Exception
 {
-    /**
-     * @var string configuration as json as received in the request
-     *
-     * @ManagementAssert\HasValidConfigurationStructure
-     */
-    public $configuration;
 }

@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+
 /**
  * A stage is used in context of a pipeline and represents a stage in the processing of a command. Stages may block
  * further processing of a command by throwing an exception.
@@ -25,8 +27,8 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 interface Stage
 {
     /**
-     * @param object $command
-     * @return object
+     * @param Command $command
+     * @return Command
      */
-    public function process($command);
+    public function process(Command $command);
 }

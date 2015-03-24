@@ -18,39 +18,36 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Broadway\CommandHandling\CommandBusInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
-class DispatchStage implements Stage
+class EventDispatchingStage implements Stage
 {
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
-
     /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
-     * @param LoggerInterface     $logger
-     * @param CommandBusInterface $commandBus
+     * @var BufferedEventBus
      */
-    public function __construct(LoggerInterface $logger, CommandBusInterface $commandBus)
+    private $bufferedEventBus;
+
+    public function __construct(LoggerInterface $logger, BufferedEventBus $bufferedEventBus)
     {
         $this->logger = $logger;
-        $this->commandBus = $commandBus;
+        $this->bufferedEventBus = $bufferedEventBus;
     }
 
     public function process(Command $command)
     {
-        $this->logger->debug(sprintf('Dispatching command "%s" for handling', $command));
+        $this->logger->debug(sprintf('Dispatching Events for "%s"', $command));
 
-        $this->commandBus->dispatch($command);
+        $this->bufferedEventBus->flush();
 
-        $this->logger->debug(sprintf('Command "%s" has been handled', $command));
+        $this->logger->debug(sprintf('All events for "%s" have been dispatched', $command));
+
         return $command;
     }
 }

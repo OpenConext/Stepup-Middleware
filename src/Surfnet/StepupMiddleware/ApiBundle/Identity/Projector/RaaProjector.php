@@ -38,7 +38,7 @@ class RaaProjector extends Projector
     /**
      * @param RaaUpdatedEvent $event
      */
-    public function updateRaaConfiguration(RaaUpdatedEvent $event)
+    public function applyRaaUpdatedEvent(RaaUpdatedEvent $event)
     {
         foreach ($event->raas as $institution => $raaList) {
             $this->updateRaaListForInstitution($institution, $raaList);

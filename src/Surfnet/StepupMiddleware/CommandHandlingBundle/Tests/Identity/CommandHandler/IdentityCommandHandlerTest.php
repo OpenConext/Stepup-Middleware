@@ -64,27 +64,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 {
     private static $window = 3600;
 
-    /** @var MockInterface */
-    private $eventBus;
-
-    /** @var MockInterface */
-    private $middlewareConnection;
-
-    /** @var MockInterface */
-    private $gatewayConnection;
-
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
-        $this->eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus');
-        $this->middlewareConnection = m::mock('Doctrine\DBAL\Driver\Connection');
-        $this->gatewayConnection = m::mock('Doctrine\DBAL\Driver\Connection');
 
         return new IdentityCommandHandler(
             new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
-            $this->eventBus,
-            $this->middlewareConnection,
-            $this->gatewayConnection,
             ConfigurableSettings::create(self::$window)
         );
     }
@@ -616,12 +601,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command = new RevokeOwnSecondFactorCommand();
         $command->identityId = '42';
         $command->secondFactorId = self::uuid();
-
-        $this->eventBus->shouldReceive('flush')->once();
-        $this->middlewareConnection->shouldReceive('beginTransaction')->once();
-        $this->middlewareConnection->shouldReceive('commit')->once();
-        $this->gatewayConnection->shouldReceive('beginTransaction')->once();
-        $this->gatewayConnection->shouldReceive('commit')->once();
 
         $this->scenario
             ->withAggregateId($id = new IdentityId($command->identityId))

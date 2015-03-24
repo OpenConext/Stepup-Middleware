@@ -24,56 +24,56 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractCommand
 {
     /**
-     * @Assert\NotBlank(message="Identity ID may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */
     public $identityId;
 
     /**
-     * @Assert\NotBlank(message="NameID may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */
     public $nameId;
 
     /**
-     * @Assert\NotBlank(message="Institution may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */
     public $institution;
 
     /**
-     * @Assert\NotBlank(message="Common name may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */
     public $commonName;
 
     /**
-     * @Assert\NotBlank(message="E-mail may not be blank")
-     * @Assert\Email(message="E-mail must be a valid e-mail address")
+     * @Assert\NotBlank()
+     * @Assert\Email()
      *
      * @var string
      */
     public $email;
 
     /**
-     * @Assert\NotBlank(message="Second factor ID may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */
     public $secondFactorId;
 
     /**
-     * @Assert\NotBlank(message="Yubikey may not be blank")
-     * @Assert\Type("string", message="Common name must be a string")
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
      *
      * @var string
      */

@@ -19,18 +19,19 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * May be executed by a Registration Authority to revoke a Registrant's verified or vetted second factor.
  */
-class RevokeRegistrantsSecondFactorCommand extends AbstractCommand
+class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * The ID of the identity that has the authority to issue the revocation of a registrant's second factor.
      *
-     * @Assert\NotBlank(message="stepup.command.shared.authority_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.shared.authority_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -39,8 +40,8 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand
     /**
      * The ID of an identity.
      *
-     * @Assert\NotBlank(message="stepup.command.shared.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.shared.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -49,8 +50,8 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand
     /**
      * The ID of a verified or vetted second factor.
      *
-     * @Assert\NotBlank(message="stepup.command.revoke_second_factor.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.revoke_second_factor.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

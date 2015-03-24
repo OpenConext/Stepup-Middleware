@@ -19,21 +19,38 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CommandController extends Controller
 {
     public function handleAction(Command $command, Request $request)
     {
+        /** @var \Monolog\Logger $logger */
+        $logger = $this->get('logger');
+
+        $logger->notice(sprintf('Received request to process Command "%s"', $command));
+
         /** @var Pipeline $pipeline */
         $pipeline = $this->get('pipeline');
-        $command = $pipeline->process($command);
+
+        try {
+            $command = $pipeline->process($command);
+        } catch (ForbiddenException $e) {
+            throw new AccessDeniedHttpException(
+                sprintf('Processing of command "%s" is forbidden for this client', $command),
+                $e
+            );
+        }
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName]);
+
+        $logger->notice(sprintf('Command "%s" has been successfully processed', $command));
 
         return $response;
     }

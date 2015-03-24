@@ -19,45 +19,46 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateIdentityCommand extends AbstractCommand
+class CreateIdentityCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $id;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.name_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.name_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $nameId;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.email.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.email.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $email;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.institution.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.institution.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $institution;
 
     /**
-     * @Assert\NotBlank(message="stepup.command.create_identity.common_name.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.create_identity.common_name.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

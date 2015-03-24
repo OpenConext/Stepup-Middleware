@@ -19,15 +19,16 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ProvePhonePossessionCommand extends AbstractCommand
+class ProvePhonePossessionCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -36,8 +37,8 @@ class ProvePhonePossessionCommand extends AbstractCommand
     /**
      * The ID of the second factor to create.
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -46,12 +47,9 @@ class ProvePhonePossessionCommand extends AbstractCommand
     /**
      * The phone number
      *
-     * @Assert\NotBlank(message="stepup.command.prove_phone_possession.phone_number.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.prove_phone_possession.phone_number.must_be_string")
-     * @Assert\Regex(
-     *     pattern="~^\+[\d\s]+ \(0\) \d+$~",
-     *     message="stepup.command.prove_phone_possession.phone_number.must_consist_of_digits"
-     * )
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     * @Assert\Regex(pattern="~^\+[\d\s]+ \(0\) \d+$~")
      *
      * @var string
      */

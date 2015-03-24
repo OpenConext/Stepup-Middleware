@@ -16,35 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
-use Symfony\Component\Validator\Constraints as Assert;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
-class UpdateIdentityCommand extends AbstractCommand implements SelfServiceExecutable
+class FixedUuidStubCommand extends AbstractCommand implements Command
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
+     * @var string generated using \Rhumsaa\Uuid\Uuid::uuid4()
      */
-    public $id;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $commonName;
+    public $UUID = '1e8a8dc6-852e-4df8-ba23-8c18061b7c38';
 }

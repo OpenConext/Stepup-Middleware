@@ -5,22 +5,43 @@ services:
     surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline
         arguments:
+            - @logger
             - @surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline
             - @doctrine.dbal.middleware_connection
+            - @doctrine.dbal.gateway_connection
 
     surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline
+        arguments:
+            - @logger
+
+    surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage
+        arguments:
+            - @logger
+            - @security.authorization_checker
+        tags: [{ name: pipeline.stage, priority: 100 }]
 
     surfnet_stepup_middleware_command_handling.pipeline.stage.validation:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage
-        arguments: [ @validator ]
-        tags: [{ name: pipeline.stage, priority: 2 }]
+        arguments:
+            - @logger
+            - @validator
+        tags: [{ name: pipeline.stage, priority: 75 }]
 
     surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage
         arguments:
+            - @logger
             - @surfnet_stepup_middleware_command_handling.command_bus
         tags: [{ name: pipeline.stage, priority: 50 }]
+
+    surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage
+        arguments:
+            - @logger
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+        tags: [{ name: pipeline.stage, priority: 25 }]
 
     surfnet_stepup_middleware_command_handling.command_bus:
         class: Broadway\CommandHandling\SimpleCommandBus

@@ -19,18 +19,19 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * May be executed by a Registrant to revoke one of his/her own verified or vetted second factors.
  */
-class RevokeOwnSecondFactorCommand extends AbstractCommand
+class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
      * The ID of an existing identity.
      *
-     * @Assert\NotBlank(message="stepup.command.shared.identity_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.shared.identity_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -39,8 +40,8 @@ class RevokeOwnSecondFactorCommand extends AbstractCommand
     /**
      * The ID of a verified or vetted second factor.
      *
-     * @Assert\NotBlank(message="stepup.command.revoke_second_factor.second_factor_id.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.revoke_second_factor.second_factor_id.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
      *
      * @var string
      */

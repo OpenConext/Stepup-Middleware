@@ -18,31 +18,46 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
+use Psr\Log\LoggerInterface;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStage implements Stage
 {
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var ValidatorInterface
      */
     private $validator;
 
     /**
+     * @param LoggerInterface    $logger
      * @param ValidatorInterface $validator
      */
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(LoggerInterface $logger, ValidatorInterface $validator)
     {
+        $this->logger = $logger;
         $this->validator = $validator;
     }
 
-    public function process($command)
+    public function process(Command $command)
     {
+        $this->logger->debug(sprintf('Processing validation for "%s"', $command));
+
         $violations = $this->validator->validate($command);
 
         if (count($violations) > 0) {
+            $this->logger->debug(sprintf('Command "%s" has validation violations', $command));
+
             throw InvalidCommandException::createFromViolations($violations);
         }
+
+        $this->logger->debug(sprintf('Command "%s" is valid', $command));
 
         return $command;
     }

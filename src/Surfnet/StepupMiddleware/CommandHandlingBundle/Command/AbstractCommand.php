@@ -23,10 +23,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractCommand implements Command
 {
     /**
-     * @Assert\NotBlank(message="stepup.command.command_uuid.must_not_be_blank")
-     * @Assert\Type(type="string", message="stepup.command.command_uuid.must_be_string")
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     * @Assert\Regex(pattern="~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~")
      *
      * @var string
      */
     public $UUID;
+
+    public function __toString()
+    {
+        return get_class($this) . '[' . $this->UUID . ']';
+    }
 }

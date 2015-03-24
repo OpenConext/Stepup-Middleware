@@ -16,18 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
+use PHPUnit_Framework_TestCase as UnitTest;
 
-class UpdateConfigurationCommand extends AbstractCommand implements ManagementExecutable
+class AbstractCommandTest extends UnitTest
 {
     /**
-     * @var string configuration as json as received in the request
-     *
-     * @ManagementAssert\HasValidConfigurationStructure
+     * @test
+     * @group command
      */
-    public $configuration;
+    public function to_string_generates_command_identifiable_information()
+    {
+        $command = new FixedUuidStubCommand();
+        $uuid = $command->UUID;
+
+        $this->assertEquals(
+            'Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand[' . $uuid . ']',
+            (string) $command,
+            'Command cast to string should give F\Q\C\N[UuidOfCommand]'
+        );
+    }
 }

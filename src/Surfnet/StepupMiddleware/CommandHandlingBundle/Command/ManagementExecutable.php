@@ -16,18 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as ManagementAssert;
-
-class UpdateConfigurationCommand extends AbstractCommand implements ManagementExecutable
+/**
+ * Marker interface used to indicate that the command may only be invoked through
+ * the management API.
+ */
+interface ManagementExecutable
 {
-    /**
-     * @var string configuration as json as received in the request
-     *
-     * @ManagementAssert\HasValidConfigurationStructure
-     */
-    public $configuration;
 }

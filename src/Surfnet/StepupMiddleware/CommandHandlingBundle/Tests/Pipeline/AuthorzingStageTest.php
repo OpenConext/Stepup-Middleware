@@ -85,8 +85,6 @@ class AuthorizingStageTest extends UnitTest
      */
     public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required()
     {
-        //@todo discuss: this sequence is tightly coupled to the sequence of ifs in the stage itself,
-        //               making for a brittle test... thoughts?
         $command = m::mock(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
             . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable, '
@@ -97,19 +95,17 @@ class AuthorizingStageTest extends UnitTest
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->with(['ROLE_SS'])
-            ->once()
             ->andReturn(false);
 
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->with(['ROLE_RA'])
-            ->once()
             ->andReturn(true);
 
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->with(['ROLE_MANAGEMENT'])
-            ->never();
+            ->andReturn(false);
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 

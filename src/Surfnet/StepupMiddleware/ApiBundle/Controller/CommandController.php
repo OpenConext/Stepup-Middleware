@@ -19,10 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CommandController extends Controller
 {
@@ -35,7 +37,12 @@ class CommandController extends Controller
 
         /** @var Pipeline $pipeline */
         $pipeline = $this->get('pipeline');
-        $command = $pipeline->process($command);
+
+        try {
+            $command = $pipeline->process($command);
+        } catch (ForbiddenException $e) {
+            throw new HttpException(403, sprintf('Processing of command "%s" is forbidden for this client', $command));
+        }
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response = new JsonResponse(['command' => $command->UUID, 'processed_by' => $serverName]);

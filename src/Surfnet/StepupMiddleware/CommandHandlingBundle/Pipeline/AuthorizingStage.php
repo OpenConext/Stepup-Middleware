@@ -39,7 +39,7 @@ class AuthorizingStage implements Stage
     private $authorizationChecker;
 
     /**
-     * @param LoggerInterface                                    $logger
+     * @param LoggerInterface               $logger
      * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(LoggerInterface $logger, AuthorizationCheckerInterface $authorizationChecker)

@@ -48,7 +48,7 @@ class ProvePhonePossessionCommand extends AbstractCommand
      *
      * @Assert\NotBlank()
      * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^\d+$~")
+     * @Assert\Regex(pattern="~^\+[\d\s]+ \(0\) \d+$~")
      *
      * @var string
      */

@@ -209,18 +209,18 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id = new IdentityId(self::uuid());
-        $nameId = new NameId(md5(__METHOD__));
+        $id          = new IdentityId(self::uuid());
+        $nameId      = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
-        $email = 'a@b.c';
-        $commonName = 'Foo bar';
-        $secFacId = new SecondFactorId(self::uuid());
-        $pubId = new PhoneNumber('31612345678');
+        $email       = 'a@b.c';
+        $commonName  = 'Foo bar';
+        $secFacId    = new SecondFactorId(self::uuid());
+        $phoneNumber = new PhoneNumber('+31 (0) 612345678');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
         $command->secondFactorId = (string) $secFacId;
-        $command->phoneNumber = (string) $pubId;
+        $command->phoneNumber = (string) $phoneNumber;
 
         $this->scenario
             ->withAggregateId($id)
@@ -230,7 +230,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new PhonePossessionProvenEvent(
                     $id,
                     $secFacId,
-                    $pubId,
+                    $phoneNumber,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -302,13 +302,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
-        $id = new IdentityId(self::uuid());
-        $nameId = new NameId(md5(__METHOD__));
-        $institution = new Institution('A Corp.');
-        $email = 'a@b.c';
-        $commonName = 'Foo bar';
-        $secFacId1 = new SecondFactorId(self::uuid());
-        $phoneNumber1 = new PhoneNumber('31612345678');
+        $id           = new IdentityId(self::uuid());
+        $nameId       = new NameId(md5(__METHOD__));
+        $institution  = new Institution('A Corp.');
+        $email        = 'a@b.c';
+        $commonName   = 'Foo bar';
+        $secFacId1    = new SecondFactorId(self::uuid());
+        $phoneNumber1 = new PhoneNumber('+31 (0) 612345678');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;
@@ -344,14 +344,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
 
-        $id = new IdentityId(self::uuid());
-        $nameId = new NameId(md5(__METHOD__));
+        $id          = new IdentityId(self::uuid());
+        $nameId      = new NameId(md5(__METHOD__));
         $institution = new Institution('A Corp.');
-        $email = 'a@b.c';
-        $commonName = 'Foo bar';
-        $secFacId1 = new SecondFactorId(self::uuid());
-        $publicId = new YubikeyPublicId('ccccvfeghijk');
-        $phoneNumber = new PhoneNumber('31676543210');
+        $email       = 'a@b.c';
+        $commonName  = 'Foo bar';
+        $secFacId1   = new SecondFactorId(self::uuid());
+        $publicId    = new YubikeyPublicId('ccccvfeghijk');
+        $phoneNumber = new PhoneNumber('+31 (0) 676543210');
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;

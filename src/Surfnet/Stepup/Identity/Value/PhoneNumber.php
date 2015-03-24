@@ -33,10 +33,12 @@ class PhoneNumber
             throw InvalidArgumentException::invalidType('string', 'value', $value);
         }
 
-        if (!preg_match('~^\d+$~', $value)) {
-            throw new InvalidArgumentException(
-                sprintf("Expected phone number ('######'), got '%s...' (truncated)", substr($value, 0, 5))
-            );
+        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $value)) {
+            throw new InvalidArgumentException(sprintf(
+                "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
+                // 12 characters captures the most extended country code up to and incl. the first subscriber digit
+                substr($value, 0, 12)
+            ));
         }
 
         $this->value = $value;

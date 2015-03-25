@@ -30,6 +30,27 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
+services:
+    twig.extension.stringloader:
+        class: Twig_Extension_StringLoader
+        tags: [{ name: twig.extension }]
+    twig.extension.sandbox:
+        class: Twig_Extension_Sandbox
+        arguments: [ @twig.extension.sandbox.policy ]
+        tags: [{ name: twig.extension }]
+    twig.extension.sandbox.policy:
+        class: Twig_Sandbox_SecurityPolicy
+        arguments:
+            - [ if, else, elseif, for ] # Allowed tags
+            - [ escape ] # Allowed filters
+            - # Allowed methods
+                Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
+                    - getCommonName
+                    - getLocation
+                    - getContactInformation
+            - [] # Allowed properties
+            - [] # Allowed functions
+
 # Assetic Configuration
 assetic:
     debug:          "%kernel.debug%"

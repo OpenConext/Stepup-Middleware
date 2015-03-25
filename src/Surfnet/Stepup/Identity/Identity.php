@@ -303,9 +303,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $registrationCode,
             $secondFactorIdentifier,
             $documentNumber,
-            $identityVerified,
-            $this->vettedSecondFactors,
-            $this->vettedSecondFactors
+            $identityVerified
         );
     }
 

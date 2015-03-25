@@ -122,9 +122,9 @@ interface Identity extends AggregateRoot
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param Identity       $identity
-     * @param SecondFactorId $secondFactorId
-     * @param string         $secondFactorIdentifier
+     * @param Identity       $registrant
+     * @param SecondFactorId $registrantsSecondFactorId
+     * @param string         $registrantsSecondFactorIdentifier
      * @param string         $registrationCode
      * @param string         $documentNumber
      * @param bool           $identityVerified
@@ -132,9 +132,9 @@ interface Identity extends AggregateRoot
      * @throws DomainException
      */
     public function vetSecondFactor(
-        Identity $identity,
-        SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        Identity $registrant,
+        SecondFactorId $registrantsSecondFactorId,
+        $registrantsSecondFactorIdentifier,
         $registrationCode,
         $documentNumber,
         $identityVerified

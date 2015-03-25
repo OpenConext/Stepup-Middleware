@@ -239,9 +239,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function vetSecondFactor(
-        IdentityApi $identity,
-        SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        IdentityApi $registrant,
+        SecondFactorId $registrantsSecondFactorId,
+        $registrantsSecondFactorIdentifier,
         $registrationCode,
         $documentNumber,
         $identityVerified
@@ -256,8 +256,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
 
         $verifiedSecondFactorHasEqualOrLowerLoaComparedTo =
-            $identity->verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
-                $secondFactorId,
+            $registrant->verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
+                $registrantsSecondFactorId,
                 $secondFactorWithHighestLoa
             );
 
@@ -265,9 +265,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Authority does not have the required LoA to vet the identity\'s second factor');
         }
 
-        $identity->complyWithVettingOfSecondFactor(
-            $secondFactorId,
-            $secondFactorIdentifier,
+        $registrant->complyWithVettingOfSecondFactor(
+            $registrantsSecondFactorId,
+            $registrantsSecondFactorIdentifier,
             $registrationCode,
             $documentNumber,
             $identityVerified

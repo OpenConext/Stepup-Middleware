@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+{% set template = template_from_string(templateString) %}
+
+{% sandbox %}
+    {% include template %}
+{% endsandbox %}
+
+</body>
+</html>

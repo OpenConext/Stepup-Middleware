@@ -177,11 +177,11 @@ class IdentityCommandHandler extends CommandHandler
     {
         /** @var IdentityApi $authority */
         $authority = $this->repository->load(new IdentityId($command->authorityId));
-        /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        /** @var IdentityApi $registrant */
+        $registrant = $this->repository->load(new IdentityId($command->identityId));
 
         $authority->vetSecondFactor(
-            $identity,
+            $registrant,
             new SecondFactorId($command->secondFactorId),
             $command->secondFactorIdentifier,
             $command->registrationCode,
@@ -190,7 +190,7 @@ class IdentityCommandHandler extends CommandHandler
         );
 
         $this->repository->add($authority);
-        $this->repository->add($identity);
+        $this->repository->add($registrant);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

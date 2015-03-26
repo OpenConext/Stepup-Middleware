@@ -20,10 +20,10 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-interface LoaComparable
+interface SecondFactor
 {
     /**
-     * @param self $comparable
+     * @param SecondFactor $comparable
      * @return bool
      */
     public function hasEqualOrHigherLoaComparedTo(self $comparable);

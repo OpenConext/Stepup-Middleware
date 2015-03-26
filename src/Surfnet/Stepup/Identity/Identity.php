@@ -23,7 +23,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
-use Surfnet\Stepup\Identity\Entity\LoaComparable;
+use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
@@ -560,7 +560,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
         SecondFactorId $secondFactorId,
-        LoaComparable $comparedTo
+        SecondFactor $comparedTo
     ) {
         /** @var VerifiedSecondFactor|null $secondFactor */
         $secondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);

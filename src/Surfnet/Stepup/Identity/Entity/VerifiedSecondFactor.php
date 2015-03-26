@@ -37,7 +37,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class VerifiedSecondFactor extends EventSourcedEntity implements LoaComparable
+class VerifiedSecondFactor extends EventSourcedEntity implements SecondFactor
 {
     /**
      * @var SecondFactorId
@@ -145,7 +145,7 @@ class VerifiedSecondFactor extends EventSourcedEntity implements LoaComparable
         );
     }
 
-    public function hasEqualOrHigherLoaComparedTo(LoaComparable $comparable)
+    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable)
     {
         return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->type);
     }

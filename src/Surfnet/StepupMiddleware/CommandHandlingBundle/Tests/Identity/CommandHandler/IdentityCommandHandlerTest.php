@@ -23,7 +23,6 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
-use Mockery\MockInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
@@ -32,6 +31,7 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -46,6 +46,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
@@ -54,6 +55,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikey
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
@@ -263,7 +265,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $email          = 'arthur@example.org';
         $commonName     = 'Arthur Dent';
         $secondFactorId = new SecondFactorId(self::uuid());
-        $stepupProvider = new StepupProvider('Surfnet');
+        $stepupProvider = new StepupProvider('tiqr');
         $gssfId         = new GssfId('_' . md5('Surfnet'));
 
         $command                 = new ProveGssfPossessionCommand();
@@ -629,6 +631,204 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new UnverifiedSecondFactorRevokedEvent($id, $secFacId)
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function a_second_factor_can_be_vetted()
+    {
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorIdentifier = 'ccccvfeghijk';
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
+
+        $authorityInstitution = new Institution('Wazoo');
+        $this->scenario
+            ->withAggregateId($authorityId = new IdentityId($command->authorityId))
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId = new IdentityId($this->uuid()),
+                    $authorityInstitution,
+                    $authorityNameId = new NameId($this->uuid()),
+                    'e@mail.com',
+                    'Charlie Parker'
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    new SecondFactorId($this->uuid()),
+                    new YubikeyPublicId('ccccvkdowiej')
+                )
+            ])
+            ->withAggregateId($identityId = new IdentityId($command->identityId))
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution = new Institution('A Corp.'),
+                    $nameId = new NameId('3'),
+                    'a@b.c',
+                    'foobar'
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $identityId,
+                    $secFacId = new SecondFactorId('ISFID'),
+                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+                new EmailVerifiedEvent(
+                    $identityId,
+                    $institution,
+                    $secFacId,
+                    DateTime::now(),
+                    'REGCODE',
+                    'foobar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new SecondFactorVettedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    $secFacId,
+                    new SecondFactorType('yubikey'),
+                    'ccccvfeghijk',
+                    'NH9392',
+                    'foobar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @expectedException \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Authority does not have the required LoA
+     */
+    public function a_second_factor_cannot_be_vetted_without_a_secure_enough_vetted_second_factor()
+    {
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorIdentifier = 'ccccvfeghijk';
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
+
+        $authorityInstitution = new Institution('Wazoo');
+        $this->scenario
+            ->withAggregateId($authorityId = new IdentityId($command->authorityId))
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId = new IdentityId($this->uuid()),
+                    $authorityInstitution,
+                    $authorityNameId = new NameId($this->uuid()),
+                    'e@mail.com',
+                    'Charlie Parker'
+                ),
+                new PhonePossessionProvenEvent(
+                    $authorityId,
+                    $authorityPhoneSfId = new SecondFactorId($this->uuid()),
+                    $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678'),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+                new EmailVerifiedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityPhoneSfId,
+                    DateTime::now(),
+                    'regcode',
+                    'Charlie Parker',
+                    'e@mail.com',
+                    'en_GB'
+                ),
+                new SecondFactorVettedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    '+31 (0) 612345678',
+                    'NG-RB-81',
+                    'Charlie Parker',
+                    'e@mail.com',
+                    'en_GB'
+                )
+            ])
+            ->withAggregateId($identityId = new IdentityId($command->identityId))
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution = new Institution('A Corp.'),
+                    $nameId = new NameId('3'),
+                    'a@b.c',
+                    'foobar'
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $identityId,
+                    $secFacId = new SecondFactorId('ISFID'),
+                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    'Foo bar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+                new EmailVerifiedEvent(
+                    $identityId,
+                    $institution,
+                    $secFacId,
+                    DateTime::now(),
+                    'REGCODE',
+                    'foobar',
+                    'a@b.c',
+                    'en_GB'
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new SecondFactorVettedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    $secFacId,
+                    new SecondFactorType('yubikey'),
+                    'ccccvfeghijk',
+                    'NH9392',
+                    'foobar',
+                    'a@b.c',
+                    'en_GB'
+                ),
             ]);
     }
 }

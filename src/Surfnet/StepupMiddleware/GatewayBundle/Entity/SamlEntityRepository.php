@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Exception;
 
 class SamlEntityRepository extends EntityRepository
 {

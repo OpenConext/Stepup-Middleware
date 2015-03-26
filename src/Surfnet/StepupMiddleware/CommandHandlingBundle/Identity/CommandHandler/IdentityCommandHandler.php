@@ -19,10 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
+use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
-use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -49,7 +49,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
 class IdentityCommandHandler extends CommandHandler
 {
     /**
-     * @var IdentityRepository
+     * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
      */
     private $repository;
 
@@ -175,16 +175,22 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
     {
-        /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
-        $identity->vetSecondFactor(
-            $command->registrationCode,
+        /** @var IdentityApi $authority */
+        $authority = $this->repository->load(new IdentityId($command->authorityId));
+        /** @var IdentityApi $registrant */
+        $registrant = $this->repository->load(new IdentityId($command->identityId));
+
+        $authority->vetSecondFactor(
+            $registrant,
+            new SecondFactorId($command->secondFactorId),
             $command->secondFactorIdentifier,
+            $command->registrationCode,
             $command->documentNumber,
             $command->identityVerified
         );
 
-        $this->repository->add($identity);
+        $this->repository->add($authority);
+        $this->repository->add($registrant);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

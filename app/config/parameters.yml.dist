@@ -33,3 +33,7 @@ parameters:
     email_sender_email: noreply@surfnet.nl
 
     email_verification_window: 3600 # the amout of seconds the email verification email/url is valid
+
+    stepup_loa_loa1: https://gateway.tld/authentication/loa1
+    stepup_loa_loa2: https://gateway.tld/authentication/loa2
+    stepup_loa_loa3: https://gateway.tld/authentication/loa3

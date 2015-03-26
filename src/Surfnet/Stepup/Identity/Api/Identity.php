@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -116,13 +118,42 @@ interface Identity extends AggregateRoot
     public function verifyEmail($verificationNonce);
 
     /**
-     * @param string $registrationCode
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
+     * Attempts to vet another identity's verified second factor.
+     *
+     * @param Identity       $registrant
+     * @param SecondFactorId $registrantsSecondFactorId
+     * @param string         $registrantsSecondFactorIdentifier
+     * @param string         $registrationCode
+     * @param string         $documentNumber
+     * @param bool           $identityVerified
      * @return void
+     * @throws DomainException
      */
-    public function vetSecondFactor($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified);
+    public function vetSecondFactor(
+        Identity $registrant,
+        SecondFactorId $registrantsSecondFactorId,
+        $registrantsSecondFactorIdentifier,
+        $registrationCode,
+        $documentNumber,
+        $identityVerified
+    );
+
+    /**
+     * Makes the identity comply with an authority's vetting of a verified second factor.
+     *
+     * @param SecondFactorId $secondFactorId
+     * @param string         $secondFactorIdentifier
+     * @param string         $registrationCode
+     * @param string         $documentNumber
+     * @return void
+     * @throws DomainException
+     */
+    public function complyWithVettingOfSecondFactor(
+        SecondFactorId $secondFactorId,
+        $secondFactorIdentifier,
+        $registrationCode,
+        $documentNumber
+    );
 
     /**
      * @param SecondFactorId $secondFactorId
@@ -161,4 +192,10 @@ interface Identity extends AggregateRoot
      * @return string
      */
     public function getEmail();
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @return VerifiedSecondFactor|null
+     */
+    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
 }

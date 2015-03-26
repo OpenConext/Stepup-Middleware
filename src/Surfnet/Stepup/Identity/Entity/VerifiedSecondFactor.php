@@ -20,7 +20,6 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -28,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
  * A second factor whose possession has been proven by the registrant and the registrant's e-mail address has been
@@ -36,7 +36,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class VerifiedSecondFactor extends EventSourcedEntity
+class VerifiedSecondFactor extends AbstractSecondFactor
 {
     /**
      * @var SecondFactorId
@@ -49,7 +49,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     private $identity;
 
     /**
-     * @var string
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     private $type;
 
@@ -71,7 +71,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     /**
      * @param SecondFactorId $id
      * @param Identity $identity
-     * @param string $type
+     * @param SecondFactorType $type
      * @param string $secondFactorIdentifier
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
@@ -80,7 +80,7 @@ class VerifiedSecondFactor extends EventSourcedEntity
     public static function create(
         SecondFactorId $id,
         Identity $identity,
-        $type,
+        SecondFactorType $type,
         $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode
@@ -107,42 +107,27 @@ class VerifiedSecondFactor extends EventSourcedEntity
     /**
      * @param string $registrationCode
      * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
      * @return bool
      */
-    public function wouldBeVettedBy($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    public function hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
-            && $secondFactorIdentifier === $this->secondFactorIdentifier
-            && $identityVerified === true
-            && !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+            && $secondFactorIdentifier === $this->secondFactorIdentifier;
     }
 
     /**
-     * @param string $registrationCode
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
+     * @return bool
      */
-    public function vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    public function canBeVettedNow()
     {
-        if (strcasecmp($registrationCode, $this->registrationCode) !== 0) {
-            throw new DomainException('Cannot vet this second factor: registration code mismatch.');
-        }
+        return !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+    }
 
-        if ($secondFactorIdentifier !== $this->secondFactorIdentifier) {
-            throw new DomainException('Cannot vet this second factor: second factor identifier mismatch.');
-        }
-
-        if ($identityVerified !== true) {
-            throw new DomainException("Cannot vet this second factor: real identity wasn't verified by an RA.");
-        }
-
-        if (DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')))) {
-            throw new DomainException('Cannot vet this second factor: registration window has closed.');
-        }
-
+    /**
+     * @param string $documentNumber
+     */
+    public function vet($documentNumber)
+    {
         $this->apply(
             new SecondFactorVettedEvent(
                 new IdentityId($this->identity->getAggregateRootId()),
@@ -182,5 +167,10 @@ class VerifiedSecondFactor extends EventSourcedEntity
             $this->type,
             $this->secondFactorIdentifier
         );
+    }
+
+    protected function getType()
+    {
+        return $this->type;
     }
 }

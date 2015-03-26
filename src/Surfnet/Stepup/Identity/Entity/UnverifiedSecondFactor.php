@@ -37,7 +37,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class UnverifiedSecondFactor extends EventSourcedEntity implements SecondFactor
+class UnverifiedSecondFactor extends AbstractSecondFactor
 {
     /**
      * @var Identity
@@ -150,16 +150,6 @@ class UnverifiedSecondFactor extends EventSourcedEntity implements SecondFactor
         );
     }
 
-    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable)
-    {
-        return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->type);
-    }
-
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type)
-    {
-        return $this->type->hasEqualOrLowerLoaComparedTo($type);
-    }
-
     public function revoke()
     {
         $this->apply(new UnverifiedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
@@ -187,5 +177,10 @@ class UnverifiedSecondFactor extends EventSourcedEntity implements SecondFactor
             $registrationRequestedAt,
             $registrationCode
         );
+    }
+
+    protected function getType()
+    {
+        return $this->type;
     }
 }

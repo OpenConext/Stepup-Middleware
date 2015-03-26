@@ -31,7 +31,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
-class VettedSecondFactor extends EventSourcedEntity implements SecondFactor
+class VettedSecondFactor extends AbstractSecondFactor
 {
     /**
      * @var Identity
@@ -87,24 +87,6 @@ class VettedSecondFactor extends EventSourcedEntity implements SecondFactor
         return $this->id;
     }
 
-    /**
-     * @return SecondFactorType
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable)
-    {
-        return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->type);
-    }
-
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type)
-    {
-        return $this->type->hasEqualOrLowerLoaComparedTo($type);
-    }
-
     public function revoke()
     {
         $this->apply(new VettedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
@@ -115,5 +97,10 @@ class VettedSecondFactor extends EventSourcedEntity implements SecondFactor
         $this->apply(
             new CompliedWithVettedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
         );
+    }
+
+    protected function getType()
+    {
+        return $this->type;
     }
 }

@@ -265,12 +265,15 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Authority does not have the required LoA to vet the identity\'s second factor');
         }
 
+        if (!$identityVerified) {
+            throw new DomainException('Will not vet second factor when physical identity has not been verified.');
+        }
+
         $registrant->complyWithVettingOfSecondFactor(
             $registrantsSecondFactorId,
             $registrantsSecondFactorIdentifier,
             $registrationCode,
-            $documentNumber,
-            $identityVerified
+            $documentNumber
         );
     }
 
@@ -278,33 +281,28 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $secondFactorId,
         $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
-        $identityVerified
+        $documentNumber
     ) {
-        if (!$this->verifiedSecondFactors->containsKey((string) $secondFactorId)) {
-            throw new DomainException('Cannot vet second factor: second factor does not exist.');
+        $secondFactorToVet = null;
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            /** @var VerifiedSecondFactor $secondFactor */
+            if ($secondFactor->hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)) {
+                $secondFactorToVet = $secondFactor;
+            }
         }
 
-        /** @var VerifiedSecondFactor $secondFactor */
-        $secondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
-
-        if (!$secondFactor->wouldBeVettedBy(
-            $registrationCode,
-            $secondFactorIdentifier,
-            $documentNumber,
-            $identityVerified
-        )) {
+        if (!$secondFactorToVet) {
             throw new DomainException(
-                'Cannot vet second factor: registration code is incorrect or registration window has closed.'
+                'Cannot vet second factor, no verified second factor can be vetted using the given registration code ' .
+                'and second factor identifier'
             );
         }
 
-        $secondFactor->vet(
-            $registrationCode,
-            $secondFactorIdentifier,
-            $documentNumber,
-            $identityVerified
-        );
+        if (!$secondFactorToVet->canBeVettedNow()) {
+            throw new DomainException('Cannot vet second factor, the registration window is closed.');
+        }
+
+        $secondFactorToVet->vet($documentNumber);
     }
 
     public function revokeSecondFactor(SecondFactorId $secondFactorId)

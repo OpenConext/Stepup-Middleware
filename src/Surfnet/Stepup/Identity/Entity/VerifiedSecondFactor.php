@@ -108,42 +108,27 @@ class VerifiedSecondFactor extends EventSourcedEntity implements LoaComparable
     /**
      * @param string $registrationCode
      * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
      * @return bool
      */
-    public function wouldBeVettedBy($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    public function hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
-            && $secondFactorIdentifier === $this->secondFactorIdentifier
-            && $identityVerified === true
-            && !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+            && $secondFactorIdentifier === $this->secondFactorIdentifier;
     }
 
     /**
-     * @param string $registrationCode
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param bool $identityVerified
+     * @return bool
      */
-    public function vet($registrationCode, $secondFactorIdentifier, $documentNumber, $identityVerified)
+    public function canBeVettedNow()
     {
-        if (strcasecmp($registrationCode, $this->registrationCode) !== 0) {
-            throw new DomainException('Cannot vet this second factor: registration code mismatch.');
-        }
+        return !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+    }
 
-        if ($secondFactorIdentifier !== $this->secondFactorIdentifier) {
-            throw new DomainException('Cannot vet this second factor: second factor identifier mismatch.');
-        }
-
-        if ($identityVerified !== true) {
-            throw new DomainException("Cannot vet this second factor: real identity wasn't verified by an RA.");
-        }
-
-        if (DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')))) {
-            throw new DomainException('Cannot vet this second factor: registration window has closed.');
-        }
-
+    /**
+     * @param string $documentNumber
+     */
+    public function vet($documentNumber)
+    {
         $this->apply(
             new SecondFactorVettedEvent(
                 new IdentityId($this->identity->getAggregateRootId()),

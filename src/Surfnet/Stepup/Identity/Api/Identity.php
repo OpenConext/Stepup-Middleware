@@ -147,7 +147,6 @@ interface Identity extends AggregateRoot
      * @param string         $secondFactorIdentifier
      * @param string         $registrationCode
      * @param string         $documentNumber
-     * @param bool           $identityVerified
      * @return void
      * @throws DomainException
      */
@@ -155,8 +154,7 @@ interface Identity extends AggregateRoot
         SecondFactorId $secondFactorId,
         $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
-        $identityVerified
+        $documentNumber
     );
 
     /**

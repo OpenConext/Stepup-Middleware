@@ -23,7 +23,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 interface SecondFactor
 {
     /**
-     * @param SecondFactor $comparable
+     * @param self $comparable
      * @return bool
      */
     public function hasEqualOrHigherLoaComparedTo(self $comparable);

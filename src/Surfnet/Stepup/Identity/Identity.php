@@ -248,11 +248,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
 
         if ($registrantsSecondFactor === null) {
-            throw new DomainException("Registrant second factor by given ID does not exist");
+            throw new DomainException(
+                sprintf('Registrant second factor with ID %s does not exist', $registrantsSecondFactorId)
+            );
         }
 
         if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo($registrantsSecondFactor)) {
-            throw new DomainException('Authority does not have the required LoA to vet the identity\'s second factor');
+            throw new DomainException("Authority does not have the required LoA to vet the registrant's second factor");
         }
 
         if (!$identityVerified) {

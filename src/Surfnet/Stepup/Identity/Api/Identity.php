@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Identity\Api;
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
+use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -197,12 +198,7 @@ interface Identity extends AggregateRoot
 
     /**
      * @param SecondFactorId $secondFactorId
-     * @param SecondFactor $comparedTo
-     * @return bool
-     * @throws DomainException
+     * @return VerifiedSecondFactor|null
      */
-    public function verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
-        SecondFactorId $secondFactorId,
-        SecondFactor $comparedTo
-    );
+    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
 }

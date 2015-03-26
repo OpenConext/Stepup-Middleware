@@ -247,14 +247,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
         $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa();
+        $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
 
-        $verifiedSecondFactorHasEqualOrLowerLoaComparedTo =
-            $registrant->verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
-                $registrantsSecondFactorId,
-                $secondFactorWithHighestLoa
-            );
+        if ($registrantsSecondFactor === null) {
+            throw new DomainException("Registrant second factor by given ID does not exist");
+        }
 
-        if (!$verifiedSecondFactorHasEqualOrLowerLoaComparedTo) {
+        if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo($registrantsSecondFactor)) {
             throw new DomainException('Authority does not have the required LoA to vet the identity\'s second factor');
         }
 
@@ -551,17 +550,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return $this->email;
     }
 
-    public function verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
-        SecondFactorId $secondFactorId,
-        SecondFactor $comparedTo
-    ) {
-        /** @var VerifiedSecondFactor|null $secondFactor */
-        $secondFactor = $this->verifiedSecondFactors->get((string) $secondFactorId);
-
-        if (!$secondFactor) {
-            throw new DomainException('This identity does not have a verified second factor by that ID.');
-        }
-
-        return $comparedTo->hasEqualOrHigherLoaComparedTo($secondFactor);
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @return VerifiedSecondFactor|null
+     */
+    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId)
+    {
+        return $this->verifiedSecondFactors->get((string) $secondFactorId);
     }
 }

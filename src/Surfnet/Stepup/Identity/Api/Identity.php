@@ -20,7 +20,6 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -31,8 +30,6 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
-use Surfnet\StepupBundle\Value\Loa;
-use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
 {

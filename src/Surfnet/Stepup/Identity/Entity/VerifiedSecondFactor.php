@@ -20,7 +20,6 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;

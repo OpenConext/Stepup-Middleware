@@ -19,11 +19,10 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
+use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
@@ -88,17 +87,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $commonName;
 
     /**
-     * @var Collection|UnverifiedSecondFactor[]
+     * @var SecondFactorCollection|UnverifiedSecondFactor[]
      */
     private $unverifiedSecondFactors;
 
     /**
-     * @var Collection|VerifiedSecondFactor[]
+     * @var SecondFactorCollection|VerifiedSecondFactor[]
      */
     private $verifiedSecondFactors;
 
     /**
-     * @var Collection|VettedSecondFactor[]
+     * @var SecondFactorCollection|VettedSecondFactor[]
      */
     private $vettedSecondFactors;
 
@@ -246,14 +245,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $documentNumber,
         $identityVerified
     ) {
-        /** @var VettedSecondFactor|false $secondFactorWithHighestLoa */
-        $secondFactorWithHighestLoa = array_reduce(
-            $this->vettedSecondFactors->toArray(),
-            function (VettedSecondFactor $carry, VettedSecondFactor $item) {
-                return $carry->hasEqualOrHigherLoaComparedTo($item) ? $carry : $item;
-            },
-            $this->vettedSecondFactors->first()
-        );
+        /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
+        $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa();
 
         $verifiedSecondFactorHasEqualOrLowerLoaComparedTo =
             $registrant->verifiedSecondFactorHasEqualOrLowerLoaComparedTo(
@@ -368,9 +361,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->nameId = $event->nameId;
         $this->email = $event->email;
         $this->commonName = $event->commonName;
-        $this->unverifiedSecondFactors = new ArrayCollection();
-        $this->verifiedSecondFactors = new ArrayCollection();
-        $this->vettedSecondFactors = new ArrayCollection();
+        $this->unverifiedSecondFactors = new SecondFactorCollection();
+        $this->verifiedSecondFactors = new SecondFactorCollection();
+        $this->vettedSecondFactors = new SecondFactorCollection();
     }
 
     protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)

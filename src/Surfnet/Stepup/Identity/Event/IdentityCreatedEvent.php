@@ -30,11 +30,6 @@ class IdentityCreatedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
      * @var string
      */
     public $email;
@@ -51,9 +46,8 @@ class IdentityCreatedEvent extends IdentityEvent
         $email,
         $commonName
     ) {
-        parent::__construct($id);
+        parent::__construct($id, $institution);
 
-        $this->institution = $institution;
         $this->nameId = $nameId;
         $this->email = $email;
         $this->commonName = $commonName;
@@ -74,7 +68,7 @@ class IdentityCreatedEvent extends IdentityEvent
     {
         return [
             'id' => (string) $this->identityId,
-            'institution' => (string) $this->institution,
+            'institution' => (string) $this->identityInstitution,
             'name_id' => (string) $this->nameId,
             'email' => $this->email,
             'common_name' => $this->commonName

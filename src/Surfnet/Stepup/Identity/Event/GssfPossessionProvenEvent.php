@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 
@@ -73,9 +74,12 @@ class GssfPossessionProvenEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param IdentityId              $identityId
-     * @param StepupProvider          $stepupProvider
+     * @param Institution             $identityInstitution
      * @param SecondFactorId          $secondFactorId
+     * @param StepupProvider          $stepupProvider
      * @param GssfId                  $gssfId
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $emailVerificationNonce
@@ -85,6 +89,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
      */
     public function __construct(
         IdentityId $identityId,
+        Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         StepupProvider $stepupProvider,
         GssfId $gssfId,
@@ -94,7 +99,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId          = $secondFactorId;
         $this->stepupProvider          = $stepupProvider;
@@ -110,6 +115,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new StepupProvider($data['stepup_provider']),
             new GssfId($data['gssf_id']),
@@ -125,6 +131,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
     {
         return [
             'identity_id'               => (string) $this->identityId,
+            'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
             'stepup_provider'           => (string) $this->stepupProvider,
             'gssf_id'                   => (string) $this->gssfId,

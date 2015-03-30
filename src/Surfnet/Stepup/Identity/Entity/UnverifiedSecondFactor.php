@@ -152,13 +152,24 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
 
     public function revoke()
     {
-        $this->apply(new UnverifiedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
+        $this->apply(
+            new UnverifiedSecondFactorRevokedEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id
+            )
+        );
     }
 
     public function complyWithRevocation(IdentityId $authorityId)
     {
         $this->apply(
-            new CompliedWithUnverifiedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
+            new CompliedWithUnverifiedSecondFactorRevocationEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $authorityId
+            )
         );
     }
 

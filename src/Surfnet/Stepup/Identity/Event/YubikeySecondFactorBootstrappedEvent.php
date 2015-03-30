@@ -32,11 +32,6 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
      * @var SecondFactorId
      */
     public $secondFactorId;
@@ -53,10 +48,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
-        $this->institution = $institution;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
@@ -64,11 +58,11 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id'       => (string) $this->identityId,
-            'name_id'           => (string) $this->nameId,
-            'institution'       => (string) $this->institution,
-            'second_factor_id'  => (string) $this->secondFactorId,
-            'yubikey_public_id' => (string) $this->yubikeyPublicId,
+            'identity_id'          => (string) $this->identityId,
+            'name_id'              => (string) $this->nameId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'second_factor_id'     => (string) $this->secondFactorId,
+            'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
     }
 
@@ -77,7 +71,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id'])
         );

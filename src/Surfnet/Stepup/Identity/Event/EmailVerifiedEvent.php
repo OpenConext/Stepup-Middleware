@@ -26,11 +26,6 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 class EmailVerifiedEvent extends IdentityEvent
 {
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
      * @var SecondFactorId
      */
     public $secondFactorId;
@@ -62,7 +57,7 @@ class EmailVerifiedEvent extends IdentityEvent
 
     /**
      * @param IdentityId $identityId
-     * @param Institution $institution
+     * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
@@ -72,7 +67,7 @@ class EmailVerifiedEvent extends IdentityEvent
      */
     public function __construct(
         IdentityId $identityId,
-        Institution $institution,
+        Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         DateTime $registrationRequestedAt,
         $registrationCode,
@@ -80,9 +75,8 @@ class EmailVerifiedEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $identityInstitution);
 
-        $this->institution = $institution;
         $this->secondFactorId = $secondFactorId;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
@@ -95,7 +89,7 @@ class EmailVerifiedEvent extends IdentityEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
@@ -108,14 +102,14 @@ class EmailVerifiedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'institution' => (string) $this->institution,
-            'second_factor_id' => (string) $this->secondFactorId,
+            'identity_id'               => (string) $this->identityId,
+            'identity_institution'      => (string) $this->identityInstitution,
+            'second_factor_id'          => (string) $this->secondFactorId,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
-            'registration_code' => $this->registrationCode,
-            'common_name' => $this->commonName,
-            'email' => $this->email,
-            'preferred_locale' => $this->preferredLocale,
+            'registration_code'         => $this->registrationCode,
+            'common_name'               => $this->commonName,
+            'email'                     => $this->email,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

@@ -122,7 +122,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             return;
         }
 
-        $this->apply(new IdentityRenamedEvent($this->id, $this->commonName, $commonName));
+        $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $this->commonName, $commonName));
     }
 
     public function changeEmail($email)
@@ -131,7 +131,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             return;
         }
 
-        $this->apply(new IdentityEmailChangedEvent($this->id, $this->email, $email));
+        $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $this->email, $email));
     }
 
     public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
@@ -157,6 +157,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(
             new YubikeyPossessionProvenEvent(
                 $this->id,
+                $this->institution,
                 $secondFactorId,
                 $yubikeyPublicId,
                 $emailVerificationWindow,
@@ -177,6 +178,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(
             new PhonePossessionProvenEvent(
                 $this->id,
+                $this->institution,
                 $secondFactorId,
                 $phoneNumber,
                 $emailVerificationWindow,
@@ -199,6 +201,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(
             new GssfPossessionProvenEvent(
                 $this->id,
+                $this->institution,
                 $secondFactorId,
                 $provider,
                 $gssfId,
@@ -356,7 +359,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id = $event->identityId;
-        $this->institution = $event->institution;
+        $this->institution = $event->identityInstitution;
         $this->nameId = $event->nameId;
         $this->email = $event->email;
         $this->commonName = $event->commonName;

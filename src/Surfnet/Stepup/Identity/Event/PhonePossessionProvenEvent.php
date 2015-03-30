@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
@@ -68,6 +69,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
 
     /**
      * @param IdentityId              $identityId
+     * @param Institution             $identityInstitution
      * @param SecondFactorId          $secondFactorId
      * @param PhoneNumber             $phoneNumber
      * @param EmailVerificationWindow $emailVerificationWindow
@@ -78,6 +80,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
      */
     public function __construct(
         IdentityId $identityId,
+        Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
         EmailVerificationWindow $emailVerificationWindow,
@@ -86,7 +89,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
@@ -101,6 +104,7 @@ class PhonePossessionProvenEvent extends IdentityEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
@@ -114,14 +118,15 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id'                     => (string) $this->identityId,
-            'second_factor_id'                => (string) $this->secondFactorId,
-            'phone_number'                    => (string) $this->phoneNumber,
-            'email_verification_window'       => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'        => (string) $this->emailVerificationNonce,
-            'common_name'                     => (string) $this->commonName,
-            'email'                           => (string) $this->email,
-            'preferred_locale'                => $this->preferredLocale,
+            'identity_id'               => (string) $this->identityId,
+            'identity_institution'      => (string) $this->identityInstitution,
+            'second_factor_id'          => (string) $this->secondFactorId,
+            'phone_number'              => (string) $this->phoneNumber,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
+            'common_name'               => (string) $this->commonName,
+            'email'                     => (string) $this->email,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

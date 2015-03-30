@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 abstract class SecondFactorRevokedEvent extends IdentityEvent
@@ -28,9 +29,12 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
      */
     public $secondFactorId;
 
-    final public function __construct(IdentityId $identityId, SecondFactorId $secondFactorId)
-    {
-        parent::__construct($identityId);
+    final public function __construct(
+        IdentityId $identityId,
+        Institution $identityInstitution,
+        SecondFactorId $secondFactorId
+    ) {
+        parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
     }
@@ -39,6 +43,7 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
     {
         return new static(
             new IdentityId($data['identity_id']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id'])
         );
     }
@@ -46,8 +51,9 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
     final public function serialize()
     {
         return [
-            'identity_id'      => (string) $this->identityId,
-            'second_factor_id' => (string) $this->secondFactorId,
+            'identity_id'          => (string) $this->identityId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'second_factor_id'     => (string) $this->secondFactorId,
         ];
     }
 }

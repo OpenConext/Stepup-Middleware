@@ -32,11 +32,6 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
      * @var SecondFactorId
      */
     public $secondFactorId;
@@ -97,9 +92,8 @@ class SecondFactorVettedEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $institution);
 
-        $this->institution = $institution;
         $this->nameId = $nameId;
         $this->secondFactorId = $secondFactorId;
         $this->secondFactorType = $secondFactorType;
@@ -115,7 +109,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
             $data['second_factor_identifier'],
@@ -131,7 +125,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         return [
             'identity_id' => (string) $this->identityId,
             'name_id' => (string) $this->nameId,
-            'institution' => (string) $this->institution,
+            'identity_institution' => (string) $this->identityInstitution,
             'second_factor_id' => (string) $this->secondFactorId,
             'second_factor_type' => (string) $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,

@@ -145,6 +145,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId,
                     $pubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(static::$window), DateTime::now()),
@@ -183,6 +184,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId1,
                     $pubId1,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -231,6 +233,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new PhonePossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId,
                     $phoneNumber,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -281,6 +284,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new GssfPossessionProvenEvent(
                     $identityId,
+                    $institution,
                     $secondFactorId,
                     $stepupProvider,
                     $gssfId,
@@ -323,6 +327,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new PhonePossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId1,
                     $phoneNumber1,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -366,6 +371,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId1,
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -411,6 +417,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secondFactorId,
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -467,6 +474,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secondFactorId,
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -521,6 +529,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 new IdentityCreatedEvent($id, $institution, $nameId, $email, $commonName),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secondFactorId,
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -573,7 +582,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id = new IdentityId('42');
         $createdEvent = new IdentityCreatedEvent(
             $id,
-            new Institution('A Corp.'),
+            $institution = new Institution('A Corp.'),
             new NameId('3'),
             'a@b.c',
             'foobar'
@@ -589,8 +598,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->given([$createdEvent])
             ->when($updateCommand)
             ->then([
-                new IdentityRenamedEvent($id, 'foobar', 'Henk'),
-                new IdentityEmailChangedEvent($id, 'a@b.c', 'new@email.com')
+                new IdentityRenamedEvent($id, $institution, 'foobar', 'Henk'),
+                new IdentityEmailChangedEvent($id, $institution, 'a@b.c', 'new@email.com')
             ]);
     }
 
@@ -609,13 +618,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->given([
                 new IdentityCreatedEvent(
                     $id,
-                    new Institution('A Corp.'),
+                    $institution = new Institution('A Corp.'),
                     new NameId('3'),
                     'a@b.c',
                     'foobar'
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
+                    $institution,
                     $secFacId = new SecondFactorId($command->secondFactorId),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -630,7 +640,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new UnverifiedSecondFactorRevokedEvent($id, $secFacId)
+                new UnverifiedSecondFactorRevokedEvent($id, $institution, $secFacId)
             ]);
     }
 
@@ -679,6 +689,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 ),
                 new YubikeyPossessionProvenEvent(
                     $identityId,
+                    $institution,
                     $secFacId = new SecondFactorId('ISFID'),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -748,6 +759,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 ),
                 new PhonePossessionProvenEvent(
                     $authorityId,
+                    $authorityInstitution,
                     $authorityPhoneSfId = new SecondFactorId($this->uuid()),
                     $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
@@ -793,6 +805,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 ),
                 new YubikeyPossessionProvenEvent(
                     $identityId,
+                    $institution,
                     $secFacId = new SecondFactorId('ISFID'),
                     $pubId = new YubikeyPublicId('ccccvfeghijk'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(

@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+
 /**
  * Thrown when a client provided invalid command input to the application.
  */
@@ -27,6 +30,35 @@ class BadCommandRequestException extends \RuntimeException
      * @var string[]
      */
     private $errors;
+
+    /**
+     * @param string $message
+     * @param ConstraintViolationListInterface $violations
+     * @return self
+     */
+    public static function withViolations($message, ConstraintViolationListInterface $violations)
+    {
+        $violationStrings = self::convertViolationsToStrings($violations);
+        $message = sprintf('%s (%s)', $message, join('; ', $violationStrings));
+
+        return new self($violationStrings, $message);
+    }
+
+    /**
+     * @param ConstraintViolationListInterface $violations
+     * @return string[]
+     */
+    private static function convertViolationsToStrings(ConstraintViolationListInterface $violations)
+    {
+        $violationStrings = [];
+
+        foreach ($violations as $violation) {
+            /** @var ConstraintViolationInterface $violation */
+            $violationStrings[] = sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
+        }
+
+        return $violationStrings;
+    }
 
     /**
      * @param string[] $errors

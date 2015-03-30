@@ -102,6 +102,13 @@ services:
         tags:
             - { name: request.param_converter, priority: -10, converter: surfnet_stepup_middleware_api.command }
 
+    surfnet_stepup_middleware_api.request.metadata_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\MetadataParamConverter
+        arguments:
+            - @validator
+        tags:
+            - { name: request.param_converter, priority: -15, converter: surfnet_stepup_middleware_api.metadata }
+
     surfnet_stepup_middleware_api.request.institution_param_converter:
         class: Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter
         tags:

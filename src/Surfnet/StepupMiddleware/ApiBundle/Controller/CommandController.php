@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,12 +30,15 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CommandController extends Controller
 {
-    public function handleAction(Command $command, Request $request)
+    public function handleAction(Command $command, Metadata $metadata, Request $request)
     {
         /** @var \Monolog\Logger $logger */
         $logger = $this->get('logger');
-
         $logger->notice(sprintf('Received request to process Command "%s"', $command));
+
+        /** @var MetadataEnricher $metadataEnricher */
+        $metadataEnricher = $this->get('surfnet_stepup_middleware_command_handling.metadata_enricher.actor');
+        $metadataEnricher->enrichWithMetadata($metadata);
 
         /** @var Pipeline $pipeline */
         $pipeline = $this->get('pipeline');

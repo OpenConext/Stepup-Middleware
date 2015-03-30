@@ -148,7 +148,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId,
                     $pubId,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(static::$window), DateTime::now()),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
                     'nonce',
                     'Foo bar',
                     'a@b.c',

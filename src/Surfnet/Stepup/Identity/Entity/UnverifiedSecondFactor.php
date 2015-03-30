@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
@@ -175,7 +174,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
 
     /**
      * @param DateTime $registrationRequestedAt
-     * @param string $registrationCode
+     * @param string   $registrationCode
      * @return VerifiedSecondFactor
      */
     public function asVerified($registrationRequestedAt, $registrationCode)

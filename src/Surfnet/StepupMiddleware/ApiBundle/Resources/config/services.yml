@@ -102,6 +102,12 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.sraa
 
+    surfnet_stepup_middleware_api.service.audit_log:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.audit_log
+
     # Param Converters
     surfnet_stepup_middleware_api.request.command_param_converter:
         class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter

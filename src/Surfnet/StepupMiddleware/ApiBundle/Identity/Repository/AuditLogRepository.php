@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchAuditLogCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 
 class AuditLogRepository extends EntityRepository
@@ -31,5 +33,31 @@ class AuditLogRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($entry);
         $entityManager->flush();
+    }
+
+    /**
+     * @param SearchAuditLogCommand $command
+     * @return Query
+     */
+    public function createSearchQuery(SearchAuditLogCommand $command)
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('al')
+            ->where('al.identityInstitution = :identityInstitution')
+            ->setParameter('identityInstitution', $command->identityInstitution)
+            ->andWhere('al.identityId = :identityId')
+            ->setParameter('identityId', $command->identityId);
+
+        switch ($command->orderBy) {
+            case 'secondFactorId':
+            case 'secondFactorType':
+            case 'action':
+            case 'recordedOn':
+            case 'actorId':
+                $queryBuilder->orderBy("al.$command->orderBy", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
+                break;
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

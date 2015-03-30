@@ -439,6 +439,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $institution,
                     $secondFactorId,
+                    new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'regcode',
                     $commonName,
@@ -493,6 +494,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $institution,
                     $secondFactorId,
+                    new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'regcode',
                     $commonName,
@@ -643,7 +645,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new UnverifiedSecondFactorRevokedEvent($id, $institution, $secFacId)
+                new UnverifiedSecondFactorRevokedEvent($id, $institution, $secFacId, new SecondFactorType('yubikey'))
             ]);
     }
 
@@ -708,6 +710,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $secFacId,
+                    new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'REGCODE',
                     'foobar',
@@ -778,6 +781,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityId,
                     $authorityInstitution,
                     $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
                     DateTime::now(),
                     'regcode',
                     'Charlie Parker',
@@ -824,6 +828,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $secFacId,
+                    new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'REGCODE',
                     'foobar',

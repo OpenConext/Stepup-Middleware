@@ -23,16 +23,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class PhonePossessionProvenEvent extends IdentityEvent
+class PhonePossessionProvenEvent extends SecondFactorEvent
 {
-    /**
-     * The UUID of the second factor that has been proven to be in possession of the registrant.
-     *
-     * @var SecondFactorId
-     */
-    public $secondFactorId;
-
     /**
      * @var PhoneNumber
      */
@@ -89,9 +83,8 @@ class PhonePossessionProvenEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $identityInstitution);
+        parent::__construct($identityId, $identityInstitution, $secondFactorId, new SecondFactorType('sms'));
 
-        $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;

@@ -24,16 +24,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class GssfPossessionProvenEvent extends IdentityEvent
+class GssfPossessionProvenEvent extends SecondFactorEvent
 {
-    /**
-     * The UUID of the second factor that has been proven to be in possession of the registrant.
-     *
-     * @var SecondFactorId
-     */
-    public $secondFactorId;
-
     /**
      * @var StepupProvider
      */
@@ -99,9 +93,13 @@ class GssfPossessionProvenEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $identityInstitution);
+        parent::__construct(
+            $identityId,
+            $identityInstitution,
+            $secondFactorId,
+            new SecondFactorType((string) $stepupProvider)
+        );
 
-        $this->secondFactorId          = $secondFactorId;
         $this->stepupProvider          = $stepupProvider;
         $this->gssfId                  = $gssfId;
         $this->emailVerificationWindow = $emailVerificationWindow;

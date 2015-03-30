@@ -24,7 +24,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class SecondFactorVettedEvent extends IdentityEvent
+class SecondFactorVettedEvent extends SecondFactorEvent
 {
     /**
      * @var NameId
@@ -92,7 +92,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $institution);
+        parent::__construct($identityId, $institution, $secondFactorId, $secondFactorType);
 
         $this->nameId = $nameId;
         $this->secondFactorId = $secondFactorId;

@@ -24,16 +24,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class YubikeyPossessionProvenEvent extends IdentityEvent
+class YubikeyPossessionProvenEvent extends SecondFactorEvent
 {
-    /**
-     * The UUID of the second factor that has been proven to be in possession of the registrant.
-     *
-     * @var SecondFactorId
-     */
-    public $secondFactorId;
-
     /**
      * The Yubikey's public ID.
      *
@@ -97,9 +91,8 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $institution);
+        parent::__construct($identityId, $institution, $secondFactorId, new SecondFactorType('yubikey'));
 
-        $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;

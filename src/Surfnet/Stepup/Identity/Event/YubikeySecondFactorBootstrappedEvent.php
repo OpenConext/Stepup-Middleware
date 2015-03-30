@@ -23,18 +23,14 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
+final class YubikeySecondFactorBootstrappedEvent extends SecondFactorEvent
 {
     /**
      * @var NameId
      */
     public $nameId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public $secondFactorId;
 
     /**
      * @var YubikeyPublicId
@@ -48,10 +44,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
-        parent::__construct($identityId, $institution);
+        parent::__construct($identityId, $institution, $secondFactorId, new SecondFactorType('yubikey'));
 
         $this->nameId = $nameId;
-        $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
 

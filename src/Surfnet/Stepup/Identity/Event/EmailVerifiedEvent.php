@@ -22,14 +22,10 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class EmailVerifiedEvent extends IdentityEvent
+class EmailVerifiedEvent extends SecondFactorEvent
 {
-    /**
-     * @var SecondFactorId
-     */
-    public $secondFactorId;
-
     /**
      * @var DateTime
      */
@@ -56,28 +52,29 @@ class EmailVerifiedEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $identityInstitution
-     * @param SecondFactorId $secondFactorId
-     * @param DateTime $registrationRequestedAt
-     * @param string $registrationCode
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId       $identityId
+     * @param Institution      $identityInstitution
+     * @param SecondFactorId   $secondFactorId
+     * @param SecondFactorType $secondFactorType
+     * @param DateTime         $registrationRequestedAt
+     * @param string           $registrationCode
+     * @param string           $commonName
+     * @param string           $email
+     * @param string           $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
+        SecondFactorType $secondFactorType,
         DateTime $registrationRequestedAt,
         $registrationCode,
         $commonName,
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $identityInstitution);
+        parent::__construct($identityId, $identityInstitution, $secondFactorId, $secondFactorType);
 
-        $this->secondFactorId = $secondFactorId;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
         $this->commonName = $commonName;
@@ -91,6 +88,7 @@ class EmailVerifiedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
+            new SecondFactorType($data['second_factor_type']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
             $data['common_name'],
@@ -105,6 +103,7 @@ class EmailVerifiedEvent extends IdentityEvent
             'identity_id'               => (string) $this->identityId,
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
+            'second_factor_type'        => (string) $this->secondFactorType,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
             'registration_code'         => $this->registrationCode,
             'common_name'               => $this->commonName,

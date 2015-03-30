@@ -140,6 +140,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 new IdentityId($this->identity->getAggregateRootId()),
                 $this->identity->getInstitution(),
                 $this->id,
+                $this->type,
                 DateTime::now(),
                 TokenGenerator::generateHumanReadableToken(8),
                 $this->identity->getCommonName(),
@@ -155,7 +156,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
             new UnverifiedSecondFactorRevokedEvent(
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
-                $this->id
+                $this->id,
+                $this->type
             )
         );
     }
@@ -167,6 +169,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
+                $this->type,
                 $authorityId
             )
         );

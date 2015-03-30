@@ -48,6 +48,12 @@ services:
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor ]
 
+    surfnet_stepup_middleware_api.repository.audit_log:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry ]
+
     # Domain Services
     surfnet_stepup_middleware_api.service.abstract_search:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService

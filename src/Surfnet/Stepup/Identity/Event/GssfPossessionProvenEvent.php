@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -26,20 +27,25 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class GssfPossessionProvenEvent extends SecondFactorEvent
+class GssfPossessionProvenEvent extends IdentityEvent
 {
     /**
-     * @var StepupProvider
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $secondFactorId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\StepupProvider
      */
     public $stepupProvider;
 
     /**
-     * @var GssfId
+     * @var \Surfnet\Stepup\Identity\Value\GssfId
      */
     public $gssfId;
 
     /**
-     * @var EmailVerificationWindow
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -93,13 +99,9 @@ class GssfPossessionProvenEvent extends SecondFactorEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct(
-            $identityId,
-            $identityInstitution,
-            $secondFactorId,
-            new SecondFactorType((string) $stepupProvider)
-        );
+        parent::__construct($identityId, $identityInstitution);
 
+        $this->secondFactorId          = $secondFactorId;
         $this->stepupProvider          = $stepupProvider;
         $this->gssfId                  = $gssfId;
         $this->emailVerificationWindow = $emailVerificationWindow;
@@ -107,6 +109,17 @@ class GssfPossessionProvenEvent extends SecondFactorEvent
         $this->commonName              = $commonName;
         $this->email                   = $email;
         $this->preferredLocale         = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType((string) $this->stepupProvider);
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)

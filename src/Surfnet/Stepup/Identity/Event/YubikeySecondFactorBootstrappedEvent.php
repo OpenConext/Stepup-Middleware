@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -25,15 +26,20 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-final class YubikeySecondFactorBootstrappedEvent extends SecondFactorEvent
+final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
-     * @var YubikeyPublicId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $secondFactorId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
      */
     public $yubikeyPublicId;
 
@@ -44,10 +50,22 @@ final class YubikeySecondFactorBootstrappedEvent extends SecondFactorEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
-        parent::__construct($identityId, $institution, $secondFactorId, new SecondFactorType('yubikey'));
+        parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
+        $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
+
+        return $metadata;
     }
 
     public function serialize()

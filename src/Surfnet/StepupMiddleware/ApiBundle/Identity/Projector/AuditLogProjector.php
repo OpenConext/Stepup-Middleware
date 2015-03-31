@@ -22,6 +22,7 @@ use Broadway\Domain\DomainMessageInterface;
 use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Event\AuditableEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
@@ -46,23 +47,34 @@ class AuditLogProjector implements ProjectorInterface
     {
         $event = $domainMessage->getPayload();
 
-        if (!$event instanceof IdentityEvent) {
+        if (!$event instanceof AuditableEvent) {
             return;
         }
 
+        $auditLogMetadata = $event->getAuditLogMetadata();
         $metadata = $domainMessage->getMetadata()->serialize();
 
         $entry = new AuditLogEntry();
-        $entry->actorId = isset($metadata['actorId']) ? $metadata['actorId'] : null;
-        $entry->actorInstitution = isset($metadata['actorInstitution']) ? $metadata['actorInstitution'] : null;
-        $entry->identityId = (string) $event->identityId;
-        $entry->identityInstitution = $event->identityInstitution;
+
+        if (isset($metadata['actorId'])) {
+            $entry->actorId = $metadata['actorId'];
+        }
+
+        if (isset($metadata['actorInstitution'])) {
+            $entry->actorInstitution = $metadata['actorInstitution'];
+        }
+
+        $entry->identityId = (string) $auditLogMetadata->identityId;
+        $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->action = get_class($event);
         $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
-        if ($event instanceof SecondFactorEvent) {
-            $entry->secondFactorId = (string) $event->secondFactorId;
-            $entry->secondFactorType = (string) $event->secondFactorType;
+        if ($auditLogMetadata->secondFactorId) {
+            $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;
+        }
+
+        if ($auditLogMetadata->secondFactorType) {
+            $entry->secondFactorType = (string) $auditLogMetadata->secondFactorType;
         }
 
         $this->auditLogRepository->save($entry);

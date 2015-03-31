@@ -18,21 +18,22 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class SecondFactorVettedEvent extends SecondFactorEvent
+class SecondFactorVettedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
@@ -92,7 +93,7 @@ class SecondFactorVettedEvent extends SecondFactorEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $institution, $secondFactorId, $secondFactorType);
+        parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
         $this->secondFactorId = $secondFactorId;
@@ -102,6 +103,17 @@ class SecondFactorVettedEvent extends SecondFactorEvent
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)

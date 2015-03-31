@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
@@ -41,6 +42,15 @@ class IdentityRenamedEvent extends IdentityEvent
         $this->newName = $newEmail;
     }
 
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
+    }
+
     public static function deserialize(array $data)
     {
         return new self(
@@ -51,9 +61,6 @@ class IdentityRenamedEvent extends IdentityEvent
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [

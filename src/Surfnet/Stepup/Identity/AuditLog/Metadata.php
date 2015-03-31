@@ -16,27 +16,27 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\Stepup\Identity\AuditLog;
 
-use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+final class Metadata
 {
     /**
-     * @var IdentityId
+     * @var \Surfnet\Stepup\Identity\Value\IdentityId
      */
     public $identityId;
 
     /**
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $identityInstitution;
 
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
-    {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
-    }
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId|null
+     */
+    public $secondFactorId;
+
+    /**
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType|null
+     */
+    public $secondFactorType;
 }

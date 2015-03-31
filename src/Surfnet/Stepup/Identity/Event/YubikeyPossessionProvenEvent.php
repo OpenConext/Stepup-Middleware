@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -26,22 +26,27 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class YubikeyPossessionProvenEvent extends SecondFactorEvent
+class YubikeyPossessionProvenEvent extends IdentityEvent
 {
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $secondFactorId;
+
     /**
      * The Yubikey's public ID.
      *
-     * @var YubikeyPublicId
+     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
      */
     public $yubikeyPublicId;
 
     /**
-     * @var DateTime
+     * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $emailVerificationRequestedAt;
 
     /**
-     * @var EmailVerificationWindow
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -91,14 +96,26 @@ class YubikeyPossessionProvenEvent extends SecondFactorEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $institution, $secondFactorId, new SecondFactorType('yubikey'));
+        parent::__construct($identityId, $institution);
 
+        $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)

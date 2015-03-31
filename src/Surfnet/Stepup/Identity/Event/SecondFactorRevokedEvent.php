@@ -18,20 +18,45 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-abstract class SecondFactorRevokedEvent extends SecondFactorEvent
+abstract class SecondFactorRevokedEvent extends IdentityEvent
 {
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $secondFactorId;
+
+    /**
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     */
+    public $secondFactorType;
+
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType
     ) {
-        parent::__construct($identityId, $identityInstitution, $secondFactorId, $secondFactorType);
+        parent::__construct($identityId, $identityInstitution);
+
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
     }
 
     final public static function deserialize(array $data)

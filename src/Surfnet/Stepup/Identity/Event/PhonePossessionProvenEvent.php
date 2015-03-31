@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -25,15 +26,20 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class PhonePossessionProvenEvent extends SecondFactorEvent
+class PhonePossessionProvenEvent extends IdentityEvent
 {
     /**
-     * @var PhoneNumber
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $secondFactorId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
      */
     public $phoneNumber;
 
     /**
-     * @var EmailVerificationWindow
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -83,14 +89,26 @@ class PhonePossessionProvenEvent extends SecondFactorEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId, $identityInstitution, $secondFactorId, new SecondFactorType('sms'));
+        parent::__construct($identityId, $identityInstitution);
 
+        $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)

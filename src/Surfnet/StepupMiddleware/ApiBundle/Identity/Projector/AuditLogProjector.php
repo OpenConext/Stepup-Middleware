@@ -23,8 +23,6 @@ use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
-use Surfnet\Stepup\Identity\Event\IdentityEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 

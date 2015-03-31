@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;

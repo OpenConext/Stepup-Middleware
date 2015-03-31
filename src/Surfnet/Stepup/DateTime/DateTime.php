@@ -20,13 +20,12 @@ namespace Surfnet\Stepup\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
-use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class DateTime implements JsonSerializable
+class DateTime
 {
     /**
      * The 'c' format, expanded in separate format characters. This string can also be used with
@@ -163,11 +162,6 @@ class DateTime implements JsonSerializable
      * @return string An ISO 8601 representation of this DateTime.
      */
     public function __toString()
-    {
-        return $this->format(self::FORMAT);
-    }
-
-    public function jsonSerialize()
     {
         return $this->format(self::FORMAT);
     }

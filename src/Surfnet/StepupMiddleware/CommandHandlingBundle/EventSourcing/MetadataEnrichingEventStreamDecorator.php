@@ -31,7 +31,7 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
      */
     private $metadata;
 
-    public function enrichWithMetadata(Metadata $metadata = null)
+    public function setMetadata(Metadata $metadata = null)
     {
         $this->metadata = $metadata;
     }

@@ -38,7 +38,7 @@ class CommandController extends Controller
 
         /** @var MetadataEnricher $metadataEnricher */
         $metadataEnricher = $this->get('surfnet_stepup_middleware_command_handling.metadata_enricher.actor');
-        $metadataEnricher->enrichWithMetadata($metadata);
+        $metadataEnricher->setMetadata($metadata);
 
         /** @var Pipeline $pipeline */
         $pipeline = $this->get('pipeline');

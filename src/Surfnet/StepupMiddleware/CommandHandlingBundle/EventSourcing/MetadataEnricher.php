@@ -26,5 +26,5 @@ interface MetadataEnricher
      * @param Metadata|null $metadata
      * @return void
      */
-    public function enrichWithMetadata(Metadata $metadata = null);
+    public function setMetadata(Metadata $metadata = null);
 }

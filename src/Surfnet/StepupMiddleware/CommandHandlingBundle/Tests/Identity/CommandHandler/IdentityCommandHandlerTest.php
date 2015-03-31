@@ -585,9 +585,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     public function an_identity_can_be_updated()
     {
         $id = new IdentityId('42');
+        $institution = new Institution('A Corp.');
         $createdEvent = new IdentityCreatedEvent(
             $id,
-            $institution = new Institution('A Corp.'),
+            $institution,
             new NameId('3'),
             'a@b.c',
             'foobar'
@@ -618,21 +619,26 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId = '42';
         $command->secondFactorId = self::uuid();
 
+        $identityId = new IdentityId($command->identityId);
+        $institution = new Institution('A Corp.');
+        $secFacId = new SecondFactorId($command->secondFactorId);
+        $pubId = new YubikeyPublicId('ccccvfeghijk');
+
         $this->scenario
-            ->withAggregateId($id = new IdentityId($command->identityId))
+            ->withAggregateId($identityId)
             ->given([
                 new IdentityCreatedEvent(
-                    $id,
-                    $institution = new Institution('A Corp.'),
+                    $identityId,
+                    $institution,
                     new NameId('3'),
                     'a@b.c',
                     'foobar'
                 ),
                 new YubikeyPossessionProvenEvent(
-                    $id,
+                    $identityId,
                     $institution,
-                    $secFacId = new SecondFactorId($command->secondFactorId),
-                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    $secFacId,
+                    $pubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -645,7 +651,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new UnverifiedSecondFactorRevokedEvent($id, $institution, $secFacId, new SecondFactorType('yubikey'))
+                new UnverifiedSecondFactorRevokedEvent($identityId, $institution, $secFacId, new SecondFactorType('yubikey'))
             ]);
     }
 
@@ -664,14 +670,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->documentNumber = 'NH9392';
         $command->identityVerified = true;
 
+        $authorityId = new IdentityId($command->authorityId);
+        $authorityNameId = new NameId($this->uuid());
         $authorityInstitution = new Institution('Wazoo');
+
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantPubId = new YubikeyPublicId('ccccvfeghijk');
+
         $this->scenario
-            ->withAggregateId($authorityId = new IdentityId($command->authorityId))
+            ->withAggregateId($authorityId)
             ->given([
                 new IdentityCreatedEvent(
-                    $authorityId = new IdentityId($this->uuid()),
+                    $authorityId,
                     $authorityInstitution,
-                    $authorityNameId = new NameId($this->uuid()),
+                    $authorityNameId,
                     'e@mail.com',
                     'Charlie Parker'
                 ),
@@ -683,20 +698,20 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new YubikeyPublicId('ccccvkdowiej')
                 )
             ])
-            ->withAggregateId($identityId = new IdentityId($command->identityId))
+            ->withAggregateId($registrantId)
             ->given([
                 new IdentityCreatedEvent(
-                    $identityId,
-                    $institution = new Institution('A Corp.'),
-                    $nameId = new NameId('3'),
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
                     'a@b.c',
                     'foobar'
                 ),
                 new YubikeyPossessionProvenEvent(
-                    $identityId,
-                    $institution,
-                    $secFacId = new SecondFactorId('ISFID'),
-                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantPubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -707,9 +722,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'en_GB'
                 ),
                 new EmailVerifiedEvent(
-                    $identityId,
-                    $institution,
-                    $secFacId,
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'REGCODE',
@@ -721,10 +736,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new SecondFactorVettedEvent(
-                    $identityId,
-                    $nameId,
-                    $institution,
-                    $secFacId,
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     'ccccvfeghijk',
                     'NH9392',
@@ -752,22 +767,33 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->documentNumber = 'NH9392';
         $command->identityVerified = true;
 
+        $authorityId = new IdentityId($command->authorityId);
         $authorityInstitution = new Institution('Wazoo');
+        $authorityNameId = new NameId($this->uuid());
+        $authorityPhoneSfId = new SecondFactorId($this->uuid());
+        $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678');
+
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantPubId = new YubikeyPublicId('ccccvfeghijk');
+
         $this->scenario
-            ->withAggregateId($authorityId = new IdentityId($command->authorityId))
+            ->withAggregateId($authorityId)
             ->given([
                 new IdentityCreatedEvent(
-                    $authorityId = new IdentityId($this->uuid()),
+                    $authorityId,
                     $authorityInstitution,
-                    $authorityNameId = new NameId($this->uuid()),
+                    $authorityNameId,
                     'e@mail.com',
                     'Charlie Parker'
                 ),
                 new PhonePossessionProvenEvent(
                     $authorityId,
                     $authorityInstitution,
-                    $authorityPhoneSfId = new SecondFactorId($this->uuid()),
-                    $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678'),
+                    $authorityPhoneSfId,
+                    $authorityPhoneNo,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -801,20 +827,20 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'en_GB'
                 )
             ])
-            ->withAggregateId($identityId = new IdentityId($command->identityId))
+            ->withAggregateId($registrantId)
             ->given([
                 new IdentityCreatedEvent(
-                    $identityId,
-                    $institution = new Institution('A Corp.'),
-                    $nameId = new NameId('3'),
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
                     'a@b.c',
                     'foobar'
                 ),
                 new YubikeyPossessionProvenEvent(
-                    $identityId,
-                    $institution,
-                    $secFacId = new SecondFactorId('ISFID'),
-                    $pubId = new YubikeyPublicId('ccccvfeghijk'),
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantPubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -825,9 +851,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'en_GB'
                 ),
                 new EmailVerifiedEvent(
-                    $identityId,
-                    $institution,
-                    $secFacId,
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     DateTime::now(),
                     'REGCODE',
@@ -839,10 +865,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new SecondFactorVettedEvent(
-                    $identityId,
-                    $nameId,
-                    $institution,
-                    $secFacId,
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     'ccccvfeghijk',
                     'NH9392',

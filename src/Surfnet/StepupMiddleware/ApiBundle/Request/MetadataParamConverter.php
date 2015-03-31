@@ -39,13 +39,13 @@ class MetadataParamConverter implements ParamConverterInterface
 
     public function apply(Request $request, ParamConverter $configuration)
     {
-        $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent());
 
         $this->assertIsValidMetadataStructure($data);
 
         $metadata = new Metadata();
 
-        foreach ($data['meta'] as $property => $value) {
+        foreach ($data->meta as $property => $value) {
             $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
             $metadata->$properlyCasedProperty = $value;
         }
@@ -70,7 +70,7 @@ class MetadataParamConverter implements ParamConverterInterface
      */
     private function assertIsValidMetadataStructure($data)
     {
-        if (!is_array($data)) {
+        if (!is_object($data)) {
             $type = gettype($data);
 
             throw new BadCommandRequestException(
@@ -78,11 +78,11 @@ class MetadataParamConverter implements ParamConverterInterface
             );
         }
 
-        if (!isset($data['meta'])) {
+        if (!isset($data->meta)) {
             throw new BadCommandRequestException(["Required parameter 'meta' is not set."]);
         }
 
-        if (!is_array($data['meta'])) {
+        if (!is_object($data->meta)) {
             $type = gettype($data);
 
             throw new BadCommandRequestException([

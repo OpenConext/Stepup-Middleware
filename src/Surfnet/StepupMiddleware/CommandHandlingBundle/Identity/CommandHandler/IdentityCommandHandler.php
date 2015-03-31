@@ -78,7 +78,7 @@ class IdentityCommandHandler extends CommandHandler
             $command->commonName
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
@@ -89,7 +89,7 @@ class IdentityCommandHandler extends CommandHandler
         $identity->rename($command->commonName);
         $identity->changeEmail($command->email);
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     public function handleBootstrapIdentityWithYubikeySecondFactorCommand(
@@ -108,7 +108,7 @@ class IdentityCommandHandler extends CommandHandler
             new YubikeyPublicId($command->yubikeyPublicId)
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
@@ -122,7 +122,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     /**
@@ -139,7 +139,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     /**
@@ -157,7 +157,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     /**
@@ -170,7 +170,7 @@ class IdentityCommandHandler extends CommandHandler
 
         $identity->verifyEmail($command->verificationNonce);
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
@@ -189,8 +189,8 @@ class IdentityCommandHandler extends CommandHandler
             $command->identityVerified
         );
 
-        $this->repository->add($authority);
-        $this->repository->add($registrant);
+        $this->repository->save($authority);
+        $this->repository->save($registrant);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
@@ -199,7 +199,7 @@ class IdentityCommandHandler extends CommandHandler
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 
     public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
@@ -211,6 +211,6 @@ class IdentityCommandHandler extends CommandHandler
             new IdentityId($command->authorityId)
         );
 
-        $this->repository->add($identity);
+        $this->repository->save($identity);
     }
 }

@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
-use Broadway\Domain\DomainMessageInterface;
+use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -39,9 +39,9 @@ class AuditLogProjector implements ProjectorInterface
     }
 
     /**
-     * @param DomainMessageInterface $domainMessage
+     * @param DomainMessage $domainMessage
      */
-    public function handle(DomainMessageInterface $domainMessage)
+    public function handle(DomainMessage $domainMessage)
     {
         $event = $domainMessage->getPayload();
 

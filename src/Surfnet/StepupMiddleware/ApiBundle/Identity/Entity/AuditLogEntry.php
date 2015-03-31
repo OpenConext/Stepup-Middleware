@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
@@ -34,7 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-class AuditLogEntry
+class AuditLogEntry implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -100,4 +101,18 @@ class AuditLogEntry
      * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $recordedOn;
+
+    public function jsonSerialize()
+    {
+        return [
+            'actor_id' => $this->actorId,
+            'actor_institution' => $this->actorInstitution ? (string) $this->actorInstitution : null,
+            'identity_id' => $this->identityId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'second_factor_id' => $this->secondFactorId,
+            'second_factor_type' => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'action' => $this->action,
+            'recorded_on' => (string) $this->recordedOn,
+        ];
+    }
 }

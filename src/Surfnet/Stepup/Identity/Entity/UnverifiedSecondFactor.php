@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -142,7 +143,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 DateTime::now(),
-                TokenGenerator::generateHumanReadableToken(8),
+                OtpGenerator::generate(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
                 'en_GB'

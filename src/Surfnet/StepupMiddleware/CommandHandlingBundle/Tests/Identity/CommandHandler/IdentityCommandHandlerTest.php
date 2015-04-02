@@ -121,8 +121,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
+        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
+            ->shouldReceive('generate')->once()->andReturn('regcode');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -207,8 +208,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
+        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
+            ->shouldReceive('generate')->once()->andReturn('regcode');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id          = new IdentityId(self::uuid());
@@ -254,9 +256,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
+        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
+            ->shouldReceive('generate')->once()->andReturn('regcode');
+
         $nonce = 'nonce';
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateHumanReadableToken')->once()->andReturn('code')
             ->shouldReceive('generateNonce')->once()->andReturn($nonce);
 
         $identityId     = new IdentityId(self::uuid());
@@ -390,8 +394,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateHumanReadableToken')->once()->andReturn('regcode');
+        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
+            ->shouldReceive('generate')->once()->andReturn('regcode');
 
         $id = new IdentityId(self::uuid());
         $nameId = new NameId(md5(__METHOD__));

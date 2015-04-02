@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2ad3705e9fa893ac3e086752cef6eacd",
+    "hash": "3cbcd91f1dd22bede3503d7972812d9a",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2269,16 +2269,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "0.1.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "5d91dc357c9ba0cbc7749b2d2ac5bc940bda665e"
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/5d91dc357c9ba0cbc7749b2d2ac5bc940bda665e",
-                "reference": "5d91dc357c9ba0cbc7749b2d2ac5bc940bda665e",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/cae60583cbb8907f5f2fa4730091765c59a4204a",
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a",
                 "shasum": ""
             },
             "require": {
@@ -2315,7 +2315,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-26 12:46:11"
+            "time": "2015-04-02 12:24:11"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -4702,7 +4702,8 @@
         "doctrine/dbal": 10,
         "doctrine/orm": 20,
         "doctrine/doctrine-bundle": 20,
-        "doctrine/migrations": 20
+        "doctrine/migrations": 20,
+        "surfnet/stepup-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

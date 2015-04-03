@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Value;
+namespace Surfnet\Stepup\IdentifyingData\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class CommonName
+final class CommonName
 {
     /**
      * @var string

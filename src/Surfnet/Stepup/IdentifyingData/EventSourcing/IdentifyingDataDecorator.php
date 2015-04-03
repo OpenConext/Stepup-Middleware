@@ -27,8 +27,14 @@ use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 
 class IdentifyingDataDecorator implements RepositoryInterface
 {
+    /**
+     * @var EventSourcingRepository
+     */
     private $aggregateRootRepository;
 
+    /**
+     * @var IdentifyingDataRepository
+     */
     private $identifyingDataRepository;
 
     public function __construct(
@@ -41,9 +47,16 @@ class IdentifyingDataDecorator implements RepositoryInterface
 
     public function add(AggregateRoot $aggregate)
     {
-        $this->assertImplementsAccessibleIdentifyingDataInterface($aggregate);
+        if (!$aggregate instanceof IdentifyingDataHolder) {
+            throw new DomainException(
+                'The AggregateRoot must implement the \Surfnet\Stepup\Identity\Api\AccessibleIdentifyingData interface '
+                . 'to be able to set/get the Identifying Data'
+            );
+        }
 
-//        $identifyingData = $aggregate->
+        $identifyingData = $aggregate->exposeIdentifyingData();
+        $this->identifyingDataRepository->save($identifyingData);
+
         return $this->aggregateRootRepository->add($aggregate);
     }
 
@@ -51,18 +64,22 @@ class IdentifyingDataDecorator implements RepositoryInterface
     {
         $aggregate = $this->aggregateRootRepository->load($id);
 
-        $this->assertImplementsAccessibleIdentifyingDataInterface($aggregate);
-
-        return $aggregate;
-    }
-
-    private function assertImplementsAccessibleIdentifyingDataInterface($aggregate)
-    {
         if (!$aggregate instanceof IdentifyingDataHolder) {
             throw new DomainException(
                 'The AggregateRoot must implement the \Surfnet\Stepup\Identity\Api\AccessibleIdentifyingData interface '
                 . 'to be able to set/get the Identifying Data'
             );
         }
+
+        $identifyingDataId = $aggregate->getIdentifyingDataId();
+        $identifyingData = $this->identifyingDataRepository->getByUuid($identifyingDataId);
+
+        if (!$identifyingData) {
+            throw new DomainException(sprintf('No Identifying Data with id "%s" found', $identifyingDataId));
+        }
+
+        $aggregate->setIdentifyingData($identifyingData);
+
+        return $aggregate;
     }
 }

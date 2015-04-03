@@ -28,9 +28,9 @@ interface IdentifyingDataHolder
     public function getIdentifyingDataId();
 
     /**
-     * @param IdentifyingData $sensitiveData
+     * @param IdentifyingData $identifyingData
      */
-    public function setIdentifyingData(IdentifyingData $sensitiveData);
+    public function setIdentifyingData(IdentifyingData $identifyingData);
 
     /**
      * @return IdentifyingData

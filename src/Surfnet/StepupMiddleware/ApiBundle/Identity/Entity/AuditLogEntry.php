@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
@@ -37,6 +38,29 @@ use JsonSerializable;
  */
 class AuditLogEntry implements JsonSerializable
 {
+    /**
+     * Maps event FQCNs to action names.
+     *
+     * @var string[]
+     */
+    private static $eventActionMap = [
+        'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
+        'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
+        'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
+        'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent'                                => 'email_verified',
+        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent'                         => 'possession_proven',
+        'Surfnet\Stepup\Identity\Event\IdentityCreatedEvent'                              => 'created',
+        'Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent'                         => 'email_changed',
+        'Surfnet\Stepup\Identity\Event\IdentityRenamedEvent'                              => 'renamed',
+        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent'                        => 'possession_proven',
+        'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
+        'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
+        'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
+        'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
+        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent'                      => 'possession_proven',
+        'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent'              => 'bootstrapped',
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -111,8 +135,23 @@ class AuditLogEntry implements JsonSerializable
             'identity_institution' => (string) $this->identityInstitution,
             'second_factor_id' => $this->secondFactorId,
             'second_factor_type' => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'event' => $this->event,
+            'action' => $this->mapEventToAction($this->event),
             'recorded_on' => (string) $this->recordedOn,
         ];
+    }
+
+    /**
+     * Maps an event FQCN to an action name (eg. '...\Event\IdentityCreatedEvent' to 'created').
+     *
+     * @param string $event Event FQCN
+     * @return string Action name
+     */
+    private function mapEventToAction($event)
+    {
+        if (!isset(self::$eventActionMap[$event])) {
+            throw new LogicException(sprintf("Action name for event '%s' not registered", $event));
+        }
+
+        return self::$eventActionMap[$event];
     }
 }

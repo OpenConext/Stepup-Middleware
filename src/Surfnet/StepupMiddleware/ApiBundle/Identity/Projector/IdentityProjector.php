@@ -41,7 +41,7 @@ class IdentityProjector extends Projector
     {
         $this->identityRepository->save(Identity::create(
             (string) $event->identityId,
-            $event->institution,
+            $event->identityInstitution,
             (string) $event->nameId,
             $event->email,
             $event->commonName

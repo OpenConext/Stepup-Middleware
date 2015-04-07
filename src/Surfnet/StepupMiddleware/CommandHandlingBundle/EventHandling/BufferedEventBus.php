@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling;
 
 use Broadway\Domain\DomainEventStreamInterface;
-use Broadway\Domain\DomainMessageInterface;
+use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventHandling\EventListenerInterface;
 use Exception;
@@ -33,7 +33,7 @@ class BufferedEventBus implements EventBusInterface
     private $eventListeners = [];
 
     /**
-     * @var DomainMessageInterface[]
+     * @var DomainMessage[]
      */
     private $buffer = [];
 

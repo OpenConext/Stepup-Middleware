@@ -16,27 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event;
 
-use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Event\AuditableEvent;
 
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+final class EventStub implements AuditableEvent
 {
     /**
-     * @var IdentityId
+     * @var \Surfnet\Stepup\Identity\AuditLog\Metadata
      */
-    public $identityId;
+    private $metadata;
 
-    /**
-     * @var Institution
-     */
-    public $identityInstitution;
-
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
+    public function __construct(Metadata $metadata)
     {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
+        $this->metadata = $metadata;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        return $this->metadata;
     }
 }

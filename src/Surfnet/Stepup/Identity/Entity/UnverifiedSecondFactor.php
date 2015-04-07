@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
@@ -142,6 +141,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 new IdentityId($this->identity->getAggregateRootId()),
                 $this->identity->getInstitution(),
                 $this->id,
+                $this->type,
                 DateTime::now(),
                 OtpGenerator::generate(8),
                 $this->identity->getCommonName(),
@@ -153,19 +153,32 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
 
     public function revoke()
     {
-        $this->apply(new UnverifiedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
+        $this->apply(
+            new UnverifiedSecondFactorRevokedEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type
+            )
+        );
     }
 
     public function complyWithRevocation(IdentityId $authorityId)
     {
         $this->apply(
-            new CompliedWithUnverifiedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
+            new CompliedWithUnverifiedSecondFactorRevocationEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type,
+                $authorityId
+            )
         );
     }
 
     /**
      * @param DateTime $registrationRequestedAt
-     * @param string $registrationCode
+     * @param string   $registrationCode
      * @return VerifiedSecondFactor
      */
     public function asVerified($registrationRequestedAt, $registrationCode)

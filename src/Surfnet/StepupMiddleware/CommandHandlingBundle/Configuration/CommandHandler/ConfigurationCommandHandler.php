@@ -48,7 +48,7 @@ class ConfigurationCommandHandler extends CommandHandler
 
         $configuration->update($command->configuration);
 
-        $this->repository->add($configuration);
+        $this->repository->save($configuration);
     }
 
     /**

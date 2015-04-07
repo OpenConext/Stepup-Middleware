@@ -16,27 +16,24 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
-use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Symfony\Component\Validator\Constraints as Assert;
 
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+final class Metadata
 {
     /**
-     * @var IdentityId
+     * @Assert\Type(type="string")
+     * @Assert\Regex(pattern="~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i")
+     *
+     * @var string|null
      */
-    public $identityId;
+    public $actorId;
 
     /**
-     * @var Institution
+     * @Assert\Type(type="string")
+     *
+     * @var string|null
      */
-    public $identityInstitution;
-
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
-    {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
-    }
+    public $actorInstitution;
 }

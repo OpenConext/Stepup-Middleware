@@ -93,7 +93,7 @@ class ExceptionListener
         ) {
             $errors = $exception->getErrors();
         } else {
-            $errors = [$exception->getMessage()];
+            $errors = [sprintf('%s: %s', get_class($exception), $exception->getMessage())];
         }
 
         return new JsonResponse(['errors' => $errors], $statusCode, $headers);

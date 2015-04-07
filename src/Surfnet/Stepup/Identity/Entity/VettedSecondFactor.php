@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -89,13 +88,26 @@ class VettedSecondFactor extends AbstractSecondFactor
 
     public function revoke()
     {
-        $this->apply(new VettedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
+        $this->apply(
+            new VettedSecondFactorRevokedEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type
+            )
+        );
     }
 
     public function complyWithRevocation(IdentityId $authorityId)
     {
         $this->apply(
-            new CompliedWithVettedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
+            new CompliedWithVettedSecondFactorRevocationEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type,
+                $authorityId
+            )
         );
     }
 

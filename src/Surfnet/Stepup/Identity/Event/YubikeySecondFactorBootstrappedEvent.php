@@ -18,31 +18,28 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var YubikeyPublicId
+     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
      */
     public $yubikeyPublicId;
 
@@ -53,22 +50,32 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
-        $this->institution = $institution;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
+
+        return $metadata;
     }
 
     public function serialize()
     {
         return [
-            'identity_id'       => (string) $this->identityId,
-            'name_id'           => (string) $this->nameId,
-            'institution'       => (string) $this->institution,
-            'second_factor_id'  => (string) $this->secondFactorId,
-            'yubikey_public_id' => (string) $this->yubikeyPublicId,
+            'identity_id'          => (string) $this->identityId,
+            'name_id'              => (string) $this->nameId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'second_factor_id'     => (string) $this->secondFactorId,
+            'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
     }
 
@@ -77,7 +84,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id'])
         );

@@ -44,6 +44,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EventSerializationAndDeserializationTest extends UnitTest
 {
@@ -75,21 +76,27 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'CompliedWithUnverifiedSecondFactorRevocationEvent' => [
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms'),
                     new IdentityId(static::UUID())
                 )
             ],
             'CompliedWithVerifiedSecondFactorRevocationEvent' => [
                 new CompliedWithVerifiedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms'),
                     new IdentityId(static::UUID())
                 )
             ],
             'CompliedWithVettedSecondFactorRevocationEvent' => [
                 new CompliedWithVettedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms'),
                     new IdentityId(static::UUID())
                 )
             ],
@@ -98,6 +105,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc'),
                     new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms'),
                     DateTime::now(),
                     '123',
                     'Arthur Dent',
@@ -117,6 +125,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'IdentityEmailChangedEvent' => [
                 new IdentityEmailChangedEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     'arthur@babelfish.inc',
                     'Arthur.Dent@babelfish.inc'
                 )
@@ -124,6 +133,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'IdentityRenamedEvent' => [
                 new IdentityRenamedEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     'Arthur Dent',
                     'A. Dent'
                 )
@@ -131,6 +141,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'PhonePossessionProvenEvent' => [
                 new PhonePossessionProvenEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new PhoneNumber('+31 (0) 612345678'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
@@ -143,24 +154,31 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'UnverifiedSecondFactorRevokedEvent' => [
                 new UnverifiedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
-                    new SecondFactorId(static::UUID())
-                )
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms')
+)
             ],
             'VerifiedSecondFactorRevokedEvent' => [
                 new VerifiedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
-                    new SecondFactorId(static::UUID())
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms')
                 )
             ],
             'VettedSecondFactorRevokedEvent' => [
                 new VettedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
-                    new SecondFactorId(static::UUID())
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('sms')
                 )
             ],
             'YubikeyPossessionProvenEvent' => [
                 new YubikeyPossessionProvenEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new YubikeyPublicId('this_is_mah_yubikey'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
@@ -173,8 +191,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'GssfPossessionProvenEvent' => [
                 new GssfPossessionProvenEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
-                    new StepupProvider('Tiqr'),
+                    new StepupProvider('tiqr'),
                     new GssfId('_' . md5('Tiqr')),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',

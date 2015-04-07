@@ -19,24 +19,26 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EmailVerifiedEvent extends IdentityEvent
 {
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var DateTime
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     */
+    public $secondFactorType;
+
+    /**
+     * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $registrationRequestedAt;
 
@@ -61,29 +63,31 @@ class EmailVerifiedEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $institution
-     * @param SecondFactorId $secondFactorId
-     * @param DateTime $registrationRequestedAt
-     * @param string $registrationCode
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId       $identityId
+     * @param Institution      $identityInstitution
+     * @param SecondFactorId   $secondFactorId
+     * @param SecondFactorType $secondFactorType
+     * @param DateTime         $registrationRequestedAt
+     * @param string           $registrationCode
+     * @param string           $commonName
+     * @param string           $email
+     * @param string           $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
-        Institution $institution,
+        Institution $identityInstitution,
         SecondFactorId $secondFactorId,
+        SecondFactorType $secondFactorType,
         DateTime $registrationRequestedAt,
         $registrationCode,
         $commonName,
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $identityInstitution);
 
-        $this->institution = $institution;
         $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
         $this->commonName = $commonName;
@@ -91,12 +95,24 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->preferredLocale = $preferredLocale;
     }
 
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
+    }
+
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['identity_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
+            new SecondFactorType($data['second_factor_type']),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
             $data['common_name'],
@@ -108,14 +124,15 @@ class EmailVerifiedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'institution' => (string) $this->institution,
-            'second_factor_id' => (string) $this->secondFactorId,
+            'identity_id'               => (string) $this->identityId,
+            'identity_institution'      => (string) $this->identityInstitution,
+            'second_factor_id'          => (string) $this->secondFactorId,
+            'second_factor_type'        => (string) $this->secondFactorType,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
-            'registration_code' => $this->registrationCode,
-            'common_name' => $this->commonName,
-            'email' => $this->email,
-            'preferred_locale' => $this->preferredLocale,
+            'registration_code'         => $this->registrationCode,
+            'common_name'               => $this->commonName,
+            'email'                     => $this->email,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

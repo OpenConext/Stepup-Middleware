@@ -51,7 +51,7 @@ class AuditLogRepository extends EntityRepository
         switch ($command->orderBy) {
             case 'secondFactorId':
             case 'secondFactorType':
-            case 'action':
+            case 'event':
             case 'recordedOn':
             case 'actorId':
                 $queryBuilder->orderBy("al.$command->orderBy", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');

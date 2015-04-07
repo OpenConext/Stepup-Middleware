@@ -93,7 +93,7 @@ class AuditLogEntry implements JsonSerializable
      *
      * @var string
      */
-    public $action;
+    public $event;
 
     /**
      * @ORM\Column(type="stepup_datetime")
@@ -111,7 +111,7 @@ class AuditLogEntry implements JsonSerializable
             'identity_institution' => (string) $this->identityInstitution,
             'second_factor_id' => $this->secondFactorId,
             'second_factor_type' => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'action' => $this->action,
+            'event' => $this->event,
             'recorded_on' => (string) $this->recordedOn,
         ];
     }

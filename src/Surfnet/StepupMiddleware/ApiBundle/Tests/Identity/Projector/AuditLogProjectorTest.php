@@ -159,7 +159,7 @@ final class AuditLogProjectorTest extends TestCase
         Institution $identityInstitution,
         SecondFactorId $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
-        $action,
+        $event,
         StepupDateTime $recordedOn
     ) {
         $entry = new AuditLogEntry();
@@ -169,7 +169,7 @@ final class AuditLogProjectorTest extends TestCase
         $entry->identityInstitution = $identityInstitution;
         $entry->secondFactorId = $secondFactorId ? (string) $secondFactorId : null;
         $entry->secondFactorType = $secondFactorType ? (string) $secondFactorType : null;
-        $entry->action = $action;
+        $entry->event = $event;
         $entry->recordedOn = $recordedOn;
 
         return $entry;

@@ -129,14 +129,14 @@ class AuditLogEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'actor_id' => $this->actorId,
-            'actor_institution' => $this->actorInstitution ? (string) $this->actorInstitution : null,
-            'identity_id' => $this->identityId,
+            'actor_id'             => $this->actorId,
+            'actor_institution'    => $this->actorInstitution ? (string) $this->actorInstitution : null,
+            'identity_id'          => $this->identityId,
             'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id' => $this->secondFactorId,
-            'second_factor_type' => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'action' => $this->mapEventToAction($this->event),
-            'recorded_on' => (string) $this->recordedOn,
+            'second_factor_id'     => $this->secondFactorId,
+            'second_factor_type'   => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'action'               => $this->mapEventToAction($this->event),
+            'recorded_on'          => (string) $this->recordedOn,
         ];
     }
 

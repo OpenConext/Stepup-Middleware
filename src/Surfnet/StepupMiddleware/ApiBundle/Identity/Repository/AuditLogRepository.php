@@ -20,11 +20,31 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchAuditLogCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchSecondFactorAuditLogCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 
 class AuditLogRepository extends EntityRepository
 {
+    /**
+     * An array of event FQCNs that pertain to second factors (verification, vetting, revocation etc.).
+     *
+     * @var string[]
+     */
+    private static $secondFactorEvents = [
+        'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent',
+        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent',
+        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent',
+        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent',
+        'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent',
+        'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent',
+        'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent',
+        'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent',
+        'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent',
+        'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent',
+        'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent',
+        'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent',
+    ];
+
     /**
      * @param AuditLogEntry $entry
      */
@@ -36,17 +56,19 @@ class AuditLogRepository extends EntityRepository
     }
 
     /**
-     * @param SearchAuditLogCommand $command
+     * @param SearchSecondFactorAuditLogCommand $command
      * @return Query
      */
-    public function createSearchQuery(SearchAuditLogCommand $command)
+    public function createSecondFactorSearchQuery(SearchSecondFactorAuditLogCommand $command)
     {
         $queryBuilder = $this
             ->createQueryBuilder('al')
             ->where('al.identityInstitution = :identityInstitution')
             ->setParameter('identityInstitution', $command->identityInstitution)
             ->andWhere('al.identityId = :identityId')
-            ->setParameter('identityId', $command->identityId);
+            ->andWhere('al.event IN (:secondFactorEvents)')
+            ->setParameter('identityId', $command->identityId)
+            ->setParameter('secondFactorEvents', self::$secondFactorEvents);
 
         switch ($command->orderBy) {
             case 'secondFactorId':

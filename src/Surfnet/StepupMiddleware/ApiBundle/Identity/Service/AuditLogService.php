@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Pagerfanta\Pagerfanta;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchAuditLogCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchSecondFactorAuditLogCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 class AuditLogService extends AbstractSearchService
@@ -35,12 +35,12 @@ class AuditLogService extends AbstractSearchService
     }
 
     /**
-     * @param SearchAuditLogCommand $command
+     * @param SearchSecondFactorAuditLogCommand $command
      * @return Pagerfanta
      */
-    public function search(SearchAuditLogCommand $command)
+    public function searchSecondFactorAuditLog(SearchSecondFactorAuditLogCommand $command)
     {
-        $query = $this->repository->createSearchQuery($command);
+        $query = $this->repository->createSecondFactorSearchQuery($command);
 
         $paginator = $this->createPaginatorFrom($query, $command);
 

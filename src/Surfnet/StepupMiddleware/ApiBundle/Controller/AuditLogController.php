@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchAuditLogCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchSecondFactorAuditLogCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,20 +28,20 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class AuditLogController extends Controller
 {
-    public function collectionAction(Request $request, Institution $institution)
+    public function secondFactorAuditLogAction(Request $request, Institution $institution)
     {
         if (!$this->isGranted('ROLE_RA')) {
             throw new AccessDeniedHttpException('Client is not authorised to access RA second factor');
         }
 
-        $command = new SearchAuditLogCommand();
+        $command = new SearchSecondFactorAuditLogCommand();
         $command->identityInstitution = $institution;
         $command->identityId = new IdentityId($request->get('identityId'));
         $command->orderBy = $request->get('orderBy');
         $command->orderDirection = $request->get('orderDirection');
         $command->pageNumber = $request->get('p');
 
-        $paginator = $this->getService()->search($command);
+        $paginator = $this->getService()->searchSecondFactorAuditLog($command);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
-final class SearchAuditLogCommand extends AbstractSearchCommand
+final class SearchSecondFactorAuditLogCommand extends AbstractSearchCommand
 {
     /**
      * @var Institution

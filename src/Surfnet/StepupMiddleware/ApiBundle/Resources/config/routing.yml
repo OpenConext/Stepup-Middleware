@@ -81,7 +81,7 @@ identity_sraa_get:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 audit_log:
-    path:     /audit-log/second-factor
+    path:     /audit-log/second-factors
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:AuditLog:secondFactorAuditLog }
     methods:  [GET]
     requirements:

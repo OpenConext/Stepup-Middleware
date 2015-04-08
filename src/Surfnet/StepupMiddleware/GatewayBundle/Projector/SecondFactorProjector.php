@@ -47,7 +47,7 @@ class SecondFactorProjector extends Projector
             new SecondFactor(
                 (string) $event->identityId,
                 (string) $event->nameId,
-                (string) $event->institution,
+                (string) $event->identityInstitution,
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
                 'yubikey'
@@ -61,7 +61,7 @@ class SecondFactorProjector extends Projector
             new SecondFactor(
                 (string) $event->identityId,
                 (string) $event->nameId,
-                (string) $event->institution,
+                (string) $event->identityInstitution,
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType

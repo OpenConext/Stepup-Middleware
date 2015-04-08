@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -27,17 +28,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class SecondFactorVettedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
@@ -97,9 +93,8 @@ class SecondFactorVettedEvent extends IdentityEvent
         $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $institution);
 
-        $this->institution = $institution;
         $this->nameId = $nameId;
         $this->secondFactorId = $secondFactorId;
         $this->secondFactorType = $secondFactorType;
@@ -110,12 +105,23 @@ class SecondFactorVettedEvent extends IdentityEvent
         $this->preferredLocale = $preferredLocale;
     }
 
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
+    }
+
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
             $data['second_factor_identifier'],
@@ -131,7 +137,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         return [
             'identity_id' => (string) $this->identityId,
             'name_id' => (string) $this->nameId,
-            'institution' => (string) $this->institution,
+            'identity_institution' => (string) $this->identityInstitution,
             'second_factor_id' => (string) $this->secondFactorId,
             'second_factor_type' => (string) $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,

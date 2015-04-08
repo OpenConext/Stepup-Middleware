@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3cbcd91f1dd22bede3503d7972812d9a",
+    "hash": "56a4aa58d293fd4bd53afce9816ce514",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -57,16 +57,16 @@
         },
         {
             "name": "broadway/broadway",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qandidate-labs/broadway.git",
-                "reference": "b875bddde981514001ea1551c3e08976da2568a1"
+                "reference": "f1456c5a960f4b65c5856408eda3ac533930d169"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qandidate-labs/broadway/zipball/b875bddde981514001ea1551c3e08976da2568a1",
-                "reference": "b875bddde981514001ea1551c3e08976da2568a1",
+                "url": "https://api.github.com/repos/qandidate-labs/broadway/zipball/f1456c5a960f4b65c5856408eda3ac533930d169",
+                "reference": "f1456c5a960f4b65c5856408eda3ac533930d169",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                 "domain-driven design",
                 "event sourcing"
             ],
-            "time": "2015-01-02 09:18:58"
+            "time": "2015-02-16 20:42:42"
         },
         {
             "name": "broadway/uuid-generator",
@@ -2273,12 +2273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "59477b5bd7ac7cfb91058feb4e532daff2c50509"
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/59477b5bd7ac7cfb91058feb4e532daff2c50509",
-                "reference": "59477b5bd7ac7cfb91058feb4e532daff2c50509",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/cae60583cbb8907f5f2fa4730091765c59a4204a",
+                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a",
                 "shasum": ""
             },
             "require": {
@@ -2315,7 +2315,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-03-24 13:20:07"
+            "time": "2015-04-02 12:24:11"
         },
         {
             "name": "swiftmailer/swiftmailer",

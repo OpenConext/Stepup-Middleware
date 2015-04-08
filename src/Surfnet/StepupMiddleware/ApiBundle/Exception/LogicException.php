@@ -16,27 +16,8 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 
-use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+class LogicException extends \LogicException
 {
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
-
-    /**
-     * @var Institution
-     */
-    public $identityInstitution;
-
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
-    {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
-    }
 }

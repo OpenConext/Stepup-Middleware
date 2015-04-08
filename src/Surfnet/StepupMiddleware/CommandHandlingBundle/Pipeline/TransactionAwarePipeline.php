@@ -33,10 +33,12 @@ class TransactionAwarePipeline implements Pipeline
      * @var Connection
      */
     private $middlewareConnection;
+
     /**
      * @var Connection
      */
     private $gatewayConnection;
+
     /**
      * @var LoggerInterface
      */

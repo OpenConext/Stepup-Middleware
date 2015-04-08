@@ -18,7 +18,9 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 class IdentityEmailChangedEvent extends IdentityEvent
 {
@@ -32,35 +34,40 @@ class IdentityEmailChangedEvent extends IdentityEvent
      */
     public $newEmail;
 
-    public function __construct(IdentityId $id, $oldEmail, $newEmail)
+    public function __construct(IdentityId $id, Institution $institution, $oldEmail, $newEmail)
     {
-        parent::__construct($id);
+        parent::__construct($id, $institution);
 
         $this->oldEmail = $oldEmail;
         $this->newEmail = $newEmail;
     }
 
-    /**
-     * @return mixed The object instance
-     */
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
+    }
+
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
+            new Institution($data['institution']),
             $data['old_email'],
             $data['new_email']
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [
-            'id'       => (string)$this->identityId,
-            'old_email' => $this->oldEmail,
-            'new_email' => $this->newEmail
+            'id'          => (string) $this->identityId,
+            'institution' => (string) $this->identityInstitution,
+            'old_email'   => $this->oldEmail,
+            'new_email'   => $this->newEmail
         ];
     }
 }

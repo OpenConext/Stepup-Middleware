@@ -16,27 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing;
 
-use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+interface MetadataEnricher
 {
     /**
-     * @var IdentityId
+     * @param Metadata|null $metadata
+     * @return void
      */
-    public $identityId;
-
-    /**
-     * @var Institution
-     */
-    public $identityInstitution;
-
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
-    {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
-    }
+    public function setMetadata(Metadata $metadata = null);
 }

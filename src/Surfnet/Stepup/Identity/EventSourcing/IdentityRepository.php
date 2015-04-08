@@ -25,11 +25,24 @@ use Broadway\EventStore\EventStoreInterface;
 
 class IdentityRepository extends EventSourcingRepository
 {
+    /**
+     * @param EventStoreInterface             $eventStore
+     * @param EventBusInterface               $eventBus
+     * @param AggregateFactoryInterface       $aggregateFactory
+     * @param EventStreamDecoratorInterface[] $eventStreamDecorators
+     */
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
-        AggregateFactoryInterface $aggregateFactory
+        AggregateFactoryInterface $aggregateFactory,
+        array $eventStreamDecorators = []
     ) {
-        parent::__construct($eventStore, $eventBus, 'Surfnet\Stepup\Identity\Identity', $aggregateFactory);
+        parent::__construct(
+            $eventStore,
+            $eventBus,
+            'Surfnet\Stepup\Identity\Identity',
+            $aggregateFactory,
+            $eventStreamDecorators
+        );
     }
 }

@@ -16,27 +16,30 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Event;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
 
-use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
-abstract class IdentityEvent implements AuditableEvent, SerializableInterface
+final class SearchSecondFactorAuditLogCommand extends AbstractSearchCommand
 {
+    /**
+     * @var Institution
+     */
+    public $identityInstitution;
+
     /**
      * @var IdentityId
      */
     public $identityId;
 
     /**
-     * @var Institution
+     * @var string
      */
-    public $identityInstitution;
+    public $orderBy = 'recordedOn';
 
-    public function __construct(IdentityId $identityId, Institution $identityInstitution)
-    {
-        $this->identityId = $identityId;
-        $this->identityInstitution = $identityInstitution;
-    }
+    /**
+     * @var string
+     */
+    public $orderDirection = 'desc';
 }

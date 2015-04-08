@@ -37,7 +37,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
  *      }
  * )
  */
-final class RaSecondFactor implements JsonSerializable
+class RaSecondFactor implements JsonSerializable
 {
     /**
      * @ORM\Id

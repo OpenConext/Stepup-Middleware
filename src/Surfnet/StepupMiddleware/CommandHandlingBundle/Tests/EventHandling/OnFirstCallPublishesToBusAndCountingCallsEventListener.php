@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 
 use Broadway\Domain\DomainEventStream;
-use Broadway\Domain\DomainMessageInterface;
+use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListenerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
@@ -50,7 +50,7 @@ class OnFirstCallPublishesToBusAndCountingCallsEventListener implements EventLis
         $this->toPublish = $toPublish;
     }
 
-    public function handle(DomainMessageInterface $domainMessage)
+    public function handle(DomainMessage $domainMessage)
     {
         if ($this->callCount === 0) {
             $this->eventBus->publish($this->toPublish);

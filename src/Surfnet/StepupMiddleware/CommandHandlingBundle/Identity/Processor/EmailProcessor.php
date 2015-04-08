@@ -87,7 +87,7 @@ class EmailProcessor extends Processor
             $event->commonName,
             $event->email,
             $event->registrationCode,
-            $this->raService->listRas($event->institution)
+            $this->raService->listRas($event->identityInstitution)
         );
     }
 }

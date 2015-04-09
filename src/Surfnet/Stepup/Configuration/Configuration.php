@@ -35,7 +35,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
 
     /**
-     * @var string
+     * @var array
      */
     private $configuration;
 

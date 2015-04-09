@@ -191,3 +191,6 @@ surfnet_stepup_middleware_command_handling:
 
 surfnet_stepup_middleware_middleware:
     email_verification_window: %email_verification_window%
+
+surfnet_stepup_middleware_management:
+    email_required_locale: %default_locale%

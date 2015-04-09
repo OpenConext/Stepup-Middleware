@@ -41,12 +41,19 @@ class ConfigurationStructureValidator extends ConstraintValidator
      */
     private $raaConfigurationValidator;
 
+    /**
+     * @var EmailTemplatesConfigurationValidator
+     */
+    private $emailTemplatesConfigurationValidator;
+
     public function __construct(
         GatewayConfigurationValidator $gatewayConfigurationValidator,
-        RaaConfigurationValidator $raaConfigurationValidator
+        RaaConfigurationValidator $raaConfigurationValidator,
+        EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator
     ) {
         $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
         $this->raaConfigurationValidator = $raaConfigurationValidator;
+        $this->emailTemplatesConfigurationValidator = $emailTemplatesConfigurationValidator;
     }
 
     public function validate($value, Constraint $constraint)
@@ -82,10 +89,17 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
         Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
         Assert::keyExists($configuration, 'sraa', "Required property 'sraa' is missing", '(root)');
+        Assert::keyExists(
+            $configuration,
+            'email_templates',
+            "Required property 'email_templates' is missing",
+            '(root)'
+        );
 
         $this->validateGatewayConfiguration($configuration, 'gateway');
         $this->validateRaaConfiguration($configuration, 'raa');
         $this->validateSraaConfiguration($configuration, 'sraa');
+        $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
     }
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
@@ -117,5 +131,16 @@ class ConfigurationStructureValidator extends ConstraintValidator
                 $propertyPath . '[' . $index. ']'
             );
         }
+    }
+
+    private function validateEmailTemplatesConfiguration($configuration, $propertyPath)
+    {
+        Assert::isArray(
+            $configuration['email_templates'],
+            'Property "email_templates" must have an object as value',
+            $propertyPath
+        );
+
+        $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);
     }
 }

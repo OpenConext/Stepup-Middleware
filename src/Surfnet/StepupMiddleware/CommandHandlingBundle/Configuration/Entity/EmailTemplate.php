@@ -72,4 +72,12 @@ class EmailTemplate
         $this->locale = $locale;
         $this->htmlContent = $htmlContent;
     }
+
+    /**
+     * @return string
+     */
+    public function getHtmlContent()
+    {
+        return $this->htmlContent;
+    }
 }

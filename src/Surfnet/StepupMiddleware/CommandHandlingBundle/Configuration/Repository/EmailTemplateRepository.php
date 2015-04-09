@@ -23,6 +23,32 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTem
 
 final class EmailTemplateRepository extends EntityRepository
 {
+    /**
+     * @param string $name
+     * @param string $preferredLocale
+     * @param string $fallbackLocale
+     * @return EmailTemplate
+     */
+    public function findByName($name, $preferredLocale, $fallbackLocale)
+    {
+        return $this
+            ->createQueryBuilder('tpl')
+            ->where('tpl.name = :name')
+            ->setParameter('name', $name)
+            ->addSelect(
+                'CASE WHEN tpl.locale = :preferredLocale THEN 2
+                      WHEN tpl.locale = :fallbackLocale THEN 1
+                      ELSE 0
+                 END AS HIDDEN localePreference'
+            )
+            ->setParameter('preferredLocale', $preferredLocale)
+            ->setParameter('fallbackLocale', $fallbackLocale)
+            ->orderBy('localePreference', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult();
+    }
+
     public function removeAll()
     {
         $this

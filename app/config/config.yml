@@ -191,6 +191,7 @@ monolog:
 
 surfnet_stepup_middleware_command_handling:
     self_service_email_verification_url_template: %self_service_email_verification_url_template%
+    email_fallback_locale: %default_locale%
     email_sender:
         name: %email_sender_name%
         email: %email_sender_email%

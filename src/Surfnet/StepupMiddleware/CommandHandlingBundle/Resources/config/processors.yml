@@ -22,3 +22,15 @@ services:
         arguments:
             - ''
             - ''
+
+    surfnet_stepup_middleware_command_handling.projector.email_templates:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Projector\EmailTemplatesProjector
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.repository.email_template
+        tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_command_handling.repository.email_template:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTemplate ]

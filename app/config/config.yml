@@ -111,6 +111,12 @@ doctrine:
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
+                    configuration_command_handling:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Configuration
+                        prefix: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration
+                        is_bundle: false
                 dql:
                     string_functions:
                         MATCH_AGAINST: \Surfnet\StepupMiddleware\ApiBundle\Doctrine\Query\MatchAgainst

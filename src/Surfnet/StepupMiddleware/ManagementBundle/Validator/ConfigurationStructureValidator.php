@@ -83,7 +83,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         return GuzzleHttp\json_decode($rawValue, true);
     }
 
-    public function validateRoot(array $configuration)
+    public function validateRoot($configuration)
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');

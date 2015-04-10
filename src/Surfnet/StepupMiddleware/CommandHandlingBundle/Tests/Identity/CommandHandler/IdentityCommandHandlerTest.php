@@ -57,6 +57,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 /**

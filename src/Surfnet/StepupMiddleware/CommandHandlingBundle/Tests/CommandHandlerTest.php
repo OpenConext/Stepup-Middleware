@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
 use Rhumsaa\Uuid\Uuid;

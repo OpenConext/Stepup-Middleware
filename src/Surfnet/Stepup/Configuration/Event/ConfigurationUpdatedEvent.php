@@ -26,16 +26,16 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
     public $newConfiguration;
 
     /**
-     * @var array
+     * @var array|null
      */
     public $oldConfiguration;
 
     /**
      * @param string $id
      * @param array $newConfiguration
-     * @param array $oldConfiguration
+     * @param array|null $oldConfiguration
      */
-    public function __construct($id, $newConfiguration, $oldConfiguration)
+    public function __construct($id, array $newConfiguration, array $oldConfiguration = null)
     {
         parent::__construct($id);
 

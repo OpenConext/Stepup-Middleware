@@ -18,9 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Projector;
 
-use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTemplate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository;
 
@@ -36,11 +35,11 @@ final class EmailTemplatesProjector extends Projector
         $this->repository = $repository;
     }
 
-    public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event)
+    public function applyEmailTemplatesUpdatedEvent(EmailTemplatesUpdatedEvent $event)
     {
         $this->repository->removeAll();
 
-        foreach ($event->newConfiguration['email_templates'] as $name => $templates) {
+        foreach ($event->emailTemplates as $name => $templates) {
             foreach ($templates as $locale => $htmlContent) {
                 $this->repository->save(new EmailTemplate($name, $locale, $htmlContent));
             }

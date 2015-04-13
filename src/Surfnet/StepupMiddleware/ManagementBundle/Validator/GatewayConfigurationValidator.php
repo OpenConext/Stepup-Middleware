@@ -62,7 +62,10 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         );
 
         foreach ($serviceProviders as $index => $serviceProvider) {
-            $this->serviceProviderConfigurationValidator->validate($serviceProvider, $propertyPath . '[' . $index. ']');
+            $path = $propertyPath . '[' . $index . ']';
+            Assert::isArray($serviceProvider, 'Service provider must be an object', $path);
+
+            $this->serviceProviderConfigurationValidator->validate($serviceProvider, $path);
         }
     }
 }

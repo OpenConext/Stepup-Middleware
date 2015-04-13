@@ -42,8 +42,8 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $propertyPath
         );
 
-        $this->validateStringValue($configuration, 'entity_id', $propertyPath . '.entity_id');
-        $this->validateStringValue($configuration, 'public_key', $propertyPath . '.public_key');
+        $this->validateStringValue($configuration, 'entity_id', $propertyPath);
+        $this->validateStringValue($configuration, 'public_key', $propertyPath);
         $this->validateAssertionConsumerUrls($configuration, $propertyPath);
         $this->validateLoaDefinition($configuration, $propertyPath);
     }
@@ -56,7 +56,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
     private function validateStringValue($configuration, $name, $propertyPath)
     {
         Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
-        Assert::string($configuration[$name], 'value must be a string', $propertyPath);
+        Assert::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
     /**

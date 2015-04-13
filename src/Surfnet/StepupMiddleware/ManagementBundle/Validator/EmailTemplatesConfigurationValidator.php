@@ -73,11 +73,20 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
                 "Required property '" . $this->requiredLocale . "' is missing",
                 $templatePropertyPath
             );
-            Assert::string(
-                $configuration[$templateName][$this->requiredLocale],
-                "Property '" . $this->requiredLocale . "' must have a string as value",
-                $templatePropertyPath
-            );
+
+            foreach ($configuration[$templateName] as $locale => $template) {
+                $localePropertyPath = $templatePropertyPath . '[' . $locale . ']';
+                Assert::string(
+                    $locale,
+                    'Locale must be string',
+                    $localePropertyPath
+                );
+                Assert::string(
+                    $template,
+                    "Property '" . $this->requiredLocale . "' must have a string as value",
+                    $localePropertyPath
+                );
+            }
         }
     }
 }

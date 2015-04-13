@@ -46,16 +46,12 @@ class RaaConfigurationValidator implements ConfigurationValidatorInterface
         );
 
         $acceptedProperties = ['name_id', 'location', 'contact_info'];
-        StepupAssert::noExtraKeys(
+        StepupAssert::keysMatch(
             $raaConfiguration,
             $acceptedProperties,
             sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
             $propertyPath
         );
-
-        Assert::keyExists($raaConfiguration, 'name_id', 'required property name_id is missing', $propertyPath);
-        Assert::keyExists($raaConfiguration, 'location', 'required property location is missing', $propertyPath);
-        Assert::keyExists($raaConfiguration, 'contact_info', 'required property contact_info is missing', $propertyPath);
 
         Assert::string($raaConfiguration['name_id'], 'value must be a string', $propertyPath . '.name_id');
         Assert::string($raaConfiguration['location'], 'value must be a string', $propertyPath . '.location');

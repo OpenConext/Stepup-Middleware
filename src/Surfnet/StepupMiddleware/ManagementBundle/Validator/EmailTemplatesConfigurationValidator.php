@@ -45,7 +45,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
     {
         $templateNames = ['confirm_email', 'registration_code'];
 
-        StepupAssert::noExtraKeys(
+        StepupAssert::keysMatch(
             $configuration,
             $templateNames,
             sprintf("Expected only templates '%s'", join(',', $templateNames)),
@@ -53,12 +53,6 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         );
 
         foreach ($templateNames as $templateName) {
-            Assert::keyExists(
-                $configuration,
-                $templateName,
-                "Required property '" . $templateName . "' is missing",
-                $propertyPath
-            );
             Assert::isArray(
                 $configuration[$templateName],
                 'Property "' . $templateName . '" must have an object as value',

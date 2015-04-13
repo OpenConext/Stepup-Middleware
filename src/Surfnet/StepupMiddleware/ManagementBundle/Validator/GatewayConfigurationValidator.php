@@ -37,14 +37,13 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
      */
     public function validate(array $gatewayConfiguration, $propertyPath)
     {
-        StepupAssert::noExtraKeys(
+        StepupAssert::keysMatch(
             $gatewayConfiguration,
             ['service_providers'],
             "Expected only property 'service_providers'",
             $propertyPath
         );
 
-        Assert::keyExists($gatewayConfiguration, 'service_providers', 'missing key service_providers', $propertyPath);
         $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
     }
 

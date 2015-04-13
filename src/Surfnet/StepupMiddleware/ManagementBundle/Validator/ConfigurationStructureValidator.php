@@ -89,20 +89,10 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
         $acceptedProperties = ['gateway', 'raa', 'sraa', 'email_templates'];
-        StepupAssert::noExtraKeys(
+        StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
             sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
-            '(root)'
-        );
-
-        Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
-        Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
-        Assert::keyExists($configuration, 'sraa', "Required property 'sraa' is missing", '(root)');
-        Assert::keyExists(
-            $configuration,
-            'email_templates',
-            "Required property 'email_templates' is missing",
             '(root)'
         );
 

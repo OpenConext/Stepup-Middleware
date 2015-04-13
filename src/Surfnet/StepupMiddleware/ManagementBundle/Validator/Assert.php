@@ -22,11 +22,13 @@ use Assert\InvalidArgumentException;
 
 final class Assert
 {
-    public static function noExtraKeys(array $value, array $keys, $message = null, $propertyPath = null)
+    public static function keysMatch(array $value, array $keys, $message = null, $propertyPath = null)
     {
-        $extraKeys = array_diff(array_keys($value), $keys);
+        $keysOfValue = array_keys($value);
+        $extraKeys = array_diff($keysOfValue, $keys);
+        $missingKeys = array_diff($keys, $keysOfValue);
 
-        if (count($extraKeys) === 0) {
+        if (count($extraKeys) === 0 && count($missingKeys) === 0) {
             return;
         }
 
@@ -35,7 +37,7 @@ final class Assert
             0,
             $propertyPath,
             $value,
-            ['expected' => $keys, 'actual' => array_keys($value)]
+            ['expected' => $keys, 'actual' => $keysOfValue]
         );
     }
 }

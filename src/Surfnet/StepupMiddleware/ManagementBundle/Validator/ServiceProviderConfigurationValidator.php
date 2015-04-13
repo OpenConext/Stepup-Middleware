@@ -35,7 +35,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'assertion_encryption_enabled',
             'blacklisted_encryption_algorithms'
         ];
-        StepupAssert::noExtraKeys(
+        StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
             sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
@@ -65,7 +65,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateStringValue($configuration, $name, $propertyPath)
     {
-        Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
         Assert::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
@@ -76,7 +75,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateStringValues($configuration, $name, $propertyPath)
     {
-        Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
         Assert::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
         Assert::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
     }
@@ -88,7 +86,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateBooleanValue($configuration, $name, $propertyPath)
     {
-        Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
         Assert::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
@@ -98,8 +95,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateAssertionConsumerUrls($configuration, $propertyPath)
     {
-        Assert::keyExists($configuration, 'acs', 'required property acs is missing', $propertyPath);
-
         $value = $configuration['acs'];
         $propertyPath = $propertyPath . '.acs';
 
@@ -114,7 +109,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateLoaDefinition($configuration, $propertyPath)
     {
-        Assert::keyExists($configuration, 'loa', 'configuration must contain property loa', $propertyPath);
         $value = $configuration['loa'];
         $path  = $propertyPath . '.loa';
 

@@ -67,7 +67,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
             );
             Assert::string(
                 $configuration[$templateName][$this->requiredLocale],
-                'Property "en_GB" must have a string as value',
+                "Property '" . $this->requiredLocale . "' must have a string as value",
                 $templatePropertyPath
             );
         }

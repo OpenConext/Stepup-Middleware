@@ -46,6 +46,16 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $this->validateStringValue($configuration, 'public_key', $propertyPath);
         $this->validateAssertionConsumerUrls($configuration, $propertyPath);
         $this->validateLoaDefinition($configuration, $propertyPath);
+        $this->validateBooleanValue(
+            $configuration,
+            'assertion_encryption_enabled',
+            $propertyPath
+        );
+        $this->validateStringValues(
+            $configuration,
+            'blacklisted_encryption_algorithms',
+            $propertyPath
+        );
     }
 
     /**
@@ -57,6 +67,29 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
     {
         Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
         Assert::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
+    }
+
+    /**
+     * @param array  $configuration
+     * @param string $name
+     * @param string $propertyPath
+     */
+    private function validateStringValues($configuration, $name, $propertyPath)
+    {
+        Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
+        Assert::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
+        Assert::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
+    }
+
+    /**
+     * @param array  $configuration
+     * @param string $name
+     * @param string $propertyPath
+     */
+    private function validateBooleanValue($configuration, $name, $propertyPath)
+    {
+        Assert::keyExists($configuration, $name, sprintf('Required property %s is missing', $name), $propertyPath);
+        Assert::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
     /**

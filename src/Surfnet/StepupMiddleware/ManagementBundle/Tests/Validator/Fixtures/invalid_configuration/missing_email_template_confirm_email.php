@@ -17,24 +17,34 @@
  */
 
 return [
-    'expectedPropertyPath' => 'raa',
-    'configuration'        => [
-        'gateway'         => [
+    'expectedPropertyPath' => 'email_templates',
+    'configuration' => [
+        'gateway' => [
             'service_providers' => [
                 [
-                    'entity_id' => 'http://entity.tld/metadata',
-                    'public_key' => 'MIIEEE...',
-                    'acs' => ['http://entity.tld/consume-assertion'],
-                    'loa' => [
-                        '__default__' => 'http://gateway.tld/loa/1'
+                    "entity_id"  => "https://entity.tld/id",
+                    "public_key" => "MIIE...",
+                    "acs"        => ["https://entity.tld/consume-assertion"],
+                    "loa"        => [
+                        "__default__" => "https://entity.tld/authentication/loa2",
                     ],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
-                ],
+                ]
             ],
         ],
-        'raa'             => null,
-        'sraa'            => [],
-        'email_templates' => [],
+        'raa' => [
+            'SURFnet bv' => [
+                [
+                    'name_id'      => 'ddfd',
+                    'location'     => 'Behind you',
+                    'contact_info' => "Don't",
+                ]
+            ],
+        ],
+        'sraa' => ['20394-4320423-439248324'],
+        'email_templates' => [
+            'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+        ],
     ]
 ];

@@ -18,23 +18,34 @@
 
 return [
     'expectedPropertyPath' => 'sraa',
-    'configuration'        => [
-        'gateway'         => [
+    'configuration' => [
+        'gateway' => [
             'service_providers' => [
                 [
-                    'entity_id' => 'http://entity.tld/metadata',
-                    'public_key' => 'MIIEEE...',
-                    'acs' => ['http://entity.tld/consume-assertion'],
-                    'loa' => [
-                        '__default__' => 'http://gateway.tld/loa/1'
+                    "entity_id"  => "https://entity.tld/id",
+                    "public_key" => "MIIE...",
+                    "acs"        => ["https://entity.tld/consume-assertion"],
+                    "loa"        => [
+                        "__default__" => "https://entity.tld/authentication/loa2",
                     ],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
-                ],
+                ]
             ],
         ],
-        'raa'             => [],
-        'sraa'            => null,
-        'email_templates' => [],
+        'raa' => [
+            'SURFnet bv' => [
+                [
+                    'name_id'      => 'ddfd',
+                    'location'     => 'Behind you',
+                    'contact_info' => "Don't",
+                ]
+            ],
+        ],
+        'sraa' => 9,
+        'email_templates' => [
+            'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
+            'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+        ],
     ]
 ];

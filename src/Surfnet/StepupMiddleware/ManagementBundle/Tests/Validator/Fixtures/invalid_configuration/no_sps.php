@@ -17,6 +17,23 @@
  */
 
 return [
-    'expectedPropertyPath' => '(root)',
-    'configuration'        => null
+    'expectedPropertyPath' => 'gateway',
+    'configuration' => [
+        'gateway' => [
+        ],
+        'raa' => [
+            'SURFnet bv' => [
+                [
+                    'name_id'      => 'ddfd',
+                    'location'     => 'Behind you',
+                    'contact_info' => "Don't",
+                ]
+            ],
+        ],
+        'sraa' => ['20394-4320423-439248324'],
+        'email_templates' => [
+            'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
+            'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+        ],
+    ]
 ];

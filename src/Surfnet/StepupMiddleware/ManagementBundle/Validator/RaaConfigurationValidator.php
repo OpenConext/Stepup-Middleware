@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class RaaConfigurationValidator implements ConfigurationValidatorInterface
 {
@@ -41,6 +42,14 @@ class RaaConfigurationValidator implements ConfigurationValidatorInterface
         Assert::isArray(
             $raaConfiguration,
             "each raa configuration must be an object with properties 'name_id', 'location' and 'contact_info' as value",
+            $subPath
+        );
+
+        $acceptedProperties = ['name_id', 'location', 'contact_info'];
+        StepupAssert::noExtraKeys(
+            $raaConfiguration,
+            $acceptedProperties,
+            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
             $subPath
         );
 

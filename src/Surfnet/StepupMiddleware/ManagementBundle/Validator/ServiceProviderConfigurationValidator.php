@@ -19,12 +19,28 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
     public function validate(array $configuration, $propertyPath)
     {
         Assert::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
+
+        $acceptedProperties = [
+            'entity_id',
+            'public_key',
+            'acs',
+            'loa',
+            'assertion_encryption_enabled',
+            'blacklisted_encryption_algorithms'
+        ];
+        StepupAssert::noExtraKeys(
+            $configuration,
+            $acceptedProperties,
+            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
+            $propertyPath
+        );
 
         $this->validateStringValue($configuration, 'entity_id', $propertyPath . '.entity_id');
         $this->validateStringValue($configuration, 'public_key', $propertyPath . '.public_key');

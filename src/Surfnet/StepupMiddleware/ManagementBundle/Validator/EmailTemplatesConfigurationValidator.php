@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
 use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 final class EmailTemplatesConfigurationValidator implements ConfigurationValidatorInterface
 {
@@ -43,6 +44,13 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
     public function validate(array $configuration, $propertyPath)
     {
         $templateNames = ['confirm_email', 'registration_code'];
+
+        StepupAssert::noExtraKeys(
+            $configuration,
+            $templateNames,
+            sprintf("Expected only templates '%s'", join(',', $templateNames)),
+            $propertyPath
+        );
 
         foreach ($templateNames as $templateName) {
             Assert::keyExists(

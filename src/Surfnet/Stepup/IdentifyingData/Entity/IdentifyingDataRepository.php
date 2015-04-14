@@ -38,11 +38,11 @@ class IdentifyingDataRepository extends EntityRepository
     }
 
     /**
-     * @param IdentifyingData $sensitiveData
+     * @param IdentifyingData $identifyingData
      */
-    public function save(IdentifyingData $sensitiveData)
+    public function save(IdentifyingData $identifyingData)
     {
-        $this->getEntityManager()->persist($sensitiveData);
+        $this->getEntityManager()->persist($identifyingData);
         $this->getEntityManager()->flush();
     }
 }

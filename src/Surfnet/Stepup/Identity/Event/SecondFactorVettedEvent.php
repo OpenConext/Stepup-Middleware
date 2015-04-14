@@ -46,7 +46,7 @@ class SecondFactorVettedEvent extends IdentityEvent
     /**
      * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
      */
-    public $identifyableDataId;
+    public $identifyingDataId;
 
     /**
      * @var string

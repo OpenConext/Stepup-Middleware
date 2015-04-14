@@ -41,7 +41,9 @@
         "liip/rmt": "1.1.*",
         "moontoast/math": "~1.1",
         "rhumsaa/uuid": "~2.8",
-        "mockery/mockery": "~0.9"
+        "mockery/mockery": "~0.9",
+        "liip/functional-test-bundle": "~1.2",
+        "doctrine/data-fixtures": "~1.1"
     },
     "scripts": {
         "post-install-cmd": [

@@ -45,7 +45,7 @@ class IdentifyingDataDecorator implements RepositoryInterface
         $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
-    public function add(AggregateRoot $aggregate)
+    public function save(AggregateRoot $aggregate)
     {
         if (!$aggregate instanceof IdentifyingDataHolder) {
             throw new DomainException(
@@ -57,7 +57,7 @@ class IdentifyingDataDecorator implements RepositoryInterface
         $identifyingData = $aggregate->exposeIdentifyingData();
         $this->identifyingDataRepository->save($identifyingData);
 
-        return $this->aggregateRootRepository->add($aggregate);
+        return $this->aggregateRootRepository->save($aggregate);
     }
 
     public function load($id)
@@ -72,6 +72,12 @@ class IdentifyingDataDecorator implements RepositoryInterface
         }
 
         $identifyingDataId = $aggregate->getIdentifyingDataId();
+
+        // if there is no ID yet, we're working with a new instance of the aggregate.
+        if (!$identifyingDataId) {
+            return $aggregate;
+        }
+
         $identifyingData = $this->identifyingDataRepository->getById($identifyingDataId);
 
         if (!$identifyingData) {

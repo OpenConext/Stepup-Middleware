@@ -31,8 +31,8 @@ class IdentifyingDataRepository extends EntityRepository
     public function getById(IdentifyingDataId $id)
     {
         return $this->createQueryBuilder('s')
-            ->where('id = :id')
-            ->setParameter('id', (string) $id)
+            ->where('s.id = :identifyingDataId')
+            ->setParameter('identifyingDataId', (string) $id)
             ->getQuery()
             ->getOneOrNullResult();
     }

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
+use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
@@ -61,10 +62,10 @@ class IdentityCommandHandler extends CommandHandler
     private $configurableSettings;
 
     /**
-     * @param IdentityRepository   $repository
+     * @param RepositoryInterface  $repository
      * @param ConfigurableSettings $configurableSettings
      */
-    public function __construct(IdentityRepository $repository, ConfigurableSettings $configurableSettings)
+    public function __construct(RepositoryInterface $repository, ConfigurableSettings $configurableSettings)
     {
         $this->repository           = $repository;
         $this->configurableSettings = $configurableSettings;

@@ -529,10 +529,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function setIdentifyingData(IdentifyingData $identifyingData)
     {
-        if ($this->identifyingDataId !== $identifyingData->id) {
+        if (!$this->identifyingDataId->equals(new IdentifyingDataId($identifyingData->id))) {
             throw new DomainException(sprintf(
-                'Cannot set IdentifyingData "%s" on identity "%s" as it does not belong to this identity',
+                'Cannot set IdentifyingData "%s" on identity "%s" with IdentifyingDataId "%s" as it does not belong to '
+                . 'this identity',
                 $identifyingData->id,
+                (string) $this->identifyingDataId,
                 (string) $this->id
             ));
         }

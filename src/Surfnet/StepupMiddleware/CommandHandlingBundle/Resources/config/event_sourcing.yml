@@ -1,4 +1,10 @@
 services:
+    surfnet_stepup.repository.identity_decorated_with_identifying_data:
+        class: Surfnet\Stepup\IdentifyingData\EventSourcing\IdentifyingDataDecorator
+        arguments:
+            - @surfnet_stepup.repository.identity
+            - @stepup.repository.identifying_data
+
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:

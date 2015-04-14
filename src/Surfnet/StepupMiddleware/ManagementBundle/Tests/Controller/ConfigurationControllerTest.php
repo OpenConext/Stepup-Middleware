@@ -23,7 +23,7 @@ use Liip\FunctionalTestBundle\Test\WebTestCase;
 class ConfigurationControllerTest extends WebTestCase
 {
     /**
-     * @var \Symfony\Bundle\Frameworkbundle\Client
+     * @var \Symfony\Bundle\FrameworkBundle\Client
      */
     private $client;
 

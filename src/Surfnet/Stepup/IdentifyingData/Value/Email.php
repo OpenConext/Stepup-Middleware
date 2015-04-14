@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\IdentifyingData\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Email
+final class Email implements JsonSerializable
 {
     /**
      * @var string
@@ -61,6 +62,11 @@ final class Email
     public function equals(Email $other)
     {
         return $this->email === $other->email;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->email;
     }
 
     public function __toString()

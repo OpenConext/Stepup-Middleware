@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder;
+use Surfnet\Stepup\IdentifyingData\Value\CommonName;
+use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -31,22 +34,22 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
-interface Identity extends AggregateRoot
+interface Identity extends IdentifyingDataHolder, AggregateRoot
 {
     /**
      * @param IdentityId  $id
      * @param Institution $institution
      * @param NameId      $nameId
-     * @param string      $email
-     * @param string      $commonName
+     * @param Email       $email
+     * @param CommonName  $commonName
      * @return Identity
      */
     public static function create(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
-        $email,
-        $commonName
+        Email $email,
+        CommonName $commonName
     );
 
     /**
@@ -55,16 +58,16 @@ interface Identity extends AggregateRoot
     public function __construct();
 
     /**
-     * @param string $commonName
+     * @param CommonName $commonName
      * @return void
      */
-    public function rename($commonName);
+    public function rename(CommonName $commonName);
 
     /**
-     * @param string $email
+     * @param Email $email
      * @return void
      */
-    public function changeEmail($email);
+    public function changeEmail(Email $email);
 
     /**
      * @param SecondFactorId $secondFactorId
@@ -182,16 +185,6 @@ interface Identity extends AggregateRoot
      * @return Institution
      */
     public function getInstitution();
-
-    /**
-     * @return string
-     */
-    public function getCommonName();
-
-    /**
-     * @return string
-     */
-    public function getEmail();
 
     /**
      * @param SecondFactorId $secondFactorId

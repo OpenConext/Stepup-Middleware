@@ -27,7 +27,7 @@ use Surfnet\Stepup\IdentifyingData\Value\CommonName;
  */
 class CommonNameType extends Type
 {
-    const NAME = 'common_name';
+    const NAME = 'stepup_common_name';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

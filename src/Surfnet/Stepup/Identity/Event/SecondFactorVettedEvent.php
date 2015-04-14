@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -43,6 +44,11 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $secondFactorType;
 
     /**
+     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
+     */
+    public $identifyableDataId;
+
+    /**
      * @var string
      */
     public $secondFactorIdentifier;
@@ -53,31 +59,20 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $documentNumber;
 
     /**
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * @var string
-     */
-    public $email;
-
-    /**
      * @var string Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param NameId $nameId
-     * @param Institution $institution
-     * @param SecondFactorId $secondFactorId
-     * @param SecondFactorType $secondFactorType
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId        $identityId
+     * @param NameId            $nameId
+     * @param Institution       $institution
+     * @param SecondFactorId    $secondFactorId
+     * @param SecondFactorType  $secondFactorType
+     * @param IdentifyingDataId $identifyingDataId
+     * @param string            $secondFactorIdentifier
+     * @param string            $documentNumber
+     * @param string            $preferredLocale
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -87,22 +82,20 @@ class SecondFactorVettedEvent extends IdentityEvent
         Institution $institution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
+        IdentifyingDataId $identifyingDataId,
         $secondFactorIdentifier,
         $documentNumber,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId = $nameId;
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
+        $this->nameId                 = $nameId;
+        $this->secondFactorId         = $secondFactorId;
+        $this->secondFactorType       = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->documentNumber = $documentNumber;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
+        $this->identifyingDataId      = $identifyingDataId;
+        $this->documentNumber         = $documentNumber;
+        $this->preferredLocale        = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
@@ -124,10 +117,9 @@ class SecondFactorVettedEvent extends IdentityEvent
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['second_factor_identifier'],
             $data['document_number'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -135,16 +127,15 @@ class SecondFactorVettedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'name_id' => (string) $this->nameId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id' => (string) $this->secondFactorId,
-            'second_factor_type' => (string) $this->secondFactorType,
+            'identity_id'              => (string) $this->identityId,
+            'name_id'                  => (string) $this->nameId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => (string) $this->secondFactorId,
+            'second_factor_type'       => (string) $this->secondFactorType,
+            'identifying_data_id'      => (string) $this->identifyingDataId,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'document_number' => $this->documentNumber,
-            'common_name' => $this->commonName,
-            'email' => $this->email,
-            'preferred_locale' => $this->preferredLocale,
+            'document_number'          => $this->documentNumber,
+            'preferred_locale'         => $this->preferredLocale,
         ];
     }
 }

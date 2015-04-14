@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\IdentifyingData\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class CommonName
+final class CommonName implements JsonSerializable
 {
     /**
      * @var string
@@ -54,6 +55,11 @@ final class CommonName
     public function equals(CommonName $other)
     {
         return $this->commonName === $other->commonName;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->commonName;
     }
 
     public function __toString()

@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\IdentifyingData\Api;
 
 use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 
 interface IdentifyingDataHolder
 {
     /**
-     * @return string UUID
+     * @return IdentifyingDataId UUID
      */
     public function getIdentifyingDataId();
 

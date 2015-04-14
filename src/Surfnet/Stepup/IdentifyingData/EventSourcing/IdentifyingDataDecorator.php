@@ -72,7 +72,7 @@ class IdentifyingDataDecorator implements RepositoryInterface
         }
 
         $identifyingDataId = $aggregate->getIdentifyingDataId();
-        $identifyingData = $this->identifyingDataRepository->getByUuid($identifyingDataId);
+        $identifyingData = $this->identifyingDataRepository->getById($identifyingDataId);
 
         if (!$identifyingData) {
             throw new DomainException(sprintf('No Identifying Data with id "%s" found', $identifyingDataId));

@@ -18,10 +18,12 @@
 
 namespace Surfnet\Stepup\IdentifyingData\Value;
 
+use JsonSerializable;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 
-final class IdentifyingDataId
+final class IdentifyingDataId implements JsonSerializable
 {
     /**
      * @var string
@@ -41,11 +43,12 @@ final class IdentifyingDataId
     }
 
     /**
+     * @param IdentityId $identityId
      * @return IdentifyingDataId
      */
-    public static function generate()
+    public static function fromIdentityId(IdentityId $identityId)
     {
-        return new self(Uuid::uuid4());
+        return new self((string) $identityId);
     }
 
     /**
@@ -55,6 +58,11 @@ final class IdentifyingDataId
     public function equals(IdentifyingDataId $other)
     {
         return $this->identifyingDataId === $other->identifyingDataId;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->identifyingDataId;
     }
 
     public function __toString()

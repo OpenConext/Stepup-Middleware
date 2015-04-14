@@ -27,7 +27,7 @@ use Surfnet\Stepup\IdentifyingData\Value\Email;
  */
 class EmailType extends Type
 {
-    const NAME = 'email';
+    const NAME = 'stepup_email';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

@@ -134,10 +134,9 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->identity->getIdentifyingDataId(),
                 $this->secondFactorIdentifier,
                 $documentNumber,
-                $this->identity->getCommonName(),
-                $this->identity->getEmail(),
                 'en_GB'
             )
         );

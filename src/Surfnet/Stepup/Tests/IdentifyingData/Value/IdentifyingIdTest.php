@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Tests\IdentifyingData\Value;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 
-class IdentifiableDataIdTest extends UnitTest
+class IdentifyingDataIdTest extends UnitTest
 {
     /**
      * @test

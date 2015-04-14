@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -50,23 +51,14 @@ class GssfPossessionProvenEvent extends IdentityEvent
     public $emailVerificationWindow;
 
     /**
+     * @var IdentifyingDataId
+     */
+    public $identifyingDataId;
+
+    /**
      * @var string
      */
     public $emailVerificationNonce;
-
-    /**
-     * The identity's common name.
-     *
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * The identity's email address.
-     *
-     * @var string
-     */
-    public $email;
 
     /**
      * @var string Eg. "en_GB"
@@ -82,9 +74,8 @@ class GssfPossessionProvenEvent extends IdentityEvent
      * @param StepupProvider          $stepupProvider
      * @param GssfId                  $gssfId
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @param IdentifyingDataId       $identifyingDataId
      * @param string                  $emailVerificationNonce
-     * @param string                  $commonName
-     * @param string                  $email
      * @param string                  $preferredLocale
      */
     public function __construct(
@@ -94,9 +85,8 @@ class GssfPossessionProvenEvent extends IdentityEvent
         StepupProvider $stepupProvider,
         GssfId $gssfId,
         EmailVerificationWindow $emailVerificationWindow,
+        IdentifyingDataId $identifyingDataId,
         $emailVerificationNonce,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
@@ -105,9 +95,8 @@ class GssfPossessionProvenEvent extends IdentityEvent
         $this->stepupProvider          = $stepupProvider;
         $this->gssfId                  = $gssfId;
         $this->emailVerificationWindow = $emailVerificationWindow;
+        $this->identifyingDataId       = $identifyingDataId;
         $this->emailVerificationNonce  = $emailVerificationNonce;
-        $this->commonName              = $commonName;
-        $this->email                   = $email;
         $this->preferredLocale         = $preferredLocale;
     }
 
@@ -131,9 +120,8 @@ class GssfPossessionProvenEvent extends IdentityEvent
             new StepupProvider($data['stepup_provider']),
             new GssfId($data['gssf_id']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['email_verification_nonce'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -147,9 +135,8 @@ class GssfPossessionProvenEvent extends IdentityEvent
             'stepup_provider'           => (string) $this->stepupProvider,
             'gssf_id'                   => (string) $this->gssfId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'identifying_data_id'       => (string) $this->identifyingDataId,
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'common_name'               => (string) $this->commonName,
-            'email'                     => (string) $this->email,
             'preferred_locale'          => $this->preferredLocale,
         ];
     }

@@ -19,6 +19,10 @@
 namespace Surfnet\Stepup\IdentifyingData\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\IdentifyingData\Value\CommonName;
+use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository")
@@ -30,21 +34,31 @@ class IdentifyingData
      * @ORM\Id
      * @ORM\Column(length=36)
      *
-     * @var string
+     * @var IdentifyingDataId
      */
-    public $uuid;
+    public $id;
 
     /**
-     * @ORM\Column(length=255)
+     * @ORM\Column(type="stepup_common_name", length=255)
      *
-     * @var string
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @ORM\Column(length=255)
+     * @ORM\Column(type="stepup_email", length=255)
      *
-     * @var string
+     * @var Email
      */
     public $email;
+
+    public static function createFrom(IdentityId $id, Email $email, CommonName $commonName)
+    {
+        $identifyingData             = new self();
+        $identifyingData->id         = IdentifyingDataId::fromIdentityId($id);
+        $identifyingData->email      = $email;
+        $identifyingData->commonName = $commonName;
+
+        return $identifyingData;
+    }
 }

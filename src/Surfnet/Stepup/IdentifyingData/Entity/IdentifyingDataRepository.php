@@ -19,24 +19,20 @@
 namespace Surfnet\Stepup\IdentifyingData\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 
 class IdentifyingDataRepository extends EntityRepository
 {
     /**
-     * @param string $uuid
+     * @param IdentifyingDataId $id
      * @return IdentifyingData
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getByUuid($uuid)
+    public function getById(IdentifyingDataId $id)
     {
-        if (!is_string($uuid)) {
-            throw InvalidArgumentException::invalidType('string (uuid)', 'uuid', $uuid);
-        }
-
         return $this->createQueryBuilder('s')
-            ->where('id = :uuid')
-            ->setParameter('uuid', $uuid)
+            ->where('id = :id')
+            ->setParameter('id', (string) $id)
             ->getQuery()
             ->getOneOrNullResult();
     }

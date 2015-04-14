@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -43,19 +44,14 @@ class EmailVerifiedEvent extends IdentityEvent
     public $registrationRequestedAt;
 
     /**
+     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
+     */
+    public $identifyingDataId;
+
+    /**
      * @var string
      */
     public $registrationCode;
-
-    /**
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * @var string
-     */
-    public $email;
 
     /**
      * @var string Eg. "en_GB"
@@ -63,15 +59,14 @@ class EmailVerifiedEvent extends IdentityEvent
     public $preferredLocale;
 
     /**
-     * @param IdentityId       $identityId
-     * @param Institution      $identityInstitution
-     * @param SecondFactorId   $secondFactorId
-     * @param SecondFactorType $secondFactorType
-     * @param DateTime         $registrationRequestedAt
-     * @param string           $registrationCode
-     * @param string           $commonName
-     * @param string           $email
-     * @param string           $preferredLocale
+     * @param IdentityId        $identityId
+     * @param Institution       $identityInstitution
+     * @param SecondFactorId    $secondFactorId
+     * @param SecondFactorType  $secondFactorType
+     * @param DateTime          $registrationRequestedAt
+     * @param IdentifyingDataId $identifyingDataId
+     * @param string            $registrationCode
+     * @param string            $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
@@ -79,20 +74,18 @@ class EmailVerifiedEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
         DateTime $registrationRequestedAt,
+        IdentifyingDataId $identifyingDataId,
         $registrationCode,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
+        $this->secondFactorId          = $secondFactorId;
+        $this->secondFactorType        = $secondFactorType;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->registrationCode = $registrationCode;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
+        $this->identifyingDataId       = $identifyingDataId;
+        $this->registrationCode        = $registrationCode;
+        $this->preferredLocale         = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
@@ -114,9 +107,8 @@ class EmailVerifiedEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
             DateTime::fromString($data['registration_requested_at']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['registration_code'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -129,9 +121,8 @@ class EmailVerifiedEvent extends IdentityEvent
             'second_factor_id'          => (string) $this->secondFactorId,
             'second_factor_type'        => (string) $this->secondFactorType,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
+            'identifying_data_id'       => (string) $this->identifyingDataId,
             'registration_code'         => $this->registrationCode,
-            'common_name'               => $this->commonName,
-            'email'                     => $this->email,
             'preferred_locale'          => $this->preferredLocale,
         ];
     }

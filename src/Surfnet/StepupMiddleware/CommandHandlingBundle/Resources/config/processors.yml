@@ -4,6 +4,7 @@ services:
         arguments:
             - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
             - @surfnet_stepup_middleware_api.service.ra
+            - @stepup.repository.identifying_data
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_command_handling.service.second_factor_mail:

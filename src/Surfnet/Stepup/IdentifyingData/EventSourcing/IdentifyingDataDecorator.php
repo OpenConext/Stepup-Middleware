@@ -22,6 +22,7 @@ use Broadway\Domain\AggregateRoot;
 use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder;
 use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 
@@ -48,9 +49,10 @@ class IdentifyingDataDecorator implements RepositoryInterface
     public function save(AggregateRoot $aggregate)
     {
         if (!$aggregate instanceof IdentifyingDataHolder) {
-            throw new DomainException(
-                'The AggregateRoot must implement the \Surfnet\Stepup\Identity\Api\AccessibleIdentifyingData interface '
-                . 'to be able to set/get the Identifying Data'
+            throw InvalidArgumentException::invalidType(
+                'instance of \Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder',
+                'aggregate',
+                $aggregate
             );
         }
 
@@ -65,9 +67,10 @@ class IdentifyingDataDecorator implements RepositoryInterface
         $aggregate = $this->aggregateRootRepository->load($id);
 
         if (!$aggregate instanceof IdentifyingDataHolder) {
-            throw new DomainException(
-                'The AggregateRoot must implement the \Surfnet\Stepup\Identity\Api\AccessibleIdentifyingData interface '
-                . 'to be able to set/get the Identifying Data'
+            throw InvalidArgumentException::invalidType(
+                'instance of \Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder',
+                'aggregate',
+                $aggregate
             );
         }
 

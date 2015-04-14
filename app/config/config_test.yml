@@ -31,3 +31,16 @@ doctrine:
 
 liip_functional_test:
     cache_sqlite_db: true
+
+monolog:
+    handlers:
+        # Handlers are merged in from config.yml and config_dev.yml. They cannot be disabled or removed. The practical
+        # solution is to assign them the `null` handler, which discards the records.
+        main_graylog:
+            type: null
+        main_logfile:
+            type: null
+        graylog:
+            type: null
+        console:
+            type: null

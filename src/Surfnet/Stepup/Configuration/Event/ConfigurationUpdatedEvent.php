@@ -21,21 +21,21 @@ namespace Surfnet\Stepup\Configuration\Event;
 class ConfigurationUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var string
+     * @var array
      */
     public $newConfiguration;
 
     /**
-     * @var string
+     * @var array|null
      */
     public $oldConfiguration;
 
     /**
      * @param string $id
-     * @param string $newConfiguration
-     * @param string $oldConfiguration
+     * @param array $newConfiguration
+     * @param array|null $oldConfiguration
      */
-    public function __construct($id, $newConfiguration, $oldConfiguration)
+    public function __construct($id, array $newConfiguration, array $oldConfiguration = null)
     {
         parent::__construct($id);
 

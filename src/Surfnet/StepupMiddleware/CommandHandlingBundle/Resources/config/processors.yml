@@ -16,6 +16,8 @@ services:
             - @translator
             - @templating
             - '' # Verification URL set in bundle extension
+            - @surfnet_stepup_middleware_management.service.email_template
+            - '' # Fallback locale
 
     surfnet_stepup_middleware_command_handling.email_sender:
         public: false
@@ -23,3 +25,4 @@ services:
         arguments:
             - ''
             - ''
+

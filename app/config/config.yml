@@ -119,6 +119,12 @@ doctrine:
                         dir: %kernel.root_dir%/../src/Surfnet/Stepup/IdentifyingData/Entity
                         prefix: Surfnet\Stepup\IdentifyingData\Entity
                         is_bundle: false
+                    management_configuration:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration
+                        prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
+
                 dql:
                     string_functions:
                         MATCH_AGAINST: \Surfnet\StepupMiddleware\ApiBundle\Doctrine\Query\MatchAgainst
@@ -193,9 +199,13 @@ monolog:
 
 surfnet_stepup_middleware_command_handling:
     self_service_email_verification_url_template: %self_service_email_verification_url_template%
+    email_fallback_locale: %default_locale%
     email_sender:
         name: %email_sender_name%
         email: %email_sender_email%
 
 surfnet_stepup_middleware_middleware:
     email_verification_window: %email_verification_window%
+
+surfnet_stepup_middleware_management:
+    email_required_locale: %default_locale%

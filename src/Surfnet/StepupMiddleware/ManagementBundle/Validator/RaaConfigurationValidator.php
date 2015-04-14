@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class RaaConfigurationValidator implements ConfigurationValidatorInterface
 {
@@ -36,20 +37,24 @@ class RaaConfigurationValidator implements ConfigurationValidatorInterface
         }
     }
 
-    public function validateRaaConfiguration($raaConfiguration, $subPath)
+    public function validateRaaConfiguration($raaConfiguration, $propertyPath)
     {
         Assert::isArray(
             $raaConfiguration,
             "each raa configuration must be an object with properties 'name_id', 'location' and 'contact_info' as value",
-            $subPath
+            $propertyPath
         );
 
-        Assert::keyExists($raaConfiguration, 'name_id', 'required property name_id is missing', $subPath);
-        Assert::keyExists($raaConfiguration, 'location', 'required property location is missing', $subPath);
-        Assert::keyExists($raaConfiguration, 'contact_info', 'required property contact_info is missing', $subPath);
+        $acceptedProperties = ['name_id', 'location', 'contact_info'];
+        StepupAssert::keysMatch(
+            $raaConfiguration,
+            $acceptedProperties,
+            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
+            $propertyPath
+        );
 
-        Assert::string($raaConfiguration['name_id'], 'value must be a string', $subPath . '.name_id');
-        Assert::string($raaConfiguration['location'], 'value must be a string', $subPath . '.location');
-        Assert::string($raaConfiguration['contact_info'], 'value must be a string', $subPath . '.contact_info');
+        Assert::string($raaConfiguration['name_id'], 'value must be a string', $propertyPath . '.name_id');
+        Assert::string($raaConfiguration['location'], 'value must be a string', $propertyPath . '.location');
+        Assert::string($raaConfiguration['contact_info'], 'value must be a string', $propertyPath . '.contact_info');
     }
 }

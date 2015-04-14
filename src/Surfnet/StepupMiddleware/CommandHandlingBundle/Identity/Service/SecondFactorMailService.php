@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
@@ -54,9 +54,9 @@ class SecondFactorMailService
     private $emailVerificationUrlTemplate;
 
     /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
+     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
      */
-    private $emailTemplateRepository;
+    private $emailTemplateService;
 
     /**
      * @var string
@@ -69,7 +69,7 @@ class SecondFactorMailService
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
      * @param string $emailVerificationUrlTemplate
-     * @param EmailTemplateRepository $emailTemplateRepository
+     * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
      */
     public function __construct(
@@ -78,7 +78,7 @@ class SecondFactorMailService
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
         $emailVerificationUrlTemplate,
-        EmailTemplateRepository $emailTemplateRepository,
+        EmailTemplateService $emailTemplateService,
         $fallbackLocale
     ) {
         $this->mailer = $mailer;
@@ -86,7 +86,7 @@ class SecondFactorMailService
         $this->translator = $translator;
         $this->templateEngine = $templateEngine;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
-        $this->emailTemplateRepository = $emailTemplateRepository;
+        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
     }
 
@@ -114,10 +114,10 @@ class SecondFactorMailService
             urlencode($verificationNonce),
             $this->emailVerificationUrlTemplate
         );
-        $emailTemplate = $this->emailTemplateRepository->findByName('confirm_email', $locale, $this->fallbackLocale);
+        $emailTemplate = $this->emailTemplateService->findByName('confirm_email', $locale, $this->fallbackLocale);
 
         $parameters = [
-            'templateString'   => $emailTemplate->getHtmlContent(),
+            'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,
@@ -161,13 +161,13 @@ class SecondFactorMailService
             $locale
         );
 
-        $emailTemplate = $this->emailTemplateRepository->findByName(
+        $emailTemplate = $this->emailTemplateService->findByName(
             'registration_code',
             $locale,
             $this->fallbackLocale
         );
         $parameters = [
-            'templateString'   => $emailTemplate->getHtmlContent(),
+            'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,

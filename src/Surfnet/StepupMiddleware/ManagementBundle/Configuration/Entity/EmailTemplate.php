@@ -76,6 +76,22 @@ class EmailTemplate
     /**
      * @return string
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @return string
+     */
     public function getHtmlContent()
     {
         return $this->htmlContent;

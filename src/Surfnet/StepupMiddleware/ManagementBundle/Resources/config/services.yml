@@ -39,3 +39,7 @@ services:
         factory_service: doctrine.orm.middleware_entity_manager
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate ]
+
+    surfnet_stepup_middleware_management.service.email_template:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
+        arguments: [ @surfnet_stepup_middleware_management.repository.email_template ]

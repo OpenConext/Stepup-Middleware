@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository")
  * @ORM\Table(
  *      name="email_templates",
  *      indexes={}

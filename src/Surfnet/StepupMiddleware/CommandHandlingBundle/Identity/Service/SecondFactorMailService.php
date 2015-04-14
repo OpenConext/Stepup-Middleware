@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
@@ -54,7 +54,7 @@ class SecondFactorMailService
     private $emailVerificationUrlTemplate;
 
     /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository
+     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
      */
     private $emailTemplateRepository;
 

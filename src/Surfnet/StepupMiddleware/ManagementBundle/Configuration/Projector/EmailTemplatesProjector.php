@@ -16,17 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Projector;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTemplate;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
 final class EmailTemplatesProjector extends Projector
 {
     /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository\EmailTemplateRepository
+     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
      */
     private $repository;
 

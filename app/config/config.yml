@@ -111,11 +111,11 @@ doctrine:
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
-                    configuration_command_handling:
+                    management_configuration:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Configuration
-                        prefix: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration
+                        prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
                 dql:
                     string_functions:

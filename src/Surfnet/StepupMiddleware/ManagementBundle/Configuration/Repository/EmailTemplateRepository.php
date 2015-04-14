@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Repository;
+namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTemplate;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 
 final class EmailTemplateRepository extends EntityRepository
 {
@@ -27,7 +27,7 @@ final class EmailTemplateRepository extends EntityRepository
      * @param string $name
      * @param string $preferredLocale
      * @param string $fallbackLocale
-     * @return EmailTemplate
+     * @return \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate
      */
     public function findByName($name, $preferredLocale, $fallbackLocale)
     {
@@ -54,7 +54,7 @@ final class EmailTemplateRepository extends EntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Entity\EmailTemplate tpl'
+                'DELETE FROM Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate tpl'
             )->execute();
     }
 

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -51,23 +52,14 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     public $emailVerificationWindow;
 
     /**
+     * @var IdentifyingDataId
+     */
+    public $identifyingDataId;
+
+    /**
      * @var string
      */
     public $emailVerificationNonce;
-
-    /**
-     * The identity's common name.
-     *
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * The identity's email address.
-     *
-     * @var string
-     */
-    public $email;
 
     /**
      * @var string Eg. "en_GB"
@@ -80,9 +72,8 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
      * @param SecondFactorId          $secondFactorId
      * @param YubikeyPublicId         $yubikeyPublicId
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @param IdentifyingDataId       $identifyingDataId
      * @param string                  $emailVerificationNonce
-     * @param string                  $commonName
-     * @param string                  $email
      * @param string                  $preferredLocale
      */
     public function __construct(
@@ -91,20 +82,18 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
         EmailVerificationWindow $emailVerificationWindow,
+        IdentifyingDataId $identifyingDataId,
         $emailVerificationNonce,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->secondFactorId = $secondFactorId;
-        $this->yubikeyPublicId = $yubikeyPublicId;
+        $this->secondFactorId          = $secondFactorId;
+        $this->yubikeyPublicId         = $yubikeyPublicId;
         $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce = $emailVerificationNonce;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
+        $this->identifyingDataId       = $identifyingDataId;
+        $this->emailVerificationNonce  = $emailVerificationNonce;
+        $this->preferredLocale         = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
@@ -126,9 +115,8 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['email_verification_nonce'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -141,9 +129,8 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'second_factor_id'          => (string) $this->secondFactorId,
             'yubikey_public_id'         => (string) $this->yubikeyPublicId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'identifying_data_id'       => (string) $this->identifyingDataId,
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'common_name'               => (string) $this->commonName,
-            'email'                     => (string) $this->email,
             'preferred_locale'          => $this->preferredLocale,
         ];
     }

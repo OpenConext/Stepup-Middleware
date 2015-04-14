@@ -1,7 +1,17 @@
 services:
+    stepup.repository.identifying_data:
+        public: false
+        class: Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository
+        factory_service: doctrine.orm.entity_manager
+        factory_method:  getRepository
+        arguments:
+            - 'Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData'
+
     surfnet_stepup_middleware_api.projector.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentityProjector
-        arguments: [ @surfnet_stepup_middleware_api.repository.identity ]
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.identity
+            - @stepup.repository.identifying_data
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.second_factor:
@@ -18,6 +28,7 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.ra_second_factor
             - @surfnet_stepup_middleware_api.repository.identity
+            - @stepup.repository.identifying_data
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.raa:

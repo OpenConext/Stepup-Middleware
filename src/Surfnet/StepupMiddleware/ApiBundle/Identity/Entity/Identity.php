@@ -22,6 +22,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\IdentifyingData\Value\CommonName;
+use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
@@ -53,9 +55,9 @@ class Identity implements JsonSerializable
     public $nameId;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_common_name")
      *
-     * @var string
+     * @var CommonName
      */
     public $commonName;
 
@@ -67,9 +69,9 @@ class Identity implements JsonSerializable
     public $institution;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_email")
      *
-     * @var string
+     * @var Email
      */
     public $email;
 
@@ -104,8 +106,8 @@ class Identity implements JsonSerializable
         $id,
         Institution $institution,
         $nameId,
-        $email,
-        $commonName
+        Email $email,
+        CommonName $commonName
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
@@ -113,14 +115,6 @@ class Identity implements JsonSerializable
 
         if (!is_string($nameId)) {
             throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
-        }
-
-        if (!is_string($email)) {
-            throw InvalidArgumentException::invalidType('string', 'email', $email);
-        }
-
-        if (!is_string($commonName)) {
-            throw InvalidArgumentException::invalidType('string', 'commonName', $commonName);
         }
 
         $identity = new self();

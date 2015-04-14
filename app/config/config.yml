@@ -97,6 +97,8 @@ doctrine:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            stepup_common_name: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\CommonNameType
+            stepup_email: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -110,6 +112,12 @@ doctrine:
                         type: annotation
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
+                        is_bundle: false
+                    stepup_identifying_data:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/Stepup/IdentifyingData/Entity
+                        prefix: Surfnet\Stepup\IdentifyingData\Entity
                         is_bundle: false
                     management_configuration:
                         mapping: true

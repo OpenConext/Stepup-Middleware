@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -34,7 +35,17 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var Institution
+     */
+    public $institution;
+
+    /**
+     * @var IdentifyingDataId
+     */
+    public $identifyingDataId;
+
+    /**
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
@@ -47,12 +58,15 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         IdentityId $identityId,
         NameId $nameId,
         Institution $institution,
+        IdentifyingDataId $identifyingDataId,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
         parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
+        $this->institution = $institution;
+        $this->identifyingDataId = $identifyingDataId;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
@@ -74,6 +88,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             'identity_id'          => (string) $this->identityId,
             'name_id'              => (string) $this->nameId,
             'identity_institution' => (string) $this->identityInstitution,
+            'identifying_data_id' => (string) $this->identifyingDataId,
             'second_factor_id'     => (string) $this->secondFactorId,
             'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
@@ -85,6 +100,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['identity_institution']),
+            new IdentifyingDataId($data['identifying_data_id']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id'])
         );

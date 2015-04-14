@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -31,27 +32,20 @@ class IdentityCreatedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var string
+     * @var IdentifyingDataId
      */
-    public $email;
-
-    /**
-     * @var string
-     */
-    public $commonName;
+    public $identifyingDataId;
 
     public function __construct(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
-        $email,
-        $commonName
+        IdentifyingDataId $identifyingDataId
     ) {
         parent::__construct($id, $institution);
 
         $this->nameId = $nameId;
-        $this->email = $email;
-        $this->commonName = $commonName;
+        $this->identifyingDataId = $identifyingDataId;
     }
 
     public function getAuditLogMetadata()
@@ -69,19 +63,17 @@ class IdentityCreatedEvent extends IdentityEvent
             new IdentityId($data['id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
-            $data['email'],
-            $data['common_name']
+            new IdentifyingDataId($data['identifying_data_id'])
         );
     }
 
     public function serialize()
     {
         return [
-            'id' => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'name_id' => (string) $this->nameId,
-            'email' => $this->email,
-            'common_name' => $this->commonName
+            'id'                  => (string) $this->identityId,
+            'institution'         => (string) $this->identityInstitution,
+            'name_id'             => (string) $this->nameId,
+            'identifying_data_id' => (string) $this->identifyingDataId
         ];
     }
 }

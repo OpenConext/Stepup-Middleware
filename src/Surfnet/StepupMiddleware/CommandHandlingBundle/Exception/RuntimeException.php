@@ -16,23 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ManagementBundle\DependencyInjection;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use RuntimeException as CoreRuntimeException;
 
-class Configuration implements ConfigurationInterface
+class RuntimeException extends CoreRuntimeException implements Exception
 {
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('surfnet_stepup_middleware_management');
-
-        $rootNode
-            ->children()
-                ->scalarNode('email_required_locale')->isRequired()->end()
-            ->end();
-
-        return $treeBuilder;
-    }
 }

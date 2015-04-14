@@ -16,23 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ManagementBundle\DependencyInjection;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Dto\EmailTemplate;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 
-class Configuration implements ConfigurationInterface
+interface EmailTemplateService
 {
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('surfnet_stepup_middleware_management');
-
-        $rootNode
-            ->children()
-                ->scalarNode('email_required_locale')->isRequired()->end()
-            ->end();
-
-        return $treeBuilder;
-    }
+    /**
+     * @param string $name
+     * @param string $preferredLocale
+     * @param string $fallbackLocale
+     * @return EmailTemplate
+     * @throws RuntimeException
+     */
+    public function findByName($name, $preferredLocale, $fallbackLocale);
 }

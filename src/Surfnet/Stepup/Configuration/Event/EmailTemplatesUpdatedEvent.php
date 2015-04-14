@@ -18,46 +18,31 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
-class ConfigurationUpdatedEvent extends ConfigurationEvent
+class EmailTemplatesUpdatedEvent extends ConfigurationEvent
 {
     /**
      * @var array
      */
-    public $newConfiguration;
+    public $emailTemplates;
 
     /**
-     * @var array
+     * @param string $configurationId
+     * @param array  $emailTemplates
      */
-    public $oldConfiguration;
-
-    /**
-     * @param string $id
-     * @param array $newConfiguration
-     * @param array $oldConfiguration
-     */
-    public function __construct($id, $newConfiguration, $oldConfiguration)
+    public function __construct($configurationId, array $emailTemplates)
     {
-        parent::__construct($id);
+        parent::__construct($configurationId);
 
-        $this->newConfiguration = $newConfiguration;
-        $this->oldConfiguration = $oldConfiguration;
+        $this->emailTemplates = $emailTemplates;
     }
 
     public static function deserialize(array $data)
     {
-        return new self(
-            $data['id'],
-            $data['new_configuration'],
-            $data['old_configuration']
-        );
+        return new self($data['id'], $data['email_templates']);
     }
 
     public function serialize()
     {
-        return [
-            'id'                => $this->id,
-            'new_configuration' => $this->newConfiguration,
-            'old_configuration' => $this->oldConfiguration
-        ];
+        return ['id' => $this->id, 'email_templates' => $this->emailTemplates];
     }
 }

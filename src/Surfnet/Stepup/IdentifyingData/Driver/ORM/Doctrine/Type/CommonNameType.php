@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 
 /**
@@ -49,7 +51,20 @@ class CommonNameType extends Type
             return $value;
         }
 
-        return new CommonName($value);
+        try {
+            $commonName = new CommonName($value);
+        } catch (InvalidArgumentException $e) {
+            // get nice standard message, so we can throw it keeping the exception chain
+            $doctrineExceptionMessage = ConversionException::conversionFailedFormat(
+                $value,
+                $this->getName(),
+                $platform->getDateTimeFormatString()
+            )->getMessage();
+
+            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+        }
+
+        return $commonName;
     }
 
     public function getName()

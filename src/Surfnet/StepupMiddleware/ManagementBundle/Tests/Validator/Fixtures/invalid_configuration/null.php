@@ -16,18 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
-
-use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
-use Rhumsaa\Uuid\Uuid;
-
-abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
-{
-    /**
-     * @return string
-     */
-    protected static function uuid()
-    {
-        return (string) Uuid::uuid4();
-    }
-}
+return [
+    'expectedPropertyPath' => '(root)',
+    'configuration'        => null
+];

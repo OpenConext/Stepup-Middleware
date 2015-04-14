@@ -22,6 +22,7 @@ use Assert\Assertion as Assert;
 use Assert\InvalidArgumentException as AssertionException;
 use GuzzleHttp;
 use InvalidArgumentException as CoreInvalidArgumentException;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -83,16 +84,15 @@ class ConfigurationStructureValidator extends ConstraintValidator
         return GuzzleHttp\json_decode($rawValue, true);
     }
 
-    public function validateRoot(array $configuration)
+    public function validateRoot($configuration)
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
-        Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
-        Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
-        Assert::keyExists($configuration, 'sraa', "Required property 'sraa' is missing", '(root)');
-        Assert::keyExists(
+
+        $acceptedProperties = ['gateway', 'raa', 'sraa', 'email_templates'];
+        StepupAssert::keysMatch(
             $configuration,
-            'email_templates',
-            "Required property 'email_templates' is missing",
+            $acceptedProperties,
+            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
             '(root)'
         );
 

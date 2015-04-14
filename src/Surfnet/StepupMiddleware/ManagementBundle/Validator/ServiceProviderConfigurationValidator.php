@@ -38,7 +38,10 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
-            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
+            sprintf(
+                "The following properties must be present: '%s'; other properties are not supported",
+                join("', '", $acceptedProperties)
+            ),
             $propertyPath
         );
 

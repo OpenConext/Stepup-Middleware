@@ -30,6 +30,7 @@ interface IdentifyingDataHolder
 
     /**
      * @param IdentifyingData $identifyingData
+     * @return void
      */
     public function setIdentifyingData(IdentifyingData $identifyingData);
 

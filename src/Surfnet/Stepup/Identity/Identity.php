@@ -374,16 +374,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors     = new SecondFactorCollection();
     }
 
-    protected function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
-    {
-        // @todo discuss removal as it is a noop
-    }
-
-    protected function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
-    {
-        // @todo discuss removal as it is a noop
-    }
-
     protected function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
         $secondFactor = VettedSecondFactor::create(

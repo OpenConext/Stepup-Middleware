@@ -18,8 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 
-use LogicException as CoreLogicException;
-
-class LogicException extends CoreLogicException implements Exception
+/**
+ * Marker interface
+ */
+interface Exception
 {
 }

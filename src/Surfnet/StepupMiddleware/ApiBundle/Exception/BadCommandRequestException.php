@@ -24,7 +24,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 /**
  * Thrown when a client provided invalid command input to the application.
  */
-class BadCommandRequestException extends \RuntimeException
+class BadCommandRequestException extends RuntimeException
 {
     /**
      * @var string[]

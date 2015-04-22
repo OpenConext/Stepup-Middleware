@@ -114,8 +114,6 @@ class RaaRepository extends EntityRepository
         return $this->findOneBy(['nameId' => $nameId]);
     }
 
-
-
     /**
      * @param Institution $institution
      * @return Raa[]

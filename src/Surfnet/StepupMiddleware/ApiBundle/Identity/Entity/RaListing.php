@@ -24,6 +24,7 @@ use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository")
@@ -65,9 +66,9 @@ class RaListing implements JsonSerializable
     public $email;
 
     /**
-     * @ORM\Column(length=20)
+     * @ORM\Column(type="authority_role")
      *
-     * @var string
+     * @var AuthorityRole
      */
     public $role;
 
@@ -90,16 +91,12 @@ class RaListing implements JsonSerializable
         Institution $institution,
         CommonName $commonName,
         Email $email,
-        $role,
+        AuthorityRole $role,
         $location,
         $contactInformation
     ) {
         if (!is_string($identityId)) {
             throw InvalidArgumentException::invalidType('string', 'id', $identityId);
-        }
-
-        if (!is_string($role)) {
-            throw InvalidArgumentException::invalidType('string', 'role', $role);
         }
 
         if (!is_string($location)) {

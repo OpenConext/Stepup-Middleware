@@ -96,6 +96,7 @@ doctrine:
                 charset:  UTF8
         types:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
+            authority_role: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
             stepup_common_name: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\CommonNameType

@@ -80,7 +80,7 @@ class RaService extends AbstractSearchService
             )
         );
 
-        $identities = $this->identityRepository->findIdentitiesForNameIdsIndexedByNameIds($nameIds);
+        $identities = $this->identityRepository->findByNameIdsIndexed($nameIds);
         $credentials = [];
 
         foreach ($ras as $ra) {

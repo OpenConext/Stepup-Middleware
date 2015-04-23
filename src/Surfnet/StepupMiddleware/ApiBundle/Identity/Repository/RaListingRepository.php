@@ -18,10 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaListingCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 class RaListingRepository extends EntityRepository
 {
@@ -51,5 +53,34 @@ class RaListingRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param string $institution
+     * @return ArrayCollection
+     */
+    public function getRaasByInstitution($institution)
+    {
+        $listings = $this->createQueryBuilder('rl')
+            ->where('rl.role = :role')
+            ->andWhere('rl.institution = :institution')
+            ->setParameters([
+                'role'        => AuthorityRole::RAA(),
+                'institution' => $institution
+            ])
+            ->getQuery()
+            ->getResult();
+
+        return new ArrayCollection($listings);
+    }
+
+    public function saveAll($listingsToSave)
+    {
+        $em = $this->getEntityManager();
+        foreach ($listingsToSave as $raListing) {
+            $em->persist($raListing);
+        }
+
+        $em->flush();
     }
 }

@@ -126,7 +126,7 @@ class RaListing implements JsonSerializable
             'institution'         => (string) $this->institution,
             'common_name'         => (string) $this->commonName,
             'email'               => (string) $this->email,
-            'role'                => $this->role,
+            'role'                => (string) $this->role,
             'location'            => $this->location,
             'contact_information' => $this->contactInformation
         ];

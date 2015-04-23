@@ -83,7 +83,7 @@ class IdentityRepository extends EntityRepository
      * @param string[] $nameIds
      * @return Identity[] Indexed by NameID.
      */
-    public function findIdentitiesForNameIdsIndexedByNameIds(array $nameIds)
+    public function findByNameIdsIndexed(array $nameIds)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('i')

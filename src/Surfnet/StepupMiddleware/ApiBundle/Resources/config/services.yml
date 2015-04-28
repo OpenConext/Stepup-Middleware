@@ -6,11 +6,23 @@ services:
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
 
+    surfnet_stepup_middleware_api.repository.institution_listing:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
+
     surfnet_stepup_middleware_api.repository.ra:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository
         factory_service: doctrine.orm.middleware_entity_manager
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra ]
+
+    surfnet_stepup_middleware_api.repository.ra_candidate:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate ]
 
     surfnet_stepup_middleware_api.repository.ra_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository

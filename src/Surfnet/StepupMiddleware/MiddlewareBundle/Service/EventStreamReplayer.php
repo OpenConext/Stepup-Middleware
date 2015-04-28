@@ -55,6 +55,8 @@ class EventStreamReplayer
         'raa',
         'sraa',
         'audit_log',
+        'ra_listing',
+        'ra_candidate'
     ];
 
     /**

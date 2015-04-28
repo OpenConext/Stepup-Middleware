@@ -33,15 +33,6 @@ return [
                 ]
             ],
         ],
-        'raa' => [
-            'SURFnet bv' => [
-                [
-                    'name_id'      => 'ddfd',
-                    'location'     => 'Behind you',
-                    'contact_info' => "Don't",
-                ]
-            ],
-        ],
         'sraa' => 9,
         'email_templates' => [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],

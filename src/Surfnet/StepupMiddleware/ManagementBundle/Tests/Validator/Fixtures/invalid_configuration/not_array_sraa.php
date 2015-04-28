@@ -33,7 +33,6 @@ return [
                 ],
             ],
         ],
-        'raa'             => [],
         'sraa'            => null,
         'email_templates' => [],
     ]

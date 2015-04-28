@@ -19,8 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
 
 class RaaProjector extends Projector
@@ -33,52 +31,5 @@ class RaaProjector extends Projector
     public function __construct(RaaRepository $raaRepository)
     {
         $this->raaRepository = $raaRepository;
-    }
-
-    /**
-     * @param RaaUpdatedEvent $event
-     */
-    public function applyRaaUpdatedEvent(RaaUpdatedEvent $event)
-    {
-        foreach ($event->raas as $institution => $raaList) {
-            $this->updateRaaListForInstitution($institution, $raaList);
-        }
-    }
-
-    /**
-     * @param string $institution
-     * @param array  $raaList
-     */
-    private function updateRaaListForInstitution($institution, $raaList)
-    {
-        $existingNameIds = $this->raaRepository->getAllNameIdsRegisteredFor($institution);
-        $newNameIds = array_map(function ($raa) {
-            return $raa['name_id'];
-        }, $raaList);
-
-        $toBeInsertedNameIds = array_diff($newNameIds, $existingNameIds);
-        $toBeInserted = array_filter($raaList, function ($raa) use ($toBeInsertedNameIds) {
-            return in_array($raa['name_id'], $toBeInsertedNameIds);
-        });
-
-        $this->insertNewRaas($institution, $toBeInserted);
-    }
-
-    /**
-     * @param string $institution
-     * @param array $toBeInserted
-     */
-    private function insertNewRaas($institution, array $toBeInserted)
-    {
-        $raaCollection = [];
-        foreach ($toBeInserted as $raaConfiguration) {
-            $raa                     = Raa::create($institution, $raaConfiguration['name_id']);
-            $raa->location           = $raaConfiguration['location'];
-            $raa->contactInformation = $raaConfiguration['contact_info'];
-
-            $raaCollection[] = $raa;
-        }
-
-        $this->raaRepository->saveAll($raaCollection);
     }
 }

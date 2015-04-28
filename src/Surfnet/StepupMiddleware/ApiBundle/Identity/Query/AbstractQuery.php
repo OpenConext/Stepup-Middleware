@@ -16,27 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-class SearchIdentityCommand extends AbstractSearchCommand
+abstract class AbstractQuery
 {
     /**
-     * @var string
+     * @var int
      */
-    public $nameId;
+    public $pageNumber;
 
     /**
-     * @var string
+     * @var int
      */
-    public $commonName;
-
-    /**
-     * @var string
-     */
-    public $institution;
-
-    /**
-     * @var string
-     */
-    public $email;
+    public $itemsPerPage = 25;
 }

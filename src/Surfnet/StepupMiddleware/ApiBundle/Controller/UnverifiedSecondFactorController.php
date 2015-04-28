@@ -19,8 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -54,12 +53,12 @@ class UnverifiedSecondFactorController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access resource');
         }
 
-        $command = new SearchUnverifiedSecondFactorCommand();
-        $command->identityId = $request->get('identityId');
-        $command->verificationNonce = $request->get('verificationNonce');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query = new UnverifiedSecondFactorQuery();
+        $query->identityId = $request->get('identityId');
+        $query->verificationNonce = $request->get('verificationNonce');
+        $query->pageNumber = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->searchUnverifiedSecondFactors($command);
+        $paginator = $this->getService()->searchUnverifiedSecondFactors($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

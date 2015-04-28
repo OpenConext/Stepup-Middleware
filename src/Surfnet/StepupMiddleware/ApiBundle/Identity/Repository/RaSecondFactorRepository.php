@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 
 class RaSecondFactorRepository extends EntityRepository
@@ -51,45 +51,45 @@ class RaSecondFactorRepository extends EntityRepository
      *                                               below complex or hard to maintain.
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @param SearchRaSecondFactorCommand $command
+     * @param RaSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(SearchRaSecondFactorCommand $command)
+    public function createSearchQuery(RaSecondFactorQuery $query)
     {
         $queryBuilder = $this
             ->createQueryBuilder('sf')
             ->andWhere('sf.institution = :institution')
-            ->setParameter('institution', $command->institution);
+            ->setParameter('institution', $query->institution);
 
-        if ($command->name) {
-            $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', "%$command->name%");
+        if ($query->name) {
+            $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', "%$query->name%");
         }
 
-        if ($command->type) {
-            $queryBuilder->andWhere('sf.type = :type')->setParameter('type', $command->type);
+        if ($query->type) {
+            $queryBuilder->andWhere('sf.type = :type')->setParameter('type', $query->type);
         }
 
-        if ($command->secondFactorId) {
+        if ($query->secondFactorId) {
             $queryBuilder
                 ->andWhere('sf.secondFactorId = :secondFactorId')
-                ->setParameter('secondFactorId', $command->secondFactorId);
+                ->setParameter('secondFactorId', $query->secondFactorId);
         }
 
-        if ($command->email) {
-            $queryBuilder->andWhere('sf.email LIKE :email')->setParameter('email', "%$command->email%");
+        if ($query->email) {
+            $queryBuilder->andWhere('sf.email LIKE :email')->setParameter('email', "%$query->email%");
         }
 
-        if ($command->status) {
-            $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $command->status);
+        if ($query->status) {
+            $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $query->status);
         }
 
-        switch ($command->orderBy) {
+        switch ($query->orderBy) {
             case 'name':
             case 'type':
             case 'secondFactorId':
             case 'email':
             case 'status':
-                $queryBuilder->orderBy("sf.$command->orderBy", $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
+                $queryBuilder->orderBy("sf.$query->orderBy", $query->orderDirection === 'desc' ? 'DESC' : 'ASC');
                 break;
         }
 

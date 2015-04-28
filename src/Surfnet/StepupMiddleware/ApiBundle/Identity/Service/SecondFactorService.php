@@ -19,13 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
@@ -63,40 +62,40 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param SearchUnverifiedSecondFactorCommand $command
+     * @param UnverifiedSecondFactorQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function searchUnverifiedSecondFactors(SearchUnverifiedSecondFactorCommand $command)
+    public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query)
     {
-        $query = $this->unverifiedRepository->createSearchQuery($command);
+        $doctrineQuery = $this->unverifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($query, $command);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
     }
 
     /**
-     * @param SearchVerifiedSecondFactorCommand $command
+     * @param VerifiedSecondFactorQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function searchVerifiedSecondFactors(SearchVerifiedSecondFactorCommand $command)
+    public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
     {
-        $query = $this->verifiedRepository->createSearchQuery($command);
+        $doctrineQuery = $this->verifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($query, $command);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
     }
 
     /**
-     * @param SearchVettedSecondFactorCommand $command
-     * @return Pagerfanta
+     * @param VettedSecondFactorQuery $query
+     * @return \Pagerfanta\Pagerfanta
      */
-    public function searchVettedSecondFactors(SearchVettedSecondFactorCommand $command)
+    public function searchVettedSecondFactors(VettedSecondFactorQuery $query)
     {
-        $query = $this->vettedRepository->createSearchQuery($command);
+        $doctrineQuery = $this->vettedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($query, $command);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
     }

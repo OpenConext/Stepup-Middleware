@@ -16,19 +16,30 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
-class SearchUnverifiedSecondFactorCommand extends AbstractSearchCommand
+final class SecondFactorAuditLogQuery extends AbstractQuery
 {
+    /**
+     * @var Institution
+     */
+    public $identityInstitution;
+
     /**
      * @var IdentityId
      */
     public $identityId;
 
     /**
-     * @var string|null
+     * @var string
      */
-    public $verificationNonce;
+    public $orderBy = 'recordedOn';
+
+    /**
+     * @var string
+     */
+    public $orderDirection = 'desc';
 }

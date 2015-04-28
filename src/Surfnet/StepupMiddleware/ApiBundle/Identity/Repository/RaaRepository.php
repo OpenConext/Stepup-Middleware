@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaaCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaaQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 
 class RaaRepository extends EntityRepository
@@ -86,20 +86,20 @@ class RaaRepository extends EntityRepository
     }
 
     /**
-     * @param SearchRaaCommand $searchRaaCommand
+     * @param RaaQuery $query
      * @return \Doctrine\ORM\Query
      */
-    public function createSearchQuery(SearchRaaCommand $searchRaaCommand)
+    public function createSearchQuery(RaaQuery $query)
     {
         $queryBuilder = $this
             ->createQueryBuilder('r')
             ->where('r.institution = :institution')
-            ->setParameter('institution', $searchRaaCommand->institution);
+            ->setParameter('institution', $query->institution);
 
-        if ($searchRaaCommand->nameId) {
+        if ($query->nameId) {
             $queryBuilder
                 ->andWhere('r.nameId = :nameId')
-                ->setParameter('nameId', $searchRaaCommand->nameId);
+                ->setParameter('nameId', $query->nameId);
         }
 
         return $queryBuilder->getQuery();

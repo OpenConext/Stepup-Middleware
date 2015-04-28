@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaListingCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
@@ -34,22 +34,22 @@ class RaListingRepository extends EntityRepository
     }
 
     /**
-     * @param SearchRaListingCommand $searchCommand
+     * @param RaListingQuery $query
      * @return \Doctrine\ORM\Query
      */
-    public function createSearchQuery(SearchRaListingCommand $searchCommand)
+    public function createSearchQuery(RaListingQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('r')
             ->where('r.institution = :institution')
-            ->setParameter('institution', $searchCommand->institution);
+            ->setParameter('institution', $query->institution);
 
-        $orderDirection = $searchCommand->orderDirection === 'asc' ? 'ASC' : 'DESC';
-        switch ($searchCommand->orderBy) {
+        $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
+        switch ($query->orderBy) {
             case 'commonName':
                 $queryBuilder->orderBy('r.commonName', $orderDirection);
                 break;
             default:
-                throw new RuntimeException(sprintf('Unknown order by column "%s"', $searchCommand->orderBy));
+                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
         }
 
         return $queryBuilder->getQuery();

@@ -16,30 +16,28 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-
-final class SearchSecondFactorAuditLogCommand extends AbstractSearchCommand
+class RaListingQuery extends AbstractQuery
 {
     /**
-     * @var Institution
+     * @var string
      */
-    public $identityInstitution;
-
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
+    public $institution;
 
     /**
      * @var string
      */
-    public $orderBy = 'recordedOn';
+    public $orderBy;
 
     /**
      * @var string
      */
-    public $orderDirection = 'desc';
+    public $orderDirection;
+
+    /**
+     * {@inheritdoc} RaListing should not be paginated, expectation is that amount of entries remains well under 100,
+     * if there are issue they will be tackled later as requested by SURFnet.
+     */
+    public $itemsPerPage = 1000;
 }

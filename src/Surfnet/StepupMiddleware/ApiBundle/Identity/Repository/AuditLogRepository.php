@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchSecondFactorAuditLogCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 
 class AuditLogRepository extends EntityRepository
@@ -56,27 +56,27 @@ class AuditLogRepository extends EntityRepository
     }
 
     /**
-     * @param SearchSecondFactorAuditLogCommand $command
+     * @param SecondFactorAuditLogQuery $query
      * @return Query
      */
-    public function createSecondFactorSearchQuery(SearchSecondFactorAuditLogCommand $command)
+    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query)
     {
         $queryBuilder = $this
             ->createQueryBuilder('al')
             ->where('al.identityInstitution = :identityInstitution')
-            ->setParameter('identityInstitution', $command->identityInstitution)
+            ->setParameter('identityInstitution', $query->identityInstitution)
             ->andWhere('al.identityId = :identityId')
             ->andWhere('al.event IN (:secondFactorEvents)')
-            ->setParameter('identityId', $command->identityId)
+            ->setParameter('identityId', $query->identityId)
             ->setParameter('secondFactorEvents', self::$secondFactorEvents);
 
-        switch ($command->orderBy) {
+        switch ($query->orderBy) {
             case 'secondFactorId':
             case 'secondFactorType':
             case 'event':
             case 'recordedOn':
             case 'actorId':
-                $queryBuilder->orderBy(sprintf('al.%s', $command->orderBy), $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
+                $queryBuilder->orderBy(sprintf('al.%s', $query->orderBy), $query->orderDirection === 'desc' ? 'DESC' : 'ASC');
                 break;
         }
 

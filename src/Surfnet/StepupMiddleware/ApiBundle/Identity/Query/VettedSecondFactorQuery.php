@@ -16,25 +16,14 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
-class SearchVerifiedSecondFactorCommand extends AbstractSearchCommand
+class VettedSecondFactorQuery extends AbstractQuery
 {
     /**
-     * @var IdentityId|null
+     * @var IdentityId
      */
     public $identityId;
-
-    /**
-     * @var SecondFactorId|null
-     */
-    public $secondFactorId;
-
-    /**
-     * @var string|null
-     */
-    public $registrationCode;
 }

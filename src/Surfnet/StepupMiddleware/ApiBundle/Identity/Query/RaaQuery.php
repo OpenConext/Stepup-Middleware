@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-class SearchRaListingCommand extends AbstractSearchCommand
+class RaaQuery extends AbstractQuery
 {
     /**
      * @var string
@@ -28,16 +28,5 @@ class SearchRaListingCommand extends AbstractSearchCommand
     /**
      * @var string
      */
-    public $orderBy;
-
-    /**
-     * @var string
-     */
-    public $orderDirection;
-
-    /**
-     * {@inheritdoc} RaListing should not be paginated, expectation is that amount of entries remains well under 100,
-     * if there are issue they will be tackled later as requested by SURFnet.
-     */
-    public $itemsPerPage = 1000;
+    public $nameId;
 }

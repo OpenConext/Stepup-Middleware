@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 
@@ -38,14 +38,14 @@ class RaSecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param SearchRaSecondFactorCommand $command
+     * @param RaSecondFactorQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function search(SearchRaSecondFactorCommand $command)
+    public function search(RaSecondFactorQuery $query)
     {
-        $query = $this->repository->createSearchQuery($command);
+        $doctrineQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($query, $command);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
     }

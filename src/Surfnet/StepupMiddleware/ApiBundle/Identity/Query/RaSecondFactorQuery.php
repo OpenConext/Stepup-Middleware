@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-class SearchRaaCommand extends AbstractSearchCommand
+final class RaSecondFactorQuery extends AbstractQuery
 {
     /**
      * @var string
@@ -26,7 +26,37 @@ class SearchRaaCommand extends AbstractSearchCommand
     public $institution;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public $nameId;
+    public $name;
+
+    /**
+     * @var string|null
+     */
+    public $type;
+
+    /**
+     * @var string|null The second factor type's ID (eg. Yubikey public ID)
+     */
+    public $secondFactorId;
+
+    /**
+     * @var string|null
+     */
+    public $email;
+
+    /**
+     * @var string|null One of the ApiBundle\Identity\Entity\RaSecondFactor::STATUS_* constants.
+     */
+    public $status;
+
+    /**
+     * @var string|null
+     */
+    public $orderBy;
+
+    /**
+     * @var string|null
+     */
+    public $orderDirection;
 }

@@ -16,17 +16,25 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Command;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-abstract class AbstractSearchCommand
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+
+class VerifiedSecondFactorQuery extends AbstractQuery
 {
     /**
-     * @var int
+     * @var IdentityId|null
      */
-    public $pageNumber;
+    public $identityId;
 
     /**
-     * @var int
+     * @var SecondFactorId|null
      */
-    public $itemsPerPage = 25;
+    public $secondFactorId;
+
+    /**
+     * @var string|null
+     */
+    public $registrationCode;
 }

@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -53,11 +53,11 @@ class VettedSecondFactorController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access resource');
         }
 
-        $command = new SearchVettedSecondFactorCommand();
-        $command->identityId = $request->get('identityId');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query = new VettedSecondFactorQuery();
+        $query->identityId = $request->get('identityId');
+        $query->pageNumber = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->searchVettedSecondFactors($command);
+        $paginator = $this->getService()->searchVettedSecondFactors($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

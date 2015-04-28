@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaListingCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 
 class RaListingService extends AbstractSearchService
@@ -34,14 +34,14 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @param SearchRaListingCommand $command
+     * @param RaListingQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function search(SearchRaListingCommand $command)
+    public function search(RaListingQuery $query)
     {
-        $query = $this->raListingRepository->createSearchQuery($command);
+        $doctrineQuery = $this->raListingRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($query, $command);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
     }

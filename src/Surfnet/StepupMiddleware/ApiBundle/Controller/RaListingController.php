@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaListingCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,13 +33,13 @@ class RaListingController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access RA search');
         }
 
-        $command                 = new SearchRaListingCommand();
-        $command->institution    = $institution;
-        $command->pageNumber     = (int) $request->get('p', 1);
-        $command->orderBy        = $request->get('orderBy');
-        $command->orderDirection = $request->get('orderDirection');
+        $query                 = new RaListingQuery();
+        $query->institution    = $institution;
+        $query->pageNumber     = (int) $request->get('p', 1);
+        $query->orderBy        = $request->get('orderBy');
+        $query->orderDirection = $request->get('orderDirection');
 
-        $searchResults = $this->getService()->search($command);
+        $searchResults = $this->getService()->search($query);
 
         return JsonCollectionResponse::fromPaginator($searchResults);
     }

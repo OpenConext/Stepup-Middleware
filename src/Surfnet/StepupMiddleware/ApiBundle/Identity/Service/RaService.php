@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\ListRasCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -66,18 +65,12 @@ class RaService extends AbstractSearchService
         $raas = $this->raaRepository->findByInstitution($institution);
 
         $nameIds = array_merge(
-            array_map(
-                function (Ra $ra) {
-                    return $ra->nameId;
-                },
-                $ras
-            ),
-            array_map(
-                function (Raa $raa) {
-                    return $raa->nameId;
-                },
-                $raas
-            )
+            array_map(function (Ra $ra) {
+                return $ra->nameId;
+            }, $ras),
+            array_map(function (Raa $raa) {
+                return $raa->nameId;
+            }, $raas)
         );
 
         $identities = $this->identityRepository->findByNameIdsIndexed($nameIds);

@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
@@ -54,14 +54,14 @@ class IdentityController extends Controller
             throw new AccessDeniedHttpException('Client is not authorised to access identity');
         }
 
-        $command = new SearchIdentityCommand();
-        $command->institution = $institution;
-        $command->nameId = $request->get('NameID');
-        $command->commonName = $request->get('commonName');
-        $command->email = $request->get('email');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query              = new IdentityQuery();
+        $query->institution = $institution;
+        $query->nameId      = $request->get('NameID');
+        $query->commonName  = $request->get('commonName');
+        $query->email       = $request->get('email');
+        $query->pageNumber  = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->search($command);
+        $paginator = $this->getService()->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

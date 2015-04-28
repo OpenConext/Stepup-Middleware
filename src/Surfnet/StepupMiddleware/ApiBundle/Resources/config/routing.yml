@@ -101,3 +101,9 @@ identity_registration_authority_credentials:
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+institution_listing:
+    path:      /institution-listing
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionListing:collection }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

@@ -3,7 +3,6 @@ services:
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
         arguments:
             - @surfnet_stepup_middleware_management.validator.gateway_configuration
-            - @surfnet_stepup_middleware_management.validator.raa_configuration
             - @surfnet_stepup_middleware_management.validator.email_templates_configuration
         tags:
             - { name: validator.constraint_validator, alias: configuration_structure_validator }
@@ -17,10 +16,6 @@ services:
     surfnet_stepup_middleware_management.validator.service_provider_configuration:
         public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
-
-    surfnet_stepup_middleware_management.validator.raa_configuration:
-        public: false
-        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\RaaConfigurationValidator
 
     surfnet_stepup_middleware_management.validator.email_templates_configuration:
         public: false

@@ -20,6 +20,5 @@ return [
     'expectedPropertyPath' => '(root)',
     'configuration'        => [
         'gateway' => [],
-        'raa'     => [],
     ]
 ];

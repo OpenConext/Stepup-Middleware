@@ -26,23 +26,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VerifiedSecondFactorController extends Controller
 {
     public function getAction($id)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access verified second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $secondFactor = $this->getService()->findVerified(new SecondFactorId($id));
 
         if ($secondFactor === null) {
-            throw new NotFoundHttpException(
-                sprintf("Verified second factor '%s' does not exist", $id)
-            );
+            throw new NotFoundHttpException(sprintf("Verified second factor '%s' does not exist", $id));
         }
 
         return new JsonResponse($secondFactor);
@@ -50,9 +45,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $query = new VerifiedSecondFactorQuery();
 
@@ -65,7 +58,7 @@ class VerifiedSecondFactorController extends Controller
         }
 
         $query->registrationCode = $request->get('registrationCode');
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query->pageNumber       = (int) $request->get('p', 1);
 
         $paginator = $this->getService()->searchVerifiedSecondFactors($query);
 

@@ -24,15 +24,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class AuditLogController extends Controller
 {
     public function secondFactorAuditLogAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access RA second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $query                      = new SecondFactorAuditLogQuery();
         $query->identityInstitution = $institution;

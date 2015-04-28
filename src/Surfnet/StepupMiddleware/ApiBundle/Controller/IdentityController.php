@@ -26,23 +26,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends Controller
 {
     public function getAction($id)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access identity');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $identity = $this->getService()->find($id);
 
         if ($identity === null) {
-            throw new NotFoundHttpException(
-                sprintf("Identity '%s' does not exist", $id)
-            );
+            throw new NotFoundHttpException(sprintf("Identity '%s' does not exist", $id));
         }
 
         return new JsonResponse($identity);
@@ -50,9 +45,7 @@ class IdentityController extends Controller
 
     public function collectionAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access identity');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $query              = new IdentityQuery();
         $query->institution = $institution;

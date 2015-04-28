@@ -23,15 +23,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RaListingController extends Controller
 {
     public function searchAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access RA search');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $query                 = new RaListingQuery();
         $query->institution    = $institution;

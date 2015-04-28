@@ -23,25 +23,22 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class RaSecondFactorController extends Controller
 {
     public function collectionAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access RA second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query = new RaSecondFactorQuery();
-        $query->institution = $institution;
-        $query->pageNumber = (int) $request->get('p', 1);
-        $query->name = $request->get('name');
-        $query->type = $request->get('type');
+        $query                 = new RaSecondFactorQuery();
+        $query->institution    = $institution;
+        $query->pageNumber     = (int) $request->get('p', 1);
+        $query->name           = $request->get('name');
+        $query->type           = $request->get('type');
         $query->secondFactorId = $request->get('secondFactorId');
-        $query->email = $request->get('email');
-        $query->status = $request->get('status');
-        $query->orderBy = $request->get('orderBy');
+        $query->email          = $request->get('email');
+        $query->status         = $request->get('status');
+        $query->orderBy        = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
 
         $paginator = $this->getService()->search($query);

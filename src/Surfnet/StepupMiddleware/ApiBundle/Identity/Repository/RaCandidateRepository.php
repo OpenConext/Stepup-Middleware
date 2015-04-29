@@ -21,15 +21,24 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
 class RaCandidateRepository extends EntityRepository
 {
+    /**
+     * @param RaCandidate $raCandidate
+     * @return void
+     */
     public function save(RaCandidate $raCandidate)
     {
         $this->getEntityManager()->persist($raCandidate);
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * @param IdentityId $identityId
+     * @return void
+     */
     public function removeByIdentityId(IdentityId $identityId)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
@@ -42,5 +51,30 @@ class RaCandidateRepository extends EntityRepository
             ->execute();
 
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param RaCandidateQuery $query
+     * @return \Doctrine\ORM\Query
+     */
+    public function createSearchQuery(RaCandidateQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('rac')
+            ->where('rac.institution = :institution')
+            ->setParameter('institution', $query->institution);
+
+        if ($query->commonName) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(rac.commonName, :commonName) > 0')
+                ->setParameter('commonName', $query->commonName);
+        }
+
+        if ($query->email) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(rac.email, :email) > 0')
+                ->setParameter('email', $query->email);
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

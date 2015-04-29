@@ -91,6 +91,12 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.institution_listing
 
+    surfnet_stepup_middleware_api.service.ra_candidate:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.ra_candidate
+
     surfnet_stepup_middleware_api.service.ra_second_factor:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService
         parent: surfnet_stepup_middleware_api.service.abstract_search

@@ -107,3 +107,9 @@ institution_listing:
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionListing:collection }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+ra_candidate:
+    path:      /ra-candidate
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:search }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

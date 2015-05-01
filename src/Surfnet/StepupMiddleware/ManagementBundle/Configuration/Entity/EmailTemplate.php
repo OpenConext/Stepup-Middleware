@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository")
@@ -66,7 +67,7 @@ class EmailTemplate
      */
     public function __construct($name, $locale, $htmlContent)
     {
-        $this->id = sprintf('%s-%s', $name, $locale);
+        $this->id = (string) Uuid::uuid4();
 
         $this->name = $name;
         $this->locale = $locale;

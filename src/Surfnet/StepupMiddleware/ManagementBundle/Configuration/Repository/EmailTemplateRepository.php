@@ -54,7 +54,10 @@ final class EmailTemplateRepository extends EntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate tpl'
+                'DELETE FROM
+                    Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate tpl
+                WHERE
+                    1 = 1'
             )->execute();
     }
 

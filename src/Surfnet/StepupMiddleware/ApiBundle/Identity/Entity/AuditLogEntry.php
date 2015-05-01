@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 
 /**
@@ -63,12 +64,11 @@ class AuditLogEntry implements JsonSerializable
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(length=36)
      *
      * @var int|null
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\Column(length=36, nullable=true)

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
@@ -53,6 +54,7 @@ class AuditLogProjector implements ProjectorInterface
         $metadata = $domainMessage->getMetadata()->serialize();
 
         $entry = new AuditLogEntry();
+        $entry->id = (string) Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
             $entry->actorId = $metadata['actorId'];

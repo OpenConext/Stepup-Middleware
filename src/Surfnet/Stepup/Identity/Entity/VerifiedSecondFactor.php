@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
@@ -135,10 +134,9 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->identity->getIdentifyingDataId(),
                 $this->secondFactorIdentifier,
                 $documentNumber,
-                $this->identity->getCommonName(),
-                $this->identity->getEmail(),
                 'en_GB'
             )
         );
@@ -146,13 +144,26 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     public function revoke()
     {
-        $this->apply(new VerifiedSecondFactorRevokedEvent($this->identity->getId(), $this->id));
+        $this->apply(
+            new VerifiedSecondFactorRevokedEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type
+            )
+        );
     }
 
     public function complyWithRevocation(IdentityId $authorityId)
     {
         $this->apply(
-            new CompliedWithVerifiedSecondFactorRevocationEvent($this->identity->getId(), $this->id, $authorityId)
+            new CompliedWithVerifiedSecondFactorRevocationEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type,
+                $authorityId
+            )
         );
     }
 

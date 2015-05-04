@@ -18,34 +18,61 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 abstract class CompliedWithRevocationEvent extends IdentityEvent
 {
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\IdentityId
+     */
+    public $authorityId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var IdentityId
+     * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
-    public $authorityId;
+    public $secondFactorType;
 
-    final public function __construct(IdentityId $identityId, SecondFactorId $secondFactorId, IdentityId $authorityId)
-    {
-        parent::__construct($identityId);
+    final public function __construct(
+        IdentityId $identityId,
+        Institution $identityInstitution,
+        SecondFactorId $secondFactorId,
+        SecondFactorType $secondFactorType,
+        IdentityId $authorityId
+    ) {
+        parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId = $secondFactorId;
         $this->authorityId = $authorityId;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
     }
 
     final public static function deserialize(array $data)
     {
         return new static(
             new IdentityId($data['identity_id']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
+            new SecondFactorType($data['second_factor_type']),
             new IdentityId($data['authority_id'])
         );
     }
@@ -53,9 +80,11 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent
     final public function serialize()
     {
         return [
-            'identity_id'      => (string) $this->identityId,
-            'second_factor_id' => (string) $this->secondFactorId,
-            'authority_id'     => (string) $this->authorityId,
+            'identity_id'          => (string) $this->identityId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'second_factor_id'     => (string) $this->secondFactorId,
+            'second_factor_type'   => (string) $this->secondFactorType,
+            'authority_id'         => (string) $this->authorityId,
         ];
     }
 }

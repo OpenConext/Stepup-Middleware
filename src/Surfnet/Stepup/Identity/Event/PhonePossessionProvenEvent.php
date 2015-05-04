@@ -18,48 +18,41 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class PhonePossessionProvenEvent extends IdentityEvent
 {
     /**
-     * The UUID of the second factor that has been proven to be in possession of the registrant.
-     *
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var PhoneNumber
+     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
      */
     public $phoneNumber;
 
     /**
-     * @var EmailVerificationWindow
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     public $emailVerificationWindow;
+
+    /**
+     * @var IdentifyingDataId
+     */
+    public $identifyingDataId;
 
     /**
      * @var string
      */
     public $emailVerificationNonce;
-
-    /**
-     * The identity's common name.
-     *
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * The identity's email address.
-     *
-     * @var string
-     */
-    public $email;
 
     /**
      * @var string Eg. "en_GB"
@@ -68,45 +61,55 @@ class PhonePossessionProvenEvent extends IdentityEvent
 
     /**
      * @param IdentityId              $identityId
+     * @param Institution             $identityInstitution
      * @param SecondFactorId          $secondFactorId
      * @param PhoneNumber             $phoneNumber
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @param IdentifyingDataId       $identifyingDataId
      * @param string                  $emailVerificationNonce
-     * @param string                  $commonName
-     * @param string                  $email
      * @param string                  $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
+        Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
         EmailVerificationWindow $emailVerificationWindow,
+        IdentifyingDataId $identifyingDataId,
         $emailVerificationNonce,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
         $this->emailVerificationWindow = $emailVerificationWindow;
+        $this->identifyingDataId = $identifyingDataId;
         $this->emailVerificationNonce = $emailVerificationNonce;
-        $this->commonName = $commonName;
-        $this->email = $email;
         $this->preferredLocale = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['identity_id']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new PhoneNumber($data['phone_number']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['email_verification_nonce'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -114,14 +117,14 @@ class PhonePossessionProvenEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id'                     => (string) $this->identityId,
-            'second_factor_id'                => (string) $this->secondFactorId,
-            'phone_number'                    => (string) $this->phoneNumber,
-            'email_verification_window'       => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'        => (string) $this->emailVerificationNonce,
-            'common_name'                     => (string) $this->commonName,
-            'email'                           => (string) $this->email,
-            'preferred_locale'                => $this->preferredLocale,
+            'identity_id'               => (string) $this->identityId,
+            'identity_institution'      => (string) $this->identityInstitution,
+            'second_factor_id'          => (string) $this->secondFactorId,
+            'phone_number'              => (string) $this->phoneNumber,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'identifying_data_id'       => (string) $this->identifyingDataId,
+            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

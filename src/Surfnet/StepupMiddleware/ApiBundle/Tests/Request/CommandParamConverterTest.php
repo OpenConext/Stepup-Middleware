@@ -25,7 +25,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
-     * @group api
+     * @group api-bundle
      * @dataProvider invalidCommandJsonStructures
      * @param string $commandJson
      */
@@ -44,7 +44,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @group api
+     * @group api-bundle
      * @dataProvider convertibleCommandNames
      * @param string $expectedCommandClass
      * @param string $commandName
@@ -67,7 +67,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @group api
+     * @group api-bundle
      */
     public function it_sets_uuid()
     {
@@ -89,7 +89,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @group api
+     * @group api-bundle
      */
     public function it_sets_payload()
     {

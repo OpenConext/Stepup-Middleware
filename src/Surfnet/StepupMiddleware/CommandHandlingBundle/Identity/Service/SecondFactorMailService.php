@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
@@ -53,24 +54,40 @@ class SecondFactorMailService
     private $emailVerificationUrlTemplate;
 
     /**
+     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
+     */
+    private $emailTemplateService;
+
+    /**
+     * @var string
+     */
+    private $fallbackLocale;
+
+    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
      * @param string $emailVerificationUrlTemplate
+     * @param EmailTemplateService $emailTemplateService
+     * @param string $fallbackLocale
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
-        $emailVerificationUrlTemplate
+        $emailVerificationUrlTemplate,
+        EmailTemplateService $emailTemplateService,
+        $fallbackLocale
     ) {
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
         $this->templateEngine = $templateEngine;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
+        $this->emailTemplateService = $emailTemplateService;
+        $this->fallbackLocale = $fallbackLocale;
     }
 
     /**
@@ -97,8 +114,10 @@ class SecondFactorMailService
             urlencode($verificationNonce),
             $this->emailVerificationUrlTemplate
         );
+        $emailTemplate = $this->emailTemplateService->findByName('confirm_email', $locale, $this->fallbackLocale);
+
         $parameters = [
-            'templateString'   => self::VERIFICATION_TEMPLATE,
+            'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,
@@ -142,8 +161,13 @@ class SecondFactorMailService
             $locale
         );
 
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'registration_code',
+            $locale,
+            $this->fallbackLocale
+        );
         $parameters = [
-            'templateString'   => self::REGISTRATION_TEMPLATE,
+            'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,
@@ -168,94 +192,4 @@ class SecondFactorMailService
 
         $this->mailer->send($message);
     }
-
-    const VERIFICATION_TEMPLATE = <<<TWIG
-<p style="font-style:italic;text-align:center">- English version of this message below-</p>
-
-<p>Beste {{ commonName }},</p>
-
-<p>Bedankt voor het registreren van je token. Klik op onderstaande link om je e-mailadres te bevestigen:</p>
-<p><a href="{{ verificationUrl }}">{{ verificationUrl }}</a></p>
-<p>Is klikken op de link niet mogelijk? Kopieer dan de link en plak deze in de adresbalk van je browser.</p>
-<p>SURFnet</p>
-
-<hr>
-
-<p>Dear {{ commonName }},</p>
-
-<p>Thank you for registering your token. Please visit this link to verify your email address:</p>
-<p><a href="{{ verificationUrl }}">{{ verificationUrl }}</a></p>
-<p>If you can not click on the URL, please copy the link and paste it in the address bar of your browser.</p>
-<p>SURFnet</p>
-TWIG;
-
-    const REGISTRATION_TEMPLATE = <<<TWIG
-<p style="font-style:italic;text-align:center">- English version of this message below-</p>
-
-<p>Beste {{ commonName }},</p>
-
-<p>Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga naar de Service Desk om je token te laten activeren. </p>
-<p>Neem aub het volgende mee:</p>
-<ul>
-    <li>Je token</li>
-    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>
-    <li>De registratiecode uit deze e-mail</li>
-</ul>
-
-<p style="font-size: 150%; text-align: center">
-    <code>{{ registrationCode }}</code>
-</p>
-
-<p>Service Desk medewerkers die je token kunnen activeren:</p>
-
-{% if ras is empty %}
-    <p>Er zijn geen Service Desk medewerkers beschikbaar.</p>
-{% else %}
-    <ul>
-        {% for ra in ras %}
-            <li>
-                <address>
-                    <strong>{{ ra.commonName }}</strong><br>
-                    {{ ra.location }}<br>
-                    {{ ra.contactInformation }}
-                </address>
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<hr>
-
-<p>Dear {{ commonName }},</p>
-
-<p>Thank you for registering your token, you are almost ready now. Please visit the Service Desk to activate your token.</p>
-<p>Please bring the following:</p>
-<ul>
-    <li>Your token</li>
-    <li>A valid identity document (passport, drivers license or national ID-card.</li>
-    <li>The registration code from this e-mail</li>
-</ul>
-
-<p style="font-size: 150%; text-align: center">
-    <code>{{ registrationCode }}</code>
-</p>
-
-<p>Service Desk employees authorized to activate your token:</p>
-
-{% if ras is empty %}
-    <p>No Service Desk employees are available.</p>
-{% else %}
-    <ul>
-        {% for ra in ras %}
-            <li>
-                <address>
-                    <strong>{{ ra.commonName }}</strong><br>
-                    {{ ra.location }}<br>
-                    {{ ra.contactInformation }}
-                </address>
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
-TWIG;
 }

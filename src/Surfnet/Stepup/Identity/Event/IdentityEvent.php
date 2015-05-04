@@ -20,16 +20,23 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
-abstract class IdentityEvent implements SerializableInterface
+abstract class IdentityEvent implements AuditableEvent, SerializableInterface
 {
     /**
      * @var IdentityId
      */
     public $identityId;
 
-    public function __construct(IdentityId $identityId)
+    /**
+     * @var Institution
+     */
+    public $identityInstitution;
+
+    public function __construct(IdentityId $identityId, Institution $identityInstitution)
     {
         $this->identityId = $identityId;
+        $this->identityInstitution = $identityInstitution;
     }
 }

@@ -18,49 +18,53 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 class IdentityRenamedEvent extends IdentityEvent
 {
     /**
-     * @var string
+     * @var IdentifyingDataId
      */
-    public $oldName;
+    public $identifyingDataId;
 
-    /**
-     * @var string
-     */
-    public $newName;
-
-    public function __construct(IdentityId $id, $oldEmail, $newEmail)
+    public function __construct(IdentityId $id, Institution $institution, IdentifyingDataId $identifyingDataId)
     {
-        parent::__construct($id);
+        parent::__construct($id, $institution);
 
-        $this->oldName = $oldEmail;
-        $this->newName = $newEmail;
+        $this->identifyingDataId = $identifyingDataId;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
     }
 
     /**
-     * @return mixed The object instance
+     * @param array $data
+     * @return IdentityRenamedEvent The object instance
      */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
-            $data['old_name'],
-            $data['new_name']
+            new Institution($data['institution']),
+            new IdentifyingDataId($data['identifying_data_id'])
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [
-            'id'       => (string) $this->identityId,
-            'old_name' => $this->oldName,
-            'new_name' => $this->newName
+            'id'          => (string) $this->identityId,
+            'institution' => (string) $this->identityInstitution,
+            'identifying_data_id' => (string) $this->identifyingDataId
         ];
     }
 }

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -32,27 +33,38 @@ class IdentityProjector extends Projector
      */
     private $identityRepository;
 
-    public function __construct(IdentityRepository $identityRepository)
-    {
+    /**
+     * @var
+     */
+    private $identifyingDataRepository;
+
+    public function __construct(
+        IdentityRepository $identityRepository,
+        IdentifyingDataRepository $identifyingDataRepository
+    ) {
         $this->identityRepository = $identityRepository;
+        $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
+        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
+
         $this->identityRepository->save(Identity::create(
             (string) $event->identityId,
-            $event->institution,
+            $event->identityInstitution,
             (string) $event->nameId,
-            $event->email,
-            $event->commonName
+            $identifyingData->email,
+            $identifyingData->commonName
         ));
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
 
-        $identity->commonName = $event->newName;
+        $identity->commonName = $identifyingData->commonName;
 
         $this->identityRepository->save($identity);
     }
@@ -60,8 +72,9 @@ class IdentityProjector extends Projector
     public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
 
-        $identity->email = $event->newEmail;
+        $identity->email = $identifyingData->email;
 
         $this->identityRepository->save($identity);
     }

@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -55,20 +57,34 @@ class RaSecondFactorProjector extends Projector
      */
     private $identityRepository;
 
+    /**
+     * @var IdentifyingDataRepository
+     */
+    private $identifyingDataRepository;
+
     public function __construct(
         RaSecondFactorRepository $raSecondFactorRepository,
-        IdentityRepository $identityRepository
+        IdentityRepository $identityRepository,
+        IdentifyingDataRepository $identifyingDataRepository
     ) {
         $this->raSecondFactorRepository = $raSecondFactorRepository;
         $this->identityRepository = $identityRepository;
+        $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
         $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
 
+        if (count($secondFactors) === 0) {
+            return;
+        }
+
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
+        $commonName = $identifyingData->commonName;
+
         foreach ($secondFactors as $secondFactor) {
-            $secondFactor->name = $event->newName;
+            $secondFactor->name = (string) $commonName;
         }
 
         $this->raSecondFactorRepository->saveAll($secondFactors);
@@ -78,8 +94,15 @@ class RaSecondFactorProjector extends Projector
     {
         $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
 
+        if (count($secondFactors) === 0) {
+            return;
+        }
+
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
+        $email = $identifyingData->email;
+
         foreach ($secondFactors as $secondFactor) {
-            $secondFactor->email = $event->newEmail;
+            $secondFactor->email = (string) $email;
         }
 
         $this->raSecondFactorRepository->saveAll($secondFactors);
@@ -88,6 +111,7 @@ class RaSecondFactorProjector extends Projector
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $secondFactor = new RaSecondFactor(
             (string) $event->secondFactorId,
@@ -95,8 +119,8 @@ class RaSecondFactorProjector extends Projector
             (string) $event->yubikeyPublicId,
             $identity->id,
             (string) $identity->institution,
-            $identity->commonName,
-            $identity->email
+            (string) $identifyingData->commonName,
+            (string) $identifyingData->email
         );
         $secondFactor->status = SecondFactorStatus::vetted();
 
@@ -106,6 +130,7 @@ class RaSecondFactorProjector extends Projector
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->raSecondFactorRepository->save(
             new RaSecondFactor(
@@ -114,8 +139,8 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->yubikeyPublicId,
                 $identity->id,
                 (string) $identity->institution,
-                $identity->commonName,
-                $identity->email
+                (string) $identifyingData->commonName,
+                (string) $identifyingData->email
             )
         );
     }
@@ -123,6 +148,7 @@ class RaSecondFactorProjector extends Projector
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->raSecondFactorRepository->save(
             new RaSecondFactor(
@@ -131,8 +157,8 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->phoneNumber,
                 $identity->id,
                 (string) $identity->institution,
-                $identity->commonName,
-                $identity->email
+                (string) $identifyingData->commonName,
+                (string) $identifyingData->email
             )
         );
     }
@@ -140,6 +166,7 @@ class RaSecondFactorProjector extends Projector
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
+        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->raSecondFactorRepository->save(
             new RaSecondFactor(
@@ -148,8 +175,8 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->gssfId,
                 $identity->id,
                 (string) $identity->institution,
-                $identity->commonName,
-                $identity->email
+                (string) $identifyingData->commonName,
+                (string) $identifyingData->email
             )
         );
     }
@@ -195,6 +222,15 @@ class RaSecondFactorProjector extends Projector
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
+    }
+
+    /**
+     * @param IdentifyingDataId $identifyingDataId
+     * @return \Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData
+     */
+    private function getIdentifyingData(IdentifyingDataId $identifyingDataId)
+    {
+        return $this->identifyingDataRepository->getById($identifyingDataId);
     }
 
     /**

@@ -48,6 +48,12 @@ services:
         factory_method: getRepository
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor ]
 
+    surfnet_stepup_middleware_api.repository.audit_log:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry ]
+
     # Domain Services
     surfnet_stepup_middleware_api.service.abstract_search:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
@@ -96,11 +102,24 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.sraa
 
+    surfnet_stepup_middleware_api.service.audit_log:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService
+        parent: surfnet_stepup_middleware_api.service.abstract_search
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.audit_log
+
     # Param Converters
     surfnet_stepup_middleware_api.request.command_param_converter:
         class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
         tags:
             - { name: request.param_converter, priority: -10, converter: surfnet_stepup_middleware_api.command }
+
+    surfnet_stepup_middleware_api.request.metadata_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\MetadataParamConverter
+        arguments:
+            - @validator
+        tags:
+            - { name: request.param_converter, priority: -15, converter: surfnet_stepup_middleware_api.metadata }
 
     surfnet_stepup_middleware_api.request.institution_param_converter:
         class: Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter

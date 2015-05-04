@@ -70,6 +70,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                    ->scalarNode('email_fallback_locale')->isRequired()->end()
                 ->end();
 
         return $treeBuilder;

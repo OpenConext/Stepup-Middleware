@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 {
@@ -36,7 +37,13 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
      */
     public function validate(array $gatewayConfiguration, $propertyPath)
     {
-        Assert::keyExists($gatewayConfiguration, 'service_providers', 'missing key service_providers', $propertyPath);
+        StepupAssert::keysMatch(
+            $gatewayConfiguration,
+            ['service_providers'],
+            "Expected only property 'service_providers'",
+            $propertyPath
+        );
+
         $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
     }
 
@@ -54,7 +61,10 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         );
 
         foreach ($serviceProviders as $index => $serviceProvider) {
-            $this->serviceProviderConfigurationValidator->validate($serviceProvider, $propertyPath . '[' . $index. ']');
+            $path = $propertyPath . '[' . $index . ']';
+            Assert::isArray($serviceProvider, 'Service provider must be an object', $path);
+
+            $this->serviceProviderConfigurationValidator->validate($serviceProvider, $path);
         }
     }
 }

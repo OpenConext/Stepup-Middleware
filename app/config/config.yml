@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: logging.yml }
 
 framework:
     #esi:             ~
@@ -97,6 +98,8 @@ doctrine:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            stepup_common_name: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\CommonNameType
+            stepup_email: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -110,6 +113,18 @@ doctrine:
                         type: annotation
                         dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
+                        is_bundle: false
+                    stepup_identifying_data:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/Stepup/IdentifyingData/Entity
+                        prefix: Surfnet\Stepup\IdentifyingData\Entity
+                        is_bundle: false
+                    management_configuration:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration
+                        prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
                 dql:
                     string_functions:
@@ -162,32 +177,15 @@ surfnet_stepup:
         loa2: %stepup_loa_loa2%
         loa3: %stepup_loa_loa3%
 
-monolog:
-    handlers:
-        main:
-            type: group
-            members:
-                - main_graylog
-                - main_logfile
-        main_graylog:
-            type: buffer
-            handler: graylog
-            level: NOTICE
-        main_logfile:
-            type: stream
-            handler: logfile
-            level: NOTICE
-            path: %kernel.logs_dir%/%kernel.environment%.log
-        graylog:
-            type: gelf
-            publisher: { hostname: %graylog_hostname% }
-            formatter: surfnet_stepup.monolog.full_message_exception_gelf_message_formatter
-
 surfnet_stepup_middleware_command_handling:
     self_service_email_verification_url_template: %self_service_email_verification_url_template%
+    email_fallback_locale: %default_locale%
     email_sender:
         name: %email_sender_name%
         email: %email_sender_email%
 
 surfnet_stepup_middleware_middleware:
     email_verification_window: %email_verification_window%
+
+surfnet_stepup_middleware_management:
+    email_required_locale: %default_locale%

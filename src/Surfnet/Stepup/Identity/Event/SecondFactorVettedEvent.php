@@ -18,6 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -27,17 +29,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class SecondFactorVettedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
@@ -45,6 +42,11 @@ class SecondFactorVettedEvent extends IdentityEvent
      * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     public $secondFactorType;
+
+    /**
+     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
+     */
+    public $identifyingDataId;
 
     /**
      * @var string
@@ -57,31 +59,20 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $documentNumber;
 
     /**
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * @var string
-     */
-    public $email;
-
-    /**
      * @var string Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @param IdentityId $identityId
-     * @param NameId $nameId
-     * @param Institution $institution
-     * @param SecondFactorId $secondFactorId
-     * @param SecondFactorType $secondFactorType
-     * @param string $secondFactorIdentifier
-     * @param string $documentNumber
-     * @param string $commonName
-     * @param string $email
-     * @param string $preferredLocale
+     * @param IdentityId        $identityId
+     * @param NameId            $nameId
+     * @param Institution       $institution
+     * @param SecondFactorId    $secondFactorId
+     * @param SecondFactorType  $secondFactorType
+     * @param IdentifyingDataId $identifyingDataId
+     * @param string            $secondFactorIdentifier
+     * @param string            $documentNumber
+     * @param string            $preferredLocale
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -91,23 +82,31 @@ class SecondFactorVettedEvent extends IdentityEvent
         Institution $institution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
+        IdentifyingDataId $identifyingDataId,
         $secondFactorIdentifier,
         $documentNumber,
-        $commonName,
-        $email,
         $preferredLocale
     ) {
-        parent::__construct($identityId);
+        parent::__construct($identityId, $institution);
 
-        $this->institution = $institution;
-        $this->nameId = $nameId;
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
+        $this->nameId                 = $nameId;
+        $this->secondFactorId         = $secondFactorId;
+        $this->secondFactorType       = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->documentNumber = $documentNumber;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
+        $this->identifyingDataId      = $identifyingDataId;
+        $this->documentNumber         = $documentNumber;
+        $this->preferredLocale        = $preferredLocale;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+
+        return $metadata;
     }
 
     public static function deserialize(array $data)
@@ -115,13 +114,12 @@ class SecondFactorVettedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
-            new Institution($data['institution']),
+            new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
+            new IdentifyingDataId($data['identifying_data_id']),
             $data['second_factor_identifier'],
             $data['document_number'],
-            $data['common_name'],
-            $data['email'],
             $data['preferred_locale']
         );
     }
@@ -129,16 +127,15 @@ class SecondFactorVettedEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'name_id' => (string) $this->nameId,
-            'institution' => (string) $this->institution,
-            'second_factor_id' => (string) $this->secondFactorId,
-            'second_factor_type' => (string) $this->secondFactorType,
+            'identity_id'              => (string) $this->identityId,
+            'name_id'                  => (string) $this->nameId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => (string) $this->secondFactorId,
+            'second_factor_type'       => (string) $this->secondFactorType,
+            'identifying_data_id'      => (string) $this->identifyingDataId,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'document_number' => $this->documentNumber,
-            'common_name' => $this->commonName,
-            'email' => $this->email,
-            'preferred_locale' => $this->preferredLocale,
+            'document_number'          => $this->documentNumber,
+            'preferred_locale'         => $this->preferredLocale,
         ];
     }
 }

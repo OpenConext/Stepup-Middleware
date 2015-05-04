@@ -80,6 +80,14 @@ identity_sraa_get:
         nameId: ".+"
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+audit_log:
+    path:     /audit-log/second-factors
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:AuditLog:secondFactorAuditLog }
+    methods:  [GET]
+    requirements:
+        identityId: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_registration_authority_credentials:
     path:      /registration-authority/{identityId}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:getRegistrationAuthorityCredentials }

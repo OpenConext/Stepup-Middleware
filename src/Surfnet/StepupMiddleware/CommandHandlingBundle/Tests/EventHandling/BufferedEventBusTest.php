@@ -18,7 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 
+use Broadway\Domain\DateTime;
 use Broadway\Domain\DomainEventStream;
+use Broadway\Domain\DomainMessage;
+use Broadway\Domain\Metadata;
 use Mockery as m;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
@@ -30,7 +33,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_buffers_events()
     {
-        $event = m::mock('Broadway\Domain\DomainMessageInterface');
+        $event = $this->createDummyDomainMessage();
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->never()
             ->getMock();
@@ -48,7 +51,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_flushes_events()
     {
-        $event = m::mock('Broadway\Domain\DomainMessageInterface');
+        $event = $this->createDummyDomainMessage();
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -68,7 +71,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
     {
-        $event    = m::mock('Broadway\Domain\DomainMessageInterface');
+        $event    = $this->createDummyDomainMessage();
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -89,7 +92,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function new_event_can_be_buffered_while_flushing()
     {
-        $event = m::mock('Broadway\Domain\DomainMessageInterface');
+        $event = $this->createDummyDomainMessage();
         $bus = new BufferedEventBus();
 
         // in php7 replace this with anonymous class
@@ -107,5 +110,13 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $bus->flush();
 
         $this->assertEquals(2, $listener->callCount, 'After flushing twice, the callcount should be 2');
+    }
+
+    /**
+     * @return DomainMessage
+     */
+    private function createDummyDomainMessage()
+    {
+        return new DomainMessage('1', 0, new Metadata(), null, DateTime::fromString('1970-01-01H00:00:00.000'));
     }
 }

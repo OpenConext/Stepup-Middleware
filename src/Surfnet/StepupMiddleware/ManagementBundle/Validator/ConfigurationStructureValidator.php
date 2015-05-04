@@ -22,6 +22,7 @@ use Assert\Assertion as Assert;
 use Assert\InvalidArgumentException as AssertionException;
 use GuzzleHttp;
 use InvalidArgumentException as CoreInvalidArgumentException;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -41,12 +42,19 @@ class ConfigurationStructureValidator extends ConstraintValidator
      */
     private $raaConfigurationValidator;
 
+    /**
+     * @var EmailTemplatesConfigurationValidator
+     */
+    private $emailTemplatesConfigurationValidator;
+
     public function __construct(
         GatewayConfigurationValidator $gatewayConfigurationValidator,
-        RaaConfigurationValidator $raaConfigurationValidator
+        RaaConfigurationValidator $raaConfigurationValidator,
+        EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator
     ) {
         $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
         $this->raaConfigurationValidator = $raaConfigurationValidator;
+        $this->emailTemplatesConfigurationValidator = $emailTemplatesConfigurationValidator;
     }
 
     public function validate($value, Constraint $constraint)
@@ -76,16 +84,22 @@ class ConfigurationStructureValidator extends ConstraintValidator
         return GuzzleHttp\json_decode($rawValue, true);
     }
 
-    public function validateRoot(array $configuration)
+    public function validateRoot($configuration)
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
-        Assert::keyExists($configuration, 'gateway', "Required property 'gateway' is missing", '(root)');
-        Assert::keyExists($configuration, 'raa', "Required property 'raa' is missing", '(root)');
-        Assert::keyExists($configuration, 'sraa', "Required property 'sraa' is missing", '(root)');
+
+        $acceptedProperties = ['gateway', 'raa', 'sraa', 'email_templates'];
+        StepupAssert::keysMatch(
+            $configuration,
+            $acceptedProperties,
+            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
+            '(root)'
+        );
 
         $this->validateGatewayConfiguration($configuration, 'gateway');
         $this->validateRaaConfiguration($configuration, 'raa');
         $this->validateSraaConfiguration($configuration, 'sraa');
+        $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
     }
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
@@ -117,5 +131,16 @@ class ConfigurationStructureValidator extends ConstraintValidator
                 $propertyPath . '[' . $index. ']'
             );
         }
+    }
+
+    private function validateEmailTemplatesConfiguration($configuration, $propertyPath)
+    {
+        Assert::isArray(
+            $configuration['email_templates'],
+            'Property "email_templates" must have an object as value',
+            $propertyPath
+        );
+
+        $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);
     }
 }

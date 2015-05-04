@@ -22,6 +22,7 @@ interface ConfigurationValidatorInterface
 {
     /**
      * @param array $configuration
+     * @param string $propertyPath
      * @return void
      * @throws \Assert\InvalidArgumentException
      */

@@ -1,10 +1,20 @@
 services:
+    surfnet_stepup.repository.identity_decorated_with_identifying_data:
+        class: Surfnet\Stepup\IdentifyingData\EventSourcing\IdentifyingDataDecorator
+        arguments:
+            - @surfnet_stepup.repository.identity
+            - @stepup.repository.identifying_data
+
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:
             - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
             - @surfnet_stepup.aggregate_factory.public_constructor
+            - [@surfnet_stepup_middleware_command_handling.metadata_enricher.actor]
+
+    surfnet_stepup_middleware_command_handling.metadata_enricher.actor:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnrichingEventStreamDecorator
 
     surfnet_stepup.repository.configuration:
         class: Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository

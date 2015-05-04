@@ -4,6 +4,7 @@ services:
         arguments:
             - @surfnet_stepup_middleware_management.validator.gateway_configuration
             - @surfnet_stepup_middleware_management.validator.raa_configuration
+            - @surfnet_stepup_middleware_management.validator.email_templates_configuration
         tags:
             - { name: validator.constraint_validator, alias: configuration_structure_validator }
 
@@ -20,3 +21,25 @@ services:
     surfnet_stepup_middleware_management.validator.raa_configuration:
         public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\RaaConfigurationValidator
+
+    surfnet_stepup_middleware_management.validator.email_templates_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator
+        arguments:
+            - '' # Default locale
+
+    surfnet_stepup_middleware_management.projector.email_templates:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
+        arguments:
+            - @surfnet_stepup_middleware_management.repository.email_template
+        tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_management.repository.email_template:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
+        factory_service: doctrine.orm.middleware_entity_manager
+        factory_method: getRepository
+        arguments: [ Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate ]
+
+    surfnet_stepup_middleware_management.service.email_template:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
+        arguments: [ @surfnet_stepup_middleware_management.repository.email_template ]

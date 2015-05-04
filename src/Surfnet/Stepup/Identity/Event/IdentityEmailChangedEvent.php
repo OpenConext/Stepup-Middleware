@@ -18,49 +18,58 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 class IdentityEmailChangedEvent extends IdentityEvent
 {
     /**
-     * @var string
+     * @var IdentifyingDataId
      */
-    public $oldEmail;
+    public $identifyingDataId;
 
     /**
      * @var string
      */
     public $newEmail;
 
-    public function __construct(IdentityId $id, $oldEmail, $newEmail)
+    public function __construct(IdentityId $identityId, Institution $institution, IdentifyingDataId $identifyingDataId)
     {
-        parent::__construct($id);
+        parent::__construct($identityId, $institution);
 
-        $this->oldEmail = $oldEmail;
-        $this->newEmail = $newEmail;
+        $this->identifyingDataId = $identifyingDataId;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
     }
 
     /**
-     * @return mixed The object instance
+     * @param array $data
+     * @return IdentityEmailChangedEvent
      */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
-            $data['old_email'],
-            $data['new_email']
+            new Institution($data['institution']),
+            new IdentifyingDataId($data['identifying_data_id'])
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [
-            'id'       => (string)$this->identityId,
-            'old_email' => $this->oldEmail,
-            'new_email' => $this->newEmail
+            'id'          => (string) $this->identityId,
+            'institution' => (string) $this->identityInstitution,
+            'identifying_data_id' => (string) $this->identifyingDataId
         ];
     }
 }

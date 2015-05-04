@@ -22,10 +22,17 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RaCandidateController extends Controller
 {
+    /**
+     * @param Institution $institution
+     * @param Request     $request
+     * @return JsonCollectionResponse
+     */
     public function searchAction(Institution $institution, Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
@@ -39,5 +46,24 @@ class RaCandidateController extends Controller
         $paginator = $this->get('surfnet_stepup_middleware_api.service.ra_candidate')->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
+
+        $identityId = $request->get('identityId');
+
+        $raCandidate = $this->get('surfnet_stepup_middleware_api.service.ra_candidate')->findByIdentityId($identityId);
+
+        if ($raCandidate === null) {
+            throw new NotFoundHttpException(sprintf("RaCandidate with IdentityId '%s' does not exist", $identityId));
+        }
+
+        return new JsonResponse($raCandidate);
     }
 }

@@ -28,6 +28,9 @@ class RaCandidateService extends AbstractSearchService
      */
     private $raCandidateRepository;
 
+    /**
+     * @param RaCandidateRepository $raCandidateRepository
+     */
     public function __construct(RaCandidateRepository $raCandidateRepository)
     {
         $this->raCandidateRepository = $raCandidateRepository;
@@ -44,5 +47,16 @@ class RaCandidateService extends AbstractSearchService
         $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
+    }
+
+    /**
+     * @param string $identityId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate
+     */
+    public function findByIdentityId($identityId)
+    {
+        $raCandidate = $this->raCandidateRepository->findByIdentityId($identityId);
+
+        return $raCandidate;
     }
 }

@@ -78,6 +78,10 @@ class RaCandidateRepository extends EntityRepository
         return $queryBuilder->getQuery();
     }
 
+    /**
+     * @param array $sraaList
+     * @return void
+     */
     public function removeByNameIds(array $sraaList)
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
@@ -90,5 +94,19 @@ class RaCandidateRepository extends EntityRepository
             ->execute();
 
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param string $identityId
+     * @return null|RaCandidate
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByIdentityId($identityId)
+    {
+        return $this->createQueryBuilder('rac')
+            ->where('rac.identityId = :identityId')
+            ->setParameter('identityId', $identityId)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

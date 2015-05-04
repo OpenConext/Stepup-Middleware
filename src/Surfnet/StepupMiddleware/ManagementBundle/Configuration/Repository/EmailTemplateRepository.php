@@ -49,16 +49,25 @@ final class EmailTemplateRepository extends EntityRepository
             ->getSingleResult();
     }
 
+    /**
+     * Removes all email templates.
+     *
+     * We hydrate all templates and remove them through the entitymanager so that they get
+     * removed from the IdentityMap. This to prevent issues when replaying the events, where
+     * deleting them with a delete query would cause errors due to templates not being found.
+     */
     public function removeAll()
     {
-        $this
-            ->getEntityManager()
-            ->createQuery(
-                'DELETE FROM
-                    Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate tpl
-                WHERE
-                    1 = 1'
-            )->execute();
+        $templates = $this->findAll();
+        $em = $this->getEntityManager();
+
+        foreach ($templates as $template) {
+            $em->remove($template);
+        }
+
+        $em->flush();
+
+        unset($templates);
     }
 
     public function save(EmailTemplate $template)

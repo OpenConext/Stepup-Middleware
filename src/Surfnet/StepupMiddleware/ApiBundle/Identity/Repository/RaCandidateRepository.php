@@ -77,4 +77,18 @@ class RaCandidateRepository extends EntityRepository
 
         return $queryBuilder->getQuery();
     }
+
+    public function removeByNameIds(array $sraaList)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->delete($this->_entityName, 'rac')
+            ->where('rac.nameId IN (:sraaList)')
+            ->setParameter('sraaList', $sraaList)
+            ->getQuery()
+            ->execute();
+
+        $this->getEntityManager()->flush();
+    }
 }

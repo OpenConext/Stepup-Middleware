@@ -19,12 +19,14 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
 class RaCandidateProjector extends Projector
@@ -54,6 +56,7 @@ class RaCandidateProjector extends Projector
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,
+            $event->nameId,
             $identifyingData->commonName,
             $identifyingData->email
         );
@@ -68,6 +71,7 @@ class RaCandidateProjector extends Projector
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,
+            $event->nameId,
             $identifyingData->commonName,
             $identifyingData->email
         );
@@ -84,5 +88,16 @@ class RaCandidateProjector extends Projector
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->raCandidateRepository->removeByIdentityId($event->identityId);
+    }
+
+    /**
+     * @param SraaUpdatedEvent $event
+     *
+     * Removes all RaCandidates that have a nameId matching an SRAA, as they cannot be made RA(A) as they
+     * already are SRAA.
+     */
+    public function applySraaUpdatedEvent(SraaUpdatedEvent $event)
+    {
+        $this->raCandidateRepository->removeByNameIds($event->sraaList);
     }
 }

@@ -24,12 +24,14 @@ use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository")
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_ra_candidate_institution", columns={"institution"}),
+ *          @ORM\Index(name="idx_ra_candidate_name_id", columns={"name_id"}),
  *          @ORM\Index(name="idxft_ra_candidate_email", columns={"email"}, flags={"FULLTEXT"}),
  *          @ORM\Index(name="idxft_ra_candidate_commonname", columns={"common_name"}, flags={"FULLTEXT"})
  *      }
@@ -53,6 +55,13 @@ class RaCandidate implements JsonSerializable
     public $institution;
 
     /**
+     * @ORM\Column
+     *
+     * @var string
+     */
+    public $nameId;
+
+    /**
      * @ORM\Column(type="stepup_common_name")
      *
      * @var CommonName
@@ -69,12 +78,14 @@ class RaCandidate implements JsonSerializable
     public static function nominate(
         IdentityId $identityId,
         Institution $institution,
+        NameId $nameId,
         CommonName $commonName,
         Email $email
     ) {
         $candidate              = new self();
         $candidate->identityId  = (string) $identityId;
         $candidate->institution = $institution;
+        $candidate->nameId      = (string) $nameId;
         $candidate->commonName  = $commonName;
         $candidate->email       = $email;
 
@@ -87,7 +98,8 @@ class RaCandidate implements JsonSerializable
             'identity_id' => $this->identityId,
             'institution' => (string) $this->institution,
             'common_name' => $this->commonName,
-            'email'       => $this->email
+            'email'       => $this->email,
+            'name_id'     => $this->nameId
         ];
     }
 }

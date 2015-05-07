@@ -110,7 +110,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $vettedSecondFactors;
 
     /**
-     * @var Regist
+     * @var RegistrationAuthority
      */
     private $registrationAuthority;
 

@@ -91,7 +91,7 @@ class Ra implements JsonSerializable
      * @param NameId             $nameId
      * @param Location           $location
      * @param ContactInformation $contactInformation
-     * @return Raa
+     * @return Ra
      */
     public static function create(
         Institution $institution,

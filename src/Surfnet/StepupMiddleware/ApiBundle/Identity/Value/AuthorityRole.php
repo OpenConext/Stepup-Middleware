@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class AuthorityRole
 {
@@ -63,6 +65,24 @@ class AuthorityRole
     public static function RAA()
     {
         return new self(self::ROLE_RAA);
+    }
+
+    /**
+     * @param RegistrationAuthorityRole $registrationAuthorityRole
+     * @return AuthorityRole
+     */
+    public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole)
+    {
+        if ($registrationAuthorityRole->isRa()) {
+            return static::RA();
+        } elseif ($registrationAuthorityRole->isRaa()) {
+            return static::RAA();
+        }
+
+        throw new RuntimeException(sprintf(
+            'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
+            (string) $registrationAuthorityRole
+        ));
     }
 
     /**

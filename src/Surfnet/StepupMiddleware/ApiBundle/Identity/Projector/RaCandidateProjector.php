@@ -22,6 +22,8 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -49,6 +51,10 @@ class RaCandidateProjector extends Projector
         $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
+    /**
+     * @param SecondFactorVettedEvent $event
+     * @return void
+     */
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
@@ -64,6 +70,10 @@ class RaCandidateProjector extends Projector
         $this->raCandidateRepository->save($candidate);
     }
 
+    /**
+     * @param YubikeySecondFactorBootstrappedEvent $event
+     * @return void
+     */
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
         $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
@@ -79,11 +89,19 @@ class RaCandidateProjector extends Projector
         $this->raCandidateRepository->save($candidate);
     }
 
+    /**
+     * @param VettedSecondFactorRevokedEvent $event
+     * @return void
+     */
     public function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
     {
         $this->raCandidateRepository->removeByIdentityId($event->identityId);
     }
 
+    /**
+     * @param CompliedWithVettedSecondFactorRevocationEvent $event
+     * @return void
+     */
     public function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
@@ -99,5 +117,19 @@ class RaCandidateProjector extends Projector
     public function applySraaUpdatedEvent(SraaUpdatedEvent $event)
     {
         $this->raCandidateRepository->removeByNameIds($event->sraaList);
+    }
+
+    /**
+     * @param IdentityAccreditedAsRaEvent $event
+     * @return void
+     */
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    {
+        $this->raCandidateRepository->removeByIdentityId($event->identityId);
+    }
+
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    {
+        $this->raCandidateRepository->removeByIdentityId($event->identityId);
     }
 }

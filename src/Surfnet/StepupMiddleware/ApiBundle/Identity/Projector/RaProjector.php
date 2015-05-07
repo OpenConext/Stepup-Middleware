@@ -39,10 +39,10 @@ class RaProjector extends Projector
      * @param IdentityAccreditedAsRaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaEvent $event)
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
     {
-        $raa = Ra::create($event->identityInstitution, $event->nameId, $event->location, $event->contactInformation);
+        $ra = Ra::create($event->identityInstitution, $event->nameId, $event->location, $event->contactInformation);
 
-        $this->raRepository->save($raa);
+        $this->raRepository->save($ra);
     }
 }

@@ -22,7 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
@@ -73,14 +75,14 @@ class RaListing implements JsonSerializable
     public $role;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="stepup_location", nullable=true)
      *
      * @var string
      */
     public $location;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="stepup_contact_information", nullable=true)
      *
      * @var string
      */
@@ -92,19 +94,11 @@ class RaListing implements JsonSerializable
         CommonName $commonName,
         Email $email,
         AuthorityRole $role,
-        $location,
-        $contactInformation
+        Location $location,
+        ContactInformation $contactInformation
     ) {
         if (!is_string($identityId)) {
             throw InvalidArgumentException::invalidType('string', 'id', $identityId);
-        }
-
-        if (!is_string($location)) {
-            throw InvalidArgumentException::invalidType('string', 'location', $location);
-        }
-
-        if (!is_string($contactInformation)) {
-            throw InvalidArgumentException::invalidType('string', 'contactInformation', $contactInformation);
         }
 
         $entry                     = new self();
@@ -127,8 +121,8 @@ class RaListing implements JsonSerializable
             'common_name'         => (string) $this->commonName,
             'email'               => (string) $this->email,
             'role'                => (string) $this->role,
-            'location'            => $this->location,
-            'contact_information' => $this->contactInformation
+            'location'            => (string) $this->location,
+            'contact_information' => (string) $this->contactInformation
         ];
     }
 }

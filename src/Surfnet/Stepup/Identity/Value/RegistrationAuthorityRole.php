@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class RegistrationAuthorityRole
+class RegistrationAuthorityRole implements SerializableInterface
 {
     const ROLE_RA   = 1;
     const ROLE_RAA  = 2;
@@ -36,13 +37,13 @@ class RegistrationAuthorityRole
      */
     public function __construct($role)
     {
-        if (!is_scalar($role) || !in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
+        if (!is_int($role) || !in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
             throw new InvalidArgumentException(
                 'Invalid role given, role must be one of RegistrationAuthorityRole::[ROLE_RA|ROLE_RAA|ROLE_SRAA]'
             );
         }
 
-        $this->role = trim($role);
+        $this->role = $role;
     }
 
     /**
@@ -54,13 +55,39 @@ class RegistrationAuthorityRole
         return $this->role === $role->role;
     }
 
+    /**
+     * @return bool
+     */
+    public function isRa()
+    {
+        return $this->role === self::ROLE_RA;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRaa()
+    {
+        return $this->role === self::ROLE_RAA;
+    }
+
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->role;
     }
 
     public function __toString()
     {
-        return $this->role;
+        return (string) $this->role;
+    }
+
+    public static function deserialize(array $data)
+    {
+        return new self($data['role']);
+    }
+
+    public function serialize()
+    {
+        return ['role' => $this->role];
     }
 }

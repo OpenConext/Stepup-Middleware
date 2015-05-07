@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
@@ -44,64 +44,45 @@ class RaListingProjector extends Projector
         $this->identityRepository = $identityRepository;
     }
 
-    public function applyRaaUpdatedEvent(RaaUpdatedEvent $raaUpdatedEvent)
+    /**
+     * @param IdentityAccreditedAsRaEvent $event
+     * @return void
+     */
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
     {
-        foreach ($raaUpdatedEvent->raas as $institution => $raaListings) {
-            $this->updateRaaListingsForInstitution($institution, $raaListings);
-        }
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $raListing = RaListing::create(
+            (string) $event->identityId,
+            $event->identityInstitution,
+            $identity->commonName,
+            $identity->email,
+            AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
+            $event->location,
+            $event->contactInformation
+        );
+
+        $this->raListingRepository->save($raListing);
     }
 
-    private function updateRaaListingsForInstitution($institution, $raaListings)
+    /**
+     * @param IdentityAccreditedAsRaaEvent $event
+     * @return void
+     */
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
     {
-        $nameIds = array_map(function ($raa) {
-            return $raa['name_id'];
-        }, $raaListings);
+        $identity = $this->identityRepository->find((string) $event->identityId);
 
-        $existingRaListings = $this->raListingRepository->getRaasByInstitution($institution);
-        $identities         = $this->identityRepository->findByNameIdsIndexed($nameIds);
+        $raListing = RaListing::create(
+            (string) $event->identityId,
+            $event->identityInstitution,
+            $identity->commonName,
+            $identity->email,
+            AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
+            $event->location,
+            $event->contactInformation
+        );
 
-        if (count($identities) !== count($nameIds)) {
-            $invalid = [];
-            foreach ($nameIds as $nameId) {
-                if (!array_key_exists($nameId, $identities)) {
-                    $invalid[] = $nameId;
-                }
-            }
-
-            throw new RuntimeException(sprintf(
-                'Cannot create RaListings as the RAAs with the following NameIDs have no corresponding Identity: "%s"',
-                implode('", "', $invalid)
-            ));
-        }
-
-        $existingByIdentityId = $existingRaListings
-            ->map(function (RaListing $raListing) {
-                return $raListing->identityId;
-            })
-            ->toArray();
-
-        $existingByIdentity = array_intersect_key($identities, array_flip($existingByIdentityId));
-        $toInsert = array_filter($raaListings, function ($raa) use ($existingByIdentity) {
-            return !array_key_exists($raa['name_id'], $existingByIdentity);
-        });
-
-        $listingsToSave = [];
-        foreach ($toInsert as $newRaListing) {
-            $identity = $identities[$newRaListing['name_id']];
-
-            $listingsToSave[] = RaListing::create(
-                $identity->id,
-                $identity->institution,
-                $identity->commonName,
-                $identity->email,
-                AuthorityRole::RAA(),
-                $newRaListing['location'],
-                $newRaListing['contact_info']
-            );
-        }
-
-        $this->raListingRepository->saveAll($listingsToSave);
-
-        unset($listingsToSave, $toInsert, $existingByIdentity, $existingByIdentityId, $existingRaListings, $identities);
+        $this->raListingRepository->save($raListing);
     }
 }

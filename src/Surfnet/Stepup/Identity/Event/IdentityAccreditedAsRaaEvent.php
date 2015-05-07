@@ -87,7 +87,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['institution']),
-            new RegistrationAuthorityRole($data['registration_authority_role']),
+            RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
             new ContactInformation($data['contact_information'])
         );
@@ -99,7 +99,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
             'identity_id'                 => (string) $this->identityId,
             'name_id'                     => (string) $this->nameId,
             'institution'                 => (string) $this->identityInstitution,
-            'registration_authority_role' => (string) $this->registrationAuthorityRole,
+            'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
             'location'                    => (string) $this->location,
             'contact_information'         => (string) $this->contactInformation
         ];

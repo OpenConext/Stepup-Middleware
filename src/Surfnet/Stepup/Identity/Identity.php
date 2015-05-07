@@ -25,6 +25,7 @@ use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
@@ -34,6 +35,8 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEven
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -44,12 +47,15 @@ use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -102,6 +108,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var SecondFactorCollection|VettedSecondFactor[]
      */
     private $vettedSecondFactors;
+
+    /**
+     * @var Regist
+     */
+    private $registrationAuthority;
 
     public static function create(
         IdentityId $id,
@@ -362,6 +373,56 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $vettedSecondFactor->complyWithRevocation($authorityId);
     }
 
+    /**
+     * @param Institution               $institution
+     * @param RegistrationAuthorityRole $role
+     * @param Location                  $location
+     * @param ContactInformation        $contactInformation
+     * @return void
+     */
+    public function accreditWith(
+        RegistrationAuthorityRole $role,
+        Institution $institution,
+        Location $location,
+        ContactInformation $contactInformation
+    ) {
+        if (!$this->institution->equals($institution)) {
+            throw new DomainException('An Identity may only be accredited within its own institution');
+        }
+
+        if (!$this->vettedSecondFactors->count()) {
+            throw new DomainException(
+                'An Identity must have at least one vetted second factor before it can be accredited'
+            );
+        }
+
+        if ($this->registrationAuthority) {
+            throw new DomainException('Cannot accredit Identity as it has already been accredited');
+        }
+
+        if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
+            $this->apply(new IdentityAccreditedAsRaEvent(
+                $this->id,
+                $this->nameId,
+                $this->institution,
+                $role,
+                $location,
+                $contactInformation
+            ));
+        } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
+            $this->apply(new IdentityAccreditedAsRaaEvent(
+                $this->id,
+                $this->nameId,
+                $this->institution,
+                $role,
+                $location,
+                $contactInformation
+            ));
+        } else {
+            throw new DomainException('An Identity can only be accredited with either the RA or RAA role');
+        }
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
@@ -483,6 +544,24 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->vettedSecondFactors->remove((string) $event->secondFactorId);
+    }
+
+    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    {
+        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation
+        );
+    }
+
+    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    {
+        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation
+        );
     }
 
     public function getAggregateRootId()

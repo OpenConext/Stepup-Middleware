@@ -27,6 +27,8 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEven
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -35,12 +37,15 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
@@ -194,6 +199,26 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentifyingDataId(static::UUID()),
                     '42',
                     'en_GB'
+                )
+            ],
+            'IdentityAccreditedAsRaEvent' => [
+                new IdentityAccreditedAsRaEvent(
+                    new IdentityId(static::UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe')
+                )
+            ],
+            'IdentityAccreditedAsRaaEvent' => [
+                new IdentityAccreditedAsRaaEvent(
+                    new IdentityId(static::UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe')
                 )
             ]
         ];

@@ -20,7 +20,11 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository")
@@ -34,64 +38,68 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 class Raa implements JsonSerializable
 {
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(length=36)
      */
     public $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=150, nullable=false)
+     * @ORM\Column(type="institution", nullable=false)
      */
     public $institution;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=150, nullable=false)
+     * @ORM\Column(type="stepup_name_id", nullable=false)
      */
     public $nameId;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="stepup_location", nullable=true)
      */
     public $location;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="stepup_contact_information", nullable=true)
      */
     public $contactInformation;
 
-    private function __construct($institution, $nameId)
-    {
-        $this->institution = $institution;
-        $this->nameId = $nameId;
+    private function __construct(
+        Institution $institution,
+        NameId $nameId,
+        Location $location,
+        ContactInformation $contactInformation
+    ) {
+        $this->id                 = (string) Uuid::uuid4();
+        $this->institution        = $institution;
+        $this->nameId             = $nameId;
+        $this->location           = $location;
+        $this->contactInformation = $contactInformation;
     }
 
     /**
-     * @param string $institution
-     * @param string $nameId
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa
+     * @param Institution        $institution
+     * @param NameId             $nameId
+     * @param Location           $location
+     * @param ContactInformation $contactInformation
+     * @return Raa
      */
-    public static function create($institution, $nameId)
-    {
-        if (!is_string($institution)) {
-            throw InvalidArgumentException::invalidType('string', 'institution', $institution);
-        }
-
-        if (!is_string($nameId)) {
-            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
-        }
-
-        $raa = new self($institution, $nameId);
+    public static function create(
+        Institution $institution,
+        NameId $nameId,
+        Location $location,
+        ContactInformation $contactInformation
+    ) {
+        $raa = new self($institution, $nameId, $location, $contactInformation);
 
         return $raa;
     }

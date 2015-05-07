@@ -19,30 +19,30 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository;
 
-class RaaProjector extends Projector
+class RaProjector extends Projector
 {
     /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository
      */
-    private $raaRepository;
+    private $raRepository;
 
-    public function __construct(RaaRepository $raaRepository)
+    public function __construct(RaRepository $raRepository)
     {
-        $this->raaRepository = $raaRepository;
+        $this->raRepository = $raRepository;
     }
 
     /**
-     * @param IdentityAccreditedAsRaaEvent $event
+     * @param IdentityAccreditedAsRaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaEvent $event)
     {
-        $raa = Raa::create($event->identityInstitution, $event->nameId, $event->location, $event->contactInformation);
+        $raa = Ra::create($event->identityInstitution, $event->nameId, $event->location, $event->contactInformation);
 
-        $this->raaRepository->save($raa);
+        $this->raRepository->save($raa);
     }
 }

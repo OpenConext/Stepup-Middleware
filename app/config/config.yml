@@ -101,6 +101,9 @@ doctrine:
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
             stepup_common_name: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\CommonNameType
             stepup_email: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType
+            stepup_name_id: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
+            stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
+            stepup_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

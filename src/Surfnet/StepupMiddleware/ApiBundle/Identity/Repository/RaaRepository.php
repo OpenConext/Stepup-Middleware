@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaaQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 
@@ -50,39 +49,12 @@ class RaaRepository extends EntityRepository
     }
 
     /**
-     * @param array $raaCollection
+     * @param Raa $raa
      */
-    public function saveAll(array $raaCollection)
+    public function save(Raa $raa)
     {
-        $invalid = [];
-        foreach ($raaCollection as $index => $raa) {
-            if (!$raa instanceof Raa) {
-                $invalid[$index] = $raa;
-            }
-        }
-
-        if (count($invalid)) {
-            $invalidIndications = [];
-            foreach ($invalid as $index => $value) {
-                $invalidIndications[] = sprintf(
-                    '"%s" at index "%d"',
-                    is_object($value) ? get_class($value) : gettype($value)
-                );
-            }
-
-            throw new InvalidArgumentException(sprintf(
-                'Expected array of Raa Objects, got %s',
-                implode(', ', $invalidIndications)
-            ));
-        }
-
-        $entityManager = $this->getEntityManager();
-
-        foreach ($raaCollection as $raa) {
-            $entityManager->persist($raa);
-        }
-
-        $entityManager->flush();
+        $this->getEntityManager()->persist($raa);
+        $this->getEntityManager()->flush();
     }
 
     /**

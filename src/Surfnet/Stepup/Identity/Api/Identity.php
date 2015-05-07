@@ -24,12 +24,15 @@ use Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder;
 use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -167,9 +170,45 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     /**
      * @param SecondFactorId $secondFactorId
      * @param IdentityId $authorityId
-     * @return
+     * @return void
      */
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
+
+    /**
+     * @param Institution               $institution
+     * @param RegistrationAuthorityRole $role
+     * @param Location                  $location
+     * @param ContactInformation        $contactInformation
+     * @return void
+     */
+    public function accreditWith(
+        RegistrationAuthorityRole $role,
+        Institution $institution,
+        Location $location,
+        ContactInformation $contactInformation
+    );
+//
+//    The following methods are already defined but cannot yet be implemented.
+//
+//    /**
+//     * @param RegistrationAuthorityRole $role
+//     * @param Institution               $institution
+//     * @return void
+//     */
+//    public function appointAs(RegistrationAuthorityRole $role, Institution $institution);
+//
+//    /**
+//     * @param Location           $location
+//     * @param ContactInformation $contactInformation
+//     * @return void
+//     */
+//    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
+//
+//    /**
+//     * @param Institution $institution
+//     * @return void
+//     */
+//    public function retractRegistrationAuthority(Institution $institution);
 
     /**
      * @return IdentityId

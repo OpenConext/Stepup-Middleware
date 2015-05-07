@@ -41,4 +41,14 @@ class RaRepository extends EntityRepository
     {
         return $this->findBy(['institution' => $institution]);
     }
+
+    /**
+     * @param Ra $ra
+     * @return void
+     */
+    public function save(Ra $ra)
+    {
+        $this->getEntityManager()->persist($ra);
+        $this->getEntityManager()->flush();
+    }
 }

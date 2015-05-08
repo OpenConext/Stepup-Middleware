@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class IdentityRepository extends EntityRepository
@@ -47,33 +47,33 @@ class IdentityRepository extends EntityRepository
     }
 
     /**
-     * @param SearchIdentityCommand $command
+     * @param IdentityQuery $query
      * @return \Doctrine\ORM\Query
      */
-    public function createSearchQuery(SearchIdentityCommand $command)
+    public function createSearchQuery(IdentityQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('i');
 
         $queryBuilder
             ->where('i.institution = :institution')
-            ->setParameter('institution', $command->institution);
+            ->setParameter('institution', $query->institution);
 
-        if ($command->nameId) {
+        if ($query->nameId) {
             $queryBuilder
                 ->andWhere('i.nameId = :nameId')
-                ->setParameter('nameId', $command->nameId);
+                ->setParameter('nameId', $query->nameId);
         }
 
-        if ($command->email) {
+        if ($query->email) {
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
-                ->setParameter('email', $command->email);
+                ->setParameter('email', $query->email);
         }
 
-        if ($command->commonName) {
+        if ($query->commonName) {
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
-                ->setParameter('commonName', $command->commonName);
+                ->setParameter('commonName', $query->commonName);
         }
 
         return $queryBuilder->getQuery();
@@ -83,7 +83,7 @@ class IdentityRepository extends EntityRepository
      * @param string[] $nameIds
      * @return Identity[] Indexed by NameID.
      */
-    public function findIdentitiesForNameIdsIndexedByNameIds(array $nameIds)
+    public function findByNameIdsIndexed(array $nameIds)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('i')

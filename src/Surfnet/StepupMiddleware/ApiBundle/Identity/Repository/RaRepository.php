@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\ListRasCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 
 class RaRepository extends EntityRepository
@@ -44,18 +43,12 @@ class RaRepository extends EntityRepository
     }
 
     /**
-     * Searches for RAs.
-     *
-     * @param ListRasCommand $searchRaCommand
-     * @return \Doctrine\ORM\Query
+     * @param Ra $ra
+     * @return void
      */
-    public function createSearchQuery(ListRasCommand $searchRaCommand)
+    public function save(Ra $ra)
     {
-        $queryBuilder = $this
-            ->createQueryBuilder('r')
-            ->where('r.institution = :institution')
-            ->setParameter('institution', $searchRaCommand->institution);
-
-        return $queryBuilder->getQuery();
+        $this->getEntityManager()->persist($ra);
+        $this->getEntityManager()->flush();
     }
 }

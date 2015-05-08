@@ -66,6 +66,12 @@ identity_ra_list:
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+identity_ra_listing:
+    path:      /ra-listing
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaListing:search }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_raa_search:
     path:      /raa
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Raa:search }
@@ -92,6 +98,26 @@ identity_registration_authority_credentials:
     path:      /registration-authority/{identityId}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:getRegistrationAuthorityCredentials }
     methods:  [GET]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+institution_listing:
+    path:      /institution-listing
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionListing:collection }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+ra_candidate_search:
+    path:      /ra-candidate
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:search }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+ra_candidate:
+    path:      /ra-candidate/{identityId}
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:get }
+    methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

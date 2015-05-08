@@ -22,15 +22,6 @@ return [
         'gateway' => [
             'service_providers' => 9,
         ],
-        'raa' => [
-            'SURFnet bv' => [
-                [
-                    'name_id'      => 'ddfd',
-                    'location'     => 'Behind you',
-                    'contact_info' => "Don't",
-                ]
-            ],
-        ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],

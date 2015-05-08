@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
-class RegistrationAuthorityCredentials implements \JsonSerializable
+final class RegistrationAuthorityCredentials implements \JsonSerializable
 {
     /**
      * @var string
@@ -37,7 +37,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     private $institution;
 
     /**
-     * @var string
+     * @var string|\Surfnet\Stepup\IdentifyingData\Value\CommonName
      */
     private $commonName;
 
@@ -132,7 +132,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     /**
      * @param string $nameId
      * @param string $identityNameId
-     * @return bool
+     * @return void
      */
     private static function assertEquals($nameId, $identityNameId)
     {

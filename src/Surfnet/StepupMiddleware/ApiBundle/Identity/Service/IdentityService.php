@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository;
@@ -75,14 +75,14 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param SearchIdentityCommand $command
+     * @param IdentityQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function search(SearchIdentityCommand $command)
+    public function search(IdentityQuery $query)
     {
-        $searchQuery = $this->repository->createSearchQuery($command);
+        $searchQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($searchQuery, $command);
+        $paginator = $this->createPaginatorFrom($searchQuery, $query);
 
         return $paginator;
     }

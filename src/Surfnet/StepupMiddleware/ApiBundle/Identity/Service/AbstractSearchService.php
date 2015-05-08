@@ -23,34 +23,34 @@ use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\AbstractSearchCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
 
 class AbstractSearchService
 {
     /**
-     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $searchQuery
-     * @param AbstractSearchCommand                          $command
+     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $doctrineQuery
+     * @param AbstractQuery                          $query
      * @return Pagerfanta
      */
-    protected function createPaginatorFrom($searchQuery, AbstractSearchCommand $command)
+    protected function createPaginatorFrom($doctrineQuery, AbstractQuery $query)
     {
-        $query = $searchQuery;
-        if ($searchQuery instanceof QueryBuilder) {
-            $query = $searchQuery->getQuery();
+        $queryObject = $doctrineQuery;
+        if ($doctrineQuery instanceof QueryBuilder) {
+            $queryObject = $doctrineQuery->getQuery();
         }
 
-        if (!$query instanceof Query) {
+        if (!$queryObject instanceof Query) {
             throw InvalidArgumentException::invalidType(
                 'Doctrine\ORM\Query or Doctrine\ORM\QueryBuilder',
                 'searchQuery',
-                $searchQuery
+                $doctrineQuery
             );
         }
 
-        $adapter   = new DoctrineORMAdapter($searchQuery);
+        $adapter   = new DoctrineORMAdapter($doctrineQuery);
         $paginator = new Pagerfanta($adapter);
-        $paginator->setMaxPerPage($command->itemsPerPage);
-        $paginator->setCurrentPage($command->pageNumber);
+        $paginator->setMaxPerPage($query->itemsPerPage);
+        $paginator->setCurrentPage($query->pageNumber);
 
         return $paginator;
     }

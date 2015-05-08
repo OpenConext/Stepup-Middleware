@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Identity\EventSourcing;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\AggregateFactoryInterface;
 use Broadway\EventSourcing\EventSourcingRepository;
+use Broadway\EventSourcing\EventStreamDecoratorInterface;
 use Broadway\EventStore\EventStoreInterface;
 
 class IdentityRepository extends EventSourcingRepository

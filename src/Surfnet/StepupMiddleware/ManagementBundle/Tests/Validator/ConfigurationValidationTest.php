@@ -20,12 +20,10 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator;
-use Surfnet\StepupMiddleware\ManagementBundle\Validator\RaaConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator;
 
 final class ConfigurationValidationTest extends TestCase
@@ -65,7 +63,6 @@ final class ConfigurationValidationTest extends TestCase
             new GatewayConfigurationValidator(
                 new ServiceProviderConfigurationValidator()
             ),
-            new RaaConfigurationValidator(),
             new EmailTemplatesConfigurationValidator('en_GB')
         );
         $validator->initialize($context);

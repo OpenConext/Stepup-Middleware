@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-use RuntimeException;
-
 /**
  * Named exception used to indicate that the command that is being processed
  * may not be executed by the requesting client.

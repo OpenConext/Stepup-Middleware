@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 class SecondFactorProjector extends Projector
@@ -71,12 +72,30 @@ class SecondFactorProjector extends Projector
 
     protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
     {
-        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
+        $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
+
+        if ($secondFactor === null) {
+            throw new RuntimeException(sprintf(
+                'Expected to find a second factor having secondFactorId "%s", found none.',
+                $event->secondFactorId
+            ));
+        }
+
+        $this->repository->remove($secondFactor);
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
-        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
+        $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
+
+        if ($secondFactor === null) {
+            throw new RuntimeException(sprintf(
+                'Expected to find a second factor having secondFactorId "%s", found none.',
+                $event->secondFactorId
+            ));
+        }
+
+        $this->repository->remove($secondFactor);
     }
 }

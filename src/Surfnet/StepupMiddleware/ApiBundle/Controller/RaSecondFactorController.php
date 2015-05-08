@@ -19,32 +19,29 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class RaSecondFactorController extends Controller
 {
     public function collectionAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access RA second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $command = new SearchRaSecondFactorCommand();
-        $command->institution = $institution;
-        $command->pageNumber = (int) $request->get('p', 1);
-        $command->name = $request->get('name');
-        $command->type = $request->get('type');
-        $command->secondFactorId = $request->get('secondFactorId');
-        $command->email = $request->get('email');
-        $command->status = $request->get('status');
-        $command->orderBy = $request->get('orderBy');
-        $command->orderDirection = $request->get('orderDirection');
+        $query                 = new RaSecondFactorQuery();
+        $query->institution    = $institution;
+        $query->pageNumber     = (int) $request->get('p', 1);
+        $query->name           = $request->get('name');
+        $query->type           = $request->get('type');
+        $query->secondFactorId = $request->get('secondFactorId');
+        $query->email          = $request->get('email');
+        $query->status         = $request->get('status');
+        $query->orderBy        = $request->get('orderBy');
+        $query->orderDirection = $request->get('orderDirection');
 
-        $paginator = $this->getService()->search($command);
+        $paginator = $this->getService()->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

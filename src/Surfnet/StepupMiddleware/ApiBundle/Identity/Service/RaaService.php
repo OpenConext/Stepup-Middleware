@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaaCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaaQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
 
 class RaaService extends AbstractSearchService
@@ -34,14 +34,14 @@ class RaaService extends AbstractSearchService
     }
 
     /**
-     * @param SearchRaaCommand $searchRaaCommand
+     * @param RaaQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function search(SearchRaaCommand $searchRaaCommand)
+    public function search(RaaQuery $query)
     {
-        $searchQuery = $this->raaRepository->createSearchQuery($searchRaaCommand);
+        $searchQuery = $this->raaRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($searchQuery, $searchRaaCommand);
+        $paginator = $this->createPaginatorFrom($searchQuery, $query);
 
         return $paginator;
     }

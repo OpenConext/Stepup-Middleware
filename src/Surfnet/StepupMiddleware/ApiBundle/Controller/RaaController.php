@@ -19,26 +19,23 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchRaaCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaaQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RaaController extends Controller
 {
     public function searchAction(Request $request, Institution $institution)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access identity');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $command = new SearchRaaCommand();
-        $command->institution = $institution;
-        $command->nameId = $request->get('NameID');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query              = new RaaQuery();
+        $query->institution = $institution;
+        $query->nameId      = $request->get('NameID');
+        $query->pageNumber  = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->search($command);
+        $paginator = $this->getService()->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

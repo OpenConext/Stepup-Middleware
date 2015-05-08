@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 
-class LogicException extends \LogicException
+use LogicException as CoreLogicException;
+
+class LogicException extends CoreLogicException implements Exception
 {
 }

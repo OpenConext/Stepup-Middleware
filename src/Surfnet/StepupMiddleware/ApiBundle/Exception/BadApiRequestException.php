@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 /**
  * Thrown when a client provided invalid command input to the application.
  */
-class BadApiRequestException extends \RuntimeException
+class BadApiRequestException extends RuntimeException
 {
     /**
      * @var string[]

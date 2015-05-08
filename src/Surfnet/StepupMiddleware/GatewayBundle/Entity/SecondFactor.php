@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
@@ -35,8 +36,7 @@ class SecondFactor
      * @var int
      *
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
+     * @ORM\Column(length=36)
      */
     private $id;
 
@@ -82,8 +82,15 @@ class SecondFactor
      */
     private $secondFactorIdentifier;
 
-    public function __construct($identityId, $nameId, $institution, $secondFactorId, $secondFactorIdentifier, $secondFactorType)
-    {
+    public function __construct(
+        $identityId,
+        $nameId,
+        $institution,
+        $secondFactorId,
+        $secondFactorIdentifier,
+        $secondFactorType
+    ) {
+        $this->id                     = (string) Uuid::uuid4();
         $this->identityId             = $identityId;
         $this->nameId                 = $nameId;
         $this->institution            = $institution;

@@ -22,7 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository")
+ * @ORM\Entity(
+ *      repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository"
+ * )
  * @ORM\Table(
  *      name="email_templates",
  *      indexes={}

@@ -82,8 +82,14 @@ class SecondFactor
      */
     private $secondFactorIdentifier;
 
-    public function __construct($identityId, $nameId, $institution, $secondFactorId, $secondFactorIdentifier, $secondFactorType)
-    {
+    public function __construct(
+        $identityId,
+        $nameId,
+        $institution,
+        $secondFactorId,
+        $secondFactorIdentifier,
+        $secondFactorType
+    ) {
         $this->id                     = (string) Uuid::uuid4();
         $this->identityId             = $identityId;
         $this->nameId                 = $nameId;

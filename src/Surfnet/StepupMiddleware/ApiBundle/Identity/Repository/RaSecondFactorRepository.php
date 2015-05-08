@@ -62,7 +62,7 @@ class RaSecondFactorRepository extends EntityRepository
             ->setParameter('institution', $query->institution);
 
         if ($query->name) {
-            $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', "%$query->name%");
+            $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', sprintf('%%%s%%', $query->name));
         }
 
         if ($query->type) {
@@ -76,7 +76,7 @@ class RaSecondFactorRepository extends EntityRepository
         }
 
         if ($query->email) {
-            $queryBuilder->andWhere('sf.email LIKE :email')->setParameter('email', "%$query->email%");
+            $queryBuilder->andWhere('sf.email LIKE :email')->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
         if ($query->status) {
@@ -89,7 +89,10 @@ class RaSecondFactorRepository extends EntityRepository
             case 'secondFactorId':
             case 'email':
             case 'status':
-                $queryBuilder->orderBy("sf.$query->orderBy", $query->orderDirection === 'desc' ? 'DESC' : 'ASC');
+                $queryBuilder->orderBy(
+                    sprintf('sf.%s', $query->orderBy),
+                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
+                );
                 break;
         }
 

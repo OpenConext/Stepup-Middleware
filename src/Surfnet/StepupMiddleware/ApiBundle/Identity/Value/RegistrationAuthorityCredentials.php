@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
-class RegistrationAuthorityCredentials implements \JsonSerializable
+final class RegistrationAuthorityCredentials implements \JsonSerializable
 {
     /**
      * @var string

@@ -52,7 +52,7 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function RA()
+    public static function ra()
     {
         return new self(self::ROLE_RA);
     }
@@ -62,7 +62,7 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function RAA()
+    public static function raa()
     {
         return new self(self::ROLE_RAA);
     }
@@ -74,9 +74,9 @@ class AuthorityRole
     public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole)
     {
         if ($registrationAuthorityRole->isRa()) {
-            return static::RA();
+            return static::ra();
         } elseif ($registrationAuthorityRole->isRaa()) {
-            return static::RAA();
+            return static::raa();
         }
 
         throw new RuntimeException(sprintf(

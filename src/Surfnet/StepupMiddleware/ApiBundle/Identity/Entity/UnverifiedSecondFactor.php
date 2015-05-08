@@ -107,12 +107,12 @@ class UnverifiedSecondFactor implements \JsonSerializable
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
         }
 
-        $secondFactor = new self;
-        $secondFactor->identity = $identity;
-        $secondFactor->id = $id;
-        $secondFactor->type = $type;
-        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
-        $secondFactor->verificationNonce = $verificationNonce;
+        $secondFactor                              = new self;
+        $secondFactor->identity                    = $identity;
+        $secondFactor->id                          = $id;
+        $secondFactor->type                        = $type;
+        $secondFactor->secondFactorIdentifier      = $secondFactorIdentifier;
+        $secondFactor->verificationNonce           = $verificationNonce;
         $secondFactor->verificationNonceValidUntil = $verificationNonceValidUntil;
 
         $identity->unverifiedSecondFactors->add($secondFactor);
@@ -147,8 +147,8 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'   => $this->id,
-            'type' => $this->type,
+            'id'                       => $this->id,
+            'type'                     => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier
         ];
     }

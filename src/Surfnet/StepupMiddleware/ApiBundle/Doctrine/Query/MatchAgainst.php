@@ -62,7 +62,7 @@ class MatchAgainst extends FunctionNode
         }
 
         return sprintf(
-            "MATCH(%s) AGAINST (%s IN NATURAL LANGUAGE MODE)",
+            'MATCH(%s) AGAINST (%s IN NATURAL LANGUAGE MODE)',
             $parsedColumns,
             $this->searchTerm->dispatch($sqlWalker)
         );

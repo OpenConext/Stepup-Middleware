@@ -33,6 +33,6 @@ class MigrationsMigrateDoctrineCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getApplication()->doRun(new StringInput("doc:mig:mig --em=deploy"), $output);
+        $this->getApplication()->doRun(new StringInput('doc:mig:mig --em=deploy'), $output);
     }
 }

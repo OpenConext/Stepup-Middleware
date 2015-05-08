@@ -44,7 +44,10 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
             $propertyPath
         );
 
-        $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
+        $this->validateServiceProviders(
+            $gatewayConfiguration['service_providers'],
+            $propertyPath . '.service_providers'
+        );
     }
 
     private function validateServiceProviders($serviceProviders, $propertyPath)

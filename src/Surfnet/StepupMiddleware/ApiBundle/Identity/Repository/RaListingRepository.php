@@ -65,7 +65,7 @@ class RaListingRepository extends EntityRepository
             ->where('rl.role = :role')
             ->andWhere('rl.institution = :institution')
             ->setParameters([
-                'role'        => AuthorityRole::RAA(),
+                'role'        => AuthorityRole::raa(),
                 'institution' => $institution
             ])
             ->getQuery()

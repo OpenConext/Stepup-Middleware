@@ -65,7 +65,7 @@ class CommonNameTypeTest extends UnitTest
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
 
-        $input  = AuthorityRole::RAA();
+        $input  = AuthorityRole::raa();
         $output = $authorityRole->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));

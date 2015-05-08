@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Entity;
+namespace Surfnet\StepupMiddleware\GatewayBundle\Exception;
 
-use Surfnet\StepupBundle\Value\SecondFactorType;
+use RuntimeException as CoreRuntimeException;
 
-interface SecondFactor
+class RuntimeException extends CoreRuntimeException
 {
-    /**
-     * @param SecondFactor $comparable
-     * @return bool
-     */
-    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable);
-
-    /**
-     * @param SecondFactorType $type
-     * @return bool
-     */
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type);
 }

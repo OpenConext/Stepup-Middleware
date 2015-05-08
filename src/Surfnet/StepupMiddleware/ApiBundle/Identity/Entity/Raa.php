@@ -46,28 +46,28 @@ class Raa implements JsonSerializable
     public $id;
 
     /**
-     * @var string
+     * @var Institution
      *
      * @ORM\Column(type="institution", nullable=false)
      */
     public $institution;
 
     /**
-     * @var string
+     * @var NameId
      *
      * @ORM\Column(type="stepup_name_id", nullable=false)
      */
     public $nameId;
 
     /**
-     * @var string
+     * @var Location
      *
      * @ORM\Column(type="stepup_location", nullable=true)
      */
     public $location;
 
     /**
-     * @var string
+     * @var ContactInformation
      *
      * @ORM\Column(type="stepup_contact_information", nullable=true)
      */

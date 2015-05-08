@@ -149,8 +149,7 @@ class UnverifiedSecondFactor implements \JsonSerializable
         return [
             'id'   => $this->id,
             'type' => $this->type,
-            'second_factor_identifier' => $this->secondFactorIdentifier,
-//            'verification_expires_at' => (string) $this->verificationNonceValidUntil
+            'second_factor_identifier' => $this->secondFactorIdentifier
         ];
     }
 }

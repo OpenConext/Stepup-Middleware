@@ -77,14 +77,14 @@ class RaListing implements JsonSerializable
     /**
      * @ORM\Column(type="stepup_location", nullable=true)
      *
-     * @var string
+     * @var Location
      */
     public $location;
 
     /**
      * @ORM\Column(type="stepup_contact_information", nullable=true)
      *
-     * @var string
+     * @var ContactInformation
      */
     public $contactInformation;
 

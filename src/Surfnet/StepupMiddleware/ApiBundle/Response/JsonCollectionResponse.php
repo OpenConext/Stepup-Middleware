@@ -51,6 +51,6 @@ class JsonCollectionResponse extends JsonResponse
             'items'      => $collection
         );
 
-        parent::__construct($data);
+        parent::__construct($data, 200, $headers);
     }
 }

@@ -31,7 +31,7 @@ class IdentityQuery extends AbstractQuery
     public $commonName;
 
     /**
-     * @var string
+     * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 

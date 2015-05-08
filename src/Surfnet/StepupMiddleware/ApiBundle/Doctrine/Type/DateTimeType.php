@@ -31,11 +31,22 @@ class DateTimeType extends Type
 {
     const NAME = 'stepup_datetime';
 
+    /**
+     * @param array            $fieldDeclaration
+     * @param AbstractPlatform $platform
+     * @return string
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getDateTimeTypeDeclarationSQL($fieldDeclaration);
     }
 
+    /**
+     * @param mixed            $value
+     * @param AbstractPlatform $platform
+     * @return null|string
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if ($value === null) {
@@ -45,6 +56,12 @@ class DateTimeType extends Type
         return $value->format($platform->getDateTimeFormatString());
     }
 
+    /**
+     * @param mixed            $value
+     * @param AbstractPlatform $platform
+     * @return null|DateTime
+     * @throws ConversionException
+     */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if (is_null($value)) {

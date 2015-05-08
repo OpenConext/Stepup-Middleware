@@ -54,10 +54,10 @@ final class SecondFactorStatus
     }
 
     /**
-     * @param self $other
+     * @param SecondFactorStatus $other
      * @return bool
      */
-    public function equals(self $other)
+    public function equals(SecondFactorStatus $other)
     {
         return $this->status === $other->status;
     }

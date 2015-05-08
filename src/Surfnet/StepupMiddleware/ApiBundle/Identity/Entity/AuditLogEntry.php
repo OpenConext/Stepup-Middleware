@@ -66,7 +66,7 @@ class AuditLogEntry implements JsonSerializable
      * @ORM\Id
      * @ORM\Column(length=36)
      *
-     * @var int|null
+     * @var string
      */
     public $id;
 

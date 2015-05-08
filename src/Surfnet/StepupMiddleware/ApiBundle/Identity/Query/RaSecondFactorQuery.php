@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 final class RaSecondFactorQuery extends AbstractQuery
 {
     /**
-     * @var string
+     * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 

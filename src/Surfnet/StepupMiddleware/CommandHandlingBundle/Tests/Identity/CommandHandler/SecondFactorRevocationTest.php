@@ -76,11 +76,11 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $command->identityId     = '42';
         $command->secondFactorId = self::uuid();
 
-        $identityId        = new IdentityId($command->identityId);
-        $institution       = new Institution('A Corp.');
-        $identifyingDataId = IdentifyingDataId::fromIdentityId($identityId);
-        $secFacId          = new SecondFactorId($command->secondFactorId);
-        $pubId             = new YubikeyPublicId('ccccvfeghijk');
+        $identityId             = new IdentityId($command->identityId);
+        $institution            = new Institution('A Corp.');
+        $identifyingDataId      = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId         = new SecondFactorId($command->secondFactorId);
+        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -94,8 +94,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new YubikeyPossessionProvenEvent(
                     $identityId,
                     $institution,
-                    $secFacId,
-                    $pubId,
+                    $secondFactorId,
+                    $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -110,8 +110,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new UnverifiedSecondFactorRevokedEvent(
                     $identityId,
                     $institution,
-                    $secFacId,
-                    new SecondFactorType('yubikey')
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    (string) $secondFactorIdentifier
                 )
             ]);
     }
@@ -126,11 +127,11 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $command->identityId     = '42';
         $command->secondFactorId = self::uuid();
 
-        $identityId        = new IdentityId($command->identityId);
-        $institution       = new Institution('A Corp.');
-        $identifyingDataId = IdentifyingDataId::fromIdentityId($identityId);
-        $secFacId          = new SecondFactorId($command->secondFactorId);
-        $pubId             = new YubikeyPublicId('ccccvfeghijk');
+        $identityId             = new IdentityId($command->identityId);
+        $institution            = new Institution('A Corp.');
+        $identifyingDataId      = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId         = new SecondFactorId($command->secondFactorId);
+        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -144,8 +145,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new YubikeyPossessionProvenEvent(
                     $identityId,
                     $institution,
-                    $secFacId,
-                    $pubId,
+                    $secondFactorId,
+                    $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -157,8 +158,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new EmailVerifiedEvent(
                     $identityId,
                     $institution,
-                    $secFacId,
+                    $secondFactorId,
                     new SecondFactorType('yubikey'),
+                    (string) $secondFactorIdentifier,
                     DateTime::now(),
                     $identifyingDataId,
                     'SOMEREGISTRATIONCODE',
@@ -170,8 +172,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new VerifiedSecondFactorRevokedEvent(
                     $identityId,
                     $institution,
-                    $secFacId,
-                    new SecondFactorType('yubikey')
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    (string) $secondFactorIdentifier
                 )
             ]);
     }
@@ -186,13 +189,13 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $command->identityId     = '42';
         $command->secondFactorId = self::uuid();
 
-        $identityId        = new IdentityId($command->identityId);
-        $nameId            = new NameId('3');
-        $institution       = new Institution('A Corp.');
-        $identifyingDataId = IdentifyingDataId::fromIdentityId($identityId);
-        $secondFactorId    = new SecondFactorId($command->secondFactorId);
-        $secondFactorType  = new SecondFactorType('yubikey');
-        $yubikeyId         = new YubikeyPublicId('ccccvfeghijk');
+        $identityId             = new IdentityId($command->identityId);
+        $nameId                 = new NameId('3');
+        $institution            = new Institution('A Corp.');
+        $identifyingDataId      = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId         = new SecondFactorId($command->secondFactorId);
+        $secondFactorType       = new SecondFactorType('yubikey');
+        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -207,7 +210,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $secondFactorId,
-                    $yubikeyId,
+                    $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -221,6 +224,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorType,
+                    (string) $secondFactorIdentifier,
                     DateTime::now(),
                     $identifyingDataId,
                     'SOMEREGISTRATIONCODE',
@@ -233,7 +237,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorType,
                     $identifyingDataId,
-                    (string) $yubikeyId,
+                    (string) $secondFactorIdentifier,
                     'DOCUMENT_42',
                     'en_GB'
                 )
@@ -244,7 +248,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $secondFactorId,
-                    $secondFactorType
+                    $secondFactorType,
+                    (string) $secondFactorIdentifier
                 )
             ]);
     }
@@ -265,12 +270,12 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityInstitution       = new Institution('SURFnet');
         $authorityIdentifyingDataId = IdentifyingDataId::fromIdentityId($authorityId);
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('SURFnet');
-        $registrantNameId            = new NameId('3');
-        $registrantIdentifyingDataId = IdentifyingDataId::fromIdentityId($registrantId);
-        $registrantSecFacId          = new SecondFactorId($command->secondFactorId);
-        $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');
+        $registrantId                     = new IdentityId($command->identityId);
+        $registrantInstitution            = new Institution('SURFnet');
+        $registrantNameId                 = new NameId('3');
+        $registrantIdentifyingDataId      = IdentifyingDataId::fromIdentityId($registrantId);
+        $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -301,8 +306,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
                     $registrantInstitution,
-                    $registrantSecFacId,
-                    $registrantPubId,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -317,8 +322,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
                     $registrantId,
                     $registrantInstitution,
-                    $registrantSecFacId,
+                    $registrantSecondFactorId,
                     new SecondFactorType('yubikey'),
+                    (string) $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);
@@ -340,13 +346,13 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityInstitution       = new Institution('Wazoo');
         $authorityIdentifyingDataId = IdentifyingDataId::fromIdentityId($authorityId);
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantIdentifyingDataId = IdentifyingDataId::fromIdentityId($registrantId);
-        $registrantSecondFactorId    = new SecondFactorId($command->secondFactorId);
-        $registrantSecondFactorType  = new SecondFactorType('yubikey');
-        $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');
+        $registrantId                     = new IdentityId($command->identityId);
+        $registrantInstitution            = new Institution('A Corp.');
+        $registrantNameId                 = new NameId('3');
+        $registrantIdentifyingDataId      = IdentifyingDataId::fromIdentityId($registrantId);
+        $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
+        $registrantSecondFactorType       = new SecondFactorType('yubikey');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -378,7 +384,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantSecondFactorId,
-                    $registrantPubId,
+                    $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -392,6 +398,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
+                    (string) $registrantSecondFactorIdentifier,
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGISTRATION_CODE',
@@ -405,6 +412,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
+                    (string) $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);
@@ -426,13 +434,13 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityInstitution       = new Institution('Wazoo');
         $authorityIdentifyingDataId = IdentifyingDataId::fromIdentityId($authorityId);
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantIdentifyingDataId = IdentifyingDataId::fromIdentityId($registrantId);
-        $registrantSecondFactorId    = new SecondFactorId($command->secondFactorId);
-        $registrantSecondFactorType  = new SecondFactorType('yubikey');
-        $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');
+        $registrantId                     = new IdentityId($command->identityId);
+        $registrantInstitution            = new Institution('A Corp.');
+        $registrantNameId                 = new NameId('3');
+        $registrantIdentifyingDataId      = IdentifyingDataId::fromIdentityId($registrantId);
+        $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
+        $registrantSecondFactorType       = new SecondFactorType('yubikey');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -464,7 +472,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantSecondFactorId,
-                    $registrantPubId,
+                    $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -478,6 +486,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
+                    (string) $registrantSecondFactorIdentifier,
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGISTRATION_CODE',
@@ -490,7 +499,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantIdentifyingDataId,
-                    $registrantPubId,
+                    $registrantSecondFactorIdentifier,
                     'DOCUMENT_NUMBER',
                     'en_GB'
                 )
@@ -502,6 +511,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     new SecondFactorType('yubikey'),
+                    (string) $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);

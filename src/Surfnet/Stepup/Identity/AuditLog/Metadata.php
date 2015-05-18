@@ -39,4 +39,9 @@ final class Metadata
      * @var \Surfnet\StepupBundle\Value\SecondFactorType|null
      */
     public $secondFactorType;
+
+    /**
+     * @var string|null
+     */
+    public $secondFactorIdentifier;
 }

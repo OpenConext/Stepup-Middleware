@@ -107,6 +107,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
         $metadata->secondFactorType = new SecondFactorType((string) $this->stepupProvider);
+        $metadata->secondFactorIdentifier = (string) $this->gssfId;
 
         return $metadata;
     }

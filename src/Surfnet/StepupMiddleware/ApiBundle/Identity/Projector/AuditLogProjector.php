@@ -24,8 +24,10 @@ use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class AuditLogProjector implements ProjectorInterface
 {
@@ -34,9 +36,17 @@ class AuditLogProjector implements ProjectorInterface
      */
     private $auditLogRepository;
 
-    public function __construct(AuditLogRepository $auditLogRepository)
-    {
+    /**
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
+     */
+    private $identityRepository;
+
+    public function __construct(
+        AuditLogRepository $auditLogRepository,
+        IdentityRepository $identityRepository
+    ) {
         $this->auditLogRepository = $auditLogRepository;
+        $this->identityRepository = $identityRepository;
     }
 
     /**
@@ -57,17 +67,27 @@ class AuditLogProjector implements ProjectorInterface
         $entry->id = (string) Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
-            $entry->actorId = $metadata['actorId'];
+            $actor = $this->identityRepository->find($metadata['actorId']);
+
+            if (!$actor) {
+                throw new RuntimeException(sprintf(
+                    'Cannot create AuditLogEntry, given Actor Identity "%s" does not exist',
+                    $metadata['actorId']
+                ));
+            }
+
+            $entry->actorId         = $metadata['actorId'];
+            $entry->actorCommonName = $actor->commonName;
         }
 
         if (isset($metadata['actorInstitution'])) {
             $entry->actorInstitution = $metadata['actorInstitution'];
         }
 
-        $entry->identityId = (string) $auditLogMetadata->identityId;
+        $entry->identityId          = (string) $auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
-        $entry->event = get_class($event);
-        $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->event               = get_class($event);
+        $entry->recordedOn          = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
         if ($auditLogMetadata->secondFactorId) {
             $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;
@@ -75,6 +95,10 @@ class AuditLogProjector implements ProjectorInterface
 
         if ($auditLogMetadata->secondFactorType) {
             $entry->secondFactorType = (string) $auditLogMetadata->secondFactorType;
+        }
+
+        if ($auditLogMetadata->secondFactorIdentifier) {
+            $entry->secondFactorIdentifier = $auditLogMetadata->secondFactorIdentifier;
         }
 
         $this->auditLogRepository->save($entry);

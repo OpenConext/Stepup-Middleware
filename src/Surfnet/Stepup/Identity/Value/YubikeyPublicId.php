@@ -36,13 +36,21 @@ class YubikeyPublicId
         $this->value = $value;
     }
 
+    /**
+     * @return string
+     */
+    public function getYubikeyPublicId()
+    {
+        return $this->value;
+    }
+
     public function __toString()
     {
         return $this->value;
     }
 
-    public function equals($other)
+    public function equals(YubikeyPublicId $other)
     {
-        return $this == $other;
+        return $this->value === $other->value;
     }
 }

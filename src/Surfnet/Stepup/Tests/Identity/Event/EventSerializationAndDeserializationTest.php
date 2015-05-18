@@ -85,6 +85,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
+                    'secondFactorId',
                     new IdentityId(static::UUID())
                 )
             ],
@@ -94,6 +95,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
+                    'secondFactorId',
                     new IdentityId(static::UUID())
                 )
             ],
@@ -103,6 +105,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
+                    'secondFactorId',
                     new IdentityId(static::UUID())
                 )
             ],
@@ -112,6 +115,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
+                    'secondFactorId',
                     DateTime::now(),
                     new IdentifyingDataId(static::UUID()),
                     '123',
@@ -157,7 +161,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
-                    new SecondFactorType('sms')
+                    new SecondFactorType('sms'),
+                    'secondFactorId'
                 )
             ],
             'VerifiedSecondFactorRevokedEvent' => [
@@ -165,7 +170,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
-                    new SecondFactorType('sms')
+                    new SecondFactorType('sms'),
+                    'secondFactorId'
                 )
             ],
             'VettedSecondFactorRevokedEvent' => [
@@ -173,7 +179,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
-                    new SecondFactorType('sms')
+                    new SecondFactorType('sms'),
+                    'secondFactorId'
                 )
             ],
             'YubikeyPossessionProvenEvent' => [

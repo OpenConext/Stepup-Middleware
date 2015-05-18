@@ -91,11 +91,12 @@ class PhonePossessionProvenEvent extends IdentityEvent
 
     public function getAuditLogMetadata()
     {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = new SecondFactorType('sms');
+        $metadata                         = new Metadata();
+        $metadata->identityId             = $this->identityId;
+        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata->secondFactorId         = $this->secondFactorId;
+        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata->secondFactorIdentifier = (string) $this->phoneNumber;
 
         return $metadata;
     }

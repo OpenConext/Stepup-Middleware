@@ -37,6 +37,14 @@ class GssfId implements Id
         $this->gssfId = $gssfId;
     }
 
+    /**
+     * @return string
+     */
+    public function getGssfId()
+    {
+        return $this->gssfId;
+    }
+
     public function __toString()
     {
         return $this->gssfId;

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 
 /**
@@ -78,6 +79,13 @@ class AuditLogEntry implements JsonSerializable
     public $actorId;
 
     /**
+     * @ORM\Column(type="stepup_common_name", nullable=true)
+     *
+     * @var CommonName
+     */
+    public $actorCommonName;
+
+    /**
      * @ORM\Column(type="institution", nullable=true)
      *
      * @var \Surfnet\Stepup\Identity\Value\Institution|null
@@ -106,6 +114,13 @@ class AuditLogEntry implements JsonSerializable
     public $secondFactorId;
 
     /**
+     * @ORM\Column(length=255, nullable=true)
+     *
+     * @var string
+     */
+    public $secondFactorIdentifier;
+
+    /**
      * @ORM\Column(length=36, nullable=true)
      *
      * @var string|null
@@ -129,14 +144,16 @@ class AuditLogEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'actor_id'             => $this->actorId,
-            'actor_institution'    => $this->actorInstitution ? (string) $this->actorInstitution : null,
-            'identity_id'          => $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id'     => $this->secondFactorId,
-            'second_factor_type'   => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'action'               => $this->mapEventToAction($this->event),
-            'recorded_on'          => (string) $this->recordedOn,
+            'actor_id'                 => $this->actorId,
+            'actor_institution'        => $this->actorInstitution ? (string) $this->actorInstitution : null,
+            'actor_common_name'        => $this->actorCommonName,
+            'identity_id'              => $this->identityId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => $this->secondFactorId,
+            'second_factor_type'       => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
+            'action'                   => $this->mapEventToAction($this->event),
+            'recorded_on'              => (string) $this->recordedOn,
         ];
     }
 

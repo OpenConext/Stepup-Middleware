@@ -396,12 +396,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $identifyingDataId = IdentifyingDataId::fromIdentityId($id);
-        $secondFactorId    = new SecondFactorId(self::uuid());
-        $publicId          = new YubikeyPublicId('ccccvfeghijk');
+        $id                     = new IdentityId(self::uuid());
+        $institution            = new Institution('A Corp.');
+        $nameId                 = new NameId(md5(__METHOD__));
+        $identifyingDataId      = IdentifyingDataId::fromIdentityId($id);
+        $secondFactorId         = new SecondFactorId(self::uuid());
+        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $command                    = new VerifyEmailCommand();
         $command->identityId        = (string) $id;
@@ -415,7 +415,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $institution,
                     $secondFactorId,
-                    $publicId,
+                    $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -432,6 +432,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
+                    (string) $secondFactorIdentifier,
                     DateTime::now(),
                     $identifyingDataId,
                     'regcode',
@@ -451,12 +452,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
         );
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $identifyingDataId = IdentifyingDataId::fromIdentityId($id);
-        $secondFactorId    = new SecondFactorId(self::uuid());
-        $publicId          = new YubikeyPublicId('ccccvfeghijk');
+        $id                     = new IdentityId(self::uuid());
+        $institution            = new Institution('A Corp.');
+        $nameId                 = new NameId(md5(__METHOD__));
+        $identifyingDataId      = IdentifyingDataId::fromIdentityId($id);
+        $secondFactorId         = new SecondFactorId(self::uuid());
+        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
@@ -470,7 +471,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $id,
                     $institution,
                     $secondFactorId,
-                    $publicId,
+                    $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -484,6 +485,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
+                    (string) $secondFactorIdentifier,
                     DateTime::now(),
                     $identifyingDataId,
                     'regcode',
@@ -630,7 +632,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantNameId            = new NameId('3');
         $registrantIdentifyingDataId = new IdentifyingDataId(static::uuid());
         $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');
+        $registrantSecFacIdentifier  = new YubikeyPublicId('ccccvfeghijk');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -662,7 +664,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantSecFacId,
-                    $registrantPubId,
+                    $registrantSecFacIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -676,6 +678,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
+                    (string) $registrantSecFacIdentifier,
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGCODE',
@@ -756,6 +759,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityInstitution,
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
+                    (string) $authorityPhoneSfId,
                     DateTime::now(),
                     $authorityIdentifyingDataId,
                     'regcode',
@@ -799,6 +803,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
+                    (string) $registrantSecFacId,
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGCODE',

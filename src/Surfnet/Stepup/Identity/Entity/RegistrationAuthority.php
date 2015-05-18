@@ -61,4 +61,10 @@ final class RegistrationAuthority extends EventSourcedEntity
 
         return $registrationAuthority;
     }
+
+    public function amendInformation(Location $location, ContactInformation $contactInformation)
+    {
+        $this->location = $location;
+        $this->contactInformation = $contactInformation;
+    }
 }

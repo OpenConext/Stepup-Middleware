@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
@@ -82,6 +83,22 @@ class RaListingProjector extends Projector
             $event->location,
             $event->contactInformation
         );
+
+        $this->raListingRepository->save($raListing);
+    }
+
+    public function applyRegistrationAuthorityInformationAmendedEvent(
+        RegistrationAuthorityInformationAmendedEvent $event
+    ) {
+        /** @var RaListing $raListing */
+        $raListing = $this->raListingRepository->find($event->identityId);
+
+        if (!$raListing) {
+            return;
+        }
+
+        $raListing->location = $event->location;
+        $raListing->contactInformation = $event->contactInformation;
 
         $this->raListingRepository->save($raListing);
     }

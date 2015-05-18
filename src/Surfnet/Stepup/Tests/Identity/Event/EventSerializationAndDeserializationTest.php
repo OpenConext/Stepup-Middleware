@@ -33,6 +33,7 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -220,7 +221,16 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Location('somewhere behind you'),
                     new ContactInformation('Call me maybe')
                 )
-            ]
+            ],
+            'RegistrationAuthorityInformationAmendedEvent' => [
+                new RegistrationAuthorityInformationAmendedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Blue Note'),
+                    new NameId(md5('Coleman Hawkins')),
+                    new Location('New York'),
+                    new ContactInformation("131 West 3rd Street, NY")
+                )
+            ],
         ];
     }
 

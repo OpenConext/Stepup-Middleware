@@ -41,6 +41,7 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
@@ -423,6 +424,25 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
+    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation)
+    {
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot amend registration authority information: identity is not a registration authority'
+            );
+        }
+
+        $this->apply(
+            new RegistrationAuthorityInformationAmendedEvent(
+                $this->id,
+                $this->institution,
+                $this->nameId,
+                $location,
+                $contactInformation
+            )
+        );
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
@@ -562,6 +582,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->location,
             $event->contactInformation
         );
+    }
+
+    protected function applyRegistrationAuthorityInformationAmendedEvent(
+        RegistrationAuthorityInformationAmendedEvent $event
+    ) {
+        $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
     }
 
     public function getAggregateRootId()

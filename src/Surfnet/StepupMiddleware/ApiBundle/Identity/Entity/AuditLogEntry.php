@@ -79,7 +79,7 @@ class AuditLogEntry implements JsonSerializable
     public $actorId;
 
     /**
-     * @ORM\Column(type="stepup_common_name")
+     * @ORM\Column(type="stepup_common_name", nullable=true)
      *
      * @var CommonName
      */
@@ -114,7 +114,7 @@ class AuditLogEntry implements JsonSerializable
     public $secondFactorId;
 
     /**
-     * @ORM\Column(length=255)
+     * @ORM\Column(length=255, nullable=true)
      *
      * @var string
      */
@@ -144,14 +144,16 @@ class AuditLogEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'actor_id'             => $this->actorId,
-            'actor_institution'    => $this->actorInstitution ? (string) $this->actorInstitution : null,
-            'identity_id'          => $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id'     => $this->secondFactorId,
-            'second_factor_type'   => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'action'               => $this->mapEventToAction($this->event),
-            'recorded_on'          => (string) $this->recordedOn,
+            'actor_id'                 => $this->actorId,
+            'actor_institution'        => $this->actorInstitution ? (string) $this->actorInstitution : null,
+            'actor_common_name'        => $this->actorCommonName,
+            'identity_id'              => $this->identityId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => $this->secondFactorId,
+            'second_factor_type'       => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
+            'action'                   => $this->mapEventToAction($this->event),
+            'recorded_on'              => (string) $this->recordedOn,
         ];
     }
 

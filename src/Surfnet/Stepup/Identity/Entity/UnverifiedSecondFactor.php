@@ -141,6 +141,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->secondFactorIdentifier,
                 DateTime::now(),
                 $this->identity->getIdentifyingDataId(),
                 OtpGenerator::generate(8),
@@ -156,7 +157,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
-                $this->type
+                $this->type,
+                $this->secondFactorIdentifier
             )
         );
     }
@@ -169,6 +171,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->secondFactorIdentifier,
                 $authorityId
             )
         );

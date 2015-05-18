@@ -98,11 +98,12 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
 
     public function getAuditLogMetadata()
     {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = new SecondFactorType('yubikey');
+        $metadata                         = new Metadata();
+        $metadata->identityId             = $this->identityId;
+        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata->secondFactorId         = $this->secondFactorId;
+        $metadata->secondFactorType       = new SecondFactorType('yubikey');
+        $metadata->secondFactorIdentifier = (string) $this->yubikeyPublicId;
 
         return $metadata;
     }

@@ -25,32 +25,44 @@ class PhoneNumber
     /**
      * @var string
      */
-    private $value;
+    private $phoneNumber;
 
-    public function __construct($value)
+    public function __construct($phoneNumber)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        if (!is_string($phoneNumber)) {
+            throw InvalidArgumentException::invalidType('string', 'value', $phoneNumber);
         }
 
-        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $value)) {
+        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $phoneNumber)) {
             throw new InvalidArgumentException(sprintf(
                 "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
                 // 12 characters captures the most extended country code up to and incl. the first subscriber digit
-                substr($value, 0, 12)
+                substr($phoneNumber, 0, 12)
             ));
         }
 
-        $this->value = $value;
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * @param PhoneNumber $other
+     * @return bool
+     */
+    public function equals(PhoneNumber $other)
+    {
+        return $this->phoneNumber === $other->phoneNumber;
     }
 
     public function __toString()
     {
-        return $this->value;
-    }
-
-    public function equals($other)
-    {
-        return $this == $other;
+        return $this->phoneNumber;
     }
 }

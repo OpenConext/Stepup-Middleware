@@ -71,5 +71,7 @@ services:
 
     surfnet_stepup_middleware_api.projector.audit_log:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\AuditLogProjector
-        arguments: [ @surfnet_stepup_middleware_api.repository.audit_log ]
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.audit_log
+            - @surfnet_stepup_middleware_api.repository.identity
         tags: [{ name: event_bus.event_listener }]

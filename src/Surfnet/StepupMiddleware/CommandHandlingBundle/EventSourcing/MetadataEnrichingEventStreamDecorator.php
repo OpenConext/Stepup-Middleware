@@ -50,9 +50,10 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
         foreach ($eventStream as $domainMessage) {
             /** @var \Broadway\Domain\DomainMessage $domainMessage */
             $domainMessages[] = $domainMessage->andMetadata(
-                new BroadwayMetadata(
-                    ['actorId' => $this->metadata->actorId, 'actorInstitution' => $this->metadata->actorInstitution]
-                )
+                new BroadwayMetadata([
+                    'actorId'          => $this->metadata->actorId,
+                    'actorInstitution' => $this->metadata->actorInstitution
+                ])
             );
         }
 

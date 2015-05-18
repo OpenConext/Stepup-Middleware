@@ -39,6 +39,11 @@ class EmailVerifiedEvent extends IdentityEvent
     public $secondFactorType;
 
     /**
+     * @var string
+     */
+    private $secondFactorIdentifier;
+
+    /**
      * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $registrationRequestedAt;
@@ -63,6 +68,7 @@ class EmailVerifiedEvent extends IdentityEvent
      * @param Institution       $identityInstitution
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
+     * @param string            $secondFactorIdentifier
      * @param DateTime          $registrationRequestedAt
      * @param IdentifyingDataId $identifyingDataId
      * @param string            $registrationCode
@@ -73,6 +79,7 @@ class EmailVerifiedEvent extends IdentityEvent
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
+        $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         IdentifyingDataId $identifyingDataId,
         $registrationCode,
@@ -82,6 +89,7 @@ class EmailVerifiedEvent extends IdentityEvent
 
         $this->secondFactorId          = $secondFactorId;
         $this->secondFactorType        = $secondFactorType;
+        $this->secondFactorIdentifier  = $secondFactorIdentifier;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->identifyingDataId       = $identifyingDataId;
         $this->registrationCode        = $registrationCode;
@@ -106,6 +114,7 @@ class EmailVerifiedEvent extends IdentityEvent
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
+            $data['second_factor_identifier'],
             DateTime::fromString($data['registration_requested_at']),
             new IdentifyingDataId($data['identifying_data_id']),
             $data['registration_code'],
@@ -120,6 +129,7 @@ class EmailVerifiedEvent extends IdentityEvent
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
             'second_factor_type'        => (string) $this->secondFactorType,
+            'second_factor_identifier'  => $this->secondFactorIdentifier,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
             'identifying_data_id'       => (string) $this->identifyingDataId,
             'registration_code'         => $this->registrationCode,

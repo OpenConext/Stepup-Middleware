@@ -36,25 +36,33 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
      */
     public $secondFactorType;
 
+    /**
+     * @var string
+     */
+    public $secondFactorIdentifier;
+
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType
+        SecondFactorType $secondFactorType,
+        $secondFactorIdentifier
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
+        $this->secondFactorId         = $secondFactorId;
+        $this->secondFactorType       = $secondFactorType;
+        $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata()
     {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = $this->secondFactorType;
+        $metadata                         = new Metadata();
+        $metadata->identityId             = $this->identityId;
+        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata->secondFactorId         = $this->secondFactorId;
+        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
     }
@@ -65,17 +73,19 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type'])
+            new SecondFactorType($data['second_factor_type']),
+            $data['second_factor_identifier']
         );
     }
 
     final public function serialize()
     {
         return [
-            'identity_id'          => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id'     => (string) $this->secondFactorId,
-            'second_factor_type'   => (string) $this->secondFactorType,
+            'identity_id'              => (string) $this->identityId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => (string) $this->secondFactorId,
+            'second_factor_type'       => (string) $this->secondFactorType,
+            'second_factor_identifier' => $this->secondFactorIdentifier
         ];
     }
 }

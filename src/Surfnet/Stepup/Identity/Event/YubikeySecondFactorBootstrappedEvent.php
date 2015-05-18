@@ -78,6 +78,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
         $metadata->secondFactorType = new SecondFactorType('yubikey');
+        $metadata->secondFactorIdentifier = (string) $this->yubikeyPublicId;
 
         return $metadata;
     }

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 
 /**
@@ -78,6 +79,13 @@ class AuditLogEntry implements JsonSerializable
     public $actorId;
 
     /**
+     * @ORM\Column(type="stepup_common_name")
+     *
+     * @var CommonName
+     */
+    public $actorCommonName;
+
+    /**
      * @ORM\Column(type="institution", nullable=true)
      *
      * @var \Surfnet\Stepup\Identity\Value\Institution|null
@@ -104,6 +112,13 @@ class AuditLogEntry implements JsonSerializable
      * @var string|null
      */
     public $secondFactorId;
+
+    /**
+     * @ORM\Column(length=255)
+     *
+     * @var string
+     */
+    public $secondFactorIdentifier;
 
     /**
      * @ORM\Column(length=36, nullable=true)

@@ -100,11 +100,12 @@ class SecondFactorVettedEvent extends IdentityEvent
 
     public function getAuditLogMetadata()
     {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = $this->secondFactorType;
+        $metadata                         = new Metadata();
+        $metadata->identityId             = $this->identityId;
+        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata->secondFactorId         = $this->secondFactorId;
+        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
     }

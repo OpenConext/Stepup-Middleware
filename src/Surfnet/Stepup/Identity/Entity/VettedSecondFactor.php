@@ -93,7 +93,8 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
-                $this->type
+                $this->type,
+                $this->secondFactorIdentifier
             )
         );
     }
@@ -106,6 +107,7 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->secondFactorIdentifier,
                 $authorityId
             )
         );

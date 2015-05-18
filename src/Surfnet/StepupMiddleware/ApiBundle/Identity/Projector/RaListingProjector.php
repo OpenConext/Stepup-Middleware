@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
@@ -94,7 +95,10 @@ class RaListingProjector extends Projector
         $raListing = $this->raListingRepository->find($event->identityId);
 
         if (!$raListing) {
-            return;
+            throw new RuntimeException(
+                "Tried to amend an RaListing's registration authority location and contact information, " .
+                "but the listing could not be found"
+            );
         }
 
         $raListing->location = $event->location;

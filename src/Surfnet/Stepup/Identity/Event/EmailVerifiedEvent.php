@@ -103,6 +103,7 @@ class EmailVerifiedEvent extends IdentityEvent
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
         $metadata->secondFactorType = $this->secondFactorType;
+        $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
     }

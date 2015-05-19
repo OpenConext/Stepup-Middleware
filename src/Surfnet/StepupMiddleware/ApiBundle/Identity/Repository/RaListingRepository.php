@@ -28,6 +28,15 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 class RaListingRepository extends EntityRepository
 {
+    /**
+     * @param string $id The RA's identity id.
+     * @return null|RaListing
+     */
+    public function find($id)
+    {
+        return parent::find($id);
+    }
+
     public function save(RaListing $raListingEntry)
     {
         $this->getEntityManager()->persist($raListingEntry);

@@ -18,14 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class RaListingController extends Controller
 {
+    public function getAction($identityId)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
+
+        $raListing = $this->getService()->find(new IdentityId($identityId));
+
+        if ($raListing === null) {
+            throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));
+        }
+
+        return new JsonResponse($raListing);
+    }
+
     public function searchAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);

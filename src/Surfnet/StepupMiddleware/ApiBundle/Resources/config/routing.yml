@@ -72,6 +72,14 @@ identity_ra_listing:
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+identity_ra_listing_get:
+    path:      /ra-listing/{identityId}
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaListing:get }
+    methods:   [GET]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_raa_search:
     path:      /raa
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Raa:search }

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 
@@ -31,6 +32,15 @@ class RaListingService extends AbstractSearchService
     public function __construct(RaListingRepository $raListingRepository)
     {
         $this->raListingRepository = $raListingRepository;
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
+     */
+    public function findByIdentityId(IdentityId $identityId)
+    {
+        return $this->raListingRepository->findByIdentityId($identityId);
     }
 
     /**

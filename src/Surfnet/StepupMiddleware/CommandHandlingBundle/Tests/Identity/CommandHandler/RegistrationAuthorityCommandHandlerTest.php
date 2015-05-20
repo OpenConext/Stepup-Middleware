@@ -26,6 +26,7 @@ use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -37,6 +38,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
@@ -346,5 +348,110 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     )
                 ]
             );
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     */
+    public function a_registration_authoritys_information_can_be_amended()
+    {
+        $command                     = new AmendRegistrationAuthorityInformationCommand();
+        $command->identityId         = static::uuid();
+        $command->location           = 'New York';
+        $command->contactInformation = '131 West 3rd Street, NY';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Blue Note');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given(
+                [
+                    new IdentityCreatedEvent(
+                        $identityId,
+                        $institution,
+                        $nameId,
+                        $identifyingDataId
+                    ),
+                    new YubikeySecondFactorBootstrappedEvent(
+                        $identityId,
+                        $nameId,
+                        $institution,
+                        $identifyingDataId,
+                        $secondFactorId,
+                        $secondFactorPublicId
+                    ),
+                    new IdentityAccreditedAsRaaEvent(
+                        $identityId,
+                        $nameId,
+                        $institution,
+                        new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
+                        new Location('Somewhere behind you'),
+                        new ContactInformation('Call me Maybe')
+                    ),
+                ]
+            )
+            ->when($command)
+            ->then(
+                [
+                    new RegistrationAuthorityInformationAmendedEvent(
+                        $identityId,
+                        $institution,
+                        $nameId,
+                        new Location($command->location),
+                        new ContactInformation($command->contactInformation)
+                    )
+                ]
+            );
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Cannot amend registration authority information: identity is not a registration authority
+     */
+    public function an_identitys_registration_authority_information_cannot_be_amended()
+    {
+        $command                     = new AmendRegistrationAuthorityInformationCommand();
+        $command->identityId         = static::uuid();
+        $command->location           = 'New York';
+        $command->contactInformation = '131 West 3rd Street, NY';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Blue Note');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given(
+                [
+                    new IdentityCreatedEvent(
+                        $identityId,
+                        $institution,
+                        $nameId,
+                        $identifyingDataId
+                    ),
+                    new YubikeySecondFactorBootstrappedEvent(
+                        $identityId,
+                        $nameId,
+                        $institution,
+                        $identifyingDataId,
+                        $secondFactorId,
+                        $secondFactorPublicId
+                    ),
+                ]
+            )
+            ->when($command);
     }
 }

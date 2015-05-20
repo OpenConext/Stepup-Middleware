@@ -26,6 +26,7 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
 
 class RegistrationAuthorityCommandHandler extends CommandHandler
 {
@@ -52,6 +53,19 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         $identity->accreditWith(
             $role,
             new Institution($command->institution),
+            new Location($command->location),
+            new ContactInformation($command->contactInformation)
+        );
+
+        $this->repository->save($identity);
+    }
+
+    public function handleAmendRegistrationAuthorityInformationCommand(AmendRegistrationAuthorityInformationCommand $command)
+    {
+        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        $identity = $this->repository->load($command->identityId);
+
+        $identity->amendRegistrationAuthorityInformation(
             new Location($command->location),
             new ContactInformation($command->contactInformation)
         );

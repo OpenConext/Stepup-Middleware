@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository;
 
@@ -42,6 +43,21 @@ class RaProjector extends Projector
     public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
     {
         $ra = Ra::create($event->identityInstitution, $event->nameId, $event->location, $event->contactInformation);
+
+        $this->raRepository->save($ra);
+    }
+
+    public function applyRegistrationAuthorityInformationAmendedEvent(
+        RegistrationAuthorityInformationAmendedEvent $event
+    ) {
+        $ra = $this->raRepository->findByNameId($event->nameId);
+
+        if (!$ra) {
+            return;
+        }
+
+        $ra->location = $event->location;
+        $ra->contactInformation = $event->contactInformation;
 
         $this->raRepository->save($ra);
     }

@@ -196,14 +196,14 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
 //     * @return void
 //     */
 //    public function appointAs(RegistrationAuthorityRole $role, Institution $institution);
-//
-//    /**
-//     * @param Location           $location
-//     * @param ContactInformation $contactInformation
-//     * @return void
-//     */
-//    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
-//
+
+    /**
+     * @param Location           $location
+     * @param ContactInformation $contactInformation
+     * @return void
+     */
+    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
+
 //    /**
 //     * @param Institution $institution
 //     * @return void

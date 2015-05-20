@@ -38,9 +38,9 @@ class RaListingService extends AbstractSearchService
      * @param IdentityId $identityId
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
      */
-    public function find(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId)
     {
-        return $this->raListingRepository->find((string) $identityId);
+        return $this->raListingRepository->findByIdentityId($identityId);
     }
 
     /**

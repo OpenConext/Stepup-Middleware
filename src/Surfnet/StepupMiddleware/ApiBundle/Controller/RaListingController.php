@@ -32,7 +32,7 @@ class RaListingController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $raListing = $this->getService()->find(new IdentityId($identityId));
+        $raListing = $this->getService()->findByIdentityId(new IdentityId($identityId));
 
         if ($raListing === null) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));

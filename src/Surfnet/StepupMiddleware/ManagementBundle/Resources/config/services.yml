@@ -11,11 +11,16 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
         arguments:
+            - @surfnet_stepup_middleware_management.validator.identity_provider_configuration
             - @surfnet_stepup_middleware_management.validator.service_provider_configuration
 
     surfnet_stepup_middleware_management.validator.service_provider_configuration:
         public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
+
+    surfnet_stepup_middleware_management.validator.identity_provider_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
 
     surfnet_stepup_middleware_management.validator.email_templates_configuration:
         public: false

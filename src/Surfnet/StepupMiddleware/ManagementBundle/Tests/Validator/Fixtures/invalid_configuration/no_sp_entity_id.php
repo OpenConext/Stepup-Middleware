@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0]',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "public_key" => "MIIE...",

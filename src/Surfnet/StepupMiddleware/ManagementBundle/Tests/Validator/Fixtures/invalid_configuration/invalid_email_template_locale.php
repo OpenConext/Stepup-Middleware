@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'email_templates.confirm_email[9]',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",

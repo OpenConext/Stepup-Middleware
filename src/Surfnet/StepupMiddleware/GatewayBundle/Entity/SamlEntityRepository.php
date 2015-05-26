@@ -23,16 +23,23 @@ use Doctrine\ORM\EntityRepository;
 class SamlEntityRepository extends EntityRepository
 {
     /**
-     * Remove all configured SamlEntities
+     * Replace all configured service provider SamlEntities with the new SamlEntities.
+     *
+     * @param array $newSamlEntities
      */
-    public function removeAll()
+    public function replaceAllSps(array $newSamlEntities)
     {
-        $this
-            ->getEntityManager()
-            ->createQuery(
-                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity'
-            )
-            ->execute();
+        $this->replaceAllOfType(SamlEntity::TYPE_SP, $newSamlEntities);
+    }
+
+    /**
+     * Replace all configured identity provider SamlEntities with the new SamlEntities.
+     *
+     * @param array $newSamlEntities
+     */
+    public function replaceAllIdps(array $newSamlEntities)
+    {
+        $this->replaceAllOfType(SamlEntity::TYPE_IDP, $newSamlEntities);
     }
 
     /**
@@ -40,14 +47,15 @@ class SamlEntityRepository extends EntityRepository
      *
      * Will be updated later, see https://www.pivotaltracker.com/story/show/83532704
      *
+     * @param string $type
      * @param array $newSamlEntities
      */
-    public function replaceAll(array $newSamlEntities)
+    private function replaceAllOfType($type, array $newSamlEntities)
     {
         $entityManager = $this->getEntityManager();
         $counter = 0;
 
-        $this->removeAll();
+        $this->removeAllOfType($type);
         $entityManager->flush();
 
         foreach ($newSamlEntities as $samlEntity) {
@@ -59,5 +67,20 @@ class SamlEntityRepository extends EntityRepository
         }
 
         $entityManager->flush();
+    }
+
+    /**
+     * Remove all configured SamlEntities of a specific type
+     *
+     * @param string $type
+     */
+    private function removeAllOfType($type)
+    {
+        $this
+            ->getEntityManager()
+            ->createQuery(
+                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type'
+            )
+            ->execute(['type' => $type]);
     }
 }

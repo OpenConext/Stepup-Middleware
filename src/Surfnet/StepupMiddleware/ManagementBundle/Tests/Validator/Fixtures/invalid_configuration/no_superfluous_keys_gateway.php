@@ -21,6 +21,7 @@ return [
     'configuration' => [
         'gateway' => [
             'superfluous_key' => 'lemon',
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",

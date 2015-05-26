@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0].entity_id',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => 9,

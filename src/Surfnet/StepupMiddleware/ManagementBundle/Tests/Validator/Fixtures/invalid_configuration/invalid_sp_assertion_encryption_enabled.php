@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0].assertion_encryption_enabled',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",

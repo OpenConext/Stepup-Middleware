@@ -137,7 +137,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getIdentifyingDataId(),
                 $this->secondFactorIdentifier,
                 $documentNumber,
-                'en_GB'
+                $this->identity->getPreferredLocale()
             )
         );
     }

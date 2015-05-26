@@ -63,4 +63,12 @@ class CreateIdentityCommand extends AbstractCommand implements SelfServiceExecut
      * @var string
      */
     public $commonName;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $preferredLocale;
 }

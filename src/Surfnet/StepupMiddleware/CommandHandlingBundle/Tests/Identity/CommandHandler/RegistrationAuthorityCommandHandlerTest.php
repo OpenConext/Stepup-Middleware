@@ -32,6 +32,7 @@ use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
@@ -91,6 +92,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
+                    new Locale('en_GB'),
                     $identifyingDataId
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
@@ -133,6 +135,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
+                    new Locale('en_GB'),
                     $identifyingDataId
                 ),
             ])
@@ -171,6 +174,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
@@ -225,6 +229,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
@@ -269,6 +274,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
@@ -323,6 +329,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
@@ -377,6 +384,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
@@ -440,6 +448,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
+                        new Locale('en_GB'),
                         $identifyingDataId
                     ),
                     new YubikeySecondFactorBootstrappedEvent(

@@ -23,6 +23,7 @@ use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
@@ -55,7 +56,8 @@ class IdentityProjector extends Projector
             $event->identityInstitution,
             (string) $event->nameId,
             $identifyingData->email,
-            $identifyingData->commonName
+            $identifyingData->commonName,
+            $event->preferredLocale
         ));
     }
 
@@ -75,6 +77,14 @@ class IdentityProjector extends Projector
         $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
 
         $identity->email = $identifyingData->email;
+
+        $this->identityRepository->save($identity);
+    }
+
+    public function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity->preferredLocale = $event->preferredLocale;
 
         $this->identityRepository->save($identity);
     }

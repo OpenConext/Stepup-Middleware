@@ -17,11 +17,22 @@
  */
 
 return [
-    'expectedPropertyPath' => 'gateway.service_providers',
+    'expectedPropertyPath' => 'gateway.identity_providers[0]',
     'configuration' => [
         'gateway' => [
-            'identity_providers' => [],
-            'service_providers' => 9,
+            'identity_providers' => [9],
+            'service_providers' => [
+                [
+                    "entity_id"  => "https://entity.tld/id",
+                    "public_key" => "MIIE...",
+                    "acs"        => ["https://entity.tld/consume-assertion"],
+                    "loa"        => [
+                        "__default__" => "https://entity.tld/authentication/loa2",
+                    ],
+                    "assertion_encryption_enabled"      => false,
+                    "blacklisted_encryption_algorithms" => []
+                ]
+            ],
         ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [

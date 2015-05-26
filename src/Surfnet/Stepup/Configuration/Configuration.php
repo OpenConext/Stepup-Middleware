@@ -23,6 +23,7 @@ use GuzzleHttp;
 use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
@@ -60,6 +61,10 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         $this->apply(new ServiceProvidersUpdatedEvent(
             self::CONFIGURATION_ID,
             $decodedConfiguration['gateway']['service_providers']
+        ));
+        $this->apply(new IdentityProvidersUpdatedEvent(
+            self::CONFIGURATION_ID,
+            $decodedConfiguration['gateway']['identity_providers']
         ));
         $this->apply(new SraaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['sraa']));
         $this->apply(new EmailTemplatesUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['email_templates']));

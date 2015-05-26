@@ -24,6 +24,7 @@ use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
@@ -47,6 +48,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     {
         $configuration = [
             'gateway'         => [
+                'identity_providers' => [],
                 'service_providers' => [],
             ],
             'sraa'            => [],
@@ -71,6 +73,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     {
         $configuration1 = [
             'gateway'         => [
+                'identity_providers' => [],
                 'service_providers' => [],
             ],
             'sraa'            => [],
@@ -82,6 +85,14 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $configuration2 = [
             'gateway'         => [
+                'identity_providers' => [
+                    [
+                        "entity_id" => "https://entity.tld/id",
+                        "loa" => [
+                            "__default__" => "https://entity.tld/authentication/loa2",
+                        ],
+                    ]
+                ],
                 'service_providers' => [
                     [
                         "entity_id" => "https://entity.tld/id",
@@ -157,6 +168,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
         return [
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),
             new ServiceProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['service_providers']),
+            new IdentityProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['identity_providers']),
             new SraaUpdatedEvent(self::CID, $newConfiguration['sraa']),
             new EmailTemplatesUpdatedEvent(self::CID, $newConfiguration['email_templates']),
         ];

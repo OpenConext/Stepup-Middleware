@@ -24,6 +24,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureVa
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator;
 
 final class ConfigurationValidationTest extends TestCase
@@ -61,6 +62,7 @@ final class ConfigurationValidationTest extends TestCase
 
         $validator = new ConfigurationStructureValidator(
             new GatewayConfigurationValidator(
+                new IdentityProviderConfigurationValidator(),
                 new ServiceProviderConfigurationValidator()
             ),
             new EmailTemplatesConfigurationValidator('en_GB')

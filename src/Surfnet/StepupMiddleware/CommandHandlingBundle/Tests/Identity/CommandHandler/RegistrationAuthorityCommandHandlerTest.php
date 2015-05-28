@@ -99,6 +99,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $nameId,
                     $institution,
+                    new Locale('en_GB'),
                     $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
@@ -181,6 +182,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
@@ -236,6 +238,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
@@ -281,6 +284,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
@@ -336,6 +340,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
@@ -391,6 +396,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
@@ -455,6 +461,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $nameId,
                         $institution,
+                        new Locale('en_GB'),
                         $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId

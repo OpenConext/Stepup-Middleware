@@ -118,7 +118,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $registrationAuthority;
 
     /**
-     * @var string
+     * @var Locale
      */
     private $preferredLocale;
 
@@ -172,6 +172,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $this->nameId,
                 $this->institution,
+                $this->preferredLocale,
                 $this->identifyingDataId,
                 $secondFactorId,
                 $yubikeyPublicId

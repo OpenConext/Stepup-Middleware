@@ -110,6 +110,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     new NameId('N-ID'),
                     new Institution('Institution'),
+                    new Locale('nl_NL'),
                     IdentifyingDataId::fromIdentityId($identityId),
                     new SecondFactorId('SF-ID'),
                     new YubikeyPublicId('Y-ID')
@@ -664,6 +665,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId($this->uuid()),
                     new YubikeyPublicId('ccccvkdowiej')

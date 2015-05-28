@@ -22,6 +22,7 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
@@ -38,6 +39,11 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
      * @var Institution
      */
     public $institution;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale
+     */
+    public $preferredLocale;
 
     /**
      * @var IdentifyingDataId
@@ -58,6 +64,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         IdentityId $identityId,
         NameId $nameId,
         Institution $institution,
+        Locale $preferredLocale,
         IdentifyingDataId $identifyingDataId,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
@@ -66,6 +73,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
 
         $this->nameId = $nameId;
         $this->institution = $institution;
+        $this->preferredLocale = $preferredLocale;
         $this->identifyingDataId = $identifyingDataId;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
@@ -89,7 +97,8 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             'identity_id'          => (string) $this->identityId,
             'name_id'              => (string) $this->nameId,
             'identity_institution' => (string) $this->identityInstitution,
-            'identifying_data_id' => (string) $this->identifyingDataId,
+            'preferred_locale'     => (string) $this->preferredLocale,
+            'identifying_data_id'  => (string) $this->identifyingDataId,
             'second_factor_id'     => (string) $this->secondFactorId,
             'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
@@ -101,6 +110,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['identity_institution']),
+            new Locale($data['preferred_locale']),
             new IdentifyingDataId($data['identifying_data_id']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id'])

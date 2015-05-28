@@ -295,6 +295,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')
@@ -374,6 +375,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')
@@ -464,6 +466,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')

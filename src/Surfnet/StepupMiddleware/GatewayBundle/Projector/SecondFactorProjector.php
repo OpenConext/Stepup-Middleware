@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -49,6 +50,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->identityId,
                 (string) $event->nameId,
                 (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
                 'yubikey'
@@ -63,6 +65,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->identityId,
                 (string) $event->nameId,
                 (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType
@@ -97,5 +100,15 @@ class SecondFactorProjector extends Projector
         }
 
         $this->repository->remove($secondFactor);
+    }
+
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $secondFactors = $this->repository->findByIdentityId($event->identityId);
+
+        foreach ($secondFactors as $secondFactor) {
+            $secondFactor->displayLocale = (string) $event->preferredLocale;
+            $this->repository->save($secondFactor);
+        }
     }
 }

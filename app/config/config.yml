@@ -102,6 +102,7 @@ doctrine:
             stepup_common_name: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\CommonNameType
             stepup_email: Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType
             stepup_name_id: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
+            stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
             stepup_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
     orm:
@@ -190,6 +191,7 @@ surfnet_stepup_middleware_command_handling:
 
 surfnet_stepup_middleware_middleware:
     email_verification_window: %email_verification_window%
+    locales: %locales%
 
 surfnet_stepup_middleware_management:
     email_required_locale: %default_locale%

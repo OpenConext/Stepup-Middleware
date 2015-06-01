@@ -39,7 +39,7 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
         $definition = (new Definition())
             ->setClass('Surfnet\Stepup\Identity\Entity\ConfigurableSettings')
             ->setFactory('Surfnet\Stepup\Identity\Entity\ConfigurableSettings::create')
-            ->setArguments([$config['email_verification_window']]);
+            ->setArguments([$config['email_verification_window'], $config['locales']]);
 
         $container->setDefinition('identity.entity.configurable_settings', $definition);
     }

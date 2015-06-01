@@ -62,6 +62,15 @@ class SecondFactor
     private $institution;
 
     /**
+     * In which language to display any second factor verification screens.
+     *
+     * @var string
+     *
+     * @ORM\Column
+     */
+    public $displayLocale;
+
+    /**
      * @var string
      *
      * @ORM\Column(length=36)
@@ -86,6 +95,7 @@ class SecondFactor
         $identityId,
         $nameId,
         $institution,
+        $displayLocale,
         $secondFactorId,
         $secondFactorIdentifier,
         $secondFactorType
@@ -94,6 +104,7 @@ class SecondFactor
         $this->identityId             = $identityId;
         $this->nameId                 = $nameId;
         $this->institution            = $institution;
+        $this->displayLocale          = $displayLocale;
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
         $this->secondFactorType       = $secondFactorType;

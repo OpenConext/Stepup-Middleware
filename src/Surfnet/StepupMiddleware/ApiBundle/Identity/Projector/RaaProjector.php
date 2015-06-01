@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
@@ -60,5 +62,12 @@ class RaaProjector extends Projector
         $raa->contactInformation = $event->contactInformation;
 
         $this->raaRepository->save($raa);
+    }
+
+    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    {
+        $raa = $this->raaRepository->findByNameId($event->nameId);
+
+        $this->raaRepository->remove($raa);
     }
 }

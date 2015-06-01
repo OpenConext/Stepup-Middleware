@@ -94,4 +94,13 @@ class RaaRepository extends EntityRepository
     {
         return $this->findBy(['institution' => $institution]);
     }
+
+    /**
+     * @param Raa $raa
+     */
+    public function remove(Raa $raa)
+    {
+        $this->getEntityManager()->remove($raa);
+        $this->getEntityManager()->flush();
+    }
 }

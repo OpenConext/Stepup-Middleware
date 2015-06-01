@@ -30,6 +30,8 @@ use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -443,6 +445,38 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    public function appointAs(RegistrationAuthorityRole $role)
+    {
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority'
+            );
+        }
+
+        if ($this->registrationAuthority->isAppointedAs($role)) {
+            return;
+        }
+
+        if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
+            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId));
+        } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
+            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId));
+        } else {
+            throw new DomainException('An Identity can only be appointed as either RA or RAA');
+        }
+    }
+
+    public function retractRegistrationAuthority()
+    {
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot Retract Registration Authority as the Identity is not a registration authority'
+            );
+        }
+
+        $this->apply();
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
@@ -589,6 +623,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
     }
+
+
 
     public function getAggregateRootId()
     {

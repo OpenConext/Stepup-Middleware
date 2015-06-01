@@ -62,9 +62,30 @@ final class RegistrationAuthority extends EventSourcedEntity
         return $registrationAuthority;
     }
 
+    /**
+     * @param Location           $location
+     * @param ContactInformation $contactInformation
+     */
     public function amendInformation(Location $location, ContactInformation $contactInformation)
     {
         $this->location = $location;
         $this->contactInformation = $contactInformation;
+    }
+
+    /**
+     * @param RegistrationAuthorityRole $role
+     * @return bool
+     */
+    public function isAppointedAs(RegistrationAuthorityRole $role)
+    {
+        return $this->role->equals($role);
+    }
+
+    /**
+     * @return RegistrationAuthorityRole
+     */
+    public function getRole()
+    {
+        return $this->role;
     }
 }

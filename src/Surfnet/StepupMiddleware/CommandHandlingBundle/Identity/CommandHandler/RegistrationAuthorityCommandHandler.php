@@ -27,6 +27,8 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 
 class RegistrationAuthorityCommandHandler extends CommandHandler
 {
@@ -69,6 +71,28 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
             new Location($command->location),
             new ContactInformation($command->contactInformation)
         );
+
+        $this->repository->save($identity);
+    }
+
+    public function handleAppointRoleCommand(AppointRoleCommand $command)
+    {
+        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        $identity = $this->repository->load($command->identityId);
+
+        $newRole = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
+
+        $identity->appointAs($newRole);
+
+        $this->repository->save($identity);
+    }
+
+    public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command)
+    {
+        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        $identity = $this->repository->load($command->identityId);
+
+        $identity->retractRegistrationAuthority();
 
         $this->repository->save($identity);
     }

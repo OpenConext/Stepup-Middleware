@@ -51,12 +51,6 @@ services:
             - @stepup.repository.identifying_data
         tags: [{ name: event_bus.event_listener }]
 
-    surfnet_stepup_middleware_api.projector.raa:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaaProjector
-        arguments:
-            - @surfnet_stepup_middleware_api.repository.raa
-        tags: [{ name: event_bus.event_listener }]
-
     surfnet_stepup_middleware_api.projector.sraa:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector
         arguments:

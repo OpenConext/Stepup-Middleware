@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
@@ -39,11 +38,6 @@ class IdentityService extends AbstractSearchService
     private $raListingRepository;
 
     /**
-     * @var RaaRepository
-     */
-    private $raaRepository;
-
-    /**
      * @var SraaRepository
      */
     private $sraaRepository;
@@ -51,18 +45,15 @@ class IdentityService extends AbstractSearchService
     /**
      * @param IdentityRepository  $repository
      * @param RaListingRepository $raListingRepository
-     * @param RaaRepository       $raaRepository
      * @param SraaRepository      $sraaRepository
      */
     public function __construct(
         IdentityRepository $repository,
         RaListingRepository $raListingRepository,
-        RaaRepository $raaRepository,
         SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
         $this->raListingRepository = $raListingRepository;
-        $this->raaRepository = $raaRepository;
         $this->sraaRepository = $sraaRepository;
     }
 

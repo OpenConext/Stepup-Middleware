@@ -17,9 +17,11 @@
  */
 
 return [
-    'expectedPropertyPath' => 'gateway',
+    'expectedPropertyPath' => 'gateway.service_providers',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
+            'service_providers' => [],
         ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [

@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0].public_key',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",

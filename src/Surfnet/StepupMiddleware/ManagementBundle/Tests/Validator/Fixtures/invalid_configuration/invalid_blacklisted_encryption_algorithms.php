@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0].blacklisted_encryption_algorithms',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",

@@ -18,10 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
@@ -33,9 +34,9 @@ class IdentityService extends AbstractSearchService
     private $repository;
 
     /**
-     * @var RaRepository
+     * @var RaListingRepository
      */
-    private $raRepository;
+    private $raListingRepository;
 
     /**
      * @var RaaRepository
@@ -48,21 +49,21 @@ class IdentityService extends AbstractSearchService
     private $sraaRepository;
 
     /**
-     * @param IdentityRepository $repository
-     * @param RaRepository       $raRepository
-     * @param RaaRepository      $raaRepository
-     * @param SraaRepository     $sraaRepository
+     * @param IdentityRepository  $repository
+     * @param RaListingRepository $raListingRepository
+     * @param RaaRepository       $raaRepository
+     * @param SraaRepository      $sraaRepository
      */
     public function __construct(
         IdentityRepository $repository,
-        RaRepository $raRepository,
+        RaListingRepository $raListingRepository,
         RaaRepository $raaRepository,
         SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
+        $this->raListingRepository = $raListingRepository;
         $this->raaRepository = $raaRepository;
         $this->sraaRepository = $sraaRepository;
-        $this->raRepository = $raRepository;
     }
 
     /**
@@ -99,14 +100,9 @@ class IdentityService extends AbstractSearchService
             return null;
         }
 
-        $ra = $this->raRepository->findByNameId($identity->nameId);
-        if ($ra) {
-            return RegistrationAuthorityCredentials::fromRa($ra, $identity);
-        }
-
-        $raa = $this->raaRepository->findByNameId($identity->nameId);
-        if ($raa) {
-            return RegistrationAuthorityCredentials::fromRaa($raa, $identity);
+        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identityId));
+        if ($raListing) {
+            return RegistrationAuthorityCredentials::fromRaListing($raListing);
         }
 
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);

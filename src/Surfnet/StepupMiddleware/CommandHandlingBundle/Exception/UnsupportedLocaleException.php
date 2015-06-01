@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-use DomainException as CoreDomainException;
-
-class DomainException extends CoreDomainException implements Exception
+class UnsupportedLocaleException extends RuntimeException
 {
 }

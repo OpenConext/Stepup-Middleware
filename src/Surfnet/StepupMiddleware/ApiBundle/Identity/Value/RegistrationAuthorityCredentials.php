@@ -20,8 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
@@ -75,44 +73,6 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
         $this->identityId = $identityId;
         $this->isRaa = $isRaa;
         $this->isSraa = $isSraa;
-    }
-
-    /**
-     * @param Ra       $ra
-     * @param Identity $identity
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromRa(Ra $ra, Identity $identity)
-    {
-        static::assertEquals($ra->nameId, $identity->nameId);
-
-        $credentials = new self($identity->id, false, false);
-
-        $credentials->institution        = $ra->institution;
-        $credentials->commonName         = $identity->commonName;
-        $credentials->location           = $ra->location;
-        $credentials->contactInformation = $ra->contactInformation;
-
-        return $credentials;
-    }
-
-    /**
-     * @param Raa      $raa
-     * @param Identity $identity
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromRaa(Raa $raa, Identity $identity)
-    {
-        static::assertEquals($raa->nameId, $identity->nameId);
-
-        $credentials = new self($identity->id, true, false);
-
-        $credentials->institution        = $raa->institution;
-        $credentials->commonName         = $identity->commonName;
-        $credentials->location           = $raa->location;
-        $credentials->contactInformation = $raa->contactInformation;
-
-        return $credentials;
     }
 
     /**

@@ -42,17 +42,6 @@ class Configuration implements ConfigurationInterface
                             )
                         ->end()
                     ->end()
-                    ->arrayNode('locales')
-                        ->info('An array of locales that are available in the domain')
-                        ->prototype('scalar')->end()
-                        ->isRequired()
-                        ->validate()
-                            ->ifTrue(function ($locales) {
-                                return !is_array($locales) || $locales !== array_filter($locales, 'is_string');
-                            })
-                            ->thenInvalid('The locales option must be an array of strings')
-                        ->end()
-                    ->end()
                 ->end();
 
         return $treeBuilder;

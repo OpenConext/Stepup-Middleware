@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -66,10 +67,10 @@ class RaService extends AbstractSearchService
 
         $nameIds = array_merge(
             array_map(function (Ra $ra) {
-                return $ra->nameId;
+                return (string) $ra->nameId;
             }, $ras),
             array_map(function (Raa $raa) {
-                return $raa->nameId;
+                return (string) $raa->nameId;
             }, $raas)
         );
 
@@ -77,19 +78,19 @@ class RaService extends AbstractSearchService
         $credentials = [];
 
         foreach ($ras as $ra) {
-            if (!isset($identities[$ra->nameId])) {
+            if (!isset($identities[(string) $ra->nameId])) {
                 continue;
             }
 
-            $credentials[] = RegistrationAuthorityCredentials::fromRa($ra, $identities[$ra->nameId]);
+            $credentials[] = RegistrationAuthorityCredentials::fromRa($ra, $identities[(string) $ra->nameId]);
         }
 
         foreach ($raas as $raa) {
-            if (!isset($identities[$raa->nameId])) {
+            if (!isset($identities[(string) $raa->nameId])) {
                 continue;
             }
 
-            $credentials[] = RegistrationAuthorityCredentials::fromRaa($raa, $identities[$raa->nameId]);
+            $credentials[] = RegistrationAuthorityCredentials::fromRaa($raa, $identities[(string) $raa->nameId]);
         }
 
         return $credentials;

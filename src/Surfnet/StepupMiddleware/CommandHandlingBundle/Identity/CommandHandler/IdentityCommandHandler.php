@@ -245,7 +245,7 @@ class IdentityCommandHandler extends CommandHandler
      */
     private function assertIsValidLocale(Locale $locale)
     {
-        if (!$this->configurableSettings->isValidLocale($locale)) {
+        if (!$this->configurableSettings->isSupportedLocale($locale)) {
             throw new DomainException(
                 sprintf('Given locale "%s" is not an acceptable locale', (string) $locale)
             );

@@ -18,15 +18,36 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 class RegistrationAuthorityRetractedEvent extends IdentityEvent
 {
     /**
-     * @return \Surfnet\Stepup\Identity\AuditLog\Metadata
+     * @var IdentifyingDataId
      */
+    public $identifyingDataId;
+
+    /**
+     * @var NameId
+     */
+    public $nameId;
+
+    public function __construct(
+        IdentityId $identityId,
+        Institution $institution,
+        IdentifyingDataId $identifyingDataId,
+        NameId $nameId
+    ) {
+        parent::__construct($identityId, $institution);
+
+        $this->identifyingDataId = $identifyingDataId;
+        $this->nameId            = $nameId;
+    }
+
     public function getAuditLogMetadata()
     {
         $metadata                         = new Metadata();
@@ -40,18 +61,19 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
-            new Institution($data['identity_institution'])
+            new Institution($data['identity_institution']),
+            new IdentifyingDataId($data['identifying_data_id']),
+            new NameId($data['name_id'])
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize()
     {
         return [
-            'identity_id'          => $this->identityId,
-            'identity_institution' => $this->identityInstitution
+            'identity_id'          => (string) $this->identityId,
+            'identity_institution' => (string) $this->identityInstitution,
+            'identifying_data_id'  => (string) $this->identifyingDataId,
+            'name_id'              => (string) $this->nameId
         ];
     }
 }

@@ -109,4 +109,10 @@ class RaListingRepository extends EntityRepository
 
         return new ArrayCollection($listings);
     }
+
+    public function remove(RaListing $raListing)
+    {
+        $this->getEntityManager()->remove($raListing);
+        $this->getEntityManager()->flush();
+    }
 }

@@ -44,6 +44,7 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
@@ -474,7 +475,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        $this->apply();
+        $this->apply(new RegistrationAuthorityRetractedEvent(
+            $this->id,
+            $this->institution,
+            $this->identifyingDataId,
+            $this->nameId
+        ));
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -624,7 +630,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
     }
 
-
+    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $this->registrationAuthority = null;
+    }
 
     public function getAggregateRootId()
     {

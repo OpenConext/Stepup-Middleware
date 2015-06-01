@@ -19,10 +19,15 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository")
- * @ORM\Table()
+ * @ORM\Table(
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="unq_saml_entity_entity_id_type", columns={"entity_id", "type"})
+ *     }
+ * )
  */
 class SamlEntity
 {
@@ -33,7 +38,14 @@ class SamlEntity
     const TYPE_SP  = 'sp';
 
     /**
+     * @var string
+     *
      * @ORM\Id
+     * @ORM\Column(length=36)
+     */
+    public $id;
+
+    /**
      * @ORM\Column
      *
      * @var string
@@ -61,6 +73,7 @@ class SamlEntity
      */
     private function __construct($entityId, $type, $configuration)
     {
+        $this->id = (string) Uuid::uuid4();
         $this->entityId = $entityId;
         $this->type = $type;
         $this->configuration = $configuration;
@@ -74,5 +87,15 @@ class SamlEntity
     public static function createServiceProvider($entityId, array $configuration)
     {
         return new self($entityId, self::TYPE_SP, json_encode($configuration));
+    }
+
+    /**
+     * @param string $entityId
+     * @param array  $configuration
+     * @return SamlEntity
+     */
+    public static function createIdentityProvider($entityId, array $configuration)
+    {
+        return new self($entityId, self::TYPE_IDP, json_encode($configuration));
     }
 }

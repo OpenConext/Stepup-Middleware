@@ -43,6 +43,7 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -56,6 +57,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -119,17 +121,25 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private $registrationAuthority;
 
+    /**
+     * @var Locale
+     */
+    private $preferredLocale;
+
     public static function create(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
         Email $email,
-        CommonName $commonName
+        CommonName $commonName,
+        Locale $preferredLocale
     ) {
         $identity = new self();
 
         $identity->identifyingData = IdentifyingData::createFrom($id, $email, $commonName);
-        $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $identity->identifyingData->id));
+        $identity->apply(
+            new IdentityCreatedEvent($id, $institution, $nameId, $preferredLocale, $identity->identifyingData->id)
+        );
 
         return $identity;
     }
@@ -166,6 +176,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $this->nameId,
                 $this->institution,
+                $this->preferredLocale,
                 $this->identifyingDataId,
                 $secondFactorId,
                 $yubikeyPublicId
@@ -188,7 +199,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $emailVerificationWindow,
                 $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->preferredLocale
             )
         );
     }
@@ -208,7 +219,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $emailVerificationWindow,
                 $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->preferredLocale
             )
         );
     }
@@ -231,7 +242,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $emailVerificationWindow,
                 $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->preferredLocale
             )
         );
     }
@@ -484,11 +495,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ));
     }
 
+    public function expressPreferredLocale(Locale $preferredLocale)
+    {
+        if ($this->preferredLocale === $preferredLocale) {
+            return;
+        }
+
+        $this->apply(new LocalePreferenceExpressedEvent($this->id, $this->institution, $preferredLocale));
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
         $this->institution             = $event->identityInstitution;
         $this->nameId                  = $event->nameId;
+        $this->preferredLocale         = $event->preferredLocale;
         $this->identifyingDataId       = $event->identifyingDataId;
 
         $this->unverifiedSecondFactors = new SecondFactorCollection();
@@ -646,6 +667,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->registrationAuthority = null;
     }
 
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $this->preferredLocale = $event->preferredLocale;
+    }
+
     public function getAggregateRootId()
     {
         return (string) $this->id;
@@ -717,6 +743,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function getInstitution()
     {
         return $this->institution;
+    }
+
+    public function getPreferredLocale()
+    {
+        return $this->preferredLocale;
     }
 
     /**

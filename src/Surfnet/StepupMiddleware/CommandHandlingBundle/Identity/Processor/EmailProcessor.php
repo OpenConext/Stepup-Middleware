@@ -65,7 +65,7 @@ class EmailProcessor extends Processor
         $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
+            (string) $event->preferredLocale,
             (string) $identifyingData->commonName,
             (string) $identifyingData->email,
             $event->emailVerificationNonce
@@ -77,7 +77,7 @@ class EmailProcessor extends Processor
         $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
+            (string) $event->preferredLocale,
             (string) $identifyingData->commonName,
             (string) $identifyingData->email,
             $event->emailVerificationNonce
@@ -89,7 +89,7 @@ class EmailProcessor extends Processor
         $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
+            (string) $event->preferredLocale,
             (string) $identifyingData->commonName,
             (string) $identifyingData->email,
             $event->emailVerificationNonce
@@ -101,7 +101,7 @@ class EmailProcessor extends Processor
         $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
 
         $this->mailService->sendRegistrationEmail(
-            $event->preferredLocale,
+            (string) $event->preferredLocale,
             (string) $identifyingData->commonName,
             (string) $identifyingData->email,
             $event->registrationCode,

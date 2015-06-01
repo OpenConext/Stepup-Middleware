@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => 9,
         ],
         'sraa' => ['20394-4320423-439248324'],

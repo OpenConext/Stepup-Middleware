@@ -22,6 +22,7 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 class IdentityCreatedEvent extends IdentityEvent
@@ -32,6 +33,11 @@ class IdentityCreatedEvent extends IdentityEvent
     public $nameId;
 
     /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale
+     */
+    public $preferredLocale;
+
+    /**
      * @var IdentifyingDataId
      */
     public $identifyingDataId;
@@ -40,11 +46,13 @@ class IdentityCreatedEvent extends IdentityEvent
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
+        Locale $preferredLocale,
         IdentifyingDataId $identifyingDataId
     ) {
         parent::__construct($id, $institution);
 
         $this->nameId = $nameId;
+        $this->preferredLocale = $preferredLocale;
         $this->identifyingDataId = $identifyingDataId;
     }
 
@@ -63,6 +71,7 @@ class IdentityCreatedEvent extends IdentityEvent
             new IdentityId($data['id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
+            new Locale($data['preferred_locale']),
             new IdentifyingDataId($data['identifying_data_id'])
         );
     }
@@ -73,6 +82,7 @@ class IdentityCreatedEvent extends IdentityEvent
             'id'                  => (string) $this->identityId,
             'institution'         => (string) $this->identityInstitution,
             'name_id'             => (string) $this->nameId,
+            'preferred_locale'    => (string) $this->preferredLocale,
             'identifying_data_id' => (string) $this->identifyingDataId
         ];
     }

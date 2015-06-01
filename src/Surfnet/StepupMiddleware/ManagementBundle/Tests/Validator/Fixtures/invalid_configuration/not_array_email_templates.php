@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'email_templates',
     'configuration'        => [
         'gateway'         => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     'entity_id' => 'http://entity.tld/metadata',

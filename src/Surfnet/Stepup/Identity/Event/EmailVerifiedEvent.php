@@ -23,6 +23,7 @@ use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -59,7 +60,7 @@ class EmailVerifiedEvent extends IdentityEvent
     public $registrationCode;
 
     /**
-     * @var string Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -72,7 +73,7 @@ class EmailVerifiedEvent extends IdentityEvent
      * @param DateTime          $registrationRequestedAt
      * @param IdentifyingDataId $identifyingDataId
      * @param string            $registrationCode
-     * @param string            $preferredLocale
+     * @param Locale            $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
@@ -83,7 +84,7 @@ class EmailVerifiedEvent extends IdentityEvent
         DateTime $registrationRequestedAt,
         IdentifyingDataId $identifyingDataId,
         $registrationCode,
-        $preferredLocale
+        Locale $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -119,7 +120,7 @@ class EmailVerifiedEvent extends IdentityEvent
             DateTime::fromString($data['registration_requested_at']),
             new IdentifyingDataId($data['identifying_data_id']),
             $data['registration_code'],
-            $data['preferred_locale']
+            new Locale($data['preferred_locale'])
         );
     }
 
@@ -134,7 +135,7 @@ class EmailVerifiedEvent extends IdentityEvent
             'registration_requested_at' => (string) $this->registrationRequestedAt,
             'identifying_data_id'       => (string) $this->identifyingDataId,
             'registration_code'         => $this->registrationCode,
-            'preferred_locale'          => $this->preferredLocale,
+            'preferred_locale'          => (string) $this->preferredLocale,
         ];
     }
 }

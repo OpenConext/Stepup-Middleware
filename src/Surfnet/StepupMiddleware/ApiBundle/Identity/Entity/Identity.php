@@ -25,6 +25,7 @@ use JsonSerializable;
 use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
@@ -76,6 +77,13 @@ class Identity implements JsonSerializable
     public $email;
 
     /**
+     * @ORM\Column(type="stepup_locale")
+     *
+     * @var Locale
+     */
+    public $preferredLocale;
+
+    /**
      * A list of all second factors, whose e-mails haven't been verified.
      *
      * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
@@ -107,7 +115,8 @@ class Identity implements JsonSerializable
         Institution $institution,
         $nameId,
         Email $email,
-        CommonName $commonName
+        CommonName $commonName,
+        Locale $preferredLocale
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
@@ -124,6 +133,7 @@ class Identity implements JsonSerializable
         $identity->institution = $institution;
         $identity->email = $email;
         $identity->commonName = $commonName;
+        $identity->preferredLocale = $preferredLocale;
         $identity->unverifiedSecondFactors = new ArrayCollection();
         $identity->verifiedSecondFactors = new ArrayCollection();
         $identity->vettedSecondFactors = new ArrayCollection();
@@ -139,6 +149,7 @@ class Identity implements JsonSerializable
             'institution'               => (string) $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

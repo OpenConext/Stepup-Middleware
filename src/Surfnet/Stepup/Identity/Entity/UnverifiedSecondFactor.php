@@ -145,7 +145,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 DateTime::now(),
                 $this->identity->getIdentifyingDataId(),
                 OtpGenerator::generate(8),
-                'en_GB'
+                $this->identity->getPreferredLocale()
             )
         );
     }

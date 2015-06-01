@@ -69,6 +69,14 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      *
      * @var string
      */
+    public $preferredLocale;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     public $secondFactorId;
 
     /**

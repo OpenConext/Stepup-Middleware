@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -61,7 +62,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
     public $emailVerificationNonce;
 
     /**
-     * @var string Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -76,7 +77,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param IdentifyingDataId       $identifyingDataId
      * @param string                  $emailVerificationNonce
-     * @param string                  $preferredLocale
+     * @param Locale                  $preferredLocale
      */
     public function __construct(
         IdentityId $identityId,
@@ -87,7 +88,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
         EmailVerificationWindow $emailVerificationWindow,
         IdentifyingDataId $identifyingDataId,
         $emailVerificationNonce,
-        $preferredLocale
+        Locale $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -123,7 +124,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             new IdentifyingDataId($data['identifying_data_id']),
             $data['email_verification_nonce'],
-            $data['preferred_locale']
+            new Locale($data['preferred_locale'])
         );
     }
 
@@ -138,7 +139,7 @@ class GssfPossessionProvenEvent extends IdentityEvent
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
             'identifying_data_id'       => (string) $this->identifyingDataId,
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'preferred_locale'          => $this->preferredLocale,
+            'preferred_locale'          => (string) $this->preferredLocale,
         ];
     }
 }

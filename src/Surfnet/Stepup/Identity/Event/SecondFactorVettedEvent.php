@@ -22,6 +22,7 @@ use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -59,7 +60,7 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $documentNumber;
 
     /**
-     * @var string Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -72,7 +73,7 @@ class SecondFactorVettedEvent extends IdentityEvent
      * @param IdentifyingDataId $identifyingDataId
      * @param string            $secondFactorIdentifier
      * @param string            $documentNumber
-     * @param string            $preferredLocale
+     * @param Locale            $preferredLocale
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -85,7 +86,7 @@ class SecondFactorVettedEvent extends IdentityEvent
         IdentifyingDataId $identifyingDataId,
         $secondFactorIdentifier,
         $documentNumber,
-        $preferredLocale
+        Locale $preferredLocale
     ) {
         parent::__construct($identityId, $institution);
 
@@ -121,7 +122,7 @@ class SecondFactorVettedEvent extends IdentityEvent
             new IdentifyingDataId($data['identifying_data_id']),
             $data['second_factor_identifier'],
             $data['document_number'],
-            $data['preferred_locale']
+            new Locale($data['preferred_locale'])
         );
     }
 
@@ -136,7 +137,7 @@ class SecondFactorVettedEvent extends IdentityEvent
             'identifying_data_id'      => (string) $this->identifyingDataId,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'document_number'          => $this->documentNumber,
-            'preferred_locale'         => $this->preferredLocale,
+            'preferred_locale'         => (string) $this->preferredLocale,
         ];
     }
 }

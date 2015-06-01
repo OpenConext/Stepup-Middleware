@@ -39,6 +39,7 @@ use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
@@ -62,7 +63,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 
         return new IdentityCommandHandler(
             new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
-            ConfigurableSettings::create(self::$window)
+            ConfigurableSettings::create(self::$window, [])
         );
     }
 
@@ -89,6 +90,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     new NameId('3'),
+                    new Locale('en_GB'),
                     $identifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -102,7 +104,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $identifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ])
             ->when($command)
@@ -140,6 +142,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     new NameId('3'),
+                    new Locale('en_GB'),
                     $identifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -153,7 +156,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $identifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new EmailVerifiedEvent(
                     $identityId,
@@ -164,7 +167,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     DateTime::now(),
                     $identifyingDataId,
                     'SOMEREGISTRATIONCODE',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ])
             ->when($command)
@@ -204,6 +207,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
+                    new Locale('en_GB'),
                     $identifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -217,7 +221,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $identifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new EmailVerifiedEvent(
                     $identityId,
@@ -228,7 +232,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     DateTime::now(),
                     $identifyingDataId,
                     'SOMEREGISTRATIONCODE',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new SecondFactorVettedEvent(
                     $identityId,
@@ -239,7 +243,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $identifyingDataId,
                     (string) $secondFactorIdentifier,
                     'DOCUMENT_42',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ])
             ->when($command)
@@ -284,12 +288,14 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityInstitution,
                     $authorityNameId,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')
@@ -301,6 +307,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantNameId,
+                    new Locale('en_GB'),
                     $registrantIdentifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -314,7 +321,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $registrantIdentifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
             ])
             ->when($command)
@@ -361,12 +368,14 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityInstitution,
                     $authorityNameId,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')
@@ -378,6 +387,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantNameId,
+                    new Locale('en_GB'),
                     $registrantIdentifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -391,7 +401,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $registrantIdentifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -402,7 +412,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGISTRATION_CODE',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ])
             ->when($command)
@@ -449,12 +459,14 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityId,
                     $authorityInstitution,
                     $authorityNameId,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
                     $authorityNameId,
                     $authorityInstitution,
+                    new Locale('en_GB'),
                     $authorityIdentifyingDataId,
                     new SecondFactorId(static::uuid()),
                     new YubikeyPublicId('ccccvkdowiej')
@@ -466,6 +478,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantId,
                     $registrantInstitution,
                     $registrantNameId,
+                    new Locale('en_GB'),
                     $registrantIdentifyingDataId
                 ),
                 new YubikeyPossessionProvenEvent(
@@ -479,7 +492,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     ),
                     $registrantIdentifyingDataId,
                     'nonce',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -490,7 +503,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     DateTime::now(),
                     $registrantIdentifyingDataId,
                     'REGISTRATION_CODE',
-                    'en_GB'
+                    new Locale('en_GB')
                 ),
                 new SecondFactorVettedEvent(
                     $registrantId,
@@ -501,7 +514,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantIdentifyingDataId,
                     $registrantSecondFactorIdentifier,
                     'DOCUMENT_NUMBER',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ])
             ->when($command)

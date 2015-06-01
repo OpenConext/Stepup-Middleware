@@ -39,6 +39,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument('common-name', InputArgument::REQUIRED, 'The Common Name of the identity to create')
             ->addArgument('email', InputArgument::REQUIRED, 'The e-mail address of the identity to create')
+            ->addArgument('preferred-locale', InputArgument::REQUIRED, 'The preferred locale of the identity to create')
             ->addArgument(
                 'yubikey',
                 InputArgument::REQUIRED,
@@ -61,6 +62,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->institution     = $input->getArgument('institution');
         $command->commonName      = $input->getArgument('common-name');
         $command->email           = $input->getArgument('email');
+        $command->preferredLocale = $input->getArgument('preferred-locale');
         $command->secondFactorId  = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 

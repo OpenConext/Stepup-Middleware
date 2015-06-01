@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
+use Broadway\Serializer\SerializableInterface;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -43,6 +44,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -59,8 +61,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider eventProvider
+     * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization($event)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
     {
         $class = get_class($event);
         $this->assertTrue($event == call_user_func([$class, 'deserialize'], $event->serialize()));
@@ -120,7 +123,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     DateTime::now(),
                     new IdentifyingDataId(static::UUID()),
                     '123',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ],
             'IdentityCreatedEvent' => [
@@ -128,6 +131,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('BabelFish Inc'),
                     new NameId('42'),
+                    new Locale('en_GB'),
                     new IdentifyingDataId(static::UUID())
                 )
             ],
@@ -154,7 +158,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     new IdentifyingDataId(static::UUID()),
                     '42',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ],
             'UnverifiedSecondFactorRevokedEvent' => [
@@ -193,7 +197,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     new IdentifyingDataId(static::UUID()),
                     '42',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ],
             'GssfPossessionProvenEvent' => [
@@ -206,7 +210,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     new IdentifyingDataId(static::UUID()),
                     '42',
-                    'en_GB'
+                    new Locale('en_GB')
                 )
             ],
             'IdentityAccreditedAsRaEvent' => [

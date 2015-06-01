@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -45,6 +46,7 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
      * @param NameId      $nameId
      * @param Email       $email
      * @param CommonName  $commonName
+     * @param Locale      $preferredLocale
      * @return Identity
      */
     public static function create(
@@ -52,7 +54,8 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
         Institution $institution,
         NameId $nameId,
         Email $email,
-        CommonName $commonName
+        CommonName $commonName,
+        Locale $preferredLocale
     );
 
     /**
@@ -207,6 +210,12 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     public function retractRegistrationAuthority();
 
     /**
+     * @param Locale $preferredLocale
+     * @return void
+     */
+    public function expressPreferredLocale(Locale $preferredLocale);
+
+    /**
      * @return IdentityId
      */
     public function getId();
@@ -220,6 +229,11 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
      * @return Institution
      */
     public function getInstitution();
+
+    /**
+     * @return Locale
+     */
+    public function getPreferredLocale();
 
     /**
      * @param SecondFactorId $secondFactorId

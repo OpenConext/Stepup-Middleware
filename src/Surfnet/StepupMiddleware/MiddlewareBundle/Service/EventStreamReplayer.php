@@ -53,8 +53,6 @@ class EventStreamReplayer
         'vetted_second_factor',
         'ra_second_factor',
         'identity',
-        'ra',
-        'raa',
         'sraa',
         'audit_log',
         'ra_listing',

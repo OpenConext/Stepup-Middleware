@@ -103,6 +103,7 @@ class RaListingRepository extends EntityRepository
     {
         $listings = $this->createQueryBuilder('rl')
             ->where('rl.institution = :institution')
+            ->setParameter('institution', $institution)
             ->getQuery()
             ->getResult();
 

@@ -65,6 +65,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -628,6 +629,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         RegistrationAuthorityInformationAmendedEvent $event
     ) {
         $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
+    }
+
+    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
+    }
+
+    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
     }
 
     protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)

@@ -74,6 +74,15 @@ final class RegistrationAuthority extends EventSourcedEntity
 
     /**
      * @param RegistrationAuthorityRole $role
+     * @return void
+     */
+    public function appointAs(RegistrationAuthorityRole $role)
+    {
+        $this->role = $role;
+    }
+
+    /**
+     * @param RegistrationAuthorityRole $role
      * @return bool
      */
     public function isAppointedAs(RegistrationAuthorityRole $role)

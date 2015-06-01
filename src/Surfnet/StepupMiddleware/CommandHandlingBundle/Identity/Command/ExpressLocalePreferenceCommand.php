@@ -19,13 +19,15 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractCommand
+class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServiceExecutable, RaExecutable
 {
     /**
      * @Assert\NotBlank()
-     * @Assert\Type("string")
+     * @Assert\Type(type="string")
      *
      * @var string
      */
@@ -33,57 +35,9 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
 
     /**
      * @Assert\NotBlank()
-     * @Assert\Type("string")
-     *
-     * @var string
-     */
-    public $nameId;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     *
-     * @var string
-     */
-    public $institution;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     *
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Email()
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
+     * @Assert\Type(type="string")
      *
      * @var string
      */
     public $preferredLocale;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     *
-     * @var string
-     */
-    public $secondFactorId;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type("string")
-     *
-     * @var string
-     */
-    public $yubikeyPublicId;
 }

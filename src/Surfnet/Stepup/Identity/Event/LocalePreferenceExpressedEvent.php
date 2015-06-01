@@ -19,41 +19,27 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
-use Surfnet\Stepup\Identity\Value\NameId;
 
-class IdentityCreatedEvent extends IdentityEvent
+class LocalePreferenceExpressedEvent extends IdentityEvent
 {
     /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
+     * @var Locale
      */
     public $preferredLocale;
 
     /**
-     * @var IdentifyingDataId
+     * @param IdentityId  $id
+     * @param Institution $institution
+     * @param Locale      $preferredLocale
      */
-    public $identifyingDataId;
-
-    public function __construct(
-        IdentityId $id,
-        Institution $institution,
-        NameId $nameId,
-        Locale $preferredLocale,
-        IdentifyingDataId $identifyingDataId
-    ) {
+    public function __construct(IdentityId $id, Institution $institution, Locale $preferredLocale)
+    {
         parent::__construct($id, $institution);
 
-        $this->nameId = $nameId;
         $this->preferredLocale = $preferredLocale;
-        $this->identifyingDataId = $identifyingDataId;
     }
 
     public function getAuditLogMetadata()
@@ -65,25 +51,25 @@ class IdentityCreatedEvent extends IdentityEvent
         return $metadata;
     }
 
+    /**
+     * @param array $data
+     * @return IdentityRenamedEvent The object instance
+     */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new NameId($data['name_id']),
-            new Locale($data['preferred_locale']),
-            new IdentifyingDataId($data['identifying_data_id'])
+            new Locale($data['preferred_locale'])
         );
     }
 
     public function serialize()
     {
         return [
-            'id'                  => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'preferred_locale'    => (string) $this->preferredLocale,
-            'identifying_data_id' => (string) $this->identifyingDataId
+            'id'          => (string) $this->identityId,
+            'institution' => (string) $this->identityInstitution,
+            'preferred_locale' => (string) $this->preferredLocale,
         ];
     }
 }

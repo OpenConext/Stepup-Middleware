@@ -20,6 +20,9 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren) we simply have a lot of commands
+ */
 abstract class AbstractCommand implements Command
 {
     /**

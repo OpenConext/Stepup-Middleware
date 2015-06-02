@@ -190,15 +190,12 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
         Location $location,
         ContactInformation $contactInformation
     );
-//
-//    The following methods are already defined but cannot yet be implemented.
-//
-//    /**
-//     * @param RegistrationAuthorityRole $role
-//     * @param Institution               $institution
-//     * @return void
-//     */
-//    public function appointAs(RegistrationAuthorityRole $role, Institution $institution);
+
+    /**
+     * @param RegistrationAuthorityRole $role
+     * @return void
+     */
+    public function appointAs(RegistrationAuthorityRole $role);
 
     /**
      * @param Location           $location
@@ -208,16 +205,15 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
 
     /**
+     * @return void
+     */
+    public function retractRegistrationAuthority();
+
+    /**
      * @param Locale $preferredLocale
      * @return void
      */
     public function expressPreferredLocale(Locale $preferredLocale);
-
-//    /**
-//     * @param Institution $institution
-//     * @return void
-//     */
-//    public function retractRegistrationAuthority(Institution $institution);
 
     /**
      * @return IdentityId

@@ -24,11 +24,11 @@ use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
 class RaCandidateProjector extends Projector
@@ -128,8 +128,31 @@ class RaCandidateProjector extends Projector
         $this->raCandidateRepository->removeByIdentityId($event->identityId);
     }
 
+    /**
+     * @param IdentityAccreditedAsRaaEvent $event
+     * @return void
+     */
     public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
     {
         $this->raCandidateRepository->removeByIdentityId($event->identityId);
+    }
+
+    /**
+     * @param RegistrationAuthorityRetractedEvent $event
+     * @return void
+     */
+    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
+
+        $candidate = RaCandidate::nominate(
+            $event->identityId,
+            $event->identityInstitution,
+            $event->nameId,
+            $identifyingData->commonName,
+            $identifyingData->email
+        );
+
+        $this->raCandidateRepository->save($candidate);
     }
 }

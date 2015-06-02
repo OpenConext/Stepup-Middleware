@@ -30,6 +30,8 @@ use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -43,6 +45,7 @@ use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
@@ -64,6 +67,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -454,6 +458,43 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    public function appointAs(RegistrationAuthorityRole $role)
+    {
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority'
+            );
+        }
+
+        if ($this->registrationAuthority->isAppointedAs($role)) {
+            return;
+        }
+
+        if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
+            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId));
+        } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
+            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId));
+        } else {
+            throw new DomainException('An Identity can only be appointed as either RA or RAA');
+        }
+    }
+
+    public function retractRegistrationAuthority()
+    {
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot Retract Registration Authority as the Identity is not a registration authority'
+            );
+        }
+
+        $this->apply(new RegistrationAuthorityRetractedEvent(
+            $this->id,
+            $this->institution,
+            $this->identifyingDataId,
+            $this->nameId
+        ));
+    }
+
     public function expressPreferredLocale(Locale $preferredLocale)
     {
         if ($this->preferredLocale === $preferredLocale) {
@@ -609,6 +650,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         RegistrationAuthorityInformationAmendedEvent $event
     ) {
         $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
+    }
+
+    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
+    }
+
+    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
+    }
+
+    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $this->registrationAuthority = null;
     }
 
     protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
@@ -92,5 +93,30 @@ class RaListingRepository extends EntityRepository
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param Institution $institution
+     * @return ArrayCollection
+     */
+    public function listRasFor(Institution $institution)
+    {
+        $listings = $this->createQueryBuilder('rl')
+            ->where('rl.institution = :institution')
+            ->setParameter('institution', $institution)
+            ->getQuery()
+            ->getResult();
+
+        return new ArrayCollection($listings);
+    }
+
+    /**
+     * @param RaListing $raListing
+     * @return void
+     */
+    public function remove(RaListing $raListing)
+    {
+        $this->getEntityManager()->remove($raListing);
+        $this->getEntityManager()->flush();
     }
 }

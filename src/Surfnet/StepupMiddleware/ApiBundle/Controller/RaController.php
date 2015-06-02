@@ -28,17 +28,18 @@ class RaController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_SS']);
 
-        $ras = $this->getService()->listRas($institution);
-        $raCount = count($ras);
+        $service = $this->getRaListingService();
+        $registrationAuthorityCredentials = $service->listRegistrationAuthoritiesFor($institution);
+        $count = count($registrationAuthorityCredentials);
 
-        return new JsonCollectionResponse($raCount, 1, $raCount, $ras);
+        return new JsonCollectionResponse($count, 1, $count, $registrationAuthorityCredentials);
     }
 
     /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService
+     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
      */
-    private function getService()
+    private function getRaListingService()
     {
-        return $this->get('surfnet_stepup_middleware_api.service.ra');
+        return $this->get('surfnet_stepup_middleware_api.service.ra_listing');
     }
 }

@@ -19,9 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -105,5 +108,33 @@ class RaListingProjector extends Projector
         $raListing->contactInformation = $event->contactInformation;
 
         $this->raListingRepository->save($raListing);
+    }
+
+    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    {
+        /** @var RaListing $raListing */
+        $raListing = $this->raListingRepository->find($event->identityId);
+
+        $raListing->role = AuthorityRole::ra();
+
+        $this->raListingRepository->save($raListing);
+    }
+
+    public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    {
+        /** @var RaListing $raListing */
+        $raListing = $this->raListingRepository->find($event->identityId);
+
+        $raListing->role = AuthorityRole::raa();
+
+        $this->raListingRepository->save($raListing);
+    }
+
+    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        /** @var RaListing $raListing */
+        $raListing = $this->raListingRepository->find($event->identityId);
+
+        $this->raListingRepository->remove($raListing);
     }
 }

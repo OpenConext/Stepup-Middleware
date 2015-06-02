@@ -25,7 +25,7 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
 class EmailProcessor extends Processor
@@ -36,9 +36,9 @@ class EmailProcessor extends Processor
     private $mailService;
 
     /**
-     * @var RaService
+     * @var RaListingService
      */
-    private $raService;
+    private $raListingService;
 
     /**
      * @var IdentifyingDataRepository
@@ -47,16 +47,16 @@ class EmailProcessor extends Processor
 
     /**
      * @param SecondFactorMailService   $mailService
-     * @param RaService                 $raService
+     * @param RaListingService          $raListingService
      * @param IdentifyingDataRepository $identifyingDataRepository
      */
     public function __construct(
         SecondFactorMailService $mailService,
-        RaService $raService,
+        RaListingService $raListingService,
         IdentifyingDataRepository $identifyingDataRepository
     ) {
-        $this->mailService = $mailService;
-        $this->raService = $raService;
+        $this->mailService               = $mailService;
+        $this->raListingService          = $raListingService;
         $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
@@ -105,7 +105,7 @@ class EmailProcessor extends Processor
             (string) $identifyingData->commonName,
             (string) $identifyingData->email,
             $event->registrationCode,
-            $this->raService->listRas($event->identityInstitution)
+            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
         );
     }
 

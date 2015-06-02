@@ -19,8 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 class RaListingService extends AbstractSearchService
 {
@@ -54,5 +57,20 @@ class RaListingService extends AbstractSearchService
         $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 
         return $paginator;
+    }
+
+    /**
+     * @param Institution $institution
+     * @return array
+     */
+    public function listRegistrationAuthoritiesFor(Institution $institution)
+    {
+        $raListings = $this->raListingRepository->listRasFor($institution);
+
+        return $raListings
+            ->map(function (RaListing $raListing) {
+                return RegistrationAuthorityCredentials::fromRaListing($raListing);
+            })
+            ->toArray();
     }
 }

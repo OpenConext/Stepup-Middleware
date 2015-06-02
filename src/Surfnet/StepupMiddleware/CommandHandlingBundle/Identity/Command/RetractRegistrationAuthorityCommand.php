@@ -16,26 +16,19 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @SuppressWarnings(PHPMD.NumberOfChildren) we simply have a lot of commands
- */
-abstract class AbstractCommand implements Command
+class RetractRegistrationAuthorityCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * @Assert\NotBlank()
      * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i")
      *
      * @var string
      */
-    public $UUID;
-
-    public function __toString()
-    {
-        return get_class($this) . '[' . $this->UUID . ']';
-    }
+    public $identityId;
 }

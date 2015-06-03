@@ -2,8 +2,7 @@ services:
     stepup.repository.identifying_data:
         public: false
         class: Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository
-        factory_service: doctrine.orm.entity_manager
-        factory_method:  getRepository
+        factory: [@doctrine.orm.entity_manager, getRepository]
         arguments:
             - 'Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData'
 

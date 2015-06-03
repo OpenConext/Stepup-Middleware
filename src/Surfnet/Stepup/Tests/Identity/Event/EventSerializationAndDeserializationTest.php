@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
-use Doctrine\Tests\Common\Annotations\Foo\Name;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;

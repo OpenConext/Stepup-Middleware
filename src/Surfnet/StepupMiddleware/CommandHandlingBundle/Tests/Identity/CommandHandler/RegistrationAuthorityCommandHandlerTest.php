@@ -23,10 +23,13 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -40,6 +43,8 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
@@ -469,5 +474,492 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 ]
             )
             ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage An Identity must have at least one vetted second factor before it can be accredited
+     */
+    public function an_identity_without_vetted_second_factor_may_not_be_accredited_as_ra()
+    {
+        $command                     = new AccreditIdentityCommand();
+        $command->identityId         = static::uuid();
+        $command->institution        = 'Babelfish Inc.';
+        $command->role               = 'ra';
+        $command->location           = 'somewhere';
+        $command->contactInformation = 'Call me maybe';
+
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution($command->institution);
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage An Identity may only be accredited within its own institution
+     */
+    public function an_identity_cannot_be_accredited_as_outside_of_its_institution()
+    {
+        $command                     = new AccreditIdentityCommand();
+        $command->identityId         = static::uuid();
+        $command->institution        = 'Babelfish Inc.';
+        $command->role               = 'ra';
+        $command->location           = 'somewhere';
+        $command->contactInformation = 'Call me maybe';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Blue Note');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given(
+                [
+                    new IdentityCreatedEvent(
+                        $identityId,
+                        $institution,
+                        $nameId,
+                        new Locale('en_GB'),
+                        $identifyingDataId
+                    ),
+                    new YubikeySecondFactorBootstrappedEvent(
+                        $identityId,
+                        $nameId,
+                        $institution,
+                        new Locale('en_GB'),
+                        $identifyingDataId,
+                        $secondFactorId,
+                        $secondFactorPublicId
+                    ),
+                ]
+            )
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     */
+    public function an_identity_with_a_vetted_second_factor_can_be_accredited_as_ra()
+    {
+        $command                     = new AccreditIdentityCommand();
+        $command->identityId         = static::uuid();
+        $command->institution        = 'Babelfish Inc.';
+        $command->role               = 'ra';
+        $command->location           = 'somewhere';
+        $command->contactInformation = 'Call me maybe';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution($command->institution);
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given(
+                [
+                    new IdentityCreatedEvent(
+                        $identityId,
+                        $institution,
+                        $nameId,
+                        new Locale('en_GB'),
+                        $identifyingDataId
+                    ),
+                    new YubikeySecondFactorBootstrappedEvent(
+                        $identityId,
+                        $nameId,
+                        $institution,
+                        new Locale('en_GB'),
+                        $identifyingDataId,
+                        $secondFactorId,
+                        $secondFactorPublicId
+                    ),
+                ]
+            )
+            ->when($command)
+            ->then([
+                new IdentityAccreditedAsRaEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location($command->location),
+                    new ContactInformation($command->contactInformation)
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited
+     */
+    public function an_identity_cannot_be_accredited_twice()
+    {
+        $command                     = new AccreditIdentityCommand();
+        $command->identityId         = static::uuid();
+        $command->institution        = 'Babelfish Inc.';
+        $command->role               = 'ra';
+        $command->location           = 'somewhere';
+        $command->contactInformation = 'Call me maybe';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution($command->institution);
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location($command->location),
+                    new ContactInformation($command->contactInformation)
+                )
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException
+     */
+    public function an_identity_cannot_be_accredited_as_sraa()
+    {
+        $command                     = new AccreditIdentityCommand();
+        $command->identityId         = static::uuid();
+        $command->institution        = 'Babelfish Inc.';
+        $command->role               = 'sraa';
+        $command->location           = 'somewhere';
+        $command->contactInformation = 'Call me maybe';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution($command->institution);
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                ),
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     */
+    public function an_identity_that_is_accredited_as_raa_can_be_appointed_as_ra()
+    {
+        $command                     = new AppointRoleCommand();
+        $command->identityId         = static::uuid();
+        $command->role               = 'ra';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Babelfish Inc.');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
+                    new Location('somewhere'),
+                    new ContactInformation('Call me maybe')
+                )
+            ])
+            ->when($command)
+            ->then([
+                new AppointedAsRaEvent(
+                    $identityId,
+                    $institution,
+                    $nameId
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     */
+    public function an_identity_that_is_accredited_as_ra_can_be_appointed_as_raa()
+    {
+        $command                     = new AppointRoleCommand();
+        $command->identityId         = static::uuid();
+        $command->role               = 'raa';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Babelfish Inc.');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                ),
+                new IdentityAccreditedAsRaaEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('somewhere'),
+                    new ContactInformation('Call me maybe')
+                )
+            ])
+            ->when($command)
+            ->then([
+                new AppointedAsRaaEvent(
+                    $identityId,
+                    $institution,
+                    $nameId
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority
+     */
+    public function an_unaccredited_identity_cannot_be_appointed_a_registration_authority_role()
+    {
+        $command                     = new AppointRoleCommand();
+        $command->identityId         = static::uuid();
+        $command->role               = 'raa';
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Babelfish Inc.');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                )
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group                    command-handler
+     * @group                    ra-command-handler
+     * @expectedException        \Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Cannot Retract Registration Authority as the Identity is not a registration authority
+     */
+    public function an_unaccredited_identity_cannot_have_its_registration_authority_retracted()
+    {
+        $command             = new RetractRegistrationAuthorityCommand();
+        $command->identityId = static::uuid();
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Babelfish Inc.');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                )
+            ])
+            ->when($command);
+    }
+
+    public function an_accredited_identity_can_retract_its_registration_authority()
+    {
+        $command             = new RetractRegistrationAuthorityCommand();
+        $command->identityId = static::uuid();
+
+        $identityId           = new IdentityId($command->identityId);
+        $institution          = new Institution('Babelfish Inc.');
+        $nameId               = new NameId(md5('someNameId'));
+        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $secondFactorId       = new SecondFactorId(static::uuid());
+        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    new Locale('en_GB'),
+                    $identifyingDataId
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new Locale('en_GB'),
+                    $identifyingDataId,
+                    $secondFactorId,
+                    $secondFactorPublicId
+                ),
+                new IdentityAccreditedAsRaaEvent(
+                    $identityId,
+                    $nameId,
+                    $institution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('somewhere'),
+                    new ContactInformation('Call me maybe')
+                )
+            ])
+            ->when($command)
+            ->then([
+                new RegistrationAuthorityRetractedEvent(
+                    $identityId,
+                    $institution,
+                    $identifyingDataId,
+                    $nameId
+                )
+            ]);
     }
 }

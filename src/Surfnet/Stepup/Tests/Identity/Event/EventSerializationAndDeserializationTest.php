@@ -19,10 +19,13 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
+use Doctrine\Tests\Common\Annotations\Foo\Name;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -35,6 +38,7 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -240,6 +244,28 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new NameId(md5('Coleman Hawkins')),
                     new Location('New York'),
                     new ContactInformation("131 West 3rd Street, NY")
+                )
+            ],
+            'AppointedAsRaaEvent' => [
+                new AppointedAsRaaEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId'))
+                )
+            ],
+            'AppointedAsRaEvent' => [
+                new AppointedAsRaEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId'))
+                )
+            ],
+            'RegistrationAuthorityRetractedEvent' => [
+                new RegistrationAuthorityRetractedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new IdentifyingDataId(static::UUID()),
+                    new NameId(md5('someNameId'))
                 )
             ],
         ];

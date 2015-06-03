@@ -19,7 +19,6 @@ framework:
 # see https://www.pivotaltracker.com/story/show/96056010
 #
 monolog:
-    channels: [authentication]
     handlers:
         prod-signaler:
             type: group

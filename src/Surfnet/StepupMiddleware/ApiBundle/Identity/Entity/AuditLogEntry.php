@@ -84,7 +84,7 @@ class AuditLogEntry implements JsonSerializable
     /**
      * @ORM\Column(type="stepup_common_name", nullable=true)
      *
-     * @var CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $actorCommonName;
 

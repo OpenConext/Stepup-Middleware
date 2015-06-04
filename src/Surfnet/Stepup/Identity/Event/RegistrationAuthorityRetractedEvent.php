@@ -18,34 +18,44 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class RegistrationAuthorityRetractedEvent extends IdentityEvent
+class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable
 {
-    /**
-     * @var IdentifyingDataId
-     */
-    public $identifyingDataId;
-
     /**
      * @var NameId
      */
     public $nameId;
 
+    /**
+     * @var CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var Email
+     */
+    public $email;
+
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        IdentifyingDataId $identifyingDataId,
-        NameId $nameId
+        NameId $nameId,
+        CommonName $commonName,
+        Email $email
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->identifyingDataId = $identifyingDataId;
-        $this->nameId            = $nameId;
+        $this->nameId     = $nameId;
+        $this->commonName = $commonName;
+        $this->email      = $email;
     }
 
     public function getAuditLogMetadata()
@@ -62,8 +72,9 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
-            new IdentifyingDataId($data['identifying_data_id']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
+            CommonName::unknown(),
+            Email::unknown()
         );
     }
 
@@ -72,8 +83,21 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent
         return [
             'identity_id'          => (string) $this->identityId,
             'identity_institution' => (string) $this->identityInstitution,
-            'identifying_data_id'  => (string) $this->identifyingDataId,
             'name_id'              => (string) $this->nameId
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::EMAIL => $this->email,
+            SensitiveData::COMMON_NAME => $this->commonName,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

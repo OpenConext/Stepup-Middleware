@@ -22,7 +22,6 @@ use Broadway\Serializer\SerializableInterface;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
@@ -42,7 +41,9 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -57,6 +58,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
 class EventSerializationAndDeserializationTest extends UnitTest
 {
@@ -69,7 +71,18 @@ class EventSerializationAndDeserializationTest extends UnitTest
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
     {
         $class = get_class($event);
-        $this->assertTrue($event == call_user_func([$class, 'deserialize'], $event->serialize()));
+
+        $serializedEvent = $event->serialize();
+        if ($event instanceof Forgettable) {
+            $sensitiveData = $event->getSensitiveData();
+        }
+
+        $deserializedEvent = $event::deserialize($serializedEvent);
+        if ($event instanceof Forgettable) {
+            $deserializedEvent->setSensitiveData($sensitiveData);
+        }
+
+        $this->assertTrue($event == $deserializedEvent);
     }
 
     /**
@@ -124,8 +137,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorType('sms'),
                     'secondFactorId',
                     DateTime::now(),
-                    new IdentifyingDataId(static::UUID()),
                     '123',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
                     new Locale('en_GB')
                 )
             ],
@@ -134,22 +148,23 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('BabelFish Inc'),
                     new NameId('42'),
-                    new Locale('en_GB'),
-                    new IdentifyingDataId(static::UUID())
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
+                    new Locale('en_GB')
                 )
             ],
             'IdentityEmailChangedEvent' => [
                 new IdentityEmailChangedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new IdentifyingDataId(static::UUID())
+                    new Email('info@example.com')
                 )
             ],
             'IdentityRenamedEvent' => [
                 new IdentityRenamedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new IdentifyingDataId(static::UUID())
+                    new CommonName('Henk Westbroek')
                 )
             ],
             'PhonePossessionProvenEvent' => [
@@ -159,8 +174,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new PhoneNumber('+31 (0) 612345678'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
-                    new IdentifyingDataId(static::UUID()),
                     '42',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
                     new Locale('en_GB')
                 )
             ],
@@ -198,8 +214,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new YubikeyPublicId('this_is_mah_yubikey'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
-                    new IdentifyingDataId(static::UUID()),
                     '42',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
                     new Locale('en_GB')
                 )
             ],
@@ -211,8 +228,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new StepupProvider('tiqr'),
                     new GssfId('_' . md5('Tiqr')),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
-                    new IdentifyingDataId(static::UUID()),
                     '42',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
                     new Locale('en_GB')
                 )
             ],
@@ -263,8 +281,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
                 new RegistrationAuthorityRetractedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new IdentifyingDataId(static::UUID()),
-                    new NameId(md5('someNameId'))
+                    new NameId(md5('someNameId')),
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com')
                 )
             ],
         ];

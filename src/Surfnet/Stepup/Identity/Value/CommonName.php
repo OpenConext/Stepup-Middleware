@@ -41,11 +41,11 @@ class CommonName implements Id
      */
     public function __construct($commonName)
     {
-        if (!is_string($commonName)) {
-            throw InvalidArgumentException::invalidType('string', 'commonName', $commonName);
+        if (!is_string($commonName) || trim($commonName) === '') {
+            throw InvalidArgumentException::invalidType('non-empty string', 'commonName', $commonName);
         }
 
-        $this->commonName = $commonName;
+        $this->commonName = trim($commonName);
     }
 
     /**

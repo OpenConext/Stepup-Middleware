@@ -19,15 +19,18 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class EmailVerifiedEvent extends IdentityEvent
+class EmailVerifiedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
@@ -50,17 +53,22 @@ class EmailVerifiedEvent extends IdentityEvent
     public $registrationRequestedAt;
 
     /**
-     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
-     */
-    public $identifyingDataId;
-
-    /**
      * @var string
      */
     public $registrationCode;
 
     /**
-     * @var Locale Eg. "en_GB"
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -71,9 +79,12 @@ class EmailVerifiedEvent extends IdentityEvent
      * @param SecondFactorType  $secondFactorType
      * @param string            $secondFactorIdentifier
      * @param DateTime          $registrationRequestedAt
-     * @param IdentifyingDataId $identifyingDataId
      * @param string            $registrationCode
+     * @param CommonName        $commonName
+     * @param Email             $email
      * @param Locale            $preferredLocale
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
@@ -82,8 +93,9 @@ class EmailVerifiedEvent extends IdentityEvent
         SecondFactorType $secondFactorType,
         $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
-        IdentifyingDataId $identifyingDataId,
         $registrationCode,
+        CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
@@ -92,8 +104,9 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->secondFactorType        = $secondFactorType;
         $this->secondFactorIdentifier  = $secondFactorIdentifier;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->identifyingDataId       = $identifyingDataId;
         $this->registrationCode        = $registrationCode;
+        $this->commonName              = $commonName;
+        $this->email                   = $email;
         $this->preferredLocale         = $preferredLocale;
     }
 
@@ -118,8 +131,9 @@ class EmailVerifiedEvent extends IdentityEvent
             new SecondFactorType($data['second_factor_type']),
             $data['second_factor_identifier'],
             DateTime::fromString($data['registration_requested_at']),
-            new IdentifyingDataId($data['identifying_data_id']),
             $data['registration_code'],
+            CommonName::unknown(),
+            Email::unknown(),
             new Locale($data['preferred_locale'])
         );
     }
@@ -133,9 +147,22 @@ class EmailVerifiedEvent extends IdentityEvent
             'second_factor_type'        => (string) $this->secondFactorType,
             'second_factor_identifier'  => $this->secondFactorIdentifier,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
-            'identifying_data_id'       => (string) $this->identifyingDataId,
             'registration_code'         => $this->registrationCode,
             'preferred_locale'          => (string) $this->preferredLocale,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::EMAIL => $this->email,
+            SensitiveData::COMMON_NAME => $this->commonName,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

@@ -20,8 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 
 /**

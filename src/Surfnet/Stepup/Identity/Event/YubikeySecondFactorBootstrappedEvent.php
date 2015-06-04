@@ -19,7 +19,8 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -27,8 +28,10 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
+final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
@@ -41,14 +44,19 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
     public $institution;
 
     /**
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
      * @var \Surfnet\Stepup\Identity\Value\Locale
      */
     public $preferredLocale;
-
-    /**
-     * @var IdentifyingDataId
-     */
-    public $identifyingDataId;
 
     /**
      * @var SecondFactorId
@@ -64,8 +72,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         IdentityId $identityId,
         NameId $nameId,
         Institution $institution,
+        CommonName $commonName,
+        Email $email,
         Locale $preferredLocale,
-        IdentifyingDataId $identifyingDataId,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
@@ -73,8 +82,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
 
         $this->nameId = $nameId;
         $this->institution = $institution;
+        $this->commonName = $commonName;
+        $this->email = $email;
         $this->preferredLocale = $preferredLocale;
-        $this->identifyingDataId = $identifyingDataId;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
@@ -98,7 +108,6 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             'name_id'              => (string) $this->nameId,
             'identity_institution' => (string) $this->identityInstitution,
             'preferred_locale'     => (string) $this->preferredLocale,
-            'identifying_data_id'  => (string) $this->identifyingDataId,
             'second_factor_id'     => (string) $this->secondFactorId,
             'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
@@ -110,10 +119,25 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['identity_institution']),
+            CommonName::unknown(),
+            Email::unknown(),
             new Locale($data['preferred_locale']),
-            new IdentifyingDataId($data['identifying_data_id']),
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id'])
         );
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::EMAIL => $this->email,
+            SensitiveData::COMMON_NAME => $this->commonName,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

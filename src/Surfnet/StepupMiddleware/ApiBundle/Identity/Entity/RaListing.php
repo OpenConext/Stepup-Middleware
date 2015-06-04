@@ -20,9 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;

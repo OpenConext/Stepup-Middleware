@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\IdentifyingData\Driver\ORM\Doctrine\Type;
+namespace Surfnet\Stepup\Tests\Identity\Driver\ORM\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\EmailType;
+use Surfnet\Stepup\Identity\Value\Email;
 
 class EmailTypeTest extends UnitTest
 {
@@ -36,7 +36,7 @@ class EmailTypeTest extends UnitTest
      */
     public static function setUpBeforeClass()
     {
-        Type::addType(EmailType::NAME, 'Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type\EmailType');
+        Type::addType(EmailType::NAME, 'Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\EmailType');
     }
 
     public function setUp()
@@ -97,7 +97,7 @@ class EmailTypeTest extends UnitTest
 
         $output = $email->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\IdentifyingData\Value\Email', $output);
+        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Email', $output);
         $this->assertEquals(new Email($input), $output);
     }
 

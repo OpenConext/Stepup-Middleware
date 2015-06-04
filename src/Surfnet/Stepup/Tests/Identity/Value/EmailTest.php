@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\IdentifyablaData\Value;
+namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\Email;
 
 class EmailTest extends UnitTest
 {

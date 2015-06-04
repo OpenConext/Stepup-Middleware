@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\IdentifyingData\Driver\ORM\Doctrine\Type;
+namespace Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 
 /**
- * Custom Type for the CommonName Value Object
+ * Custom Type for the Email Value Object
  */
-class CommonNameType extends Type
+class EmailType extends Type
 {
-    const NAME = 'stepup_common_name';
+    const NAME = 'stepup_email';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -52,7 +52,7 @@ class CommonNameType extends Type
         }
 
         try {
-            $commonName = new CommonName($value);
+            $email = new Email($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailedFormat(
@@ -64,7 +64,7 @@ class CommonNameType extends Type
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
         }
 
-        return $commonName;
+        return $email;
     }
 
     public function getName()

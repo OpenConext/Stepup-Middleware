@@ -143,8 +143,9 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->type,
                 $this->secondFactorIdentifier,
                 DateTime::now(),
-                $this->identity->getIdentifyingDataId(),
                 OtpGenerator::generate(8),
+                $this->identity->getCommonName(),
+                $this->identity->getEmail(),
                 $this->identity->getPreferredLocale()
             )
         );

@@ -20,10 +20,6 @@ namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
@@ -42,8 +38,8 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
-use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -52,7 +48,9 @@ use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -67,7 +65,6 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -92,14 +89,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $nameId;
 
     /**
-     * @var IdentifyingDataId
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
-    private $identifyingDataId;
+    private $commonName;
 
     /**
-     * @var IdentifyingData
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
-    private $identifyingData;
+    private $email;
 
     /**
      * @var SecondFactorCollection|UnverifiedSecondFactor[]
@@ -130,16 +127,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
-        Email $email,
         CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     ) {
         $identity = new self();
-
-        $identity->identifyingData = IdentifyingData::createFrom($id, $email, $commonName);
-        $identity->apply(
-            new IdentityCreatedEvent($id, $institution, $nameId, $preferredLocale, $identity->identifyingData->id)
-        );
+        $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
 
         return $identity;
     }
@@ -150,22 +143,22 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function rename(CommonName $commonName)
     {
-        if ($this->identifyingData->commonName->equals($commonName)) {
+        if ($this->commonName->equals($commonName)) {
             return;
         }
 
-        $this->identifyingData->commonName = $commonName;
-        $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $this->identifyingDataId));
+        $this->commonName = $commonName;
+        $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $commonName));
     }
 
     public function changeEmail(Email $email)
     {
-        if ($this->identifyingData->email->equals($email)) {
+        if ($this->email->equals($email)) {
             return;
         }
 
-        $this->identifyingData->email = $email;
-        $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $this->identifyingDataId));
+        $this->email = $email;
+        $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $email));
     }
 
     public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
@@ -176,8 +169,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->id,
                 $this->nameId,
                 $this->institution,
+                $this->commonName,
+                $this->email,
                 $this->preferredLocale,
-                $this->identifyingDataId,
                 $secondFactorId,
                 $yubikeyPublicId
             )
@@ -197,8 +191,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $yubikeyPublicId,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
                 $this->preferredLocale
             )
         );
@@ -217,8 +212,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $phoneNumber,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
                 $this->preferredLocale
             )
         );
@@ -240,8 +236,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $provider,
                 $gssfId,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
                 $this->preferredLocale
             )
         );
@@ -490,8 +487,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new RegistrationAuthorityRetractedEvent(
             $this->id,
             $this->institution,
-            $this->identifyingDataId,
-            $this->nameId
+            $this->nameId,
+            $this->commonName,
+            $this->email
         ));
     }
 
@@ -509,8 +507,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->id                      = $event->identityId;
         $this->institution             = $event->identityInstitution;
         $this->nameId                  = $event->nameId;
+        $this->commonName              = $event->commonName;
+        $this->email                   = $event->email;
         $this->preferredLocale         = $event->preferredLocale;
-        $this->identifyingDataId       = $event->identifyingDataId;
 
         $this->unverifiedSecondFactors = new SecondFactorCollection();
         $this->verifiedSecondFactors   = new SecondFactorCollection();
@@ -699,31 +698,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function getIdentifyingDataId()
-    {
-        return $this->identifyingDataId;
-    }
-
-    public function setIdentifyingData(IdentifyingData $identifyingData)
-    {
-        if (!$this->identifyingDataId->equals(new IdentifyingDataId($identifyingData->id))) {
-            throw new DomainException(sprintf(
-                'Cannot set IdentifyingData "%s" on identity "%s" with IdentifyingDataId "%s" as it does not belong to '
-                . 'this identity',
-                $identifyingData->id,
-                (string) $this->identifyingDataId,
-                (string) $this->id
-            ));
-        }
-
-        $this->identifyingData = $identifyingData;
-    }
-
-    public function exposeIdentifyingData()
-    {
-        return $this->identifyingData;
-    }
-
     public function getId()
     {
         return $this->id;
@@ -743,6 +717,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function getInstitution()
     {
         return $this->institution;
+    }
+
+    public function getCommonName()
+    {
+        return $this->commonName;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     public function getPreferredLocale()

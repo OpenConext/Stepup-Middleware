@@ -36,7 +36,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     private $institution;
 
     /**
-     * @var string|\Surfnet\Stepup\IdentifyingData\Value\CommonName
+     * @var string
      */
     private $commonName;
 
@@ -85,7 +85,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
         static::assertEquals($sraa->nameId, $identity->nameId);
 
         $credentials = new self($identity->id, true, true);
-        $credentials->commonName = $identity->commonName;
+        $credentials->commonName = (string) $identity->commonName;
 
         return $credentials;
     }
@@ -103,7 +103,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
         );
 
         $credentials->institution        = $raListing->institution;
-        $credentials->commonName         = $raListing->commonName;
+        $credentials->commonName         = (string) $raListing->commonName;
         $credentials->location           = $raListing->location;
         $credentials->contactInformation = $raListing->contactInformation;
 

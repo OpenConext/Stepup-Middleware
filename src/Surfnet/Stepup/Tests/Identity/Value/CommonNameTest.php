@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\IdentifyingData\Value;
+namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
 
-class IdentifyingDataIdTest extends UnitTest
+class CommonNameTest extends UnitTest
 {
     /**
      * @test
@@ -31,27 +31,27 @@ class IdentifyingDataIdTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function the_id_must_be_a_non_empty_string($invalidValue)
+    public function the_common_name_address_must_be_a_non_empty_string($invalidValue)
     {
-        new IdentifyingDataId($invalidValue);
+        new CommonName($invalidValue);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function two_Identifiable_data_ids_with_the_same_value_are_equal()
+    public function two_common_names_with_the_same_value_are_equal()
     {
-        $identifiableDataId = new IdentifyingDataId('89d428f7-a65a-4fe4-bae8-bc19c8b26c83');
-        $theSame            = new IdentifyingDataId('89d428f7-a65a-4fe4-bae8-bc19c8b26c83');
-        $different          = new IdentifyingDataId('518d3f11-6218-4cad-bf80-4394c4174c6f');
+        $commonName = new CommonName('John Doe');
+        $theSame    = new CommonName('John Doe');
+        $different  = new CommonName('Jane Doe');
 
-        $this->assertTrue($identifiableDataId->equals($theSame));
-        $this->assertFalse($identifiableDataId->equals($different));
+        $this->assertTrue($commonName->equals($theSame));
+        $this->assertFalse($commonName->equals($different));
     }
 
     /**
-     * provider for {@see the_id_must_be_a_non_empty_string()}
+     * provider for {@see the_common_name_address_must_be_a_non_empty_string()}
      */
     public function invalidArgumentProvider()
     {

@@ -20,11 +20,10 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -38,14 +37,14 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
-interface Identity extends IdentifyingDataHolder, AggregateRoot
+interface Identity extends AggregateRoot
 {
     /**
      * @param IdentityId  $id
      * @param Institution $institution
      * @param NameId      $nameId
-     * @param Email       $email
      * @param CommonName  $commonName
+     * @param Email       $email
      * @param Locale      $preferredLocale
      * @return Identity
      */
@@ -53,8 +52,8 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
-        Email $email,
         CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     );
 
@@ -76,11 +75,14 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     public function changeEmail(Email $email);
 
     /**
-     * @param SecondFactorId $secondFactorId
+     * @param SecondFactorId  $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
      * @return void
      */
-    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
+    public function bootstrapYubikeySecondFactor(
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId
+    );
 
     /**
      * @param SecondFactorId          $secondFactorId
@@ -229,6 +231,16 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
      * @return Institution
      */
     public function getInstitution();
+
+    /**
+     * @return CommonName
+     */
+    public function getCommonName();
+
+    /**
+     * @return Email
+     */
+    public function getEmail();
 
     /**
      * @return Locale

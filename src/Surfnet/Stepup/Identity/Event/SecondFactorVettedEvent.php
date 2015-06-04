@@ -18,16 +18,19 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class SecondFactorVettedEvent extends IdentityEvent
+class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
@@ -45,11 +48,6 @@ class SecondFactorVettedEvent extends IdentityEvent
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
-     */
-    public $identifyingDataId;
-
-    /**
      * @var string
      */
     public $secondFactorIdentifier;
@@ -58,6 +56,16 @@ class SecondFactorVettedEvent extends IdentityEvent
      * @var string
      */
     public $documentNumber;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
 
     /**
      * @var Locale Eg. "en_GB"
@@ -70,9 +78,10 @@ class SecondFactorVettedEvent extends IdentityEvent
      * @param Institution       $institution
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
-     * @param IdentifyingDataId $identifyingDataId
      * @param string            $secondFactorIdentifier
      * @param string            $documentNumber
+     * @param CommonName        $commonName
+     * @param Email             $email
      * @param Locale            $preferredLocale
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -83,9 +92,10 @@ class SecondFactorVettedEvent extends IdentityEvent
         Institution $institution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        IdentifyingDataId $identifyingDataId,
         $secondFactorIdentifier,
         $documentNumber,
+        CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     ) {
         parent::__construct($identityId, $institution);
@@ -94,8 +104,9 @@ class SecondFactorVettedEvent extends IdentityEvent
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorType       = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->identifyingDataId      = $identifyingDataId;
         $this->documentNumber         = $documentNumber;
+        $this->commonName             = $commonName;
+        $this->email                  = $email;
         $this->preferredLocale        = $preferredLocale;
     }
 
@@ -119,9 +130,10 @@ class SecondFactorVettedEvent extends IdentityEvent
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorType($data['second_factor_type']),
-            new IdentifyingDataId($data['identifying_data_id']),
             $data['second_factor_identifier'],
             $data['document_number'],
+            CommonName::unknown(),
+            Email::unknown(),
             new Locale($data['preferred_locale'])
         );
     }
@@ -134,10 +146,23 @@ class SecondFactorVettedEvent extends IdentityEvent
             'identity_institution'     => (string) $this->identityInstitution,
             'second_factor_id'         => (string) $this->secondFactorId,
             'second_factor_type'       => (string) $this->secondFactorType,
-            'identifying_data_id'      => (string) $this->identifyingDataId,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'document_number'          => $this->documentNumber,
             'preferred_locale'         => (string) $this->preferredLocale,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::EMAIL => $this->email,
+            SensitiveData::COMMON_NAME => $this->commonName,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

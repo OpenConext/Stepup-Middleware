@@ -20,11 +20,11 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\RepositoryInterface;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Identity;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -82,8 +82,8 @@ class IdentityCommandHandler extends CommandHandler
             new IdentityId($command->id),
             new Institution($command->institution),
             new NameId($command->nameId),
-            new Email($command->email),
             new CommonName($command->commonName),
+            new Email($command->email),
             $preferredLocale
         );
 
@@ -107,13 +107,16 @@ class IdentityCommandHandler extends CommandHandler
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
+        $commonName = new CommonName($command->commonName);
+        $email = new Email($command->email);
+
         // @todo add check if Identity does not already exist based on NameId
         $identity = Identity::create(
             new IdentityId($command->identityId),
             new Institution($command->institution),
             new NameId($command->nameId),
-            new Email($command->email),
-            new CommonName($command->commonName),
+            $commonName,
+            $email,
             $preferredLocale
         );
 

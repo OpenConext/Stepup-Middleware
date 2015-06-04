@@ -19,7 +19,8 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -27,8 +28,10 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class YubikeyPossessionProvenEvent extends IdentityEvent
+class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
@@ -53,17 +56,22 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
     public $emailVerificationWindow;
 
     /**
-     * @var IdentifyingDataId
-     */
-    public $identifyingDataId;
-
-    /**
      * @var string
      */
     public $emailVerificationNonce;
 
     /**
-     * @var Locale Eg. "en_GB"
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -73,8 +81,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
      * @param SecondFactorId          $secondFactorId
      * @param YubikeyPublicId         $yubikeyPublicId
      * @param EmailVerificationWindow $emailVerificationWindow
-     * @param IdentifyingDataId       $identifyingDataId
      * @param string                  $emailVerificationNonce
+     * @param CommonName              $commonName
+     * @param Email                   $email
      * @param Locale                  $preferredLocale
      */
     public function __construct(
@@ -83,8 +92,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
         EmailVerificationWindow $emailVerificationWindow,
-        IdentifyingDataId $identifyingDataId,
         $emailVerificationNonce,
+        CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     ) {
         parent::__construct($identityId, $institution);
@@ -92,8 +102,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
         $this->secondFactorId          = $secondFactorId;
         $this->yubikeyPublicId         = $yubikeyPublicId;
         $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->identifyingDataId       = $identifyingDataId;
         $this->emailVerificationNonce  = $emailVerificationNonce;
+        $this->commonName              = $commonName;
+        $this->email                   = $email;
         $this->preferredLocale         = $preferredLocale;
     }
 
@@ -117,8 +128,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             new SecondFactorId($data['second_factor_id']),
             new YubikeyPublicId($data['yubikey_public_id']),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
-            new IdentifyingDataId($data['identifying_data_id']),
             $data['email_verification_nonce'],
+            CommonName::unknown(),
+            Email::unknown(),
             new Locale($data['preferred_locale'])
         );
     }
@@ -131,9 +143,22 @@ class YubikeyPossessionProvenEvent extends IdentityEvent
             'second_factor_id'          => (string) $this->secondFactorId,
             'yubikey_public_id'         => (string) $this->yubikeyPublicId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'identifying_data_id'       => (string) $this->identifyingDataId,
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
             'preferred_locale'          => (string) $this->preferredLocale,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::EMAIL => $this->email,
+            SensitiveData::COMMON_NAME => $this->commonName,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

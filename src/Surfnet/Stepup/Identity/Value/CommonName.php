@@ -19,13 +19,14 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Api\Id;
 
-class YubikeyPublicId
+class CommonName implements Id
 {
     /**
      * @var string
      */
-    private $value;
+    private $commonName;
 
     /**
      * @return self
@@ -35,30 +36,37 @@ class YubikeyPublicId
         return new self('—');
     }
 
-    public function __construct($value)
+    /**
+     * @param string $commonName
+     */
+    public function __construct($commonName)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        if (!is_string($commonName)) {
+            throw InvalidArgumentException::invalidType('string', 'commonName', $commonName);
         }
 
-        $this->value = $value;
+        $this->commonName = $commonName;
     }
 
     /**
      * @return string
      */
-    public function getYubikeyPublicId()
+    public function getCommonName()
     {
-        return $this->value;
+        return $this->commonName;
     }
 
     public function __toString()
     {
-        return $this->value;
+        return $this->commonName;
     }
 
-    public function equals(YubikeyPublicId $other)
+    public function equals(Id $other)
     {
-        return $this->value === $other->value;
+        if (!$other instanceof CommonName) {
+            return false;
+        }
+
+        return $this->commonName === $other->commonName;
     }
 }

@@ -19,58 +19,61 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Api\Id;
 
-class PhoneNumber
+class Email implements Id
 {
     /**
      * @var string
      */
-    private $phoneNumber;
+    private $email;
 
     /**
      * @return self
      */
     public static function unknown()
     {
-        return new self('+0 (0) 000000000');
+        return new self('john.doe@example.com');
     }
 
-    public function __construct($phoneNumber)
+    /**
+     * @param string $email
+     */
+    public function __construct($email)
     {
-        if (!is_string($phoneNumber)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $phoneNumber);
+        if (!is_string($email) || trim($email) === '') {
+            throw InvalidArgumentException::invalidType('non-empty string', 'email', $email);
         }
 
-        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $phoneNumber)) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidArgumentException(sprintf(
-                "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
-                // 12 characters captures the most extended country code up to and incl. the first subscriber digit
-                substr($phoneNumber, 0, 12)
+                'Email given: "%s is not a RFC 822 (https://www.ietf.org/rfc/rfc0822.txt) compliant email address"',
+                $email
             ));
         }
 
-        $this->phoneNumber = $phoneNumber;
+        $this->email = trim($email);
     }
 
     /**
      * @return string
      */
-    public function getPhoneNumber()
+    public function getEmail()
     {
-        return $this->phoneNumber;
-    }
-
-    /**
-     * @param PhoneNumber $other
-     * @return bool
-     */
-    public function equals(PhoneNumber $other)
-    {
-        return $this->phoneNumber === $other->phoneNumber;
+        return $this->email;
     }
 
     public function __toString()
     {
-        return $this->phoneNumber;
+        return $this->email;
+    }
+
+    public function equals(Id $other)
+    {
+        if (!$other instanceof Email) {
+            return false;
+        }
+
+        return $this->email === $other->email;
     }
 }

@@ -19,13 +19,14 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Api\Id;
 
-class YubikeyPublicId
+class DocumentNumber implements Id
 {
     /**
      * @var string
      */
-    private $value;
+    private $documentNumber;
 
     /**
      * @return self
@@ -35,30 +36,37 @@ class YubikeyPublicId
         return new self('—');
     }
 
-    public function __construct($value)
+    /**
+     * @param string $documentNumber
+     */
+    public function __construct($documentNumber)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        if (!is_string($documentNumber)) {
+            throw InvalidArgumentException::invalidType('string', 'documentNumber', $documentNumber);
         }
 
-        $this->value = $value;
+        $this->documentNumber = $documentNumber;
     }
 
     /**
      * @return string
      */
-    public function getYubikeyPublicId()
+    public function getDocumentNumber()
     {
-        return $this->value;
+        return $this->documentNumber;
     }
 
     public function __toString()
     {
-        return $this->value;
+        return $this->documentNumber;
     }
 
-    public function equals(YubikeyPublicId $other)
+    public function equals(Id $other)
     {
-        return $this->value === $other->value;
+        if (!$other instanceof DocumentNumber) {
+            return false;
+        }
+
+        return $this->documentNumber === $other->documentNumber;
     }
 }

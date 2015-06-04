@@ -28,6 +28,14 @@ class GssfId implements Id
      */
     private $gssfId;
 
+    /**
+     * @return self
+     */
+    public static function unknown()
+    {
+        return new self('—');
+    }
+
     public function __construct($gssfId)
     {
         if (!is_string($gssfId) || trim($gssfId) === '') {

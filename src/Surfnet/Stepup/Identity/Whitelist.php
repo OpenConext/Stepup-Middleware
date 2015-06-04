@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * Copyright 2014 SURFnet bv
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace Surfnet\Stepup\Identity;
+
+use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\Identity\Api\Whitelist as WhitelistApi;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
+use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
+use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
+use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
+use Surfnet\StepupBundle\Exception\DomainException;
+
+final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
+{
+    /**
+     * There can ever be only one whitelist, so using a fixed UUIDv4
+     */
+    const WHITELIST_AGGREGATE_ID = '125ccee5-d650-437a-a0b0-6bf17c8188fa';
+
+    /**
+     * @var InstitutionCollection The collection of institutions currently on the whitelist
+     */
+    private $whitelist;
+
+    public function __construct()
+    {
+    }
+
+    public function getAggregateRootId()
+    {
+        return self::WHITELIST_AGGREGATE_ID;
+    }
+
+    public static function create(InstitutionCollection $institutionCollection)
+    {
+        $configuration = new self();
+        $configuration->apply(new WhitelistCreatedEvent($institutionCollection));
+
+        return $configuration;
+    }
+
+    public function replaceAll(InstitutionCollection $institutionCollection)
+    {
+        $this->apply(new WhitelistReplacedEvent($institutionCollection));
+    }
+
+    public function add(InstitutionCollection $institutionCollection)
+    {
+        foreach ($institutionCollection as $institution) {
+            if ($this->whitelist->contains($institution)) {
+                throw new DomainException(sprintf(
+                    'Cannot add institution "%s" as it is already whitelisted',
+                    $institution
+                ));
+            }
+        }
+
+        $this->apply(new InstitutionsAddedToWhitelistEvent($institutionCollection));
+    }
+
+    public function remove(InstitutionCollection $institutionCollection)
+    {
+        foreach ($institutionCollection as $institution) {
+            if (!$this->whitelist->contains($institution)) {
+                throw new DomainException(sprintf(
+                    'Cannot remove institution "%s" as it is not whitelisted'
+                ));
+            }
+        }
+
+        $this->apply(new InstitutionsRemovedFromWhitelistEvent($institutionCollection));
+    }
+
+    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    {
+        $this->whitelist = $event->whitelistedInstitutions;
+    }
+
+    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    {
+        $this->whitelist = $event->whitelistedInstitutions;
+    }
+
+    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    {
+        $this->whitelist->addAllFrom($event->addedInstitutions);
+    }
+
+    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
+    {
+        $this->whitelist->removeAllIn($event->removedInstitutions);
+    }
+}

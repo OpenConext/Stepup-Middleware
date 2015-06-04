@@ -56,7 +56,7 @@ final class SensitiveDataMessageRepository
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
-                SensitiveData::wrap(json_decode($row['sensitive_data']))
+                new SensitiveData(json_decode($row['sensitive_data']))
             );
         }, $rows);
     }

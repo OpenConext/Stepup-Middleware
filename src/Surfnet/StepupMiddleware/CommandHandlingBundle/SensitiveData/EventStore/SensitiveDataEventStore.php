@@ -22,7 +22,7 @@ use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Entity\SensitiveDataMessage;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataEventStoreException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;

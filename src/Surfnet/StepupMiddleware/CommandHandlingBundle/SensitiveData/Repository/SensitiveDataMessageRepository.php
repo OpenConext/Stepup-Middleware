@@ -22,7 +22,7 @@ use Doctrine\DBAL\Connection;
 use Exception as CoreException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Entity\SensitiveDataMessage;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class SensitiveDataMessageRepository

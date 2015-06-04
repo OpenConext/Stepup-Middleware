@@ -30,11 +30,11 @@ class GssfId implements Id
 
     public function __construct($gssfId)
     {
-        if (!is_string($gssfId) || strlen(trim($gssfId)) === 0) {
+        if (!is_string($gssfId) || trim($gssfId) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'gssfId', $gssfId);
         }
 
-        $this->gssfId = $gssfId;
+        $this->gssfId = trim($gssfId);
     }
 
     /**

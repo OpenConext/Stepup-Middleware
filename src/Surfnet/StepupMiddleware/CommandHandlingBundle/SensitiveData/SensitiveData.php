@@ -47,7 +47,7 @@ class SensitiveData implements JsonSerializable
      */
     public function __construct(array $data = null)
     {
-        $this->data = array_map('strval', $data);
+        $this->data = $data === null ? null : array_map('strval', $data);
     }
 
     /**

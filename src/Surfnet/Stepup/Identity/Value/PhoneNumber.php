@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class PhoneNumber
+class PhoneNumber implements JsonSerializable
 {
     /**
      * @var string
@@ -72,5 +73,10 @@ class PhoneNumber
     public function __toString()
     {
         return $this->phoneNumber;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
     }
 }

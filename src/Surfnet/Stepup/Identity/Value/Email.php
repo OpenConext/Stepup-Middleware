@@ -18,10 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\Identity\Api\Id;
 
-class Email implements Id
+class Email implements JsonSerializable
 {
     /**
      * @var string
@@ -68,12 +68,13 @@ class Email implements Id
         return $this->email;
     }
 
-    public function equals(Id $other)
+    public function equals(self $other)
     {
-        if (!$other instanceof Email) {
-            return false;
-        }
-
         return $this->email === $other->email;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
     }
 }

@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class YubikeyPublicId
+class YubikeyPublicId implements JsonSerializable
 {
     /**
      * @var string
@@ -60,5 +61,10 @@ class YubikeyPublicId
     public function equals(YubikeyPublicId $other)
     {
         return $this->value === $other->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
     }
 }

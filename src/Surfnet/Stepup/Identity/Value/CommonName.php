@@ -18,10 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\Identity\Api\Id;
 
-class CommonName implements Id
+class CommonName implements JsonSerializable
 {
     /**
      * @var string
@@ -61,12 +61,13 @@ class CommonName implements Id
         return $this->commonName;
     }
 
-    public function equals(Id $other)
+    public function equals(self $other)
     {
-        if (!$other instanceof CommonName) {
-            return false;
-        }
-
         return $this->commonName === $other->commonName;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
     }
 }

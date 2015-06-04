@@ -3,3 +3,27 @@ management_configuration_update:
     defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Configuration:update }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_whitelist_add:
+    path:     /whitelist/add
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:addToWhitelist }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_whitelist_overwrite:
+    path:     /whitelist/overwrite
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:overwriteWhitelist }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_whitelist_remove:
+    path:     /whitelist/remove
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:removeFromWhitelist }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_whitelist_read:
+    path:     /whitelist
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:showWhitelist }
+    methods:   [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

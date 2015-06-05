@@ -119,7 +119,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new PhoneNumber($data['phone_number']),
+            PhoneNumber::unknown(),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             CommonName::unknown(),
@@ -134,7 +134,6 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
             'identity_id'               => (string) $this->identityId,
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
-            'phone_number'              => (string) $this->phoneNumber,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
             'preferred_locale'          => (string) $this->preferredLocale,
@@ -146,6 +145,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->phoneNumber,
         ]);
     }
 
@@ -153,5 +153,6 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier(new SecondFactorType('sms'));
     }
 }

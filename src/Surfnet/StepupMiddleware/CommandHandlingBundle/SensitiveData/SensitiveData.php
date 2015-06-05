@@ -19,20 +19,22 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use JsonSerializable;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements JsonSerializable
 {
     const COMMON_NAME = 'common_name';
     const EMAIL = 'email';
-    const PHONE_NUMBER = 'phone_number';
-    const YUBIKEY_PUBLIC_ID = 'yubikey_public_id';
-    const GSSF_ID = 'gssf_id';
+    const SECOND_FACTOR_IDENTIFIER = 'second_factor_identifier';
     const DOCUMENT_NUMBER = 'document_number';
 
     /**
@@ -80,33 +82,14 @@ class SensitiveData implements JsonSerializable
     }
 
     /**
-     * @return PhoneNumber
+     * @param SecondFactorType $secondFactorType
+     * @return SecondFactorIdentifier
      */
-    public function getPhoneNumber()
+    public function getSecondFactorIdentifier(SecondFactorType $secondFactorType)
     {
         return $this->data
-            ? new PhoneNumber($this->data[self::PHONE_NUMBER])
-            : PhoneNumber::unknown();
-    }
-
-    /**
-     * @return YubikeyPublicId
-     */
-    public function getYubikeyPublicId()
-    {
-        return $this->data
-            ? new YubikeyPublicId($this->data[self::YUBIKEY_PUBLIC_ID])
-            : YubikeyPublicId::unknown();
-    }
-
-    /**
-     * @return GssfId
-     */
-    public function getGssfId()
-    {
-        return $this->data
-            ? new GssfId($this->data[self::GSSF_ID])
-            : GssfId::unknown();
+            ? SecondFactorIdentifierFactory::forType($secondFactorType, $this->data[self::SECOND_FACTOR_IDENTIFIER])
+            : SecondFactorIdentifierFactory::unknownForType($secondFactorType);
     }
 
     /**

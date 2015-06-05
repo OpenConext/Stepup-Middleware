@@ -131,7 +131,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             new StepupProvider($data['stepup_provider']),
-            new GssfId($data['gssf_id']),
+            GssfId::unknown(),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             CommonName::unknown(),
@@ -147,7 +147,6 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
             'stepup_provider'           => (string) $this->stepupProvider,
-            'gssf_id'                   => (string) $this->gssfId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
             'preferred_locale'          => (string) $this->preferredLocale,
@@ -159,12 +158,16 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->gssfId,
         ]);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
+        $secondFactorType = new SecondFactorType((string) $this->stepupProvider);
+
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->gssfId     = $sensitiveData->getSecondFactorIdentifier($secondFactorType);
     }
 }

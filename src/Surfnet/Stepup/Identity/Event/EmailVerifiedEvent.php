@@ -26,6 +26,8 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -43,7 +45,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
     public $secondFactorType;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
@@ -77,7 +79,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
      * @param Institution       $identityInstitution
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
-     * @param string            $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @param DateTime          $registrationRequestedAt
      * @param string            $registrationCode
      * @param CommonName        $commonName
@@ -91,7 +93,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        $secondFactorIdentifier,
+        SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode,
         CommonName $commonName,
@@ -124,12 +126,14 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
 
     public static function deserialize(array $data)
     {
+        $secondFactorType = new SecondFactorType($data['second_factor_type']);
+
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type']),
-            $data['second_factor_identifier'],
+            $secondFactorType,
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
             DateTime::fromString($data['registration_requested_at']),
             $data['registration_code'],
             CommonName::unknown(),
@@ -145,7 +149,6 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
             'second_factor_type'        => (string) $this->secondFactorType,
-            'second_factor_identifier'  => $this->secondFactorIdentifier,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
             'registration_code'         => $this->registrationCode,
             'preferred_locale'          => (string) $this->preferredLocale,
@@ -157,6 +160,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier,
         ]);
     }
 
@@ -164,5 +168,6 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
     }
 }

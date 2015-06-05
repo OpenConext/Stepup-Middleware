@@ -21,16 +21,13 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class PhoneNumber implements JsonSerializable
+class PhoneNumber implements SecondFactorIdentifier, JsonSerializable
 {
     /**
      * @var string
      */
     private $phoneNumber;
 
-    /**
-     * @return self
-     */
     public static function unknown()
     {
         return new self('+0 (0) 000000000');
@@ -61,13 +58,9 @@ class PhoneNumber implements JsonSerializable
         return $this->phoneNumber;
     }
 
-    /**
-     * @param PhoneNumber $other
-     * @return bool
-     */
-    public function equals(PhoneNumber $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        return $this->phoneNumber === $other->phoneNumber;
+        return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }
 
     public function __toString()

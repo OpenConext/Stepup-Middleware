@@ -99,43 +99,131 @@ class EventSerializationAndDeserializationTest extends UnitTest
     public function eventProvider()
     {
         return [
-            'CompliedWithUnverifiedSecondFactorRevocationEvent' => [
+            'CompliedWithUnverifiedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId',
+                    new PhoneNumber('+0 (0) 000000000'),
                     new IdentityId(static::UUID())
                 )
             ],
-            'CompliedWithVerifiedSecondFactorRevocationEvent' => [
+            'CompliedWithUnverifiedSecondFactorRevocationEvent:yubikey' => [
+                new CompliedWithUnverifiedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'CompliedWithUnverifiedSecondFactorRevocationEvent:tiqr' => [
+                new CompliedWithUnverifiedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'CompliedWithVerifiedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithVerifiedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId',
+                    new PhoneNumber('+0 (0) 000000000'),
                     new IdentityId(static::UUID())
                 )
             ],
-            'CompliedWithVettedSecondFactorRevocationEvent' => [
+            'CompliedWithVerifiedSecondFactorRevocationEvent:yubikey' => [
+                new CompliedWithVerifiedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'CompliedWithVerifiedSecondFactorRevocationEvent:tiqr' => [
+                new CompliedWithVerifiedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'CompliedWithVettedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithVettedSecondFactorRevocationEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId',
+                    new PhoneNumber('+0 (0) 000000000'),
                     new IdentityId(static::UUID())
                 )
             ],
-            'EmailVerifiedEvent' => [
+            'CompliedWithVettedSecondFactorRevocationEvent:yubikey' => [
+                new CompliedWithVettedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'CompliedWithVettedSecondFactorRevocationEvent:tiqr' => [
+                new CompliedWithVettedSecondFactorRevocationEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp'),
+                    new IdentityId(static::UUID())
+                )
+            ],
+            'EmailVerifiedEvent:sms' => [
                 new EmailVerifiedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId',
+                    new PhoneNumber('+0 (0) 000000000'),
+                    DateTime::now(),
+                    '123',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
+                    new Locale('en_GB')
+                )
+            ],
+            'EmailVerifiedEvent:yubikey' => [
+                new EmailVerifiedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc'),
+                    DateTime::now(),
+                    '123',
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.com'),
+                    new Locale('en_GB')
+                )
+            ],
+            'EmailVerifiedEvent:tiqr' => [
+                new EmailVerifiedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp'),
                     DateTime::now(),
                     '123',
                     new CommonName('Henk Westbroek'),
@@ -180,31 +268,85 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Locale('en_GB')
                 )
             ],
-            'UnverifiedSecondFactorRevokedEvent' => [
+            'UnverifiedSecondFactorRevokedEvent:sms' => [
                 new UnverifiedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId'
+                    new PhoneNumber('+0 (0) 000000000')
                 )
             ],
-            'VerifiedSecondFactorRevokedEvent' => [
+            'UnverifiedSecondFactorRevokedEvent:yubikey' => [
+                new UnverifiedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc')
+                )
+            ],
+            'UnverifiedSecondFactorRevokedEvent:tiqr' => [
+                new UnverifiedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp')
+                )
+            ],
+            'VerifiedSecondFactorRevokedEvent:sms' => [
                 new VerifiedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId'
+                    new PhoneNumber('+0 (0) 000000000')
                 )
             ],
-            'VettedSecondFactorRevokedEvent' => [
+            'VerifiedSecondFactorRevokedEvent:yubikey' => [
+                new VerifiedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc')
+                )
+            ],
+            'VerifiedSecondFactorRevokedEvent:tiqr' => [
+                new VerifiedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp')
+                )
+            ],
+            'VettedSecondFactorRevokedEvent:sms' => [
                 new VettedSecondFactorRevokedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    'secondFactorId'
+                    new PhoneNumber('+0 (0) 000000000')
+                )
+            ],
+            'VettedSecondFactorRevokedEvent:yubikey' => [
+                new VettedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('cccccccccccc')
+                )
+            ],
+            'VettedSecondFactorRevokedEvent:tiqr' => [
+                new VettedSecondFactorRevokedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new SecondFactorId(static::UUID()),
+                    new SecondFactorType('tiqr'),
+                    new GssfId('bleep-blorp')
                 )
             ],
             'YubikeyPossessionProvenEvent' => [

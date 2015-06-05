@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -39,12 +40,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class UnverifiedSecondFactor extends AbstractSecondFactor
 {
     /**
-     * @var Identity
+     * @var \Surfnet\Stepup\Identity\Api\Identity
      */
     private $identity;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     private $id;
 
@@ -54,12 +55,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     private $type;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
     /**
-     * @var EmailVerificationWindow;
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     private $verificationWindow;
 
@@ -72,7 +73,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorId          $id
      * @param Identity                $identity
      * @param SecondFactorType        $type
-     * @param string                  $secondFactorIdentifier
+     * @param SecondFactorIdentifier  $secondFactorIdentifier
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $verificationNonce
      * @return UnverifiedSecondFactor

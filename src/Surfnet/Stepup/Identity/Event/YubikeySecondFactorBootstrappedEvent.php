@@ -39,7 +39,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     public $nameId;
 
     /**
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
@@ -59,7 +59,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     public $preferredLocale;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
@@ -109,7 +109,6 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
             'identity_institution' => (string) $this->identityInstitution,
             'preferred_locale'     => (string) $this->preferredLocale,
             'second_factor_id'     => (string) $this->secondFactorId,
-            'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
     }
 
@@ -123,7 +122,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
             Email::unknown(),
             new Locale($data['preferred_locale']),
             new SecondFactorId($data['second_factor_id']),
-            new YubikeyPublicId($data['yubikey_public_id'])
+            YubikeyPublicId::unknown()
         );
     }
 
@@ -132,6 +131,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->yubikeyPublicId,
         ]);
     }
 
@@ -139,5 +139,6 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier(new SecondFactorType('yubikey'));
     }
 }

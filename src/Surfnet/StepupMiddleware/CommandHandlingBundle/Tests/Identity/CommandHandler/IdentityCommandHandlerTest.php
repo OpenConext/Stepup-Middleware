@@ -36,6 +36,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -509,7 +510,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $secondFactorIdentifier,
+                    $secondFactorIdentifier,
                     DateTime::now(),
                     'regcode',
                     $commonName,
@@ -573,7 +574,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $secondFactorIdentifier,
+                    $secondFactorIdentifier,
                     DateTime::now(),
                     'regcode',
                     $commonName,
@@ -794,7 +795,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    (string) $registrantSecFacIdentifier,
+                    $registrantSecFacIdentifier,
                     DateTime::now(),
                     'REGCODE',
                     $registrantCommonName,
@@ -810,8 +811,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    'ccccvfeghijk',
-                    'NH9392',
+                    new YubikeyPublicId('ccccvfeghijk'),
+                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -882,7 +883,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityInstitution,
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
-                    (string) $authorityPhoneSfId,
+                    $authorityPhoneNo,
                     DateTime::now(),
                     'regcode',
                     $authorityCommonName,
@@ -895,8 +896,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityInstitution,
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
-                    '+31 (0) 612345678',
-                    'NG-RB-81',
+                    $authorityPhoneNo,
+                    new DocumentNumber('NG-RB-81'),
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB')
@@ -931,7 +932,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    (string) $registrantSecFacId,
+                    $registrantPubId,
                     DateTime::now(),
                     'REGCODE',
                     $registrantCommonName,
@@ -947,8 +948,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    'ccccvfeghijk',
-                    'NH9392',
+                    new YubikeyPublicId('ccccvfeghijk'),
+                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')

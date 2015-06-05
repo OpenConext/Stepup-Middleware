@@ -22,9 +22,13 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-abstract class CompliedWithRevocationEvent extends IdentityEvent
+abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\IdentityId
@@ -42,7 +46,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent
     public $secondFactorType;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
@@ -51,7 +55,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        $secondFactorIdentifier,
+        SecondFactorIdentifier $secondFactorIdentifier,
         IdentityId $authorityId
     ) {
         parent::__construct($identityId, $identityInstitution);
@@ -76,12 +80,14 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent
 
     final public static function deserialize(array $data)
     {
+        $secondFactorType = new SecondFactorType($data['second_factor_type']);
+
         return new static(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type']),
-            $data['second_factor_identifier'],
+            $secondFactorType,
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
             new IdentityId($data['authority_id'])
         );
     }
@@ -94,7 +100,18 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent
             'second_factor_id'         => (string) $this->secondFactorId,
             'second_factor_type'       => (string) $this->secondFactorType,
             'authority_id'             => (string) $this->authorityId,
-            'second_factor_identifier' => $this->secondFactorIdentifier
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return new SensitiveData([
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier,
+        ]);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
     }
 }

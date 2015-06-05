@@ -126,7 +126,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new YubikeyPublicId($data['yubikey_public_id']),
+            YubikeyPublicId::unknown(),
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             CommonName::unknown(),
@@ -141,7 +141,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
             'identity_id'               => (string) $this->identityId,
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
-            'yubikey_public_id'         => (string) $this->yubikeyPublicId,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
             'email_verification_nonce'  => (string) $this->emailVerificationNonce,
             'preferred_locale'          => (string) $this->preferredLocale,
@@ -153,6 +152,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->yubikeyPublicId,
         ]);
     }
 
@@ -160,5 +160,6 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier(new SecondFactorType('yubikey'));
     }
 }

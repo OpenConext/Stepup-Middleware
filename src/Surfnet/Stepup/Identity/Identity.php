@@ -50,6 +50,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -61,6 +62,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
@@ -273,7 +275,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $registrantsSecondFactorId,
         $registrantsSecondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
+        DocumentNumber $documentNumber,
         $identityVerified
     ) {
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
@@ -306,7 +308,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $secondFactorId,
         $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber
+        DocumentNumber $documentNumber
     ) {
         $secondFactorToVet = null;
         foreach ($this->verifiedSecondFactors as $secondFactor) {
@@ -522,7 +524,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            (string) $event->yubikeyPublicId
+            $event->yubikeyPublicId
         );
 
         $this->vettedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
@@ -534,7 +536,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            (string) $event->yubikeyPublicId,
+            $event->yubikeyPublicId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -548,7 +550,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('sms'),
-            (string) $event->phoneNumber,
+            $event->phoneNumber,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -562,7 +564,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType((string) $event->stepupProvider),
-            (string) $event->gssfId,
+            $event->gssfId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );

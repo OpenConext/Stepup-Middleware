@@ -36,6 +36,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -118,7 +119,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $secondFactorIdentifier
+                    $secondFactorIdentifier
                 )
             ]);
     }
@@ -170,7 +171,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $secondFactorIdentifier,
+                    $secondFactorIdentifier,
                     DateTime::now(),
                     'SOMEREGISTRATIONCODE',
                     $commonName,
@@ -185,7 +186,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $secondFactorIdentifier
+                    $secondFactorIdentifier
                 )
             ]);
     }
@@ -239,7 +240,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorType,
-                    (string) $secondFactorIdentifier,
+                    $secondFactorIdentifier,
                     DateTime::now(),
                     'SOMEREGISTRATIONCODE',
                     $commonName,
@@ -252,8 +253,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorType,
-                    (string) $secondFactorIdentifier,
-                    'DOCUMENT_42',
+                    $secondFactorIdentifier,
+                    new DocumentNumber('DOCUMENT_42'),
                     $commonName,
                     $email,
                     new Locale('en_GB')
@@ -266,7 +267,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorType,
-                    (string) $secondFactorIdentifier
+                    $secondFactorIdentifier
                 )
             ]);
     }
@@ -350,7 +351,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $registrantSecondFactorIdentifier,
+                    $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);
@@ -433,7 +434,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
-                    (string) $registrantSecondFactorIdentifier,
+                    $registrantSecondFactorIdentifier,
                     DateTime::now(),
                     'REGISTRATION_CODE',
                     $registrantCommonName,
@@ -448,7 +449,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
-                    (string) $registrantSecondFactorIdentifier,
+                    $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);
@@ -531,7 +532,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
-                    (string) $registrantSecondFactorIdentifier,
+                    $registrantSecondFactorIdentifier,
                     DateTime::now(),
                     'REGISTRATION_CODE',
                     $registrantCommonName,
@@ -545,7 +546,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    'DOCUMENT_NUMBER',
+                    new DocumentNumber('DOCUMENT_NUMBER'),
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -558,7 +559,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     new SecondFactorType('yubikey'),
-                    (string) $registrantSecondFactorIdentifier,
+                    $registrantSecondFactorIdentifier,
                     $authorityId
                 ),
             ]);

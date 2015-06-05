@@ -20,12 +20,15 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -48,12 +51,12 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public $secondFactorType;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\DocumentNumber
      */
     public $documentNumber;
 
@@ -68,7 +71,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public $email;
 
     /**
-     * @var Locale Eg. "en_GB"
+     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -78,8 +81,8 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
      * @param Institution       $institution
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
-     * @param string            $secondFactorIdentifier
-     * @param string            $documentNumber
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @param DocumentNumber    $documentNumber
      * @param CommonName        $commonName
      * @param Email             $email
      * @param Locale            $preferredLocale
@@ -92,8 +95,8 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         Institution $institution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        $secondFactorIdentifier,
-        $documentNumber,
+        SecondFactorIdentifier $secondFactorIdentifier,
+        DocumentNumber $documentNumber,
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale
@@ -124,14 +127,16 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
 
     public static function deserialize(array $data)
     {
+        $secondFactorType = new SecondFactorType($data['second_factor_type']);
+
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type']),
-            $data['second_factor_identifier'],
-            $data['document_number'],
+            $secondFactorType,
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
+            DocumentNumber::unknown(),
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale'])
@@ -146,8 +151,6 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
             'identity_institution'     => (string) $this->identityInstitution,
             'second_factor_id'         => (string) $this->secondFactorId,
             'second_factor_type'       => (string) $this->secondFactorType,
-            'second_factor_identifier' => $this->secondFactorIdentifier,
-            'document_number'          => $this->documentNumber,
             'preferred_locale'         => (string) $this->preferredLocale,
         ];
     }
@@ -157,6 +160,8 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         return new SensitiveData([
             SensitiveData::EMAIL => $this->email,
             SensitiveData::COMMON_NAME => $this->commonName,
+            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier,
+            SensitiveData::DOCUMENT_NUMBER => $this->documentNumber,
         ]);
     }
 
@@ -164,5 +169,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
+        $this->documentNumber = $sensitiveData->getDocumentNumber();
     }
 }

@@ -23,6 +23,7 @@ use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -34,6 +35,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
@@ -135,7 +137,7 @@ interface Identity extends AggregateRoot
      * @param SecondFactorId $registrantsSecondFactorId
      * @param string         $registrantsSecondFactorIdentifier
      * @param string         $registrationCode
-     * @param string         $documentNumber
+     * @param DocumentNumber $documentNumber
      * @param bool           $identityVerified
      * @return void
      * @throws DomainException
@@ -145,7 +147,7 @@ interface Identity extends AggregateRoot
         SecondFactorId $registrantsSecondFactorId,
         $registrantsSecondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
+        DocumentNumber $documentNumber,
         $identityVerified
     );
 
@@ -155,7 +157,7 @@ interface Identity extends AggregateRoot
      * @param SecondFactorId $secondFactorId
      * @param string         $secondFactorIdentifier
      * @param string         $registrationCode
-     * @param string         $documentNumber
+     * @param DocumentNumber $documentNumber
      * @return void
      * @throws DomainException
      */
@@ -163,7 +165,7 @@ interface Identity extends AggregateRoot
         SecondFactorId $secondFactorId,
         $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber
+        DocumentNumber $documentNumber
     );
 
     /**

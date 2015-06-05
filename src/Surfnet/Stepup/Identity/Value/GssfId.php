@@ -21,16 +21,13 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class GssfId implements JsonSerializable
+class GssfId implements SecondFactorIdentifier, JsonSerializable
 {
     /**
      * @var string
      */
     private $gssfId;
 
-    /**
-     * @return self
-     */
     public static function unknown()
     {
         return new self('—');
@@ -58,9 +55,9 @@ class GssfId implements JsonSerializable
         return $this->gssfId;
     }
 
-    public function equals(self $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        return $this->gssfId === $other->gssfId;
+        return $other instanceof self && $this->gssfId === $other->gssfId;
     }
 
     public function jsonSerialize()

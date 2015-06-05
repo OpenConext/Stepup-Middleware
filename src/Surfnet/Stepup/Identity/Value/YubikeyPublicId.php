@@ -21,16 +21,13 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class YubikeyPublicId implements JsonSerializable
+class YubikeyPublicId implements SecondFactorIdentifier, JsonSerializable
 {
     /**
      * @var string
      */
     private $value;
 
-    /**
-     * @return self
-     */
     public static function unknown()
     {
         return new self('—');
@@ -58,9 +55,9 @@ class YubikeyPublicId implements JsonSerializable
         return $this->value;
     }
 
-    public function equals(YubikeyPublicId $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        return $this->value === $other->value;
+        return $other instanceof self && $this->value === $other->value;
     }
 
     public function jsonSerialize()

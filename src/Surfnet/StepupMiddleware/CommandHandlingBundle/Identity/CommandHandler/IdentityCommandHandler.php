@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -202,7 +203,7 @@ class IdentityCommandHandler extends CommandHandler
             new SecondFactorId($command->secondFactorId),
             $command->secondFactorIdentifier,
             $command->registrationCode,
-            $command->documentNumber,
+            new DocumentNumber($command->documentNumber),
             $command->identityVerified
         );
 

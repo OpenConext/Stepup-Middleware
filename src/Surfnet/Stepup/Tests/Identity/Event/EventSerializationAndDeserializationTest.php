@@ -34,6 +34,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
@@ -426,6 +427,13 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new NameId(md5('someNameId')),
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.com')
+                )
+            ],
+            'LocalePreferenceExpressedEvent' => [
+                new LocalePreferenceExpressedEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new Locale('fi_FI')
                 )
             ],
         ];

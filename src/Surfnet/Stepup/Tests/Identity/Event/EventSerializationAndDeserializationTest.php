@@ -71,8 +71,6 @@ class EventSerializationAndDeserializationTest extends UnitTest
      */
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
     {
-        $class = get_class($event);
-
         $serializedEvent = $event->serialize();
         if ($event instanceof Forgettable) {
             $sensitiveData = $event->getSensitiveData();

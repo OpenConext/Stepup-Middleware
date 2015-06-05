@@ -41,9 +41,8 @@ class SensitiveData implements JsonSerializable
     private $data;
 
     /**
-     * @param array $data A hash of toString-able value objects, indexed by their data keys listed in the constants
-     *    in this class.
-     * @return SensitiveData
+     * @param array|null $data A hash of toString-able value objects, indexed by their data keys listed in the constants
+     *    in this class, or null, indicating the sensitive data has been forgotten.
      */
     public function __construct(array $data = null)
     {

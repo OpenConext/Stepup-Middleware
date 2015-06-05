@@ -23,11 +23,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\GssfId;
-use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
-use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements JsonSerializable
@@ -45,10 +42,23 @@ class SensitiveData implements JsonSerializable
     /**
      * @param array|null $data A hash of toString-able value objects, indexed by their data keys listed in the constants
      *    in this class, or null, indicating the sensitive data has been forgotten.
+     * @throws InvalidArgumentException If a data key is not one of the SensitiveData class constants
      */
     public function __construct(array $data = null)
     {
-        $this->data = $data === null ? null : array_map('strval', $data);
+        if (is_array($data)) {
+            $validKeys = [self::COMMON_NAME, self::EMAIL, self::SECOND_FACTOR_IDENTIFIER, self::DOCUMENT_NUMBER];
+            $invalidKeys = array_diff(array_keys($data), $validKeys);
+            if (count($invalidKeys) > 0) {
+                throw new InvalidArgumentException(
+                    sprintf('Sensitive data contains invalid keys "%s"', join('", "', $invalidKeys))
+                );
+            }
+
+            $this->data = array_map('strval', $data);
+        } else {
+            $this->data = null;
+        }
     }
 
     /**

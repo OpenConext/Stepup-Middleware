@@ -57,7 +57,9 @@ final class SensitiveDataEventStore implements EventStoreInterface
     public function load($id)
     {
         $messageStream = $this->decoratedEventStore->load($id);
-        $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId(new IdentityId($id));
+
+        $identityId = $id instanceof IdentityId ? $id : new IdentityId($id);
+        $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
         reset($sensitiveDataStream);
 
         /** @var DomainMessage $message */
@@ -90,7 +92,7 @@ final class SensitiveDataEventStore implements EventStoreInterface
         $this->decoratedEventStore->append($id, $eventStream);
 
         $sensitiveDataMessages = [];
-        $identityId = new IdentityId($id);
+        $identityId = $id instanceof IdentityId ? $id : new IdentityId($id);
 
         /** @var DomainMessage $message */
         foreach ($eventStream as $message) {

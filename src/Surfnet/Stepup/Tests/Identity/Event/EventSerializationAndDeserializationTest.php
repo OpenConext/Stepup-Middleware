@@ -115,7 +115,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+0 (0) 000000000'),
+                    new PhoneNumber('+358 (0) 687654321'),
                     new IdentityId(static::UUID())
                 )
             ],
@@ -284,7 +284,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+0 (0) 000000000')
+                    new PhoneNumber('+31 (0) 612345678')
                 )
             ],
             'UnverifiedSecondFactorRevokedEvent:yubikey' => [
@@ -311,7 +311,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+0 (0) 000000000')
+                    PhoneNumber::unknown()
                 )
             ],
             'VerifiedSecondFactorRevokedEvent:yubikey' => [
@@ -338,7 +338,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+0 (0) 000000000')
+                    new PhoneNumber('+1 (0) 5155550100')
                 )
             ],
             'VettedSecondFactorRevokedEvent:yubikey' => [

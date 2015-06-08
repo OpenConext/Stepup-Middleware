@@ -56,7 +56,7 @@ class Sender
         $this->email = $email;
     }
 
-    public function equals(self $other)
+    public function equals(Sender $other)
     {
         return $this == $other;
     }

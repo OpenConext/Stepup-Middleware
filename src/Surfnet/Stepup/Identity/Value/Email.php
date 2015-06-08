@@ -68,7 +68,7 @@ final class Email implements JsonSerializable
         return $this->email;
     }
 
-    public function equals(self $other)
+    public function equals(Email $other)
     {
         return $this->email === $other->email;
     }

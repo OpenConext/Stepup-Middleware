@@ -61,7 +61,7 @@ final class DocumentNumber implements JsonSerializable
         return $this->documentNumber;
     }
 
-    public function equals(self $other)
+    public function equals(DocumentNumber $other)
     {
         return $this->documentNumber === $other->documentNumber;
     }

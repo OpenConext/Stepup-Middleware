@@ -44,7 +44,7 @@ final class Locale implements JsonSerializable
      * @param self $other
      * @return bool
      */
-    public function equals(self $other)
+    public function equals(Locale $other)
     {
         return $this == $other;
     }

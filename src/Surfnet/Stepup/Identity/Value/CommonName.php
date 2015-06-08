@@ -61,7 +61,7 @@ final class CommonName implements JsonSerializable
         return $this->commonName;
     }
 
-    public function equals(self $other)
+    public function equals(CommonName $other)
     {
         return $this->commonName === $other->commonName;
     }

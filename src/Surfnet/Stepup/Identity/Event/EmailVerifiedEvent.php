@@ -157,17 +157,16 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }
 }

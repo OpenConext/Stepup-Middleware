@@ -160,19 +160,18 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier,
-            SensitiveData::DOCUMENT_NUMBER => $this->documentNumber,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType)
+            ->withDocumentNumber($this->documentNumber);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
-        $this->email      = $sensitiveData->getEmail();
-        $this->commonName = $sensitiveData->getCommonName();
-        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
+        $this->email          = $sensitiveData->getEmail();
+        $this->commonName     = $sensitiveData->getCommonName();
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->documentNumber = $sensitiveData->getDocumentNumber();
     }
 }

@@ -99,10 +99,9 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)

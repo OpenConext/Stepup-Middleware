@@ -155,19 +155,16 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->gssfId,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->gssfId, new SecondFactorType((string) $this->stepupProvider));
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
-        $secondFactorType = new SecondFactorType((string) $this->stepupProvider);
-
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->gssfId     = $sensitiveData->getSecondFactorIdentifier($secondFactorType);
+        $this->gssfId     = $sensitiveData->getSecondFactorIdentifier();
     }
 }

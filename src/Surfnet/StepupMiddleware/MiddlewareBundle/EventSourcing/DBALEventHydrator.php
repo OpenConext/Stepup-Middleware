@@ -120,7 +120,7 @@ class DBALEventHydrator
         $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));
 
         if ($event instanceof Forgettable) {
-            $event->setSensitiveData(new SensitiveData(json_decode($row['sensitive_data'], true)));
+            $event->setSensitiveData(SensitiveData::deserialize(json_decode($row['sensitive_data'], true)));
         }
 
         return new DomainMessage(

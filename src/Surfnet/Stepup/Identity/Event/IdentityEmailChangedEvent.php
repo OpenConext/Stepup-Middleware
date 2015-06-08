@@ -71,9 +71,8 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-        ]);
+        return (new SensitiveData)
+            ->withEmail($this->email);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)

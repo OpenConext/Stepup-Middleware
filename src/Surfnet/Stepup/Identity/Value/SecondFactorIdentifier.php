@@ -18,7 +18,9 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-interface SecondFactorIdentifier
+use JsonSerializable;
+
+interface SecondFactorIdentifier extends JsonSerializable
 {
     /**
      * @return static

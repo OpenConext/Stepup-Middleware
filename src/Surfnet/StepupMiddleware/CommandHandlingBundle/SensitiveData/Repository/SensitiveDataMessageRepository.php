@@ -56,7 +56,7 @@ final class SensitiveDataMessageRepository
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
-                new SensitiveData(json_decode($row['sensitive_data'], true))
+                SensitiveData::deserialize(json_decode($row['sensitive_data'], true))
             );
         }, $rows);
 
@@ -76,7 +76,7 @@ final class SensitiveDataMessageRepository
                 $this->connection->insert('event_stream_sensitive_data', [
                     'identity_id'    => (string) $sensitiveDataMessage->getIdentityId(),
                     'playhead'       => $sensitiveDataMessage->getPlayhead(),
-                    'sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()),
+                    'sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()->serialize()),
                 ]);
             }
             $this->connection->commit();

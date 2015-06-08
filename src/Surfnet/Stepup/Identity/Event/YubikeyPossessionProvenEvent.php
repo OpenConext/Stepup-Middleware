@@ -149,17 +149,16 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->yubikeyPublicId,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier(new SecondFactorType('yubikey'));
+        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
     }
 }

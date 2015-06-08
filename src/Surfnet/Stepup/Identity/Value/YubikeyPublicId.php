@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class YubikeyPublicId implements SecondFactorIdentifier, JsonSerializable
+final class YubikeyPublicId implements SecondFactorIdentifier
 {
     /**
      * @var string

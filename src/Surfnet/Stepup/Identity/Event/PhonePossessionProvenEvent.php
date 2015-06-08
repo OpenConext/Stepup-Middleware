@@ -142,17 +142,16 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
 
     public function getSensitiveData()
     {
-        return new SensitiveData([
-            SensitiveData::EMAIL => $this->email,
-            SensitiveData::COMMON_NAME => $this->commonName,
-            SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->phoneNumber,
-        ]);
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->phoneNumber, new SecondFactorType('sms'));
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
-        $this->email      = $sensitiveData->getEmail();
-        $this->commonName = $sensitiveData->getCommonName();
-        $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier(new SecondFactorType('sms'));
+        $this->email       = $sensitiveData->getEmail();
+        $this->commonName  = $sensitiveData->getCommonName();
+        $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
     }
 }

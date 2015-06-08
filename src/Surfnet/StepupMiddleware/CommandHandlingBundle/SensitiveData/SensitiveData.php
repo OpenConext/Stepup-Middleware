@@ -18,8 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
-use JsonSerializable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -27,38 +26,83 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-class SensitiveData implements JsonSerializable
+class SensitiveData implements SerializableInterface
 {
-    const COMMON_NAME = 'common_name';
-    const EMAIL = 'email';
-    const SECOND_FACTOR_IDENTIFIER = 'second_factor_identifier';
-    const DOCUMENT_NUMBER = 'document_number';
+    /**
+     * @var CommonName|null
+     */
+    private $commonName;
 
     /**
-     * @var array|null
+     * @var Email|null
      */
-    private $data;
+    private $email;
 
     /**
-     * @param array|null $data A hash of toString-able value objects, indexed by their data keys listed in the constants
-     *    in this class, or null, indicating the sensitive data has been forgotten.
-     * @throws InvalidArgumentException If a data key is not one of the SensitiveData class constants
+     * @var SecondFactorIdentifier|null
      */
-    public function __construct(array $data = null)
+    private $secondFactorIdentifier;
+
+    /**
+     * @var SecondFactorType|null
+     */
+    private $secondFactorType;
+
+    /**
+     * @var DocumentNumber|null
+     */
+    private $documentNumber;
+
+    /**
+     * @param CommonName $commonName
+     * @return SensitiveData
+     */
+    public function withCommonName(CommonName $commonName)
     {
-        if (is_array($data)) {
-            $validKeys = [self::COMMON_NAME, self::EMAIL, self::SECOND_FACTOR_IDENTIFIER, self::DOCUMENT_NUMBER];
-            $invalidKeys = array_diff(array_keys($data), $validKeys);
-            if (count($invalidKeys) > 0) {
-                throw new InvalidArgumentException(
-                    sprintf('Sensitive data contains invalid keys "%s"', join('", "', $invalidKeys))
-                );
-            }
+        $clone = clone $this;
+        $clone->commonName = $commonName;
 
-            $this->data = array_map('strval', $data);
-        } else {
-            $this->data = null;
-        }
+        return $clone;
+    }
+
+    /**
+     * @param Email $email
+     * @return SensitiveData
+     */
+    public function withEmail(Email $email)
+    {
+        $clone = clone $this;
+        $clone->email = $email;
+
+        return $clone;
+    }
+
+    /**
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @param SecondFactorType       $secondFactorType
+     * @return SensitiveData
+     */
+    public function withSecondFactorIdentifier(
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorType $secondFactorType
+    ) {
+        $clone = clone $this;
+        $clone->secondFactorType = $secondFactorType;
+        $clone->secondFactorIdentifier = $secondFactorIdentifier;
+
+        return $clone;
+    }
+
+    /**
+     * @param DocumentNumber $documentNumber
+     * @return SensitiveData
+     */
+    public function withDocumentNumber(DocumentNumber $documentNumber)
+    {
+        $clone = clone $this;
+        $clone->documentNumber = $documentNumber;
+
+        return $clone;
     }
 
     /**
@@ -68,7 +112,10 @@ class SensitiveData implements JsonSerializable
      */
     public function forget()
     {
-        return new self(null);
+        $forgotten = new self();
+        $forgotten->secondFactorType = $this->secondFactorType;
+
+        return $forgotten;
     }
 
     /**
@@ -76,9 +123,7 @@ class SensitiveData implements JsonSerializable
      */
     public function getCommonName()
     {
-        return $this->data
-            ? new CommonName($this->data[self::COMMON_NAME])
-            : CommonName::unknown();
+        return $this->commonName ?: CommonName::unknown();
     }
 
     /**
@@ -86,20 +131,15 @@ class SensitiveData implements JsonSerializable
      */
     public function getEmail()
     {
-        return $this->data
-            ? new Email($this->data[self::EMAIL])
-            : Email::unknown();
+        return $this->email ?: Email::unknown();
     }
 
     /**
-     * @param SecondFactorType $secondFactorType
      * @return SecondFactorIdentifier
      */
-    public function getSecondFactorIdentifier(SecondFactorType $secondFactorType)
+    public function getSecondFactorIdentifier()
     {
-        return $this->data
-            ? SecondFactorIdentifierFactory::forType($secondFactorType, $this->data[self::SECOND_FACTOR_IDENTIFIER])
-            : SecondFactorIdentifierFactory::unknownForType($secondFactorType);
+        return $this->secondFactorIdentifier ?: SecondFactorIdentifierFactory::unknownForType($this->secondFactorType);
     }
 
     /**
@@ -107,13 +147,45 @@ class SensitiveData implements JsonSerializable
      */
     public function getDocumentNumber()
     {
-        return $this->data
-            ? new DocumentNumber($this->data[self::DOCUMENT_NUMBER])
-            : DocumentNumber::unknown();
+        return $this->documentNumber ?: DocumentNumber::unknown();
     }
 
-    public function jsonSerialize()
+    public static function deserialize(array $data)
     {
-        return $this->data;
+        $self = new self;
+
+        if (isset($data['common_name'])) {
+            $self->commonName = new CommonName($data['common_name']);
+        }
+
+        if (isset($data['email'])) {
+            $self->email = new Email($data['email']);
+        }
+
+        if (isset($data['second_factor_type'])) {
+            $self->secondFactorType = new SecondFactorType($data['second_factor_type']);
+        }
+
+        if (isset($data['second_factor_identifier'])) {
+            $self->secondFactorIdentifier =
+                SecondFactorIdentifierFactory::forType($self->secondFactorType, $data['second_factor_identifier']);
+        }
+
+        if (isset($data['document_number'])) {
+            $self->documentNumber = new DocumentNumber($data['document_number']);
+        }
+
+        return $self;
+    }
+
+    public function serialize()
+    {
+        return [
+            'common_name'              => $this->commonName,
+            'email'                    => $this->email,
+            'second_factor_type'       => $this->secondFactorType,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
+            'document_number'          => $this->documentNumber,
+        ];
     }
 }

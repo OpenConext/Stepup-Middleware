@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class GssfId implements SecondFactorIdentifier, JsonSerializable
+final class GssfId implements SecondFactorIdentifier
 {
     /**
      * @var string

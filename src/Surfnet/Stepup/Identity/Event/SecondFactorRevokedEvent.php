@@ -96,11 +96,12 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
 
     public function getSensitiveData()
     {
-        return new SensitiveData([SensitiveData::SECOND_FACTOR_IDENTIFIER => $this->secondFactorIdentifier]);
+        return (new SensitiveData)
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
-        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier($this->secondFactorType);
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }
 }

@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class RegistrationAuthorityRole implements SerializableInterface
+final class RegistrationAuthorityRole implements SerializableInterface
 {
     const ROLE_RA   = 1;
     const ROLE_RAA  = 2;

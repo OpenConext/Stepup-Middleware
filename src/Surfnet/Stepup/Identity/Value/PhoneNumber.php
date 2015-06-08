@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class PhoneNumber implements SecondFactorIdentifier, JsonSerializable
+final class PhoneNumber implements SecondFactorIdentifier, JsonSerializable
 {
     /**
      * @var string

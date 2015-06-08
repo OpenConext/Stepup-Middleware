@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class Locale implements JsonSerializable
+final class Locale implements JsonSerializable
 {
     /**
      * @var string

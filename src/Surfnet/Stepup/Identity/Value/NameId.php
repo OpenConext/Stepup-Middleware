@@ -24,7 +24,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 /**
  * The natural identifier of an Identity is the SAML Name ID.
  */
-class NameId implements JsonSerializable
+final class NameId implements JsonSerializable
 {
     /**
      * @var string

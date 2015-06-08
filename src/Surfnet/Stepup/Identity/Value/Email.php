@@ -75,6 +75,6 @@ final class Email implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->email;
     }
 }

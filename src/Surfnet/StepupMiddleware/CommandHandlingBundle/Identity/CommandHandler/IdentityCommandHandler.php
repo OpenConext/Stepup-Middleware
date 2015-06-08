@@ -108,16 +108,13 @@ class IdentityCommandHandler extends CommandHandler
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
-        $commonName = new CommonName($command->commonName);
-        $email = new Email($command->email);
-
         // @todo add check if Identity does not already exist based on NameId
         $identity = Identity::create(
             new IdentityId($command->identityId),
             new Institution($command->institution),
             new NameId($command->nameId),
-            $commonName,
-            $email,
+            new CommonName($command->commonName),
+            new Email($command->email),
             $preferredLocale
         );
 

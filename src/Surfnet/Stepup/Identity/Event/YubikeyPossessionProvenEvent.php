@@ -115,7 +115,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
         $metadata->identityInstitution    = $this->identityInstitution;
         $metadata->secondFactorId         = $this->secondFactorId;
         $metadata->secondFactorType       = new SecondFactorType('yubikey');
-        $metadata->secondFactorIdentifier = (string) $this->yubikeyPublicId;
+        $metadata->secondFactorIdentifier = $this->yubikeyPublicId;
 
         return $metadata;
     }

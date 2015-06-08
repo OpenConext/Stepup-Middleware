@@ -98,7 +98,7 @@ class AuditLogProjector implements ProjectorInterface
         }
 
         if ($auditLogMetadata->secondFactorIdentifier) {
-            $entry->secondFactorIdentifier = $auditLogMetadata->secondFactorIdentifier;
+            $entry->secondFactorIdentifier = (string) $auditLogMetadata->secondFactorIdentifier;
         }
 
         $this->auditLogRepository->save($entry);

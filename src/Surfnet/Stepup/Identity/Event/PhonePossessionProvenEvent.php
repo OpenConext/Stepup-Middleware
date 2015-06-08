@@ -108,7 +108,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable
         $metadata->identityInstitution    = $this->identityInstitution;
         $metadata->secondFactorId         = $this->secondFactorId;
         $metadata->secondFactorType       = new SecondFactorType('sms');
-        $metadata->secondFactorIdentifier = (string) $this->phoneNumber;
+        $metadata->secondFactorIdentifier = $this->phoneNumber;
 
         return $metadata;
     }

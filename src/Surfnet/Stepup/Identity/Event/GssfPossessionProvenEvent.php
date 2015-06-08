@@ -119,7 +119,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
         $metadata->secondFactorType = new SecondFactorType((string) $this->stepupProvider);
-        $metadata->secondFactorIdentifier = (string) $this->gssfId;
+        $metadata->secondFactorIdentifier = $this->gssfId;
 
         return $metadata;
     }

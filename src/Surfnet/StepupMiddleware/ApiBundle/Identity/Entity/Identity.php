@@ -26,6 +26,7 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
@@ -49,9 +50,9 @@ class Identity implements JsonSerializable
     public $id;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_name_id")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
@@ -113,17 +114,13 @@ class Identity implements JsonSerializable
     public static function create(
         $id,
         Institution $institution,
-        $nameId,
+        NameId $nameId,
         Email $email,
         CommonName $commonName,
         Locale $preferredLocale
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
-        if (!is_string($nameId)) {
-            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
         $identity = new self();

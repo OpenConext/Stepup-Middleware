@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
@@ -31,12 +33,12 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     private $identityId;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     private $institution;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     private $commonName;
 
@@ -85,7 +87,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
         static::assertEquals($sraa->nameId, $identity->nameId);
 
         $credentials = new self($identity->id, true, true);
-        $credentials->commonName = (string) $identity->commonName;
+        $credentials->commonName = $identity->commonName;
 
         return $credentials;
     }
@@ -103,7 +105,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
         );
 
         $credentials->institution        = $raListing->institution;
-        $credentials->commonName         = (string) $raListing->commonName;
+        $credentials->commonName         = $raListing->commonName;
         $credentials->location           = $raListing->location;
         $credentials->contactInformation = $raListing->contactInformation;
 
@@ -153,7 +155,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return Institution
      */
     public function getInstitution()
     {
@@ -161,7 +163,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return CommonName
      */
     public function getCommonName()
     {

@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
@@ -44,7 +45,7 @@ class SraaProjector extends Projector
 
         $sraaList = [];
         foreach ($event->sraaList as $sraaNameId) {
-            $sraaList[] = new Sraa($sraaNameId);
+            $sraaList[] = new Sraa(new NameId($sraaNameId));
         }
 
         $this->sraaRepository->saveAll($sraaList);

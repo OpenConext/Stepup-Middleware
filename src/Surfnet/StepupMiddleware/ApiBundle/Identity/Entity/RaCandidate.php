@@ -55,9 +55,9 @@ class RaCandidate implements JsonSerializable
     public $institution;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_name_id")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
@@ -85,7 +85,7 @@ class RaCandidate implements JsonSerializable
         $candidate              = new self();
         $candidate->identityId  = (string) $identityId;
         $candidate->institution = $institution;
-        $candidate->nameId      = (string) $nameId;
+        $candidate->nameId      = $nameId;
         $candidate->commonName  = $commonName;
         $candidate->email       = $email;
 

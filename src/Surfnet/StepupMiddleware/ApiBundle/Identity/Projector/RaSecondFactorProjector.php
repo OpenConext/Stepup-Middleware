@@ -74,7 +74,7 @@ class RaSecondFactorProjector extends Projector
         $commonName = $event->commonName;
 
         foreach ($secondFactors as $secondFactor) {
-            $secondFactor->name = (string) $commonName;
+            $secondFactor->name = $commonName;
         }
 
         $this->raSecondFactorRepository->saveAll($secondFactors);
@@ -91,7 +91,7 @@ class RaSecondFactorProjector extends Projector
         $email = $event->email;
 
         foreach ($secondFactors as $secondFactor) {
-            $secondFactor->email = (string) $email;
+            $secondFactor->email = $email;
         }
 
         $this->raSecondFactorRepository->saveAll($secondFactors);
@@ -106,9 +106,9 @@ class RaSecondFactorProjector extends Projector
             'yubikey',
             (string) $event->yubikeyPublicId,
             $identity->id,
-            (string) $identity->institution,
-            (string) $event->commonName,
-            (string) $event->email
+            $identity->institution,
+            $event->commonName,
+            $event->email
         );
         $secondFactor->status = SecondFactorStatus::vetted();
 
@@ -125,9 +125,9 @@ class RaSecondFactorProjector extends Projector
                 'yubikey',
                 (string) $event->yubikeyPublicId,
                 $identity->id,
-                (string) $identity->institution,
-                (string) $event->commonName,
-                (string) $event->email
+                $identity->institution,
+                $event->commonName,
+                $event->email
             )
         );
     }
@@ -142,9 +142,9 @@ class RaSecondFactorProjector extends Projector
                 'sms',
                 (string) $event->phoneNumber,
                 $identity->id,
-                (string) $identity->institution,
-                (string) $event->commonName,
-                (string) $event->email
+                $identity->institution,
+                $event->commonName,
+                $event->email
             )
         );
     }
@@ -159,9 +159,9 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->stepupProvider,
                 (string) $event->gssfId,
                 $identity->id,
-                (string) $identity->institution,
-                (string) $event->commonName,
-                (string) $event->email
+                $identity->institution,
+                $event->commonName,
+                $event->email
             )
         );
     }

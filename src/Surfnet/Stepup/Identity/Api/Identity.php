@@ -38,6 +38,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
 {
@@ -133,19 +134,21 @@ interface Identity extends AggregateRoot
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param Identity       $registrant
-     * @param SecondFactorId $registrantsSecondFactorId
-     * @param string         $registrantsSecondFactorIdentifier
-     * @param string         $registrationCode
-     * @param DocumentNumber $documentNumber
-     * @param bool           $identityVerified
+     * @param Identity               $registrant
+     * @param SecondFactorId         $registrantsSecondFactorId
+     * @param SecondFactorType       $registrantsSecondFactorType
+     * @param SecondFactorIdentifier $registrantsSecondFactorIdentifier
+     * @param string                 $registrationCode
+     * @param DocumentNumber         $documentNumber
+     * @param bool                   $identityVerified
      * @return void
      * @throws DomainException
      */
     public function vetSecondFactor(
         Identity $registrant,
         SecondFactorId $registrantsSecondFactorId,
-        $registrantsSecondFactorIdentifier,
+        SecondFactorType $registrantsSecondFactorType,
+        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber,
         $identityVerified
@@ -154,16 +157,18 @@ interface Identity extends AggregateRoot
     /**
      * Makes the identity comply with an authority's vetting of a verified second factor.
      *
-     * @param SecondFactorId $secondFactorId
-     * @param string         $secondFactorIdentifier
-     * @param string         $registrationCode
-     * @param DocumentNumber $documentNumber
-     * @return void
+     * @param SecondFactorId         $secondFactorId
+     * @param SecondFactorType       $secondFactorType
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @param string                 $registrationCode
+     * @param DocumentNumber         $documentNumber
      * @throws DomainException
+     * @return void
      */
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber
     );

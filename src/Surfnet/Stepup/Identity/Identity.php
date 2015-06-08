@@ -273,7 +273,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function vetSecondFactor(
         IdentityApi $registrant,
         SecondFactorId $registrantsSecondFactorId,
-        $registrantsSecondFactorIdentifier,
+        SecondFactorType $registrantsSecondFactorType,
+        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber,
         $identityVerified
@@ -298,6 +299,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         $registrant->complyWithVettingOfSecondFactor(
             $registrantsSecondFactorId,
+            $registrantsSecondFactorType,
             $registrantsSecondFactorIdentifier,
             $registrationCode,
             $documentNumber
@@ -306,7 +308,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber
     ) {

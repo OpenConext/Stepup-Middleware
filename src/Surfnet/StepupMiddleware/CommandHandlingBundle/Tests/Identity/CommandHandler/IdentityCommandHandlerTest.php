@@ -726,6 +726,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
         $command->registrationCode       = 'REGCODE';
+        $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = 'ccccvfeghijk';
         $command->documentNumber         = 'NH9392';
         $command->identityVerified       = true;
@@ -833,6 +834,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
         $command->registrationCode       = 'REGCODE';
+        $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = 'ccccvfeghijk';
         $command->documentNumber         = 'NH9392';
         $command->identityVerified       = true;

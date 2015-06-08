@@ -33,8 +33,10 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -195,10 +197,17 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $registrant */
         $registrant = $this->repository->load(new IdentityId($command->identityId));
 
+        $secondFactorType = new SecondFactorType($command->secondFactorType);
+        $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
+            $secondFactorType,
+            $command->secondFactorIdentifier
+        );
+
         $authority->vetSecondFactor(
             $registrant,
             new SecondFactorId($command->secondFactorId),
-            $command->secondFactorIdentifier,
+            $secondFactorType,
+            $secondFactorIdentifier,
             $command->registrationCode,
             new DocumentNumber($command->documentNumber),
             $command->identityVerified

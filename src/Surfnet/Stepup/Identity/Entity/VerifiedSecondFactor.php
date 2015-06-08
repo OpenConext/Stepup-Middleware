@@ -108,15 +108,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     /**
      * @param string $registrationCode
-     * @param string $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
      */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)
+    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
-            && $this->secondFactorIdentifier->equals(
-                SecondFactorIdentifierFactory::forType($this->type, $secondFactorIdentifier)
-            );
+            && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
     }
 
     /**

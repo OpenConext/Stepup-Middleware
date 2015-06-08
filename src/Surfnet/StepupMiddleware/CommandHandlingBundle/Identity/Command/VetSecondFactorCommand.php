@@ -64,6 +64,14 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      *
      * @var string
      */
+    public $secondFactorType;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
     public $secondFactorIdentifier;
 
     /**

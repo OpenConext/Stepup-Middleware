@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\Identity\Driver\ORM\Doctrine\Type;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\CommonNameType;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType;
 
 class CommonNameTypeTest extends UnitTest
 {
@@ -36,7 +36,7 @@ class CommonNameTypeTest extends UnitTest
      */
     public static function setUpBeforeClass()
     {
-        Type::addType(CommonNameType::NAME, 'Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\CommonNameType');
+        Type::addType(CommonNameType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType');
     }
 
     public function setUp()

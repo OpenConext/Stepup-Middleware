@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\Identity\Driver\ORM\Doctrine\Type;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\EmailType;
 use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType;
 
 class EmailTypeTest extends UnitTest
 {
@@ -36,7 +36,7 @@ class EmailTypeTest extends UnitTest
      */
     public static function setUpBeforeClass()
     {
-        Type::addType(EmailType::NAME, 'Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\EmailType');
+        Type::addType(EmailType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType');
     }
 
     public function setUp()

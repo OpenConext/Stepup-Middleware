@@ -86,8 +86,8 @@ doctrine:
             authority_role: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
             stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
-            stepup_common_name: Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\CommonNameType
-            stepup_email: Surfnet\Stepup\Identity\Driver\ORM\Doctrine\Type\EmailType
+            stepup_common_name: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType
+            stepup_email: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType
             stepup_name_id: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
             stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType

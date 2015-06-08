@@ -31,7 +31,7 @@ class InstitutionListing implements JsonSerializable
      * @ORM\Id
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 

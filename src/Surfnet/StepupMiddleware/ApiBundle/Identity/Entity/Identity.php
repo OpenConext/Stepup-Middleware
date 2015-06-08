@@ -59,28 +59,28 @@ class Identity implements JsonSerializable
     /**
      * @ORM\Column(type="stepup_common_name")
      *
-     * @var CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $commonName;
 
     /**
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
      * @ORM\Column(type="stepup_email")
      *
-     * @var Email
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
 
     /**
      * @ORM\Column(type="stepup_locale")
      *
-     * @var Locale
+     * @var \Surfnet\Stepup\Identity\Value\Locale
      */
     public $preferredLocale;
 

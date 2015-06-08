@@ -23,7 +23,7 @@ use Broadway\Domain\DomainMessage;
 use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataEventStoreException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 
@@ -56,35 +56,13 @@ final class SensitiveDataEventStore implements EventStoreInterface
 
     public function load($id)
     {
-        $messageStream = $this->decoratedEventStore->load($id);
+        $domainEventStream = $this->decoratedEventStore->load($id);
 
         $identityId = $id instanceof IdentityId ? $id : new IdentityId($id);
         $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
-        reset($sensitiveDataStream);
+        $sensitiveDataStream->applyToDomainEventStream($domainEventStream);
 
-        /** @var DomainMessage $message */
-        foreach ($messageStream as $message) {
-            /** @var SensitiveDataMessage|false $sensitiveDataMessage */
-            $sensitiveDataMessage = current($sensitiveDataStream);
-
-            if (!$sensitiveDataMessage || $sensitiveDataMessage->getPlayhead() != $message->getPlayhead()) {
-                continue;
-            }
-
-            $event = $message->getPayload();
-
-            if (!$event instanceof Forgettable) {
-                throw new SensitiveDataEventStoreException(
-                    'Encountered sensitive data for event which does not support it'
-                );
-            }
-
-            $event->setSensitiveData($sensitiveDataMessage->getSensitiveData());
-
-            next($sensitiveDataStream);
-        }
-
-        return $messageStream;
+        return $domainEventStream;
     }
 
     public function append($id, DomainEventStreamInterface $eventStream)

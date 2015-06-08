@@ -23,6 +23,7 @@ use Exception as CoreException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class SensitiveDataMessageRepository
@@ -41,7 +42,7 @@ final class SensitiveDataMessageRepository
      * Finds all sensitive data records for a given Identity, ordered by playhead.
      *
      * @param IdentityId $identityId
-     * @return SensitiveDataMessage[]
+     * @return SensitiveDataMessageStream
      */
     public function findByIdentityId(IdentityId $identityId)
     {
@@ -51,14 +52,15 @@ final class SensitiveDataMessageRepository
                 ORDER BY playhead ASC';
 
         $rows = $this->connection->fetchAll($sql, ['identity_id' => (string) $identityId]);
-
-        return array_map(function (array $row) use ($identityId) {
+        $messages = array_map(function (array $row) use ($identityId) {
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
                 new SensitiveData(json_decode($row['sensitive_data'], true))
             );
         }, $rows);
+
+        return new SensitiveDataMessageStream($messages);
     }
 
     /**

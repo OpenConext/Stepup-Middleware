@@ -18,9 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception;
 
-use Broadway\EventStore\EventStoreException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\Exception;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 
-class SensitiveDataEventStoreException extends EventStoreException implements Exception
+class SensitiveDataApplicationException extends RuntimeException
 {
 }

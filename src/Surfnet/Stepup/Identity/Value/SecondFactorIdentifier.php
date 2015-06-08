@@ -26,6 +26,13 @@ interface SecondFactorIdentifier
     public static function unknown();
 
     /**
+     * Return a string representation of the value of this value object.
+     *
+     * @return string
+     */
+    public function getValue();
+
+    /**
      * @param SecondFactorIdentifier $other
      * @return bool
      */

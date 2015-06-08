@@ -42,10 +42,7 @@ final class GssfId implements SecondFactorIdentifier, JsonSerializable
         $this->gssfId = trim($gssfId);
     }
 
-    /**
-     * @return string
-     */
-    public function getGssfId()
+    public function getValue()
     {
         return $this->gssfId;
     }

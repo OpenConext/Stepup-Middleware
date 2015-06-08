@@ -42,10 +42,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier, JsonSerializable
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getYubikeyPublicId()
+    public function getValue()
     {
         return $this->value;
     }

@@ -50,10 +50,7 @@ final class PhoneNumber implements SecondFactorIdentifier, JsonSerializable
         $this->phoneNumber = $phoneNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getPhoneNumber()
+    public function getValue()
     {
         return $this->phoneNumber;
     }

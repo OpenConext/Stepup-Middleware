@@ -41,8 +41,8 @@ class DocumentNumber implements JsonSerializable
      */
     public function __construct($documentNumber)
     {
-        if (!is_string($documentNumber)) {
-            throw InvalidArgumentException::invalidType('string', 'documentNumber', $documentNumber);
+        if (!is_string($documentNumber) || empty($documentNumber)) {
+            throw InvalidArgumentException::invalidType('non-empty string', 'documentNumber', $documentNumber);
         }
 
         $this->documentNumber = $documentNumber;

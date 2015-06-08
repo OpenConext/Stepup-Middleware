@@ -71,13 +71,24 @@ class EventSerializationAndDeserializationTest extends UnitTest
      */
     public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
     {
+        $isForgettableEvent = $event instanceof Forgettable;
+        $providesSensitiveData = method_exists($event, 'getSensitiveData') || method_exists($event, 'setSensitiveData');
+
+        if (!$isForgettableEvent && $providesSensitiveData) {
+            $this->fail(sprintf(
+                'You provide sensitive data in %s, but do not implement %s',
+                get_class($event),
+                'Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable'
+            ));
+        }
+
         $serializedEvent = $event->serialize();
-        if ($event instanceof Forgettable) {
+        if ($isForgettableEvent) {
             $sensitiveData = $event->getSensitiveData();
         }
 
         $deserializedEvent = $event::deserialize($serializedEvent);
-        if ($event instanceof Forgettable) {
+        if ($isForgettableEvent) {
             $deserializedEvent->setSensitiveData($sensitiveData);
         }
 

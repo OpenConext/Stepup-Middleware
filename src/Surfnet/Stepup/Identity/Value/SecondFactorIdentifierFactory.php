@@ -30,15 +30,15 @@ final class SecondFactorIdentifierFactory
      */
     public static function forType(SecondFactorType $type, $secondFactorIdentifier)
     {
-        if ($type->equals(new SecondFactorType('sms'))) {
+        if ($type->isSms()) {
             return new PhoneNumber($secondFactorIdentifier);
         }
 
-        if ($type->equals(new SecondFactorType('yubikey'))) {
+        if ($type->isYubikey()) {
             return new YubikeyPublicId($secondFactorIdentifier);
         }
 
-        if ($type->equals(new SecondFactorType('tiqr'))) {
+        if ($type->isGssf()) {
             return new GssfId($secondFactorIdentifier);
         }
 
@@ -51,15 +51,15 @@ final class SecondFactorIdentifierFactory
      */
     public static function unknownForType(SecondFactorType $type)
     {
-        if ($type->equals(new SecondFactorType('sms'))) {
+        if ($type->isSms()) {
             return PhoneNumber::unknown();
         }
 
-        if ($type->equals(new SecondFactorType('yubikey'))) {
+        if ($type->isYubikey()) {
             return YubikeyPublicId::unknown();
         }
 
-        if ($type->equals(new SecondFactorType('tiqr'))) {
+        if ($type->isGssf()) {
             return GssfId::unknown();
         }
 

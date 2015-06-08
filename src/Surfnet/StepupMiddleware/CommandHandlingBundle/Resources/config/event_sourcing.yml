@@ -49,7 +49,7 @@ services:
             - @doctrine.dbal.middleware_connection
 
     surfnet_stepup_middleware_command_handling.event_store.sensitive_data:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventStore\SensitiveDataEventStore
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventStore\SensitiveDataEventStoreDecorator
         arguments:
              - @surfnet_stepup.event_store.dbal
              - @surfnet_stepup_middleware_command_handling.repository.sensitive_data_message

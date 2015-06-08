@@ -30,7 +30,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\Sens
 /**
  * Event store decorator that loads and appends the sensitive data of events into a separate data store.
  */
-final class SensitiveDataEventStore implements EventStoreInterface
+final class SensitiveDataEventStoreDecorator implements EventStoreInterface
 {
     /**
      * @var EventStoreInterface

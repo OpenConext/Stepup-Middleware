@@ -51,7 +51,7 @@ final class Locale implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->locale;
     }
 
     /**

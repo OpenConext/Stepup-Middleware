@@ -96,7 +96,7 @@ class RaCandidate implements JsonSerializable
     {
         return [
             'identity_id' => $this->identityId,
-            'institution' => (string) $this->institution,
+            'institution' => $this->institution,
             'common_name' => $this->commonName,
             'email'       => $this->email,
             'name_id'     => $this->nameId

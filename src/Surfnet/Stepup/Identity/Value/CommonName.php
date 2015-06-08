@@ -68,6 +68,6 @@ final class CommonName implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->commonName;
     }
 }

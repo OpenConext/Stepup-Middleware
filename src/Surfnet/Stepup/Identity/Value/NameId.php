@@ -52,6 +52,6 @@ final class NameId implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->value;
     }
 }

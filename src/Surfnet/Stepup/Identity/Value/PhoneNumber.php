@@ -67,6 +67,6 @@ final class PhoneNumber implements SecondFactorIdentifier, JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->phoneNumber;
     }
 }

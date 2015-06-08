@@ -68,6 +68,6 @@ final class DocumentNumber implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->documentNumber;
     }
 }

@@ -143,7 +143,7 @@ class Identity implements JsonSerializable
         return [
             'id'                        => $this->id,
             'name_id'                   => $this->nameId,
-            'institution'               => (string) $this->institution,
+            'institution'               => $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
             'preferred_locale'          => $this->preferredLocale,

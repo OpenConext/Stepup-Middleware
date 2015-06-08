@@ -45,6 +45,6 @@ class InstitutionListing implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return ['name' => (string) $this->institution];
+        return ['name' => $this->institution];
     }
 }

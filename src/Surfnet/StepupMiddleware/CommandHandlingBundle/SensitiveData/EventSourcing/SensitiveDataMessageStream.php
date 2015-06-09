@@ -44,7 +44,6 @@ final class SensitiveDataMessageStream
 
         /** @var DomainMessage $domainMessage */
         foreach ($domainEventStream as $domainMessage) {
-
             $sensitiveDataMessage = isset($sensitiveDataMap[$domainMessage->getPlayhead()])
                 ? $sensitiveDataMap[$domainMessage->getPlayhead()]
                 : null;

@@ -209,7 +209,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     DateTime::now(),
                     '123',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -223,7 +223,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     DateTime::now(),
                     '123',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -237,7 +237,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     DateTime::now(),
                     '123',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -247,7 +247,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('BabelFish Inc'),
                     new NameId('42'),
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -255,7 +255,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                 new IdentityEmailChangedEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new Email('info@example.com')
+                    new Email('info@example.invalid')
                 )
             ],
             'IdentityRenamedEvent' => [
@@ -274,7 +274,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -368,7 +368,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -382,7 +382,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com'),
+                    new Email('info@example.invalid'),
                     new Locale('en_GB')
                 )
             ],
@@ -435,7 +435,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new NameId(md5('someNameId')),
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.com')
+                    new Email('info@example.invalid')
                 )
             ],
             'LocalePreferenceExpressedEvent' => [

@@ -54,9 +54,9 @@ class EmailTest extends UnitTest
      */
     public function two_emails_with_the_same_value_are_equal()
     {
-        $email     = new Email('email@example.tld');
-        $theSame   = new Email('email@example.tld');
-        $different = new Email('different@example.tld');
+        $email     = new Email('email@example.invalid');
+        $theSame   = new Email('email@example.invalid');
+        $different = new Email('different@example.invalid');
 
         $this->assertTrue($email->equals($theSame));
         $this->assertFalse($email->equals($different));
@@ -87,10 +87,10 @@ class EmailTest extends UnitTest
     public function invalidEmailProvider()
     {
         return [
-            'no @-sign'       => ['mailboxexample.tld'],
+            'no @-sign'       => ['mailboxexample.invalid'],
             'no tld'          => ['mailbox@example'],
-            'no mailbox'      => ['@example.tld'],
-            'invalid mailbox' => ['(｡◕‿◕｡)@example.tld'],
+            'no mailbox'      => ['@example.invalid'],
+            'invalid mailbox' => ['(｡◕‿◕｡)@example.invalid'],
         ];
     }
 }

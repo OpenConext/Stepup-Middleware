@@ -65,11 +65,11 @@ class EmailTypeTest extends UnitTest
     {
         $email = Type::getType(EmailType::NAME);
 
-        $input  = new Email('arthur@babelfish.inc');
+        $input  = new Email('arthur@babelfish.invalid');
         $output = $email->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
-        $this->assertEquals('arthur@babelfish.inc', $output);
+        $this->assertEquals('arthur@babelfish.invalid', $output);
     }
 
     /**
@@ -93,7 +93,7 @@ class EmailTypeTest extends UnitTest
     {
         $email = Type::getType(EmailType::NAME);
 
-        $input = 'arthur@babelfish.inc';
+        $input = 'arthur@babelfish.invalid';
 
         $output = $email->convertToPHPValue($input, $this->platform);
 

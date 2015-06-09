@@ -81,7 +81,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 
         $identityId             = new IdentityId($command->identityId);
         $institution            = new Institution('A Corp.');
-        $email                  = new Email('info@example.com');
+        $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
         $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
@@ -136,7 +136,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 
         $identityId             = new IdentityId($command->identityId);
         $institution            = new Institution('A Corp.');
-        $email                  = new Email('info@example.com');
+        $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
         $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
@@ -204,7 +204,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $identityId             = new IdentityId($command->identityId);
         $nameId                 = new NameId('3');
         $institution            = new Institution('A Corp.');
-        $email                  = new Email('info@example.com');
+        $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
         $secondFactorType       = new SecondFactorType('yubikey');
@@ -286,7 +286,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityId                = new IdentityId($command->authorityId);
         $authorityNameId            = new NameId(static::uuid());
         $authorityInstitution       = new Institution('SURFnet');
-        $authorityEmail             = new Email('info@example.com');
+        $authorityEmail             = new Email('info@domain.invalid');
         $authorityCommonName        = new CommonName('Henk Westbroek');
 
         $registrantId                     = new IdentityId($command->identityId);
@@ -294,7 +294,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantNameId                 = new NameId('3');
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
         $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
-        $registrantEmail                  = new Email('matti@example.com');
+        $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
         $this->scenario
@@ -371,7 +371,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityId                = new IdentityId($command->authorityId);
         $authorityNameId            = new NameId(static::uuid());
         $authorityInstitution       = new Institution('Wazoo');
-        $authorityEmail             = new Email('info@example.com');
+        $authorityEmail             = new Email('info@domain.invalid');
         $authorityCommonName        = new CommonName('Henk Westbroek');
 
         $registrantId                     = new IdentityId($command->identityId);
@@ -380,7 +380,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
         $registrantSecondFactorType       = new SecondFactorType('yubikey');
         $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
-        $registrantEmail                  = new Email('matti@example.com');
+        $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
         $this->scenario
@@ -469,7 +469,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $authorityId                = new IdentityId($command->authorityId);
         $authorityNameId            = new NameId(static::uuid());
         $authorityInstitution       = new Institution('Wazoo');
-        $authorityEmail             = new Email('info@example.com');
+        $authorityEmail             = new Email('info@domain.invalid');
         $authorityCommonName        = new CommonName('Henk Westbroek');
 
         $registrantId                     = new IdentityId($command->identityId);
@@ -478,7 +478,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
         $registrantSecondFactorType       = new SecondFactorType('yubikey');
         $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
-        $registrantEmail                  = new Email('matti@example.com');
+        $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
         $this->scenario

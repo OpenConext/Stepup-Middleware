@@ -91,7 +91,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->nameId          = 'N-ID';
         $command->institution     = 'Institution';
         $command->commonName      = 'Enrique';
-        $command->email           = 'foo@bar.baz';
+        $command->email           = 'foo@domain.invalid';
         $command->preferredLocale = 'nl_NL';
         $command->secondFactorId  = 'SF-ID';
         $command->yubikeyPublicId = 'Y-ID';
@@ -139,7 +139,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId          = new SecondFactorId(self::uuid());
@@ -190,7 +190,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId1         = new SecondFactorId(self::uuid());
@@ -247,7 +247,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId          = new SecondFactorId(self::uuid());
@@ -306,7 +306,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $identityId        = new IdentityId(self::uuid());
         $institution       = new Institution('Surfnet');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secondFactorId    = new SecondFactorId(self::uuid());
@@ -360,7 +360,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId1         = new SecondFactorId(self::uuid());
@@ -411,7 +411,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
         $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId1         = new SecondFactorId(self::uuid());
@@ -467,7 +467,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                     = new IdentityId(self::uuid());
         $institution            = new Institution('A Corp.');
         $nameId                 = new NameId(md5(__METHOD__));
-        $email                  = new Email('info@example.com');
+        $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $preferredLocale        = new Locale('en_GB');
         $secondFactorId         = new SecondFactorId(self::uuid());
@@ -534,7 +534,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $id                     = new IdentityId(self::uuid());
         $institution            = new Institution('A Corp.');
         $nameId                 = new NameId(md5(__METHOD__));
-        $email                  = new Email('info@example.com');
+        $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $preferredLocale        = new Locale('en_GB');
         $secondFactorId         = new SecondFactorId(self::uuid());
@@ -601,7 +601,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $publicId = new YubikeyPublicId('ccccvfeghijk');
         $institution = new Institution('A Corp.');
         $nameId = new NameId(md5(__METHOD__));
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
 
@@ -650,7 +650,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $createCommand->institution = 'A Corp.';
         $createCommand->nameId = '3';
         $createCommand->preferredLocale = 'nl_NL';
-        $createCommand->email = 'a@b.c';
+        $createCommand->email = 'a@domain.invalid';
         $createCommand->commonName = 'foobar';
 
         $identityId                = new IdentityId($createCommand->id);
@@ -734,13 +734,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $authorityId                = new IdentityId($command->authorityId);
         $authorityNameId            = new NameId($this->uuid());
         $authorityInstitution       = new Institution('Wazoo');
-        $authorityEmail             = new Email('info@example.com');
+        $authorityEmail             = new Email('info@domain.invalid');
         $authorityCommonName        = new CommonName('Henk Westbroek');
 
         $registrantId                = new IdentityId($command->identityId);
         $registrantInstitution       = new Institution('A Corp.');
         $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@example.com');
+        $registrantEmail             = new Email('reg@domain.invalid');
         $registrantCommonName        = new CommonName('Reginald Waterloo');
         $registrantSecFacId          = new SecondFactorId('ISFID');
         $registrantSecFacIdentifier  = new YubikeyPublicId('ccccvfeghijk');
@@ -842,7 +842,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $authorityId                = new IdentityId($command->authorityId);
         $authorityInstitution       = new Institution('Wazoo');
         $authorityNameId            = new NameId($this->uuid());
-        $authorityEmail             = new Email('info@example.com');
+        $authorityEmail             = new Email('info@domain.invalid');
         $authorityCommonName        = new CommonName('Henk Westbroek');
         $authorityPhoneSfId         = new SecondFactorId($this->uuid());
         $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
@@ -850,7 +850,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantId                = new IdentityId($command->identityId);
         $registrantInstitution       = new Institution('A Corp.');
         $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@example.com');
+        $registrantEmail             = new Email('reg@domain.invalid');
         $registrantCommonName        = new CommonName('Reginald Waterloo');
         $registrantSecFacId          = new SecondFactorId('ISFID');
         $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');

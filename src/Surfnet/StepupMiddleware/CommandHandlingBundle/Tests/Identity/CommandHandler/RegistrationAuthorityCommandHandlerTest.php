@@ -87,7 +87,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('A Different Institution than the Command holds');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -136,7 +136,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
 
         $this->scenario
@@ -174,7 +174,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -233,7 +233,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -282,7 +282,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -341,7 +341,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -400,7 +400,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -468,7 +468,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -520,7 +520,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
 
         $this->scenario
@@ -557,7 +557,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -606,7 +606,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -667,7 +667,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -723,7 +723,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -767,7 +767,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -826,7 +826,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -887,7 +887,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -932,7 +932,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
@@ -970,7 +970,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@example.com');
+        $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');

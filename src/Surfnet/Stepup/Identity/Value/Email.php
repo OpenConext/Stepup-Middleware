@@ -33,7 +33,7 @@ final class Email implements JsonSerializable
      */
     public static function unknown()
     {
-        return new self('unknown@example.com');
+        return new self('unknown@domain.invalid');
     }
 
     /**

@@ -30,6 +30,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
@@ -52,6 +53,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -956,6 +958,103 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantEmail,
                     new Locale('en_GB')
                 ),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function an_identity_can_express_its_locale_preference()
+    {
+        $command                  = new ExpressLocalePreferenceCommand();
+        $command->identityId      = $this->uuid();
+        $command->preferredLocale = 'nl_NL';
+
+        $identityId  = new IdentityId($command->identityId);
+        $institution = new Institution('Institution');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    new NameId('N-ID'),
+                    new CommonName('Matti Vanhanen'),
+                    new Email('m.vanhanen@domain.invalid'),
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException
+     * @expectedExceptionMessage Given locale "fi_FI" is not an acceptable locale
+     */
+    public function an_identity_cannot_express_a_preference_for_an_unsupported_locale()
+    {
+        $command                  = new ExpressLocalePreferenceCommand();
+        $command->identityId      = $this->uuid();
+        $command->preferredLocale = 'fi_FI';
+
+        $identityId  = new IdentityId($command->identityId);
+        $institution = new Institution('Institution');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    new NameId('N-ID'),
+                    new CommonName('Matti Vanhanen'),
+                    new Email('m.vanhanen@domain.invalid'),
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function an_identity_can_express_its_locale_preference_more_than_one_time()
+    {
+        $command                  = new ExpressLocalePreferenceCommand();
+        $command->identityId      = $this->uuid();
+        $command->preferredLocale = 'nl_NL';
+
+        $identityId  = new IdentityId($command->identityId);
+        $institution = new Institution('Institution');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    new NameId('N-ID'),
+                    new CommonName('Matti Vanhanen'),
+                    new Email('m.vanhanen@domain.invalid'),
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->when($command)
+            ->then([
+                new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
+                new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
             ]);
     }
 }

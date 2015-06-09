@@ -702,7 +702,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         );
 
         $updateCommand             = new UpdateIdentityCommand();
-        $updateCommand->id         = '42';
+        $updateCommand->id         = $id->getValue();
         $updateCommand->email      = 'new-email@domain.invalid';
         $updateCommand->commonName = 'Henk Hendriksen';
 

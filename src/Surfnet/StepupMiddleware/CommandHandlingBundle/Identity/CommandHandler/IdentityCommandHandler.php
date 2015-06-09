@@ -96,7 +96,7 @@ class IdentityCommandHandler extends CommandHandler
     public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load($command->id);
+        $identity = $this->repository->load(new IdentityId($command->id));
 
         $identity->rename(new CommonName($command->commonName));
         $identity->changeEmail(new Email($command->email));

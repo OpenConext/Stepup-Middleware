@@ -22,8 +22,8 @@ use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 
@@ -56,10 +56,15 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
 
     public function load($id)
     {
+        if (!$id instanceof IdentityId) {
+            throw new InvalidArgumentException(
+                'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
+            );
+        }
+
         $domainEventStream = $this->decoratedEventStore->load($id);
 
-        $identityId = $id instanceof IdentityId ? $id : new IdentityId($id);
-        $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
+        $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($id);
         $sensitiveDataStream->applyToDomainEventStream($domainEventStream);
 
         return $domainEventStream;
@@ -67,13 +72,17 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
 
     public function append($id, DomainEventStreamInterface $eventStream)
     {
+        if (!$id instanceof IdentityId) {
+            throw new InvalidArgumentException(
+                'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
+            );
+        }
+
         $this->decoratedEventStore->append($id, $eventStream);
 
         $sensitiveDataMessages = [];
-        $identityId = $id instanceof IdentityId ? $id : new IdentityId($id);
-
-        /** @var DomainMessage $message */
         foreach ($eventStream as $message) {
+            /** @var DomainMessage $message */
             $event = $message->getPayload();
 
             if (!$event instanceof Forgettable) {
@@ -81,7 +90,7 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
             }
 
             $sensitiveDataMessages[] = new SensitiveDataMessage(
-                $identityId,
+                $id,
                 $message->getPlayhead(),
                 $event->getSensitiveData()
             );

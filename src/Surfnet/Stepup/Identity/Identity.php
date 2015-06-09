@@ -678,7 +678,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function getAggregateRootId()
     {
-        return (string) $this->id;
+        return $this->id;
     }
 
     protected function getChildEntities()

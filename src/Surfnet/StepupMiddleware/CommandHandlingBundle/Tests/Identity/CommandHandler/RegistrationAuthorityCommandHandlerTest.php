@@ -64,7 +64,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new RegistrationAuthorityCommandHandler(
-            new IdentityRepository($eventStore, $eventBus, $aggregateFactory)
+            new IdentityRepository(
+                new IdentityIdEnforcingEventStoreDecorator($eventStore),
+                $eventBus,
+                $aggregateFactory
+            )
         );
     }
 

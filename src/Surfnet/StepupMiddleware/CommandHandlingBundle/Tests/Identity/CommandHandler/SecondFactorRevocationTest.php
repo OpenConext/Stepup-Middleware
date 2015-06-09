@@ -64,7 +64,11 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new IdentityCommandHandler(
-            new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
+            new IdentityRepository(
+                new IdentityIdEnforcingEventStoreDecorator($eventStore),
+                $eventBus,
+                $aggregateFactory
+            ),
             ConfigurableSettings::create(self::$window, [])
         );
     }

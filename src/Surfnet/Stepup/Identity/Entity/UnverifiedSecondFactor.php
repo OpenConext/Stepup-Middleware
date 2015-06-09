@@ -138,7 +138,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     {
         $this->apply(
             new EmailVerifiedEvent(
-                new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,

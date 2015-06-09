@@ -76,7 +76,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new IdentityCommandHandler(
-            new IdentityRepository($eventStore, $eventBus, $aggregateFactory),
+            new IdentityRepository(
+                new IdentityIdEnforcingEventStoreDecorator($eventStore),
+                $eventBus,
+                $aggregateFactory
+            ),
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB'])
         );
     }
@@ -698,7 +702,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         );
 
         $updateCommand             = new UpdateIdentityCommand();
-        $updateCommand->id         = $id;
+        $updateCommand->id         = '42';
         $updateCommand->email      = 'new-email@domain.invalid';
         $updateCommand->commonName = 'Henk Hendriksen';
 

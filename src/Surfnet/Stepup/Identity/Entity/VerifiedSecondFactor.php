@@ -129,7 +129,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     {
         $this->apply(
             new SecondFactorVettedEvent(
-                new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getId(),
                 $this->identity->getNameId(),
                 $this->identity->getInstitution(),
                 $this->id,

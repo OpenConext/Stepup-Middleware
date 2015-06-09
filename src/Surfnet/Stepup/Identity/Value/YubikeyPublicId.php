@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class YubikeyPublicId implements SecondFactorIdentifier
@@ -35,8 +34,8 @@ final class YubikeyPublicId implements SecondFactorIdentifier
 
     public function __construct($value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        if (!is_string($value) || empty($value)) {
+            throw InvalidArgumentException::invalidType('non-empty string', 'value', $value);
         }
 
         $this->value = $value;

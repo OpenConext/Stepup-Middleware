@@ -57,9 +57,11 @@ class EmailTest extends UnitTest
         $email     = new Email('email@example.invalid');
         $theSame   = new Email('email@example.invalid');
         $different = new Email('different@example.invalid');
+        $unknown   = Email::unknown();
 
         $this->assertTrue($email->equals($theSame));
         $this->assertFalse($email->equals($different));
+        $this->assertFalse($email->equals($unknown));
     }
 
     /**

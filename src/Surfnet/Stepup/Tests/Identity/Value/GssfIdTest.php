@@ -43,11 +43,13 @@ class GssfIdTest extends UnitTest
     public function two_gssf_ids_with_the_same_value_are_equal()
     {
         $gssf        = new GssfId('a');
-        $theSame     = new GssfId('a');
+        $theSame     = new GssfId(' a');
         $different   = new GssfId('A');
+        $unknown     = GssfId::unknown();
 
         $this->assertTrue($gssf->equals($theSame));
         $this->assertFalse($gssf->equals($different));
+        $this->assertFalse($gssf->equals($unknown));
     }
 
     /**

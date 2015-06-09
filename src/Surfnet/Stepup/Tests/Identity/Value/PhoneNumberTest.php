@@ -19,43 +19,43 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\PhoneNumber;
 
-class CommonNameTest extends UnitTest
+class PhoneNumberTest extends UnitTest
 {
     /**
      * @test
      * @group        domain
-     * @dataProvider invalidArgumentProvider
+     * @dataProvider invalidValueProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
-    public function the_common_name_address_must_be_a_non_empty_string($invalidValue)
+    public function a_phone_number_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
-        new CommonName($invalidValue);
+        new PhoneNumber($invalidValue);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function two_common_names_with_the_same_value_are_equal()
+    public function two_phone_numbers_with_the_same_value_are_equal()
     {
-        $commonName = new CommonName('John Doe');
-        $theSame    = new CommonName('John Doe');
-        $different  = new CommonName('Jane Doe');
-        $unknown    = CommonName::unknown();
+        $one         = new PhoneNumber('+31 (0) 12345678');
+        $theSame     = new PhoneNumber('+31 (0) 12345678');
+        $different   = new PhoneNumber('+31 (0) 87654321');
+        $unknown     = PhoneNumber::unknown();
 
-        $this->assertTrue($commonName->equals($theSame));
-        $this->assertFalse($commonName->equals($different));
-        $this->assertFalse($commonName->equals($unknown));
+        $this->assertTrue($one->equals($theSame));
+        $this->assertFalse($one->equals($different));
+        $this->assertFalse($one->equals($unknown));
     }
 
     /**
-     * provider for {@see the_common_name_address_must_be_a_non_empty_string()}
+     * DataProvider for {@see a_phonenumber_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidArgumentProvider()
+    public function invalidValueProvider()
     {
         return [
             'empty string' => [''],

@@ -32,184 +32,223 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class SensitiveDataMessageStreamTest extends TestCase
 {
-    public function sensitiveDataApplications()
+    const EVENT_STREAM_A = 'A';
+    const EVENT_STREAM_B = 'B';
+
+    /**
+     * @test
+     * @group sensitive-data
+     */
+    public function it_can_work_with_zero_sensitive_data_messages_and_zero_events()
     {
-        return [
-            '0 sensitive data, 0 events' => [
-                [],
-                [],
-                [],
-            ],
-            '1 sensitive data, 1 event' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 0,
-                        'data' => (new SensitiveData())
-                            ->withCommonName(new CommonName('Willie Willoughby'))
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 0,
-                        'forgettable' => true,
-                    ],
-                ],
-                [[0, 0]],
-            ],
-            '2 sensitive data, 2 events' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 0,
-                        'data' => (new SensitiveData())->withCommonName(new CommonName('Willie Willoughby'))
-                    ],
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 1,
-                        'data' => (new SensitiveData())
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 0,
-                        'forgettable' => true,
-                    ],
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 1,
-                        'forgettable' => true,
-                    ],
-                ],
-                [[0, 0]],
-            ],
-            '1 forgotten sensitive data, 1 forgettable event, 1 regular event' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 1,
-                        'data' => (new SensitiveData())->withEmail(new Email('null@domain.invalid'))->forget()
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 0,
-                        'forgettable' => false,
-                    ],
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 1,
-                        'forgettable' => true,
-                    ],
-                ],
-                [[0, 1]],
-            ],
-            '0 sensitive data, 1 forgettable event' => [
-                [],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 1,
-                        'forgettable' => true,
-                    ],
-                ],
-                [],
-                '/^Sensitive data is missing for event with UUID .+, playhead 1$/',
-            ],
-            '1 mismatched sensitive data, 1 regular event' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 0,
-                        'data' => (new SensitiveData())->withEmail(new Email('null@domain.invalid'))
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 1,
-                        'forgettable' => false,
-                    ],
-                ],
-                [],
-                '/^1 sensitive data messages are still to be matched to events$/',
-            ],
-            '1 sensitive data, 2 regular event of which 1 matches the sensitive data' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 1,
-                        'data' => (new SensitiveData())->withEmail(new Email('null@domain.invalid'))
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 0,
-                        'forgettable' => false,
-                    ],
-                    [
-                        'id'          => md5('1'),
-                        'playhead'    => 1,
-                        'forgettable' => false,
-                    ],
-                ],
-                [],
-                '/^Encountered sensitive data for event which does not support sensitive data, UUID .+, playhead 1$/',
-            ],
-            '1 sensitive data, 1 forgettable event, stream ID mismatch' => [
-                [
-                    [
-                        'id' => md5('1'),
-                        'playhead' => 1,
-                        'data' => (new SensitiveData())->withEmail(new Email('null@domain.invalid'))
-                    ],
-                ],
-                [
-                    [
-                        'id'          => md5('2'),
-                        'playhead'    => 1,
-                        'forgettable' => true,
-                    ],
-                ],
-                [],
-                '/^Encountered sensitive data from stream .+ for event from stream .+$/',
-            ],
-        ];
+        $this->apply([], []);
     }
 
     /**
      * @test
      * @group sensitive-data
-     * @dataProvider sensitiveDataApplications
-     *
-     * @param array       $sensitiveDataDescriptors
-     * @param array       $eventDescriptors
-     * @param array       $equalityAssertions
-     * @param string|null $expectedErrorMessage
      */
-    public function it_sets_sensitive_data_on_events($sensitiveDataDescriptors, $eventDescriptors, $equalityAssertions, $expectedErrorMessage = null)
+    public function it_can_apply_one_sensitive_data_message_to_one_matching_event()
     {
-        if ($expectedErrorMessage) {
-            $this->setExpectedExceptionRegExp(
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException',
-                $expectedErrorMessage
-            );
-        }
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                0,
+                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby'))
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+        ];
 
-        $sensitiveDataMessages = $this->createSensitiveDataMessages($sensitiveDataDescriptors);
-        $domainMessages = $this->createDomainMessages($eventDescriptors);
         $this->apply($sensitiveDataMessages, $domainMessages);
+        $this->assertSensitiveDataEquals($sensitiveDataMessages[0], $domainMessages[0]);
+    }
 
-        foreach ($equalityAssertions as $equalityAssertion) {
-            $this->assertSensitiveDataEquals(
-                $sensitiveDataMessages[$equalityAssertion[0]],
-                $domainMessages[$equalityAssertion[1]]
-            );
-        }
+    /**
+     * @test
+     * @group sensitive-data
+     */
+    public function it_can_apply_two_sensitive_data_message_to_two_matching_events()
+    {
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                0,
+                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby'))
+            ),
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                1,
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                1,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
+        $this->assertSensitiveDataEquals($sensitiveDataMessages[0], $domainMessages[0]);
+        $this->assertSensitiveDataEquals($sensitiveDataMessages[1], $domainMessages[1]);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     */
+    public function it_can_apply_one_sensitive_data_message_to_one_regular_event_and_one_matching_forgettable_event()
+    {
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                1,
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new RegularEventStub(),
+                DateTime::now()
+            ),
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                1,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
+        $this->assertSensitiveDataEquals($sensitiveDataMessages[0], $domainMessages[1]);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
+     * @expectedExceptionMessage Sensitive data is missing for event with UUID A, playhead 0
+     */
+    public function it_fails_when_sensitive_data_is_missing_for_an_event()
+    {
+        $sensitiveDataMessages = [];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
+     * @expectedExceptionMessage 1 sensitive data messages are still to be matched to events
+     */
+    public function it_fails_when_not_all_sensitive_data_could_be_matched_to_an_event()
+    {
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                1,
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new RegularEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
+     * @expectedExceptionMessage Encountered sensitive data for event which does not support sensitive data, UUID A, playhead 0
+     */
+    public function it_fails_when_sensitive_data_matches_a_regular_event()
+    {
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                0,
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_A,
+                0,
+                new Metadata(),
+                new RegularEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
+     * @expectedExceptionMessage Encountered sensitive data from stream A for event from stream B
+     */
+    public function it_fails_when_stream_ids_dont_match()
+    {
+        $sensitiveDataMessages = [
+            new SensitiveDataMessage(
+                new IdentityId(self::EVENT_STREAM_A),
+                0,
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+            ),
+        ];
+        $domainMessages = [
+            new DomainMessage(
+                self::EVENT_STREAM_B,
+                0,
+                new Metadata(),
+                new ForgettableEventStub(),
+                DateTime::now()
+            ),
+        ];
+
+        $this->apply($sensitiveDataMessages, $domainMessages);
     }
 
     private function apply(array $sensitiveDataMessages, array $domainMessages)
@@ -221,39 +260,5 @@ final class SensitiveDataMessageStreamTest extends TestCase
     private function assertSensitiveDataEquals(SensitiveDataMessage $sensitiveDataMessage, DomainMessage $domainMessage)
     {
         $this->assertEquals($sensitiveDataMessage->getSensitiveData(), $domainMessage->getPayload()->sensitiveData);
-    }
-
-    private function createSensitiveDataMessages(array $descriptors)
-    {
-        return array_map([$this, 'createSensitiveDataMessage'], $descriptors);
-    }
-
-    private function createSensitiveDataMessage(array $descriptor)
-    {
-        return new SensitiveDataMessage(new IdentityId($descriptor['id']), $descriptor['playhead'], $descriptor['data']);
-    }
-
-    private function createDomainMessages(array $descriptors)
-    {
-        return array_map([$this, 'createDomainMessage'], $descriptors);
-    }
-
-    private function createDomainMessage(array $descriptor)
-    {
-        return new DomainMessage(
-            $descriptor['id'],
-            $descriptor['playhead'],
-            new Metadata(),
-            $descriptor['forgettable'] ? new ForgettableEvent() : new RegularEvent(),
-            DateTime::now()
-        );
-    }
-
-    private function pluck($key, &$array)
-    {
-        $value = $array[$key];
-        unset($array[$key]);
-
-        return $value;
     }
 }

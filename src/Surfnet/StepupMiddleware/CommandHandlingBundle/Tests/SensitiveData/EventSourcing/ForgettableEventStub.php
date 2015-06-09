@@ -18,6 +18,30 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData\EventSourcing;
 
-final class RegularEvent
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+
+final class ForgettableEventStub implements Forgettable
 {
+    /**
+     * @var SensitiveData
+     */
+    public $sensitiveData;
+
+    /**
+     * @return SensitiveData
+     */
+    public function getSensitiveData()
+    {
+        return $this->sensitiveData;
+    }
+
+    /**
+     * @param SensitiveData $sensitiveData
+     * @return void
+     */
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->sensitiveData = $sensitiveData;
+    }
 }

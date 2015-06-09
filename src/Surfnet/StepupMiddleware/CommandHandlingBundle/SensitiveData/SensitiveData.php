@@ -180,12 +180,12 @@ class SensitiveData implements SerializableInterface
 
     public function serialize()
     {
-        return [
+        return array_filter([
             'common_name'              => $this->commonName,
             'email'                    => $this->email,
             'second_factor_type'       => $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'document_number'          => $this->documentNumber,
-        ];
+        ]);
     }
 }

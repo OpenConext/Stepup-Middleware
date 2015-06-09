@@ -683,14 +683,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_be_updated()
     {
-        $this->markTestSkipped(
-            'Skipping for now, as this cannot be tested as the commonName and email, which change should trigger events'
-            . ' are no longer created or tracked on the Identity.'
-        );
-
         $id                = new IdentityId('42');
         $institution       = new Institution('A Corp.');
-        $email             = new Email('info@example.com');
+        $email             = new Email('info@domain.invalid');
         $commonName        = new CommonName('Henk Westbroek');
 
         $createdEvent = new IdentityCreatedEvent(
@@ -704,7 +699,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $updateCommand             = new UpdateIdentityCommand();
         $updateCommand->id         = $id;
-        $updateCommand->email      = 'new-email@surfnet.nl';
+        $updateCommand->email      = 'new-email@domain.invalid';
         $updateCommand->commonName = 'Henk Hendriksen';
 
         $this->scenario
@@ -712,8 +707,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->given([$createdEvent])
             ->when($updateCommand)
             ->then([
-                new IdentityRenamedEvent($id, $institution, $commonName),
-                new IdentityEmailChangedEvent($id, $institution, $email)
+                new IdentityRenamedEvent($id, $institution, new CommonName($updateCommand->commonName)),
+                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email))
             ]);
     }
 

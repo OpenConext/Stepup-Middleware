@@ -25,7 +25,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Command\ForgetSensitiveDataCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
 final class SensitiveDataCommandHandler extends CommandHandler
@@ -60,7 +60,7 @@ final class SensitiveDataCommandHandler extends CommandHandler
         $this->sensitiveDataService = $sensitiveDataService;
     }
 
-    public function handleForgetSensitiveDataCommand(ForgetSensitiveDataCommand $command)
+    public function handleForgetIdentityCommand(ForgetIdentityCommand $command)
     {
         $apiIdentity = $this->apiIdentityRepository->findOneByNameIdAndInstitution(
             new NameId($command->nameId),

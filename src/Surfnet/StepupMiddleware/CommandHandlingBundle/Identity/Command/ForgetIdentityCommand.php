@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Command;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ForgetSensitiveDataCommand extends AbstractCommand implements ManagementExecutable
+final class ForgetIdentityCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
      * @Assert\NotBlank

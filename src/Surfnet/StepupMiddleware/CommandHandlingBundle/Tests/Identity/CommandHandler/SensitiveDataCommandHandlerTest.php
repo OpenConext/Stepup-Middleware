@@ -35,8 +35,8 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\SensitiveDataCommandHandler;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Command\ForgetSensitiveDataCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 /**
@@ -93,7 +93,7 @@ class SensitiveDataCommandHandlerTest extends CommandHandlerTest
             ->once()
             ->with(m::anyOf($identityId));
 
-        $command = new ForgetSensitiveDataCommand();
+        $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
         $command->institution = $institution->getInstitution();
 
@@ -150,7 +150,7 @@ class SensitiveDataCommandHandlerTest extends CommandHandlerTest
             ->once()
             ->with(m::anyOf($identityId));
 
-        $command = new ForgetSensitiveDataCommand();
+        $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
         $command->institution = $institution->getInstitution();
 

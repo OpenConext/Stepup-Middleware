@@ -21,9 +21,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData\Ser
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Command\ForgetSensitiveDataCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
 final class SensitiveDataServiceTest extends TestCase

@@ -40,7 +40,7 @@ final class IdentityId implements Id
     /**
      * @return string
      */
-    public function getValue()
+    public function getIdentityId()
     {
         return $this->value;
     }

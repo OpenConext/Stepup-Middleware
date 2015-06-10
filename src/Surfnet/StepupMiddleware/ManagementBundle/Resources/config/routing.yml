@@ -3,3 +3,9 @@ management_configuration_update:
     defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Configuration:update }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_forget_identity:
+    path:     /forget-identity
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:SensitiveData:forgetIdentity }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

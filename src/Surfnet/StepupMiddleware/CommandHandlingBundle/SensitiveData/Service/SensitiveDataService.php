@@ -19,10 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Command\ForgetSensitiveDataCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 
 final class SensitiveDataService
@@ -32,26 +28,13 @@ final class SensitiveDataService
      */
     private $sensitiveDataMessageRepository;
 
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
-
-    public function __construct(
-        SensitiveDataMessageRepository $sensitiveDataMessageRepository,
-        IdentityRepository $identityRepository
-    ) {
+    public function __construct(SensitiveDataMessageRepository $sensitiveDataMessageRepository)
+    {
         $this->sensitiveDataMessageRepository = $sensitiveDataMessageRepository;
-        $this->identityRepository             = $identityRepository;
     }
 
-    public function forgetSensitiveData(ForgetSensitiveDataCommand $command)
+    public function forgetSensitiveData(IdentityId $identityId)
     {
-        $nameId = new NameId($command->nameId);
-        $institution = new Institution($command->institution);
-        $identity = $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
-        $identityId = new IdentityId($identity->id);
-
         $sensitiveDataMessageStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
         $sensitiveDataMessageStream->forget();
 

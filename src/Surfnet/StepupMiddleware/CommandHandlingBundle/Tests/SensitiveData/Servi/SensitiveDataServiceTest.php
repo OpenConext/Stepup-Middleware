@@ -34,24 +34,15 @@ final class SensitiveDataServiceTest extends TestCase
      */
     public function it_can_forget_sensitive_data_in_a_stream()
     {
-        $command = new ForgetSensitiveDataCommand();
-        $command->nameId = 'Martin Freeman';
-        $command->institution = 'SURFnetbv';
-
-        $identityRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository');
-        $identityRepository
-            ->shouldReceive('findOneByNameIdAndInstitution')
-            ->once()
-            ->with(m::anyOf(new NameId($command->nameId)), m::anyOf(new Institution($command->institution)))
-            ->andReturn((object) ['id' => 'A']);
+        $identityId = new IdentityId('A');
 
         $sensitiveDataMessageStream = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream');
         $sensitiveDataMessageStream->shouldReceive('forget')->once();
         $sensitiveDataMessageRepository = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository');
-        $sensitiveDataMessageRepository->shouldReceive('findByIdentityId')->with(m::anyOf(new IdentityId('A')))->once()->andReturn($sensitiveDataMessageStream);
+        $sensitiveDataMessageRepository->shouldReceive('findByIdentityId')->with($identityId)->once()->andReturn($sensitiveDataMessageStream);
         $sensitiveDataMessageRepository->shouldReceive('update')->with($sensitiveDataMessageStream);
 
-        $service = new SensitiveDataService($sensitiveDataMessageRepository, $identityRepository);
-        $service->forgetSensitiveData($command);
+        $service = new SensitiveDataService($sensitiveDataMessageRepository);
+        $service->forgetSensitiveData($identityId);
     }
 }

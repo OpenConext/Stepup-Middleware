@@ -77,7 +77,7 @@ class SensitiveDataMessageRepository
                 $this->connection->insert('event_stream_sensitive_data', [
                     'identity_id'    => (string) $sensitiveDataMessage->getIdentityId(),
                     'playhead'       => $sensitiveDataMessage->getPlayhead(),
-                    'sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()->serialize()),
+                    'sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize()),
                 ]);
             }
             $this->connection->commit();
@@ -100,7 +100,7 @@ class SensitiveDataMessageRepository
                 /** @var SensitiveDataMessage $sensitiveDataMessage */
                 $this->connection->update(
                     'event_stream_sensitive_data',
-                    ['sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()->serialize())],
+                    ['sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize())],
                     [
                         'identity_id' => (string) $sensitiveDataMessage->getIdentityId(),
                         'playhead'    => $sensitiveDataMessage->getPlayhead(),

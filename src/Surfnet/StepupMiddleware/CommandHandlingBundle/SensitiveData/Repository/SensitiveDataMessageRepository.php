@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repositor
 
 use Doctrine\DBAL\Connection;
 use Exception as CoreException;
+use GuzzleHttp;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
@@ -56,7 +57,7 @@ class SensitiveDataMessageRepository
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
-                SensitiveData::deserialize(json_decode($row['sensitive_data'], true))
+                SensitiveData::deserialize(GuzzleHttp\json_decode($row['sensitive_data'], true))
             );
         }, $rows);
 

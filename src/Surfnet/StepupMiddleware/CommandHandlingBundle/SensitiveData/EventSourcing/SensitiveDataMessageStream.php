@@ -62,6 +62,13 @@ final class SensitiveDataMessageStream implements IteratorAggregate
         }
     }
 
+    public function forget()
+    {
+        foreach ($this->messages as $message) {
+            $message->forget();
+        }
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->messages);

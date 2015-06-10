@@ -41,6 +41,14 @@ final class Institution implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getInstitution()
+    {
+        return $this->institution;
+    }
+
+    /**
      * @param Institution $otherInstitution
      * @return bool
      */

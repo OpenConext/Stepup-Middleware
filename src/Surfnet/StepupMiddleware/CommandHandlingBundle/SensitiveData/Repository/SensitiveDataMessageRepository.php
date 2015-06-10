@@ -86,4 +86,31 @@ final class SensitiveDataMessageRepository
             throw new RuntimeException('An exception occurred while appending sensitive data', 0, $e);
         }
     }
+
+    /**
+     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
+     * @return void
+     */
+    public function update(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    {
+        $this->connection->beginTransaction();
+
+        try {
+            foreach ($sensitiveDataMessageStream as $sensitiveDataMessage) {
+                /** @var SensitiveDataMessage $sensitiveDataMessage */
+                $this->connection->update(
+                    'event_stream_sensitive_data',
+                    ['sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()->serialize())],
+                    [
+                        'identity_id' => (string) $sensitiveDataMessage->getIdentityId(),
+                        'playhead'    => $sensitiveDataMessage->getPlayhead(),
+                    ]
+                );
+            }
+            $this->connection->commit();
+        } catch (CoreException $e) {
+            $this->connection->rollBack();
+            throw new RuntimeException('An exception occurred while updating sensitive data', 0, $e);
+        }
+    }
 }

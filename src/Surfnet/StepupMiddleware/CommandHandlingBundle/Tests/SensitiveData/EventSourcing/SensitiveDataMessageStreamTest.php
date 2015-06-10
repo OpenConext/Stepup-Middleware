@@ -22,6 +22,7 @@ use Broadway\Domain\DateTime;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
+use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -249,6 +250,20 @@ final class SensitiveDataMessageStreamTest extends TestCase
         ];
 
         $this->apply($sensitiveDataMessages, $domainMessages);
+    }
+
+    /**
+     * @test
+     * @group sensitive-data
+     */
+    public function it_can_forget_all_sensitive_data()
+    {
+        $sensitiveDataMessageStream = new SensitiveDataMessageStream([
+            m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage')
+                ->shouldReceive('forget')->once()
+                ->getMock(),
+        ]);
+        $sensitiveDataMessageStream->forget();
     }
 
     private function apply(array $sensitiveDataMessages, array $domainMessages)

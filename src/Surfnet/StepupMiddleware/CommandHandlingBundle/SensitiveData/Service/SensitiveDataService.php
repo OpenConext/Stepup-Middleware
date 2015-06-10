@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 
-final class SensitiveDataService
+class SensitiveDataService
 {
     /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository

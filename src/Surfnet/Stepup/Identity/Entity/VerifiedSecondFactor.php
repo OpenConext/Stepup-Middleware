@@ -22,6 +22,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -181,6 +182,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
             $this->type,
             $this->secondFactorIdentifier
         );
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+
+        $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
     protected function getType()

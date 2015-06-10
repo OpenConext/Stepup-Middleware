@@ -225,6 +225,11 @@ interface Identity extends AggregateRoot
     public function expressPreferredLocale(Locale $preferredLocale);
 
     /**
+     * @return void
+     */
+    public function forget();
+
+    /**
      * @return IdentityId
      */
     public function getId();

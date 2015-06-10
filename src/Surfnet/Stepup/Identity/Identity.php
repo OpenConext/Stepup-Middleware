@@ -37,6 +37,7 @@ use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
@@ -124,6 +125,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var Locale
      */
     private $preferredLocale;
+
+    /**
+     * @var boolean
+     */
+    private $forgotten;
 
     public static function create(
         IdentityId $id,
@@ -507,6 +513,15 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new LocalePreferenceExpressedEvent($this->id, $this->institution, $preferredLocale));
     }
 
+    public function forget()
+    {
+        if ($this->forgotten) {
+            return;
+        }
+
+        $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
@@ -515,6 +530,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->commonName              = $event->commonName;
         $this->email                   = $event->email;
         $this->preferredLocale         = $event->preferredLocale;
+        $this->forgotten               = false;
 
         $this->unverifiedSecondFactors = new SecondFactorCollection();
         $this->verifiedSecondFactors   = new SecondFactorCollection();
@@ -674,6 +690,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
     {
         $this->preferredLocale = $event->preferredLocale;
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->commonName = CommonName::unknown();
+        $this->email      = Email::unknown();
+        $this->forgotten  = true;
     }
 
     public function getAggregateRootId()

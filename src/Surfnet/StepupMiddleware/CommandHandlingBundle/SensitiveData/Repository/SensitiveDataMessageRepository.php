@@ -64,15 +64,16 @@ final class SensitiveDataMessageRepository
     }
 
     /**
-     * @param SensitiveDataMessage[] $sensitiveDataMessages
+     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function append(array $sensitiveDataMessages)
+    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream)
     {
         $this->connection->beginTransaction();
 
         try {
-            foreach ($sensitiveDataMessages as $sensitiveDataMessage) {
+            foreach ($sensitiveDataMessageStream as $sensitiveDataMessage) {
+                /** @var SensitiveDataMessage $sensitiveDataMessage */
                 $this->connection->insert('event_stream_sensitive_data', [
                     'identity_id'    => (string) $sensitiveDataMessage->getIdentityId(),
                     'playhead'       => $sensitiveDataMessage->getPlayhead(),
@@ -82,7 +83,7 @@ final class SensitiveDataMessageRepository
             $this->connection->commit();
         } catch (CoreException $e) {
             $this->connection->rollBack();
-            throw new RuntimeException('An exception occurred while saving sensitive data', 0, $e);
+            throw new RuntimeException('An exception occurred while appending sensitive data', 0, $e);
         }
     }
 }

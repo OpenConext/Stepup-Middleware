@@ -20,12 +20,17 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class PhoneNumber
+final class PhoneNumber implements SecondFactorIdentifier
 {
     /**
      * @var string
      */
     private $phoneNumber;
+
+    public static function unknown()
+    {
+        return new self('+0 (0) 000000000');
+    }
 
     public function __construct($phoneNumber)
     {
@@ -44,24 +49,22 @@ class PhoneNumber
         $this->phoneNumber = $phoneNumber;
     }
 
-    /**
-     * @return string
-     */
-    public function getPhoneNumber()
+    public function getValue()
     {
         return $this->phoneNumber;
     }
 
-    /**
-     * @param PhoneNumber $other
-     * @return bool
-     */
-    public function equals(PhoneNumber $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        return $this->phoneNumber === $other->phoneNumber;
+        return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }
 
     public function __toString()
+    {
+        return $this->phoneNumber;
+    }
+
+    public function jsonSerialize()
     {
         return $this->phoneNumber;
     }

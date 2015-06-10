@@ -20,8 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 
 class RaSecondFactorRepository extends EntityRepository
 {

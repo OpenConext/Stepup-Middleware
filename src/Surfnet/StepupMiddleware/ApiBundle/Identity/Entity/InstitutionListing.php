@@ -31,7 +31,7 @@ class InstitutionListing implements JsonSerializable
      * @ORM\Id
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
@@ -45,6 +45,6 @@ class InstitutionListing implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return ['name' => (string) $this->institution];
+        return ['name' => $this->institution];
     }
 }

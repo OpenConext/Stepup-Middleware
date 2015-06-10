@@ -24,7 +24,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 /**
  * The natural identifier of an Identity is the SAML Name ID.
  */
-class NameId implements JsonSerializable
+final class NameId implements JsonSerializable
 {
     /**
      * @var string
@@ -52,6 +52,6 @@ class NameId implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->value;
     }
 }

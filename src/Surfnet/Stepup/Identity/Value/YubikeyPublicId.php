@@ -20,26 +20,28 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class YubikeyPublicId
+final class YubikeyPublicId implements SecondFactorIdentifier
 {
     /**
      * @var string
      */
     private $value;
 
+    public static function unknown()
+    {
+        return new self('—');
+    }
+
     public function __construct($value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        if (!is_string($value) || empty($value)) {
+            throw InvalidArgumentException::invalidType('non-empty string', 'value', $value);
         }
 
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getYubikeyPublicId()
+    public function getValue()
     {
         return $this->value;
     }
@@ -49,8 +51,13 @@ class YubikeyPublicId
         return $this->value;
     }
 
-    public function equals(YubikeyPublicId $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        return $this->value === $other->value;
+        return $other instanceof self && $this->value === $other->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }

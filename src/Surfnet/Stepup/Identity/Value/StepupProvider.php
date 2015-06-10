@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class StepupProvider
+final class StepupProvider
 {
     /**
      * @var string

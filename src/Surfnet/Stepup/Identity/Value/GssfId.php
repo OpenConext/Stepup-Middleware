@@ -19,28 +19,29 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\Identity\Api\Id;
 
-class GssfId implements Id
+final class GssfId implements SecondFactorIdentifier
 {
     /**
      * @var string
      */
     private $gssfId;
 
+    public static function unknown()
+    {
+        return new self('—');
+    }
+
     public function __construct($gssfId)
     {
-        if (!is_string($gssfId) || strlen(trim($gssfId)) === 0) {
+        if (!is_string($gssfId) || trim($gssfId) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'gssfId', $gssfId);
         }
 
-        $this->gssfId = $gssfId;
+        $this->gssfId = trim($gssfId);
     }
 
-    /**
-     * @return string
-     */
-    public function getGssfId()
+    public function getValue()
     {
         return $this->gssfId;
     }
@@ -50,12 +51,13 @@ class GssfId implements Id
         return $this->gssfId;
     }
 
-    public function equals(Id $other)
+    public function equals(SecondFactorIdentifier $other)
     {
-        if (!$other instanceof GssfId) {
-            return false;
-        }
+        return $other instanceof self && $this->gssfId === $other->gssfId;
+    }
 
-        return $this->gssfId === $other->gssfId;
+    public function jsonSerialize()
+    {
+        return $this->gssfId;
     }
 }

@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
@@ -31,12 +33,12 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     private $identityId;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     private $institution;
 
     /**
-     * @var string|\Surfnet\Stepup\IdentifyingData\Value\CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     private $commonName;
 
@@ -153,7 +155,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return Institution
      */
     public function getInstitution()
     {
@@ -161,7 +163,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return CommonName
      */
     public function getCommonName()
     {

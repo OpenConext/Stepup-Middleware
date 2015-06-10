@@ -22,7 +22,6 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
@@ -32,7 +31,9 @@ use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -63,7 +64,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new RegistrationAuthorityCommandHandler(
-            new IdentityRepository($eventStore, $eventBus, $aggregateFactory)
+            new IdentityRepository(
+                new IdentityIdEnforcingEventStoreDecorator($eventStore),
+                $eventBus,
+                $aggregateFactory
+            )
         );
     }
 
@@ -86,7 +91,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('A Different Institution than the Command holds');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -97,15 +103,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 )
@@ -132,7 +140,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -141,8 +150,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
             ])
             ->when($command);
@@ -168,7 +178,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -180,15 +191,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
@@ -224,7 +237,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -236,15 +250,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     )
@@ -270,7 +286,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -282,15 +299,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     )
@@ -326,7 +345,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -338,15 +358,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     )
@@ -382,7 +404,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -394,15 +417,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
@@ -447,7 +472,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -459,15 +485,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
@@ -496,7 +524,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -505,8 +534,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
             ])
             ->when($command);
@@ -531,7 +561,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -543,15 +574,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
@@ -577,7 +610,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -589,15 +623,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $identityId,
                         $institution,
                         $nameId,
-                        new Locale('en_GB'),
-                        $identifyingDataId
+                        $commonName,
+                        $email,
+                        new Locale('en_GB')
                     ),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
                         $institution,
+                        $commonName,
+                        $email,
                         new Locale('en_GB'),
-                        $identifyingDataId,
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
@@ -635,7 +671,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -646,15 +683,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
@@ -688,7 +727,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -699,15 +739,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
@@ -729,7 +771,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -740,15 +783,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
@@ -785,7 +830,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -796,15 +842,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
@@ -843,7 +891,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -854,15 +903,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 )
@@ -885,7 +936,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -896,15 +948,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 )
@@ -920,7 +974,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
         $nameId               = new NameId(md5('someNameId'));
-        $identifyingDataId    = IdentifyingDataId::fromIdentityId($identityId);
+        $email                = new Email('info@domain.invalid');
+        $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
 
@@ -931,15 +986,17 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $identityId,
                     $institution,
                     $nameId,
-                    new Locale('en_GB'),
-                    $identifyingDataId
+                    $commonName,
+                    $email,
+                    new Locale('en_GB')
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
                     $institution,
+                    $commonName,
+                    $email,
                     new Locale('en_GB'),
-                    $identifyingDataId,
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
@@ -957,8 +1014,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 new RegistrationAuthorityRetractedEvent(
                     $identityId,
                     $institution,
-                    $identifyingDataId,
-                    $nameId
+                    $nameId,
+                    $commonName,
+                    $email
                 )
             ]);
     }

@@ -22,10 +22,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
@@ -49,37 +50,37 @@ class Identity implements JsonSerializable
     public $id;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_name_id")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
      * @ORM\Column(type="stepup_common_name")
      *
-     * @var CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $commonName;
 
     /**
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
      * @ORM\Column(type="stepup_email")
      *
-     * @var Email
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
 
     /**
      * @ORM\Column(type="stepup_locale")
      *
-     * @var Locale
+     * @var \Surfnet\Stepup\Identity\Value\Locale
      */
     public $preferredLocale;
 
@@ -113,17 +114,13 @@ class Identity implements JsonSerializable
     public static function create(
         $id,
         Institution $institution,
-        $nameId,
+        NameId $nameId,
         Email $email,
         CommonName $commonName,
         Locale $preferredLocale
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
-        if (!is_string($nameId)) {
-            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
         $identity = new self();
@@ -146,7 +143,7 @@ class Identity implements JsonSerializable
         return [
             'id'                        => $this->id,
             'name_id'                   => $this->nameId,
-            'institution'               => (string) $this->institution,
+            'institution'               => $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
             'preferred_locale'          => $this->preferredLocale,

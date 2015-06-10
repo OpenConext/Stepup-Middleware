@@ -7,6 +7,7 @@ services:
             - @surfnet_stepup.event_store.simple_serializer
             - @surfnet_stepup.event_store.simple_serializer
             - 'event_stream'
+            - 'event_stream_sensitive_data'
 
     middleware.event_replay.event_stream_replayer:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer

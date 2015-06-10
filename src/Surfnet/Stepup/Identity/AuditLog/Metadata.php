@@ -41,7 +41,7 @@ final class Metadata
     public $secondFactorType;
 
     /**
-     * @var string|null
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier|null
      */
     public $secondFactorIdentifier;
 }

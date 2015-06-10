@@ -19,15 +19,20 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class EmailVerifiedEvent extends IdentityEvent
+class EmailVerifiedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
@@ -40,7 +45,7 @@ class EmailVerifiedEvent extends IdentityEvent
     public $secondFactorType;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
@@ -50,17 +55,22 @@ class EmailVerifiedEvent extends IdentityEvent
     public $registrationRequestedAt;
 
     /**
-     * @var \Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId
-     */
-    public $identifyingDataId;
-
-    /**
      * @var string
      */
     public $registrationCode;
 
     /**
-     * @var Locale Eg. "en_GB"
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -69,21 +79,25 @@ class EmailVerifiedEvent extends IdentityEvent
      * @param Institution       $identityInstitution
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
-     * @param string            $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @param DateTime          $registrationRequestedAt
-     * @param IdentifyingDataId $identifyingDataId
      * @param string            $registrationCode
+     * @param CommonName        $commonName
+     * @param Email             $email
      * @param Locale            $preferredLocale
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        $secondFactorIdentifier,
+        SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
-        IdentifyingDataId $identifyingDataId,
         $registrationCode,
+        CommonName $commonName,
+        Email $email,
         Locale $preferredLocale
     ) {
         parent::__construct($identityId, $identityInstitution);
@@ -92,8 +106,9 @@ class EmailVerifiedEvent extends IdentityEvent
         $this->secondFactorType        = $secondFactorType;
         $this->secondFactorIdentifier  = $secondFactorIdentifier;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->identifyingDataId       = $identifyingDataId;
         $this->registrationCode        = $registrationCode;
+        $this->commonName              = $commonName;
+        $this->email                   = $email;
         $this->preferredLocale         = $preferredLocale;
     }
 
@@ -111,15 +126,18 @@ class EmailVerifiedEvent extends IdentityEvent
 
     public static function deserialize(array $data)
     {
+        $secondFactorType = new SecondFactorType($data['second_factor_type']);
+
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type']),
-            $data['second_factor_identifier'],
+            $secondFactorType,
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
             DateTime::fromString($data['registration_requested_at']),
-            new IdentifyingDataId($data['identifying_data_id']),
             $data['registration_code'],
+            CommonName::unknown(),
+            Email::unknown(),
             new Locale($data['preferred_locale'])
         );
     }
@@ -131,11 +149,24 @@ class EmailVerifiedEvent extends IdentityEvent
             'identity_institution'      => (string) $this->identityInstitution,
             'second_factor_id'          => (string) $this->secondFactorId,
             'second_factor_type'        => (string) $this->secondFactorType,
-            'second_factor_identifier'  => $this->secondFactorIdentifier,
             'registration_requested_at' => (string) $this->registrationRequestedAt,
-            'identifying_data_id'       => (string) $this->identifyingDataId,
             'registration_code'         => $this->registrationCode,
             'preferred_locale'          => (string) $this->preferredLocale,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }
 }

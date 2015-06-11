@@ -64,10 +64,10 @@ final class RightToBeForgottenCommandHandler extends CommandHandler
         SensitiveDataService $sensitiveDataService,
         SraaRepository $sraaRepository
     ) {
-        $this->repository = $repository;
+        $this->repository            = $repository;
         $this->apiIdentityRepository = $apiIdentityRepository;
-        $this->sensitiveDataService = $sensitiveDataService;
-        $this->sraaRepository          = $sraaRepository;
+        $this->sensitiveDataService  = $sensitiveDataService;
+        $this->sraaRepository        = $sraaRepository;
     }
 
     public function handleForgetIdentityCommand(ForgetIdentityCommand $command)

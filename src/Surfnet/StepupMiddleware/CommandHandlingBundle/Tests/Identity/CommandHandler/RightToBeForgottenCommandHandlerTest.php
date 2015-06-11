@@ -140,8 +140,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group sensitive-data
+     * @expectedException Surfnet\Stepup\Exception\DomainException
+     * @expectedExceptionMessage Operation on this Identity is not allowed: it has been forgotten
      */
-    public function an_identitys_sensitive_data_can_be_forgotten_twice_but_the_identity_domain_ignores_it()
+    public function an_identity_may_not_be_forgotten_twice()
     {
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
@@ -190,8 +192,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                 ),
                 new IdentityForgottenEvent($identityId, $institution),
             ])
-            ->when($command)
-            ->then([]);
+            ->when($command);
     }
 
     /**

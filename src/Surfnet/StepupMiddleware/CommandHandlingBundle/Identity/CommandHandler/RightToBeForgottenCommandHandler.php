@@ -25,6 +25,8 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
@@ -46,24 +48,38 @@ final class RightToBeForgottenCommandHandler extends CommandHandler
     private $sensitiveDataService;
 
     /**
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
+     */
+    private $sraaRepository;
+
+    /**
      * @param IdentityRepository    $repository
      * @param ApiIdentityRepository $apiIdentityRepository
      * @param SensitiveDataService  $sensitiveDataService
+     * @param SraaRepository           $sraaRepository
      */
     public function __construct(
         IdentityRepository $repository,
         ApiIdentityRepository $apiIdentityRepository,
-        SensitiveDataService $sensitiveDataService
+        SensitiveDataService $sensitiveDataService,
+        SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
         $this->apiIdentityRepository = $apiIdentityRepository;
         $this->sensitiveDataService = $sensitiveDataService;
+        $this->sraaRepository          = $sraaRepository;
     }
 
     public function handleForgetIdentityCommand(ForgetIdentityCommand $command)
     {
+        $nameId = new NameId($command->nameId);
+
+        if ($this->sraaRepository->contains($nameId)) {
+            throw new RuntimeException('Cannot forget an identity that is currently accredited as an SRAA');
+        }
+
         $apiIdentity = $this->apiIdentityRepository->findOneByNameIdAndInstitution(
-            new NameId($command->nameId),
+            $nameId,
             new Institution($command->institution)
         );
         $identityId = new IdentityId($apiIdentity->id);

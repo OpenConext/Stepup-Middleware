@@ -24,5 +24,6 @@ services:
                 - @surfnet_stepup.repository.identity
                 - @surfnet_stepup_middleware_api.repository.identity
                 - @surfnet_stepup_middleware_command_handling.service.sensitive_data
+                - @surfnet_stepup_middleware_api.repository.sraa
             tags: [{ name: command_bus.command_handler }]
 

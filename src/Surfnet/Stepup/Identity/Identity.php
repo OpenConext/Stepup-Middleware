@@ -519,6 +519,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             return;
         }
 
+        if ($this->registrationAuthority) {
+            throw new DomainException('Cannot forget an identity that is currently accredited as an RA(A)');
+        }
+
         $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
     }
 

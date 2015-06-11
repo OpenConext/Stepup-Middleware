@@ -18,13 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
 class SraaService
 {
     /**
-     * @var SraaRepository
+     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
      */
     private $sraaRepository;
 
@@ -34,15 +35,20 @@ class SraaService
     }
 
     /**
-     * @param string $nameId
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa
+     * @param NameId $nameId
+     * @return Sraa|null
      */
-    public function findByNameId($nameId)
+    public function findByNameId(NameId $nameId)
     {
-        if (!is_string($nameId)) {
-            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
-        }
+        return $this->sraaRepository->findByNameId($nameId);
+    }
 
-        return $this->sraaRepository->find($nameId);
+    /**
+     * @param NameId $nameId
+     * @return bool
+     */
+    public function contains(NameId $nameId)
+    {
+        return $this->sraaRepository->contains($nameId);
     }
 }

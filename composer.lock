@@ -2205,12 +2205,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082"
+                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/7b45911a83a8eaa114fab195d45b23dc66229082",
-                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/2f060a9588fe61ff68f26d9aefb98b2056775d8f",
+                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f",
                 "shasum": ""
             },
             "require": {
@@ -2247,7 +2247,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-08 12:46:51"
+            "time": "2015-06-11 15:29:59"
         },
         {
             "name": "swiftmailer/swiftmailer",

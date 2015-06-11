@@ -36,13 +36,13 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\SensitiveDataCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 /**
  * @runTestsInSeparateProcesses
  */
-class SensitiveDataCommandHandlerTest extends CommandHandlerTest
+class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
 {
     /** @var MockInterface */
     private $apiIdentityRepository;
@@ -57,7 +57,7 @@ class SensitiveDataCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository');
         $this->sensitiveDataService = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService');
 
-        return new SensitiveDataCommandHandler(
+        return new RightToBeForgottenCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,

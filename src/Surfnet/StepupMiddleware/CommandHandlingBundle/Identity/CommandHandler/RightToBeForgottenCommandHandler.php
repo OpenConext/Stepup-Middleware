@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
-final class SensitiveDataCommandHandler extends CommandHandler
+final class RightToBeForgottenCommandHandler extends CommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository

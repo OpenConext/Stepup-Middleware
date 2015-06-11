@@ -57,16 +57,12 @@ class VettedSecondFactorRepository extends EntityRepository
 
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $secondFactors = $this->createQueryBuilder('sf')
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'sf')
             ->where('sf.identity = :identityId')
-            ->setParameter('identityId', $identityId->getIdentityId());
-        $entityManager = $this->getEntityManager();
-
-        foreach ($secondFactors as $secondFactor) {
-            $entityManager->remove($secondFactor);
-        }
-
-        $entityManager->flush();
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 
     /**

@@ -106,16 +106,12 @@ class RaSecondFactorRepository extends EntityRepository
      */
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-
-        $queryBuilder
+        $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'rasf')
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
-
-        $this->getEntityManager()->flush();
     }
 
     public function save(RaSecondFactor $secondFactor)

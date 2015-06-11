@@ -102,16 +102,12 @@ class AuditLogRepository extends EntityRepository
      */
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-
-        $queryBuilder
+        $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'al')
             ->where('al.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
-
-        $this->getEntityManager()->flush();
     }
 
     /**

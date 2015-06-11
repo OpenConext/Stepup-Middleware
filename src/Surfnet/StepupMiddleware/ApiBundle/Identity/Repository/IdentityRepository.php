@@ -115,14 +115,11 @@ class IdentityRepository extends EntityRepository
 
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $identity = $this->find($identityId->getIdentityId());
-
-        if (!$identity) {
-            return;
-        }
-
-        $entityManager = $this->getEntityManager();
-        $entityManager->remove($identity);
-        $entityManager->flush($identity);
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'i')
+            ->where('i.id = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 }

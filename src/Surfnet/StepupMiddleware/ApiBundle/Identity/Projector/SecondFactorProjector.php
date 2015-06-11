@@ -161,35 +161,35 @@ class SecondFactorProjector extends Projector
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
     {
-        $this->unverifiedRepository->remove($this->unverifiedRepository->find((string) $event->secondFactorId));
+        $this->unverifiedRepository->remove($this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event
     ) {
-        $this->unverifiedRepository->remove($this->unverifiedRepository->find((string) $event->secondFactorId));
+        $this->unverifiedRepository->remove($this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
     {
-        $this->verifiedRepository->remove($this->verifiedRepository->find((string) $event->secondFactorId));
+        $this->verifiedRepository->remove($this->verifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event
     ) {
-        $this->verifiedRepository->remove($this->verifiedRepository->find((string) $event->secondFactorId));
+        $this->verifiedRepository->remove($this->verifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
     {
-        $this->vettedRepository->remove($this->vettedRepository->find((string) $event->secondFactorId));
+        $this->vettedRepository->remove($this->vettedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
-        $this->vettedRepository->remove($this->vettedRepository->find((string) $event->secondFactorId));
+        $this->vettedRepository->remove($this->vettedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

@@ -38,6 +38,6 @@ class SensitiveDataService
         $sensitiveDataMessageStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
         $sensitiveDataMessageStream->forget();
 
-        $this->sensitiveDataMessageRepository->update($sensitiveDataMessageStream);
+        $this->sensitiveDataMessageRepository->modify($sensitiveDataMessageStream);
     }
 }

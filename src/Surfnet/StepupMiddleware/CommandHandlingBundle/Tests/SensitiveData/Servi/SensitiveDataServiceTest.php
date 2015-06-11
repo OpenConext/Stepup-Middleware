@@ -37,7 +37,7 @@ final class SensitiveDataServiceTest extends TestCase
         $sensitiveDataMessageStream->shouldReceive('forget')->once();
         $sensitiveDataMessageRepository = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository');
         $sensitiveDataMessageRepository->shouldReceive('findByIdentityId')->with($identityId)->once()->andReturn($sensitiveDataMessageStream);
-        $sensitiveDataMessageRepository->shouldReceive('update')->with($sensitiveDataMessageStream);
+        $sensitiveDataMessageRepository->shouldReceive('modify')->with($sensitiveDataMessageStream);
 
         $service = new SensitiveDataService($sensitiveDataMessageRepository);
         $service->forgetSensitiveData($identityId);

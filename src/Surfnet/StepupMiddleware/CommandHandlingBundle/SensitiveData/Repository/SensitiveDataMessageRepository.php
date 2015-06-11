@@ -92,7 +92,7 @@ class SensitiveDataMessageRepository
      * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function update(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream)
     {
         $this->connection->beginTransaction();
 

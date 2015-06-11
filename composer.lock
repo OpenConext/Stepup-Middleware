@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "54f44bf0e8e23d887672b73e8cea331f",
+    "hash": "cf63fc4a7425378776c0a7bc2dd67937",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2201,7 +2201,7 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-feature/transparent-pii-management",
+            "version": "dev-maintenance/expose-sft",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
@@ -2222,8 +2222,10 @@
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "~2",
                 "symfony/dependency-injection": "~2",
-                "symfony/form": "~2",
+                "symfony/form": "^2.7",
+                "symfony/framework-bundle": "~2",
                 "symfony/http-kernel": "~2",
+                "symfony/twig-bridge": "~2",
                 "symfony/validator": "~2"
             },
             "require-dev": {

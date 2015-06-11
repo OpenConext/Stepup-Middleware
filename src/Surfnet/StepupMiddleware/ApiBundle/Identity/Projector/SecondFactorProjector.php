@@ -33,6 +33,7 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
@@ -79,79 +80,82 @@ class SecondFactorProjector extends Projector
 
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $secondFactor = new VettedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->type = 'yubikey';
+        $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
 
-        $this->vettedRepository->save(
-            VettedSecondFactor::addToIdentity(
-                $identity,
-                (string) $event->secondFactorId,
-                'yubikey',
-                (string) $event->yubikeyPublicId
-            )
-        );
+        $this->vettedRepository->save($secondFactor);
     }
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $secondFactor = new UnverifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->type = 'yubikey';
+        $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
+        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
-        $this->unverifiedRepository->save(
-            UnverifiedSecondFactor::addToIdentity(
-                $identity,
-                (string) $event->secondFactorId,
-                'yubikey',
-                (string) $event->yubikeyPublicId,
-                $event->emailVerificationNonce,
-                $event->emailVerificationWindow->openUntil()
-            )
-        );
+        $this->unverifiedRepository->save($secondFactor);
     }
 
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $secondFactor = new UnverifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->type = 'sms';
+        $secondFactor->secondFactorIdentifier = $event->phoneNumber->getValue();
+        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
-        $this->unverifiedRepository->save(
-            UnverifiedSecondFactor::addToIdentity(
-                $identity,
-                (string) $event->secondFactorId,
-                'sms',
-                (string) $event->phoneNumber,
-                $event->emailVerificationNonce,
-                $event->emailVerificationWindow->openUntil()
-            )
-        );
+        $this->unverifiedRepository->save($secondFactor);
     }
 
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $secondFactor = new UnverifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->type = $event->stepupProvider->getStepupProvider();
+        $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
+        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
-        $this->unverifiedRepository->save(
-            UnverifiedSecondFactor::addToIdentity(
-                $identity,
-                (string) $event->secondFactorId,
-                (string) $event->stepupProvider,
-                (string) $event->gssfId,
-                $event->emailVerificationNonce,
-                $event->emailVerificationWindow->openUntil()
-            )
-        );
+        $this->unverifiedRepository->save($secondFactor);
     }
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $unverified = $this->unverifiedRepository->find((string) $event->secondFactorId);
+        $unverified = $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
-        $this->verifiedRepository->save($unverified->verifyEmail($event->registrationCode));
+        $verified = new VerifiedSecondFactor();
+        $verified->id = $event->secondFactorId->getSecondFactorId();
+        $verified->identityId = $event->identityId->getIdentityId();
+        $verified->institution = $event->identityInstitution->getInstitution();
+        $verified->commonName = $event->commonName->getCommonName();
+        $verified->type = $event->secondFactorType->getSecondFactorType();
+        $verified->secondFactorIdentifier = $unverified->secondFactorIdentifier;
+        $verified->registrationCode = $event->registrationCode;
+
+        $this->verifiedRepository->save($verified);
         $this->unverifiedRepository->remove($unverified);
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $verified = $this->verifiedRepository->find((string) $event->secondFactorId);
+        $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
-        $this->vettedRepository->save($verified->vet());
+        $vetted = new VettedSecondFactor();
+        $vetted->id = $event->secondFactorId->getSecondFactorId();
+        $vetted->identityId = $event->identityId->getIdentityId();
+        $vetted->type = $event->secondFactorType->getSecondFactorType();
+        $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+
+        $this->vettedRepository->save($vetted);
         $this->verifiedRepository->remove($verified);
     }
 

@@ -48,7 +48,7 @@ class UnverifiedSecondFactorRepository extends EntityRepository
 
         if ($query->identityId) {
             $queryBuilder
-                ->andWhere('sf.identity = :identityId')
+                ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string) $query->identityId);
         }
 
@@ -64,7 +64,7 @@ class UnverifiedSecondFactorRepository extends EntityRepository
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'sf')
-            ->where('sf.identity = :identityId')
+            ->where('sf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();

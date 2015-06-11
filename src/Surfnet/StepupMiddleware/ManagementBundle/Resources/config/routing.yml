@@ -6,6 +6,6 @@ management_configuration_update:
 
 management_forget_identity:
     path:     /forget-identity
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:SensitiveData:forgetIdentity }
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:RightToBeForgotten:forgetIdentity }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

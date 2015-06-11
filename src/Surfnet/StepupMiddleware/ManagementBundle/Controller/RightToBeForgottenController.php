@@ -28,7 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class SensitiveDataController extends Controller
+class RightToBeForgottenController extends Controller
 {
     public function forgetIdentityAction(Request $request)
     {

@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Exception\BadApiRequestException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class RightToBeForgottenController extends Controller
 {
@@ -35,11 +36,11 @@ class RightToBeForgottenController extends Controller
         $payload = GuzzleHttp\json_decode($request->getContent(), true);
 
         if (!isset($payload['name_id'])) {
-            throw new BadApiRequestException('Please specify a NameID in the property "name_id"');
+            throw new BadRequestHttpException('Please specify a NameID in the property "name_id"');
         }
 
         if (!isset($payload['institution'])) {
-            throw new BadApiRequestException('Please specify an institution in the property "institution"');
+            throw new BadRequestHttpException('Please specify an institution in the property "institution"');
         }
 
         $command = new ForgetIdentityCommand();

@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 
@@ -57,6 +58,20 @@ class UnverifiedSecondFactorRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $secondFactors = $this->createQueryBuilder('sf')
+            ->where('sf.identity = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId());
+        $entityManager = $this->getEntityManager();
+
+        foreach ($secondFactors as $secondFactor) {
+            $entityManager->remove($secondFactor);
+        }
+
+        $entityManager->flush();
     }
 
     /**

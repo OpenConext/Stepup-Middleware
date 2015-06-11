@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEven
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -185,5 +186,12 @@ class SecondFactorProjector extends Projector
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->vettedRepository->remove($this->vettedRepository->find((string) $event->secondFactorId));
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->unverifiedRepository->removeByIdentityId($event->identityId);
+        $this->verifiedRepository->removeByIdentityId($event->identityId);
+        $this->vettedRepository->removeByIdentityId($event->identityId);
     }
 }

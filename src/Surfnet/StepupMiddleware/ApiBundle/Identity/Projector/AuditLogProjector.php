@@ -19,17 +19,19 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\ReadModel\Projector;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
-class AuditLogProjector implements ProjectorInterface
+class AuditLogProjector extends Projector
 {
     /**
      * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
@@ -56,10 +58,19 @@ class AuditLogProjector implements ProjectorInterface
     {
         $event = $domainMessage->getPayload();
 
-        if (!$event instanceof AuditableEvent) {
-            return;
+        if ($event instanceof AuditableEvent) {
+            $this->handleAuditableEvent($event, $domainMessage);
         }
 
+        parent::handle($domainMessage);
+    }
+
+    /**
+     * @param AuditableEvent $event
+     * @param DomainMessage  $domainMessage
+     */
+    private function handleAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
+    {
         $auditLogMetadata = $event->getAuditLogMetadata();
         $metadata = $domainMessage->getMetadata()->serialize();
 
@@ -102,5 +113,16 @@ class AuditLogProjector implements ProjectorInterface
         }
 
         $this->auditLogRepository->save($entry);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $entriesWhereActor = $this->auditLogRepository->findEntriesWhereIdentityIsActorOnly($event->identityId);
+        foreach ($entriesWhereActor as $auditLogEntry) {
+            $auditLogEntry->actorCommonName = CommonName::unknown();
+        }
+
+        $this->auditLogRepository->saveAll($entriesWhereActor);
+        $this->auditLogRepository->removeByIdentityId($event->identityId);
     }
 }

@@ -52,6 +52,18 @@ class SecondFactorRepository extends EntityRepository
         return $this->findBy(['identityId' => (string) $identityId]);
     }
 
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $secondFactors = $this->findByIdentityId($identityId);
+        $entityManager = $this->getEntityManager();
+
+        foreach ($secondFactors as $secondFactor) {
+            $entityManager->remove($secondFactor);
+        }
+
+        $entityManager->flush();
+    }
+
     /**
      * @param SecondFactor $secondFactor
      */

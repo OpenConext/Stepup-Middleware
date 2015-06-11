@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 
@@ -97,6 +98,24 @@ class RaSecondFactorRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @return void
+     */
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+
+        $queryBuilder
+            ->delete($this->_entityName, 'rasf')
+            ->where('rasf.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
+
+        $this->getEntityManager()->flush();
     }
 
     public function save(RaSecondFactor $secondFactor)

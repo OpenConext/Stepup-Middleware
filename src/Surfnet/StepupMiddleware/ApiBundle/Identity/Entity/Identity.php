@@ -87,7 +87,7 @@ class Identity implements JsonSerializable
     /**
      * A list of all second factors, whose e-mails haven't been verified.
      *
-     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist", "remove"})
      *
      * @var Collection|UnverifiedSecondFactor[]
      */
@@ -96,7 +96,7 @@ class Identity implements JsonSerializable
     /**
      * A list of all second factors, whose e-mails have been verified and are awaiting vetting by an RA.
      *
-     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist", "remove"})
      *
      * @var Collection|VerifiedSecondFactor[]
      */
@@ -105,7 +105,7 @@ class Identity implements JsonSerializable
     /**
      * A list of all second factors that, along with their identities, have been vetted by a Registration Authority.
      *
-     * @ORM\OneToMany(targetEntity="VettedSecondFactor", mappedBy="identity", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="VettedSecondFactor", mappedBy="identity", cascade={"persist", "remove"})
      *
      * @var Collection|VettedSecondFactor[]
      */

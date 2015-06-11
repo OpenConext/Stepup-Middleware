@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
-use Broadway\ReadModel\Projector;
+use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
-class AuditLogProjector extends Projector
+class AuditLogProjector implements ProjectorInterface
 {
     /**
      * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
@@ -58,18 +58,19 @@ class AuditLogProjector extends Projector
     {
         $event = $domainMessage->getPayload();
 
-        if ($event instanceof AuditableEvent) {
-            $this->handleAuditableEvent($event, $domainMessage);
+        if ($event instanceof IdentityForgottenEvent) {
+            // Don't insert the IdentityForgottenEvent into the audit log, as we'd remove it immediately afterwards.
+            $this->applyIdentityForgottenEvent($event);
+        } elseif ($event instanceof AuditableEvent) {
+            $this->applyAuditableEvent($event, $domainMessage);
         }
-
-        parent::handle($domainMessage);
     }
 
     /**
      * @param AuditableEvent $event
      * @param DomainMessage  $domainMessage
      */
-    private function handleAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
+    private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
         $metadata = $domainMessage->getMetadata()->serialize();
@@ -115,7 +116,7 @@ class AuditLogProjector extends Projector
         $this->auditLogRepository->save($entry);
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    private function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
         $entriesWhereActor = $this->auditLogRepository->findEntriesWhereIdentityIsActorOnly($event->identityId);
         foreach ($entriesWhereActor as $auditLogEntry) {

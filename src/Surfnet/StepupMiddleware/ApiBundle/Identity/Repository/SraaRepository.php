@@ -93,6 +93,6 @@ class SraaRepository extends EntityRepository
      */
     public function contains(NameId $nameId)
     {
-        return $this->findOneBy(['nameId' => (string) $nameId]) !== null;
+        return $this->findByNameId($nameId) !== null;
     }
 }

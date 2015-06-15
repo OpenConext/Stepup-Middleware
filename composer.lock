@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b35d160513aaf5248479a97d77b5f526",
+    "hash": "abda2db862ec224a88929f74569aae63",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2201,16 +2201,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-develop",
+            "version": "dev-feature/transparent-pii-management",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a"
+                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/f0d4419e8be9a8738809ae35b0e2f4c30ac683df",
-                "reference": "cae60583cbb8907f5f2fa4730091765c59a4204a",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/7b45911a83a8eaa114fab195d45b23dc66229082",
+                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082",
                 "shasum": ""
             },
             "require": {
@@ -2247,7 +2247,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-04-02 12:24:11"
+            "time": "2015-06-08 12:46:51"
         },
         {
             "name": "swiftmailer/swiftmailer",

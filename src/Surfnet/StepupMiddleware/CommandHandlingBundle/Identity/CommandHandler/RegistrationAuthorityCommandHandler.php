@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
@@ -48,7 +49,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
     public function handleAccreditIdentityCommand(AccreditIdentityCommand $command)
     {
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
-        $identity = $this->repository->load($command->identityId);
+        $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $role = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 
@@ -65,7 +66,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
     public function handleAmendRegistrationAuthorityInformationCommand(AmendRegistrationAuthorityInformationCommand $command)
     {
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
-        $identity = $this->repository->load($command->identityId);
+        $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->amendRegistrationAuthorityInformation(
             new Location($command->location),
@@ -78,7 +79,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
     public function handleAppointRoleCommand(AppointRoleCommand $command)
     {
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
-        $identity = $this->repository->load($command->identityId);
+        $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $newRole = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 
@@ -90,7 +91,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
     public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command)
     {
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
-        $identity = $this->repository->load($command->identityId);
+        $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->retractRegistrationAuthority();
 

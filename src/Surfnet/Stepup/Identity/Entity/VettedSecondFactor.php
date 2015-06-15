@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -33,12 +34,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class VettedSecondFactor extends AbstractSecondFactor
 {
     /**
-     * @var Identity
+     * @var \Surfnet\Stepup\Identity\Api\Identity
      */
     private $identity;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     private $id;
 
@@ -48,7 +49,7 @@ class VettedSecondFactor extends AbstractSecondFactor
     private $type;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
@@ -56,14 +57,14 @@ class VettedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorId $id
      * @param Identity $identity
      * @param SecondFactorType $type
-     * @param string $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return VettedSecondFactor
      */
     public static function create(
         SecondFactorId $id,
         Identity $identity,
         SecondFactorType $type,
-        $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier
     ) {
         $secondFactor = new self();
         $secondFactor->id = $id;

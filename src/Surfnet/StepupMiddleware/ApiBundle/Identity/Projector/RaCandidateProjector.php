@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
-use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
@@ -38,17 +37,9 @@ class RaCandidateProjector extends Projector
      */
     private $raCandidateRepository;
 
-    /**
-     * @var IdentifyingDataRepository
-     */
-    private $identifyingDataRepository;
-
-    public function __construct(
-        RaCandidateRepository $raCandidateRepository,
-        IdentifyingDataRepository $identifyingDataRepository
-    ) {
+    public function __construct(RaCandidateRepository $raCandidateRepository)
+    {
         $this->raCandidateRepository = $raCandidateRepository;
-        $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
     /**
@@ -57,14 +48,12 @@ class RaCandidateProjector extends Projector
      */
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,
             $event->nameId,
-            $identifyingData->commonName,
-            $identifyingData->email
+            $event->commonName,
+            $event->email
         );
 
         $this->raCandidateRepository->save($candidate);
@@ -76,14 +65,12 @@ class RaCandidateProjector extends Projector
      */
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,
             $event->nameId,
-            $identifyingData->commonName,
-            $identifyingData->email
+            $event->commonName,
+            $event->email
         );
 
         $this->raCandidateRepository->save($candidate);
@@ -143,14 +130,12 @@ class RaCandidateProjector extends Projector
      */
     public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
     {
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,
             $event->nameId,
-            $identifyingData->commonName,
-            $identifyingData->email
+            $event->commonName,
+            $event->email
         );
 
         $this->raCandidateRepository->save($candidate);

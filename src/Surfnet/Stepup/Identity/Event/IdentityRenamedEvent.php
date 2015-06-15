@@ -19,22 +19,24 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class IdentityRenamedEvent extends IdentityEvent
+class IdentityRenamedEvent extends IdentityEvent implements Forgettable
 {
     /**
-     * @var IdentifyingDataId
+     * @var CommonName
      */
-    public $identifyingDataId;
+    public $commonName;
 
-    public function __construct(IdentityId $id, Institution $institution, IdentifyingDataId $identifyingDataId)
+    public function __construct(IdentityId $id, Institution $institution, CommonName $commonName)
     {
         parent::__construct($id, $institution);
 
-        $this->identifyingDataId = $identifyingDataId;
+        $this->commonName = $commonName;
     }
 
     public function getAuditLogMetadata()
@@ -55,7 +57,7 @@ class IdentityRenamedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new IdentifyingDataId($data['identifying_data_id'])
+            CommonName::unknown()
         );
     }
 
@@ -64,7 +66,17 @@ class IdentityRenamedEvent extends IdentityEvent
         return [
             'id'          => (string) $this->identityId,
             'institution' => (string) $this->identityInstitution,
-            'identifying_data_id' => (string) $this->identifyingDataId
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withCommonName($this->commonName);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

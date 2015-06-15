@@ -24,7 +24,7 @@ use PHPUnit_Framework_TestCase as UnitTest;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
-class CommonNameTypeTest extends UnitTest
+class AuthorityRoleTypeTest extends UnitTest
 {
     /**
      * @var \Doctrine\DBAL\Platforms\MySqlPlatform

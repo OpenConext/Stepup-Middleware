@@ -24,8 +24,11 @@ use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -38,12 +41,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class VerifiedSecondFactor extends AbstractSecondFactor
 {
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     private $id;
 
     /**
-     * @var Identity
+     * @var \Surfnet\Stepup\Identity\Api\Identity
      */
     private $identity;
 
@@ -53,12 +56,12 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     private $type;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
     /**
-     * @var DateTime
+     * @var \Surfnet\Stepup\DateTime\DateTime
      */
     private $registrationRequestedAt;
 
@@ -71,7 +74,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorId $id
      * @param Identity $identity
      * @param SecondFactorType $type
-     * @param string $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @return self
@@ -80,7 +83,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         SecondFactorId $id,
         Identity $identity,
         SecondFactorType $type,
-        $secondFactorIdentifier,
+        SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode
     ) {
@@ -105,13 +108,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     /**
      * @param string $registrationCode
-     * @param string $secondFactorIdentifier
+     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
      */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)
+    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
-            && $secondFactorIdentifier === $this->secondFactorIdentifier;
+            && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
     }
 
     /**
@@ -122,21 +125,19 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         return !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
     }
 
-    /**
-     * @param string $documentNumber
-     */
-    public function vet($documentNumber)
+    public function vet(DocumentNumber $documentNumber)
     {
         $this->apply(
             new SecondFactorVettedEvent(
-                new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getId(),
                 $this->identity->getNameId(),
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->identity->getIdentifyingDataId(),
                 $this->secondFactorIdentifier,
                 $documentNumber,
+                $this->identity->getCommonName(),
+                $this->identity->getEmail(),
                 $this->identity->getPreferredLocale()
             )
         );

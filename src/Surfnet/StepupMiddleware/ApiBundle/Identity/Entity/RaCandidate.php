@@ -20,8 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -50,28 +50,28 @@ class RaCandidate implements JsonSerializable
     /**
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_name_id")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
      * @ORM\Column(type="stepup_common_name")
      *
-     * @var CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $commonName;
 
     /**
      * @ORM\Column(type="stepup_email")
      *
-     * @var Email
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
 
@@ -85,7 +85,7 @@ class RaCandidate implements JsonSerializable
         $candidate              = new self();
         $candidate->identityId  = (string) $identityId;
         $candidate->institution = $institution;
-        $candidate->nameId      = (string) $nameId;
+        $candidate->nameId      = $nameId;
         $candidate->commonName  = $commonName;
         $candidate->email       = $email;
 
@@ -96,7 +96,7 @@ class RaCandidate implements JsonSerializable
     {
         return [
             'identity_id' => $this->identityId,
-            'institution' => (string) $this->institution,
+            'institution' => $this->institution,
             'common_name' => $this->commonName,
             'email'       => $this->email,
             'name_id'     => $this->nameId

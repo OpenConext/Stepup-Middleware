@@ -19,27 +19,24 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class IdentityEmailChangedEvent extends IdentityEvent
+class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable
 {
     /**
-     * @var IdentifyingDataId
+     * @var Email
      */
-    public $identifyingDataId;
+    public $email;
 
-    /**
-     * @var string
-     */
-    public $newEmail;
-
-    public function __construct(IdentityId $identityId, Institution $institution, IdentifyingDataId $identifyingDataId)
+    public function __construct(IdentityId $identityId, Institution $institution, Email $email)
     {
         parent::__construct($identityId, $institution);
 
-        $this->identifyingDataId = $identifyingDataId;
+        $this->email = $email;
     }
 
     public function getAuditLogMetadata()
@@ -60,7 +57,7 @@ class IdentityEmailChangedEvent extends IdentityEvent
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new IdentifyingDataId($data['identifying_data_id'])
+            Email::unknown()
         );
     }
 
@@ -69,7 +66,17 @@ class IdentityEmailChangedEvent extends IdentityEvent
         return [
             'id'          => (string) $this->identityId,
             'institution' => (string) $this->identityInstitution,
-            'identifying_data_id' => (string) $this->identifyingDataId
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withEmail($this->email);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email = $sensitiveData->getEmail();
     }
 }

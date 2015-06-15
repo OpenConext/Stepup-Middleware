@@ -60,6 +60,11 @@ services:
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry ]
 
+    surfnet_stepup_middleware_api.repository.whitelist_entry:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository
+        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
+
     # Domain Services
     surfnet_stepup_middleware_api.service.abstract_search:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
@@ -116,6 +121,11 @@ services:
         parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - @surfnet_stepup_middleware_api.repository.audit_log
+
+    surfnet_stepup_middleware_api.service.whitelist_entry:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.whitelist_entry
 
     # Param Converters
     surfnet_stepup_middleware_api.request.command_param_converter:

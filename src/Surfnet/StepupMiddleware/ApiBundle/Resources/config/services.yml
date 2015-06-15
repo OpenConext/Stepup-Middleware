@@ -10,16 +10,6 @@ services:
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
 
-    surfnet_stepup_middleware_api.repository.ra:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository
-        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra ]
-
-    surfnet_stepup_middleware_api.repository.raa:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository
-        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa ]
-
     surfnet_stepup_middleware_api.repository.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]

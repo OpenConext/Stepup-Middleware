@@ -21,6 +21,8 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use GuzzleHttp;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\ManagementBundle\Exception\BadApiRequestException;
@@ -28,6 +30,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class RightToBeForgottenController extends Controller
 {
@@ -42,6 +45,8 @@ class RightToBeForgottenController extends Controller
         if (!isset($payload['institution'])) {
             throw new BadRequestHttpException('Please specify an institution in the property "institution"');
         }
+
+        $this->assertMayForget(new NameId($payload['name_id']), new Institution($payload['institution']));
 
         $command = new ForgetIdentityCommand();
         $command->UUID        = (string) Uuid::uuid4();
@@ -70,5 +75,39 @@ class RightToBeForgottenController extends Controller
         ]);
 
         return $response;
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
+     * @throws ConflictHttpException
+     */
+    private function assertMayForget(NameId $nameId, Institution $institution)
+    {
+        $identityService = $this->get('surfnet_stepup_middleware_api.service.identity');
+        $credentials =
+            $identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);
+
+        if ($credentials === null) {
+            return;
+        }
+
+        if ($credentials->isSraa()) {
+            throw new ConflictHttpException(
+                'Identity is currently configured to act as an SRAA. ' .
+                'Remove its NameID from the configuration and try again.'
+            );
+        }
+
+        if ($credentials->isRaa()) {
+            $role = 'RAA';
+        } else {
+            $role = 'RA';
+        }
+
+        throw new ConflictHttpException(sprintf(
+            'Identity is currently accredited as an %s. Retract the accreditation and try again.',
+            $role
+        ));
     }
 }

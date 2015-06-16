@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing;
 
+use ArrayIterator;
 use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
+use IteratorAggregate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
-final class SensitiveDataMessageStream
+class SensitiveDataMessageStream implements IteratorAggregate
 {
     /**
      * @var array
@@ -58,6 +60,18 @@ final class SensitiveDataMessageStream
                 count($sensitiveDataMap)
             ));
         }
+    }
+
+    public function forget()
+    {
+        foreach ($this->messages as $message) {
+            $message->forget();
+        }
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->messages);
     }
 
     /**

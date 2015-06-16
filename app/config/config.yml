@@ -162,6 +162,8 @@ surfnet_stepup:
         loa1: %stepup_loa_loa1%
         loa2: %stepup_loa_loa2%
         loa3: %stepup_loa_loa3%
+    sms:
+        enabled: false
 
 surfnet_stepup_middleware_command_handling:
     self_service_email_verification_url_template: %self_service_email_verification_url_template%

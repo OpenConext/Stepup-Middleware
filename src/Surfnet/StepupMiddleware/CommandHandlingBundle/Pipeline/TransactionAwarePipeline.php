@@ -84,17 +84,23 @@ class TransactionAwarePipeline implements Pipeline
         } catch (\Exception $e) {
             // log at highest level if we may have a split head in the db-cluster...
             if (strpos($e->getMessage(), 'ER_UNKNOWN_COM_ERROR')) {
-                $this->logger->emergency(sprintf(
-                    '[!!!] Critical Database Exception while processing command "%s": "%s"',
-                    $command,
-                    $e->getMessage()
-                ));
+                $this->logger->emergency(
+                    sprintf(
+                        '[!!!] Critical Database Exception while processing command "%s": "%s"',
+                        $command,
+                        $e->getMessage()
+                    ),
+                    ['exception' => $e]
+                );
             } else {
-                $this->logger->error(sprintf(
-                    'Exception occurred while processing command "%s": "%s", rolling back transaction',
-                    $command,
-                    $e->getMessage()
-                ));
+                $this->logger->error(
+                    sprintf(
+                        'Exception occurred while processing command "%s": "%s", rolling back transaction',
+                        $command,
+                        $e->getMessage()
+                    ),
+                    ['exception' => $e]
+                );
             }
 
             $this->middlewareConnection->rollBack();

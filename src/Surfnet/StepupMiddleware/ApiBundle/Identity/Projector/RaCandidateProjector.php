@@ -23,6 +23,7 @@ use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -139,5 +140,10 @@ class RaCandidateProjector extends Projector
         );
 
         $this->raCandidateRepository->save($candidate);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->raCandidateRepository->removeByIdentityId($event->identityId);
     }
 }

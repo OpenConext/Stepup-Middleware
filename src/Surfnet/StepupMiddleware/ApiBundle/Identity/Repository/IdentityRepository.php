@@ -19,6 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
@@ -92,5 +95,31 @@ class IdentityRepository extends EntityRepository
             ->setParameter('nameIds', $nameIds)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
+     * @return Identity
+     */
+    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    {
+        return $this->createQueryBuilder('i')
+                ->where('i.nameId = :nameId')
+                ->setParameter('nameId', $nameId->getNameId())
+                ->andWhere('i.institution = :institution')
+                ->setParameter('institution', $institution->getInstitution())
+                ->getQuery()
+                ->getSingleResult();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'i')
+            ->where('i.id = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 }

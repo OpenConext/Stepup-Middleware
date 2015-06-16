@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(
@@ -37,11 +36,11 @@ class VettedSecondFactor implements \JsonSerializable
     public $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="vettedSecondFactors")
+     * @ORM\Column(length=36)
      *
-     * @var Identity
+     * @var string
      */
-    public $identity;
+    public $identityId;
 
     /**
      * @ORM\Column(length=16)
@@ -58,42 +57,6 @@ class VettedSecondFactor implements \JsonSerializable
      * @var string
      */
     public $secondFactorIdentifier;
-
-    /**
-     * @param Identity $identity
-     * @param string $id
-     * @param string $type
-     * @param string $secondFactorIdentifier
-     * @return self
-     */
-    public static function addToIdentity(Identity $identity, $id, $type, $secondFactorIdentifier)
-    {
-        if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
-        if (!is_string($type)) {
-            throw InvalidArgumentException::invalidType('string', 'type', $type);
-        }
-
-        if (!is_string($secondFactorIdentifier)) {
-            throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
-        }
-
-        $secondFactor = new self;
-        $secondFactor->identity = $identity;
-        $secondFactor->id = $id;
-        $secondFactor->type = $type;
-        $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
-
-        $identity->vettedSecondFactors->add($secondFactor);
-
-        return $secondFactor;
-    }
-
-    final private function __construct()
-    {
-    }
 
     public function jsonSerialize()
     {

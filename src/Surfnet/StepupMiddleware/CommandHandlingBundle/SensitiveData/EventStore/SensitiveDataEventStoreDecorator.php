@@ -24,6 +24,7 @@ use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository;
 
@@ -96,6 +97,6 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
             );
         }
 
-        $this->sensitiveDataMessageRepository->append($sensitiveDataMessages);
+        $this->sensitiveDataMessageRepository->append(new SensitiveDataMessageStream($sensitiveDataMessages));
     }
 }

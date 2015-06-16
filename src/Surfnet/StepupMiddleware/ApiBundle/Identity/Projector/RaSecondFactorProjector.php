@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -207,6 +208,11 @@ class RaSecondFactorProjector extends Projector
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->raSecondFactorRepository->removeByIdentityId($event->identityId);
     }
 
     /**

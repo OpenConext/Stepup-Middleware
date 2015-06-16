@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
@@ -31,6 +32,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - Events, events, events!
+ */
 class RaListingProjector extends Projector
 {
     /**
@@ -136,5 +140,10 @@ class RaListingProjector extends Projector
         $raListing = $this->raListingRepository->find($event->identityId);
 
         $this->raListingRepository->remove($raListing);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->raListingRepository->removeByIdentityId($event->identityId);
     }
 }

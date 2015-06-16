@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
@@ -51,16 +52,6 @@ class AuditLogRepository extends EntityRepository
     ];
 
     /**
-     * @param AuditLogEntry $entry
-     */
-    public function save(AuditLogEntry $entry)
-    {
-        $entityManager = $this->getEntityManager();
-        $entityManager->persist($entry);
-        $entityManager->flush();
-    }
-
-    /**
      * @param SecondFactorAuditLogQuery $query
      * @return Query
      */
@@ -89,5 +80,54 @@ class AuditLogRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param IdentityId $actorId
+     * @return AuditLogEntry[]
+     */
+    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId)
+    {
+        return $this->createQueryBuilder('al')
+            ->where('al.actorId = :actorId')
+            ->andWhere('al.identityId != :actorId')
+            ->setParameter('actorId', $actorId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @return void
+     */
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'al')
+            ->where('al.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param AuditLogEntry $entry
+     */
+    public function save(AuditLogEntry $entry)
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entry);
+        $entityManager->flush();
+    }
+
+    public function saveAll(array $entries)
+    {
+        $entityManager = $this->getEntityManager();
+
+        foreach ($entries as $entry) {
+            $entityManager->persist($entry);
+        }
+
+        $entityManager->flush();
     }
 }

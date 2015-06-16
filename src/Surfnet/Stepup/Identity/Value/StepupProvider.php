@@ -36,7 +36,10 @@ final class StepupProvider
         $this->provider = trim($provider);
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function getStepupProvider()
     {
         return $this->provider;
     }
@@ -44,5 +47,10 @@ final class StepupProvider
     public function equals(StepupProvider $other)
     {
         return $this->provider === $other->provider;
+    }
+
+    public function __toString()
+    {
+        return $this->provider;
     }
 }

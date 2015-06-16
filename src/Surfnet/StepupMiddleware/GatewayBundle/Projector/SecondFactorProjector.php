@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -110,5 +111,10 @@ class SecondFactorProjector extends Projector
             $secondFactor->displayLocale = (string) $event->preferredLocale;
             $this->repository->save($secondFactor);
         }
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->repository->removeByIdentityId($event->identityId);
     }
 }

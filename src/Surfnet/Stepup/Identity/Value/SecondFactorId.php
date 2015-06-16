@@ -37,7 +37,10 @@ final class SecondFactorId implements Id
         $this->value = $value;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function getSecondFactorId()
     {
         return $this->value;
     }
@@ -45,5 +48,10 @@ final class SecondFactorId implements Id
     public function equals(Id $other)
     {
         return $this == $other;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
     }
 }

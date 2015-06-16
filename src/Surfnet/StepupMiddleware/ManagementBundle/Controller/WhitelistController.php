@@ -78,7 +78,7 @@ class WhitelistController extends Controller
         $pipeline = $this->get('pipeline');
 
         try {
-            $command = $pipeline->process($command);
+            $pipeline->process($command);
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),
@@ -89,7 +89,6 @@ class WhitelistController extends Controller
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response   = new JsonResponse([
             'status'       => 'OK',
-            'command'      => $command->UUID,
             'processed_by' => $serverName,
             'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
         ]);

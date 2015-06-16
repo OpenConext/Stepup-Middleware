@@ -107,7 +107,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->elements;
+        return ['institutions' => $this->elements];
     }
 
     public static function deserialize(array $data)

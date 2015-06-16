@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Whitelist;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
@@ -49,7 +50,8 @@ class WhitelistCommandHandler extends CommandHandler
     {
         $whitelist = $this->getWhitelist();
 
-        $whitelist->replaceAll(new InstitutionCollection($command->institutions));
+        $institutions = $this->mapArrayToInstitutions($command->institutions);
+        $whitelist->replaceAll(new InstitutionCollection($institutions));
 
         $this->repository->save($whitelist);
     }
@@ -61,7 +63,8 @@ class WhitelistCommandHandler extends CommandHandler
     {
         $whitelist = $this->getWhitelist();
 
-        $whitelist->add(new InstitutionCollection($command->institutionsToBeAdded));
+        $institutions = $this->mapArrayToInstitutions($command->institutionsToBeAdded);
+        $whitelist->add(new InstitutionCollection($institutions));
 
         $this->repository->save($whitelist);
     }
@@ -69,11 +72,12 @@ class WhitelistCommandHandler extends CommandHandler
     /**
      * @param RemoveFromWhitelistCommand $command
      */
-    public function handlerRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command)
+    public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command)
     {
         $whitelist = $this->getWhitelist();
 
-        $whitelist->remove(new InstitutionCollection($command->institutionsToBeRemoved));
+        $institutions = $this->mapArrayToInstitutions($command->institutionsToBeRemoved);
+        $whitelist->remove(new InstitutionCollection($institutions));
 
         $this->repository->save($whitelist);
     }
@@ -88,5 +92,16 @@ class WhitelistCommandHandler extends CommandHandler
         } catch (AggregateNotFoundException $e) {
             return Whitelist::create(new InstitutionCollection());
         }
+    }
+
+    /**
+     * @param array $institutions
+     * @return Institution[]
+     */
+    private function mapArrayToInstitutions(array $institutions)
+    {
+        return array_map(function ($institutionName) {
+            return new Institution($institutionName);
+        }, $institutions);
     }
 }

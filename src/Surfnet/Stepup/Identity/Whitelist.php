@@ -80,7 +80,8 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
         foreach ($institutionCollection as $institution) {
             if (!$this->whitelist->contains($institution)) {
                 throw new DomainException(sprintf(
-                    'Cannot remove institution "%s" as it is not whitelisted'
+                    'Cannot remove institution "%s" as it is not whitelisted',
+                    $institution
                 ));
             }
         }

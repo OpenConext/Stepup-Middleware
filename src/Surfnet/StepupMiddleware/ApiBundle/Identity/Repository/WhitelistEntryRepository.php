@@ -33,12 +33,10 @@ class WhitelistEntryRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('w');
 
-        $result = $qb
+        return $qb
             ->where($qb->expr()->in('w.institution', $institutions))
             ->getQuery()
             ->getResult();
-
-        return new ArrayCollection($result);
     }
 
     /**
@@ -84,8 +82,8 @@ class WhitelistEntryRepository extends EntityRepository
     public function hasEntryFor($institution)
     {
         $count = $this->createQueryBuilder('w')
-            ->select('count(w.institution) as count')
-            ->where('institution = :institution')
+            ->select('COUNT(w.institution)')
+            ->where('w.institution = :institution')
             ->setParameter('institution', $institution)
             ->getQuery()
             ->getSingleScalarResult();

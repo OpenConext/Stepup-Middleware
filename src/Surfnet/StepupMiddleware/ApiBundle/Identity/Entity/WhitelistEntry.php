@@ -23,7 +23,7 @@ use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Repository\WhitelistEntryRepository")
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository")
  */
 class WhitelistEntry implements JsonSerializable
 {
@@ -45,6 +45,6 @@ class WhitelistEntry implements JsonSerializable
 
     public function jsonSerialize()
     {
-
+        return $this->institution;
     }
 }

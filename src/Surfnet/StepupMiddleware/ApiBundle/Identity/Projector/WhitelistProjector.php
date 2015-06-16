@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Projector;
+namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
+use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
@@ -25,7 +26,7 @@ use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository;
 
-class WhitelistProjector
+class WhitelistProjector extends Projector
 {
     /**
      * @var WhitelistEntryRepository

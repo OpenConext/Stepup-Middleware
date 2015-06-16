@@ -19,13 +19,13 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Whitelist as WhitelistApi;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
-use Surfnet\StepupBundle\Exception\DomainException;
 
 final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
 {

@@ -145,7 +145,7 @@ class IdentityService extends AbstractSearchService
             $credentials = RegistrationAuthorityCredentials::fromRaListing($raListing);
 
             if ($sraa) {
-                $credentials->grantSraa();
+                $credentials = $credentials->grantSraa();
             }
 
             return $credentials;

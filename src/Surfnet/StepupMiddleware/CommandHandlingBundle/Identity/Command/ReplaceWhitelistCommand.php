@@ -19,12 +19,17 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ReplaceWhitelistCommand extends AbstractCommand
+class ReplaceWhitelistCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
      * @Assert\Type(type="array")
+     * @Assert\All({
+     *      @Assert\NotBlank,
+     *      @Assert\Type("string")
+     * })
      *
      * @var array
      */

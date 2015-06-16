@@ -123,11 +123,14 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * Grants the SRAA
+     * @return RegistrationAuthorityCredentials
      */
     public function grantSraa()
     {
-        $this->isSraa = true;
+        $copy = clone $this;
+        $copy->isSraa = true;
+
+        return $copy;
     }
 
     /**

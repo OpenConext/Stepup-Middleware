@@ -23,6 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -194,6 +195,13 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
             $registrationRequestedAt,
             $registrationCode
         );
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+
+        $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
     protected function getType()

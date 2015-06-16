@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -72,5 +73,10 @@ class IdentityProjector extends Projector
         $identity->preferredLocale = $event->preferredLocale;
 
         $this->identityRepository->save($identity);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->identityRepository->removeByIdentityId($event->identityId);
     }
 }

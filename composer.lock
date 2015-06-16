@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "abda2db862ec224a88929f74569aae63",
+    "hash": "cf63fc4a7425378776c0a7bc2dd67937",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2201,16 +2201,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-feature/transparent-pii-management",
+            "version": "dev-maintenance/expose-sft",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082"
+                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/7b45911a83a8eaa114fab195d45b23dc66229082",
-                "reference": "7b45911a83a8eaa114fab195d45b23dc66229082",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/2f060a9588fe61ff68f26d9aefb98b2056775d8f",
+                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f",
                 "shasum": ""
             },
             "require": {
@@ -2222,8 +2222,10 @@
                 "sensio/framework-extra-bundle": "~3",
                 "symfony/config": "~2",
                 "symfony/dependency-injection": "~2",
-                "symfony/form": "~2",
+                "symfony/form": "^2.7",
+                "symfony/framework-bundle": "~2",
                 "symfony/http-kernel": "~2",
+                "symfony/twig-bridge": "~2",
                 "symfony/validator": "~2"
             },
             "require-dev": {
@@ -2247,7 +2249,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-08 12:46:51"
+            "time": "2015-06-11 15:29:59"
         },
         {
             "name": "swiftmailer/swiftmailer",

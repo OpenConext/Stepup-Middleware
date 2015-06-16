@@ -40,7 +40,10 @@ final class NameId implements JsonSerializable
         $this->value = $value;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function getNameId()
     {
         return $this->value;
     }
@@ -48,6 +51,11 @@ final class NameId implements JsonSerializable
     public function equals($other)
     {
         return $this == $other;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
     }
 
     public function jsonSerialize()

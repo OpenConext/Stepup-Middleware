@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -84,33 +82,6 @@ class Identity implements JsonSerializable
      */
     public $preferredLocale;
 
-    /**
-     * A list of all second factors, whose e-mails haven't been verified.
-     *
-     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|UnverifiedSecondFactor[]
-     */
-    public $unverifiedSecondFactors;
-
-    /**
-     * A list of all second factors, whose e-mails have been verified and are awaiting vetting by an RA.
-     *
-     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|VerifiedSecondFactor[]
-     */
-    public $verifiedSecondFactors;
-
-    /**
-     * A list of all second factors that, along with their identities, have been vetted by a Registration Authority.
-     *
-     * @ORM\OneToMany(targetEntity="VettedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|VettedSecondFactor[]
-     */
-    public $vettedSecondFactors;
-
     public static function create(
         $id,
         Institution $institution,
@@ -131,9 +102,6 @@ class Identity implements JsonSerializable
         $identity->email = $email;
         $identity->commonName = $commonName;
         $identity->preferredLocale = $preferredLocale;
-        $identity->unverifiedSecondFactors = new ArrayCollection();
-        $identity->verifiedSecondFactors = new ArrayCollection();
-        $identity->vettedSecondFactors = new ArrayCollection();
 
         return $identity;
     }

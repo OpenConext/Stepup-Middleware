@@ -60,3 +60,8 @@ services:
         arguments:
              - @surfnet_stepup.event_store.dbal
              - @surfnet_stepup_middleware_command_handling.repository.sensitive_data_message
+
+    surfnet_stepup_middleware_command_handling.service.sensitive_data:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.repository.sensitive_data_message

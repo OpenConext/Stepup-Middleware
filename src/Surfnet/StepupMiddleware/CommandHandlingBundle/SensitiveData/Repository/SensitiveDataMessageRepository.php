@@ -20,13 +20,14 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repositor
 
 use Doctrine\DBAL\Connection;
 use Exception as CoreException;
+use GuzzleHttp;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-final class SensitiveDataMessageRepository
+class SensitiveDataMessageRepository
 {
     /**
      * @var Connection
@@ -56,7 +57,7 @@ final class SensitiveDataMessageRepository
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
-                SensitiveData::deserialize(json_decode($row['sensitive_data'], true))
+                SensitiveData::deserialize(GuzzleHttp\json_decode($row['sensitive_data'], true))
             );
         }, $rows);
 
@@ -64,25 +65,53 @@ final class SensitiveDataMessageRepository
     }
 
     /**
-     * @param SensitiveDataMessage[] $sensitiveDataMessages
+     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function append(array $sensitiveDataMessages)
+    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream)
     {
         $this->connection->beginTransaction();
 
         try {
-            foreach ($sensitiveDataMessages as $sensitiveDataMessage) {
+            foreach ($sensitiveDataMessageStream as $sensitiveDataMessage) {
+                /** @var SensitiveDataMessage $sensitiveDataMessage */
                 $this->connection->insert('event_stream_sensitive_data', [
                     'identity_id'    => (string) $sensitiveDataMessage->getIdentityId(),
                     'playhead'       => $sensitiveDataMessage->getPlayhead(),
-                    'sensitive_data' => json_encode($sensitiveDataMessage->getSensitiveData()->serialize()),
+                    'sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize()),
                 ]);
             }
             $this->connection->commit();
         } catch (CoreException $e) {
             $this->connection->rollBack();
-            throw new RuntimeException('An exception occurred while saving sensitive data', 0, $e);
+            throw new RuntimeException('An exception occurred while appending sensitive data', 0, $e);
+        }
+    }
+
+    /**
+     * @param SensitiveDataMessageStream $sensitiveDataMessageStream
+     * @return void
+     */
+    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    {
+        $this->connection->beginTransaction();
+
+        try {
+            foreach ($sensitiveDataMessageStream as $sensitiveDataMessage) {
+                /** @var SensitiveDataMessage $sensitiveDataMessage */
+                $this->connection->update(
+                    'event_stream_sensitive_data',
+                    ['sensitive_data' => json_encode((object) $sensitiveDataMessage->getSensitiveData()->serialize())],
+                    [
+                        'identity_id' => (string) $sensitiveDataMessage->getIdentityId(),
+                        'playhead'    => $sensitiveDataMessage->getPlayhead(),
+                    ]
+                );
+            }
+            $this->connection->commit();
+        } catch (CoreException $e) {
+            $this->connection->rollBack();
+            throw new RuntimeException('An exception occurred while updating sensitive data', 0, $e);
         }
     }
 }

@@ -111,6 +111,20 @@ class RaListingRepository extends EntityRepository
     }
 
     /**
+     * @param IdentityId $identityId
+     * @return void
+     */
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'ral')
+            ->where('ral.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
      * @param RaListing $raListing
      * @return void
      */

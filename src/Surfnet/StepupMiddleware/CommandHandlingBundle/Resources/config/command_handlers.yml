@@ -24,3 +24,11 @@ services:
             - @surfnet_stepup.repository.whitelist
         tags: [{ name: command_bus.command_handler }]
 
+    surfnet_stepup_middleware_command_handling.command_handler.right_to_be_forgotten_command_handler:
+            class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler
+            arguments:
+                - @surfnet_stepup.repository.identity
+                - @surfnet_stepup_middleware_api.repository.identity
+                - @surfnet_stepup_middleware_command_handling.service.sensitive_data
+                - @surfnet_stepup_middleware_api.repository.sraa
+            tags: [{ name: command_bus.command_handler }]

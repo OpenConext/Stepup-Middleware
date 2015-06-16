@@ -19,6 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
@@ -91,7 +95,50 @@ class IdentityService extends AbstractSearchService
             return null;
         }
 
-        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identityId));
+        return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
+     * @return RegistrationAuthorityCredentials|null
+     */
+    public function findRegistrationAuthorityCredentialsByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    {
+        $query = new IdentityQuery();
+        $query->nameId = $nameId->getNameId();
+        $query->institution = $institution->getInstitution();
+        $query->pageNumber = 1;
+        $query->itemsPerPage = 2;
+
+        $identities = $this->search($query);
+        $identityCount = count($identities);
+
+        if ($identityCount === 0) {
+            return null;
+        }
+
+        if ($identityCount > 1) {
+            throw new RuntimeException(sprintf(
+                'Found more than one identity matching NameID "%s" within institution "%s"',
+                $nameId->getNameId(),
+                $institution->getInstitution()
+            ));
+        }
+
+        /** @var Identity $identity */
+        $identity = $identities->getIterator()->current();
+
+        return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
+    }
+
+    /**
+     * @param Identity $identity
+     * @return null|RegistrationAuthorityCredentials
+     */
+    private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
+    {
+        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         if ($raListing) {
             return RegistrationAuthorityCredentials::fromRaListing($raListing);
         }

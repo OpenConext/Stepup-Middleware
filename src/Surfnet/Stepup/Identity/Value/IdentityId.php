@@ -18,10 +18,11 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
-final class IdentityId implements Id
+final class IdentityId implements Id, JsonSerializable
 {
     /**
      * @var string
@@ -40,7 +41,7 @@ final class IdentityId implements Id
     /**
      * @return string
      */
-    public function getValue()
+    public function getIdentityId()
     {
         return $this->value;
     }
@@ -51,6 +52,11 @@ final class IdentityId implements Id
     }
 
     public function __toString()
+    {
+        return $this->value;
+    }
+
+    public function jsonSerialize()
     {
         return $this->value;
     }

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +33,7 @@ class SraaController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $sraa = $this->getService()->findByNameId($nameId);
+        $sraa = $this->getService()->findByNameId(new NameId($nameId));
 
         if (!$sraa) {
             return new JsonNotFoundResponse();

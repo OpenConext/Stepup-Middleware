@@ -27,3 +27,10 @@ management_whitelist_show:
     defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:showWhitelist }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+management_forget_identity:
+    path:     /forget-identity
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:RightToBeForgotten:forgetIdentity }
+    methods:   [POST]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+

@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(
@@ -38,11 +37,11 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Identity", inversedBy="unverifiedSecondFactors")
+     * @ORM\Column(length=36)
      *
-     * @var Identity
+     * @var string
      */
-    public $identity;
+    public $identityId;
 
     /**
      * @ORM\Column(length=16)
@@ -70,79 +69,9 @@ class UnverifiedSecondFactor implements \JsonSerializable
     /**
      * @ORM\Column(type="stepup_datetime", nullable=false)
      *
-     * @var
+     * @var DateTime
      */
     public $verificationNonceValidUntil;
-
-    /**
-     * @param Identity $identity
-     * @param string   $id
-     * @param string   $type
-     * @param string   $secondFactorIdentifier
-     * @param string   $verificationNonce
-     * @param DateTime $verificationNonceValidUntil
-     * @return UnverifiedSecondFactor
-     */
-    public static function addToIdentity(
-        Identity $identity,
-        $id,
-        $type,
-        $secondFactorIdentifier,
-        $verificationNonce,
-        DateTime $verificationNonceValidUntil
-    ) {
-        if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
-        if (!is_string($type)) {
-            throw InvalidArgumentException::invalidType('string', 'type', $type);
-        }
-
-        if (!is_string($secondFactorIdentifier)) {
-            throw InvalidArgumentException::invalidType('string', 'secondFactorIdentifier', $secondFactorIdentifier);
-        }
-
-        if (!is_string($verificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
-        }
-
-        $secondFactor                              = new self;
-        $secondFactor->identity                    = $identity;
-        $secondFactor->id                          = $id;
-        $secondFactor->type                        = $type;
-        $secondFactor->secondFactorIdentifier      = $secondFactorIdentifier;
-        $secondFactor->verificationNonce           = $verificationNonce;
-        $secondFactor->verificationNonceValidUntil = $verificationNonceValidUntil;
-
-        $identity->unverifiedSecondFactors->add($secondFactor);
-
-        return $secondFactor;
-    }
-
-    final private function __construct()
-    {
-    }
-
-    /**
-     * @param string $registrationCode
-     * @return VerifiedSecondFactor
-     */
-    public function verifyEmail($registrationCode)
-    {
-        $identity = $this->identity;
-
-        $this->identity->unverifiedSecondFactors->removeElement($this);
-        $this->identity = null;
-
-        return VerifiedSecondFactor::addToIdentity(
-            $identity,
-            $this->id,
-            $this->type,
-            $this->secondFactorIdentifier,
-            $registrationCode
-        );
-    }
 
     public function jsonSerialize()
     {

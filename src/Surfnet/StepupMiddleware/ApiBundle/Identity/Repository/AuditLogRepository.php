@@ -77,6 +77,8 @@ class AuditLogRepository extends EntityRepository
                     $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
                 );
                 break;
+            default:
+                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
         }
 
         return $queryBuilder->getQuery();

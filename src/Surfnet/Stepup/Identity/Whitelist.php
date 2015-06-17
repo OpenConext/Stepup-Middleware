@@ -91,12 +91,14 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
 
     protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
     {
-        $this->whitelist = $event->whitelistedInstitutions;
+        $this->whitelist = new InstitutionCollection();
+        $this->whitelist->addAllFrom($event->whitelistedInstitutions);
     }
 
     protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
     {
-        $this->whitelist = $event->whitelistedInstitutions;
+        $this->whitelist = new InstitutionCollection();
+        $this->whitelist->addAllFrom($event->whitelistedInstitutions);
     }
 
     protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)

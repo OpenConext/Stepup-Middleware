@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf63fc4a7425378776c0a7bc2dd67937",
+    "hash": "c60948c39cfaee2d9a7ef2cbeaf7970e",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1930,12 +1930,12 @@
             "version": "2.8.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ramsey/uuid.git",
+                "url": "https://github.com/ramsey/rhumsaa-uuid.git",
                 "reference": "cca98c652cac412c9c2f109c69e5532f313435fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/cca98c652cac412c9c2f109c69e5532f313435fc",
+                "url": "https://api.github.com/repos/ramsey/rhumsaa-uuid/zipball/cca98c652cac412c9c2f109c69e5532f313435fc",
                 "reference": "cca98c652cac412c9c2f109c69e5532f313435fc",
                 "shasum": ""
             },
@@ -2201,16 +2201,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "dev-maintenance/expose-sft",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f"
+                "reference": "10a75d6bafb65fa233e64236047d67aa37850b3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/2f060a9588fe61ff68f26d9aefb98b2056775d8f",
-                "reference": "2f060a9588fe61ff68f26d9aefb98b2056775d8f",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/10a75d6bafb65fa233e64236047d67aa37850b3b",
+                "reference": "10a75d6bafb65fa233e64236047d67aa37850b3b",
                 "shasum": ""
             },
             "require": {
@@ -2249,7 +2249,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-06-11 15:29:59"
+            "time": "2015-06-17 09:41:36"
         },
         {
             "name": "swiftmailer/swiftmailer",

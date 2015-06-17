@@ -36,6 +36,8 @@ class RightToBeForgottenController extends Controller
 {
     public function forgetIdentityAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $payload = GuzzleHttp\json_decode($request->getContent(), true);
 
         if (!isset($payload['name_id'])) {

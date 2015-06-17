@@ -33,6 +33,8 @@ class CommandController extends Controller
 {
     public function handleAction(Command $command, Metadata $metadata, Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+
         /** @var \Monolog\Logger $logger */
         $logger = $this->get('logger');
         $logger->notice(sprintf('Received request to process Command "%s"', $command));

@@ -10,3 +10,4 @@ monolog:
             type: syslog
             ident: stepup-middleware
             facility: user
+            formatter: surfnet_stepup.monolog.json_formatter

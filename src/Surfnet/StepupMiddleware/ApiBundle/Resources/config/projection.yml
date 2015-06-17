@@ -52,3 +52,9 @@ services:
             - @surfnet_stepup_middleware_api.repository.audit_log
             - @surfnet_stepup_middleware_api.repository.identity
         tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_api.projector.whitelist_entry:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\WhitelistProjector
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.whitelist_entry
+        tags: [{ name: event_bus.event_listener }]

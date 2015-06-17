@@ -50,10 +50,10 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
 
     public static function create(InstitutionCollection $institutionCollection)
     {
-        $configuration = new self();
-        $configuration->apply(new WhitelistCreatedEvent($institutionCollection));
+        $whitelist = new self();
+        $whitelist->apply(new WhitelistCreatedEvent($institutionCollection));
 
-        return $configuration;
+        return $whitelist;
     }
 
     public function replaceAll(InstitutionCollection $institutionCollection)

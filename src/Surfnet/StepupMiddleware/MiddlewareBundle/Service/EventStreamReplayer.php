@@ -103,13 +103,21 @@ class EventStreamReplayer
             $totalEvents = $this->eventHydrator->getCount();
 
             $preparationProgress->advance();
-            $defaultMessage = sprintf(
-                'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
-                $totalEvents,
-                $increments
-            );
-            $preparationProgress->setMessage($defaultMessage);
-            $preparationProgress->finish();
+
+            if ($totalEvents == 0) {
+                // Spaces are needed to overwrite the previous message.
+                $preparationProgress->setMessage('There are no events to replay. Done.     ');
+                $preparationProgress->finish();
+                return;
+            } else {
+                $defaultMessage = sprintf(
+                    'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
+                    $totalEvents,
+                    $increments
+                );
+                $preparationProgress->setMessage($defaultMessage);
+                $preparationProgress->finish();
+            }
 
             $replayProgress = new ProgressBar($output, $totalEvents);
             $replayProgress->setFormat('event_replay');

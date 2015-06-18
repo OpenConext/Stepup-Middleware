@@ -23,6 +23,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -81,9 +82,11 @@ class CommandController extends Controller
             return $metadata->actorInstitution;
         }
 
-        // the createIdentityCommand is used to create an Identity for a new user, not logged in yet,
-        // thus there is not Metadata::actorInstitution
-        if ($command instanceof CreateIdentityCommand) {
+        // the createIdentityCommand is used to create an Identity for a new user,
+        // the updateIdentityCommand is used to update name or email of an identity
+        // Both are only sent by the SS when the Identity is not logged in yet,
+        // thus there is not Metadata::actorInstitution,
+        if ($command instanceof CreateIdentityCommand || $command instanceof UpdateIdentityCommand) {
             return $command->institution;
         }
 

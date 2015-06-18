@@ -55,7 +55,9 @@ class EventStreamReplayer
         'sraa',
         'audit_log',
         'ra_listing',
-        'ra_candidate'
+        'ra_candidate',
+        'second_factor_revocation',
+        'whitelist_entry',
     ];
 
     /**
@@ -63,7 +65,8 @@ class EventStreamReplayer
      */
     private $gatewayTables = [
         'second_factor',
-        'saml_entity'
+        'saml_entity',
+        'whitelist_entry',
     ];
 
     public function __construct(

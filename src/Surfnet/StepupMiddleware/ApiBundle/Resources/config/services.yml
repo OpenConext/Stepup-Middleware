@@ -50,6 +50,11 @@ services:
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry ]
 
+    surfnet_stepup_middleware_api.repository.second_factor_revocation:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository
+        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactorRevocation]
+
     surfnet_stepup_middleware_api.repository.whitelist_entry:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]

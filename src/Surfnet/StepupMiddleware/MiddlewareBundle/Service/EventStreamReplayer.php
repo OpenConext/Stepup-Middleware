@@ -65,7 +65,8 @@ class EventStreamReplayer
      */
     private $gatewayTables = [
         'second_factor',
-        'saml_entity'
+        'saml_entity',
+        'whitelist_entry',
     ];
 
     public function __construct(

@@ -65,6 +65,8 @@ class IdentityController extends Controller
      */
     public function getRegistrationAuthorityCredentialsAction($identityId)
     {
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+
         $identityService = $this->getService();
 
         $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);

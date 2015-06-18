@@ -35,6 +35,8 @@ class WhitelistController extends Controller
 {
     public function replaceWhitelistAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $command               = new ReplaceWhitelistCommand();
         $command->UUID         = (string) Uuid::uuid4();
         $command->institutions = $this->getInstitutionsFromBody($request);
@@ -44,6 +46,8 @@ class WhitelistController extends Controller
 
     public function addToWhitelistAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $command                        = new AddToWhitelistCommand();
         $command->UUID                  = (string) Uuid::uuid4();
         $command->institutionsToBeAdded = $this->getInstitutionsFromBody($request);
@@ -53,6 +57,8 @@ class WhitelistController extends Controller
 
     public function removeFromWhitelistAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $command                          = new RemoveFromWhitelistCommand();
         $command->UUID                    = (string) Uuid::uuid4();
         $command->institutionsToBeRemoved = $this->getInstitutionsFromBody($request);

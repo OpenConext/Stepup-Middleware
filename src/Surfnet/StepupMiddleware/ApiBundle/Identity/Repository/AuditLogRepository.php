@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
@@ -77,6 +78,8 @@ class AuditLogRepository extends EntityRepository
                     $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
                 );
                 break;
+            default:
+                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
         }
 
         return $queryBuilder->getQuery();

@@ -36,7 +36,7 @@ final class AuditLogController extends Controller
         $query->identityId          = new IdentityId($request->get('identityId'));
         $query->orderBy             = $request->get('orderBy');
         $query->orderDirection      = $request->get('orderDirection');
-        $query->pageNumber          = $request->get('p');
+        $query->pageNumber          = $request->get('p', 1);
 
         $paginator = $this->getService()->searchSecondFactorAuditLog($query);
 

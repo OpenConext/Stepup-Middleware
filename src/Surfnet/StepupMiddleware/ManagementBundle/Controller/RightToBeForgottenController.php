@@ -25,7 +25,6 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
-use Surfnet\StepupMiddleware\ManagementBundle\Exception\BadApiRequestException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +35,8 @@ class RightToBeForgottenController extends Controller
 {
     public function forgetIdentityAction(Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $payload = GuzzleHttp\json_decode($request->getContent(), true);
 
         if (!isset($payload['name_id'])) {

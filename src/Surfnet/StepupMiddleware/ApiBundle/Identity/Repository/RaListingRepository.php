@@ -54,7 +54,12 @@ class RaListingRepository extends EntityRepository
             ->where('r.institution = :institution')
             ->setParameter('institution', $query->institution);
 
+        if (!$query->orderBy) {
+            return $queryBuilder->getQuery();
+        }
+
         $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
+
         switch ($query->orderBy) {
             case 'commonName':
                 $queryBuilder->orderBy('r.commonName', $orderDirection);

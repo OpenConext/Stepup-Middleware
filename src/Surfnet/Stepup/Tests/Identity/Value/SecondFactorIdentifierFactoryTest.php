@@ -38,8 +38,8 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
             SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 12345678')
         );
         $this->assertEquals(
-            new YubikeyPublicId('cccccccccccc'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), 'cccccccccccc')
+            new YubikeyPublicId('08189273'),
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), '08189273')
         );
         $this->assertEquals(
             new GssfId('urn:abcd-efgh-ijkl'),

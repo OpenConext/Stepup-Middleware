@@ -85,12 +85,12 @@ class SensitiveDataTest extends TestCase
             ],
             'YubikeyPublicId' => [
                 (new SensitiveData())
-                    ->withSecondFactorIdentifier(new YubikeyPublicId('c'), new SecondFactorType('yubikey')),
-                ['SecondFactorIdentifier' => new YubikeyPublicId('c')],
+                    ->withSecondFactorIdentifier(new YubikeyPublicId('00177273'), new SecondFactorType('yubikey')),
+                ['SecondFactorIdentifier' => new YubikeyPublicId('00177273')],
             ],
             'YubikeyPublicId, forgotten' => [
                 (new SensitiveData())
-                    ->withSecondFactorIdentifier(new YubikeyPublicId('c'), new SecondFactorType('yubikey'))
+                    ->withSecondFactorIdentifier(new YubikeyPublicId('00177273'), new SecondFactorType('yubikey'))
                     ->forget(),
                 ['SecondFactorIdentifier' => YubikeyPublicId::unknown()],
             ],

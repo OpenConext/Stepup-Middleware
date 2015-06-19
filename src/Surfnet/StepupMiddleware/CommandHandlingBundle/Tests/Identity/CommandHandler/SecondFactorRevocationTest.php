@@ -88,7 +88,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
-        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorIdentifier = new YubikeyPublicId('00890782');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -143,7 +143,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $email                  = new Email('info@domain.invalid');
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
-        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorIdentifier = new YubikeyPublicId('00890782');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -212,7 +212,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $commonName             = new CommonName('Henk Westbroek');
         $secondFactorId         = new SecondFactorId($command->secondFactorId);
         $secondFactorType       = new SecondFactorType('yubikey');
-        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorIdentifier = new YubikeyPublicId('00890782');
 
         $this->scenario
             ->withAggregateId($identityId)
@@ -297,7 +297,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantInstitution            = new Institution('SURFnet');
         $registrantNameId                 = new NameId('3');
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
-        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('00890782');
         $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
@@ -320,7 +320,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId(static::uuid()),
-                    new YubikeyPublicId('ccccvkdowiej')
+                    new YubikeyPublicId('12345678')
                 )
             ])
             ->withAggregateId($registrantId)
@@ -383,7 +383,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantNameId                 = new NameId('3');
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
         $registrantSecondFactorType       = new SecondFactorType('yubikey');
-        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('00890782');
         $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
@@ -406,7 +406,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId(static::uuid()),
-                    new YubikeyPublicId('ccccvkdowiej')
+                    new YubikeyPublicId('12345678')
                 )
             ])
             ->withAggregateId($registrantId)
@@ -481,7 +481,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
         $registrantNameId                 = new NameId('3');
         $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
         $registrantSecondFactorType       = new SecondFactorType('yubikey');
-        $registrantSecondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('00890782');
         $registrantEmail                  = new Email('matti@domain.invalid');
         $registrantCommonName             = new CommonName('Matti Vanhanen');
 
@@ -504,7 +504,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId(static::uuid()),
-                    new YubikeyPublicId('ccccvkdowiej')
+                    new YubikeyPublicId('12345678')
                 )
             ])
             ->withAggregateId($registrantId)

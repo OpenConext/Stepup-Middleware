@@ -79,7 +79,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
      * @expectedExceptionMessage An Identity may only be accredited within its own institution
      */
-    public function an_identity_cannot_be_accredited_for_another_institution_then_its_own()
+    public function an_identity_cannot_be_accredited_for_another_institution_than_its_own()
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
@@ -94,7 +94,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -181,7 +181,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -240,7 +240,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -289,7 +289,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -348,7 +348,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -407,7 +407,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -475,7 +475,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -564,7 +564,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -613,7 +613,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -674,7 +674,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -730,7 +730,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -774,7 +774,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -833,7 +833,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -894,7 +894,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -939,7 +939,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -977,7 +977,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->scenario
             ->withAggregateId($command->identityId)

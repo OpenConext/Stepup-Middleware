@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0]',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",
@@ -29,15 +30,6 @@ return [
                         "__default__" => "https://entity.tld/authentication/loa2",
                     ],
                     "blacklisted_encryption_algorithms" => []
-                ]
-            ],
-        ],
-        'raa' => [
-            'SURFnet bv' => [
-                [
-                    'name_id'      => 'ddfd',
-                    'location'     => 'Behind you',
-                    'contact_info' => "Don't",
                 ]
             ],
         ],

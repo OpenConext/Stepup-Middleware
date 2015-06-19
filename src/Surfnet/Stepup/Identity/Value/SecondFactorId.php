@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Value;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Id;
 
-class SecondFactorId implements Id
+final class SecondFactorId implements Id
 {
     /**
      * @var string
@@ -37,7 +37,10 @@ class SecondFactorId implements Id
         $this->value = $value;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function getSecondFactorId()
     {
         return $this->value;
     }
@@ -45,5 +48,10 @@ class SecondFactorId implements Id
     public function equals(Id $other)
     {
         return $this == $other;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
     }
 }

@@ -20,29 +20,24 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VerifiedSecondFactorController extends Controller
 {
     public function getAction($id)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access verified second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $secondFactor = $this->getService()->findVerified(new SecondFactorId($id));
 
         if ($secondFactor === null) {
-            throw new NotFoundHttpException(
-                sprintf("Verified second factor '%s' does not exist", $id)
-            );
+            throw new NotFoundHttpException(sprintf("Verified second factor '%s' does not exist", $id));
         }
 
         return new JsonResponse($secondFactor);
@@ -50,24 +45,22 @@ class VerifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $command = new SearchVerifiedSecondFactorCommand();
+        $query = new VerifiedSecondFactorQuery();
 
         if ($request->get('identityId')) {
-            $command->identityId = new IdentityId($request->get('identityId'));
+            $query->identityId = new IdentityId($request->get('identityId'));
         }
 
         if ($request->get('secondFactorId')) {
-            $command->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
+            $query->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
         }
 
-        $command->registrationCode = $request->get('registrationCode');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query->registrationCode = $request->get('registrationCode');
+        $query->pageNumber       = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->searchVerifiedSecondFactors($command);
+        $paginator = $this->getService()->searchVerifiedSecondFactors($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

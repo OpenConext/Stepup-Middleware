@@ -19,15 +19,19 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
+final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
@@ -35,17 +39,27 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
-     * @var IdentifyingDataId
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
-    public $identifyingDataId;
+    public $commonName;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale
+     */
+    public $preferredLocale;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
 
@@ -58,7 +72,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         IdentityId $identityId,
         NameId $nameId,
         Institution $institution,
-        IdentifyingDataId $identifyingDataId,
+        CommonName $commonName,
+        Email $email,
+        Locale $preferredLocale,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId
     ) {
@@ -66,7 +82,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
 
         $this->nameId = $nameId;
         $this->institution = $institution;
-        $this->identifyingDataId = $identifyingDataId;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
         $this->secondFactorId = $secondFactorId;
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
@@ -78,6 +96,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
         $metadata->secondFactorType = new SecondFactorType('yubikey');
+        $metadata->secondFactorIdentifier = $this->yubikeyPublicId;
 
         return $metadata;
     }
@@ -88,9 +107,8 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             'identity_id'          => (string) $this->identityId,
             'name_id'              => (string) $this->nameId,
             'identity_institution' => (string) $this->identityInstitution,
-            'identifying_data_id' => (string) $this->identifyingDataId,
+            'preferred_locale'     => (string) $this->preferredLocale,
             'second_factor_id'     => (string) $this->secondFactorId,
-            'yubikey_public_id'    => (string) $this->yubikeyPublicId,
         ];
     }
 
@@ -100,9 +118,26 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
             new Institution($data['identity_institution']),
-            new IdentifyingDataId($data['identifying_data_id']),
+            CommonName::unknown(),
+            Email::unknown(),
+            new Locale($data['preferred_locale']),
             new SecondFactorId($data['second_factor_id']),
-            new YubikeyPublicId($data['yubikey_public_id'])
+            YubikeyPublicId::unknown()
         );
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email)
+            ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
+        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
     }
 }

@@ -18,13 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
@@ -48,73 +48,50 @@ class Identity implements JsonSerializable
     public $id;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="stepup_name_id")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      */
     public $nameId;
 
     /**
      * @ORM\Column(type="stepup_common_name")
      *
-     * @var CommonName
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $commonName;
 
     /**
      * @ORM\Column(type="institution")
      *
-     * @var Institution
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
      * @ORM\Column(type="stepup_email")
      *
-     * @var Email
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
 
     /**
-     * A list of all second factors, whose e-mails haven't been verified.
+     * @ORM\Column(type="stepup_locale")
      *
-     * @ORM\OneToMany(targetEntity="UnverifiedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|UnverifiedSecondFactor[]
+     * @var \Surfnet\Stepup\Identity\Value\Locale
      */
-    public $unverifiedSecondFactors;
-
-    /**
-     * A list of all second factors, whose e-mails have been verified and are awaiting vetting by an RA.
-     *
-     * @ORM\OneToMany(targetEntity="VerifiedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|VerifiedSecondFactor[]
-     */
-    public $verifiedSecondFactors;
-
-    /**
-     * A list of all second factors that, along with their identities, have been vetted by a Registration Authority.
-     *
-     * @ORM\OneToMany(targetEntity="VettedSecondFactor", mappedBy="identity", cascade={"persist"})
-     *
-     * @var Collection|VettedSecondFactor[]
-     */
-    public $vettedSecondFactors;
+    public $preferredLocale;
 
     public static function create(
         $id,
         Institution $institution,
-        $nameId,
+        NameId $nameId,
         Email $email,
-        CommonName $commonName
+        CommonName $commonName,
+        Locale $preferredLocale
     ) {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
-        if (!is_string($nameId)) {
-            throw InvalidArgumentException::invalidType('string', 'nameId', $nameId);
         }
 
         $identity = new self();
@@ -124,9 +101,7 @@ class Identity implements JsonSerializable
         $identity->institution = $institution;
         $identity->email = $email;
         $identity->commonName = $commonName;
-        $identity->unverifiedSecondFactors = new ArrayCollection();
-        $identity->verifiedSecondFactors = new ArrayCollection();
-        $identity->vettedSecondFactors = new ArrayCollection();
+        $identity->preferredLocale = $preferredLocale;
 
         return $identity;
     }
@@ -136,9 +111,10 @@ class Identity implements JsonSerializable
         return [
             'id'                        => $this->id,
             'name_id'                   => $this->nameId,
-            'institution'               => (string) $this->institution,
+            'institution'               => $this->institution,
             'email'                     => $this->email,
             'common_name'               => $this->commonName,
+            'preferred_locale'          => $this->preferredLocale,
         ];
     }
 }

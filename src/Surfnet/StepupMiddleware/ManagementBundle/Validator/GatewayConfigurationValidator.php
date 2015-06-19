@@ -23,11 +23,21 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 {
+    /**
+     * @var \Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
+     */
+    private $identityProviderConfigurationValidator;
+
+    /**
+     * @var \Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
+     */
     private $serviceProviderConfigurationValidator;
 
     public function __construct(
+        IdentityProviderConfigurationValidator $identityProviderConfigurationValidator,
         ServiceProviderConfigurationValidator $serviceProviderConfigurationValidator
     ) {
+        $this->identityProviderConfigurationValidator = $identityProviderConfigurationValidator;
         $this->serviceProviderConfigurationValidator = $serviceProviderConfigurationValidator;
     }
 
@@ -39,12 +49,35 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
     {
         StepupAssert::keysMatch(
             $gatewayConfiguration,
-            ['service_providers'],
-            "Expected only property 'service_providers'",
+            ['service_providers', 'identity_providers'],
+            "Expected properties 'service_providers' and 'identity_providers'",
             $propertyPath
         );
 
-        $this->validateServiceProviders($gatewayConfiguration['service_providers'], $propertyPath . '.service_providers');
+        $this->validateIdentityProviders(
+            $gatewayConfiguration['identity_providers'],
+            $propertyPath . '.identity_providers'
+        );
+        $this->validateServiceProviders(
+            $gatewayConfiguration['service_providers'],
+            $propertyPath . '.service_providers'
+        );
+    }
+
+    private function validateIdentityProviders($identityProviders, $propertyPath)
+    {
+        Assert::isArray(
+            $identityProviders,
+            'identity_providers must have an array of identity provider configurations as value',
+            $propertyPath
+        );
+
+        foreach ($identityProviders as $index => $identityProvider) {
+            $path = $propertyPath . '[' . $index . ']';
+            Assert::isArray($identityProvider, 'Identity provider must be an object', $path);
+
+            $this->identityProviderConfigurationValidator->validate($identityProvider, $path);
+        }
     }
 
     private function validateServiceProviders($serviceProviders, $propertyPath)
@@ -52,12 +85,12 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         Assert::isArray(
             $serviceProviders,
             'service_providers must have an array of service provider configurations as value',
-            'gateway.service_providers'
+            $propertyPath
         );
         Assert::true(
             count($serviceProviders) >= 1,
             'at least one service_provider must be configured',
-            'gateway.service_providers'
+            $propertyPath
         );
 
         foreach ($serviceProviders as $index => $serviceProvider) {

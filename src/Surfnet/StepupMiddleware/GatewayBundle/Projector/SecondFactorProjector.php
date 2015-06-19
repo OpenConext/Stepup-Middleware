@@ -20,10 +20,13 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
+use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 class SecondFactorProjector extends Projector
@@ -48,6 +51,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->identityId,
                 (string) $event->nameId,
                 (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
                 'yubikey'
@@ -62,6 +66,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->identityId,
                 (string) $event->nameId,
                 (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType
@@ -71,12 +76,45 @@ class SecondFactorProjector extends Projector
 
     protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
     {
-        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
+        $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
+
+        if ($secondFactor === null) {
+            throw new RuntimeException(sprintf(
+                'Expected to find a second factor having secondFactorId "%s", found none.',
+                $event->secondFactorId
+            ));
+        }
+
+        $this->repository->remove($secondFactor);
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
-        $this->repository->remove($this->repository->findOneBySecondFactorId($event->secondFactorId));
+        $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
+
+        if ($secondFactor === null) {
+            throw new RuntimeException(sprintf(
+                'Expected to find a second factor having secondFactorId "%s", found none.',
+                $event->secondFactorId
+            ));
+        }
+
+        $this->repository->remove($secondFactor);
+    }
+
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $secondFactors = $this->repository->findByIdentityId($event->identityId);
+
+        foreach ($secondFactors as $secondFactor) {
+            $secondFactor->displayLocale = (string) $event->preferredLocale;
+            $this->repository->save($secondFactor);
+        }
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->repository->removeByIdentityId($event->identityId);
     }
 }

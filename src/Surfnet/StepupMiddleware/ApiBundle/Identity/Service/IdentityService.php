@@ -18,10 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaaRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
@@ -33,14 +37,9 @@ class IdentityService extends AbstractSearchService
     private $repository;
 
     /**
-     * @var RaRepository
+     * @var RaListingRepository
      */
-    private $raRepository;
-
-    /**
-     * @var RaaRepository
-     */
-    private $raaRepository;
+    private $raListingRepository;
 
     /**
      * @var SraaRepository
@@ -48,21 +47,18 @@ class IdentityService extends AbstractSearchService
     private $sraaRepository;
 
     /**
-     * @param IdentityRepository $repository
-     * @param RaRepository       $raRepository
-     * @param RaaRepository      $raaRepository
-     * @param SraaRepository     $sraaRepository
+     * @param IdentityRepository  $repository
+     * @param RaListingRepository $raListingRepository
+     * @param SraaRepository      $sraaRepository
      */
     public function __construct(
         IdentityRepository $repository,
-        RaRepository $raRepository,
-        RaaRepository $raaRepository,
+        RaListingRepository $raListingRepository,
         SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
-        $this->raaRepository = $raaRepository;
+        $this->raListingRepository = $raListingRepository;
         $this->sraaRepository = $sraaRepository;
-        $this->raRepository = $raRepository;
     }
 
     /**
@@ -75,14 +71,14 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param SearchIdentityCommand $command
+     * @param IdentityQuery $query
      * @return \Pagerfanta\Pagerfanta
      */
-    public function search(SearchIdentityCommand $command)
+    public function search(IdentityQuery $query)
     {
-        $searchQuery = $this->repository->createSearchQuery($command);
+        $searchQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($searchQuery, $command);
+        $paginator = $this->createPaginatorFrom($searchQuery, $query);
 
         return $paginator;
     }
@@ -99,17 +95,62 @@ class IdentityService extends AbstractSearchService
             return null;
         }
 
-        $ra = $this->raRepository->findByNameId($identity->nameId);
-        if ($ra) {
-            return RegistrationAuthorityCredentials::fromRa($ra, $identity);
+        return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
+     * @return RegistrationAuthorityCredentials|null
+     */
+    public function findRegistrationAuthorityCredentialsByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    {
+        $query = new IdentityQuery();
+        $query->nameId = $nameId->getNameId();
+        $query->institution = $institution->getInstitution();
+        $query->pageNumber = 1;
+        $query->itemsPerPage = 2;
+
+        $identities = $this->search($query);
+        $identityCount = count($identities);
+
+        if ($identityCount === 0) {
+            return null;
         }
 
-        $raa = $this->raaRepository->findByNameId($identity->nameId);
-        if ($raa) {
-            return RegistrationAuthorityCredentials::fromRaa($raa, $identity);
+        if ($identityCount > 1) {
+            throw new RuntimeException(sprintf(
+                'Found more than one identity matching NameID "%s" within institution "%s"',
+                $nameId->getNameId(),
+                $institution->getInstitution()
+            ));
         }
 
+        /** @var Identity $identity */
+        $identity = $identities->getIterator()->current();
+
+        return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
+    }
+
+    /**
+     * @param Identity $identity
+     * @return null|RegistrationAuthorityCredentials
+     */
+    private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
+    {
+        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);
+
+        if ($raListing) {
+            $credentials = RegistrationAuthorityCredentials::fromRaListing($raListing);
+
+            if ($sraa) {
+                $credentials = $credentials->grantSraa();
+            }
+
+            return $credentials;
+        }
+
         if ($sraa) {
             return RegistrationAuthorityCredentials::fromSraa($sraa, $identity);
         }

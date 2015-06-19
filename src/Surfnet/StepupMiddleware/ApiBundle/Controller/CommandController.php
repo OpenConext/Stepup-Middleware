@@ -22,6 +22,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +34,8 @@ class CommandController extends Controller
 {
     public function handleAction(Command $command, Metadata $metadata, Request $request)
     {
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+
         /** @var \Monolog\Logger $logger */
         $logger = $this->get('logger');
         $logger->notice(sprintf('Received request to process Command "%s"', $command));
@@ -39,6 +43,15 @@ class CommandController extends Controller
         /** @var MetadataEnricher $metadataEnricher */
         $metadataEnricher = $this->get('surfnet_stepup_middleware_command_handling.metadata_enricher.actor');
         $metadataEnricher->setMetadata($metadata);
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_MANAGEMENT')) {
+            $logger->notice('Command sent through Management API, not enforcing Whitelist');
+        } else {
+            $logger->notice('Ensuring that the actor institution is on the whitelist, or the actor is SRAA');
+
+            $institution = $this->resolveInstitution($command, $metadata);
+            $this->assertCommandMayBeProcessedOnBehalfOf($institution, $metadata->actorId);
+        }
 
         /** @var Pipeline $pipeline */
         $pipeline = $this->get('pipeline');
@@ -58,5 +71,63 @@ class CommandController extends Controller
         $logger->notice(sprintf('Command "%s" has been successfully processed', $command));
 
         return $response;
+    }
+
+    /**
+     * @param Command  $command
+     * @param Metadata $metadata
+     * @return string
+     */
+    private function resolveInstitution(Command $command, Metadata $metadata)
+    {
+        if ($metadata->actorInstitution) {
+            return $metadata->actorInstitution;
+        }
+
+        // the createIdentityCommand is used to create an Identity for a new user,
+        // the updateIdentityCommand is used to update name or email of an identity
+        // Both are only sent by the SS when the Identity is not logged in yet,
+        // thus there is not Metadata::actorInstitution,
+        if ($command instanceof CreateIdentityCommand || $command instanceof UpdateIdentityCommand) {
+            return $command->institution;
+        }
+
+        // conservative, if we cannot determine an institution, deny processing.
+        throw new AccessDeniedHttpException(
+            'Cannot reliably determine the institution of the actor, denying processing of command'
+        );
+    }
+
+    /**
+     * @param string      $institution
+     * @param string|null $actorId
+     */
+    private function assertCommandMayBeProcessedOnBehalfOf($institution, $actorId)
+    {
+        $whitelistService = $this->get('surfnet_stepup_middleware_api.service.whitelist_entry');
+
+        if ($whitelistService->isWhitelisted($institution)) {
+            return;
+        }
+
+        if (!$actorId) {
+            throw new AccessDeniedHttpException(sprintf(
+                'Institution "%s" is not on the whitelist and no actor is found, processing of command denied',
+                $institution
+            ));
+        }
+
+        $identityService = $this->get('surfnet_stepup_middleware_api.service.identity');
+        $registrationAuthorityCredentials = $identityService->findRegistrationAuthorityCredentialsOf($actorId);
+
+        if ($registrationAuthorityCredentials->isSraa()) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException(sprintf(
+            'Institution "%s" is not on the whitelist and actor "%s" is not an SRAA, processing of command denied',
+            $institution,
+            $actorId
+        ));
     }
 }

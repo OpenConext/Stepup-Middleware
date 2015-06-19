@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
@@ -78,11 +79,20 @@ class SraaRepository extends EntityRepository
     }
 
     /**
-     * @param $nameId
+     * @param NameId $nameId
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa
      */
-    public function findByNameId($nameId)
+    public function findByNameId(NameId $nameId)
     {
-        return $this->findOneBy(['nameId' => $nameId]);
+        return $this->findOneBy(['nameId' => (string) $nameId]);
+    }
+
+    /**
+     * @param NameId $nameId
+     * @return boolean
+     */
+    public function contains(NameId $nameId)
+    {
+        return $this->findByNameId($nameId) !== null;
     }
 }

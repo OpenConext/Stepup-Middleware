@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository;
@@ -51,6 +52,22 @@ class SamlEntityProjector extends Projector
             $spConfigurations[] = SamlEntity::createServiceProvider($configuration['entity_id'], $newConfiguration);
         }
 
-        $this->samlEntityRepository->replaceAll($spConfigurations);
+        $this->samlEntityRepository->replaceAllSps($spConfigurations);
+    }
+
+    /**
+     * @param IdentityProvidersUpdatedEvent $event
+     */
+    public function applyIdentityProvidersUpdatedEvent(IdentityProvidersUpdatedEvent $event)
+    {
+        $spConfigurations = [];
+        foreach ($event->identityProviders as $configuration) {
+            $newConfiguration = $configuration;
+            unset($newConfiguration['entity_id']);
+
+            $spConfigurations[] = SamlEntity::createIdentityProvider($configuration['entity_id'], $newConfiguration);
+        }
+
+        $this->samlEntityRepository->replaceAllIdps($spConfigurations);
     }
 }

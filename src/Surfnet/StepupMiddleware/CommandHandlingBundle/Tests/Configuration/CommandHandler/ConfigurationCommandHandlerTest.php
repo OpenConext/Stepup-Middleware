@@ -24,8 +24,8 @@ use Broadway\EventStore\EventStoreInterface;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
-use Surfnet\Stepup\Configuration\Event\RaaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
@@ -48,9 +48,9 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     {
         $configuration = [
             'gateway'         => [
+                'identity_providers' => [],
                 'service_providers' => [],
             ],
-            'raa'             => [],
             'sraa'            => [],
             'email_templates' => [
                 'confirm_email'     => ['en_GB' => ''],
@@ -73,9 +73,9 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     {
         $configuration1 = [
             'gateway'         => [
+                'identity_providers' => [],
                 'service_providers' => [],
             ],
-            'raa'             => [],
             'sraa'            => [],
             'email_templates' => [
                 'confirm_email'     => ['en_GB' => ''],
@@ -85,6 +85,14 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $configuration2 = [
             'gateway'         => [
+                'identity_providers' => [
+                    [
+                        "entity_id" => "https://entity.tld/id",
+                        "loa" => [
+                            "__default__" => "https://entity.tld/authentication/loa2",
+                        ],
+                    ]
+                ],
                 'service_providers' => [
                     [
                         "entity_id" => "https://entity.tld/id",
@@ -95,13 +103,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                         ],
                         "assertion_encryption_enabled" => false,
                         "blacklisted_encryption_algorithms" => []
-                    ]
-                ],
-            ],
-            'raa' => [
-                'SURFnet bv' => [
-                    [
-                        'name_id' => 'ddfd',
                     ]
                 ],
             ],
@@ -167,7 +168,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
         return [
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),
             new ServiceProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['service_providers']),
-            new RaaUpdatedEvent(self::CID, $newConfiguration['raa']),
+            new IdentityProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['identity_providers']),
             new SraaUpdatedEvent(self::CID, $newConfiguration['sraa']),
             new EmailTemplatesUpdatedEvent(self::CID, $newConfiguration['email_templates']),
         ];

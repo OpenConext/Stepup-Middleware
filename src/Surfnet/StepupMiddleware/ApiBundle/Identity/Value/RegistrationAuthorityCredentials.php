@@ -19,12 +19,13 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Ra;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Raa;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
-class RegistrationAuthorityCredentials implements \JsonSerializable
+final class RegistrationAuthorityCredentials implements \JsonSerializable
 {
     /**
      * @var string
@@ -32,12 +33,12 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     private $identityId;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     private $institution;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     private $commonName;
 
@@ -77,44 +78,6 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @param Ra       $ra
-     * @param Identity $identity
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromRa(Ra $ra, Identity $identity)
-    {
-        static::assertEquals($ra->nameId, $identity->nameId);
-
-        $credentials = new self($identity->id, false, false);
-
-        $credentials->institution        = $ra->institution;
-        $credentials->commonName         = $identity->commonName;
-        $credentials->location           = $ra->location;
-        $credentials->contactInformation = $ra->contactInformation;
-
-        return $credentials;
-    }
-
-    /**
-     * @param Raa      $raa
-     * @param Identity $identity
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromRaa(Raa $raa, Identity $identity)
-    {
-        static::assertEquals($raa->nameId, $identity->nameId);
-
-        $credentials = new self($identity->id, true, false);
-
-        $credentials->institution        = $raa->institution;
-        $credentials->commonName         = $identity->commonName;
-        $credentials->location           = $raa->location;
-        $credentials->contactInformation = $raa->contactInformation;
-
-        return $credentials;
-    }
-
-    /**
      * @param Sraa     $sraa
      * @param Identity $identity
      * @return RegistrationAuthorityCredentials
@@ -130,13 +93,44 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
+     * @param RaListing $raListing
+     * @return RegistrationAuthorityCredentials
+     */
+    public static function fromRaListing(RaListing $raListing)
+    {
+        $credentials = new self(
+            $raListing->identityId,
+            $raListing->role->equals(AuthorityRole::raa()),
+            false
+        );
+
+        $credentials->institution        = $raListing->institution;
+        $credentials->commonName         = $raListing->commonName;
+        $credentials->location           = $raListing->location;
+        $credentials->contactInformation = $raListing->contactInformation;
+
+        return $credentials;
+    }
+
+    /**
      * @param string $nameId
      * @param string $identityNameId
-     * @return bool
+     * @return void
      */
     private static function assertEquals($nameId, $identityNameId)
     {
         Assertion::eq($nameId, $identityNameId);
+    }
+
+    /**
+     * @return RegistrationAuthorityCredentials
+     */
+    public function grantSraa()
+    {
+        $copy = clone $this;
+        $copy->isSraa = true;
+
+        return $copy;
     }
 
     /**
@@ -172,7 +166,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return Institution
      */
     public function getInstitution()
     {
@@ -180,7 +174,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @return string
+     * @return CommonName
      */
     public function getCommonName()
     {

@@ -20,8 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVerifiedSecondFactorCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
 class VerifiedSecondFactorRepository extends EntityRepository
 {
@@ -38,32 +39,42 @@ class VerifiedSecondFactorRepository extends EntityRepository
     }
 
     /**
-     * @param SearchVerifiedSecondFactorCommand $command
+     * @param VerifiedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(SearchVerifiedSecondFactorCommand $command)
+    public function createSearchQuery(VerifiedSecondFactorQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($command->identityId) {
+        if ($query->identityId) {
             $queryBuilder
-                ->andWhere('sf.identity = :identityId')
-                ->setParameter('identityId', (string) $command->identityId);
+                ->andWhere('sf.identityId = :identityId')
+                ->setParameter('identityId', (string) $query->identityId);
         }
 
-        if ($command->secondFactorId) {
+        if ($query->secondFactorId) {
             $queryBuilder
                 ->andWhere('sf.id = :secondFactorId')
-                ->setParameter('secondFactorId', (string) $command->secondFactorId);
+                ->setParameter('secondFactorId', (string) $query->secondFactorId);
         }
 
-        if (is_string($command->registrationCode)) {
+        if (is_string($query->registrationCode)) {
             $queryBuilder
                 ->andWhere('sf.registrationCode = :registrationCode')
-                ->setParameter('registrationCode', $command->registrationCode);
+                ->setParameter('registrationCode', $query->registrationCode);
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'sf')
+            ->where('sf.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 
     /**

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\Identity\Value\NameId;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository")
@@ -26,17 +27,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Sraa
 {
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\NameId
      *
      * @ORM\Id
-     * @ORM\Column(length=200)
+     * @ORM\Column(type="stepup_name_id", length=200)
      */
     public $nameId;
 
-    /**
-     * @param string $nameId
-     */
-    public function __construct($nameId)
+    public function __construct(NameId $nameId)
     {
         $this->nameId = $nameId;
     }

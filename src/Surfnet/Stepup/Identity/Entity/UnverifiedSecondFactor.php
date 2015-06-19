@@ -23,10 +23,12 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -39,12 +41,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 class UnverifiedSecondFactor extends AbstractSecondFactor
 {
     /**
-     * @var Identity
+     * @var \Surfnet\Stepup\Identity\Api\Identity
      */
     private $identity;
 
     /**
-     * @var SecondFactorId
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     private $id;
 
@@ -54,12 +56,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     private $type;
 
     /**
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
     /**
-     * @var EmailVerificationWindow;
+     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     private $verificationWindow;
 
@@ -72,7 +74,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorId          $id
      * @param Identity                $identity
      * @param SecondFactorType        $type
-     * @param string                  $secondFactorIdentifier
+     * @param SecondFactorIdentifier  $secondFactorIdentifier
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $verificationNonce
      * @return UnverifiedSecondFactor
@@ -137,14 +139,16 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     {
         $this->apply(
             new EmailVerifiedEvent(
-                new IdentityId($this->identity->getAggregateRootId()),
+                $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->secondFactorIdentifier,
                 DateTime::now(),
-                $this->identity->getIdentifyingDataId(),
                 OtpGenerator::generate(8),
-                'en_GB'
+                $this->identity->getCommonName(),
+                $this->identity->getEmail(),
+                $this->identity->getPreferredLocale()
             )
         );
     }
@@ -156,7 +160,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->id,
-                $this->type
+                $this->type,
+                $this->secondFactorIdentifier
             )
         );
     }
@@ -169,6 +174,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
+                $this->secondFactorIdentifier,
                 $authorityId
             )
         );
@@ -189,6 +195,13 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
             $registrationRequestedAt,
             $registrationCode
         );
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+
+        $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
     protected function getType()

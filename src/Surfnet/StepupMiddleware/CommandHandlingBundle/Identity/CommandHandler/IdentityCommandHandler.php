@@ -20,22 +20,28 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\RepositoryInterface;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
-use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Identity;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -73,12 +79,16 @@ class IdentityCommandHandler extends CommandHandler
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
     {
+        $preferredLocale = new Locale($command->preferredLocale);
+        $this->assertIsValidLocale($preferredLocale);
+
         $identity = Identity::create(
             new IdentityId($command->id),
             new Institution($command->institution),
             new NameId($command->nameId),
+            new CommonName($command->commonName),
             new Email($command->email),
-            new CommonName($command->commonName)
+            $preferredLocale
         );
 
         $this->repository->save($identity);
@@ -87,7 +97,7 @@ class IdentityCommandHandler extends CommandHandler
     public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load($command->id);
+        $identity = $this->repository->load(new IdentityId($command->id));
 
         $identity->rename(new CommonName($command->commonName));
         $identity->changeEmail(new Email($command->email));
@@ -98,13 +108,17 @@ class IdentityCommandHandler extends CommandHandler
     public function handleBootstrapIdentityWithYubikeySecondFactorCommand(
         BootstrapIdentityWithYubikeySecondFactorCommand $command
     ) {
+        $preferredLocale = new Locale($command->preferredLocale);
+        $this->assertIsValidLocale($preferredLocale);
+
         // @todo add check if Identity does not already exist based on NameId
         $identity = Identity::create(
             new IdentityId($command->identityId),
             new Institution($command->institution),
             new NameId($command->nameId),
+            new CommonName($command->commonName),
             new Email($command->email),
-            new CommonName($command->commonName)
+            $preferredLocale
         );
 
         $identity->bootstrapYubikeySecondFactor(
@@ -184,12 +198,19 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $registrant */
         $registrant = $this->repository->load(new IdentityId($command->identityId));
 
+        $secondFactorType = new SecondFactorType($command->secondFactorType);
+        $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
+            $secondFactorType,
+            $command->secondFactorIdentifier
+        );
+
         $authority->vetSecondFactor(
             $registrant,
             new SecondFactorId($command->secondFactorId),
-            $command->secondFactorIdentifier,
+            $secondFactorType,
+            $secondFactorIdentifier,
             $command->registrationCode,
-            $command->documentNumber,
+            new DocumentNumber($command->documentNumber),
             $command->identityVerified
         );
 
@@ -216,5 +237,29 @@ class IdentityCommandHandler extends CommandHandler
         );
 
         $this->repository->save($identity);
+    }
+
+    public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command)
+    {
+        $preferredLocale = new Locale($command->preferredLocale);
+        $this->assertIsValidLocale($preferredLocale);
+
+        /** @var IdentityApi $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity->expressPreferredLocale($preferredLocale);
+
+        $this->repository->save($identity);
+    }
+
+    /**
+     * @param Locale $locale
+     */
+    private function assertIsValidLocale(Locale $locale)
+    {
+        if (!$this->configurableSettings->isSupportedLocale($locale)) {
+            throw new UnsupportedLocaleException(
+                sprintf('Given locale "%s" is not a supported locale', (string) $locale)
+            );
+        }
     }
 }

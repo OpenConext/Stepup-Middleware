@@ -19,8 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchIdentityCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
 class IdentityRepository extends EntityRepository
 {
@@ -47,33 +50,33 @@ class IdentityRepository extends EntityRepository
     }
 
     /**
-     * @param SearchIdentityCommand $command
+     * @param IdentityQuery $query
      * @return \Doctrine\ORM\Query
      */
-    public function createSearchQuery(SearchIdentityCommand $command)
+    public function createSearchQuery(IdentityQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('i');
 
         $queryBuilder
             ->where('i.institution = :institution')
-            ->setParameter('institution', $command->institution);
+            ->setParameter('institution', $query->institution);
 
-        if ($command->nameId) {
+        if ($query->nameId) {
             $queryBuilder
                 ->andWhere('i.nameId = :nameId')
-                ->setParameter('nameId', $command->nameId);
+                ->setParameter('nameId', $query->nameId);
         }
 
-        if ($command->email) {
+        if ($query->email) {
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
-                ->setParameter('email', $command->email);
+                ->setParameter('email', $query->email);
         }
 
-        if ($command->commonName) {
+        if ($query->commonName) {
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
-                ->setParameter('commonName', $command->commonName);
+                ->setParameter('commonName', $query->commonName);
         }
 
         return $queryBuilder->getQuery();
@@ -83,7 +86,7 @@ class IdentityRepository extends EntityRepository
      * @param string[] $nameIds
      * @return Identity[] Indexed by NameID.
      */
-    public function findIdentitiesForNameIdsIndexedByNameIds(array $nameIds)
+    public function findByNameIdsIndexed(array $nameIds)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('i')
@@ -92,5 +95,31 @@ class IdentityRepository extends EntityRepository
             ->setParameter('nameIds', $nameIds)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
+     * @return Identity
+     */
+    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    {
+        return $this->createQueryBuilder('i')
+                ->where('i.nameId = :nameId')
+                ->setParameter('nameId', $nameId->getNameId())
+                ->andWhere('i.institution = :institution')
+                ->setParameter('institution', $institution->getInstitution())
+                ->getQuery()
+                ->getSingleResult();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'i')
+            ->where('i.id = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 }

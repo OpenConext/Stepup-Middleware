@@ -22,6 +22,9 @@ use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
+ */
 abstract class IdentityEvent implements AuditableEvent, SerializableInterface
 {
     /**

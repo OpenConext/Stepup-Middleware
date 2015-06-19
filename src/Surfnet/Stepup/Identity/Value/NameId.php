@@ -18,12 +18,13 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * The natural identifier of an Identity is the SAML Name ID.
  */
-class NameId
+final class NameId implements JsonSerializable
 {
     /**
      * @var string
@@ -39,7 +40,10 @@ class NameId
         $this->value = $value;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function getNameId()
     {
         return $this->value;
     }
@@ -47,5 +51,15 @@ class NameId
     public function equals($other)
     {
         return $this == $other;
+    }
+
+    public function __toString()
+    {
+        return $this->value;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->value;
     }
 }

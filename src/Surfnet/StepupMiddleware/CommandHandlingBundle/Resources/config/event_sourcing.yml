@@ -1,14 +1,8 @@
 services:
-    surfnet_stepup.repository.identity_decorated_with_identifying_data:
-        class: Surfnet\Stepup\IdentifyingData\EventSourcing\IdentifyingDataDecorator
-        arguments:
-            - @surfnet_stepup.repository.identity
-            - @stepup.repository.identifying_data
-
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:
-            - @surfnet_stepup.event_store.dbal
+            - @surfnet_stepup_middleware_command_handling.event_store.sensitive_data
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
             - @surfnet_stepup.aggregate_factory.public_constructor
             - [@surfnet_stepup_middleware_command_handling.metadata_enricher.actor]
@@ -18,6 +12,13 @@ services:
 
     surfnet_stepup.repository.configuration:
         class: Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository
+        arguments:
+            - @surfnet_stepup.event_store.dbal
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @surfnet_stepup.aggregate_factory.public_constructor
+
+    surfnet_stepup.repository.whitelist:
+        class: Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository
         arguments:
             - @surfnet_stepup.event_store.dbal
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
@@ -47,3 +48,20 @@ services:
     surfnet_stepup_middleware_command_handling.event_bus.buffered:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus
+
+    # Sensitive data
+    surfnet_stepup_middleware_command_handling.repository.sensitive_data_message:
+        class:   Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository
+        arguments:
+            - @doctrine.dbal.middleware_connection
+
+    surfnet_stepup_middleware_command_handling.event_store.sensitive_data:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventStore\SensitiveDataEventStoreDecorator
+        arguments:
+             - @surfnet_stepup.event_store.dbal
+             - @surfnet_stepup_middleware_command_handling.repository.sensitive_data_message
+
+    surfnet_stepup_middleware_command_handling.service.sensitive_data:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService
+        arguments:
+            - @surfnet_stepup_middleware_command_handling.repository.sensitive_data_message

@@ -19,12 +19,16 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class IdentityCreatedEvent extends IdentityEvent
+class IdentityCreatedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var NameId
@@ -32,20 +36,34 @@ class IdentityCreatedEvent extends IdentityEvent
     public $nameId;
 
     /**
-     * @var IdentifyingDataId
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
-    public $identifyingDataId;
+    public $commonName;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Email
+     */
+    public $email;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale
+     */
+    public $preferredLocale;
 
     public function __construct(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
-        IdentifyingDataId $identifyingDataId
+        CommonName $commonName,
+        Email $email,
+        Locale $preferredLocale
     ) {
         parent::__construct($id, $institution);
 
         $this->nameId = $nameId;
-        $this->identifyingDataId = $identifyingDataId;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
@@ -63,7 +81,9 @@ class IdentityCreatedEvent extends IdentityEvent
             new IdentityId($data['id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
-            new IdentifyingDataId($data['identifying_data_id'])
+            CommonName::unknown(),
+            Email::unknown(),
+            new Locale($data['preferred_locale'])
         );
     }
 
@@ -73,7 +93,20 @@ class IdentityCreatedEvent extends IdentityEvent
             'id'                  => (string) $this->identityId,
             'institution'         => (string) $this->identityInstitution,
             'name_id'             => (string) $this->nameId,
-            'identifying_data_id' => (string) $this->identifyingDataId
+            'preferred_locale'    => (string) $this->preferredLocale,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withCommonName($this->commonName)
+            ->withEmail($this->email);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->email      = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 }

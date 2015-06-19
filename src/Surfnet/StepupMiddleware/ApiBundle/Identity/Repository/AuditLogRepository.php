@@ -20,8 +20,10 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchSecondFactorAuditLogCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
 class AuditLogRepository extends EntityRepository
 {
@@ -43,7 +45,73 @@ class AuditLogRepository extends EntityRepository
         'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent',
         'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent',
         'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent',
+        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',
     ];
+
+    /**
+     * @param SecondFactorAuditLogQuery $query
+     * @return Query
+     */
+    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query)
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('al')
+            ->where('al.identityInstitution = :identityInstitution')
+            ->setParameter('identityInstitution', $query->identityInstitution)
+            ->andWhere('al.identityId = :identityId')
+            ->andWhere('al.event IN (:secondFactorEvents)')
+            ->setParameter('identityId', $query->identityId)
+            ->setParameter('secondFactorEvents', self::$secondFactorEvents);
+
+        switch ($query->orderBy) {
+            case 'secondFactorId':
+            case 'secondFactorType':
+            case 'event':
+            case 'recordedOn':
+            case 'actorId':
+                $queryBuilder->orderBy(
+                    sprintf('al.%s', $query->orderBy),
+                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
+                );
+                break;
+            default:
+                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
+        }
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param IdentityId $actorId
+     * @return AuditLogEntry[]
+     */
+    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId)
+    {
+        return $this->createQueryBuilder('al')
+            ->where('al.actorId = :actorId')
+            ->andWhere('al.identityId != :actorId')
+            ->setParameter('actorId', $actorId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @return void
+     */
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'al')
+            ->where('al.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
+    }
 
     /**
      * @param AuditLogEntry $entry
@@ -55,31 +123,14 @@ class AuditLogRepository extends EntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param SearchSecondFactorAuditLogCommand $command
-     * @return Query
-     */
-    public function createSecondFactorSearchQuery(SearchSecondFactorAuditLogCommand $command)
+    public function saveAll(array $entries)
     {
-        $queryBuilder = $this
-            ->createQueryBuilder('al')
-            ->where('al.identityInstitution = :identityInstitution')
-            ->setParameter('identityInstitution', $command->identityInstitution)
-            ->andWhere('al.identityId = :identityId')
-            ->andWhere('al.event IN (:secondFactorEvents)')
-            ->setParameter('identityId', $command->identityId)
-            ->setParameter('secondFactorEvents', self::$secondFactorEvents);
+        $entityManager = $this->getEntityManager();
 
-        switch ($command->orderBy) {
-            case 'secondFactorId':
-            case 'secondFactorType':
-            case 'event':
-            case 'recordedOn':
-            case 'actorId':
-                $queryBuilder->orderBy(sprintf('al.%s', $command->orderBy), $command->orderDirection === 'desc' ? 'DESC' : 'ASC');
-                break;
+        foreach ($entries as $entry) {
+            $entityManager->persist($entry);
         }
 
-        return $queryBuilder->getQuery();
+        $entityManager->flush();
     }
 }

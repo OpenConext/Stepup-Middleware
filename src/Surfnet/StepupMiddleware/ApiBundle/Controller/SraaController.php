@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SraaController extends Controller
 {
@@ -31,11 +31,9 @@ class SraaController extends Controller
      */
     public function getAction($nameId)
     {
-        if (!$this->isGranted('ROLE_RA')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access identity');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $sraa = $this->getService()->findByNameId($nameId);
+        $sraa = $this->getService()->findByNameId(new NameId($nameId));
 
         if (!$sraa) {
             return new JsonNotFoundResponse();

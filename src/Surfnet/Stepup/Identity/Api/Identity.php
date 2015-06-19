@@ -20,36 +20,44 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\IdentifyingData\Api\IdentifyingDataHolder;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
-interface Identity extends IdentifyingDataHolder, AggregateRoot
+interface Identity extends AggregateRoot
 {
     /**
      * @param IdentityId  $id
      * @param Institution $institution
      * @param NameId      $nameId
-     * @param Email       $email
      * @param CommonName  $commonName
+     * @param Email       $email
+     * @param Locale      $preferredLocale
      * @return Identity
      */
     public static function create(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
+        CommonName $commonName,
         Email $email,
-        CommonName $commonName
+        Locale $preferredLocale
     );
 
     /**
@@ -70,11 +78,14 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     public function changeEmail(Email $email);
 
     /**
-     * @param SecondFactorId $secondFactorId
+     * @param SecondFactorId  $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
      * @return void
      */
-    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId);
+    public function bootstrapYubikeySecondFactor(
+        SecondFactorId $secondFactorId,
+        YubikeyPublicId $yubikeyPublicId
+    );
 
     /**
      * @param SecondFactorId          $secondFactorId
@@ -123,39 +134,43 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param Identity       $registrant
-     * @param SecondFactorId $registrantsSecondFactorId
-     * @param string         $registrantsSecondFactorIdentifier
-     * @param string         $registrationCode
-     * @param string         $documentNumber
-     * @param bool           $identityVerified
+     * @param Identity               $registrant
+     * @param SecondFactorId         $registrantsSecondFactorId
+     * @param SecondFactorType       $registrantsSecondFactorType
+     * @param SecondFactorIdentifier $registrantsSecondFactorIdentifier
+     * @param string                 $registrationCode
+     * @param DocumentNumber         $documentNumber
+     * @param bool                   $identityVerified
      * @return void
      * @throws DomainException
      */
     public function vetSecondFactor(
         Identity $registrant,
         SecondFactorId $registrantsSecondFactorId,
-        $registrantsSecondFactorIdentifier,
+        SecondFactorType $registrantsSecondFactorType,
+        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
+        DocumentNumber $documentNumber,
         $identityVerified
     );
 
     /**
      * Makes the identity comply with an authority's vetting of a verified second factor.
      *
-     * @param SecondFactorId $secondFactorId
-     * @param string         $secondFactorIdentifier
-     * @param string         $registrationCode
-     * @param string         $documentNumber
-     * @return void
+     * @param SecondFactorId         $secondFactorId
+     * @param SecondFactorType       $secondFactorType
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @param string                 $registrationCode
+     * @param DocumentNumber         $documentNumber
      * @throws DomainException
+     * @return void
      */
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber
+        DocumentNumber $documentNumber
     );
 
     /**
@@ -167,9 +182,52 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     /**
      * @param SecondFactorId $secondFactorId
      * @param IdentityId $authorityId
-     * @return
+     * @return void
      */
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
+
+    /**
+     * @param Institution               $institution
+     * @param RegistrationAuthorityRole $role
+     * @param Location                  $location
+     * @param ContactInformation        $contactInformation
+     * @return void
+     */
+    public function accreditWith(
+        RegistrationAuthorityRole $role,
+        Institution $institution,
+        Location $location,
+        ContactInformation $contactInformation
+    );
+
+    /**
+     * @param RegistrationAuthorityRole $role
+     * @return void
+     */
+    public function appointAs(RegistrationAuthorityRole $role);
+
+    /**
+     * @param Location           $location
+     * @param ContactInformation $contactInformation
+     * @return void
+     */
+    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
+
+    /**
+     * @return void
+     */
+    public function retractRegistrationAuthority();
+
+    /**
+     * @param Locale $preferredLocale
+     * @return void
+     */
+    public function expressPreferredLocale(Locale $preferredLocale);
+
+    /**
+     * @return void
+     */
+    public function forget();
 
     /**
      * @return IdentityId
@@ -187,8 +245,29 @@ interface Identity extends IdentifyingDataHolder, AggregateRoot
     public function getInstitution();
 
     /**
+     * @return CommonName
+     */
+    public function getCommonName();
+
+    /**
+     * @return Email
+     */
+    public function getEmail();
+
+    /**
+     * @return Locale
+     */
+    public function getPreferredLocale();
+
+    /**
      * @param SecondFactorId $secondFactorId
      * @return VerifiedSecondFactor|null
      */
     public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
+
+    /**
+     * @return IdentityId We're deviating from Broadway's official API, as they accept toString-able VOs as IDs, and we
+     *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
+     */
+    public function getAggregateRootId();
 }

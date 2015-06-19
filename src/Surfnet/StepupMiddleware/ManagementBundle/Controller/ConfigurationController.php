@@ -30,8 +30,8 @@ class ConfigurationController extends Controller
 {
     public function updateAction(Request $request)
     {
-        $command = new UpdateConfigurationCommand();
-        $command->UUID = (string) Uuid::uuid4();
+        $command                = new UpdateConfigurationCommand();
+        $command->UUID          = (string) Uuid::uuid4();
         $command->configuration = $request->getContent();
 
         return $this->handleCommand($request, $command);

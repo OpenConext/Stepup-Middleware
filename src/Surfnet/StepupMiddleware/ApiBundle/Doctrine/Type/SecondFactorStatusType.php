@@ -31,11 +31,22 @@ class SecondFactorStatusType extends Type
 {
     const NAME = 'stepup_second_factor_status';
 
+    /**
+     * @param array            $fieldDeclaration
+     * @param AbstractPlatform $platform
+     * @return string
+     */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
     }
 
+    /**
+     * @param mixed            $value
+     * @param AbstractPlatform $platform
+     * @return int
+     * @throws ConversionException
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (!$value instanceof SecondFactorStatus) {
@@ -61,6 +72,12 @@ class SecondFactorStatusType extends Type
         throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
     }
 
+    /**
+     * @param mixed            $value
+     * @param AbstractPlatform $platform
+     * @return SecondFactorStatus
+     * @throws ConversionException
+     */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($value === '0') {

@@ -20,8 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchVettedSecondFactorCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 
 class VettedSecondFactorRepository extends EntityRepository
 {
@@ -38,20 +39,30 @@ class VettedSecondFactorRepository extends EntityRepository
     }
 
     /**
-     * @param SearchVettedSecondFactorCommand $command
+     * @param VettedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(SearchVettedSecondFactorCommand $command)
+    public function createSearchQuery(VettedSecondFactorQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($command->identityId) {
+        if ($query->identityId) {
             $queryBuilder
-                ->andWhere('sf.identity = :identityId')
-                ->setParameter('identityId', (string) $command->identityId);
+                ->andWhere('sf.identityId = :identityId')
+                ->setParameter('identityId', (string) $query->identityId);
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'sf')
+            ->where('sf.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 
     /**

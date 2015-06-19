@@ -19,30 +19,27 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\ListRasCommand;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RaController extends Controller
 {
     public function listAction(Institution $institution)
     {
-        if (!$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access RA list');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_SS']);
 
-        $ras = $this->getService()->listRas($institution);
-        $raCount = count($ras);
+        $service = $this->getRaListingService();
+        $registrationAuthorityCredentials = $service->listRegistrationAuthoritiesFor($institution);
+        $count = count($registrationAuthorityCredentials);
 
-        return new JsonCollectionResponse($raCount, 1, $raCount, $ras);
+        return new JsonCollectionResponse($count, 1, $count, $registrationAuthorityCredentials);
     }
 
     /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService
+     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
      */
-    private function getService()
+    private function getRaListingService()
     {
-        return $this->get('surfnet_stepup_middleware_api.service.ra');
+        return $this->get('surfnet_stepup_middleware_api.service.ra_listing');
     }
 }

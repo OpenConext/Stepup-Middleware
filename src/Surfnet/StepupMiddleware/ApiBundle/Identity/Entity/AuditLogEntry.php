@@ -59,16 +59,20 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
         'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent'                      => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent'              => 'bootstrapped',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent'                      => 'accredited_as_raa',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent'                       => 'accredited_as_ra',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent'                               => 'appointed_as_raa',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent'                                => 'appointed_as_ra',
+        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent'               => 'retracted_as_ra',
     ];
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(length=36)
      *
-     * @var int|null
+     * @var string
      */
-    private $id;
+    public $id;
 
     /**
      * @ORM\Column(length=36, nullable=true)
@@ -76,6 +80,13 @@ class AuditLogEntry implements JsonSerializable
      * @var string|null
      */
     public $actorId;
+
+    /**
+     * @ORM\Column(type="stepup_common_name", nullable=true)
+     *
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     */
+    public $actorCommonName;
 
     /**
      * @ORM\Column(type="institution", nullable=true)
@@ -106,6 +117,13 @@ class AuditLogEntry implements JsonSerializable
     public $secondFactorId;
 
     /**
+     * @ORM\Column(length=255, nullable=true)
+     *
+     * @var string
+     */
+    public $secondFactorIdentifier;
+
+    /**
      * @ORM\Column(length=36, nullable=true)
      *
      * @var string|null
@@ -129,14 +147,16 @@ class AuditLogEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'actor_id'             => $this->actorId,
-            'actor_institution'    => $this->actorInstitution ? (string) $this->actorInstitution : null,
-            'identity_id'          => $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id'     => $this->secondFactorId,
-            'second_factor_type'   => $this->secondFactorType ? (string) $this->secondFactorType : null,
-            'action'               => $this->mapEventToAction($this->event),
-            'recorded_on'          => (string) $this->recordedOn,
+            'actor_id'                 => $this->actorId,
+            'actor_institution'        => $this->actorInstitution ? (string) $this->actorInstitution : null,
+            'actor_common_name'        => $this->actorCommonName,
+            'identity_id'              => $this->identityId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => $this->secondFactorId,
+            'second_factor_type'       => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
+            'action'                   => $this->mapEventToAction($this->event),
+            'recorded_on'              => (string) $this->recordedOn,
         ];
     }
 

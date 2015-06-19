@@ -20,37 +20,50 @@ namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData;
-use Surfnet\Stepup\IdentifyingData\Value\CommonName;
-use Surfnet\Stepup\IdentifyingData\Value\Email;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
@@ -79,14 +92,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $nameId;
 
     /**
-     * @var IdentifyingDataId
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
-    private $identifyingDataId;
+    private $commonName;
 
     /**
-     * @var IdentifyingData
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
-    private $identifyingData;
+    private $email;
 
     /**
      * @var SecondFactorCollection|UnverifiedSecondFactor[]
@@ -103,17 +116,31 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private $vettedSecondFactors;
 
+    /**
+     * @var RegistrationAuthority
+     */
+    private $registrationAuthority;
+
+    /**
+     * @var Locale
+     */
+    private $preferredLocale;
+
+    /**
+     * @var boolean
+     */
+    private $forgotten;
+
     public static function create(
         IdentityId $id,
         Institution $institution,
         NameId $nameId,
+        CommonName $commonName,
         Email $email,
-        CommonName $commonName
+        Locale $preferredLocale
     ) {
         $identity = new self();
-
-        $identity->identifyingData = IdentifyingData::createFrom($id, $email, $commonName);
-        $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $identity->identifyingData->id));
+        $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
 
         return $identity;
     }
@@ -124,33 +151,41 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function rename(CommonName $commonName)
     {
-        if ($this->identifyingData->commonName->equals($commonName)) {
+        $this->assertNotForgotten();
+
+        if ($this->commonName->equals($commonName)) {
             return;
         }
 
-        $this->identifyingData->commonName = $commonName;
-        $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $this->identifyingDataId));
+        $this->commonName = $commonName;
+        $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $commonName));
     }
 
     public function changeEmail(Email $email)
     {
-        if ($this->identifyingData->email->equals($email)) {
+        $this->assertNotForgotten();
+
+        if ($this->email->equals($email)) {
             return;
         }
 
-        $this->identifyingData->email = $email;
-        $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $this->identifyingDataId));
+        $this->email = $email;
+        $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $email));
     }
 
     public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
     {
+        $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
         $this->apply(
             new YubikeySecondFactorBootstrappedEvent(
                 $this->id,
                 $this->nameId,
                 $this->institution,
-                $this->identifyingDataId,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale,
                 $secondFactorId,
                 $yubikeyPublicId
             )
@@ -162,7 +197,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         YubikeyPublicId $yubikeyPublicId,
         EmailVerificationWindow $emailVerificationWindow
     ) {
+        $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
         $this->apply(
             new YubikeyPossessionProvenEvent(
                 $this->id,
@@ -170,9 +207,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $yubikeyPublicId,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
             )
         );
     }
@@ -182,7 +220,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         PhoneNumber $phoneNumber,
         EmailVerificationWindow $emailVerificationWindow
     ) {
+        $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
         $this->apply(
             new PhonePossessionProvenEvent(
                 $this->id,
@@ -190,9 +230,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $phoneNumber,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
             )
         );
     }
@@ -203,6 +244,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         GssfId $gssfId,
         EmailVerificationWindow $emailVerificationWindow
     ) {
+        $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
         $this->apply(
@@ -213,15 +255,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $provider,
                 $gssfId,
                 $emailVerificationWindow,
-                $this->identifyingDataId,
                 TokenGenerator::generateNonce(),
-                'en_GB'
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
             )
         );
     }
 
     public function verifyEmail($verificationNonce)
     {
+        $this->assertNotForgotten();
+
         $secondFactorToVerify = null;
         foreach ($this->unverifiedSecondFactors as $secondFactor) {
             /** @var Entity\UnverifiedSecondFactor $secondFactor */
@@ -247,11 +292,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function vetSecondFactor(
         IdentityApi $registrant,
         SecondFactorId $registrantsSecondFactorId,
-        $registrantsSecondFactorIdentifier,
+        SecondFactorType $registrantsSecondFactorType,
+        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
-        $documentNumber,
+        DocumentNumber $documentNumber,
         $identityVerified
     ) {
+        $this->assertNotForgotten();
+
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
         $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa();
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
@@ -272,6 +320,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         $registrant->complyWithVettingOfSecondFactor(
             $registrantsSecondFactorId,
+            $registrantsSecondFactorType,
             $registrantsSecondFactorIdentifier,
             $registrationCode,
             $documentNumber
@@ -280,10 +329,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
-        $secondFactorIdentifier,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
-        $documentNumber
+        DocumentNumber $documentNumber
     ) {
+        $this->assertNotForgotten();
+
         $secondFactorToVet = null;
         foreach ($this->verifiedSecondFactors as $secondFactor) {
             /** @var VerifiedSecondFactor $secondFactor */
@@ -308,6 +360,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function revokeSecondFactor(SecondFactorId $secondFactorId)
     {
+        $this->assertNotForgotten();
+
         /** @var UnverifiedSecondFactor|null $unverifiedSecondFactor */
         $unverifiedSecondFactor = $this->unverifiedSecondFactors->get((string) $secondFactorId);
         /** @var VerifiedSecondFactor|null $verifiedSecondFactor */
@@ -336,6 +390,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId)
     {
+        $this->assertNotForgotten();
+
         /** @var UnverifiedSecondFactor|null $unverifiedSecondFactor */
         $unverifiedSecondFactor = $this->unverifiedSecondFactors->get((string) $secondFactorId);
         /** @var VerifiedSecondFactor|null $verifiedSecondFactor */
@@ -362,12 +418,152 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $vettedSecondFactor->complyWithRevocation($authorityId);
     }
 
+    /**
+     * @param Institution               $institution
+     * @param RegistrationAuthorityRole $role
+     * @param Location                  $location
+     * @param ContactInformation        $contactInformation
+     * @return void
+     */
+    public function accreditWith(
+        RegistrationAuthorityRole $role,
+        Institution $institution,
+        Location $location,
+        ContactInformation $contactInformation
+    ) {
+        $this->assertNotForgotten();
+
+        if (!$this->institution->equals($institution)) {
+            throw new DomainException('An Identity may only be accredited within its own institution');
+        }
+
+        if (!$this->vettedSecondFactors->count()) {
+            throw new DomainException(
+                'An Identity must have at least one vetted second factor before it can be accredited'
+            );
+        }
+
+        if ($this->registrationAuthority) {
+            throw new DomainException('Cannot accredit Identity as it has already been accredited');
+        }
+
+        if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
+            $this->apply(new IdentityAccreditedAsRaEvent(
+                $this->id,
+                $this->nameId,
+                $this->institution,
+                $role,
+                $location,
+                $contactInformation
+            ));
+        } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
+            $this->apply(new IdentityAccreditedAsRaaEvent(
+                $this->id,
+                $this->nameId,
+                $this->institution,
+                $role,
+                $location,
+                $contactInformation
+            ));
+        } else {
+            throw new DomainException('An Identity can only be accredited with either the RA or RAA role');
+        }
+    }
+
+    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation)
+    {
+        $this->assertNotForgotten();
+
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot amend registration authority information: identity is not a registration authority'
+            );
+        }
+
+        $this->apply(
+            new RegistrationAuthorityInformationAmendedEvent(
+                $this->id,
+                $this->institution,
+                $this->nameId,
+                $location,
+                $contactInformation
+            )
+        );
+    }
+
+    public function appointAs(RegistrationAuthorityRole $role)
+    {
+        $this->assertNotForgotten();
+
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority'
+            );
+        }
+
+        if ($this->registrationAuthority->isAppointedAs($role)) {
+            return;
+        }
+
+        if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
+            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId));
+        } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
+            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId));
+        } else {
+            throw new DomainException('An Identity can only be appointed as either RA or RAA');
+        }
+    }
+
+    public function retractRegistrationAuthority()
+    {
+        $this->assertNotForgotten();
+
+        if (!$this->registrationAuthority) {
+            throw new DomainException(
+                'Cannot Retract Registration Authority as the Identity is not a registration authority'
+            );
+        }
+
+        $this->apply(new RegistrationAuthorityRetractedEvent(
+            $this->id,
+            $this->institution,
+            $this->nameId,
+            $this->commonName,
+            $this->email
+        ));
+    }
+
+    public function expressPreferredLocale(Locale $preferredLocale)
+    {
+        $this->assertNotForgotten();
+
+        if ($this->preferredLocale === $preferredLocale) {
+            return;
+        }
+
+        $this->apply(new LocalePreferenceExpressedEvent($this->id, $this->institution, $preferredLocale));
+    }
+
+    public function forget()
+    {
+        $this->assertNotForgotten();
+
+        if ($this->registrationAuthority) {
+            throw new DomainException('Cannot forget an identity that is currently accredited as an RA(A)');
+        }
+
+        $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
+    }
+
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $this->id                      = $event->identityId;
         $this->institution             = $event->identityInstitution;
         $this->nameId                  = $event->nameId;
-        $this->identifyingDataId       = $event->identifyingDataId;
+        $this->commonName              = $event->commonName;
+        $this->email                   = $event->email;
+        $this->preferredLocale         = $event->preferredLocale;
+        $this->forgotten               = false;
 
         $this->unverifiedSecondFactors = new SecondFactorCollection();
         $this->verifiedSecondFactors   = new SecondFactorCollection();
@@ -380,7 +576,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            (string) $event->yubikeyPublicId
+            $event->yubikeyPublicId
         );
 
         $this->vettedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
@@ -392,7 +588,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            (string) $event->yubikeyPublicId,
+            $event->yubikeyPublicId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -406,7 +602,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('sms'),
-            (string) $event->phoneNumber,
+            $event->phoneNumber,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -420,7 +616,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType((string) $event->stepupProvider),
-            (string) $event->gssfId,
+            $event->gssfId,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );
@@ -485,9 +681,60 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->remove((string) $event->secondFactorId);
     }
 
+    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    {
+        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation
+        );
+    }
+
+    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    {
+        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation
+        );
+    }
+
+    protected function applyRegistrationAuthorityInformationAmendedEvent(
+        RegistrationAuthorityInformationAmendedEvent $event
+    ) {
+        $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
+    }
+
+    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
+    }
+
+    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    {
+        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
+    }
+
+    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $this->registrationAuthority = null;
+    }
+
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $this->preferredLocale = $event->preferredLocale;
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->commonName = CommonName::unknown();
+        $this->email      = Email::unknown();
+        $this->forgotten  = true;
+    }
+
     public function getAggregateRootId()
     {
-        return (string) $this->id;
+        return $this->id;
     }
 
     protected function getChildEntities()
@@ -502,6 +749,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @throws DomainException
      */
+    private function assertNotForgotten()
+    {
+        if ($this->forgotten) {
+            throw new DomainException('Operation on this Identity is not allowed: it has been forgotten');
+        }
+    }
+
+    /**
+     * @throws DomainException
+     */
     private function assertUserMayAddSecondFactor()
     {
         if (count($this->unverifiedSecondFactors) +
@@ -510,31 +767,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ) {
             throw new DomainException('User may not have more than one token');
         }
-    }
-
-    public function getIdentifyingDataId()
-    {
-        return $this->identifyingDataId;
-    }
-
-    public function setIdentifyingData(IdentifyingData $identifyingData)
-    {
-        if (!$this->identifyingDataId->equals(new IdentifyingDataId($identifyingData->id))) {
-            throw new DomainException(sprintf(
-                'Cannot set IdentifyingData "%s" on identity "%s" with IdentifyingDataId "%s" as it does not belong to '
-                . 'this identity',
-                $identifyingData->id,
-                (string) $this->identifyingDataId,
-                (string) $this->id
-            ));
-        }
-
-        $this->identifyingData = $identifyingData;
-    }
-
-    public function exposeIdentifyingData()
-    {
-        return $this->identifyingData;
     }
 
     public function getId()
@@ -556,6 +788,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function getInstitution()
     {
         return $this->institution;
+    }
+
+    public function getCommonName()
+    {
+        return $this->commonName;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function getPreferredLocale()
+    {
+        return $this->preferredLocale;
     }
 
     /**

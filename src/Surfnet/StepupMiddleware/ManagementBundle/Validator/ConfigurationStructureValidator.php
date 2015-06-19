@@ -38,22 +38,15 @@ class ConfigurationStructureValidator extends ConstraintValidator
     private $gatewayConfigurationValidator;
 
     /**
-     * @var RaaConfigurationValidator
-     */
-    private $raaConfigurationValidator;
-
-    /**
      * @var EmailTemplatesConfigurationValidator
      */
     private $emailTemplatesConfigurationValidator;
 
     public function __construct(
         GatewayConfigurationValidator $gatewayConfigurationValidator,
-        RaaConfigurationValidator $raaConfigurationValidator,
         EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator
     ) {
         $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
-        $this->raaConfigurationValidator = $raaConfigurationValidator;
         $this->emailTemplatesConfigurationValidator = $emailTemplatesConfigurationValidator;
     }
 
@@ -88,7 +81,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
-        $acceptedProperties = ['gateway', 'raa', 'sraa', 'email_templates'];
+        $acceptedProperties = ['gateway', 'sraa', 'email_templates'];
         StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
@@ -97,7 +90,6 @@ class ConfigurationStructureValidator extends ConstraintValidator
         );
 
         $this->validateGatewayConfiguration($configuration, 'gateway');
-        $this->validateRaaConfiguration($configuration, 'raa');
         $this->validateSraaConfiguration($configuration, 'sraa');
         $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
     }
@@ -107,13 +99,6 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assert::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
 
         $this->gatewayConfigurationValidator->validate($configuration['gateway'], $propertyPath);
-    }
-
-    private function validateRaaConfiguration($configuration, $propertyPath)
-    {
-        Assert::isArray($configuration['raa'], 'Property "raa" must have an object as value', $propertyPath);
-
-        $this->raaConfigurationValidator->validate($configuration['raa'], $propertyPath);
     }
 
     private function validateSraaConfiguration($configuration, $propertyPath)

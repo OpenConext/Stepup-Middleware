@@ -10,3 +10,9 @@ services:
         arguments:
             - @middleware.gateway_repository.saml_entities
         tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_gateway.projector.whitelist_entry:
+        class: Surfnet\StepupMiddleware\GatewayBundle\Projector\WhitelistProjector
+        arguments:
+            - @middleware.gateway_repository.whitelist_entry
+        tags: [{ name: event_bus.event_listener }]

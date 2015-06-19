@@ -19,30 +19,24 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\IdentitySearchSpecification;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnverifiedSecondFactorController extends Controller
 {
     public function getAction($id)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access unverified second factor');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $secondFactor = $this->getService()->findUnverified(new SecondFactorId($id));
 
         if ($secondFactor === null) {
-            throw new NotFoundHttpException(
-                sprintf("Unverified second factor '%s' does not exist", $id)
-            );
+            throw new NotFoundHttpException(sprintf("Unverified second factor '%s' does not exist", $id));
         }
 
         return new JsonResponse($secondFactor);
@@ -50,16 +44,14 @@ class UnverifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        if (!$this->isGranted('ROLE_RA') && !$this->isGranted('ROLE_SS')) {
-            throw new AccessDeniedHttpException('Client is not authorised to access resource');
-        }
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $command = new SearchUnverifiedSecondFactorCommand();
-        $command->identityId = $request->get('identityId');
-        $command->verificationNonce = $request->get('verificationNonce');
-        $command->pageNumber = (int) $request->get('p', 1);
+        $query                    = new UnverifiedSecondFactorQuery();
+        $query->identityId        = $request->get('identityId');
+        $query->verificationNonce = $request->get('verificationNonce');
+        $query->pageNumber        = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->searchUnverifiedSecondFactors($command);
+        $paginator = $this->getService()->searchUnverifiedSecondFactors($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

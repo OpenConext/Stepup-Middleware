@@ -19,13 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor;
 
 use Broadway\Processor\Processor;
-use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
-use Surfnet\Stepup\IdentifyingData\Value\IdentifyingDataId;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
 class EmailProcessor extends Processor
@@ -36,85 +34,58 @@ class EmailProcessor extends Processor
     private $mailService;
 
     /**
-     * @var RaService
+     * @var RaListingService
      */
-    private $raService;
-
-    /**
-     * @var IdentifyingDataRepository
-     */
-    private $identifyingDataRepository;
+    private $raListingService;
 
     /**
      * @param SecondFactorMailService   $mailService
-     * @param RaService                 $raService
-     * @param IdentifyingDataRepository $identifyingDataRepository
+     * @param RaListingService          $raListingService
      */
-    public function __construct(
-        SecondFactorMailService $mailService,
-        RaService $raService,
-        IdentifyingDataRepository $identifyingDataRepository
-    ) {
-        $this->mailService = $mailService;
-        $this->raService = $raService;
-        $this->identifyingDataRepository = $identifyingDataRepository;
+    public function __construct(SecondFactorMailService $mailService, RaListingService $raListingService)
+    {
+        $this->mailService               = $mailService;
+        $this->raListingService          = $raListingService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
-
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
-            (string) $identifyingData->commonName,
-            (string) $identifyingData->email,
+            (string) $event->preferredLocale,
+            (string) $event->commonName,
+            (string) $event->email,
             $event->emailVerificationNonce
         );
     }
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
-
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
-            (string) $identifyingData->commonName,
-            (string) $identifyingData->email,
+            (string) $event->preferredLocale,
+            (string) $event->commonName,
+            (string) $event->email,
             $event->emailVerificationNonce
         );
     }
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
-
         $this->mailService->sendEmailVerificationEmail(
-            $event->preferredLocale,
-            (string) $identifyingData->commonName,
-            (string) $identifyingData->email,
+            (string) $event->preferredLocale,
+            (string) $event->commonName,
+            (string) $event->email,
             $event->emailVerificationNonce
         );
     }
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $identifyingData = $this->getIdentifyingData($event->identifyingDataId);
-
         $this->mailService->sendRegistrationEmail(
-            $event->preferredLocale,
-            (string) $identifyingData->commonName,
-            (string) $identifyingData->email,
+            (string) $event->preferredLocale,
+            (string) $event->commonName,
+            (string) $event->email,
             $event->registrationCode,
-            $this->raService->listRas($event->identityInstitution)
+            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
         );
-    }
-
-    /**
-     * @param IdentifyingDataId $identifyingDataId
-     * @return \Surfnet\Stepup\IdentifyingData\Entity\IdentifyingData
-     */
-    private function getIdentifyingData(IdentifyingDataId $identifyingDataId)
-    {
-        return $this->identifyingDataRepository->getById($identifyingDataId);
     }
 }

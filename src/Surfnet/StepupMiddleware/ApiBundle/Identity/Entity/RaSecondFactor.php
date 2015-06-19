@@ -20,6 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
@@ -76,27 +79,27 @@ class RaSecondFactor implements JsonSerializable
     public $identityId;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="institution")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\Institution
      */
     public $institution;
 
     /**
      * The name of the registrant.
      *
-     * @ORM\Column
+     * @ORM\Column(type="stepup_common_name")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $name;
 
     /**
      * The e-mail of the registrant.
      *
-     * @ORM\Column
+     * @ORM\Column(type="stepup_email")
      *
-     * @var string
+     * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
 
@@ -105,12 +108,19 @@ class RaSecondFactor implements JsonSerializable
      * @param string $type
      * @param string $secondFactorId
      * @param string $identityId
-     * @param string $institution
-     * @param string $name
-     * @param string $email
+     * @param Institution $institution
+     * @param CommonName $name
+     * @param Email $email
      */
-    public function __construct($id, $type, $secondFactorId, $identityId, $institution, $name, $email)
-    {
+    public function __construct(
+        $id,
+        $type,
+        $secondFactorId,
+        $identityId,
+        Institution $institution,
+        CommonName $name,
+        Email $email
+    ) {
         $this->id = $id;
         $this->type = $type;
         $this->secondFactorId = $secondFactorId;

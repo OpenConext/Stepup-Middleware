@@ -20,8 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Command\SearchUnverifiedSecondFactorCommand;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 
 class UnverifiedSecondFactorRepository extends EntityRepository
 {
@@ -38,25 +39,35 @@ class UnverifiedSecondFactorRepository extends EntityRepository
     }
 
     /**
-     * @param SearchUnverifiedSecondFactorCommand $command
+     * @param UnverifiedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(SearchUnverifiedSecondFactorCommand $command)
+    public function createSearchQuery(UnverifiedSecondFactorQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($command->identityId) {
+        if ($query->identityId) {
             $queryBuilder
-                ->andWhere('sf.identity = :identityId')
-                ->setParameter('identityId', (string) $command->identityId);
+                ->andWhere('sf.identityId = :identityId')
+                ->setParameter('identityId', (string) $query->identityId);
         }
 
-        if ($command->verificationNonce) {
+        if ($query->verificationNonce) {
             $queryBuilder->andWhere('sf.verificationNonce = :verificationNonce');
-            $queryBuilder->setParameter('verificationNonce', $command->verificationNonce);
+            $queryBuilder->setParameter('verificationNonce', $query->verificationNonce);
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    public function removeByIdentityId(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'sf')
+            ->where('sf.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 
     /**

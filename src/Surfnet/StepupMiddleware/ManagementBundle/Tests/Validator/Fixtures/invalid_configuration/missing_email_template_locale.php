@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'email_templates.confirm_email',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",
@@ -33,15 +34,7 @@ return [
                 ]
             ],
         ],
-        'raa' => [
-            'SURFnet bv' => [
-                [
-                    'name_id'      => 'ddfd',
-                    'location'     => 'Behind you',
-                    'contact_info' => "Don't",
-                ]
-            ],
-        ],
+
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [
             'confirm_email'     => ['nl_NL' => 'Verify {{ commonName }}'],

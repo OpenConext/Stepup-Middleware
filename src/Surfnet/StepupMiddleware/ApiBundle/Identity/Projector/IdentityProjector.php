@@ -19,10 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\IdentifyingData\Entity\IdentifyingDataRepository;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
@@ -33,38 +34,27 @@ class IdentityProjector extends Projector
      */
     private $identityRepository;
 
-    /**
-     * @var
-     */
-    private $identifyingDataRepository;
-
-    public function __construct(
-        IdentityRepository $identityRepository,
-        IdentifyingDataRepository $identifyingDataRepository
-    ) {
+    public function __construct(IdentityRepository $identityRepository)
+    {
         $this->identityRepository = $identityRepository;
-        $this->identifyingDataRepository = $identifyingDataRepository;
     }
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
         $this->identityRepository->save(Identity::create(
             (string) $event->identityId,
             $event->identityInstitution,
-            (string) $event->nameId,
-            $identifyingData->email,
-            $identifyingData->commonName
+            $event->nameId,
+            $event->email,
+            $event->commonName,
+            $event->preferredLocale
         ));
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
-        $identity->commonName = $identifyingData->commonName;
+        $identity->commonName = $event->commonName;
 
         $this->identityRepository->save($identity);
     }
@@ -72,10 +62,21 @@ class IdentityProjector extends Projector
     public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
-        $identifyingData = $this->identifyingDataRepository->getById($event->identifyingDataId);
-
-        $identity->email = $identifyingData->email;
+        $identity->email = $event->email;
 
         $this->identityRepository->save($identity);
+    }
+
+    public function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity->preferredLocale = $event->preferredLocale;
+
+        $this->identityRepository->save($identity);
+    }
+
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->identityRepository->removeByIdentityId($event->identityId);
     }
 }

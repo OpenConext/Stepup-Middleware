@@ -3,8 +3,7 @@ services:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor\EmailProcessor
         arguments:
             - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
-            - @surfnet_stepup_middleware_api.service.ra
-            - @stepup.repository.identifying_data
+            - @surfnet_stepup_middleware_api.service.ra_listing
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_command_handling.service.second_factor_mail:

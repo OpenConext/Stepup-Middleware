@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'sraa',
     'configuration'        => [
         'gateway'         => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     'entity_id' => 'http://entity.tld/metadata',
@@ -33,7 +34,6 @@ return [
                 ],
             ],
         ],
-        'raa'             => [],
         'sraa'            => null,
         'email_templates' => [],
     ]

@@ -22,9 +22,13 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-abstract class SecondFactorRevokedEvent extends IdentityEvent
+abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
@@ -36,46 +40,68 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent
      */
     public $secondFactorType;
 
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     */
+    public $secondFactorIdentifier;
+
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
+        $this->secondFactorId         = $secondFactorId;
+        $this->secondFactorType       = $secondFactorType;
+        $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata()
     {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = $this->secondFactorType;
+        $metadata                         = new Metadata();
+        $metadata->identityId             = $this->identityId;
+        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata->secondFactorId         = $this->secondFactorId;
+        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
     }
 
     final public static function deserialize(array $data)
     {
+        $secondFactorType = new SecondFactorType($data['second_factor_type']);
+
         return new static(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
-            new SecondFactorType($data['second_factor_type'])
+            $secondFactorType,
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType)
         );
     }
 
     final public function serialize()
     {
         return [
-            'identity_id'          => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'second_factor_id'     => (string) $this->secondFactorId,
-            'second_factor_type'   => (string) $this->secondFactorType,
+            'identity_id'              => (string) $this->identityId,
+            'identity_institution'     => (string) $this->identityInstitution,
+            'second_factor_id'         => (string) $this->secondFactorId,
+            'second_factor_type'       => (string) $this->secondFactorType,
         ];
+    }
+
+    public function getSensitiveData()
+    {
+        return (new SensitiveData)
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
+    }
+
+    public function setSensitiveData(SensitiveData $sensitiveData)
+    {
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }
 }

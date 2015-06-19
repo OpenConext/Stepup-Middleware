@@ -20,6 +20,7 @@ return [
     'expectedPropertyPath' => 'gateway.service_providers[0].blacklisted_encryption_algorithms',
     'configuration' => [
         'gateway' => [
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",
@@ -30,15 +31,6 @@ return [
                     ],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => [9],
-                ]
-            ],
-        ],
-        'raa' => [
-            'SURFnet bv' => [
-                [
-                    'name_id'      => 'ddfd',
-                    'location'     => 'Behind you',
-                    'contact_info' => "Don't",
                 ]
             ],
         ],

@@ -20,37 +20,52 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-class PhoneNumber
+final class PhoneNumber implements SecondFactorIdentifier
 {
     /**
      * @var string
      */
-    private $value;
+    private $phoneNumber;
 
-    public function __construct($value)
+    public static function unknown()
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
+        return new self('+0 (0) 000000000');
+    }
+
+    public function __construct($phoneNumber)
+    {
+        if (!is_string($phoneNumber)) {
+            throw InvalidArgumentException::invalidType('string', 'value', $phoneNumber);
         }
 
-        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $value)) {
+        if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $phoneNumber)) {
             throw new InvalidArgumentException(sprintf(
                 "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
                 // 12 characters captures the most extended country code up to and incl. the first subscriber digit
-                substr($value, 0, 12)
+                substr($phoneNumber, 0, 12)
             ));
         }
 
-        $this->value = $value;
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getValue()
+    {
+        return $this->phoneNumber;
+    }
+
+    public function equals(SecondFactorIdentifier $other)
+    {
+        return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }
 
     public function __toString()
     {
-        return $this->value;
+        return $this->phoneNumber;
     }
 
-    public function equals($other)
+    public function jsonSerialize()
     {
-        return $this == $other;
+        return $this->phoneNumber;
     }
 }

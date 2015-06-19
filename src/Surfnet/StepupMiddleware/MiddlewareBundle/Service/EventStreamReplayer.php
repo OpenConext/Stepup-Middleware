@@ -174,12 +174,16 @@ class EventStreamReplayer
         $middlewareConnection = $this->connectionHelper->getConnection('middleware');
         $gatewayConnection    = $this->connectionHelper->getConnection('gateway');
 
+        $middlewareDatabaseName = $middlewareConnection->getDatabase();
+        $gatewayDatabaseName    = $gatewayConnection->getDatabase();
+
         foreach ($this->middlewareTables as $table) {
             $rows = $middlewareConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
                     $rows,
+                    $middlewareDatabaseName,
                     $table
                 ));
             }
@@ -189,8 +193,9 @@ class EventStreamReplayer
             $rows = $gatewayConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
                     $rows,
+                    $gatewayDatabaseName,
                     $table
                 ));
             }

@@ -996,8 +996,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @runInSeparateProcess
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException
-     * @expectedExceptionMessage Given locale "fi_FI" is not an acceptable locale
+     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException
+     * @expectedExceptionMessage Given locale "fi_FI" is not a supported locale
      */
     public function an_identity_cannot_express_a_preference_for_an_unsupported_locale()
     {

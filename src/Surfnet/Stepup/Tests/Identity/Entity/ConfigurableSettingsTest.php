@@ -75,6 +75,6 @@ class ConfigurableSettingsTest extends UnitTest
     {
         $configuration = ConfigurableSettings::create(3, $validLocaleStrings);
 
-        $this->assertEquals($isValid, $configuration->isValidLocale(new Locale($localeString)));
+        $this->assertEquals($isValid, $configuration->isSupportedLocale(new Locale($localeString)));
     }
 }

@@ -92,12 +92,12 @@ final class ConfigurableSettings
      * @param Locale $locale
      * @return bool
      */
-    public function isValidLocale(Locale $locale)
+    public function isSupportedLocale(Locale $locale)
     {
         return array_reduce(
             $this->locales,
-            function ($valid, Locale $validLocale) use ($locale) {
-                return $valid || $validLocale->equals($locale);
+            function ($supported, Locale $supportedLocale) use ($locale) {
+                return $supported || $supportedLocale->equals($locale);
             },
             false
         );

@@ -38,6 +38,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
@@ -255,9 +256,9 @@ class IdentityCommandHandler extends CommandHandler
      */
     private function assertIsValidLocale(Locale $locale)
     {
-        if (!$this->configurableSettings->isValidLocale($locale)) {
-            throw new DomainException(
-                sprintf('Given locale "%s" is not an acceptable locale', (string) $locale)
+        if (!$this->configurableSettings->isSupportedLocale($locale)) {
+            throw new UnsupportedLocaleException(
+                sprintf('Given locale "%s" is not a supported locale', (string) $locale)
             );
         }
     }

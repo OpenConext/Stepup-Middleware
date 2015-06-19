@@ -55,7 +55,9 @@ class EventStreamReplayer
         'sraa',
         'audit_log',
         'ra_listing',
-        'ra_candidate'
+        'ra_candidate',
+        'second_factor_revocation',
+        'whitelist_entry',
     ];
 
     /**
@@ -63,7 +65,8 @@ class EventStreamReplayer
      */
     private $gatewayTables = [
         'second_factor',
-        'saml_entity'
+        'saml_entity',
+        'whitelist_entry',
     ];
 
     public function __construct(
@@ -100,13 +103,21 @@ class EventStreamReplayer
             $totalEvents = $this->eventHydrator->getCount();
 
             $preparationProgress->advance();
-            $defaultMessage = sprintf(
-                'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
-                $totalEvents,
-                $increments
-            );
-            $preparationProgress->setMessage($defaultMessage);
-            $preparationProgress->finish();
+
+            if ($totalEvents == 0) {
+                // Spaces are needed to overwrite the previous message.
+                $preparationProgress->setMessage('There are no events to replay. Done.     ');
+                $preparationProgress->finish();
+                return;
+            } else {
+                $defaultMessage = sprintf(
+                    'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
+                    $totalEvents,
+                    $increments
+                );
+                $preparationProgress->setMessage($defaultMessage);
+                $preparationProgress->finish();
+            }
 
             $replayProgress = new ProgressBar($output, $totalEvents);
             $replayProgress->setFormat('event_replay');
@@ -163,12 +174,16 @@ class EventStreamReplayer
         $middlewareConnection = $this->connectionHelper->getConnection('middleware');
         $gatewayConnection    = $this->connectionHelper->getConnection('gateway');
 
+        $middlewareDatabaseName = $middlewareConnection->getDatabase();
+        $gatewayDatabaseName    = $gatewayConnection->getDatabase();
+
         foreach ($this->middlewareTables as $table) {
             $rows = $middlewareConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
                     $rows,
+                    $middlewareDatabaseName,
                     $table
                 ));
             }
@@ -178,8 +193,9 @@ class EventStreamReplayer
             $rows = $gatewayConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
                 $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s</comment></info>',
+                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
                     $rows,
+                    $gatewayDatabaseName,
                     $table
                 ));
             }

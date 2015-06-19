@@ -125,7 +125,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc'),
+                    new YubikeyPublicId('01906382'),
                     new IdentityId(static::UUID())
                 )
             ],
@@ -155,7 +155,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc'),
+                    new YubikeyPublicId('01906382'),
                     new IdentityId(static::UUID())
                 )
             ],
@@ -185,7 +185,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc'),
+                    new YubikeyPublicId('01906382'),
                     new IdentityId(static::UUID())
                 )
             ],
@@ -219,7 +219,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc'),
+                    new YubikeyPublicId('01906382'),
                     DateTime::now(),
                     '123',
                     new CommonName('Henk Westbroek'),
@@ -293,7 +293,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc')
+                    new YubikeyPublicId('01906382')
                 )
             ],
             'UnverifiedSecondFactorRevokedEvent:tiqr' => [
@@ -320,7 +320,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc')
+                    new YubikeyPublicId('01906382')
                 )
             ],
             'VerifiedSecondFactorRevokedEvent:tiqr' => [
@@ -347,7 +347,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('cccccccccccc')
+                    new YubikeyPublicId('01906382')
                 )
             ],
             'VettedSecondFactorRevokedEvent:tiqr' => [
@@ -364,7 +364,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
-                    new YubikeyPublicId('this_is_mah_yubikey'),
+                    new YubikeyPublicId('19382933'),
                     EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
                     '42',
                     new CommonName('Henk Westbroek'),

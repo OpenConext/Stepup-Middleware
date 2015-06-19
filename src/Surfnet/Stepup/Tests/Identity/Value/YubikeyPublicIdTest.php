@@ -25,44 +25,69 @@ class YubikeyPublicIdTest extends UnitTest
 {
     /**
      * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     *
-     * @param mixed $invalidValue
+     * @group domain
      */
-    public function a_yubikey_public_id_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function two_yubikey_public_ids_with_the_same_value_are_equal()
     {
-        new YubikeyPublicId($invalidValue);
+        $id          = new YubikeyPublicId('00001234');
+        $theSame     = new YubikeyPublicId('00001234');
+        $different   = new YubikeyPublicId('987654321');
+        $unknown     = YubikeyPublicId::unknown();
+
+        $this->assertTrue($id->equals($theSame));
+        $this->assertFalse($id->equals($different));
+        $this->assertFalse($id->equals($unknown));
+    }
+
+    public function invalidFormatProvider()
+    {
+        return [
+            '7-character unpadded ID'           => ['1906381'],
+            '9-character padded ID'             => ['0123456789'],
+            '19-character padded ID'            => ['01234567890123456789'],
+            '21-character ID'                   => ['101234567890123456789'],
+            'empty ID'                          => [''],
+            'ID with alphabetical characters'   => ['abc'],
+            'ID with alphanumerical characters' => ['abc01908389'],
+            'Larger than 0xffffffffffffffff'    => ['18446744073709551616']
+        ];
     }
 
     /**
      * @test
      * @group domain
+     * @dataProvider invalidFormatProvider
+     * @expectedException Surfnet\Stepup\Exception\InvalidArgumentException
+     *
+     * @param mixed $invalidFormat
      */
-    public function two_yubikey_public_ids_with_the_same_value_are_equal()
+    public function it_cannot_be_constructed_with_an_invalid_format($invalidFormat)
     {
-        $gssf        = new YubikeyPublicId('a');
-        $theSame     = new YubikeyPublicId('a');
-        $different   = new YubikeyPublicId('A');
-        $unknown     = YubikeyPublicId::unknown();
+        new YubikeyPublicId($invalidFormat);
+    }
 
-        $this->assertTrue($gssf->equals($theSame));
-        $this->assertFalse($gssf->equals($different));
-        $this->assertFalse($gssf->equals($unknown));
+    public function validFormatProvider()
+    {
+        return [
+            '8-character ID'  => ['01906381'],
+            '1-character ID'  => ['00000001'],
+            '0-character ID'  => ['00000000'],
+            '16-character ID' => ['1234560123456789'],
+            '20-character ID' => ['12345678901234567890'],
+        ];
     }
 
     /**
-     * DataProvider for {@see a_yubikey_public_id_cannot_be_created_with_anything_but_a_nonempty_string()}
+     * @test
+     * @group domain
+     * @dataProvider validFormatProvider
+     *
+     * @param string $validFormat
      */
-    public function invalidValueProvider()
+    public function its_value_matches_its_input_value($validFormat)
     {
-        return [
-            'empty string' => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
-        ];
+        $id = new YubikeyPublicId($validFormat);
+
+        $this->assertEquals($validFormat, $id->getValue());
     }
 }

@@ -127,7 +127,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('01900473')
                 )
             ])
             ->when($command)
@@ -188,7 +188,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('01900473')
                 ),
                 new IdentityForgottenEvent($identityId, $institution),
             ])
@@ -247,7 +247,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('01900473')
                 ),
                 new IdentityAccreditedAsRaEvent(
                     $identityId,
@@ -313,7 +313,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('01900473')
                 ),
                 new IdentityAccreditedAsRaEvent(
                     $identityId,
@@ -379,7 +379,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('01900473')
                 )
             ])
             ->when($command);

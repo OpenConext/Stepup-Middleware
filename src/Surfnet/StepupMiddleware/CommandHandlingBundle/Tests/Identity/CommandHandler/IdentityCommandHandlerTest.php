@@ -100,7 +100,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->email           = 'foo@domain.invalid';
         $command->preferredLocale = 'nl_NL';
         $command->secondFactorId  = 'SF-ID';
-        $command->yubikeyPublicId = 'Y-ID';
+        $command->yubikeyPublicId = '93193884';
 
         $identityId = new IdentityId($command->identityId);
         $this->scenario
@@ -123,7 +123,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new Email($command->email),
                     new Locale('nl_NL'),
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('Y-ID')
+                    new YubikeyPublicId('93193884')
                 )
             ]);
     }
@@ -149,7 +149,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId          = new SecondFactorId(self::uuid());
-        $pubId             = new YubikeyPublicId('ccccvfeghijk');
+        $pubId             = new YubikeyPublicId('00028278');
 
         $command                  = new ProveYubikeyPossessionCommand();
         $command->identityId      = (string) $id;
@@ -200,7 +200,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId1         = new SecondFactorId(self::uuid());
-        $pubId1            = new YubikeyPublicId('ccccvfeghijk');
+        $pubId1            = new YubikeyPublicId('00028278');
 
         $command                  = new ProveYubikeyPossessionCommand();
         $command->identityId      = (string) $id;
@@ -421,7 +421,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName        = new CommonName('Henk Westbroek');
         $preferredLocale   = new Locale('en_GB');
         $secFacId1         = new SecondFactorId(self::uuid());
-        $publicId          = new YubikeyPublicId('ccccvfeghijk');
+        $publicId          = new YubikeyPublicId('00028278');
         $phoneNumber       = new PhoneNumber('+31 (0) 676543210');
 
         $command = new ProvePhonePossessionCommand();
@@ -477,7 +477,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName             = new CommonName('Henk Westbroek');
         $preferredLocale        = new Locale('en_GB');
         $secondFactorId         = new SecondFactorId(self::uuid());
-        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorIdentifier = new YubikeyPublicId('00028278');
 
         $command                    = new VerifyEmailCommand();
         $command->identityId        = (string) $id;
@@ -544,7 +544,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $commonName             = new CommonName('Henk Westbroek');
         $preferredLocale        = new Locale('en_GB');
         $secondFactorId         = new SecondFactorId(self::uuid());
-        $secondFactorIdentifier = new YubikeyPublicId('ccccvfeghijk');
+        $secondFactorIdentifier = new YubikeyPublicId('00028278');
 
         $command = new VerifyEmailCommand();
         $command->identityId = (string) $id;
@@ -604,7 +604,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $id = new IdentityId(self::uuid());
         $secondFactorId = new SecondFactorId(self::uuid());
-        $publicId = new YubikeyPublicId('ccccvfeghijk');
+        $publicId = new YubikeyPublicId('00028278');
         $institution = new Institution('A Corp.');
         $nameId = new NameId(md5(__METHOD__));
         $email             = new Email('info@domain.invalid');
@@ -728,7 +728,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId         = 'ISFID';
         $command->registrationCode       = 'REGCODE';
         $command->secondFactorType       = 'yubikey';
-        $command->secondFactorIdentifier = 'ccccvfeghijk';
+        $command->secondFactorIdentifier = '00028278';
         $command->documentNumber         = 'NH9392';
         $command->identityVerified       = true;
 
@@ -744,7 +744,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantEmail             = new Email('reg@domain.invalid');
         $registrantCommonName        = new CommonName('Reginald Waterloo');
         $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantSecFacIdentifier  = new YubikeyPublicId('ccccvfeghijk');
+        $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -765,7 +765,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId($this->uuid()),
-                    new YubikeyPublicId('ccccvkdowiej')
+                    new YubikeyPublicId('00000012')
                 )
             ])
             ->withAggregateId($registrantId)
@@ -813,7 +813,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('ccccvfeghijk'),
+                    new YubikeyPublicId('00028278'),
                     new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
@@ -836,7 +836,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId         = 'ISFID';
         $command->registrationCode       = 'REGCODE';
         $command->secondFactorType       = 'yubikey';
-        $command->secondFactorIdentifier = 'ccccvfeghijk';
+        $command->secondFactorIdentifier = '00028278';
         $command->documentNumber         = 'NH9392';
         $command->identityVerified       = true;
 
@@ -854,7 +854,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantEmail             = new Email('reg@domain.invalid');
         $registrantCommonName        = new CommonName('Reginald Waterloo');
         $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantPubId             = new YubikeyPublicId('ccccvfeghijk');
+        $registrantPubId             = new YubikeyPublicId('00028278');
 
         $this->scenario
             ->withAggregateId($authorityId)
@@ -951,7 +951,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('ccccvfeghijk'),
+                    new YubikeyPublicId('00028278'),
                     new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,

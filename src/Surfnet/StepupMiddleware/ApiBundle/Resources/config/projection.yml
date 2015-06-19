@@ -53,6 +53,12 @@ services:
             - @surfnet_stepup_middleware_api.repository.identity
         tags: [{ name: event_bus.event_listener }]
 
+    surfnet_stepup_middleware_api.projector.second_factor_revocation:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SecondFactorRevocationProjector
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.second_factor_revocation
+        tags: [{ name: event_bus.event_listener }]
+
     surfnet_stepup_middleware_api.projector.whitelist_entry:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\WhitelistProjector
         arguments:

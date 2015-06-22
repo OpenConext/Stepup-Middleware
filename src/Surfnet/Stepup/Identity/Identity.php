@@ -570,6 +570,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors     = new SecondFactorCollection();
     }
 
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    {
+        $this->commonName = $event->commonName;
+    }
+
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    {
+        $this->email = $event->email;
+    }
+
     protected function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
         $secondFactor = VettedSecondFactor::create(

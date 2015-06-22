@@ -720,6 +720,42 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
+    public function an_identity_can_be_updated_twice_only_emitting_events_when_changed()
+    {
+        $id                = new IdentityId('42');
+        $institution       = new Institution('A Corp.');
+        $email             = new Email('info@domain.invalid');
+        $commonName        = new CommonName('Henk Westbroek');
+
+        $createdEvent = new IdentityCreatedEvent(
+            $id,
+            $institution,
+            new NameId('3'),
+            $commonName,
+            $email,
+            new Locale('de_DE')
+        );
+
+        $updateCommand             = new UpdateIdentityCommand();
+        $updateCommand->id         = $id->getIdentityId();
+        $updateCommand->email      = 'new-email@domain.invalid';
+        $updateCommand->commonName = 'Henk Hendriksen';
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([$createdEvent])
+            ->when($updateCommand)
+            ->when($updateCommand)
+            ->then([
+                new IdentityRenamedEvent($id, $institution, new CommonName($updateCommand->commonName)),
+                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email))
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
     public function a_second_factor_can_be_vetted()
     {
         $command                         = new VetSecondFactorCommand();

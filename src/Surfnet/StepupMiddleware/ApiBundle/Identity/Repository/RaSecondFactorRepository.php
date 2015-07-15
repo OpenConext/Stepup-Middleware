@@ -18,11 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 class RaSecondFactorRepository extends EntityRepository
 {
@@ -81,7 +85,26 @@ class RaSecondFactorRepository extends EntityRepository
         }
 
         if ($query->status) {
-            $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $query->status);
+            $stringStatus = $query->status;
+            if (!SecondFactorStatus::isValidStatus($stringStatus)) {
+                throw new RuntimeException(sprintf(
+                    'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
+                    is_object($stringStatus) ? get_class($stringStatus) : (string) $stringStatus
+                ));
+            }
+
+            // we need to resolve the string value to database value using the correct doctrine type. Normally this is
+            // done by doctrine itself, however the queries PagerFanta creates somehow manages to mangle this...
+            // so we do it by hand
+            $doctrineType = Type::getType(SecondFactorStatusType::NAME);
+            $secondFactorStatus = SecondFactorStatus::$stringStatus();
+
+            $databaseValue = $doctrineType->convertToDatabaseValue(
+                $secondFactorStatus,
+                $this->getEntityManager()->getConnection()->getDatabasePlatform()
+            );
+
+            $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $databaseValue);
         }
 
         switch ($query->orderBy) {

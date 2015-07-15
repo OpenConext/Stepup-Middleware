@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRepository;
 
 class RaSecondFactorService extends AbstractSearchService
 {

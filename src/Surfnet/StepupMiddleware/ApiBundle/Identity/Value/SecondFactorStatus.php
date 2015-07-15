@@ -47,6 +47,15 @@ final class SecondFactorStatus
 
     /**
      * @param string $status
+     * @return bool
+     */
+    public static function isValidStatus($status)
+    {
+        return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', true]);
+    }
+
+    /**
+     * @param string $status
      */
     private function __construct($status)
     {

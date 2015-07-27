@@ -43,7 +43,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
 
     public function validate(array $configuration, $propertyPath)
     {
-        $templateNames = ['confirm_email', 'registration_code'];
+        $templateNames = ['confirm_email', 'registration_code', 'vetted'];
 
         StepupAssert::keysMatch(
             $configuration,

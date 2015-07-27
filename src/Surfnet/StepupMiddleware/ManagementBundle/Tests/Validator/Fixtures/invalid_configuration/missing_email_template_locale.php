@@ -39,6 +39,7 @@ return [
         'email_templates' => [
             'confirm_email'     => ['nl_NL' => 'Verify {{ commonName }}'],
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+            'vetted'            => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
     ]
 ];

@@ -16,6 +16,11 @@
         <source>ss.mail.registration_email.subject</source>
         <target>Token activation: activate token at Service Desk</target>
       </trans-unit>
+      <trans-unit id="0ddb12f14d7aee72840d8a71af5a6547ab9864da" resname="ss.mail.vetted_email.subject">
+        <jms:reference-file line="134">Identity/Service/SecondFactorMailService.php</jms:reference-file>
+        <source>ss.mail.vetted_email.subject</source>
+        <target>Token activated</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

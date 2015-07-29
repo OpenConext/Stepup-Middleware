@@ -18,6 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
@@ -124,6 +127,8 @@ class SecondFactorMailService
             'verificationUrl'  => $verificationUrl
         ];
 
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
         $body = $this->templateEngine->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
@@ -187,6 +192,53 @@ class SecondFactorMailService
         $message
             ->setFrom($this->sender->getEmail(), $this->sender->getName())
             ->addTo($email, $commonName)
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param Locale     $locale
+     * @param CommonName $commonName
+     * @param Email      $email
+     */
+    public function sendVettedEmail(
+        Locale $locale,
+        CommonName $commonName,
+        Email $email
+    ) {
+        $subject = $this->translator->trans(
+            'ss.mail.vetted_email.subject',
+            ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
+            null,
+            $locale->getLocale()
+        );
+
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'vetted',
+            $locale->getLocale(),
+            $this->fallbackLocale
+        );
+        $parameters = [
+            'templateString'   => $emailTemplate->htmlContent,
+            'locale'           => $locale->getLocale(),
+            'commonName'       => $commonName->getCommonName(),
+            'email'            => $email->getEmail(),
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email->getEmail(), $commonName->getCommonName())
             ->setSubject($subject)
             ->setBody($body, 'text/html', 'utf-8');
 

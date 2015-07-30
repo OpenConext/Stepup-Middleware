@@ -2,6 +2,9 @@
 VERSION 1  RELEASE 1.0
 ======================
 
+   Version 1.2 - Send mail when token is vetted
+      30/07/2015 11:56  1.2.0  initial release
+
    Version 1.1 - Bugfix for second factor search
       15/07/2015 13:47  1.1.0  initial release
 

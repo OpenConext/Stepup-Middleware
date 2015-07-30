@@ -22,6 +22,7 @@ use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
@@ -87,5 +88,10 @@ class EmailProcessor extends Processor
             $event->registrationCode,
             $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
         );
+    }
+
+    public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
     }
 }

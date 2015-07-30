@@ -49,6 +49,14 @@ final class Locale implements JsonSerializable
         return $this == $other;
     }
 
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
     public function jsonSerialize()
     {
         return $this->locale;

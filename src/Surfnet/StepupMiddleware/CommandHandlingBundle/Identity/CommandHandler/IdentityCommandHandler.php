@@ -35,6 +35,7 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException;
@@ -44,6 +45,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
@@ -172,6 +174,20 @@ class IdentityCommandHandler extends CommandHandler
             new SecondFactorId($command->secondFactorId),
             new StepupProvider($command->stepupProvider),
             new GssfId($command->gssfId),
+            $this->configurableSettings->createNewEmailVerificationWindow()
+        );
+
+        $this->repository->save($identity);
+    }
+
+    public function handleProveU2fDevicePossessionCommand(ProveU2fDevicePossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $identity->provePossessionOfU2fDevice(
+            new SecondFactorId($command->secondFactorId),
+            new U2fKeyHandle($command->keyHandle),
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 

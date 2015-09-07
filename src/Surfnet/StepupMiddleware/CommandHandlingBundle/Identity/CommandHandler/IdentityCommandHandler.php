@@ -38,7 +38,6 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\DomainException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;

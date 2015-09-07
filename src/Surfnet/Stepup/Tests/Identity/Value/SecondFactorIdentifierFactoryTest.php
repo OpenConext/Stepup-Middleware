@@ -22,6 +22,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -45,6 +46,10 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
             new GssfId('urn:abcd-efgh-ijkl'),
             SecondFactorIdentifierFactory::forType(new SecondFactorType('tiqr'), 'urn:abcd-efgh-ijkl')
         );
+        $this->assertEquals(
+            new U2fKeyHandle('PWaaP_Beep'),
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('u2f'), 'PWaaP_Beep')
+        );
 
         $this->assertEquals(
             PhoneNumber::unknown(),
@@ -57,6 +62,10 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
         $this->assertEquals(
             GssfId::unknown(),
             SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('tiqr'))
+        );
+        $this->assertEquals(
+            U2fKeyHandle::unknown(),
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('u2f'))
         );
     }
 }

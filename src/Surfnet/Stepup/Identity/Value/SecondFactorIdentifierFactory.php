@@ -42,7 +42,11 @@ final class SecondFactorIdentifierFactory
             return new GssfId($secondFactorIdentifier);
         }
 
-        throw new LogicException(sprintf('Unknown second factor type "%s" encountered'));
+        if ($type->isU2f()) {
+            return new U2fKeyHandle($secondFactorIdentifier);
+        }
+
+        throw new LogicException(sprintf('Unknown second factor type "%s" encountered', $type->getSecondFactorType()));
     }
 
     /**
@@ -63,6 +67,10 @@ final class SecondFactorIdentifierFactory
             return GssfId::unknown();
         }
 
-        throw new LogicException(sprintf('Unknown second factor type "%s" encountered'));
+        if ($type->isU2f()) {
+            return U2fKeyHandle::unknown();
+        }
+
+        throw new LogicException(sprintf('Unknown second factor type "%s" encountered', $type->getSecondFactorType()));
     }
 }

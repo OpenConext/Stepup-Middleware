@@ -634,6 +634,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
+    protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    {
+        $secondFactor = UnverifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType('u2f'),
+            $event->keyHandle,
+            $event->emailVerificationWindow,
+            $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
         $secondFactorId = (string) $event->secondFactorId;

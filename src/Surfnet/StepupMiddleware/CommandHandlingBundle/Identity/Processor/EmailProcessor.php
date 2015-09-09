@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
@@ -70,6 +71,16 @@ class EmailProcessor extends Processor
     }
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    {
+        $this->mailService->sendEmailVerificationEmail(
+            (string) $event->preferredLocale,
+            (string) $event->commonName,
+            (string) $event->email,
+            $event->emailVerificationNonce
+        );
+    }
+
+    public function handleU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
         $this->mailService->sendEmailVerificationEmail(
             (string) $event->preferredLocale,

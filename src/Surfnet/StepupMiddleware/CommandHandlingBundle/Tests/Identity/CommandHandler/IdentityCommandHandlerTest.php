@@ -33,6 +33,7 @@ use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
@@ -49,6 +50,7 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
@@ -56,6 +58,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
@@ -348,6 +351,63 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                         DateTime::now()
                     ),
                     $nonce,
+                    $commonName,
+                    $email,
+                    $preferredLocale
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_u2f_device_possession_can_be_proven()
+    {
+        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+
+        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
+            ->shouldReceive('generate')->once()->andReturn('regcode');
+        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
+
+        $id                = new IdentityId(self::uuid());
+        $institution       = new Institution('A Corp.');
+        $nameId            = new NameId(md5(__METHOD__));
+        $email             = new Email('info@domain.invalid');
+        $commonName        = new CommonName('Henk Westbroek');
+        $preferredLocale   = new Locale('en_GB');
+        $secFacId          = new SecondFactorId(self::uuid());
+        $keyHandle         = new U2fKeyHandle('DMUV_wX');
+
+        $command                 = new ProveU2fDevicePossessionCommand();
+        $command->identityId     = (string) $id;
+        $command->secondFactorId = (string) $secFacId;
+        $command->keyHandle      = $keyHandle->getValue();
+
+        $this->scenario
+            ->withAggregateId($id)
+            ->given([new IdentityCreatedEvent(
+                $id,
+                $institution,
+                $nameId,
+                $commonName,
+                $email,
+                $preferredLocale
+            )])
+            ->when($command)
+            ->then([
+                new U2fDevicePossessionProvenEvent(
+                    $id,
+                    $institution,
+                    $secFacId,
+                    $keyHandle,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
                     $commonName,
                     $email,
                     $preferredLocale

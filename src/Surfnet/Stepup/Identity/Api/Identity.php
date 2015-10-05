@@ -37,6 +37,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -122,6 +123,18 @@ interface Identity extends AggregateRoot
         SecondFactorId $secondFactorId,
         StepupProvider $provider,
         GssfId $gssfId,
+        EmailVerificationWindow $emailVerificationWindow
+    );
+
+    /**
+     * @param SecondFactorId          $secondFactorId
+     * @param U2fKeyHandle            $keyHandle
+     * @param EmailVerificationWindow $emailVerificationWindow
+     * @return void
+     */
+    public function provePossessionOfU2fDevice(
+        SecondFactorId $secondFactorId,
+        U2fKeyHandle $keyHandle,
         EmailVerificationWindow $emailVerificationWindow
     );
 

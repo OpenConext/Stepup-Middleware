@@ -44,6 +44,7 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -65,6 +66,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -254,6 +256,29 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $provider,
                 $gssfId,
+                $emailVerificationWindow,
+                TokenGenerator::generateNonce(),
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
+            )
+        );
+    }
+
+    public function provePossessionOfU2fDevice(
+        SecondFactorId $secondFactorId,
+        U2fKeyHandle $keyHandle,
+        EmailVerificationWindow $emailVerificationWindow
+    ) {
+        $this->assertNotForgotten();
+        $this->assertUserMayAddSecondFactor();
+
+        $this->apply(
+            new U2fDevicePossessionProvenEvent(
+                $this->id,
+                $this->institution,
+                $secondFactorId,
+                $keyHandle,
                 $emailVerificationWindow,
                 TokenGenerator::generateNonce(),
                 $this->commonName,
@@ -627,6 +652,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this,
             new SecondFactorType((string) $event->stepupProvider),
             $event->gssfId,
+            $event->emailVerificationWindow,
+            $event->emailVerificationNonce
+        );
+
+        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    {
+        $secondFactor = UnverifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType('u2f'),
+            $event->keyHandle,
             $event->emailVerificationWindow,
             $event->emailVerificationNonce
         );

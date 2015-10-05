@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e4fb84a92a06f27b47845b84d86c9cae",
+    "hash": "69840b985490a8c64005e21e81836d46",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1932,7 +1932,6 @@
                 "identifier",
                 "uuid"
             ],
-            "abandoned": "ramsey/uuid",
             "time": "2014-11-09 18:42:56"
         },
         {
@@ -2145,16 +2144,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "1.2.0",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "144492c6c29a81d39178d8ab9876d81ae3b0cb63"
+                "reference": "1e15e4adf96144f470ec7660b02c2faf2b5cc9d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/144492c6c29a81d39178d8ab9876d81ae3b0cb63",
-                "reference": "144492c6c29a81d39178d8ab9876d81ae3b0cb63",
+                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/1e15e4adf96144f470ec7660b02c2faf2b5cc9d0",
+                "reference": "1e15e4adf96144f470ec7660b02c2faf2b5cc9d0",
                 "shasum": ""
             },
             "require": {
@@ -2163,15 +2162,15 @@
                 "graylog2/gelf-php": "~1.1",
                 "guzzlehttp/guzzle": "~4",
                 "monolog/monolog": "~1.11",
-                "php": "~5.4",
+                "php": ">=5.4,<8.0-dev",
                 "sensio/framework-extra-bundle": "~3",
-                "symfony/config": "~2",
-                "symfony/dependency-injection": "~2",
+                "symfony/config": "^2.7",
+                "symfony/dependency-injection": "^2.7",
                 "symfony/form": "^2.7",
-                "symfony/framework-bundle": "~2",
-                "symfony/http-kernel": "~2",
-                "symfony/twig-bridge": "~2",
-                "symfony/validator": "~2"
+                "symfony/framework-bundle": "^2.7",
+                "symfony/http-kernel": "^2.7",
+                "symfony/twig-bridge": "^2.7",
+                "symfony/validator": "^2.7"
             },
             "require-dev": {
                 "ibuildings/qa-tools": "~1.1",
@@ -2194,7 +2193,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2015-07-29 15:18:35"
+            "time": "2015-09-09 09:07:14"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -2522,7 +2521,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 }
             ],
             "description": "Common additional features for Twig that do not directly belong in core",
@@ -3612,16 +3613,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.4.1",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373"
+                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
-                "reference": "3132b1f44c7bf2ec4c7eb2d3cb78fdeca760d373",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4745ded9307786b730d7a60df5cb5a6c43cf95f7",
+                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7",
                 "shasum": ""
             },
             "require": {
@@ -3668,7 +3669,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-04-27 22:15:08"
+            "time": "2015-08-13 10:07:40"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4670,12 +4671,13 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "doctrine/migrations": 15
+        "doctrine/migrations": 15,
+        "surfnet/stepup-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4",
+        "php": ">=5.4|^7",
         "ext-gmp": "*"
     },
     "platform-dev": []

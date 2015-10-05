@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -122,6 +123,19 @@ class SecondFactorProjector extends Projector
         $secondFactor->identityId = $event->identityId->getIdentityId();
         $secondFactor->type = $event->stepupProvider->getStepupProvider();
         $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
+        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
+
+        $this->unverifiedRepository->save($secondFactor);
+    }
+
+    public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    {
+        $secondFactor = new UnverifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->type = 'u2f';
+        $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
         $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 

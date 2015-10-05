@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -159,6 +160,23 @@ class RaSecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 (string) $event->stepupProvider,
                 (string) $event->gssfId,
+                $identity->id,
+                $identity->institution,
+                $event->commonName,
+                $event->email
+            )
+        );
+    }
+
+    public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    {
+        $identity = $this->identityRepository->find((string) $event->identityId);
+
+        $this->raSecondFactorRepository->save(
+            new RaSecondFactor(
+                (string) $event->secondFactorId,
+                'u2f',
+                $event->keyHandle->getValue(),
                 $identity->id,
                 $identity->institution,
                 $event->commonName,

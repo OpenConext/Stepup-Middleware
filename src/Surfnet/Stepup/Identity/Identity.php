@@ -74,6 +74,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi

@@ -55,6 +55,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class IdentityCommandHandler extends CommandHandler
 {

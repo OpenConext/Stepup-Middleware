@@ -121,3 +121,20 @@ public function testItWorks()
     $this->assertEquals('1970-01-01T00:00:00+00:00', (string) \Surfnet\Stepup\DateTime\DateTime::now());
 }
 ```
+
+### Adding support for a new Generic SAML Second Factor `biometric`, by example
+
+ * https://github.com/SURFnet/Stepup-bundle/pull/31/commits/55279033a7f4e261277008603d9be94ebb582469
+ * Release a new minor version of `surfnet/stepup-bundle`.
+ * https://github.com/SURFnet/Stepup-Middleware/pull/106/commits/c3b42c92593f10587f9e0051420e711c974dd319
+ * https://github.com/SURFnet/Stepup-SelfService/pull/96/commits/efa7feb29f0ee26d0d9860849f3f379131ba23cd
+ * https://github.com/SURFnet/Stepup-RA/pull/102/commits/f2c0d4f57912a6c026c58db2818735bacf7a7787
+ * https://github.com/SURFnet/Stepup-Gateway/pull/90/commits/1463cf05d1bec9e5e1fa1103b81fa6ada00a611f
+ * Add the Self-Service and RA applications to the `gssp_allowed_sps` parameters:
+```yaml
+gssp_allowed_sps:
+   - (...)
+   - 'https://ss-dev.stepup.coin.surf.net/app_dev.php/registration/gssf/biometric/metadata'
+   - 'https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/biometric/metadata'
+```
+ * Configure these SPs through the Middleware configuration API.

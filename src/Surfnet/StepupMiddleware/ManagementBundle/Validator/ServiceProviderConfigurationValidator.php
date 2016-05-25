@@ -33,7 +33,8 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'acs',
             'loa',
             'assertion_encryption_enabled',
-            'blacklisted_encryption_algorithms'
+            'second_factor_only',
+            'blacklisted_encryption_algorithms',
         ];
         StepupAssert::keysMatch(
             $configuration,
@@ -53,6 +54,11 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $configuration,
             'assertion_encryption_enabled',
             $propertyPath
+        );
+        $this->validateBooleanValue(
+          $configuration,
+          'second_factor_only',
+          $propertyPath
         );
         $this->validateStringValues(
             $configuration,

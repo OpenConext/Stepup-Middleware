@@ -34,6 +34,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'loa',
             'assertion_encryption_enabled',
             'second_factor_only',
+            'second_factor_only_nameid_patterns',
             'blacklisted_encryption_algorithms',
         ];
         StepupAssert::keysMatch(
@@ -58,6 +59,11 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $this->validateBooleanValue(
           $configuration,
           'second_factor_only',
+          $propertyPath
+        );
+        $this->validateListOfNameIdPatterns(
+          $configuration,
+          'second_factor_only_nameid_patterns',
           $propertyPath
         );
         $this->validateStringValues(
@@ -124,5 +130,19 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         Assert::isArray($value, 'must be an object', $path);
         Assert::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
         Assert::allString($value, 'all properties must contain strings as values', $path);
+    }
+
+    /**
+     * @param array $configuration
+     * @param string $name
+     * @param string $propertyPath
+     */
+    private function validateListOfNameIdPatterns($configuration, $name, $propertyPath)
+    {
+        $value = $configuration[$name];
+        $propertyPath = $propertyPath . '.' . $name;
+
+        Assert::isArray($value, 'must contain an array', $propertyPath);
+        Assert::allString($value, 'must be an array of strings', $propertyPath);
     }
 }

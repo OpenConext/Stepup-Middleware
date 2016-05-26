@@ -57,14 +57,14 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $propertyPath
         );
         $this->validateBooleanValue(
-          $configuration,
-          'second_factor_only',
-          $propertyPath
+            $configuration,
+            'second_factor_only',
+            $propertyPath
         );
         $this->validateListOfNameIdPatterns(
-          $configuration,
-          'second_factor_only_nameid_patterns',
-          $propertyPath
+            $configuration,
+            'second_factor_only_nameid_patterns',
+            $propertyPath
         );
         $this->validateStringValues(
             $configuration,

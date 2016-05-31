@@ -30,6 +30,8 @@ return [
                     "loa"        => [
                         "__default__" => "https://entity.tld/authentication/loa2",
                     ],
+                    "second_factor_only" => false,
+                    "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
                 ]

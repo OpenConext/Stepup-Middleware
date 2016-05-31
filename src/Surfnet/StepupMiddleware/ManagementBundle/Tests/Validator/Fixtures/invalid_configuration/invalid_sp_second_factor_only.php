@@ -17,17 +17,10 @@
  */
 
 return [
-    'expectedPropertyPath' => 'gateway.identity_providers[0].loa',
+    'expectedPropertyPath' => 'gateway.service_providers[0].second_factor_only',
     'configuration' => [
         'gateway' => [
-            'identity_providers' => [
-                [
-                    "entity_id" => "http://idp.tld/metadata",
-                    "loa" => [
-                        "__default__" => 9,
-                    ]
-                ]
-            ],
+            'identity_providers' => [],
             'service_providers' => [
                 [
                     "entity_id"  => "https://entity.tld/id",
@@ -36,7 +29,7 @@ return [
                     "loa"        => [
                         "__default__" => "https://entity.tld/authentication/loa2",
                     ],
-                    "second_factor_only" => false,
+                    "second_factor_only" => 'true',
                     "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []

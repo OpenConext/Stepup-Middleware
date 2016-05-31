@@ -26,6 +26,8 @@ return [
                     "entity_id"  => "https://entity.tld/id",
                     "public_key" => "MIIE...",
                     "acs"        => ["https://entity.tld/consume-assertion"],
+                    "second_factor_only" => false,
+                    "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
                 ]

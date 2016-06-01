@@ -18,6 +18,12 @@ Clone the repository or download the archive to a directory. Install the depende
 
 ## Management API
 
+The configuration of the Gateway should be pushed to the Gateway 
+so that it can be configured from the outside. 
+This is done by making a POST request to an URL at the middleware, 
+with the new configuration as JSON in the request body. 
+This section is intended to document the requirements and structure of the configuration.
+
 ### Configuration API
 
 Example cURL usage:
@@ -31,6 +37,24 @@ curl -XPOST -v \
 ```
 
 ### Configuration Structure
+
+The configuration must be a json object with the following keys:
+* sraa
+* email_templates
+* gateway
+Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is therefore:
+```json
+{
+    "sraa": [],
+    "email_templates": {},
+    "gateway": {
+        "identity_providers": [],
+        "service_providers": []
+    }
+}
+```
+
+As a full example:
 
 ```json
 {
@@ -59,6 +83,8 @@ curl -XPOST -v \
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
+                "second_factor_only": false,
+                "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
             },
@@ -71,6 +97,8 @@ curl -XPOST -v \
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
+                "second_factor_only": false,
+                "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
             },
@@ -83,6 +111,8 @@ curl -XPOST -v \
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
+                "second_factor_only": false,
+                "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
             },
@@ -95,11 +125,229 @@ curl -XPOST -v \
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa3"
                 },
+                "second_factor_only": false,
+                "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
             }
         ]
     }
+}
+```
+
+## SRAA
+### Specification
+The Super Registration Authority Authority is configured by sending a list of NameIDs that should be granted SRAA rights when logged in to the RA application with a sufficient LOA.
+```json
+"sraa": [
+    "NameID of RAA as received by the Gateway from SURFConext",
+    "NameID of a different RAA as received by the Gateway from SURFConext"
+]
+```
+   
+### Processing
+The list of current SRAA's will be deleted and the supplied list of SRAAs will be stored.
+
+### Example
+```json
+"sraa": [
+   "39ba648867aa14a873339bb2a3031791ef319894"
+]
+```
+
+## Email Templates
+
+### Specification
+
+The email_templates key must contain an object. 
+Each property of this object denotes a specific type of email, the types available will be:
+* ```confirm_email```: **(required)** the email sent when the Registrant should prove the possession of his email address.
+* ```registration_code```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor.
+* ```vetted```: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
+
+The following list of emails is intended to be used in the future, 
+the functionality requiring these is not yet implemented. 
+* ```registration_code_expiration_warning```: the email sent when the Registrant has not vetted his Second Factor after 1 week.
+* ```second_factor_expiration_first_reminder```: the email sent when the Second Factor has not been used for 5 months
+* ```second_factor_expiration_second_reminder```: the email sent when the Second Factor has not been used for 5 months + 2 weeks.
+* ```second_factor_revocation_confirmation```: the email sent when a Second Factor has successfully been revoked.
+
+Each email contains an object, where each property corresponds with an IETF language tag (2 letter lower cased language code + underscore + 2 letter upper cased country code, i.e. nl_NL, nl_BE) that may be supported in the application.
+
+```json
+"email_templates": {
+    "confirm_email": {
+        "nl_NL": "Volledige template met een {{ variableName }} variabele in Twig syntax. May include <b>HTML</b> and 
+new lines.",
+        "en_GB": "Full template with a {{ variableName }} variable in Twig syntax"
+    }
+}
+```
+
+### Processing
+There will only be validation if the required email-template properties are present, 
+each with at least the default language ("en_GB") template available. 
+All previous templates will be removed from the database and the new templates will be inserted. 
+
+### Template Variables
+
+##### e-mail verification (confirm_email)
+| variable name   | type   | example                                                 |
+|-----------------|--------|---------------------------------------------------------|
+| commonName      | string | Jan Modaal                                              |
+| email           | string | jan@modaal.nl                                           |
+| verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
+
+#### registration (registration_code)
+<table>
+	<thead>
+		<tr>
+			<th>
+			<p>variable name</p>
+			</th>
+			<th>
+			<p>type</p>
+			</th>
+			<th>
+			<p>example</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>commonName</td>
+			<td>string</td>
+			<td>Jan Modaal</td>
+		</tr>
+		<tr>
+			<td>email</td>
+			<td>string</td>
+			<td>jan@modaal.nl</td>
+		</tr>
+		<tr>
+			<td>registrationCode</td>
+			<td>string</td>
+			<td>ABC23456</td>
+		</tr>
+		<tr>
+			<td colspan="1">ras</td>
+			<td colspan="1">array</td>
+			<td colspan="1">
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tbody>
+					<tr>
+						<td>
+						<p><code>[</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Jan Modaal&#39;</code><code>,</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Goeman Borgesiuslaan 77, Utrecht&#39;</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@ibuildings.nl&#39;</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>],</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Henk Modaal&#39;</code><code>,</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Moreelsepark, Utrecht&#39;</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@surfnet.nl&#39;</code></p>
+						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>]</code></p>
+						<p><code>]</code></p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="1">╰ commonName</td>
+			<td colspan="1">string</td>
+			<td colspan="1">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="1">╰ location</td>
+			<td colspan="1">string</td>
+			<td colspan="1">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="1">╰ contactInformation</td>
+			<td colspan="1">string</td>
+			<td colspan="1">&nbsp;</td>
+		</tr>
+	</tbody>
+</table>
+
+#### After vetting (vetted)
+
+| name       | type   | example       |
+|------------|--------|---------------|
+| commonName | string | Jan Modaal    |
+| email      | string | jan@modaal.nl |
+
+
+## Gateway
+### Specification:
+The gateway section contains the configured saml entities for the gateway. 
+This allows the registration of various IdPs and SPs with their respective configurations.
+It must contain an object with the ```identity_providers``` and ```service_providers``` properties. 
+Both must contain an array as value.
+
+Each element in the identity_providers array must be an object and contain the ```entity_id``` and ```loa``` properties. 
+* ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
+* ```loa``` property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
+
+Each element in the service_providers array must be an object and contain the following properties: 
+* ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
+* ```public_key``` contain the certificate contents of the public key of the SP as it can be extracted from metadata (i.e. without ----CERTIFATE----- etc.). 
+* ```acs``` property contains a list of AssertionConsumerUrls to which the SAMLResponse should be sent. Currently entries other than the first are ignored until ACS index is supported. 
+* ```loa``` property must contain a hash (object) with at least the key __default__ with the default required loa as value.
+* ```second_factor_only``` boolean determines whether this SP is allowed to use the Second Factor Only (/second-factor-only/metadata) mode, note that it then **may not** use the regular Gateway.
+* ```second_factor_only_nameid_patterns``` should contain a list of patterns (strings that may contain a wildcard character) that are allowed to use the Second Factor Only mode. Does nothing if ```second_factor_only``` is not set to true.
+* ```assertion_encryption_enabled``` must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted. 
+* ```blacklisted_encryption_algorithms``` contains an array that lists (each as single string-element) algorithms that may not be used for encryption.
+
+### Processing
+Everything will be validated against the requirements listed above. Once the validation passes, the whole configuration that is in the database is removed and the new configuration is inserted. In other words: the configuration is overwritten.
+
+### Example
+```json
+
+"gateway": {
+    "identity_providers": [
+        {
+            "entity_id": "https://example.idp.tld/metadata",
+            "loa": {
+                "__default__": "https://gateway.tld/assurance/loa2",
+                "https://example.sp.tld/metadata": "https://gateway.tld/assurance/loa2"
+            }
+        }
+    ],
+    "service_providers": [
+        {
+            "entity_id": "https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/metadata",
+            "public_key": "MIIEJTCCAw2gAwIBAgIJANug+o++<<SNIP FOR BREVITY>>KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV",
+            "acs": [
+                "https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion"
+            ],
+            "loa": {
+                "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
+            },
+            "second_factor_only": false,
+            "second_factor_only_nameid_patterns": [],
+            "assertion_encryption_enabled": false,
+            "blacklisted_encryption_algorithms": []
+        },
+        {
+            "entity_id": "https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/tiqr/metadata",
+            "public_key": "MIIEJTCCAw2gAwIBAgIJANug+o++<<SNIP FOR BREVITY>>KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV",
+            "acs": [
+                "https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/tiqr/verify"
+            ],
+            "loa": {
+                "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa3"
+            },
+            "second_factor_only": false,
+            "second_factor_only_nameid_patterns": [],
+            "assertion_encryption_enabled": false,
+            "blacklisted_encryption_algorithms": []
+        }
+    ]
 }
 ```
 

@@ -308,8 +308,8 @@ Everything will be validated against the requirements listed above. Once the val
 ### Example
 ```json
 
-gateway: {
-    identity_providers: [
+"gateway": {
+    "identity_providers": [
         {
             entity_id: "https://example.idp.tld/metadata",
             loa: {
@@ -318,7 +318,7 @@ gateway: {
             }
         }
     ],
-    service_providers: [
+    "service_providers": [
         {
             "entity_id": "https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/metadata",
             "public_key": "MIIEJTCCAw2gAwIBAgIJANug+o++<<SNIP FOR BREVITY>>KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV",

@@ -83,7 +83,7 @@ As a full example:
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
-                "second_factor_only": true,
+                "second_factor_only": false,
                 "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
@@ -97,7 +97,7 @@ As a full example:
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
-                "second_factor_only": true,
+                "second_factor_only": false,
                 "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
@@ -111,7 +111,7 @@ As a full example:
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
                 },
-                "second_factor_only": true,
+                "second_factor_only": false,
                 "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
@@ -125,7 +125,7 @@ As a full example:
                 "loa": {
                     "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa3"
                 },
-                "second_factor_only": true,
+                "second_factor_only": false,
                 "second_factor_only_nameid_patterns": [],
                 "assertion_encryption_enabled": false,
                 "blacklisted_encryption_algorithms": []
@@ -238,27 +238,16 @@ All previous templates will be removed from the database and the new templates w
 					<tr>
 						<td>
 						<p><code>[</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Jan Modaal&#39;</code><code>,</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Goeman Borgesiuslaan 77, Utrecht&#39;</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@ibuildings.nl&#39;</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>],</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Henk Modaal&#39;</code><code>,</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Moreelsepark, Utrecht&#39;</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@surfnet.nl&#39;</code></p>
-
 						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>]</code></p>
-
 						<p><code>]</code></p>
 						</td>
 					</tr>
@@ -294,11 +283,24 @@ All previous templates will be removed from the database and the new templates w
 
 ## Gateway
 ### Specification:
-The gateway section contains the configured saml entities for the gateway. This allows the registration of various IdPs and SPs with their respective configurations.
-It must contain an object with the identity_providers and service_providers properties. Both must contain an array as value
-Each element in the identity_providers array must be an object and contain the entity_id and loa properties. The entity_id has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. The loa property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
-Each element in the service_providers array must be an object and contain the following properties: entity_id, public_key, acs, loa, assertion_encryption_enabled, blacklisted_encryption_algorithms.
-The entity_id has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. The loa property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an IdO, with the value as the minimum required LoA for that IdP that should be required when you log in at that IdP. The public_key contain the certificate contents of the public key of the SP as it can be extracted from metadata (i.e. without ----CERTIFATE----- etc.). The acs property contains a list of AssertionConsumerUrls to which the SAMLResponse should be sent. Currently entries other than the first are ignored until ACS index is supported. assertion_encryption_enabled must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted. blacklisted_encryption_algorithms contains an array that lists (each as single string-element) algorithms that may not be used for encryption.
+The gateway section contains the configured saml entities for the gateway. 
+This allows the registration of various IdPs and SPs with their respective configurations.
+It must contain an object with the ```identity_providers``` and ```service_providers``` properties. 
+Both must contain an array as value.
+
+Each element in the identity_providers array must be an object and contain the ```entity_id``` and ```loa``` properties. 
+* ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
+* ```loa``` property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
+
+Each element in the service_providers array must be an object and contain the following properties: 
+* ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
+* ```public_key``` contain the certificate contents of the public key of the SP as it can be extracted from metadata (i.e. without ----CERTIFATE----- etc.). 
+* ```acs``` property contains a list of AssertionConsumerUrls to which the SAMLResponse should be sent. Currently entries other than the first are ignored until ACS index is supported. 
+* ```loa``` property must contain a hash (object) with at least the key __default__ with the default required loa as value.
+* ```second_factor_only``` boolean determines whether this SP is allowed to use the Second Factor Only (/second-factor-only/metadata) mode, note that it then **may not** use the regular Gateway.
+* ```second_factor_only_nameid_patterns``` should contain a list of patterns (strings that may contain a wildcard character) that are allowed to use the Second Factor Only mode. Does nothing if ```second_factor_only``` is not set to true.
+* ```assertion_encryption_enabled``` must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted. 
+* ```blacklisted_encryption_algorithms``` contains an array that lists (each as single string-element) algorithms that may not be used for encryption.
 
 ### Processing
 Everything will be validated against the requirements listed above. Once the validation passes, the whole configuration that is in the database is removed and the new configuration is inserted. In other words: the configuration is overwritten.
@@ -326,7 +328,7 @@ gateway: {
             "loa": {
                 "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa1"
             },
-            "second_factor_only": true,
+            "second_factor_only": false,
             "second_factor_only_nameid_patterns": [],
             "assertion_encryption_enabled": false,
             "blacklisted_encryption_algorithms": []
@@ -340,7 +342,7 @@ gateway: {
             "loa": {
                 "__default__": "https://gw-dev.stepup.coin.surf.net/authentication/loa3"
             },
-            "second_factor_only": true,
+            "second_factor_only": false,
             "second_factor_only_nameid_patterns": [],
             "assertion_encryption_enabled": false,
             "blacklisted_encryption_algorithms": []

@@ -311,8 +311,8 @@ Everything will be validated against the requirements listed above. Once the val
 "gateway": {
     "identity_providers": [
         {
-            entity_id: "https://example.idp.tld/metadata",
-            loa: {
+            "entity_id": "https://example.idp.tld/metadata",
+            "loa": {
                 "__default__": "https://gateway.tld/assurance/loa2",
                 "https://example.sp.tld/metadata": "https://gateway.tld/assurance/loa2"
             }

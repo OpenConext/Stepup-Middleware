@@ -2,6 +2,9 @@
 VERSION 1  RELEASE 1.0
 ======================
 
+   Version 1.6 - Add Second Factor Only configuration
+      01/06/2016 09:42  1.6.0  initial release
+
    Version 1.5 - New second factor type "biometric"
       29/04/2016 11:34  1.5.0  initial release
 

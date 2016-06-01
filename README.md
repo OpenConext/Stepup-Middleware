@@ -16,6 +16,8 @@ Step-up Middleware
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
 
+Make sure to run database migrations using `app/console middleware:migrations:migrate`. 
+
 ## Management API
 
 ### Configuration API

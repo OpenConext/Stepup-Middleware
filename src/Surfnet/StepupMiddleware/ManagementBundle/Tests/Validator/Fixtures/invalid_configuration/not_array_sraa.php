@@ -29,6 +29,8 @@ return [
                     'loa' => [
                         '__default__' => 'http://gateway.tld/loa/1'
                     ],
+                    "second_factor_only" => false,
+                    "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
                 ],

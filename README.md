@@ -45,11 +45,11 @@ The configuration must be a json object with the following keys:
 Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is therefore:
 ```json
 {
-    sraa: [],
-    email_templates: {},
-    gateway: {
-        identity_providers: [],
-        service_providers: []
+    "sraa": [],
+    "email_templates": {},
+    "gateway": {
+        "identity_providers": [],
+        "service_providers": []
     }
 }
 ```
@@ -287,7 +287,7 @@ All previous templates will be removed from the database and the new templates w
 #### After vetting (vetted)
 
 | name       | type   | example       |
-|-------------------------------------|
+|------------|--------|---------------|
 | commonName | string | Jan Modaal    |
 | email      | string | jan@modaal.nl |
 

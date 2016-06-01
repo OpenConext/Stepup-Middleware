@@ -71,7 +71,11 @@ final class ConfigurationValidationTest extends TestCase
         $validator->validate(json_encode($configuration), new HasValidConfigurationStructure());
 
         // PHPUnit assertions are more informative than Mockery's method-should-be-called-1-times-but-called-0-times.
-        $this->assertEquals($expectedPropertyPath, $actualPropertyPath, sprintf("Actual path to erroneous property doesn't match expected path (%s)", $errorMessage));
+        $this->assertEquals(
+            $expectedPropertyPath,
+            $actualPropertyPath,
+            sprintf("Actual path to erroneous property doesn't match expected path (%s)", $errorMessage)
+        );
     }
 
     /**

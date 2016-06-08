@@ -129,7 +129,7 @@ class RaSecondFactor implements JsonSerializable
         Institution $institution,
         CommonName $name,
         Email $email,
-        DocumentNumber $documentNumber = NULL
+        DocumentNumber $documentNumber = null
     ) {
         $this->id = $id;
         $this->type = $type;

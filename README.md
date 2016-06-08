@@ -309,9 +309,9 @@ Everything will be validated against the requirements listed above. Once the val
 
 ### LOA Resolution
 It is possible to specify a LOA in 3 places:
-1. The AuthnContextClassRef in the Authentication Request (SAML2 AuthnRequest).
-2. The ```loa``` on the ```service_providers``` configuration.
-3. The ```loa``` on the ```identity_providers``` configuration.
+  1. The AuthnContextClassRef in the Authentication Request (SAML2 AuthnRequest).
+  2. The ```loa``` on the ```service_providers``` configuration.
+  3. The ```loa``` on the ```identity_providers``` configuration.
 
 The Gateway will authenticate the user with the highest LOA of all these.
 Second Factor Only mode requires that AuthnRequests use LOA aliases. However these are quickly translated to the equivalent of 'regular' LOAs. The configuration MUST NOT use Second Factor Only LOA aliases.

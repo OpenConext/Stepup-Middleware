@@ -290,11 +290,11 @@ This allows the registration of various IdPs and SPs with their respective confi
 It must contain an object with the ```identity_providers``` and ```service_providers``` properties. 
 Both must contain an array as value.
 
-Each element in the identity_providers array must be an object and contain the ```entity_id``` and ```loa``` properties. 
+Each element in the ```identity_providers``` array must be an object and contain the ```entity_id``` and ```loa``` properties. 
 * ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
 * ```loa``` property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
 
-Each element in the service_providers array must be an object and contain the following properties: 
+Each element in the ```service_providers``` array must be an object and contain the following properties: 
 * ```entity_id``` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion. 
 * ```public_key``` contain the certificate contents of the public key of the SP as it can be extracted from metadata (i.e. without ----CERTIFATE----- etc.). 
 * ```acs``` property contains a list of AssertionConsumerUrls to which the SAMLResponse should be sent. Currently entries other than the first are ignored until ACS index is supported. 
@@ -306,6 +306,15 @@ Each element in the service_providers array must be an object and contain the fo
 
 ### Processing
 Everything will be validated against the requirements listed above. Once the validation passes, the whole configuration that is in the database is removed and the new configuration is inserted. In other words: the configuration is overwritten.
+
+### LOA Resolution
+It is possible to specify a LOA in 3 places:
+  1. The AuthnContextClassRef in the Authentication Request (SAML2 AuthnRequest).
+  2. The ```loa``` on the ```service_providers``` configuration.
+  3. The ```loa``` on the ```identity_providers``` configuration.
+
+The Gateway will authenticate the user with the highest LOA of all these.
+Second Factor Only mode requires that AuthnRequests use LOA aliases. However these are quickly translated to the equivalent of 'regular' LOAs. The configuration MUST NOT use Second Factor Only LOA aliases.
 
 ### Example
 ```json

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
@@ -65,13 +66,6 @@ class RaSecondFactor implements JsonSerializable
     public $secondFactorId;
 
     /**
-     * @ORM\Column(type="stepup_second_factor_status")
-     *
-     * @var SecondFactorStatus
-     */
-    public $status;
-
-    /**
      * @ORM\Column(length=36)
      *
      * @var string
@@ -104,6 +98,20 @@ class RaSecondFactor implements JsonSerializable
     public $email;
 
     /**
+     * @ORM\Column(type="stepup_document_number")
+     *
+     * @var DocumentNumber
+     */
+    public $documentNumber;
+
+    /**
+     * @ORM\Column(type="stepup_second_factor_status")
+     *
+     * @var SecondFactorStatus
+     */
+    public $status;
+
+    /**
      * @param string $id
      * @param string $type
      * @param string $secondFactorId
@@ -111,6 +119,7 @@ class RaSecondFactor implements JsonSerializable
      * @param Institution $institution
      * @param CommonName $name
      * @param Email $email
+     * @param DocumentNumber $documentNumber
      */
     public function __construct(
         $id,
@@ -119,16 +128,18 @@ class RaSecondFactor implements JsonSerializable
         $identityId,
         Institution $institution,
         CommonName $name,
-        Email $email
+        Email $email,
+        DocumentNumber $documentNumber = NULL
     ) {
         $this->id = $id;
         $this->type = $type;
         $this->secondFactorId = $secondFactorId;
-        $this->status = SecondFactorStatus::unverified();
         $this->identityId = $identityId;
+        $this->institution = $institution;
         $this->name = $name;
         $this->email = $email;
-        $this->institution = $institution;
+        $this->documentNumber = $documentNumber;
+        $this->status = SecondFactorStatus::unverified();
     }
 
     public function jsonSerialize()
@@ -140,6 +151,7 @@ class RaSecondFactor implements JsonSerializable
             'status'           => (string) $this->status,
             'identity_id'      => $this->identityId,
             'name'             => $this->name,
+            'document_number'  => (string) $this->documentNumber,
             'email'            => $this->email,
             'institution'      => $this->institution,
         ];

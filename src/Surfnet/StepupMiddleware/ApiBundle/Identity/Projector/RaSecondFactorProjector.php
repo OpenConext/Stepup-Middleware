@@ -35,6 +35,7 @@ use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -193,6 +194,7 @@ class RaSecondFactorProjector extends Projector
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::vetted());
+        $this->updateDocumentNumber($event->secondFactorId, $event->documentNumber);
     }
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
@@ -231,6 +233,18 @@ class RaSecondFactorProjector extends Projector
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
         $this->raSecondFactorRepository->removeByIdentityId($event->identityId);
+    }
+
+    /**
+     * @param SecondFactorId $secondFactorId
+     * @param DocumentNumber $documentNumber
+     */
+    private function updateDocumentNumber(SecondFactorId $secondFactorId, DocumentNumber $documentNumber)
+    {
+        $secondFactor = $this->raSecondFactorRepository->find((string) $secondFactorId);
+        $secondFactor->documentNumber = $documentNumber;
+
+        $this->raSecondFactorRepository->save($secondFactor);
     }
 
     /**

@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -31,11 +32,16 @@ final class AuditLogController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
+        $identityId = $request->get('identityId');
+        if (empty($identityId)) {
+            throw new BadApiRequestException(['This API-call MUST include the identityId as get parameter']);
+        }
+
         $query                      = new SecondFactorAuditLogQuery();
         $query->identityInstitution = $institution;
-        $query->identityId          = new IdentityId($request->get('identityId'));
-        $query->orderBy             = $request->get('orderBy');
-        $query->orderDirection      = $request->get('orderDirection');
+        $query->identityId          = new IdentityId($identityId);
+        $query->orderBy             = $request->get('orderBy', $query->orderBy);
+        $query->orderDirection      = $request->get('orderDirection', $query->orderDirection);
         $query->pageNumber          = $request->get('p', 1);
 
         $paginator = $this->getService()->searchSecondFactorAuditLog($query);

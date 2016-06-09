@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
@@ -50,7 +51,7 @@ class DateTime
      */
     public static function now()
     {
-        return self::$now ?: new self(new CoreDateTime);
+        return self::$now ?: new self(new CoreDateTime('now', new DateTimeZone('UTC')));
     }
 
     /**
@@ -63,7 +64,7 @@ class DateTime
             InvalidArgumentException::invalidType('string', 'dateTime', $string);
         }
 
-        $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string);
+        $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string, new DateTimeZone('UTC'));
 
         if ($dateTime === false) {
             throw new InvalidArgumentException('Date-time string could not be parsed: is it formatted correctly?');
@@ -77,7 +78,13 @@ class DateTime
      */
     public function __construct(CoreDateTime $dateTime = null)
     {
-        $this->dateTime = $dateTime ?: new CoreDateTime();
+        $dateTime = $dateTime ?: new CoreDateTime('now', new DateTimeZone('UTC'));
+
+        if ($dateTime->getOffset() !== 0) {
+            throw new InvalidArgumentException('Provided DateTime is not in UTC, but has offset: ' . $dateTime->getOffset());
+        }
+
+        $this->dateTime = $dateTime;
     }
 
     /**

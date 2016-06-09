@@ -19,9 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use InvalidArgumentException;
 use Surfnet\Stepup\DateTime\DateTime;
 
 /**
@@ -53,6 +55,12 @@ class DateTimeType extends Type
             return null;
         }
 
+        if (!$value instanceof DateTime) {
+            throw new InvalidArgumentException(
+                'Value for DateTimeType does not implement DateTime, class given: ' . get_class($value)
+            );
+        }
+
         return $value->format($platform->getDateTimeFormatString());
     }
 
@@ -68,7 +76,7 @@ class DateTimeType extends Type
             return $value;
         }
 
-        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value);
+        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value, new DateTimeZone('UTC'));
 
         if (!$dateTime) {
             throw ConversionException::conversionFailedFormat(

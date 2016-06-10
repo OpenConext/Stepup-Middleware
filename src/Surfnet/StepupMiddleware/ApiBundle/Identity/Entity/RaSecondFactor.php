@@ -151,7 +151,7 @@ class RaSecondFactor implements JsonSerializable
             'status'           => (string) $this->status,
             'identity_id'      => $this->identityId,
             'name'             => $this->name,
-            'document_number'  => (string) $this->documentNumber,
+            'document_number'  => $this->documentNumber,
             'email'            => $this->email,
             'institution'      => $this->institution,
         ];

@@ -100,12 +100,7 @@ class AuditLogProjector implements ProjectorInterface
         $entry->identityId          = (string) $auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event               = get_class($event);
-        $entry->recordedOn          = new DateTime(
-            new CoreDateTime(
-                $domainMessage->getRecordedOn()->toString(),
-                new DateTimeZone('UTC')
-            )
-        );
+        $entry->recordedOn          = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
         if ($auditLogMetadata->secondFactorId) {
             $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;

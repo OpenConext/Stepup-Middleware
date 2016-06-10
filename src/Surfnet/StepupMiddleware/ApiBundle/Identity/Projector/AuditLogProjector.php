@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
@@ -99,7 +100,12 @@ class AuditLogProjector implements ProjectorInterface
         $entry->identityId          = (string) $auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event               = get_class($event);
-        $entry->recordedOn          = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->recordedOn          = new DateTime(
+            new CoreDateTime(
+                $domainMessage->getRecordedOn()->toString(),
+                new DateTimeZone('UTC')
+            )
+        );
 
         if ($auditLogMetadata->secondFactorId) {
             $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;

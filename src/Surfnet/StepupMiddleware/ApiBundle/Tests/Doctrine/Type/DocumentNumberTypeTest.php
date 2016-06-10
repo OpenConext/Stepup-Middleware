@@ -96,7 +96,7 @@ class DocumentNumberTypeTest extends UnitTest
         $input = '12345';
         $output = $type->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf(DocumentNumber::class, $output);
+        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\DocumentNumber', $output);
         $this->assertTrue((new DocumentNumber($input))->equals($output));
     }
 

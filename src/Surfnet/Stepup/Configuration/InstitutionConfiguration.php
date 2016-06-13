@@ -35,6 +35,9 @@ use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Exception\DomainException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
+ */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
 {
     /**

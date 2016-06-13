@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationId
+final class RaLocationId implements JsonSerializable
 {
     /**
      * @var string
@@ -46,6 +47,14 @@ final class RaLocationId
     public function equals(RaLocationId $otherRaLocationId)
     {
         return $this->raLocationId === $otherRaLocationId->raLocationId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRaLocationId()
+    {
+        return $this->raLocationId;
     }
 
     public function jsonSerialize()

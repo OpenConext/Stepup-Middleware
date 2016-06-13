@@ -24,7 +24,7 @@ final class InstitutionConfigurationId
 {
     const UUID_NAMESPACE = '09876543-abcd-0987-abcd-098765432109';
 
-    private $uuid;
+    private $institutionConfigurationId;
 
     /**
      * @param Institution $institution
@@ -35,9 +35,9 @@ final class InstitutionConfigurationId
         return new self(Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
     }
 
-    private function __construct($uuid)
+    private function __construct($institutionConfigurationId)
     {
-        $this->uuid = $uuid;
+        $this->institutionConfigurationId = $institutionConfigurationId;
     }
 
     /**
@@ -46,6 +46,24 @@ final class InstitutionConfigurationId
      */
     public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId)
     {
-        return $this->uuid === $otherInstitutionConfigurationId->uuid;
+        return $this->institutionConfigurationId === $otherInstitutionConfigurationId->institutionConfigurationId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInstitutionConfigurationId()
+    {
+        return $this->institutionConfigurationId;
+    }
+
+    public function jsonSerialize()
+    {
+        return (string) $this;
+    }
+
+    public function __toString()
+    {
+        return $this->institutionConfigurationId;
     }
 }

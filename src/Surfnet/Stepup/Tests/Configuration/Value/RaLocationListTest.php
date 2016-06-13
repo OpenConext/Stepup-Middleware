@@ -83,7 +83,7 @@ class RaLocationSetTest extends TestCase
 
         $raLocationList = new RaLocationList($raLocations);
 
-        $this->assertTrue($raLocationList->hasWith($expectedRaLocationIdToBePresent));
+        $this->assertTrue($raLocationList->containsWithId($expectedRaLocationIdToBePresent));
     }
 
     /**
@@ -97,7 +97,7 @@ class RaLocationSetTest extends TestCase
 
         $raLocationList = new RaLocationList($raLocations);
 
-        $this->assertFalse($raLocationList->hasWith($expectedRaLocationIdNotToBePresent));
+        $this->assertFalse($raLocationList->containsWithId($expectedRaLocationIdNotToBePresent));
     }
 
     /**
@@ -126,7 +126,7 @@ class RaLocationSetTest extends TestCase
         $raLocationToRemove = $raLocations[0];
 
         $raLocationList = new RaLocationList($raLocations);
-        $raLocationList->removeWith($raLocationToRemove->getRaLocationId());
+        $raLocationList->removeWithId($raLocationToRemove->getRaLocationId());
 
         $raLocationListAsArray = iterator_to_array($raLocationList);
         $expectOnlyTheSecondRaLocation = array_splice($raLocations, -1);

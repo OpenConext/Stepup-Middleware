@@ -41,10 +41,10 @@ final class RaLocationList implements IteratorAggregate
      * @param RaLocationId $raLocationId
      * @return bool
      */
-    public function hasWith(RaLocationId $raLocationId)
+    public function containsWithId(RaLocationId $raLocationId)
     {
         foreach ($this->raLocations as $raLocation) {
-            if ($raLocation->getRaLocationId()->equals($raLocationId)) {
+            if ($raLocation->hasRaLocationId($raLocationId)) {
                 return true;
             }
         }
@@ -57,7 +57,7 @@ final class RaLocationList implements IteratorAggregate
      */
     public function add(RaLocation $raLocation)
     {
-        if ($this->hasWith($raLocation->getRaLocationId())) {
+        if ($this->containsWithId($raLocation->getRaLocationId())) {
             throw new LogicException(sprintf(
                 'Cannot add RaLocation with id "%s" to RaLocationList: it is already present',
                 $raLocation->getRaLocationId()
@@ -70,7 +70,7 @@ final class RaLocationList implements IteratorAggregate
     /**
      * @param RaLocationId $raLocationId
      */
-    public function removeWith(RaLocationId $raLocationId)
+    public function removeWithId(RaLocationId $raLocationId)
     {
         foreach ($this->raLocations as $key => $raLocation) {
             if ($raLocation->hasRaLocationId($raLocationId)) {
@@ -91,7 +91,7 @@ final class RaLocationList implements IteratorAggregate
      * @param RaLocationId $raLocationId
      * @return RaLocation
      */
-    public function getBy(RaLocationId $raLocationId)
+    public function getById(RaLocationId $raLocationId)
     {
         foreach ($this->raLocations as $raLocation) {
             if ($raLocation->hasRaLocationId($raLocationId)) {

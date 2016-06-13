@@ -62,7 +62,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         Location $location,
         ContactInformation $contactInformation
     ) {
-        if ($this->raLocations->hasWith($raLocationId)) {
+        if ($this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot add RaLocation with RaLocationId "%s" to RaLocations of InstitutionConfiguration "%s":'
                 . 'it is already present',
@@ -80,7 +80,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         Location $location,
         ContactInformation $contactInformation
     ) {
-        if (!$this->raLocations->hasWith($raLocationId)) {
+        if (!$this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot change RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
                 . 'it is not present',
@@ -89,7 +89,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             ));
         }
 
-        $raLocation = $this->raLocations->getBy($raLocationId);
+        $raLocation = $this->raLocations->getById($raLocationId);
 
         if (!$raLocation->getLocationName()->equals($raLocationName)) {
             // apply renamed event
@@ -104,7 +104,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function removeRaLocation(RaLocationId $raLocationId)
     {
-        if (!$this->raLocations->hasWith($raLocationId)) {
+        if (!$this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot remove RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
                 . 'it is not present',

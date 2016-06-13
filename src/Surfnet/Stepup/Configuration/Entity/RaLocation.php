@@ -73,6 +73,10 @@ class RaLocation
         $this->contactInformation = $contactInformation;
     }
 
+    /**
+     * @param RaLocationId $raLocationId
+     * @return bool
+     */
     public function hasRaLocationId(RaLocationId $raLocationId)
     {
         return $this->raLocationId->equals($raLocationId);

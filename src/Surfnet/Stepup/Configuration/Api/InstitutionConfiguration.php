@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Configuration\Api;
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
@@ -28,10 +29,11 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 interface InstitutionConfiguration extends AggregateRoot
 {
     /**
+     * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
      * @return InstitutionConfiguration
      */
-    public static function createFor(Institution $institution);
+    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution);
 
     /**
      * @param RaLocationId $raLocationId
@@ -54,7 +56,7 @@ interface InstitutionConfiguration extends AggregateRoot
      * @param ContactInformation $contactInformation
      * @return void
      */
-    public function amendRaLocation(
+    public function changeRaLocation(
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,

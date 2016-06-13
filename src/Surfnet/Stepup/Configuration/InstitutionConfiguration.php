@@ -20,6 +20,12 @@ namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration as InstitutionConfigurationInterface;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -48,8 +54,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      */
     public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
     {
-        // new self
-        // apply institution configuration created event
+        $institutionConfiguration = new self;
+        $institutionConfiguration->apply(
+            new InstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
+        );
     }
 
     final private function __construct()
@@ -71,7 +79,13 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             ));
         }
 
-        // apply ra location added event
+        $this->apply(new RaLocationAddedEvent(
+            $this->institutionConfigurationId,
+            $raLocationId,
+            $raLocationName,
+            $location,
+            $contactInformation
+        ));
     }
 
     public function changeRaLocation(
@@ -92,13 +106,23 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $raLocation = $this->raLocations->getById($raLocationId);
 
         if (!$raLocation->getLocationName()->equals($raLocationName)) {
-            // apply renamed event
+            $this->apply(
+                new RaLocationRenamedEvent($this->institutionConfigurationId, $raLocationId, $raLocationName)
+            );
         }
         if (!$raLocation->getLocation()->equals($location)) {
-            // apply relocated event
+            $this->apply(
+                new RaLocationRelocatedEvent($this->institutionConfigurationId, $raLocationId, $location)
+            );
         }
         if (!$raLocation->getContactInformation()->equals($contactInformation)) {
-            // apply contact information changed event
+            $this->apply(
+                new RaLocationContactInformationChangedEvent(
+                    $this->institutionConfigurationId,
+                    $raLocationId,
+                    $contactInformation
+                )
+            );
         }
     }
 
@@ -113,7 +137,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             ));
         }
 
-        // apply ra location removed event
+        $this->apply(new RaLocationRemovedEvent($this->institutionConfigurationId, $raLocationId));
     }
 
     public function getAggregateRootId()

@@ -39,6 +39,33 @@ class InstitutionConfigurationIdTest extends TestCase
     /**
      * @test
      * @group domain
+     *
+     * @dataProvider nonStringOrEmptyStringProvider
+     * @param $nonStringOrEmptyString
+     */
+    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string($nonStringOrEmptyString)
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+
+        new InstitutionConfigurationId($nonStringOrEmptyString);
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_uuid()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+
+        $nonUuid = 'this-is-not-a-uuid';
+
+        new InstitutionConfigurationId($nonUuid);
+    }
+
+    /**
+     * @test
+     * @group domain
      */
     public function two_institution_configuration_ids_created_for_the_same_institution_are_equal()
     {
@@ -46,5 +73,20 @@ class InstitutionConfigurationIdTest extends TestCase
         $same = InstitutionConfigurationId::from(new Institution('An institution'));
 
         $this->assertEquals($institutionConfigurationId, $same);
+    }
+
+    /**
+     * dataprovider
+     */
+    public function nonStringOrEmptyStringProvider()
+    {
+        return [
+            'empty string' => [''],
+            'blank string' => ['   '],
+            'array'        => [[]],
+            'integer'      => [1],
+            'float'        => [1.2],
+            'object'       => [new \StdClass()],
+        ];
     }
 }

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class InstitutionConfigurationId
 {
@@ -32,11 +33,27 @@ final class InstitutionConfigurationId
      */
     public static function from(Institution $institution)
     {
-        return new self(Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
+        return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
     }
 
-    private function __construct($institutionConfigurationId)
+    public function __construct($institutionConfigurationId)
     {
+        if (!is_string($institutionConfigurationId) || strlen(trim($institutionConfigurationId)) === 0) {
+            throw InvalidArgumentException::invalidType(
+                'non-empty string',
+                'institutionConfigurationId',
+                $institutionConfigurationId
+            );
+        }
+
+        if (!Uuid::isValid($institutionConfigurationId)) {
+            throw InvalidArgumentException::invalidType(
+                'UUID',
+                'institutionConfigurationId',
+                $institutionConfigurationId
+            );
+        }
+
         $this->institutionConfigurationId = $institutionConfigurationId;
     }
 

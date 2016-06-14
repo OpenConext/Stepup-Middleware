@@ -61,6 +61,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $institutionConfiguration->apply(
             new InstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
         );
+
+        return $institutionConfiguration;
     }
 
     final private function __construct()

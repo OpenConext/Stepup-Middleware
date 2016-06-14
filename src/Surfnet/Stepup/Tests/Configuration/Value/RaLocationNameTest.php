@@ -26,14 +26,14 @@ class RaLocationNameTest extends TestCase
     /**
      * @test
      * @group        domain
-     * @dataProvider invalidValueProvider
+     * @dataProvider nonStringOrEmptyStringProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
-     * @param mixed $invalidValue
+     * @param mixed $nonStringOrEmptyString
      */
-    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
     {
-        new RaLocationName($invalidValue);
+        new RaLocationName($nonStringOrEmptyString);
     }
 
     /**
@@ -60,7 +60,7 @@ class RaLocationNameTest extends TestCase
         $this->assertFalse($raLocationName->equals($different));
     }
 
-    public function invalidValueProvider()
+    public function nonStringOrEmptyStringProvider()
     {
         return [
             'empty string' => [''],

@@ -37,6 +37,7 @@ use Surfnet\Stepup\Exception\DomainException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregrateRoot
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
 {
@@ -65,7 +66,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $institutionConfiguration;
     }
 
-    final private function __construct()
+    final public function __construct()
     {
     }
 

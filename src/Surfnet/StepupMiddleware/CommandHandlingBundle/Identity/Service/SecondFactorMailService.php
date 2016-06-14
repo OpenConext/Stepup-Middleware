@@ -30,6 +30,9 @@ use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class SecondFactorMailService
 {
     /**

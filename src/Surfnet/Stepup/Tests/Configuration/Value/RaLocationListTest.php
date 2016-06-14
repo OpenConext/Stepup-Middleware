@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -26,7 +27,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 
-class RaLocationSetTest extends TestCase
+class RaLocationListTest extends TestCase
 {
     /**
      * @test
@@ -93,7 +94,7 @@ class RaLocationSetTest extends TestCase
     public function an_ra_location_list_does_not_have_ra_locations_with_a_non_present_ra_location_id()
     {
         $raLocations = $this->getRaLocationsArray();
-        $expectedRaLocationIdNotToBePresent = new RaLocationId('This ID should not be present');
+        $expectedRaLocationIdNotToBePresent = new RaLocationId((string) Uuid::uuid4());
 
         $raLocationList = new RaLocationList($raLocations);
 
@@ -138,13 +139,13 @@ class RaLocationSetTest extends TestCase
     {
         return [
             RaLocation::create(
-                new RaLocationId('An RA location ID'),
+                new RaLocationId((string) Uuid::uuid4()),
                 new RaLocationName('An RA location name'),
                 new Location('A location'),
                 new ContactInformation('Contact Information')
             ),
             RaLocation::create(
-                new RaLocationId('Another RA location ID'),
+                new RaLocationId((string) Uuid::uuid4()),
                 new RaLocationName('Another RA location name'),
                 new Location('Another location'),
                 new ContactInformation('Some more contact Information')

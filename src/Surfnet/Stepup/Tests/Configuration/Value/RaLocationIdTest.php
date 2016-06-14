@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 
 class RaLocationIdTest extends TestCase
@@ -27,13 +28,26 @@ class RaLocationIdTest extends TestCase
      * @test
      * @group        domain
      * @dataProvider nonStringOrEmptyStringProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $nonStringOrEmptyString
      */
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
     {
+        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+
         new RaLocationId($nonStringOrEmptyString);
+    }
+    /**
+     * @test
+     * @group        domain
+     */
+    public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+
+        $nonUuid = 'this-is-not-a-uuid';
+
+        new RaLocationId($nonUuid);
     }
 
     /**
@@ -42,8 +56,10 @@ class RaLocationIdTest extends TestCase
      */
     public function two_ra_location_ids_with_the_same_values_are_equal()
     {
-        $raLocationId = new RaLocationId('a');
-        $theSame      = new RaLocationId('a');
+        $uuid = self::uuid();
+
+        $raLocationId = new RaLocationId($uuid);
+        $theSame      = new RaLocationId($uuid);
 
         $this->assertTrue($raLocationId->equals($theSame));
     }
@@ -54,8 +70,8 @@ class RaLocationIdTest extends TestCase
      */
     public function two_ra_location_ids_with_different_values_are_not_equal()
     {
-        $raLocationId = new RaLocationId('a');
-        $different    = new RaLocationId('A');
+        $raLocationId = new RaLocationId(self::uuid());
+        $different    = new RaLocationId(self::uuid());
 
         $this->assertFalse($raLocationId->equals($different));
     }
@@ -70,5 +86,9 @@ class RaLocationIdTest extends TestCase
             'float'        => [1.2],
             'object'       => [new \StdClass()],
         ];
+    }
+
+    private static function uuid() {
+        return (string) Uuid::uuid4();
     }
 }

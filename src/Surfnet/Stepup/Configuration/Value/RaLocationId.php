@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class RaLocationId implements JsonSerializable
@@ -33,8 +34,20 @@ final class RaLocationId implements JsonSerializable
      */
     public function __construct($raLocationId)
     {
-        if (!is_string($raLocationId) || trim($raLocationId) === '') {
-            throw InvalidArgumentException::invalidType('non-empty string', 'raLocationId', $raLocationId);
+        if (!is_string($raLocationId) || strlen(trim($raLocationId)) === 0) {
+            throw InvalidArgumentException::invalidType(
+                'non-empty string',
+                'raLocationId',
+                $raLocationId
+            );
+        }
+
+        if (!Uuid::isValid($raLocationId)) {
+            throw InvalidArgumentException::invalidType(
+                'UUID',
+                'raLocationId',
+                $raLocationId
+            );
         }
 
         $this->raLocationId = $raLocationId;

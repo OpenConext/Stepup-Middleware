@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -29,7 +30,7 @@ use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class SecondFactorMailService
+final class SecondFactorMailService
 {
     /**
      * @var Mailer
@@ -67,6 +68,16 @@ class SecondFactorMailService
     private $fallbackLocale;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var bool
+     */
+    private $warnOnMissingTemplateConfiguration;
+
+    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
@@ -74,6 +85,8 @@ class SecondFactorMailService
      * @param string $emailVerificationUrlTemplate
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
+     * @param LoggerInterface $logger
+     * @param bool $warnOnMissingTemplateConfiguration
      */
     public function __construct(
         Mailer $mailer,
@@ -82,7 +95,9 @@ class SecondFactorMailService
         EngineInterface $templateEngine,
         $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale
+        $fallbackLocale,
+        LoggerInterface $logger,
+        $warnOnMissingTemplateConfiguration = TRUE
     ) {
         $this->mailer = $mailer;
         $this->sender = $sender;
@@ -91,6 +106,8 @@ class SecondFactorMailService
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
+        $this->logger = $logger;
+        $this->warnOnMissingTemplateConfiguration = $warnOnMissingTemplateConfiguration;
     }
 
     /**
@@ -117,7 +134,11 @@ class SecondFactorMailService
             urlencode($verificationNonce),
             $this->emailVerificationUrlTemplate
         );
-        $emailTemplate = $this->emailTemplateService->findByName('confirm_email', $locale, $this->fallbackLocale);
+
+        $emailTemplate = $this->findEmailTemplate('confirm_email', $locale, $this->fallbackLocale);
+        if (!$emailTemplate) {
+            return;
+        }
 
         $parameters = [
             'templateString'   => $emailTemplate->htmlContent,
@@ -166,11 +187,11 @@ class SecondFactorMailService
             $locale
         );
 
-        $emailTemplate = $this->emailTemplateService->findByName(
-            'registration_code',
-            $locale,
-            $this->fallbackLocale
-        );
+        $emailTemplate = $this->findEmailTemplate('registration_code', $locale, $this->fallbackLocale);
+        if (!$emailTemplate) {
+            return;
+        }
+
         $parameters = [
             'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
@@ -215,11 +236,11 @@ class SecondFactorMailService
             $locale->getLocale()
         );
 
-        $emailTemplate = $this->emailTemplateService->findByName(
-            'vetted',
-            $locale->getLocale(),
-            $this->fallbackLocale
-        );
+        $emailTemplate = $this->findEmailTemplate('vetted', $locale->getLocale(), $this->fallbackLocale);
+        if (!$emailTemplate) {
+            return;
+        }
+
         $parameters = [
             'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale->getLocale(),
@@ -243,5 +264,29 @@ class SecondFactorMailService
             ->setBody($body, 'text/html', 'utf-8');
 
         $this->mailer->send($message);
+    }
+
+    /**
+     * @param string $name
+     * @param string $locale
+     * @param string $fallbackLocale
+     * @return null|\Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Dto\EmailTemplate
+     */
+    private function findEmailTemplate($name, $locale, $fallbackLocale)
+    {
+        $emailTemplate = $this->emailTemplateService->findByName($name, $locale, $this->fallbackLocale);
+
+        if ($emailTemplate) {
+            return $emailTemplate;
+        }
+
+        if ($this->warnOnMissingTemplateConfiguration) {
+            $this->logger->warning(
+                'Skipping sending mail because template configuration is missing',
+                ['name' => $name, 'locale' => $locale, 'fallbackLocale' => $fallbackLocale]
+            );
+        }
+
+        return null;
     }
 }

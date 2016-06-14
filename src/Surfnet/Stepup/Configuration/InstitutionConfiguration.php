@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration as InstitutionConfigurationInterface;
-use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
@@ -60,7 +60,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     {
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(
-            new InstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
         );
 
         return $institutionConfiguration;
@@ -151,7 +151,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $this->institutionConfigurationId;
     }
 
-    public function applyInstitutionConfigurationCreatedEvent()
+    public function applyNewInstitutionConfigurationCreatedEvent()
     {
         // Implement
     }

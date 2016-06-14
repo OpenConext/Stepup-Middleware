@@ -33,7 +33,7 @@ class RaLocation
     /**
      * @var RaLocationName
      */
-    private $locationName;
+    private $raLocationName;
 
     /**
      * @var Location
@@ -63,13 +63,37 @@ class RaLocation
 
     private function __construct(
         RaLocationId $raLocationId,
-        RaLocationName $locationName,
+        RaLocationName $raLocationName,
         Location $location,
         ContactInformation $contactInformation
     ) {
         $this->raLocationId       = $raLocationId;
-        $this->locationName       = $locationName;
+        $this->raLocationName     = $raLocationName;
         $this->location           = $location;
+        $this->contactInformation = $contactInformation;
+    }
+
+    /**
+     * @param RaLocationName $raLocationName
+     */
+    public function rename(RaLocationName $raLocationName)
+    {
+        $this->raLocationName = $raLocationName;
+    }
+
+    /**
+     * @param Location $location
+     */
+    public function relocate(Location $location)
+    {
+        $this->location = $location;
+    }
+
+    /**
+     * @param ContactInformation $contactInformation
+     */
+    public function changeContactInformation(ContactInformation $contactInformation)
+    {
         $this->contactInformation = $contactInformation;
     }
 
@@ -93,9 +117,9 @@ class RaLocation
     /**
      * @return RaLocationName
      */
-    public function getLocationName()
+    public function getRaLocationName()
     {
-        return $this->locationName;
+        return $this->raLocationName;
     }
 
     /**

@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration as InstitutionConfigurationInterface;
+use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
@@ -111,7 +112,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
         $raLocation = $this->raLocations->getById($raLocationId);
 
-        if (!$raLocation->getLocationName()->equals($raLocationName)) {
+        if (!$raLocation->getRaLocationName()->equals($raLocationName)) {
             $this->apply(
                 new RaLocationRenamedEvent($this->institutionConfigurationId, $raLocationId, $raLocationName)
             );

@@ -52,9 +52,9 @@ class RaLocationRenamedEvent
     public static function deserialize(array $data)
     {
         return new self(
-            $data['institution_configuration_id'],
-            $data['ra_location_id'],
-            $data['ra_location_name']
+            new InstitutionConfigurationId($data['institution_configuration_id']),
+            new RaLocationId($data['ra_location_id']),
+            new RaLocationName($data['ra_location_name'])
         );
     }
 

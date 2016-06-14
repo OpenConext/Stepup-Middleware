@@ -41,7 +41,10 @@ class InstitutionConfigurationCreatedEvent
 
     public static function deserialize(array $data)
     {
-        return new self($data['institution_configuration_id'], $data['institution']);
+        return new self(
+            new InstitutionConfigurationId($data['institution_configuration_id']),
+            new Institution($data['institution'])
+        );
     }
 
     public function serialize()

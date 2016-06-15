@@ -100,7 +100,7 @@ final class SecondFactorMailService
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
         LoggerInterface $logger,
-        $warnOnMissingTemplateConfiguration = TRUE
+        $warnOnMissingTemplateConfiguration = true
     ) {
         $this->mailer = $mailer;
         $this->sender = $sender;

@@ -63,28 +63,67 @@ class InstitutionConfigurationTest extends TestCase
         $location           = new Location('A location');
         $contactInformation = new ContactInformation('Contact information');
 
-        $expectedRaLocations = new RaLocationList(
-            [
-                RaLocation::create(
-                    $raLocationId,
-                    $raLocationName,
-                    $location,
-                    $contactInformation
-                ),
-            ]
-        );
+        $expectedRaLocations = new RaLocationList([
+            RaLocation::create($raLocationId, $raLocationName, $location, $contactInformation)
+        ]);
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        );
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
 
         $actualRaLocations = $institutionConfiguration->getRaLocations();
 
         $this->assertEquals($expectedRaLocations, $actualRaLocations);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function an_ra_location_cannot_be_added_to_an_institution_configuration_if_it_is_already_present()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'already present');
+
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId       = new RaLocationId(self::uuid());
+        $raLocationName     = new RaLocationName('An RA location name');
+        $location           = new Location('A location');
+        $contactInformation = new ContactInformation('Contact information');
+
+        $sameRaLocationId = $raLocationId;
+        $otherRaLocationName     = new RaLocationName('Another RA location name');
+        $otherLocation           = new Location('Another location');
+        $otherContactInformation = new ContactInformation('Other contact information');
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->addRaLocation(
+            $sameRaLocationId,
+            $otherRaLocationName,
+            $otherLocation,
+            $otherContactInformation
+        );
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function an_ra_location_cannot_be_changed_if_it_is_not_present()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
+
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId       = new RaLocationId(self::uuid());
+        $raLocationName     = new RaLocationName('Renamed RA location');
+        $location           = new Location('A location');
+        $contactInformation = new ContactInformation('Contact information');
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
     }
 
     /**
@@ -102,30 +141,13 @@ class InstitutionConfigurationTest extends TestCase
         $contactInformation = new ContactInformation('Contact information');
 
         $newRaLocationName = new RaLocationName('Renamed RA location');
-        $expectedRaLocations = new RaLocationList(
-            [
-                RaLocation::create(
-                    $raLocationId,
-                    $newRaLocationName,
-                    $location,
-                    $contactInformation
-                ),
-            ]
-        );
+        $expectedRaLocations = new RaLocationList([
+            RaLocation::create($raLocationId, $newRaLocationName, $location, $contactInformation)
+        ]);
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        );
-        $institutionConfiguration->changeRaLocation(
-            $raLocationId,
-            $newRaLocationName,
-            $location,
-            $contactInformation
-        );
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $newRaLocationName, $location, $contactInformation);
 
         $actualRaLocations = $institutionConfiguration->getRaLocations();
 
@@ -147,30 +169,13 @@ class InstitutionConfigurationTest extends TestCase
         $contactInformation = new ContactInformation('Contact information');
 
         $newLocation         = new Location('Relocated RA location');
-        $expectedRaLocations = new RaLocationList(
-            [
-                RaLocation::create(
-                    $raLocationId,
-                    $raLocationName,
-                    $newLocation,
-                    $contactInformation
-                ),
-            ]
-        );
+        $expectedRaLocations = new RaLocationList([
+            RaLocation::create($raLocationId, $raLocationName, $newLocation, $contactInformation)
+        ]);
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        );
-        $institutionConfiguration->changeRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $newLocation,
-            $contactInformation
-        );
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $newLocation, $contactInformation);
 
         $actualRaLocations = $institutionConfiguration->getRaLocations();
 
@@ -192,30 +197,13 @@ class InstitutionConfigurationTest extends TestCase
         $contactInformation = new ContactInformation('Contact information');
 
         $newContactInformation = new ContactInformation('RA location with changed ContactInformation');
-        $expectedRaLocations   = new RaLocationList(
-            [
-                RaLocation::create(
-                    $raLocationId,
-                    $raLocationName,
-                    $location,
-                    $newContactInformation
-                ),
-            ]
-        );
+        $expectedRaLocations   = new RaLocationList([
+            RaLocation::create($raLocationId, $raLocationName, $location, $newContactInformation)
+        ]);
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        );
-        $institutionConfiguration->changeRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $newContactInformation
-        );
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $location, $newContactInformation);
 
         $actualRaLocations = $institutionConfiguration->getRaLocations();
 
@@ -239,19 +227,29 @@ class InstitutionConfigurationTest extends TestCase
         $expectedRaLocations   = new RaLocationList([]);
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation(
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        );
-        $institutionConfiguration->removeRaLocation(
-            $raLocationId
-        );
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->removeRaLocation($raLocationId);
 
         $actualRaLocations = $institutionConfiguration->getRaLocations();
 
         $this->assertEquals($expectedRaLocations, $actualRaLocations);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function an_ra_location_cannot_be_removed_if_it_is_not_present()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
+
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->removeRaLocation($raLocationId);
     }
 
     /**

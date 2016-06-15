@@ -21,12 +21,19 @@ namespace Surfnet\Stepup\Tests\Configuration\Event;
 use Broadway\Serializer\SerializableInterface;
 use PHPUnit_Framework_TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Configuration\Configuration;
+use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -39,7 +46,6 @@ class EventSerializationAndDeserializationTest extends TestCase
     /**
      * @test
      * @group domain
-     * @group InstitutionConfiguration
      *
      * @dataProvider institutionConfigurationEventsProvider
      */
@@ -62,6 +68,44 @@ class EventSerializationAndDeserializationTest extends TestCase
         $uuid = (string) Uuid::uuid4();
 
         return [
+            // Configuration
+            'NewConfigurationCreatedEvent' => [
+                new NewConfigurationCreatedEvent(
+                    Configuration::CONFIGURATION_ID
+                )
+            ],
+            'ConfigurationUpdatedEvent' => [
+                new ConfigurationUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['configurationKey' => 'configurationValue']
+                )
+            ],
+            'EmailTemplatesUpdatedEvent' => [
+                new EmailTemplatesUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['template']
+                )
+            ],
+            'IdentityProvidersUpdatedEvent' => [
+                new IdentityProvidersUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['idp']
+                )
+            ],
+            'ServiceProvidersUpdatedEvent' => [
+                new ServiceProvidersUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['sp']
+                )
+            ],
+            'SraaUpdatedEvent' => [
+                new SraaUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['sraa']
+                )
+            ],
+
+            // InstitutionConfiguration
             'NewInstitutionConfigurationCreatedEvent' => [
                 new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
             ],

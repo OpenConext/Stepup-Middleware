@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
@@ -110,6 +111,11 @@ final class SecondFactorMailService
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->logger = $logger;
+
+        if (!is_bool($warnOnMissingTemplateConfiguration)) {
+            throw new InvalidArgumentException('warnOnMissingTemplateConfiguration for SecondFactorMailService is not a boolean');
+        }
+
         $this->warnOnMissingTemplateConfiguration = $warnOnMissingTemplateConfiguration;
     }
 

@@ -48,6 +48,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $institutionConfigurationId;
 
     /**
+     * @var Institution
+     */
+    private $institution;
+
+    /**
      * @var RaLocationList
      */
     private $raLocations;
@@ -71,6 +76,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     {
     }
 
+    /**
+     * @param RaLocationId $raLocationId
+     * @param RaLocationName $raLocationName
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     */
     public function addRaLocation(
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
@@ -95,6 +106,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         ));
     }
 
+    /**
+     * @param RaLocationId $raLocationId
+     * @param RaLocationName $raLocationName
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     */
     public function changeRaLocation(
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
@@ -133,6 +150,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         }
     }
 
+    /**
+     * @param RaLocationId $raLocationId
+     */
     public function removeRaLocation(RaLocationId $raLocationId)
     {
         if (!$this->raLocations->containsWithId($raLocationId)) {
@@ -152,33 +172,69 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $this->institutionConfigurationId;
     }
 
-    public function applyNewInstitutionConfigurationCreatedEvent()
+    /**
+     * @return InstitutionConfigurationId
+     */
+    public function getInstitutionConfigurationId()
     {
-        // Implement
+        return $this->institutionConfigurationId;
     }
 
-    public function applyRaLocationAddedEvent()
+    /**
+     * @return Institution
+     */
+    public function getInstitution()
     {
-        // Implement
+        return $this->institution;
     }
 
-    public function applyRaLocationRenamedEvent()
+    /**
+     * @return RaLocationList
+     */
+    public function getRaLocations()
     {
-        // Implement
+        return $this->raLocations;
     }
 
-    public function applyRaLocationRelocatedEvent()
+    public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        // Implement
+        $this->institutionConfigurationId = $event->institutionConfigurationId;
+        $this->institution = $event->institution;
+        $this->raLocations = new RaLocationList([]);
     }
 
-    public function applyRaLocationContactInformationChangedEvent()
+    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
     {
-        // Implement
+        $this->raLocations->add(
+            RaLocation::create(
+                $event->raLocationId,
+                $event->raLocationName,
+                $event->location,
+                $event->contactInformation
+            )
+        );
     }
 
-    public function applyRaLocationRemovedEvent()
+    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
     {
-        // Implement
+        $raLocation = $this->raLocations->getById($event->raLocationId);
+        $raLocation->rename($event->raLocationName);
+    }
+
+    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    {
+        $raLocation = $this->raLocations->getById($event->raLocationId);
+        $raLocation->relocate($event->location);
+    }
+
+    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    {
+        $raLocation = $this->raLocations->getById($event->raLocationId);
+        $raLocation->changeContactInformation($event->contactInformation);
+    }
+
+    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    {
+        $this->raLocations->removeWithId($event->raLocationId);
     }
 }

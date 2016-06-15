@@ -72,7 +72,7 @@ final class RaLocationId implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->raLocationId;
     }
 
     public function __toString()

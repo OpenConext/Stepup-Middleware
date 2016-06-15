@@ -50,7 +50,7 @@ final class RaLocationName
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->raLocationName;
     }
 
     public function __toString()

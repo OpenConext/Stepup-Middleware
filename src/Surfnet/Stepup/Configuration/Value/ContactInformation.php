@@ -51,7 +51,7 @@ final class ContactInformation implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->contactInformation;
     }
 
     public function __toString()

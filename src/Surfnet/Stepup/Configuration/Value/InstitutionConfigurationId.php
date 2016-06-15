@@ -76,7 +76,7 @@ final class InstitutionConfigurationId
 
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->institutionConfigurationId;
     }
 
     public function __toString()

@@ -18,11 +18,12 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
+use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 
-class RaLocationRemovedEvent
+class RaLocationRemovedEvent implements SerializableInterface
 {
     /**
      * @var InstitutionConfigurationId

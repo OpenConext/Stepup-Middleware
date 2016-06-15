@@ -196,14 +196,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $this->raLocations;
     }
 
-    public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
+    protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
         $this->institutionConfigurationId = $event->institutionConfigurationId;
         $this->institution = $event->institution;
         $this->raLocations = new RaLocationList([]);
     }
 
-    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
+    protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
     {
         $this->raLocations->add(
             RaLocation::create(
@@ -215,25 +215,25 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
+    protected function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->rename($event->raLocationName);
     }
 
-    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    protected function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->relocate($event->location);
     }
 
-    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    protected function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->changeContactInformation($event->contactInformation);
     }
 
-    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    protected function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
     {
         $this->raLocations->removeWithId($event->raLocationId);
     }

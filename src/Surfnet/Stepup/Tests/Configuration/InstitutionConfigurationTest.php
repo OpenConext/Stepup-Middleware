@@ -18,9 +18,16 @@
 
 namespace Surfnet\Stepup\Tests\Configuration;
 
+use Broadway\Domain\DomainMessage;
 use PHPUnit_Framework_TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -253,10 +260,226 @@ class InstitutionConfigurationTest extends TestCase
     }
 
     /**
+     * @test
+     * @group aggregate
+     */
+    public function creating_a_new_institution_configuration_leads_to_an_new_institution_configuration_created_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $expectedEvents = [new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function adding_an_ra_location_leads_to_an_ra_location_added_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+        $raLocationName = new RaLocationName('Test location name');
+        $location = new Location('Test location');
+        $contactInformation = new ContactInformation('Test contact information');
+
+        $expectedEvents = [
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
+            new RaLocationAddedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation
+            ),
+        ];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function renaming_an_ra_location_leads_to_an_ra_location_renamed_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+        $raLocationName = new RaLocationName('Test location name');
+        $location = new Location('Test location');
+        $contactInformation = new ContactInformation('Test contact information');
+
+        $newRaLocationName = new RaLocationName('New location name');
+
+        $expectedEvents = [
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
+            new RaLocationAddedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation
+            ),
+            new RaLocationRenamedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $newRaLocationName
+            )
+        ];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $newRaLocationName, $location, $contactInformation);
+
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function relocating_an_ra_location_leads_to_an_ra_location_relocated_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+        $raLocationName = new RaLocationName('Test location name');
+        $location = new Location('Test location');
+        $contactInformation = new ContactInformation('Test contact information');
+
+        $newLocation = new Location('New location');
+
+        $expectedEvents = [
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
+            new RaLocationAddedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation
+            ),
+            new RaLocationRelocatedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $newLocation
+            )
+        ];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $newLocation, $contactInformation);
+
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function changing_the_contact_information_of_an_ra_location_leads_to_an_ra_location_contact_information_changed_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+        $raLocationName = new RaLocationName('Test location name');
+        $location = new Location('Test location');
+        $contactInformation = new ContactInformation('Test contact information');
+
+        $newContactInformation = new ContactInformation('New contact information');
+
+        $expectedEvents = [
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
+            new RaLocationAddedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation
+            ),
+            new RaLocationContactInformationChangedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $newContactInformation
+            )
+        ];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $location, $newContactInformation);
+
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function removing_an_ra_location_leads_to_an_ra_location_removed_event()
+    {
+        $institution = new Institution('Test institution');
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $raLocationId = new RaLocationId(self::uuid());
+        $raLocationName = new RaLocationName('Test location name');
+        $location = new Location('Test location');
+        $contactInformation = new ContactInformation('Test contact information');
+
+        $expectedEvents = [
+            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
+            new RaLocationAddedEvent(
+                $institutionConfigurationId,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation
+            ),
+            new RaLocationRemovedEvent(
+                $institutionConfigurationId,
+                $raLocationId
+            )
+        ];
+
+        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
+        $institutionConfiguration->removeRaLocation($raLocationId);
+        $actualEvents = $this->getEventsFrom($institutionConfiguration);
+
+        $this->assertEquals($expectedEvents, $actualEvents);
+    }
+
+    /**
      * @return string
      */
     private static function uuid()
     {
         return (string) Uuid::uuid4();
+    }
+
+    private function getEventsFrom(InstitutionConfiguration $institutionConfiguration)
+    {
+        return array_map(function (DomainMessage $domainMessage) {
+            return $domainMessage->getPayload();
+        }, iterator_to_array($institutionConfiguration->getUncommittedEvents()));
     }
 }

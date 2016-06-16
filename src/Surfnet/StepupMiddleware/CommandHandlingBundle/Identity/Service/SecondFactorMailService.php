@@ -291,8 +291,10 @@ final class SecondFactorMailService
 
         if ($this->warnOnMissingTemplateConfiguration) {
             $this->logger->warning(
-                'Skipping sending mail because template configuration is missing',
-                ['name' => $name, 'locale' => $locale, 'fallbackLocale' => $fallbackLocale]
+                sprintf(
+                    'Skipping sending mail because template configuration for "%s" in locale "%s" or "%s" is missing',
+                    [$name, $locale, $fallbackLocale]
+                )
             );
         }
 

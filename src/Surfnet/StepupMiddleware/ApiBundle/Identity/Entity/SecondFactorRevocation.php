@@ -63,7 +63,7 @@ class SecondFactorRevocation
     public $revokedBy;
 
     /**
-     * @ORM\Column(type="stepup_datetime")
+     * @ORM\Column(type="stepup_utc_datetime")
      *
      * @var \Surfnet\Stepup\DateTime\DateTime
      */

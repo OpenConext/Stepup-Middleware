@@ -56,7 +56,6 @@ class AddRaLocationCommand extends AbstractCommand
     public $location;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Type(type="string")
      *
      * @var string

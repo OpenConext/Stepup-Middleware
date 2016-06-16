@@ -31,6 +31,7 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Value objects
@@ -51,9 +52,12 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     {
         $institution                = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-        $institutionConfiguration   = $this->getInstitutionConfiguration($institutionConfigurationId);
 
-        if ($institutionConfiguration === null) {
+        try {
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
             $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
         }
 
@@ -69,20 +73,34 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleChangeRaLocationCommand(ChangeRaLocationCommand $command)
     {
-        // Implement
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        try {
+            /** @var InstitutionConfiguration $institutionConfiguration */
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
+            throw new InstitutionConfigurationNotFoundException(sprintf(
+                'Cannot change RA location "%s": its InstitutionConfiguration with id "%s" not found',
+                $command->raLocationId,
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            ));
+        }
+
+        $institutionConfiguration->changeRaLocation(
+            new RaLocationId($command->raLocationId),
+            new RaLocationName($command->raLocationName),
+            new Location($command->location),
+            new ContactInformation($command->contactInformation)
+        );
+
+        $this->repository->save($institutionConfiguration);
     }
 
     public function handleRemoveRaLocationCommand(RemoveRaLocationCommand $command)
     {
         // Implement
-    }
-
-    private function getInstitutionConfiguration(InstitutionConfigurationId $institutionConfigurationId)
-    {
-        try {
-            return $this->repository->load($institutionConfigurationId);
-        } catch (AggregateNotFoundException $e) {
-            return null;
-        }
     }
 }

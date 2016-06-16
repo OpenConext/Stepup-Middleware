@@ -26,6 +26,7 @@ use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -36,6 +37,7 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
@@ -335,6 +337,99 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     new RaLocationId($command->raLocationId),
                     new ContactInformation($command->contactInformation)
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
+    {
+        $this->setExpectedException(
+            'Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException',
+            'not found'
+        );
+
+        $command                     = new RemoveRaLocationCommand();
+        $command->raLocationId       = self::uuid();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId(self::uuid())
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                )
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_ra_location_cannot_be_removed_if_it_is_not_present_within_an_institution_configuration()
+    {
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
+
+        $command                     = new RemoveRaLocationCommand();
+        $command->raLocationId       = self::uuid();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                )
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_ra_location_can_be_removed()
+    {
+
+        $command                     = new RemoveRaLocationCommand();
+        $command->raLocationId       = self::uuid();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                ),
+                new RaLocationAddedEvent(
+                    $institutionConfigurationId,
+                    new RaLocationId($command->raLocationId),
+                    new RaLocationName('A location name'),
+                    new Location('A location'),
+                    new ContactInformation('Some contact information')
+                )
+            ])
+            ->when($command)
+            ->then([
+                new RaLocationRemovedEvent(
+                    $institutionConfigurationId,
+                    new RaLocationId($command->raLocationId)
                 )
             ]);
     }

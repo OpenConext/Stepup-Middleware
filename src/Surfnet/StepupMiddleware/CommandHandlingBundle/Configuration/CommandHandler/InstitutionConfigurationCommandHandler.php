@@ -101,6 +101,28 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleRemoveRaLocationCommand(RemoveRaLocationCommand $command)
     {
-        // Implement
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        try {
+            /** @var InstitutionConfiguration $institutionConfiguration */
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
+            throw new InstitutionConfigurationNotFoundException(
+                sprintf(
+                    'Cannot remove RA location "%s": its InstitutionConfiguration with id "%s" was not found',
+                    $command->raLocationId,
+                    $institutionConfigurationId->getInstitutionConfigurationId()
+                )
+            );
+        }
+
+        $institutionConfiguration->removeRaLocation(
+            new RaLocationId($command->raLocationId)
+        );
+
+        $this->repository->save($institutionConfiguration);
     }
 }

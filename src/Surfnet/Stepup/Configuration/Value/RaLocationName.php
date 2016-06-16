@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,46 +16,48 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Value;
+namespace Surfnet\Stepup\Configuration\Value;
 
-use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Location implements JsonSerializable
+final class RaLocationName
 {
     /**
      * @var string
      */
-    private $location;
+    private $raLocationName;
 
     /**
-     * @param string $location
+     * @param string $raLocationName
      */
-    public function __construct($location)
+    public function __construct($raLocationName)
     {
-        if (!is_string($location)) {
-            throw InvalidArgumentException::invalidType('string', 'location', $location);
+        if (!is_string($raLocationName) || trim($raLocationName) === '') {
+            throw InvalidArgumentException::invalidType('non-empty string', 'raLocationName', $raLocationName);
         }
 
-        $this->location = trim($location);
+        $this->raLocationName = $raLocationName;
     }
 
     /**
-     * @param Location $otherLocation
+     * @param RaLocationName $otherRaLocationName
      * @return bool
      */
-    public function equals(Location $otherLocation)
+    public function equals(RaLocationName $otherRaLocationName)
     {
-        return $this->location === $otherLocation->location;
+        return $this->raLocationName === $otherRaLocationName->raLocationName;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return string
+     */
+    public function getRaLocationName()
     {
-        return $this->location;
+        return $this->raLocationName;
     }
 
     public function __toString()
     {
-        return $this->location;
+        return $this->raLocationName;
     }
 }

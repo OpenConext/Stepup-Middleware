@@ -172,30 +172,6 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $this->institutionConfigurationId;
     }
 
-    /**
-     * @return InstitutionConfigurationId
-     */
-    public function getInstitutionConfigurationId()
-    {
-        return $this->institutionConfigurationId;
-    }
-
-    /**
-     * @return Institution
-     */
-    public function getInstitution()
-    {
-        return $this->institution;
-    }
-
-    /**
-     * @return RaLocationList
-     */
-    public function getRaLocations()
-    {
-        return $this->raLocations;
-    }
-
     protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
         $this->institutionConfigurationId = $event->institutionConfigurationId;

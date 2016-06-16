@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class DateTimeTest extends UnitTest
 {
@@ -146,5 +147,24 @@ class DateTimeTest extends UnitTest
         $this->assertFalse($before->comesAfterOrIsEqual($base));
         $this->assertTrue($same->comesAfterOrIsEqual($base));
         $this->assertTrue($after->comesAfterOrIsEqual($base));
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function it_accepts_utc_times()
+    {
+        new DateTime(new CoreDateTime('1970-01-01T00:00:00.000+00:00'));
+    }
+
+    /**
+     * @test
+     * @group domain
+     * @expectedException InvalidArgumentException
+     */
+    public function it_doesnt_accept_non_utc_times()
+    {
+        new DateTime(new CoreDateTime('1970-01-01T00:00:00.000+02:00'));
     }
 }

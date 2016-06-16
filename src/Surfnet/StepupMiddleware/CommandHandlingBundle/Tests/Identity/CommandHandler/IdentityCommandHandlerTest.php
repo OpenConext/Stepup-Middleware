@@ -22,6 +22,7 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Mockery as m;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -693,7 +694,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        new DateTime(new CoreDateTime('-2 days'))
+                        new DateTime(new CoreDateTime('-2 days', new DateTimeZone('UTC')))
                     ),
                     'nonce',
                     $commonName,

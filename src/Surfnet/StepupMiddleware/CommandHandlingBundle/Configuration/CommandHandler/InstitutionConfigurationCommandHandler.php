@@ -32,6 +32,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Value objects
+ */
 class InstitutionConfigurationCommandHandler extends CommandHandler
 {
     /**

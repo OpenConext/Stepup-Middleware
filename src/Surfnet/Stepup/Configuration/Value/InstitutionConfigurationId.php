@@ -74,11 +74,6 @@ final class InstitutionConfigurationId
         return $this->institutionConfigurationId;
     }
 
-    public function jsonSerialize()
-    {
-        return $this->institutionConfigurationId;
-    }
-
     public function __toString()
     {
         return $this->institutionConfigurationId;

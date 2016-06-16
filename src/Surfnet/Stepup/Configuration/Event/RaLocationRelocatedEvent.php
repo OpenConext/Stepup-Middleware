@@ -62,9 +62,9 @@ class RaLocationRelocatedEvent implements SerializableInterface
     public function serialize()
     {
         return [
-            'institution_configuration_id' => (string) $this->institutionConfigurationId,
-            'ra_location_id'               => (string) $this->raLocationId,
-            'location'                     => (string) $this->location,
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
+            'location'                     => $this->location->getLocation(),
         ];
     }
 }

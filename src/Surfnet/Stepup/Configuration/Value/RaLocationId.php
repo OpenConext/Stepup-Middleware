@@ -18,11 +18,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
-use JsonSerializable;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationId implements JsonSerializable
+final class RaLocationId
 {
     /**
      * @var string
@@ -66,11 +65,6 @@ final class RaLocationId implements JsonSerializable
      * @return string
      */
     public function getRaLocationId()
-    {
-        return $this->raLocationId;
-    }
-
-    public function jsonSerialize()
     {
         return $this->raLocationId;
     }

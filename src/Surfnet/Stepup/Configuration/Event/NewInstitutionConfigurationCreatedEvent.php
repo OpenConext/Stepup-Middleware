@@ -51,8 +51,8 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
     public function serialize()
     {
         return [
-            'institution_configuration_id' => (string) $this->institutionConfigurationId,
-            'institution'                  => (string) $this->institution,
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution'                  => $this->institution->getInstitution(),
         ];
     }
 }

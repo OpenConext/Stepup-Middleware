@@ -48,7 +48,10 @@ final class RaLocationName
         return $this->raLocationName === $otherRaLocationName->raLocationName;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return string
+     */
+    public function getRaLocationName()
     {
         return $this->raLocationName;
     }

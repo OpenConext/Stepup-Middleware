@@ -62,9 +62,9 @@ class RaLocationContactInformationChangedEvent implements SerializableInterface
     public function serialize()
     {
         return [
-            'institution_configuration_id' => (string) $this->institutionConfigurationId,
-            'ra_location_id'               => (string) $this->raLocationId,
-            'contact_information'          => (string) $this->contactInformation,
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
+            'contact_information'          => $this->contactInformation->getContactInformation(),
         ];
     }
 }

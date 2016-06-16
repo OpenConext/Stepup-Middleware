@@ -41,43 +41,6 @@ class InstitutionConfigurationTest extends TestCase
      * @test
      * @group aggregate
      */
-    public function an_ra_location_cannot_be_changed_if_it_is_not_present()
-    {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
-
-        $institution = new Institution('Test institution');
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        $raLocationId       = new RaLocationId(self::uuid());
-        $raLocationName     = new RaLocationName('Renamed RA location');
-        $location           = new Location('A location');
-        $contactInformation = new ContactInformation('Contact information');
-
-        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->changeRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
-    }
-
-    /**
-     * @test
-     * @group aggregate
-     */
-    public function an_ra_location_cannot_be_removed_if_it_is_not_present()
-    {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
-
-        $institution = new Institution('Test institution');
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        $raLocationId = new RaLocationId(self::uuid());
-
-        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->removeRaLocation($raLocationId);
-    }
-
-    /**
-     * @test
-     * @group aggregate
-     */
     public function creating_a_new_institution_configuration_leads_to_an_new_institution_configuration_created_event()
     {
         $institution = new Institution('Test institution');
@@ -86,43 +49,6 @@ class InstitutionConfigurationTest extends TestCase
         $expectedEvents = [new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)];
 
         $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $actualEvents = $this->getEventsFrom($institutionConfiguration);
-
-        $this->assertEquals($expectedEvents, $actualEvents);
-    }
-
-    /**
-     * @test
-     * @group aggregate
-     */
-    public function removing_an_ra_location_leads_to_an_ra_location_removed_event()
-    {
-        $institution = new Institution('Test institution');
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        $raLocationId = new RaLocationId(self::uuid());
-        $raLocationName = new RaLocationName('Test location name');
-        $location = new Location('Test location');
-        $contactInformation = new ContactInformation('Test contact information');
-
-        $expectedEvents = [
-            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution),
-            new RaLocationAddedEvent(
-                $institutionConfigurationId,
-                $raLocationId,
-                $raLocationName,
-                $location,
-                $contactInformation
-            ),
-            new RaLocationRemovedEvent(
-                $institutionConfigurationId,
-                $raLocationId
-            )
-        ];
-
-        $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        $institutionConfiguration->addRaLocation($raLocationId, $raLocationName, $location, $contactInformation);
-        $institutionConfiguration->removeRaLocation($raLocationId);
         $actualEvents = $this->getEventsFrom($institutionConfiguration);
 
         $this->assertEquals($expectedEvents, $actualEvents);

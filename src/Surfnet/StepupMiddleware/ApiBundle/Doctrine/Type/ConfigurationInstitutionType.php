@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
- * Custom Type for the Institution Value Object
+ * Custom Type for the Institution Value Object for the Configuration domain
  */
-class InstitutionType extends Type
+class ConfigurationInstitutionType extends Type
 {
-    const NAME = 'institution';
+    const NAME = 'stepup_configuration_institution';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

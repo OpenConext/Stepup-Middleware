@@ -21,19 +21,19 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Configuration\Value\Location;
 
 /**
- * Custom Type for the Institution Value Object
+ * Custom Type for the Location Value Object for the Configuration domain
  */
-class InstitutionType extends Type
+class ConfigurationLocationType extends Type
 {
-    const NAME = 'institution';
+    const NAME = 'stepup_configuration_location';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -52,7 +52,7 @@ class InstitutionType extends Type
         }
 
         try {
-            $institution = new Institution($value);
+            $location = new Location($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailedFormat(
@@ -64,7 +64,7 @@ class InstitutionType extends Type
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
         }
 
-        return $institution;
+        return $location;
     }
 
     public function getName()

@@ -20,8 +20,9 @@ namespace Surfnet\Stepup\Tests\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 
 class DateTimeTest extends UnitTest
 {
@@ -36,7 +37,7 @@ class DateTimeTest extends UnitTest
      */
     public function the_configured_format_is_what_is_needed_for_correct_application_behavior()
     {
-        $this->assertEquals('Y-m-d\\TH:i:sP', DateTime::FORMAT);
+        $this->assertEquals('Y-m-d\\TH:i:sP', UtcDateTime::FORMAT);
     }
 
     /**
@@ -48,10 +49,10 @@ class DateTimeTest extends UnitTest
      */
     public function to_string_returns_the_time_in_the_correct_format()
     {
-        $coreDateTimeObject = new CoreDateTime('@1000');
-        $ourDateTimeObject  = new DateTime(new CoreDateTime('@1000'));
+        $coreDateTimeObject = new CoreDateTime('@1000', new DateTimeZone('UTC'));
+        $ourDateTimeObject  = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
 
-        $this->assertEquals($coreDateTimeObject->format(DateTime::FORMAT), (string) $ourDateTimeObject);
+        $this->assertEquals($coreDateTimeObject->format(UtcDateTime::FORMAT), (string) $ourDateTimeObject);
     }
 
     /**
@@ -60,7 +61,7 @@ class DateTimeTest extends UnitTest
      */
     public function add_returns_a_different_object_that_has_the_interval_added()
     {
-        $base     = new DateTime(new CoreDateTime('@1000'));
+        $base     = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
         $interval = new DateInterval('PT1S');
 
         $result = $base->add($interval);
@@ -75,7 +76,7 @@ class DateTimeTest extends UnitTest
      */
     public function sub_returns_a_different_object_that_has_the_interval_substracted()
     {
-        $base     = new DateTime(new CoreDateTime('@1000'));
+        $base     = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
         $interval = new DateInterval('PT1S');
 
         $result = $base->sub($interval);
@@ -90,10 +91,10 @@ class DateTimeTest extends UnitTest
      */
     public function comes_before_works_with_exclusive_comparison()
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
-        $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $base   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $before = new UtcDateTime(new CoreDateTime('@999', new DateTimeZone('UTC')));
+        $same   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $after  = new UtcDateTime(new CoreDateTime('@1001', new DateTimeZone('UTC')));
 
         $this->assertTrue($before->comesBefore($base));
         $this->assertFalse($same->comesBefore($base));
@@ -106,10 +107,10 @@ class DateTimeTest extends UnitTest
      */
     public function comes_before_or_is_equal_works_with_inclusive_comparison()
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
-        $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $base   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $before = new UtcDateTime(new CoreDateTime('@999', new DateTimeZone('UTC')));
+        $same   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $after  = new UtcDateTime(new CoreDateTime('@1001', new DateTimeZone('UTC')));
 
         $this->assertTrue($before->comesBeforeOrIsEqual($base));
         $this->assertTrue($same->comesBeforeOrIsEqual($base));
@@ -122,10 +123,10 @@ class DateTimeTest extends UnitTest
      */
     public function comes_after_works_with_exclusive_comparison()
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
-        $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $base   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $before = new UtcDateTime(new CoreDateTime('@999', new DateTimeZone('UTC')));
+        $same   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $after  = new UtcDateTime(new CoreDateTime('@1001', new DateTimeZone('UTC')));
 
         $this->assertFalse($before->comesAfter($base));
         $this->assertFalse($same->comesAfter($base));
@@ -138,10 +139,10 @@ class DateTimeTest extends UnitTest
      */
     public function comes_after_or_is_equal_works_with_inclusive_comparison()
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
-        $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $base   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $before = new UtcDateTime(new CoreDateTime('@999', new DateTimeZone('UTC')));
+        $same   = new UtcDateTime(new CoreDateTime('@1000', new DateTimeZone('UTC')));
+        $after  = new UtcDateTime(new CoreDateTime('@1001', new DateTimeZone('UTC')));
 
         $this->assertFalse($before->comesAfterOrIsEqual($base));
         $this->assertTrue($same->comesAfterOrIsEqual($base));

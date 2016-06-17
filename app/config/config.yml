@@ -92,7 +92,7 @@ doctrine:
             stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
-            stepup_utc_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
+            stepup_utc_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

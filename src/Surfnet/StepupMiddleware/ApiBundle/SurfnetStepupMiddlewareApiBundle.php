@@ -18,8 +18,20 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle;
 
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SurfnetStepupMiddlewareApiBundle extends Bundle
 {
+    public function boot()
+    {
+        parent::boot();
+
+        if (!$this->container instanceof Container) {
+            return;
+        }
+
+        UtcDateTimeFactory::$logger = $this->container->get('logger');
+    }
 }

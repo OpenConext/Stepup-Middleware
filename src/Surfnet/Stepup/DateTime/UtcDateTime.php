@@ -22,11 +22,7 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-class DateTime
+class UtcDateTime
 {
     /**
      * The 'c' format, expanded in separate format characters. This string can also be used with
@@ -35,55 +31,28 @@ class DateTime
     const FORMAT = 'Y-m-d\\TH:i:sP';
 
     /**
-     * Allows for mocking of time.
-     *
-     * @var self|null
-     */
-    private static $now;
-
-    /**
      * @var CoreDateTime
      */
     private $dateTime;
 
     /**
-     * @return self
+     * @param CoreDateTime $dateTime
      */
-    public static function now()
+    public function __construct(CoreDateTime $dateTime)
     {
-        return self::$now ?: new self(new CoreDateTime);
-    }
-
-    /**
-     * @param string $string A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
-     * @return self
-     */
-    public static function fromString($string)
-    {
-        if (!is_string($string)) {
-            InvalidArgumentException::invalidType('string', 'dateTime', $string);
+        if ($dateTime->getOffset() !== 0) {
+            throw new InvalidArgumentException(
+                'Stepup DateTime requires a UTC datetime, but got DateTime with offset %d',
+                $dateTime->getOffset()
+            );
         }
 
-        $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string);
-
-        if ($dateTime === false) {
-            throw new InvalidArgumentException('Date-time string could not be parsed: is it formatted correctly?');
-        }
-
-        return new self($dateTime);
-    }
-
-    /**
-     * @param CoreDateTime|null $dateTime
-     */
-    public function __construct(CoreDateTime $dateTime = null)
-    {
-        $this->dateTime = $dateTime ?: new CoreDateTime();
+        $this->dateTime = $dateTime;
     }
 
     /**
      * @param DateInterval $interval
-     * @return DateTime
+     * @return UtcDateTime
      */
     public function add(DateInterval $interval)
     {
@@ -95,7 +64,7 @@ class DateTime
 
     /**
      * @param DateInterval $interval
-     * @return DateTime
+     * @return UtcDateTime
      */
     public function sub(DateInterval $interval)
     {
@@ -106,37 +75,37 @@ class DateTime
     }
 
     /**
-     * @param DateTime $dateTime
+     * @param UtcDateTime $dateTime
      * @return boolean
      */
-    public function comesBefore(DateTime $dateTime)
+    public function comesBefore(UtcDateTime $dateTime)
     {
         return $this->dateTime < $dateTime->dateTime;
     }
 
     /**
-     * @param DateTime $dateTime
+     * @param UtcDateTime $dateTime
      * @return boolean
      */
-    public function comesBeforeOrIsEqual(DateTime $dateTime)
+    public function comesBeforeOrIsEqual(UtcDateTime $dateTime)
     {
         return $this->dateTime <= $dateTime->dateTime;
     }
 
     /**
-     * @param DateTime $dateTime
+     * @param UtcDateTime $dateTime
      * @return boolean
      */
-    public function comesAfter(DateTime $dateTime)
+    public function comesAfter(UtcDateTime $dateTime)
     {
         return $this->dateTime > $dateTime->dateTime;
     }
 
     /**
-     * @param DateTime $dateTime
+     * @param UtcDateTime $dateTime
      * @return boolean
      */
-    public function comesAfterOrIsEqual(DateTime $dateTime)
+    public function comesAfterOrIsEqual(UtcDateTime $dateTime)
     {
         return $this->dateTime >= $dateTime->dateTime;
     }

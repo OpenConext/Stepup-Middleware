@@ -24,7 +24,7 @@ use Broadway\Domain\Metadata as MessageMetadata;
 use DateTime as CoreDateTime;
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;

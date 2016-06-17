@@ -22,7 +22,8 @@ use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\ProjectorInterface;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -99,7 +100,9 @@ class AuditLogProjector implements ProjectorInterface
         $entry->identityId          = (string) $auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
         $entry->event               = get_class($event);
-        $entry->recordedOn          = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->recordedOn          = UtcDateTimeFactory::createFromTimezonedUtcDateTime(
+            new CoreDateTime($domainMessage->getRecordedOn()->toString())
+        );
 
         if ($auditLogMetadata->secondFactorId) {
             $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;

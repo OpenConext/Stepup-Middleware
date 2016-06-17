@@ -374,10 +374,10 @@ recommended to run tests in a separate process when using this helper so the stu
 /** @runTestInSeparateProcess */
 public function testItWorks()
 {
-    # Trick `DateTime::now()` into thinking it is 1970.
+    # Trick `UtcDateTimeFactory::now()` into thinking it is 1970.
     DateTimeHelper::stubNow(new DateTime('@0'));
 
-    $this->assertEquals('1970-01-01T00:00:00+00:00', (string) \Surfnet\Stepup\DateTime\DateTime::now());
+    $this->assertEquals('1970-01-01T00:00:00+00:00', (string) \Surfnet\Stepup\DateTime\UtcDateTimeFactory::now());
 }
 ```
 

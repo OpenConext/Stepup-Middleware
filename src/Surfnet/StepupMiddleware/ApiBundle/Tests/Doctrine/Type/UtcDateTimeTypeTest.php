@@ -19,13 +19,14 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType;
 
-class DateTimeTypeTest extends UnitTest
+class UtcDateTimeTypeTest extends UnitTest
 {
     /**
      * @var \Doctrine\DBAL\Platforms\MySqlPlatform
@@ -37,7 +38,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public static function setUpBeforeClass()
     {
-        Type::addType(UtcDateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType');
+        Type::addType(UtcDateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType');
     }
 
     public function setUp()
@@ -66,7 +67,7 @@ class DateTimeTypeTest extends UnitTest
     {
         $dateTime = Type::getType(UtcDateTimeType::NAME);
 
-        $input = new DateTime(new CoreDateTime('@0'));
+        $input = new UtcDateTime(new CoreDateTime('@0', new DateTimeZone('UTC')));
         $output = $dateTime->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -99,8 +100,8 @@ class DateTimeTypeTest extends UnitTest
 
         $output = $dateTime->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $output);
-        $this->assertEquals(new DateTime($inputAsCoreDateTime), $output);
+        $this->assertInstanceOf('Surfnet\Stepup\DateTime\UtcDateTime', $output);
+        $this->assertEquals(new UtcDateTime($inputAsCoreDateTime), $output);
     }
 
     /**

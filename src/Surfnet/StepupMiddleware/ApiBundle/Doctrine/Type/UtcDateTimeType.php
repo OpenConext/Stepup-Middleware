@@ -23,7 +23,7 @@ use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 /**
@@ -55,7 +55,7 @@ class UtcDateTimeType extends Type
             return null;
         }
 
-        if (!$value instanceof DateTime) {
+        if (!$value instanceof UtcDateTime) {
             throw new RuntimeException('Value given is not a Stepup DateTime');
         }
 
@@ -65,7 +65,7 @@ class UtcDateTimeType extends Type
     /**
      * @param mixed            $value
      * @param AbstractPlatform $platform
-     * @return null|DateTime
+     * @return null|UtcDateTime
      * @throws ConversionException
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -84,7 +84,7 @@ class UtcDateTimeType extends Type
             );
         }
 
-        return new DateTime($dateTime);
+        return new UtcDateTime($dateTime);
     }
 
     public function getName()

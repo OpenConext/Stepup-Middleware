@@ -140,7 +140,7 @@ class AuditLogEntry implements JsonSerializable
     /**
      * @ORM\Column(type="stepup_utc_datetime")
      *
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var \Surfnet\Stepup\DateTime\UtcDateTime
      */
     public $recordedOn;
 

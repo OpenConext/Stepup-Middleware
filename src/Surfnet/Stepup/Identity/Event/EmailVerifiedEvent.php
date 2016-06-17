@@ -18,7 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -50,7 +51,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
     private $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var \Surfnet\Stepup\DateTime\UtcDateTime
      */
     public $registrationRequestedAt;
 
@@ -80,7 +81,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
      * @param SecondFactorId    $secondFactorId
      * @param SecondFactorType  $secondFactorType
      * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DateTime          $registrationRequestedAt
+     * @param UtcDateTime          $registrationRequestedAt
      * @param string            $registrationCode
      * @param CommonName        $commonName
      * @param Email             $email
@@ -94,7 +95,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime $registrationRequestedAt,
+        UtcDateTime $registrationRequestedAt,
         $registrationCode,
         CommonName $commonName,
         Email $email,
@@ -134,7 +135,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable
             new SecondFactorId($data['second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
-            DateTime::fromString($data['registration_requested_at']),
+            UtcDateTimeFactory::fromString($data['registration_requested_at']),
             $data['registration_code'],
             CommonName::unknown(),
             Email::unknown(),

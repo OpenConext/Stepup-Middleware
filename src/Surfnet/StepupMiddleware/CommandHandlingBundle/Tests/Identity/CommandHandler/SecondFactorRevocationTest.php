@@ -21,7 +21,8 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandH
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -108,7 +109,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -163,7 +164,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -176,7 +177,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'SOMEREGISTRATIONCODE',
                     $commonName,
                     $email,
@@ -232,7 +233,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -245,7 +246,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorType,
                     $secondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'SOMEREGISTRATIONCODE',
                     $commonName,
                     $email,
@@ -340,7 +341,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $registrantCommonName,
@@ -426,7 +427,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $registrantCommonName,
@@ -439,7 +440,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'REGISTRATION_CODE',
                     $registrantCommonName,
                     $registrantEmail,
@@ -524,7 +525,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $registrantCommonName,
@@ -537,7 +538,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'REGISTRATION_CODE',
                     $registrantCommonName,
                     $registrantEmail,

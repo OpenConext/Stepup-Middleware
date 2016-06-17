@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationName
+final class RaLocationName implements JsonSerializable
 {
     /**
      * @var string
@@ -57,6 +58,11 @@ final class RaLocationName
     }
 
     public function __toString()
+    {
+        return $this->raLocationName;
+    }
+
+    public function jsonSerialize()
     {
         return $this->raLocationName;
     }

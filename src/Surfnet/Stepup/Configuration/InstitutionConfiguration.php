@@ -91,7 +91,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         if ($this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot add RaLocation with RaLocationId "%s" to RaLocations of InstitutionConfiguration "%s":'
-                . 'it is already present',
+                . ' it is already present',
                 $raLocationId,
                 $this->getAggregateRootId()
             ));
@@ -121,7 +121,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         if (!$this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot change RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
-                . 'it is not present',
+                . ' it is not present',
                 $raLocationId,
                 $this->getAggregateRootId()
             ));
@@ -158,7 +158,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         if (!$this->raLocations->containsWithId($raLocationId)) {
             throw new DomainException(sprintf(
                 'Cannot remove RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
-                . 'it is not present',
+                . ' it is not present',
                 $raLocationId,
                 $this->getAggregateRootId()
             ));

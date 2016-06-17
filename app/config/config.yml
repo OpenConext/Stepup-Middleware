@@ -93,6 +93,10 @@ doctrine:
             stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            stepup_ra_location_name: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType
+            stepup_configuration_institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType
+            stepup_configuration_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationContactInformationType
+            stepup_configuration_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -104,8 +108,8 @@ doctrine:
                     api:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
-                        prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
+                        prefix: Surfnet\StepupMiddleware\ApiBundle
                         is_bundle: false
                     management_configuration:
                         mapping: true

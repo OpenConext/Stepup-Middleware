@@ -25,6 +25,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationReposi
 
 class RaLocationProjector extends Projector
 {
+    /**
+     * @var RaLocationRepository
+     */
     private $repository;
 
     public function __construct(RaLocationRepository $repository)

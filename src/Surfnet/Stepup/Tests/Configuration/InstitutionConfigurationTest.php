@@ -22,18 +22,9 @@ use Broadway\Domain\DomainMessage;
 use PHPUnit_Framework_TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
-use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
-use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
-use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
-use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
-use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
-use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
-use Surfnet\Stepup\Configuration\Value\Location;
-use Surfnet\Stepup\Configuration\Value\RaLocationId;
-use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class InstitutionConfigurationTest extends TestCase
 {

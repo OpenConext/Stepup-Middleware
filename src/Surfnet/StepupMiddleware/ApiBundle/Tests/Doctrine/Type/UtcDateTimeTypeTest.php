@@ -19,13 +19,14 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType;
 
-class DateTimeTypeTest extends UnitTest
+class UtcDateTimeTypeTest extends UnitTest
 {
     /**
      * @var \Doctrine\DBAL\Platforms\MySqlPlatform
@@ -37,7 +38,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public static function setUpBeforeClass()
     {
-        Type::addType(DateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType');
+        Type::addType(UtcDateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType');
     }
 
     public function setUp()
@@ -51,7 +52,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public function a_null_value_remains_null_in_to_sql_conversion()
     {
-        $dateTime = Type::getType(DateTimeType::NAME);
+        $dateTime = Type::getType(UtcDateTimeType::NAME);
 
         $value = $dateTime->convertToDatabaseValue(null, $this->platform);
 
@@ -64,9 +65,9 @@ class DateTimeTypeTest extends UnitTest
      */
     public function a_non_null_value_is_converted_to_the_correct_format()
     {
-        $dateTime = Type::getType(DateTimeType::NAME);
+        $dateTime = Type::getType(UtcDateTimeType::NAME);
 
-        $input = new DateTime(new CoreDateTime('@0'));
+        $input = new UtcDateTime(new CoreDateTime('@0', new DateTimeZone('UTC')));
         $output = $dateTime->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -79,7 +80,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public function a_null_value_remains_null_when_converting_from_db_to_php_value()
     {
-        $dateTime = Type::getType(DateTimeType::NAME);
+        $dateTime = Type::getType(UtcDateTimeType::NAME);
 
         $value = $dateTime->convertToPHPValue(null, $this->platform);
 
@@ -90,17 +91,17 @@ class DateTimeTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_stepup_datetime_object()
+    public function a_non_null_value_is_converted_to_the_stepup_utc_datetime_object()
     {
-        $dateTime = Type::getType(DateTimeType::NAME);
+        $dateTime = Type::getType(UtcDateTimeType::NAME);
 
         $input = '2015-02-17 10:48:22';
         $inputAsCoreDateTime = CoreDateTime::createFromFormat('Y-m-d H:i:s', '2015-02-17 10:48:22');
 
         $output = $dateTime->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $output);
-        $this->assertEquals(new DateTime($inputAsCoreDateTime), $output);
+        $this->assertInstanceOf('Surfnet\Stepup\DateTime\UtcDateTime', $output);
+        $this->assertEquals(new UtcDateTime($inputAsCoreDateTime), $output);
     }
 
     /**
@@ -110,7 +111,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public function an_invalid_database_value_causes_an_exception_upon_conversion()
     {
-        $dateTime = Type::getType(DateTimeType::NAME);
+        $dateTime = Type::getType(UtcDateTimeType::NAME);
 
         $input = 'This is an invalid formatted datetime';
 

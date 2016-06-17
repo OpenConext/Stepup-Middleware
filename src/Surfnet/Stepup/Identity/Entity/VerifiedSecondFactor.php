@@ -18,7 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -62,7 +63,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     private $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var \Surfnet\Stepup\DateTime\UtcDateTime
      */
     private $registrationRequestedAt;
 
@@ -76,7 +77,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      * @param Identity $identity
      * @param SecondFactorType $type
      * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DateTime $registrationRequestedAt
+     * @param UtcDateTime $registrationRequestedAt
      * @param string $registrationCode
      * @return self
      */
@@ -85,7 +86,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         Identity $identity,
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime $registrationRequestedAt,
+        UtcDateTime $registrationRequestedAt,
         $registrationCode
     ) {
         if (!is_string($registrationCode)) {
@@ -123,7 +124,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      */
     public function canBeVettedNow()
     {
-        return !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+        return !UtcDateTimeFactory::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
     }
 
     public function vet(DocumentNumber $documentNumber)

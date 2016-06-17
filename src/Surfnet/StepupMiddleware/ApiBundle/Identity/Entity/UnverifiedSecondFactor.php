@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 
 /**
  * @ORM\Entity(
@@ -67,9 +67,9 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $verificationNonce;
 
     /**
-     * @ORM\Column(type="stepup_datetime", nullable=false)
+     * @ORM\Column(type="stepup_utc_datetime", nullable=false)
      *
-     * @var DateTime
+     * @var UtcDateTime
      */
     public $verificationNonceValidUntil;
 

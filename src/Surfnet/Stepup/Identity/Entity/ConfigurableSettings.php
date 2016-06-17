@@ -18,7 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -84,7 +85,7 @@ final class ConfigurableSettings
     {
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             $this->emailVerificationTimeFrame,
-            DateTime::now()
+            UtcDateTimeFactory::now()
         );
     }
 

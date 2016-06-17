@@ -86,13 +86,13 @@ doctrine:
             institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             stepup_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
             stepup_common_name: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType
-            stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
             stepup_document_number: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType
             stepup_email: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType
             stepup_name_id: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
             stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
             stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            stepup_utc_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UtcDateTimeType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

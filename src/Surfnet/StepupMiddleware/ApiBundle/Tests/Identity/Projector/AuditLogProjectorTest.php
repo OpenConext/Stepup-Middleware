@@ -24,7 +24,7 @@ use Broadway\Domain\Metadata as MessageMetadata;
 use DateTime as CoreDateTime;
 use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -53,7 +53,7 @@ final class AuditLogProjectorTest extends TestCase
                         new SecondFactorId('ijkl'),
                         new SecondFactorType('sms')
                     )),
-                    BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
+                    BroadwayDateTime::fromString('1970-01-01T00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
                     null,
@@ -63,7 +63,7 @@ final class AuditLogProjectorTest extends TestCase
                     new SecondFactorId('ijkl'),
                     new SecondFactorType('sms'),
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
+                    new StepupDateTime(new CoreDateTime('1970-01-01T00:00:00.000'))
                 )
             ],
             'no actor, without second factor' => [
@@ -77,7 +77,7 @@ final class AuditLogProjectorTest extends TestCase
                         null,
                         null
                     )),
-                    BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
+                    BroadwayDateTime::fromString('1970-01-01T00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
                     null,
@@ -87,7 +87,7 @@ final class AuditLogProjectorTest extends TestCase
                     null,
                     null,
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
+                    new StepupDateTime(new CoreDateTime('1970-01-01T00:00:00.000'))
                 )
             ],
             'with actor, with second factor' => [
@@ -104,7 +104,7 @@ final class AuditLogProjectorTest extends TestCase
                         new SecondFactorId('ijkl'),
                         new SecondFactorType('sms')
                     )),
-                    BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
+                    BroadwayDateTime::fromString('1970-01-01T00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
                     new IdentityId('0123'),
@@ -114,7 +114,7 @@ final class AuditLogProjectorTest extends TestCase
                     new SecondFactorId('ijkl'),
                     new SecondFactorType('sms'),
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    new StepupDateTime(new CoreDateTime('1970-01-01T00:00:00.000')),
                     self::$actorCommonName
                 )
             ],

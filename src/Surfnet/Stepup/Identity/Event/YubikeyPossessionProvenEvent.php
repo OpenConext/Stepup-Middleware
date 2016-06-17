@@ -46,7 +46,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
     public $yubikeyPublicId;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var \Surfnet\Stepup\DateTime\UtcDateTime
      */
     public $emailVerificationRequestedAt;
 

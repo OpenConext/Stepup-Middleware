@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use DateTime as CoreDateTime;
-use Surfnet\Stepup\DateTime\DateTime;
+use DateTimeZone;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 
 /**
  * @runTestsInSeparateProcesses
@@ -32,9 +34,9 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_mocks_now()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
-        $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
+        $this->assertEquals(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))), UtcDateTimeFactory::now());
     }
 
     /**
@@ -43,11 +45,11 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function it_can_be_disabled_in_the_same_process()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
-        $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
+        $this->assertEquals(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))), UtcDateTimeFactory::now());
 
         DateTimeHelper::setCurrentTime(null);
-        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
+        $this->assertTrue((new UtcDateTime(new CoreDateTime('now', new DateTimeZone('UTC'))))->comesAfterOrIsEqual(UtcDateTimeFactory::now()));
     }
 
     /**
@@ -57,6 +59,6 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
     public function it_works_with_separate_processes()
     {
         // The stub value has been removed.
-        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
+        $this->assertTrue((new UtcDateTime(new CoreDateTime('now', new DateTimeZone('UTC'))))->comesAfterOrIsEqual(UtcDateTimeFactory::now()));
     }
 }

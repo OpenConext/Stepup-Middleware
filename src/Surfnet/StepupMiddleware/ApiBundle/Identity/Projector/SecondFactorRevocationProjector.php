@@ -22,7 +22,8 @@ use Broadway\Domain\DomainMessage;
 use Broadway\ReadModel\Projector;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactorRevocation;
@@ -49,7 +50,9 @@ class SecondFactorRevocationProjector extends Projector
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'self';
-        $revocation->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $revocation->recordedOn = UtcDateTimeFactory::createFromTimezonedUtcDateTime(
+            new CoreDateTime($domainMessage->getRecordedOn()->toString())
+        );
 
         $this->repository->save($revocation);
     }
@@ -63,7 +66,9 @@ class SecondFactorRevocationProjector extends Projector
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'ra';
-        $revocation->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $revocation->recordedOn = UtcDateTimeFactory::createFromTimezonedUtcDateTime(
+            new CoreDateTime($domainMessage->getRecordedOn()->toString())
+        );
 
         $this->repository->save($revocation);
     }

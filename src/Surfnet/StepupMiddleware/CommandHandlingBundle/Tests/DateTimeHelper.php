@@ -19,18 +19,18 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use ReflectionProperty;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 
 class DateTimeHelper
 {
     /**
      * Fixes the `DateTime` returned by `DateTime::now()`.
      *
-     * @param DateTime|null $now
+     * @param UtcDateTime|null $now
      */
-    public static function setCurrentTime(DateTime $now = null)
+    public static function setCurrentTime(UtcDateTime $now = null)
     {
-        $nowProperty = new ReflectionProperty('Surfnet\Stepup\DateTime\DateTime', 'now');
+        $nowProperty = new ReflectionProperty('Surfnet\Stepup\DateTime\UtcDateTimeFactory', 'now');
         $nowProperty->setAccessible(true);
         $nowProperty->setValue($now);
     }

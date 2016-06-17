@@ -19,22 +19,23 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Broadway\Serializer\SerializableInterface;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class EmailVerificationWindow implements SerializableInterface
 {
     /**
-     * @var DateTime
+     * @var UtcDateTime
      */
     private $start;
 
     /**
-     * @var DateTime
+     * @var UtcDateTime
      */
     private $end;
 
-    private function __construct(DateTime $start, DateTime $end)
+    private function __construct(UtcDateTime $start, UtcDateTime $end)
     {
         $this->start = $start;
         $this->end   = $end;
@@ -42,20 +43,20 @@ final class EmailVerificationWindow implements SerializableInterface
 
     /**
      * @param TimeFrame $timeFrame
-     * @param DateTime  $start
+     * @param UtcDateTime  $start
      * @return EmailVerificationWindow
      */
-    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start)
+    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, UtcDateTime $start)
     {
         return new EmailVerificationWindow($start, $timeFrame->getEndWhenStartingAt($start));
     }
 
     /**
-     * @param DateTime $start
-     * @param DateTime $end
+     * @param UtcDateTime $start
+     * @param UtcDateTime $end
      * @return EmailVerificationWindow
      */
-    public static function createWindowFromTill(DateTime $start, DateTime $end)
+    public static function createWindowFromTill(UtcDateTime $start, UtcDateTime $end)
     {
         if (!$end->comesAfter($start)) {
             throw new InvalidArgumentException(sprintf(
@@ -74,13 +75,13 @@ final class EmailVerificationWindow implements SerializableInterface
      */
     public function isOpen()
     {
-        $now = DateTime::now();
+        $now = UtcDateTimeFactory::now();
 
         return $now->comesAfterOrIsEqual($this->start) && $now->comesBeforeOrIsEqual($this->end);
     }
 
     /**
-     * @return DateTime
+     * @return UtcDateTime
      */
     public function openUntil()
     {
@@ -99,8 +100,8 @@ final class EmailVerificationWindow implements SerializableInterface
     public static function deserialize(array $data)
     {
         return new EmailVerificationWindow(
-            DateTime::fromString($data['start']),
-            DateTime::fromString($data['end'])
+            UtcDateTimeFactory::fromString($data['start']),
+            UtcDateTimeFactory::fromString($data['end'])
         );
     }
 

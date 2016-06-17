@@ -18,7 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
@@ -144,7 +145,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                DateTime::now(),
+                UtcDateTimeFactory::now(),
                 OtpGenerator::generate(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
@@ -181,7 +182,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     }
 
     /**
-     * @param DateTime $registrationRequestedAt
+     * @param UtcDateTime $registrationRequestedAt
      * @param string   $registrationCode
      * @return VerifiedSecondFactor
      */

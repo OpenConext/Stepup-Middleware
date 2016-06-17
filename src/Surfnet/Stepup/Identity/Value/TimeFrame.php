@@ -20,7 +20,7 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use DateInterval;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class TimeFrame
@@ -52,10 +52,10 @@ final class TimeFrame
     }
 
     /**
-     * @param DateTime $dateTime
-     * @return DateTime
+     * @param UtcDateTime $dateTime
+     * @return UtcDateTime
      */
-    public function getEndWhenStartingAt(DateTime $dateTime)
+    public function getEndWhenStartingAt(UtcDateTime $dateTime)
     {
         return $dateTime->add($this->timeFrame);
     }

@@ -19,17 +19,19 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 /**
  * Custom Type for the Surfnet\Stepup\DateTime\DateTime Object
  */
-class DateTimeType extends Type
+class UtcDateTimeType extends Type
 {
-    const NAME = 'stepup_datetime';
+    const NAME = 'stepup_utc_datetime';
 
     /**
      * @param array            $fieldDeclaration
@@ -53,13 +55,17 @@ class DateTimeType extends Type
             return null;
         }
 
+        if (!$value instanceof UtcDateTime) {
+            throw new RuntimeException('Value given is not a Stepup DateTime');
+        }
+
         return $value->format($platform->getDateTimeFormatString());
     }
 
     /**
      * @param mixed            $value
      * @param AbstractPlatform $platform
-     * @return null|DateTime
+     * @return null|UtcDateTime
      * @throws ConversionException
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -68,7 +74,7 @@ class DateTimeType extends Type
             return $value;
         }
 
-        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value);
+        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value, new DateTimeZone('UTC'));
 
         if (!$dateTime) {
             throw ConversionException::conversionFailedFormat(
@@ -78,7 +84,7 @@ class DateTimeType extends Type
             );
         }
 
-        return new DateTime($dateTime);
+        return new UtcDateTime($dateTime);
     }
 
     public function getName()

@@ -20,7 +20,9 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use DateInterval;
 use DateTime as CoreDateTime;
-use Surfnet\Stepup\DateTime\DateTime;
+use DateTimeZone;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
@@ -35,25 +37,25 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
      */
     public function window_is_open_for_instructed_timeframe_after_given_time()
     {
-        $startTime = new DateTime(new CoreDateTime('@1'));
+        $startTime = new UtcDateTime(new CoreDateTime('@1', new DateTimeZone('UTC')));
         $timeFrame = TimeFrame::ofSeconds(3);
 
         $window = EmailVerificationWindow::createFromTimeFrameStartingAt($timeFrame, $startTime);
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@0')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@0', new DateTimeZone('UTC'))));
         $this->assertFalse($window->isOpen(), 'The window should not be open before the start time');
 
         // at the starttime, window is open
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@1')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@1', new DateTimeZone('UTC'))));
         $this->assertTrue($window->isOpen(), 'The window should be open at the start time');
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@2')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@2', new DateTimeZone('UTC'))));
         $this->assertTrue($window->isOpen(), 'The window should be open after the start time, before the end time');
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@4')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@4', new DateTimeZone('UTC'))));
         $this->assertTrue($window->isOpen(), 'The window should be open at the end time');
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@5')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@5', new DateTimeZone('UTC'))));
         $this->assertFalse($window->isOpen(), 'The window should be closed after the end time');
     }
 
@@ -66,7 +68,7 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
     public function a_window_is_considered_equal_when_the_start_and_end_are_the_same()
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@10000', new DateTimeZone('UTC'))));
 
         $base                        = $this->newEmailVerificationWindow(3);
         $same                        = $this->newEmailVerificationWindow(3);
@@ -95,19 +97,19 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
     public function the_window_correctly_calculates_the_end_datetime()
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@10', new DateTimeZone('UTC'))));
 
-        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now());
+        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), UtcDateTimeFactory::now());
 
         $endTime = $window->openUntil();
-        $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTime);
+        $this->assertEquals(new UtcDateTime(new CoreDateTime('@13', new DateTimeZone('UTC'))), $endTime);
 
         $window = EmailVerificationWindow::createWindowFromTill(
-            DateTime::now(),
-            DateTime::now()->add(new DateInterval('PT3S'))
+            UtcDateTimeFactory::now(),
+            UtcDateTimeFactory::now()->add(new DateInterval('PT3S'))
         );
         $endTimeTwo = $window->openUntil();
-        $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTimeTwo);
+        $this->assertEquals(new UtcDateTime(new CoreDateTime('@13', new DateTimeZone('UTC'))), $endTimeTwo);
     }
 
     /**
@@ -119,7 +121,7 @@ class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
      */
     private function newEmailVerificationWindow($timeFrameSeconds, $startTimeOffset = null)
     {
-        $start = DateTime::now();
+        $start = UtcDateTimeFactory::now();
         if ($startTimeOffset) {
             if (substr($startTimeOffset, 0, 1) === '-') {
                 $offset = substr($startTimeOffset, 1);

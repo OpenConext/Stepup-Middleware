@@ -22,8 +22,10 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Mockery as m;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
+use Surfnet\Stepup\DateTime\UtcDateTimeFactory;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
@@ -138,7 +140,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_yubikey_possession_can_be_proven()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
@@ -178,7 +180,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $pubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -228,7 +230,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $pubId1,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -246,7 +248,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_phone_possession_can_be_proven()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
@@ -286,7 +288,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $phoneNumber,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -303,7 +305,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_gssf_possession_can_be_proven()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
@@ -348,7 +350,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $gssfId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     $nonce,
                     $commonName,
@@ -365,7 +367,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_u2f_device_possession_can_be_proven()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
@@ -405,7 +407,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $keyHandle,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -455,7 +457,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $phoneNumber1,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -507,7 +509,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -525,7 +527,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_unverified_second_factors_email_can_be_verified()
     {
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@12345', new DateTimeZone('UTC'))));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
@@ -561,7 +563,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -577,7 +579,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'regcode',
                     $commonName,
                     $email,
@@ -628,7 +630,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $commonName,
@@ -641,7 +643,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'regcode',
                     $commonName,
                     $email,
@@ -693,7 +695,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $publicId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        new DateTime(new CoreDateTime('-2 days'))
+                        new UtcDateTime(new CoreDateTime('-2 days', new DateTimeZone('UTC')))
                     ),
                     'nonce',
                     $commonName,
@@ -881,7 +883,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacIdentifier,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $registrantCommonName,
@@ -894,7 +896,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $registrantSecFacIdentifier,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
@@ -970,7 +972,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneNo,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $authorityCommonName,
@@ -983,7 +985,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'regcode',
                     $authorityCommonName,
                     $authorityEmail,
@@ -1019,7 +1021,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantPubId,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        UtcDateTimeFactory::now()
                     ),
                     'nonce',
                     $registrantCommonName,
@@ -1032,7 +1034,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $registrantPubId,
-                    DateTime::now(),
+                    UtcDateTimeFactory::now(),
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,

@@ -19,8 +19,9 @@
 namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use PHPUnit_Framework_TestCase as UnitTest;
-use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\DateTime\UtcDateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
@@ -35,21 +36,21 @@ class ConfigurableSettingsTest extends UnitTest
     {
         $settings = ConfigurableSettings::create(3, []);
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@1')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@1', new DateTimeZone('UTC'))));
         $window = $settings->createNewEmailVerificationWindow();
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@0')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@0', new DateTimeZone('UTC'))));
         $this->assertFalse($window->isOpen());
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@1')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@1', new DateTimeZone('UTC'))));
         $this->assertTrue($window->isOpen());
 
         // create a new window after some time has passed
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@100')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@100', new DateTimeZone('UTC'))));
         $secondWindow = $settings->createNewEmailVerificationWindow();
 
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@1')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@1', new DateTimeZone('UTC'))));
         $this->assertFalse($secondWindow->isOpen());
-        DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@100')));
+        DateTimeHelper::setCurrentTime(new UtcDateTime(new CoreDateTime('@100', new DateTimeZone('UTC'))));
         $this->assertTrue($secondWindow->isOpen());
     }
 

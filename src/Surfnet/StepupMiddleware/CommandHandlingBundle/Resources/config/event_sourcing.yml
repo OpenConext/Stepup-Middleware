@@ -17,6 +17,13 @@ services:
             - @surfnet_stepup_middleware_command_handling.event_bus.buffered
             - @surfnet_stepup.aggregate_factory.public_constructor
 
+    surfnet_stepup.repository.institution_configuration:
+        class: Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository
+        arguments:
+            - @surfnet_stepup.event_store.dbal
+            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
+            - @surfnet_stepup.aggregate_factory.public_constructor
+
     surfnet_stepup.repository.whitelist:
         class: Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository
         arguments:

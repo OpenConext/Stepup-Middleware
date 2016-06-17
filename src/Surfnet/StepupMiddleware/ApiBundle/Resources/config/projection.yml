@@ -18,6 +18,7 @@ services:
             - @surfnet_stepup_middleware_api.repository.verified_second_factor
             - @surfnet_stepup_middleware_api.repository.vetted_second_factor
             - @surfnet_stepup_middleware_api.repository.identity
+            - @doctrine.orm.middleware_entity_manager
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.ra_second_factor:
@@ -38,6 +39,7 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaCandidateProjector
         arguments:
             - @surfnet_stepup_middleware_api.repository.ra_candidate
+            - @surfnet_stepup_middleware_api.repository.ra_listing
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.sraa:

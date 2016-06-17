@@ -37,12 +37,22 @@ final class EmailTemplateService implements CommandHandlingEmailTemplateService
         $this->repository = $repository;
     }
 
+    /**
+     * @param string $name
+     * @param string $preferredLocale
+     * @param string $fallbackLocale
+     * @return null|EmailTemplate
+     */
     public function findByName($name, $preferredLocale, $fallbackLocale)
     {
         try {
-            $emailTemplateEntity = $this->repository->findByName($name, $preferredLocale, $fallbackLocale);
+            $emailTemplateEntity = $this->repository->findOneByName($name, $preferredLocale, $fallbackLocale);
         } catch (Exception $e) {
             throw new RuntimeException($e->getMessage(), 0, $e);
+        }
+
+        if (!$emailTemplateEntity) {
+            return null;
         }
 
         $emailTemplate = new EmailTemplate();

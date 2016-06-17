@@ -1,5 +1,10 @@
 services:
     # Repositories
+    surfnet_stepup_middleware_api.repository.ra_location:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository
+        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation ]
+
     surfnet_stepup_middleware_api.repository.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
@@ -61,6 +66,11 @@ services:
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
 
     # Domain Services
+    surfnet_stepup_middleware_api.service.ra_location:
+            class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService
+            arguments:
+                - @surfnet_stepup_middleware_api.repository.ra_location
+
     surfnet_stepup_middleware_api.service.abstract_search:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
         abstract: true

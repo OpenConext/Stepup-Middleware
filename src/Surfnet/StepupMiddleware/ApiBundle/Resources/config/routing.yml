@@ -124,9 +124,9 @@ ra_candidate:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
-ra_location:
+ra_location_listing:
     path:     /ra-location/{institution}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:get }
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:list }
     methods:  [GET]
     requirements:
         institution: ".+"

@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaLocationController extends Controller
 {
-    public function getAction(Request $request, Institution $institution)
+    public function listAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 

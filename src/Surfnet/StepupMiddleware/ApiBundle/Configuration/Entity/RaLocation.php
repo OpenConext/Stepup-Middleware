@@ -47,7 +47,7 @@ class RaLocation implements JsonSerializable
     public $raLocationId;
 
     /**
-     * @ORM\Column(type="stepup_configuration_location")
+     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */

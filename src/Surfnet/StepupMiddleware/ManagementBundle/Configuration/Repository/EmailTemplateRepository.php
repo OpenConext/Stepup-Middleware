@@ -27,9 +27,9 @@ final class EmailTemplateRepository extends EntityRepository
      * @param string $name
      * @param string $preferredLocale
      * @param string $fallbackLocale
-     * @return \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate
+     * @return \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate|null
      */
-    public function findByName($name, $preferredLocale, $fallbackLocale)
+    public function findOneByName($name, $preferredLocale, $fallbackLocale)
     {
         return $this
             ->createQueryBuilder('tpl')
@@ -46,7 +46,7 @@ final class EmailTemplateRepository extends EntityRepository
             ->orderBy('localePreference', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**

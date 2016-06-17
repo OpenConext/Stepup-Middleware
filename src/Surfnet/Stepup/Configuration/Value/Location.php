@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Value;
+namespace Surfnet\Stepup\Configuration\Value;
 
-use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Location implements JsonSerializable
+final class Location
 {
     /**
      * @var string
@@ -49,7 +48,10 @@ final class Location implements JsonSerializable
         return $this->location === $otherLocation->location;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return string
+     */
+    public function getLocation()
     {
         return $this->location;
     }

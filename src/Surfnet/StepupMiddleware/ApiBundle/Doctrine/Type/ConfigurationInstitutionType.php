@@ -42,7 +42,17 @@ class ConfigurationInstitutionType extends Type
             return $value;
         }
 
-        return (string) $value;
+        if (!$value instanceof Institution) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal institution of type %s '%s', expected an Institution instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getInstitution();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

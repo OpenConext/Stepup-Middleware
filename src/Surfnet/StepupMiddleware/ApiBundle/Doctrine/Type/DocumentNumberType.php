@@ -42,17 +42,28 @@ class DocumentNumberType extends Type
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return null|string
+     * @throws ConversionException
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (!$value instanceof DocumentNumber) {
+        if (is_null($value)) {
             return null;
         }
 
-        return (string) $value;
+        if (!$value instanceof DocumentNumber) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal document number of type %s '%s', expected a DocumentNumber instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getDocumentNumber();
     }
 
     /**

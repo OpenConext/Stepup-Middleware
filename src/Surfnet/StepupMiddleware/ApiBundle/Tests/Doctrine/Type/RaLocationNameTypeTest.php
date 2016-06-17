@@ -79,6 +79,21 @@ class RaLocationNameTypeTest extends UnitTest
     /**
      * @test
      * @group doctrine
+     *
+     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
+     * @param $incorrectValue
+     */
+    public function a_value_can_only_be_converted_to_sql_if_it_is_an_ra_location_or_null($incorrectValue)
+    {
+        $this->setExpectedException('Doctrine\DBAL\Types\ConversionException');
+
+        $configurationContactInformation = Type::getType(RaLocationNameType::NAME);
+        $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
+    }
+
+    /**
+     * @test
+     * @group doctrine
      */
     public function a_null_value_remains_null_when_converting_from_db_to_php_value()
     {

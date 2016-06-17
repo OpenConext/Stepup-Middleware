@@ -25,7 +25,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 
 /**
- * Custom Type for the Location Value Object for the Configuration domain
+ * Custom Type for the ContactInformation Value Object for the Configuration domain
  */
 class ConfigurationContactInformationType extends Type
 {
@@ -39,10 +39,20 @@ class ConfigurationContactInformationType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
-        return (string) $value;
+        if (!$value instanceof ContactInformation) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal contact information of type %s '%s', expected a ContactInformation instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getContactInformation();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

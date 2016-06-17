@@ -42,7 +42,17 @@ class ConfigurationLocationType extends Type
             return $value;
         }
 
-        return (string) $value;
+        if (!$value instanceof Location) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal location of type %s '%s', expected a Location instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getLocation();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

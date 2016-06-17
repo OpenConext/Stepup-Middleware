@@ -42,7 +42,17 @@ class RaLocationNameType extends Type
             return $value;
         }
 
-        return (string) $value;
+        if (!$value instanceof RaLocationName) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal RA location name of type %s '%s', expected a RaLocationName instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getRaLocationName();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

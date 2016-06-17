@@ -63,6 +63,21 @@ class ConfigurationConfigurationLocationTypeTest extends UnitTest
     /**
      * @test
      * @group doctrine
+     *
+     * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
+     * @param $incorrectValue
+     */
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_location_or_null($incorrectValue)
+    {
+        $this->setExpectedException('Doctrine\DBAL\Types\ConversionException');
+
+        $configurationContactInformation = Type::getType(ConfigurationLocationType::NAME);
+        $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
+    }
+
+    /**
+     * @test
+     * @group doctrine
      */
     public function a_non_null_value_is_converted_to_the_correct_format()
     {

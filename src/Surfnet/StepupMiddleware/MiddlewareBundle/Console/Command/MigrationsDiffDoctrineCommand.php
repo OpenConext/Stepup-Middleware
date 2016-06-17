@@ -45,6 +45,9 @@ class MigrationsDiffDoctrineCommand extends Command
                 $output->write($data);
             });
 
+        // Quick migrations will cause Gateway migrations to overwrite Middleware's as they are identified per second
+        sleep(1);
+
         $output->writeln(['<info>Generating diff for Gateway...</info>', '']);
 
         ProcessBuilder::create(['app/console', 'doc:mig:diff', '--em=gateway'])
@@ -52,5 +55,14 @@ class MigrationsDiffDoctrineCommand extends Command
             ->run(function ($type, $data) use ($output) {
                 $output->write($data);
             });
+
+        $output->writeln(
+            '<error>'
+            .PHP_EOL.PHP_EOL
+            .'    Warning: The Gateway migration diff should be manually edited so'
+            .' the correct database configuration will be used during migrations!'
+            .PHP_EOL
+            .'</error>'
+        );
     }
 }

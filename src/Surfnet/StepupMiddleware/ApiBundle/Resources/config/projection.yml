@@ -64,3 +64,9 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.whitelist_entry
         tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_api.projector.ra_location:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\RaLocationProjector
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.ra_location
+        tags: [{ name: event_bus.event_listener }]

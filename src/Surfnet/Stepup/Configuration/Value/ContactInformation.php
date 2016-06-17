@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class ContactInformation
+final class ContactInformation implements JsonSerializable
 {
     /**
      * @var string
@@ -57,6 +58,11 @@ final class ContactInformation
     }
 
     public function __toString()
+    {
+        return $this->contactInformation;
+    }
+
+    public function jsonSerialize()
     {
         return $this->contactInformation;
     }

@@ -18,10 +18,11 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionConfigurationId
+final class InstitutionConfigurationId implements JsonSerializable
 {
     const UUID_NAMESPACE = '09876543-abcd-0987-abcd-098765432109';
 
@@ -75,6 +76,11 @@ final class InstitutionConfigurationId
     }
 
     public function __toString()
+    {
+        return $this->institutionConfigurationId;
+    }
+
+    public function jsonSerialize()
     {
         return $this->institutionConfigurationId;
     }

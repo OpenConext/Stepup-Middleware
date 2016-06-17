@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,19 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
- * Custom Type for the Institution Value Object
+ * Custom Type for the RaLocationName Value Object
  */
-class InstitutionType extends Type
+class RaLocationNameType extends Type
 {
-    const NAME = 'institution';
+    const NAME = 'stepup_ra_location_name';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL([]);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -42,7 +42,17 @@ class InstitutionType extends Type
             return $value;
         }
 
-        return (string) $value;
+        if (!$value instanceof RaLocationName) {
+            throw new ConversionException(
+                sprintf(
+                    "Encountered illegal RA location name of type %s '%s', expected a RaLocationName instance",
+                    is_object($value) ? get_class($value) : gettype($value),
+                    is_scalar($value) ? (string) $value : ''
+                )
+            );
+        }
+
+        return $value->getRaLocationName();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -52,7 +62,7 @@ class InstitutionType extends Type
         }
 
         try {
-            $institution = new Institution($value);
+            $raLocationName = new RaLocationName($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailedFormat(
@@ -64,7 +74,7 @@ class InstitutionType extends Type
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
         }
 
-        return $institution;
+        return $raLocationName;
     }
 
     public function getName()

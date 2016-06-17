@@ -41,16 +41,30 @@ class RaCandidateRepository extends EntityRepository
      */
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $raCandidate = $this->findByIdentityId($identityId);
 
-        $queryBuilder
-            ->delete($this->_entityName, 'rac')
-            ->where('rac.identityId = :identityId')
-            ->setParameter('identityId', (string) $identityId)
-            ->getQuery()
-            ->execute();
+        if (!$raCandidate) {
+            return;
+        }
 
+        $this->getEntityManager()->remove($raCandidate);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param string[] $sraaList
+     * @return void
+     */
+    public function removeByNameIds($sraaList)
+    {
+        $raCandidates = $this->findByNameIds($sraaList);
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
     }
 
     /**
@@ -79,21 +93,16 @@ class RaCandidateRepository extends EntityRepository
     }
 
     /**
-     * @param array $sraaList
-     * @return void
+     * @param string[] $sraaList
+     * @return RaCandidate[]
      */
-    public function removeByNameIds(array $sraaList)
+    public function findByNameIds(array $sraaList)
     {
-        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-
-        $queryBuilder
-            ->delete($this->_entityName, 'rac')
+        return $this->createQueryBuilder('rac')
             ->where('rac.nameId IN (:sraaList)')
             ->setParameter('sraaList', $sraaList)
             ->getQuery()
-            ->execute();
-
-        $this->getEntityManager()->flush();
+            ->getResult();
     }
 
     /**

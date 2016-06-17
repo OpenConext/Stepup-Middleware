@@ -293,8 +293,8 @@ final class SecondFactorMailService
             $this->logger->warning(
                 sprintf(
                     'Skipping sending mail because template configuration for "%s" in locale "%s" or "%s" is missing',
-                    $name, 
-                    $locale, 
+                    $name,
+                    $locale,
                     $fallbackLocale
                 )
             );

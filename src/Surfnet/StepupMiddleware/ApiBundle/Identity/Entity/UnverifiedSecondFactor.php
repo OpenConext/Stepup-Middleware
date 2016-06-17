@@ -67,7 +67,7 @@ class UnverifiedSecondFactor implements \JsonSerializable
     public $verificationNonce;
 
     /**
-     * @ORM\Column(type="stepup_datetime", nullable=false)
+     * @ORM\Column(type="stepup_utc_datetime", nullable=false)
      *
      * @var UtcDateTime
      */

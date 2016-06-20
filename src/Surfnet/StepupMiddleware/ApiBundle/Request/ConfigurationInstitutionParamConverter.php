@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Symfony\Component\HttpFoundation\Request;
 

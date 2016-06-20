@@ -26,33 +26,22 @@ use Surfnet\Stepup\Configuration\Value\Institution;
  * @ORM\Entity(
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository"
  * )
- * @ORM\Table(
- *      indexes={}
- * )
+ * @ORM\Table()
  */
 class InstitutionWithPersonalRaDetails implements JsonSerializable
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column
-     *
-     * @var string
-     */
-    public $id;
-
-    /**
      * @ORM\Column(type="institution")
      *
      * @var string
      */
     public $institution;
 
-    public static function create($id, Institution $institution)
+    public static function createFrom(Institution $institution)
     {
         $institutionWithPersonalRaDetails = new self;
 
-        $institutionWithPersonalRaDetails->id          = $id;
         $institutionWithPersonalRaDetails->institution = $institution;
 
         return $institutionWithPersonalRaDetails;
@@ -60,9 +49,6 @@ class InstitutionWithPersonalRaDetails implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return [
-            'id'          => $this->id,
-            'institution' => $this->institution,
-        ];
+        return ['institution' => $this->institution];
     }
 }

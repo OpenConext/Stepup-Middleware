@@ -33,8 +33,8 @@ final class RaLocationService
         $this->repository = $repository;
     }
 
-    public function findByInstitution(RaLocationQuery $query)
+    public function search(RaLocationQuery $query)
     {
-        return $this->repository->findByInstitution($query);
+        return $this->repository->search($query);
     }
 }

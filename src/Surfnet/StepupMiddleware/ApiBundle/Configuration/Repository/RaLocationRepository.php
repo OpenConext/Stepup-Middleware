@@ -28,7 +28,7 @@ class RaLocationRepository extends EntityRepository
      * @param RaLocationQuery $query
      * @return null|RaLocation[]
      */
-    public function findByInstitution(RaLocationQuery $query)
+    public function search(RaLocationQuery $query)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('rl')

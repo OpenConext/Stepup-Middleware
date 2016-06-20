@@ -36,7 +36,7 @@ final class RaLocationController extends Controller
         $query->orderBy        = $request->get('orderBy', $query->orderBy);
         $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
 
-        $raLocations = $this->getRaLocationService()->findByInstitution($query);
+        $raLocations = $this->getRaLocationService()->search($query);
         $count = count($raLocations);
 
         return new JsonCollectionResponse($count, 1, $count, $raLocations);

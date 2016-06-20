@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
 
 final class InstitutionWithPersonalRaDetailsRepository extends EntityRepository
@@ -42,5 +43,20 @@ final class InstitutionWithPersonalRaDetailsRepository extends EntityRepository
         $em = $this->getEntityManager();
         $em->persist($institutionWithPersonalRaDetails);
         $em->flush($institutionWithPersonalRaDetails);
+    }
+
+    /**
+     * @param Institution $institution
+     * @return boolean
+     */
+    public function institutionHasPersonalRaDetails(Institution $institution)
+    {
+        $matchedInstitutions = $this->createQueryBuilder('ipr')
+            ->where('ipr.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->getArrayResult();
+
+        return !empty($matchedInstitutions);
     }
 }

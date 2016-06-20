@@ -18,17 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 final class InstitutionWithPersonalRaDetailsController extends Controller
 {
-    public function getAllAction()
+    public function hasPersonalRaDetailsAction(Request $request, Institution $institution)
     {
-        $institutionsWithPersonalRaDetails = $this->getService()->findAll();
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        return new JsonResponse($institutionsWithPersonalRaDetails);
+        $personalRaDetailsEnabled = $this->getService()->institutionHasPersonalRaDetails($institution);
+
+        return new JsonResponse($personalRaDetailsEnabled);
     }
 
     /**

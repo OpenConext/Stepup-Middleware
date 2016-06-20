@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
@@ -46,6 +47,15 @@ class RaLocationRepository extends EntityRepository
             ->orderBy($orderBy, $orderDirection)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByRaLocationId(RaLocationId $raLocationId)
+    {
+        return $this->createQueryBuilder('rl')
+            ->where('rl.id = :id')
+            ->setParameter('id', $raLocationId->getRaLocationId())
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

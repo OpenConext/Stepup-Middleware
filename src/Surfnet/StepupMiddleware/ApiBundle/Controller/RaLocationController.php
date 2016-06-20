@@ -19,10 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 final class RaLocationController extends Controller
@@ -37,9 +39,19 @@ final class RaLocationController extends Controller
         $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
 
         $raLocations = $this->getRaLocationService()->search($query);
-        $count = count($raLocations);
+        $count       = count($raLocations);
 
         return new JsonCollectionResponse($count, 1, $count, $raLocations);
+    }
+
+    public function getAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+
+        $raLocationId = new RaLocationId($request->get('raLocationId'));
+        $raLocation   = $this->getRaLocationService()->findByRaLocationId($raLocationId);
+
+        return new JsonResponse($raLocation);
     }
 
     /**

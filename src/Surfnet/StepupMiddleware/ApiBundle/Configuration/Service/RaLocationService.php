@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
+use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
 
@@ -36,5 +37,10 @@ final class RaLocationService
     public function search(RaLocationQuery $query)
     {
         return $this->repository->search($query);
+    }
+
+    public function findByRaLocationId(RaLocationId $raLocationId)
+    {
+        return $this->repository->findByRaLocationId($raLocationId);
     }
 }

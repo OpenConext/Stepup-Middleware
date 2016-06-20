@@ -35,6 +35,7 @@ class RaLocationRepository extends EntityRepository
             ->from('Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation', 'rl')
             ->where('rl.institution = :institution')
             ->setParameter('institution', $query->institution->getInstitution())
+            ->orderBy($query->orderBy, $query->orderDirection)
             ->getQuery()
             ->getResult();
     }

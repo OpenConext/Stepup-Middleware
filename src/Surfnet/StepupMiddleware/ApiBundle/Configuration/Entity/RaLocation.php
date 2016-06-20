@@ -44,7 +44,7 @@ class RaLocation implements JsonSerializable
      *
      * @var string
      */
-    public $raLocationId;
+    public $id;
 
     /**
      * @ORM\Column(type="stepup_configuration_institution")
@@ -58,7 +58,7 @@ class RaLocation implements JsonSerializable
      *
      * @var RaLocationName
      */
-    public $raLocationName;
+    public $name;
 
     /**
      * @ORM\Column(type="stepup_configuration_location")
@@ -75,23 +75,23 @@ class RaLocation implements JsonSerializable
     public $contactInformation;
 
     public static function create(
-        $raLocationId,
+        $id,
         Institution $institution,
-        RaLocationName $raLocationName,
+        RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation
     ) {
-        if (!is_string($raLocationId)) {
-            throw InvalidArgumentException::invalidType('string', 'raLocationId', $raLocationId);
+        if (!is_string($id)) {
+            throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
 
         $raLocation = new self;
 
-        $raLocation->raLocationId               = $raLocationId;
-        $raLocation->institution                = $institution;
-        $raLocation->raLocationName             = $raLocationName;
-        $raLocation->location                   = $location;
-        $raLocation->contactInformation         = $contactInformation;
+        $raLocation->id                 = $id;
+        $raLocation->institution        = $institution;
+        $raLocation->name               = $name;
+        $raLocation->location           = $location;
+        $raLocation->contactInformation = $contactInformation;
 
         return $raLocation;
     }
@@ -99,9 +99,9 @@ class RaLocation implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'ra_location_id'      => $this->raLocationId,
+            'id'                  => $this->id,
             'institution'         => $this->institution,
-            'ra_location_name'    => $this->raLocationName,
+            'name'                => $this->name,
             'location'            => $this->location,
             'contact_information' => $this->contactInformation,
         ];

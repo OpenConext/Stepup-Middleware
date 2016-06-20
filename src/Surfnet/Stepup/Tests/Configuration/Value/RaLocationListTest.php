@@ -80,7 +80,7 @@ class RaLocationListTest extends TestCase
     public function an_ra_location_list_has_an_ra_location_with_a_given_ra_location_id()
     {
         $raLocations = $this->getRaLocationsArray();
-        $expectedRaLocationIdToBePresent = $raLocations[0]->getRaLocationId();
+        $expectedRaLocationIdToBePresent = $raLocations[0]->getId();
 
         $raLocationList = new RaLocationList($raLocations);
 
@@ -127,7 +127,7 @@ class RaLocationListTest extends TestCase
         $raLocationToRemove = $raLocations[0];
 
         $raLocationList = new RaLocationList($raLocations);
-        $raLocationList->removeWithId($raLocationToRemove->getRaLocationId());
+        $raLocationList->removeWithId($raLocationToRemove->getId());
 
         $raLocationListAsArray = iterator_to_array($raLocationList);
         $expectOnlyTheSecondRaLocation = array_splice($raLocations, -1);

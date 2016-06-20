@@ -28,12 +28,12 @@ class RaLocation
     /**
      * @var RaLocationId
      */
-    private $raLocationId;
+    private $id;
 
     /**
      * @var RaLocationName
      */
-    private $raLocationName;
+    private $name;
 
     /**
      * @var Location
@@ -46,39 +46,39 @@ class RaLocation
     private $contactInformation;
 
     /**
-     * @param RaLocationId $raLocationId
-     * @param RaLocationName $raLocationName
+     * @param RaLocationId $id
+     * @param RaLocationName $name
      * @param Location $location
      * @param ContactInformation $contactInformation
      * @return RaLocation
      */
     public static function create(
-        RaLocationId $raLocationId,
-        RaLocationName $raLocationName,
+        RaLocationId $id,
+        RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation
     ) {
-        return new self($raLocationId, $raLocationName, $location, $contactInformation);
+        return new self($id, $name, $location, $contactInformation);
     }
 
     private function __construct(
-        RaLocationId $raLocationId,
-        RaLocationName $raLocationName,
+        RaLocationId $id,
+        RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation
     ) {
-        $this->raLocationId       = $raLocationId;
-        $this->raLocationName     = $raLocationName;
+        $this->id                 = $id;
+        $this->name               = $name;
         $this->location           = $location;
         $this->contactInformation = $contactInformation;
     }
 
     /**
-     * @param RaLocationName $raLocationName
+     * @param RaLocationName $name
      */
-    public function rename(RaLocationName $raLocationName)
+    public function rename(RaLocationName $name)
     {
-        $this->raLocationName = $raLocationName;
+        $this->name = $name;
     }
 
     /**
@@ -98,28 +98,28 @@ class RaLocation
     }
 
     /**
-     * @param RaLocationId $raLocationId
+     * @param RaLocationId $otherId
      * @return bool
      */
-    public function hasRaLocationId(RaLocationId $raLocationId)
+    public function hasId(RaLocationId $otherId)
     {
-        return $this->raLocationId->equals($raLocationId);
+        return $this->id->equals($otherId);
     }
 
     /**
      * @return RaLocationId
      */
-    public function getRaLocationId()
+    public function getId()
     {
-        return $this->raLocationId;
+        return $this->id;
     }
 
     /**
      * @return RaLocationName
      */
-    public function getRaLocationName()
+    public function getName()
     {
-        return $this->raLocationName;
+        return $this->name;
     }
 
     /**

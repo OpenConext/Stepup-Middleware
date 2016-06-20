@@ -125,8 +125,8 @@ ra_candidate:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_location_listing:
-    path:     /ra-location/{institution}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:list }
+    path:     /ra-location
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:search }
     methods:  [GET]
     requirements:
         institution: ".+"

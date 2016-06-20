@@ -52,12 +52,12 @@ class RaCandidateRepository extends EntityRepository
     }
 
     /**
-     * @param string[] $sraaList
+     * @param string[] $nameIds
      * @return void
      */
-    public function removeByNameIds($sraaList)
+    public function removeByNameIds($nameIds)
     {
-        $raCandidates = $this->findByNameIds($sraaList);
+        $raCandidates = $this->findByNameIds($nameIds);
 
         $em = $this->getEntityManager();
         foreach ($raCandidates as $raCandidate) {

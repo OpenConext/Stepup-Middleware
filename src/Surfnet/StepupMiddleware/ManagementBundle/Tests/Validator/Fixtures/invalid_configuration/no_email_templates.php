@@ -21,5 +21,6 @@ return [
     'configuration'        => [
         'gateway' => [],
         'sraa'    => [],
-    ]
+    ],
+    'institutions_with_personal_ra_details' => ['institution.test'],
 ];

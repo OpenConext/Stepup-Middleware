@@ -39,5 +39,6 @@ return [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
         ],
+        'institutions_with_personal_ra_details' => ['institution.test'],
     ]
 ];

@@ -18,5 +18,5 @@
 
 return [
     'expectedPropertyPath' => '(root)',
-    'configuration'        => []
+    'configuration'        => [],
 ];

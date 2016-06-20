@@ -91,21 +91,18 @@ class DateTimeTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_stepup_datetime_object()
+    public function a_string_is_converted_to_the_stepup_datetime_object()
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
-        $input = '2015-02-17 10:48:22';
-        $inputAsCoreDateTime = CoreDateTime::createFromFormat(
-            'Y-m-d H:i:s',
-            '2015-02-17 10:48:22',
-            new DateTimeZone('UTC')
+        $databaseValue    = '2015-02-17 10:48:22';
+        $actualDateTime   = $dateTime->convertToPHPValue($databaseValue, $this->platform);
+        $expectedDateTime = new DateTime(
+            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC'))
         );
 
-        $output = $dateTime->convertToPHPValue($input, $this->platform);
-
-        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $output);
-        $this->assertEquals(new DateTime($inputAsCoreDateTime), $output);
+        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $actualDateTime);
+        $this->assertEquals($expectedDateTime, $actualDateTime);
     }
 
     /**

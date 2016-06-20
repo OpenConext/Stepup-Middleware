@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit_Framework_TestCase as UnitTest;
@@ -95,7 +96,11 @@ class DateTimeTypeTest extends UnitTest
         $dateTime = Type::getType(DateTimeType::NAME);
 
         $input = '2015-02-17 10:48:22';
-        $inputAsCoreDateTime = CoreDateTime::createFromFormat('Y-m-d H:i:s', '2015-02-17 10:48:22');
+        $inputAsCoreDateTime = CoreDateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            '2015-02-17 10:48:22',
+            new DateTimeZone('UTC')
+        );
 
         $output = $dateTime->convertToPHPValue($input, $this->platform);
 

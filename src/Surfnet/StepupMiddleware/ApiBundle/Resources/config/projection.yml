@@ -18,7 +18,6 @@ services:
             - @surfnet_stepup_middleware_api.repository.verified_second_factor
             - @surfnet_stepup_middleware_api.repository.vetted_second_factor
             - @surfnet_stepup_middleware_api.repository.identity
-            - @doctrine.orm.middleware_entity_manager
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.ra_second_factor:

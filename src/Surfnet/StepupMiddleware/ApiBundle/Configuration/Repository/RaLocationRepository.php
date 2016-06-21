@@ -49,6 +49,10 @@ class RaLocationRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param RaLocationId $raLocationId
+     * @return RaLocation[]
+     */
     public function findByRaLocationId(RaLocationId $raLocationId)
     {
         return $this->createQueryBuilder('rl')

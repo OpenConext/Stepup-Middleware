@@ -129,3 +129,17 @@ ra_candidate:
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+ra_location_listing:
+    path:     /ra-location
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:search }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+ra_location:
+    path:     /ra-location/{raLocationId}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:get }
+    methods:  [GET]
+    requirements:
+        raLocationId: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

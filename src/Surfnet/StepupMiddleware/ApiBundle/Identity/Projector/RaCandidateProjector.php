@@ -30,6 +30,7 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 
 class RaCandidateProjector extends Projector
 {
@@ -38,9 +39,15 @@ class RaCandidateProjector extends Projector
      */
     private $raCandidateRepository;
 
-    public function __construct(RaCandidateRepository $raCandidateRepository)
+    /**
+     * @var RaListingRepository
+     */
+    private $raListingRepository;
+
+    public function __construct(RaCandidateRepository $raCandidateRepository, RaListingRepository $raListingRepository)
     {
         $this->raCandidateRepository = $raCandidateRepository;
+        $this->raListingRepository = $raListingRepository;
     }
 
     /**
@@ -49,6 +56,10 @@ class RaCandidateProjector extends Projector
      */
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
+        if ($this->raListingRepository->findByIdentityId($event->identityId)) {
+            return;
+        }
+
         $candidate = RaCandidate::nominate(
             $event->identityId,
             $event->identityInstitution,

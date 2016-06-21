@@ -30,10 +30,10 @@ final class RaLocationQuery
     /**
      * @var string
      */
-    public $orderBy;
+    public $orderBy = 'name';
 
     /**
      * @var string
      */
-    public $orderDirection;
+    public $orderDirection = 'asc';
 }

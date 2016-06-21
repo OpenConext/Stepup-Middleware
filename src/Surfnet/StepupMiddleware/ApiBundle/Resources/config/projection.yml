@@ -38,6 +38,7 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RaCandidateProjector
         arguments:
             - @surfnet_stepup_middleware_api.repository.ra_candidate
+            - @surfnet_stepup_middleware_api.repository.ra_listing
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_api.projector.sraa:

@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationRepository extends EntityRepository
 {
@@ -28,15 +30,32 @@ class RaLocationRepository extends EntityRepository
      * @param RaLocationQuery $query
      * @return null|RaLocation[]
      */
-    public function findByInstitution(RaLocationQuery $query)
+    public function search(RaLocationQuery $query)
     {
+        if (!in_array($query->orderBy, ['name', 'location', 'contact_information'])) {
+            throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
+        }
+
+        $orderBy        = 'rl.'.$query->orderBy;
+        $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
+
         return $this->getEntityManager()->createQueryBuilder()
             ->select('rl')
             ->from('Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation', 'rl')
             ->where('rl.institution = :institution')
             ->setParameter('institution', $query->institution->getInstitution())
+            ->orderBy($orderBy, $orderDirection)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByRaLocationId(RaLocationId $raLocationId)
+    {
+        return $this->createQueryBuilder('rl')
+            ->where('rl.id = :id')
+            ->setParameter('id', $raLocationId->getRaLocationId())
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**

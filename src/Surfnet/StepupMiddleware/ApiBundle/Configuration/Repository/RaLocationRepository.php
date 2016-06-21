@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
@@ -70,5 +71,18 @@ class RaLocationRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
         $entityManager->persist($raLocation);
         $entityManager->flush();
+    }
+
+    /**
+     * @param Institution $institution
+     * @return RaLocation[]
+     */
+    public function findByInstitution(Institution $institution)
+    {
+        return $this->createQueryBuilder('rl')
+            ->where('rl.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->getArrayResult();
     }
 }

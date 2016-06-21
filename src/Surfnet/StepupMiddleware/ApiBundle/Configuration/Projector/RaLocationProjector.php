@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
 
@@ -37,8 +38,9 @@ class RaLocationProjector extends Projector
 
     public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
     {
-        $raLocation = new RaLocation(
+        $raLocation = RaLocation::create(
             $event->raLocationId->getRaLocationId(),
+            $event->institution,
             $event->raLocationName,
             $event->location,
             $event->contactInformation

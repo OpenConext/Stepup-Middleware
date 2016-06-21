@@ -119,6 +119,7 @@ class EventSerializationAndDeserializationTest extends TestCase
             'RaLocationAddedEvent' => [
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($uuid),
                     new RaLocationName('Test name'),
                     new Location('Test location'),

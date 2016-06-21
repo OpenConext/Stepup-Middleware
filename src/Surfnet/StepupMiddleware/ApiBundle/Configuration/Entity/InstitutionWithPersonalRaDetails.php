@@ -26,7 +26,6 @@ use Surfnet\Stepup\Configuration\Value\Institution;
  * @ORM\Entity(
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository"
  * )
- * @ORM\Table()
  */
 class InstitutionWithPersonalRaDetails implements JsonSerializable
 {
@@ -38,6 +37,10 @@ class InstitutionWithPersonalRaDetails implements JsonSerializable
      */
     public $institution;
 
+    /**
+     * @param Institution $institution
+     * @return InstitutionWithPersonalRaDetails
+     */
     public static function createFrom(Institution $institution)
     {
         $institutionWithPersonalRaDetails = new self;

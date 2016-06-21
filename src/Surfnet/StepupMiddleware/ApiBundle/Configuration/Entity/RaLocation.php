@@ -82,7 +82,7 @@ class RaLocation implements JsonSerializable
         ContactInformation $contactInformation
     ) {
         if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'raLocationId', $id);
+            throw InvalidArgumentException::invalidType('string', 'id', $id);
         }
 
         $raLocation = new self;

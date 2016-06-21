@@ -129,7 +129,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
         $raLocation = $this->raLocations->getById($raLocationId);
 
-        if (!$raLocation->getRaLocationName()->equals($raLocationName)) {
+        if (!$raLocation->getName()->equals($raLocationName)) {
             $this->apply(
                 new RaLocationRenamedEvent($this->institutionConfigurationId, $raLocationId, $raLocationName)
             );

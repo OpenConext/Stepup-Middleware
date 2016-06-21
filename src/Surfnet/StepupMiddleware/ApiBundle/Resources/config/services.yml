@@ -15,6 +15,11 @@ services:
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
 
+    surfnet_stepup_middleware_api.repository.institution_with_personal_ra_details:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository
+        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails ]
+
     surfnet_stepup_middleware_api.repository.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
@@ -88,6 +93,11 @@ services:
         parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - @surfnet_stepup_middleware_api.repository.institution_listing
+
+    surfnet_stepup_middleware_api.service.institution_with_personal_ra_details:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService
+        arguments:
+            - @surfnet_stepup_middleware_api.repository.institution_with_personal_ra_details
 
     surfnet_stepup_middleware_api.service.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService

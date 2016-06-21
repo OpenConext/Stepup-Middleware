@@ -38,5 +38,6 @@ return [
         ],
         'sraa'            => null,
         'email_templates' => [],
+        'institutions_with_personal_ra_details' => ['institution.test'],
     ]
 ];

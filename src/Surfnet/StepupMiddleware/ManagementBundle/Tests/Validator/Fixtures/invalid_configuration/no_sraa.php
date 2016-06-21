@@ -20,5 +20,6 @@ return [
     'expectedPropertyPath' => '(root)',
     'configuration'        => [
         'gateway' => [],
+        'institutions_with_personal_ra_details' => ['institution.test'],
     ]
 ];

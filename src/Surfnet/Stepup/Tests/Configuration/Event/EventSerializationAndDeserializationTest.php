@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionsWithPersonalRaDetailsUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
@@ -102,6 +103,12 @@ class EventSerializationAndDeserializationTest extends TestCase
                 new SraaUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
                     ['sraa']
+                )
+            ],
+            'InstitutionsWithPersonalRaDetailsUpdatedEvent' => [
+                new InstitutionsWithPersonalRaDetailsUpdatedEvent(
+                    Configuration::CONFIGURATION_ID,
+                    ['some.institution.test']
                 )
             ],
 

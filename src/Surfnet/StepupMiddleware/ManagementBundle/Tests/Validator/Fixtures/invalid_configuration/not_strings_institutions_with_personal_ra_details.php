@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,31 @@
  */
 
 return [
-    'expectedPropertyPath' => 'gateway.service_providers[0].public_key',
-    'configuration' => [
-        'gateway' => [
+    'expectedPropertyPath' => 'institutions_with_personal_ra_details',
+    'configuration'        => [
+        'gateway'         => [
             'identity_providers' => [],
             'service_providers' => [
                 [
-                    "entity_id"  => "https://entity.tld/id",
-                    "public_key" => 9,
-                    "acs"        => ["https://entity.tld/consume-assertion"],
-                    "loa"        => [
-                        "__default__" => "https://entity.tld/authentication/loa2",
+                    'entity_id' => 'http://entity.tld/metadata',
+                    'public_key' => 'MIIEEE...',
+                    'acs' => ['http://entity.tld/consume-assertion'],
+                    'loa' => [
+                        '__default__' => 'http://gateway.tld/loa/1'
                     ],
                     "second_factor_only" => false,
                     "second_factor_only_nameid_patterns" => [],
                     "assertion_encryption_enabled"      => false,
                     "blacklisted_encryption_algorithms" => []
-                ]
+                ],
             ],
         ],
-        'sraa' => ['20394-4320423-439248324'],
+        'sraa'            => [],
         'email_templates' => [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+            'vetted'            => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
-        'institutions_with_personal_ra_details' => ['institution.test'],
+        'institutions_with_personal_ra_details' => null,
     ]
 ];

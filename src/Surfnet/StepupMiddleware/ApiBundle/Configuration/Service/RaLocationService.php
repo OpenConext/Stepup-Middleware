@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
 
-final class RaLocationService
+class RaLocationService
 {
     /**
      * @var RaLocationRepository

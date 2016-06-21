@@ -29,7 +29,6 @@ class Version20160620153812 extends AbstractMigration
         $this->addSql('ALTER TABLE ra_second_factor CHANGE institution institution VARCHAR(255) NOT NULL, CHANGE name name VARCHAR(255) NOT NULL, CHANGE email email VARCHAR(255) NOT NULL, CHANGE status status INT NOT NULL, CHANGE document_number document_number VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE second_factor_revocation CHANGE institution institution VARCHAR(255) NOT NULL, CHANGE recorded_on recorded_on DATETIME NOT NULL');
         $this->addSql('ALTER TABLE sraa CHANGE name_id name_id VARCHAR(200) NOT NULL');
-        $this->addSql('ALTER TABLE unverified_second_factor CHANGE verification_nonce_valid_until verification_nonce_valid_until DATETIME NOT NULL');
         $this->addSql('ALTER TABLE whitelist_entry CHANGE institution institution VARCHAR(255) NOT NULL');
     }
 
@@ -52,7 +51,6 @@ class Version20160620153812 extends AbstractMigration
         $this->addSql('ALTER TABLE ra_second_factor CHANGE institution institution VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE name name VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE email email VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE document_number document_number VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE status status INT NOT NULL');
         $this->addSql('ALTER TABLE second_factor_revocation CHANGE institution institution VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE recorded_on recorded_on DATETIME NOT NULL');
         $this->addSql('ALTER TABLE sraa CHANGE name_id name_id VARCHAR(200) NOT NULL COLLATE utf8_unicode_ci');
-        $this->addSql('ALTER TABLE unverified_second_factor CHANGE verification_nonce_valid_until verification_nonce_valid_until DATETIME NOT NULL');
         $this->addSql('ALTER TABLE whitelist_entry CHANGE institution institution VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci');
     }
 }

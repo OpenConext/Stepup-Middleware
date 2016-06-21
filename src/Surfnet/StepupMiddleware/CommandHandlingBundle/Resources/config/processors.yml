@@ -1,6 +1,6 @@
 services:
     surfnet_stepup_middleware_command_handling.processor.email:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor\EmailProcessor
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\EmailProcessor
         arguments:
             - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
             - @surfnet_stepup_middleware_api.service.ra_listing

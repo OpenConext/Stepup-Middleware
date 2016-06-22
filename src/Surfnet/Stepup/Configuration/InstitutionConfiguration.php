@@ -99,6 +99,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
         $this->apply(new RaLocationAddedEvent(
             $this->institutionConfigurationId,
+            $this->institution,
             $raLocationId,
             $raLocationName,
             $location,

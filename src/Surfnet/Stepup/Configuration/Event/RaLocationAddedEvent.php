@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
@@ -31,22 +32,26 @@ class RaLocationAddedEvent implements SerializableInterface
      * @var InstitutionConfigurationId
      */
     public $institutionConfigurationId;
-    
+
+    /**
+     * @var Institution
+     */
+    public $institution;
+
     /**
      * @var RaLocationId
      */
     public $raLocationId;
-    
+
     /**
      * @var RaLocationName
      */
     public $raLocationName;
-    
+
     /**
      * @var Location
      */
     public $location;
-    
     /**
      * @var ContactInformation
      */
@@ -54,12 +59,14 @@ class RaLocationAddedEvent implements SerializableInterface
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
+        Institution $institution,
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
         ContactInformation $contactInformation
     ) {
         $this->institutionConfigurationId = $institutionConfigurationId;
+        $this->institution                = $institution;
         $this->raLocationId               = $raLocationId;
         $this->raLocationName             = $raLocationName;
         $this->location                   = $location;
@@ -70,6 +77,7 @@ class RaLocationAddedEvent implements SerializableInterface
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
+            new Institution($data['institution']),
             new RaLocationId($data['ra_location_id']),
             new RaLocationName($data['ra_location_name']),
             new Location($data['location']),
@@ -81,6 +89,7 @@ class RaLocationAddedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution'                  => $this->institution->getInstitution(),
             'ra_location_id'               => $this->raLocationId->getRaLocationId(),
             'ra_location_name'             => $this->raLocationName->getRaLocationName(),
             'location'                     => $this->location->getLocation(),

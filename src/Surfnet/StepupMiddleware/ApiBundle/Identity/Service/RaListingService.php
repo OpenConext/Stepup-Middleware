@@ -61,7 +61,7 @@ class RaListingService extends AbstractSearchService
 
     /**
      * @param Institution $institution
-     * @return array
+     * @return RegistrationAuthorityCredentials[]
      */
     public function listRegistrationAuthoritiesFor(Institution $institution)
     {

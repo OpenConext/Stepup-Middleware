@@ -20,7 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
@@ -33,22 +35,22 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     private $identityId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     private $institution;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     private $commonName;
 
     /**
-     * @var string
+     * @var Location|null
      */
     private $location;
 
     /**
-     * @var string
+     * @var ContactInformation|null
      */
     private $contactInformation;
 

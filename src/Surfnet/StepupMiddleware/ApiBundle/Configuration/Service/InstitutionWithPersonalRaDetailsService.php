@@ -22,7 +22,7 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository;
 
-final class InstitutionWithPersonalRaDetailsService
+class InstitutionWithPersonalRaDetailsService
 {
     /**
      * @var InstitutionWithPersonalRaDetailsRepository

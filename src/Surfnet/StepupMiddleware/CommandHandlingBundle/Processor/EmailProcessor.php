@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Processor;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
@@ -25,8 +25,9 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Service\VettingLocationService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
 class EmailProcessor extends Processor
 {
@@ -36,18 +37,18 @@ class EmailProcessor extends Processor
     private $mailService;
 
     /**
-     * @var RaListingService
+     * @var VettingLocationService
      */
-    private $raListingService;
+    private $vettingLocationService;
 
     /**
-     * @param SecondFactorMailService   $mailService
-     * @param RaListingService          $raListingService
+     * @param SecondFactorMailService $mailService
+     * @param VettingLocationService $vettingLocationService
      */
-    public function __construct(SecondFactorMailService $mailService, RaListingService $raListingService)
+    public function __construct(SecondFactorMailService $mailService, VettingLocationService $vettingLocationService)
     {
-        $this->mailService               = $mailService;
-        $this->raListingService          = $raListingService;
+        $this->mailService            = $mailService;
+        $this->vettingLocationService = $vettingLocationService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
@@ -97,7 +98,9 @@ class EmailProcessor extends Processor
             (string) $event->commonName,
             (string) $event->email,
             $event->registrationCode,
-            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
+            $this->vettingLocationService->getVettingLocationsFor(
+                new Institution($event->identityInstitution->getInstitution())
+            )
         );
     }
 

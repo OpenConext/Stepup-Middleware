@@ -180,3 +180,11 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
         arguments:
             - ~ # HTTP Basic realm string, see extension
+
+    # Application Services
+    surfnet_stepup_middleware_api.service.vetting_location:
+        class: Surfnet\StepupMiddleware\ApiBundle\Service\VettingLocationService
+        arguments:
+            - '@surfnet_stepup_middleware_api.service.institution_with_personal_ra_details'
+            - '@surfnet_stepup_middleware_api.service.ra_location'
+            - '@surfnet_stepup_middleware_api.service.ra_listing'

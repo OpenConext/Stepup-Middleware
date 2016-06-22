@@ -49,6 +49,14 @@ final class ContactInformation implements JsonSerializable
         return $this->contactInformation === $otherContactInformation->contactInformation;
     }
 
+    /**
+     * @return string
+     */
+    public function getContactInformation()
+    {
+        return $this->contactInformation;
+    }
+
     public function jsonSerialize()
     {
         return $this->contactInformation;

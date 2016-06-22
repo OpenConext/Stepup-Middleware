@@ -22,8 +22,8 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Dto\VettingLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
@@ -180,14 +180,14 @@ final class SecondFactorMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
-     * @param RegistrationAuthorityCredentials[] $ras
+     * @param VettingLocation[] $vettingLocations
      */
     public function sendRegistrationEmail(
         $locale,
         $commonName,
         $email,
         $registrationCode,
-        array $ras
+        array $vettingLocations
     ) {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
@@ -207,7 +207,7 @@ final class SecondFactorMailService
             'commonName'       => $commonName,
             'email'            => $email,
             'registrationCode' => $registrationCode,
-            'ras'              => $ras,
+            'vettingLocations' => $vettingLocations,
         ];
 
         // Rendering file template instead of string

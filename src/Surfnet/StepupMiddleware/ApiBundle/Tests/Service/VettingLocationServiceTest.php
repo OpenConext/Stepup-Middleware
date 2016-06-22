@@ -47,10 +47,10 @@ class VettingLocationServiceTest extends TestCase
     public function vetting_locations_can_be_determined_for_institution_with_ra_locations()
     {
         $expectedRaName                = 'RA';
-        $expectedRaLocation            = 'Personal location';
+        $expectedRaLocation            = 'An RA location';
         $expectedRaContactInformation  = 'RA contact information';
         $expectedRaaName               = 'RAA';
-        $expectedRaaLocation           = 'Another personal location';
+        $expectedRaaLocation           = 'An RA location';
         $expectedRaaContactInformation = 'RAA contact information';
 
         $institutionValue         = 'institution.test';
@@ -76,7 +76,7 @@ class VettingLocationServiceTest extends TestCase
                     }
                 )
             )
-            ->andReturn(true);
+            ->andReturn(false);
 
         $raListingService
             ->shouldReceive('listRegistrationAuthoritiesFor')
@@ -135,7 +135,7 @@ class VettingLocationServiceTest extends TestCase
      * @group api-bundle
      * @group vetting
      */
-    public function vetting_locations_can_be_determined_for_institution_without_ra_locations()
+    public function vetting_locations_can_be_determined_for_institution_with_personal_ra_details()
     {
         $expectedRaName                = 'RA Service Desk';
         $expectedRaLocation            = 'On site';
@@ -166,7 +166,7 @@ class VettingLocationServiceTest extends TestCase
                     }
                 )
             )
-            ->andReturn(false);
+            ->andReturn(true);
 
         $raLocationsService
             ->shouldReceive('listRaLocationsFor')

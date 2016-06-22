@@ -65,29 +65,29 @@ final class VettingLocationService implements VettingLocationServiceInterface
         $configurationInstitution = new ConfigurationInstitution($institution->getInstitution());
 
         if ($this->personalRaDetailsService->institutionShowsRaLocations($configurationInstitution)) {
-            $identityInstitution = new IdentityInstitution($institution->getInstitution());
-
             return array_map(
-                function (RegistrationAuthorityCredentials $credentials) {
+                function (RaLocation $raLocation) {
                     return new VettingLocation(
-                        $credentials->getCommonName()->getCommonName(),
-                        $credentials->getLocation()->getLocation(),
-                        $credentials->getContactInformation()->getContactInformation()
+                        $raLocation->name->getRaLocationName(),
+                        $raLocation->location->getLocation(),
+                        $raLocation->contactInformation->getContactInformation()
                     );
                 },
-                $this->raListingService->listRegistrationAuthoritiesFor($identityInstitution)
+                $this->raLocationService->listRaLocationsFor($configurationInstitution)
             );
         }
 
+        $identityInstitution = new IdentityInstitution($institution->getInstitution());
+
         return array_map(
-            function (RaLocation $raLocation) {
+            function (RegistrationAuthorityCredentials $credentials) {
                 return new VettingLocation(
-                    $raLocation->name->getRaLocationName(),
-                    $raLocation->location->getLocation(),
-                    $raLocation->contactInformation->getContactInformation()
+                    $credentials->getCommonName()->getCommonName(),
+                    $credentials->getLocation()->getLocation(),
+                    $credentials->getContactInformation()->getContactInformation()
                 );
             },
-            $this->raLocationService->listRaLocationsFor($configurationInstitution)
+            $this->raListingService->listRegistrationAuthoritiesFor($identityInstitution)
         );
     }
 }

@@ -20,8 +20,14 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
+use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationProjector extends Projector
 {
@@ -37,13 +43,71 @@ class RaLocationProjector extends Projector
 
     public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
     {
-        $raLocation = new RaLocation(
+        $raLocation = RaLocation::create(
             $event->raLocationId->getRaLocationId(),
+            $event->institution,
             $event->raLocationName,
             $event->location,
             $event->contactInformation
         );
 
         $this->repository->save($raLocation);
+    }
+
+    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
+    {
+        $raLocation = $this->fetchRaLocationById($event->raLocationId);
+
+        $raLocation->name = $event->raLocationName;
+
+        $this->repository->save($raLocation);
+    }
+
+    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    {
+        $raLocation = $this->fetchRaLocationById($event->raLocationId);
+
+        $raLocation->location = $event->location;
+
+        $this->repository->save($raLocation);
+    }
+
+    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    {
+        $raLocation = $this->fetchRaLocationById($event->raLocationId);
+
+        $raLocation->contactInformation = $event->contactInformation;
+
+        $this->repository->save($raLocation);
+    }
+
+    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    {
+        $raLocation = $this->fetchRaLocationById($event->raLocationId);
+
+        $this->repository->remove($raLocation);
+    }
+
+    /**
+     * @param RaLocationId $raLocationId
+     * @return RaLocation
+     */
+    private function fetchRaLocationById(RaLocationId $raLocationId)
+    {
+        $raLocation = $this->repository->findByRaLocationId($raLocationId);
+
+        if (is_null($raLocation)) {
+            throw new RuntimeException(
+                'Tried to update an RA Locations contact information, but location could not be found'
+            );
+        }
+
+        if (!$raLocation instanceof RaLocation) {
+            throw new RuntimeException(
+                'Tried to update an RA Locations contact information, but location is of the wrong type'
+            );
+        }
+
+        return $raLocation;
     }
 }

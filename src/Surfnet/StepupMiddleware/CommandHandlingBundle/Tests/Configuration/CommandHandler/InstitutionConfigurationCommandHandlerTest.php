@@ -71,6 +71,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName($command->raLocationName),
                     new Location($command->location),
@@ -105,6 +106,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName($command->raLocationName),
                     new Location($command->location),
@@ -140,6 +142,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName($command->raLocationName),
                     new Location($command->location),
@@ -176,6 +179,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     $originalRaLocationName,
                     new Location($command->location),
@@ -281,6 +285,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName($command->raLocationName),
                     $originalLocation,
@@ -325,6 +330,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName($command->raLocationName),
                     new Location($command->location),
@@ -419,6 +425,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
+                    $institution,
                     new RaLocationId($command->raLocationId),
                     new RaLocationName('A location name'),
                     new Location('A location'),

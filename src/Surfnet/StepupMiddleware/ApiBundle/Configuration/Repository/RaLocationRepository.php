@@ -67,4 +67,14 @@ class RaLocationRepository extends EntityRepository
         $entityManager->persist($raLocation);
         $entityManager->flush();
     }
+
+    /**
+     * @param RaLocation $raLocation
+     */
+    public function remove(RaLocation $raLocation)
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($raLocation);
+        $entityManager->flush();
+    }
 }

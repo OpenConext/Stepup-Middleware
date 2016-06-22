@@ -28,16 +28,14 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 {
     public function apply(Request $request, ParamConverter $configuration)
     {
-        $query = $request->query;
-        $institution = $query->get('institution', false);
+        $requestAttributes = $request->attributes;
+        $institution = $requestAttributes->get('institution', false);
 
         if ($institution === false) {
-            throw new BadApiRequestException(['This API-call MUST include the institution as get parameter']);
+            throw new BadApiRequestException(['This API-call MUST include the institution in the path']);
         }
 
-        $query->remove('institution');
-
-        $request->attributes->set('institution', new Institution($institution));
+        $requestAttributes->set('institution', new Institution($institution));
     }
 
     public function supports(ParamConverter $configuration)

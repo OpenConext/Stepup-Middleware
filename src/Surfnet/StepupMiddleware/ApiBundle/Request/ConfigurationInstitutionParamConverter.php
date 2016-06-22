@@ -30,25 +30,35 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 
     public function apply(Request $request, ParamConverter $configuration)
     {
-        $institution = $request->attributes->get(self::INSTITUTION, false);
-        $request->attributes->remove(self::INSTITUTION);
-
-        if (!$institution) {
-            $institution = $request->query->get(self::INSTITUTION, false);
-            $request->query->remove(self::INSTITUTION);
-        }
-
-        if ($institution === false) {
-            throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters']);
-        }
-
-
-        $request->attributes->set(self::INSTITUTION, new Institution($institution));
+        $request->attributes->set(self::INSTITUTION, new Institution($this->getInstitutionFromRequest($request)));
     }
 
     public function supports(ParamConverter $configuration)
     {
         return $configuration->getName() === self::INSTITUTION
             && $configuration->getClass() === 'Surfnet\Stepup\Configuration\Value\Institution';
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    private function getInstitutionFromRequest(Request $request)
+    {
+        $institution = $request->attributes->get(self::INSTITUTION, false);
+        $request->attributes->remove(self::INSTITUTION);
+
+        if (is_string($institution) && !empty($institution)) {
+            return $institution;
+        }
+
+        $institution = $request->query->get(self::INSTITUTION, false);
+        $request->query->remove(self::INSTITUTION);
+
+        if (is_string($institution) && !empty($institution)) {
+            return $institution;
+        }
+
+        throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters']);
     }
 }

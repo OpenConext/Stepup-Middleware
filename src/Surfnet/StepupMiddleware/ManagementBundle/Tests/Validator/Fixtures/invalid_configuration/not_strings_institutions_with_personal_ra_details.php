@@ -17,7 +17,7 @@
  */
 
 return [
-    'expectedPropertyPath' => 'institutions_with_personal_ra_details',
+    'expectedPropertyPath' => 'institutions_with_ra_locations',
     'configuration'        => [
         'gateway'         => [
             'identity_providers' => [],
@@ -42,6 +42,6 @@ return [
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
             'vetted'            => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
-        'institutions_with_personal_ra_details' => null,
+        'institutions_with_ra_locations' => null,
     ]
 ];

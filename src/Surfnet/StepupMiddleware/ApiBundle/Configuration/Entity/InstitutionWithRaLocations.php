@@ -24,10 +24,10 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 
 /**
  * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository"
+ *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithRaLocationsRepository"
  * )
  */
-class InstitutionWithPersonalRaDetails implements JsonSerializable
+class InstitutionWithRaLocations implements JsonSerializable
 {
     /**
      * @ORM\Id
@@ -39,15 +39,15 @@ class InstitutionWithPersonalRaDetails implements JsonSerializable
 
     /**
      * @param Institution $institution
-     * @return InstitutionWithPersonalRaDetails
+     * @return InstitutionWithRaLocations
      */
     public static function createFrom(Institution $institution)
     {
-        $institutionWithPersonalRaDetails = new self;
+        $institutionWithRaLocations = new self;
 
-        $institutionWithPersonalRaDetails->institution = $institution;
+        $institutionWithRaLocations->institution = $institution;
 
-        return $institutionWithPersonalRaDetails;
+        return $institutionWithRaLocations;
     }
 
     public function jsonSerialize()

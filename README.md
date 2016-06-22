@@ -44,6 +44,7 @@ The configuration must be a json object with the following keys:
 * sraa
 * email_templates
 * gateway
+* institutions_with_ra_locations
 Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is therefore:
 ```json
 {
@@ -53,7 +54,7 @@ Each of these keys will be described in detail in a section below. The minimum s
         "identity_providers": [],
         "service_providers": []
     },
-    "institutions_with_personal_ra_details": []
+    "institutions_with_ra_locations": []
 }
 ```
 
@@ -135,7 +136,7 @@ As a full example:
             }
         ]
     },
-    "institutions_with_personal_ra_details": []
+    "institutions_with_ra_locations": []
 }
 ```
 

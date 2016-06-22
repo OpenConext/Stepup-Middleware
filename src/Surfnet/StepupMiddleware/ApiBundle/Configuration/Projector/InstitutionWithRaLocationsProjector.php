@@ -19,28 +19,28 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
-use Surfnet\Stepup\Configuration\Event\InstitutionsWithPersonalRaDetailsUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionsWithRaLocationsUpdatedEvent;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithRaLocations;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithRaLocationsRepository;
 
-final class InstitutionWithPersonalRaDetailsProjector extends Projector
+final class InstitutionWithRaLocationsProjector extends Projector
 {
     /**
-     * @var InstitutionWithPersonalRaDetails
+     * @var InstitutionWithRaLocations
      */
     private $repository;
 
-    public function __construct(InstitutionWithPersonalRaDetailsRepository $repository)
+    public function __construct(InstitutionWithRaLocationsRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    public function applyInstitutionsWithPersonalRaDetailsUpdatedEvent(
-        InstitutionsWithPersonalRaDetailsUpdatedEvent $event
+    public function applyInstitutionsWithRaLocationsUpdatedEvent(
+        InstitutionsWithRaLocationsUpdatedEvent $event
     ) {
-        foreach ($event->institutionsWithPersonalRaDetails as $institution) {
-            $this->repository->addIfNotExists(InstitutionWithPersonalRaDetails::createFrom(new Institution($institution)));
+        foreach ($event->institutionsWithRaLocations as $institution) {
+            $this->repository->addIfNotExists(InstitutionWithRaLocations::createFrom(new Institution($institution)));
         }
     }
 }

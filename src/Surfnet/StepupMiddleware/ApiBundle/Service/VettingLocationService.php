@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Service;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 final class VettingLocationService implements VettingLocationServiceInterface
 {
     /**
-     * @var InstitutionWithPersonalRaDetailsService
+     * @var InstitutionWithRaLocationsService
      */
     private $personalRaDetailsService;
 
@@ -47,7 +47,7 @@ final class VettingLocationService implements VettingLocationServiceInterface
     private $raListingService;
 
     public function __construct(
-        InstitutionWithPersonalRaDetailsService $personalRaDetailsService,
+        InstitutionWithRaLocationsService $personalRaDetailsService,
         RaLocationService $raLocationService,
         RaListingService $raListingService
     ) {
@@ -64,7 +64,7 @@ final class VettingLocationService implements VettingLocationServiceInterface
     {
         $configurationInstitution = new ConfigurationInstitution($institution->getInstitution());
 
-        if ($this->personalRaDetailsService->institutionHasPersonalRaDetails($configurationInstitution)) {
+        if ($this->personalRaDetailsService->institutionShowsRaLocations($configurationInstitution)) {
             $identityInstitution = new IdentityInstitution($institution->getInstitution());
 
             return array_map(

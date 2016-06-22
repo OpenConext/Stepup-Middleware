@@ -72,8 +72,8 @@ services:
             - @surfnet_stepup_middleware_api.repository.ra_location
         tags: [{ name: event_bus.event_listener }]
 
-    surfnet_stepup_middleware_api.projector.institution_with_personal_ra_details:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\InstitutionWithPersonalRaDetailsProjector
+    surfnet_stepup_middleware_api.projector.institution_with_ra_locations:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\InstitutionWithRaLocationsProjector
         arguments:
-            - @surfnet_stepup_middleware_api.repository.institution_with_personal_ra_details
+            - @surfnet_stepup_middleware_api.repository.institution_with_ra_locations
         tags: [{ name: event_bus.event_listener }]

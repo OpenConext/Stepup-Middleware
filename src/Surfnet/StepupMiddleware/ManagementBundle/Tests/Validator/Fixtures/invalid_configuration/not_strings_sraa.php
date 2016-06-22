@@ -40,6 +40,6 @@ return [
             9
         ],
         'email_templates' => [],
-        'institutions_with_personal_ra_details' => ['institution.test'],
+        'institutions_with_ra_locations' => ['institution.test'],
     ]
 ];

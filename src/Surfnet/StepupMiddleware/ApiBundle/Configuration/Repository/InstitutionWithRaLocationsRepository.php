@@ -20,19 +20,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithRaLocations;
 
-final class InstitutionWithPersonalRaDetailsRepository extends EntityRepository
+final class InstitutionWithRaLocationsRepository extends EntityRepository
 {
     /**
-     * @param InstitutionWithPersonalRaDetails $institutionWithPersonalRaDetails
+     * @param InstitutionWithRaLocations $institutionWithRaLocations
      */
-    public function addIfNotExists(
-        InstitutionWithPersonalRaDetails $institutionWithPersonalRaDetails
-    ) {
+    public function addIfNotExists(InstitutionWithRaLocations $institutionWithRaLocations)
+    {
         $existsQuery = $this->createQueryBuilder('ipr')
             ->where('ipr.institution = :institution')
-            ->setParameter('institution', $institutionWithPersonalRaDetails->institution)
+            ->setParameter('institution', $institutionWithRaLocations->institution)
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -41,18 +40,18 @@ final class InstitutionWithPersonalRaDetailsRepository extends EntityRepository
         }
 
         $em = $this->getEntityManager();
-        $em->persist($institutionWithPersonalRaDetails);
-        $em->flush($institutionWithPersonalRaDetails);
+        $em->persist($institutionWithRaLocations);
+        $em->flush($institutionWithRaLocations);
     }
 
     /**
      * @param Institution $institution
      * @return boolean
      */
-    public function institutionHasPersonalRaDetails(Institution $institution)
+    public function institutionShowsRaLocations(Institution $institution)
     {
-        $matchedInstitutions = $this->createQueryBuilder('ipr')
-            ->where('ipr.institution = :institution')
+        $matchedInstitutions = $this->createQueryBuilder('irl')
+            ->where('irl.institution = :institution')
             ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
             ->getArrayResult();

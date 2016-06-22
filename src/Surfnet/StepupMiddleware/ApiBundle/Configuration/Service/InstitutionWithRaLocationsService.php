@@ -19,17 +19,17 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithRaLocations;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithRaLocationsRepository;
 
-class InstitutionWithPersonalRaDetailsService
+class InstitutionWithRaLocationsService
 {
     /**
-     * @var InstitutionWithPersonalRaDetailsRepository
+     * @var InstitutionWithRaLocationsRepository
      */
     private $repository;
 
-    public function __construct(InstitutionWithPersonalRaDetailsRepository $repository)
+    public function __construct(InstitutionWithRaLocationsRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -38,13 +38,13 @@ class InstitutionWithPersonalRaDetailsService
      * @param Institution $institution
      * @return boolean
      */
-    public function institutionHasPersonalRaDetails(Institution $institution)
+    public function institutionShowsRaLocations(Institution $institution)
     {
-        return $this->repository->institutionHasPersonalRaDetails($institution);
+        return $this->repository->institutionShowsRaLocations($institution);
     }
 
     /**
-     * @return InstitutionWithPersonalRaDetails[]
+     * @return InstitutionWithRaLocations[]
      */
     public function findAll()
     {

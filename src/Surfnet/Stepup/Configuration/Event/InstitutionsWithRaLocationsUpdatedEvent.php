@@ -18,34 +18,34 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
-final class InstitutionsWithPersonalRaDetailsUpdatedEvent extends ConfigurationEvent
+final class InstitutionsWithRaLocationsUpdatedEvent extends ConfigurationEvent
 {
     /**
      * @var string[]
      */
-    public $institutionsWithPersonalRaDetails;
+    public $institutionsWithRaLocations;
 
     /**
      * @param string $configurationId
-     * @param string[] $institutionsWithPersonalRaDetails
+     * @param string[] $institutionsWithRaLocations
      */
-    public function __construct($configurationId, array $institutionsWithPersonalRaDetails)
+    public function __construct($configurationId, array $institutionsWithRaLocations)
     {
         parent::__construct($configurationId);
 
-        $this->institutionsWithPersonalRaDetails = $institutionsWithPersonalRaDetails;
+        $this->institutionsWithRaLocations = $institutionsWithRaLocations;
     }
 
     public static function deserialize(array $data)
     {
-        return new self($data['id'], $data['institutions_with_personal_ra_details']);
+        return new self($data['id'], $data['institutions_with_ra_locations']);
     }
 
     public function serialize()
     {
         return [
             'id'                                    => $this->id,
-            'institutions_with_personal_ra_details' => $this->institutionsWithPersonalRaDetails,
+            'institutions_with_ra_locations' => $this->institutionsWithRaLocations,
         ];
     }
 }

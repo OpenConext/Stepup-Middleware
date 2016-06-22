@@ -98,7 +98,7 @@ class RaSecondFactor implements JsonSerializable
     public $email;
 
     /**
-     * @ORM\Column(type="stepup_document_number")
+     * @ORM\Column(type="stepup_document_number", nullable=true)
      *
      * @var DocumentNumber
      */

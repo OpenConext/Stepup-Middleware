@@ -181,7 +181,7 @@ services:
         arguments:
             - ~ # HTTP Basic realm string, see extension
 
-    # Application services
+    # Application Services
     surfnet_stepup_middleware_api.service.vetting_location:
         class: Surfnet\StepupMiddleware\ApiBundle\Service\VettingLocationService
         arguments:

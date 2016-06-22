@@ -111,7 +111,7 @@ institution_listing:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 institution_shows_ra_locations:
-    path: /shows-personal-ra-locations/{institution}
+    path: /shows-ra-locations/{institution}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionWithRaLocations:showsRaLocations }
     methods: [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

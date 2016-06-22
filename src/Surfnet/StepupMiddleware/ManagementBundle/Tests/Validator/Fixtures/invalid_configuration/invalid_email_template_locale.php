@@ -42,6 +42,6 @@ return [
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
             'vetted'            => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
-        'institutions_with_personal_ra_details' => ['institution.test'],
+        'institutions_with_ra_locations' => ['institution.test'],
     ]
 ];

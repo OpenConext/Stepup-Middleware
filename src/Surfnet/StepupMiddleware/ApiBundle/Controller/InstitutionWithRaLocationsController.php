@@ -19,27 +19,27 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-final class InstitutionWithPersonalRaDetailsController extends Controller
+final class InstitutionWithRaLocationsController extends Controller
 {
-    public function hasPersonalRaDetailsAction(Request $request, Institution $institution)
+    public function showsRaLocationsAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $personalRaDetailsEnabled = $this->getService()->institutionHasPersonalRaDetails($institution);
+        $institutionShowsRaLocations = $this->getService()->institutionShowsRaLocations($institution);
 
-        return new JsonResponse($personalRaDetailsEnabled);
+        return new JsonResponse($institutionShowsRaLocations);
     }
 
     /**
-     * @return InstitutionWithPersonalRaDetailsService
+     * @return InstitutionWithRaLocationsService
      */
     private function getService()
     {
-        return $this->container->get('surfnet_stepup_middleware_api.service.institution_with_personal_ra_details');
+        return $this->container->get('surfnet_stepup_middleware_api.service.institution_with_ra_locations');
     }
 }

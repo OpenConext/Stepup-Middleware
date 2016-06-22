@@ -44,21 +44,21 @@ class VettingLocationServiceTest extends TestCase
      * @group api-bundle
      * @group vetting
      */
-    public function vetting_locations_can_be_determined_for_institution_with_personal_ra_details()
+    public function vetting_locations_can_be_determined_for_institution_with_ra_locations()
     {
         $expectedRaName                = 'RA';
-        $expectedRaLocation            = 'Personal location';
+        $expectedRaLocation            = 'An RA location';
         $expectedRaContactInformation  = 'RA contact information';
         $expectedRaaName               = 'RAA';
-        $expectedRaaLocation           = 'Another personal location';
+        $expectedRaaLocation           = 'An RA location';
         $expectedRaaContactInformation = 'RAA contact information';
 
         $institutionValue         = 'institution.test';
         $configurationInstitution = new ConfigurationInstitution($institutionValue);
         $identityInstitution      = new IdentityInstitution($institutionValue);
 
-        $institutionsWithPersonalRaDetailsService = m::mock(
-            'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService'
+        $institutionsWithRaLocationsService = m::mock(
+            'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService'
         );
         $raLocationsService                       = m::mock(
             'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService'
@@ -67,8 +67,8 @@ class VettingLocationServiceTest extends TestCase
             '\Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService'
         );
 
-        $institutionsWithPersonalRaDetailsService
-            ->shouldReceive('institutionHasPersonalRaDetails')
+        $institutionsWithRaLocationsService
+            ->shouldReceive('institutionShowsRaLocations')
             ->with(
                 m::on(
                     function (ConfigurationInstitution $actualInstitution) use ($configurationInstitution) {
@@ -76,7 +76,7 @@ class VettingLocationServiceTest extends TestCase
                     }
                 )
             )
-            ->andReturn(true);
+            ->andReturn(false);
 
         $raListingService
             ->shouldReceive('listRegistrationAuthoritiesFor')
@@ -120,7 +120,7 @@ class VettingLocationServiceTest extends TestCase
         ];
 
         $vettingLocationService = new VettingLocationService(
-            $institutionsWithPersonalRaDetailsService,
+            $institutionsWithRaLocationsService,
             $raLocationsService,
             $raListingService
         );
@@ -135,7 +135,7 @@ class VettingLocationServiceTest extends TestCase
      * @group api-bundle
      * @group vetting
      */
-    public function vetting_locations_can_be_determined_for_institution_with_ra_locations()
+    public function vetting_locations_can_be_determined_for_institution_with_personal_ra_details()
     {
         $expectedRaName                = 'RA Service Desk';
         $expectedRaLocation            = 'On site';
@@ -147,8 +147,8 @@ class VettingLocationServiceTest extends TestCase
         $institutionValue         = 'institution.test';
         $configurationInstitution = new ConfigurationInstitution($institutionValue);
 
-        $institutionsWithPersonalRaDetailsService = m::mock(
-            'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService'
+        $institutionsWithRaLocationsService = m::mock(
+            'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService'
         );
         $raLocationsService                       = m::mock(
             'Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService'
@@ -157,8 +157,8 @@ class VettingLocationServiceTest extends TestCase
             '\Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService'
         );
 
-        $institutionsWithPersonalRaDetailsService
-            ->shouldReceive('institutionHasPersonalRaDetails')
+        $institutionsWithRaLocationsService
+            ->shouldReceive('institutionShowsRaLocations')
             ->with(
                 m::on(
                     function (ConfigurationInstitution $actualInstitution) use ($configurationInstitution) {
@@ -166,7 +166,7 @@ class VettingLocationServiceTest extends TestCase
                     }
                 )
             )
-            ->andReturn(false);
+            ->andReturn(true);
 
         $raLocationsService
             ->shouldReceive('listRaLocationsFor')
@@ -202,7 +202,7 @@ class VettingLocationServiceTest extends TestCase
         ];
 
         $vettingLocationService = new VettingLocationService(
-            $institutionsWithPersonalRaDetailsService,
+            $institutionsWithRaLocationsService,
             $raLocationsService,
             $raListingService
         );

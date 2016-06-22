@@ -15,10 +15,10 @@ services:
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
 
-    surfnet_stepup_middleware_api.repository.institution_with_personal_ra_details:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository
+    surfnet_stepup_middleware_api.repository.institution_with_ra_locations:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithRaLocationsRepository
         factory: [@doctrine.orm.middleware_entity_manager, getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails ]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithRaLocations ]
 
     surfnet_stepup_middleware_api.repository.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
@@ -94,10 +94,10 @@ services:
         arguments:
             - @surfnet_stepup_middleware_api.repository.institution_listing
 
-    surfnet_stepup_middleware_api.service.institution_with_personal_ra_details:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService
+    surfnet_stepup_middleware_api.service.institution_with_ra_locations:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService
         arguments:
-            - @surfnet_stepup_middleware_api.repository.institution_with_personal_ra_details
+            - @surfnet_stepup_middleware_api.repository.institution_with_ra_locations
 
     surfnet_stepup_middleware_api.service.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService
@@ -185,6 +185,6 @@ services:
     surfnet_stepup_middleware_api.service.vetting_location:
         class: Surfnet\StepupMiddleware\ApiBundle\Service\VettingLocationService
         arguments:
-            - '@surfnet_stepup_middleware_api.service.institution_with_personal_ra_details'
+            - '@surfnet_stepup_middleware_api.service.institution_with_ra_locations'
             - '@surfnet_stepup_middleware_api.service.ra_location'
             - '@surfnet_stepup_middleware_api.service.ra_listing'

@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Service;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithPersonalRaDetailsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
@@ -32,9 +32,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 final class VettingLocationService implements VettingLocationServiceInterface
 {
     /**
-     * @var InstitutionWithPersonalRaDetailsService
+     * @var InstitutionWithRaLocationsService
      */
-    private $personalRaDetailsService;
+    private $institutionWithRaLocations;
 
     /**
      * @var RaLocationService
@@ -47,13 +47,13 @@ final class VettingLocationService implements VettingLocationServiceInterface
     private $raListingService;
 
     public function __construct(
-        InstitutionWithPersonalRaDetailsService $personalRaDetailsService,
+        InstitutionWithRaLocationsService $institutionWithRaLocationsService,
         RaLocationService $raLocationService,
         RaListingService $raListingService
     ) {
-        $this->personalRaDetailsService = $personalRaDetailsService;
-        $this->raLocationService        = $raLocationService;
-        $this->raListingService         = $raListingService;
+        $this->institutionWithRaLocations = $institutionWithRaLocationsService;
+        $this->raLocationService          = $raLocationService;
+        $this->raListingService           = $raListingService;
     }
 
     /**
@@ -64,30 +64,30 @@ final class VettingLocationService implements VettingLocationServiceInterface
     {
         $configurationInstitution = new ConfigurationInstitution($institution->getInstitution());
 
-        if ($this->personalRaDetailsService->institutionHasPersonalRaDetails($configurationInstitution)) {
-            $identityInstitution = new IdentityInstitution($institution->getInstitution());
-
+        if ($this->institutionWithRaLocations->institutionShowsRaLocations($configurationInstitution)) {
             return array_map(
-                function (RegistrationAuthorityCredentials $credentials) {
+                function (RaLocation $raLocation) {
                     return new VettingLocation(
-                        $credentials->getCommonName()->getCommonName(),
-                        $credentials->getLocation()->getLocation(),
-                        $credentials->getContactInformation()->getContactInformation()
+                        $raLocation->name->getRaLocationName(),
+                        $raLocation->location->getLocation(),
+                        $raLocation->contactInformation->getContactInformation()
                     );
                 },
-                $this->raListingService->listRegistrationAuthoritiesFor($identityInstitution)
+                $this->raLocationService->listRaLocationsFor($configurationInstitution)
             );
         }
 
+        $identityInstitution = new IdentityInstitution($institution->getInstitution());
+
         return array_map(
-            function (RaLocation $raLocation) {
+            function (RegistrationAuthorityCredentials $credentials) {
                 return new VettingLocation(
-                    $raLocation->name->getRaLocationName(),
-                    $raLocation->location->getLocation(),
-                    $raLocation->contactInformation->getContactInformation()
+                    $credentials->getCommonName()->getCommonName(),
+                    $credentials->getLocation()->getLocation(),
+                    $credentials->getContactInformation()->getContactInformation()
                 );
             },
-            $this->raLocationService->listRaLocationsFor($configurationInstitution)
+            $this->raListingService->listRegistrationAuthoritiesFor($identityInstitution)
         );
     }
 }

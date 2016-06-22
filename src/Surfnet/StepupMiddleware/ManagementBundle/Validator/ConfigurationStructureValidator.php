@@ -81,7 +81,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
-        $acceptedProperties = ['gateway', 'sraa', 'email_templates', 'institutions_with_personal_ra_details'];
+        $acceptedProperties = ['gateway', 'sraa', 'email_templates', 'institutions_with_ra_locations'];
         StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
@@ -92,9 +92,9 @@ class ConfigurationStructureValidator extends ConstraintValidator
         $this->validateGatewayConfiguration($configuration, 'gateway');
         $this->validateSraaConfiguration($configuration, 'sraa');
         $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
-        $this->validateInstitutionsWithPersonalRaDetailsConfiguration(
+        $this->validateInstitutionsWithRaLocationsConfiguration(
             $configuration,
-            'institutions_with_personal_ra_details'
+            'institutions_with_ra_locations'
         );
     }
 
@@ -133,7 +133,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);
     }
 
-    private function validateInstitutionsWithPersonalRaDetailsConfiguration($configuration, $propertyPath)
+    private function validateInstitutionsWithRaLocationsConfiguration($configuration, $propertyPath)
     {
         Assert::isArray(
             $configuration[$propertyPath],

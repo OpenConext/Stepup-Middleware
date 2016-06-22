@@ -52,7 +52,8 @@ Each of these keys will be described in detail in a section below. The minimum s
     "gateway": {
         "identity_providers": [],
         "service_providers": []
-    }
+    },
+    "institutions_with_personal_ra_details": []
 }
 ```
 
@@ -133,7 +134,8 @@ As a full example:
                 "blacklisted_encryption_algorithms": []
             }
         ]
-    }
+    },
+    "institutions_with_personal_ra_details": []
 }
 ```
 

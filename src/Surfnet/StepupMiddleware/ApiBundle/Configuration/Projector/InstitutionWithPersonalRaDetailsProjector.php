@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionsWithPersonalRaDetailsUpdatedEvent;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithPersonalRaDetails;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithPersonalRaDetailsRepository;
 
@@ -39,7 +40,7 @@ final class InstitutionWithPersonalRaDetailsProjector extends Projector
         InstitutionsWithPersonalRaDetailsUpdatedEvent $event
     ) {
         foreach ($event->institutionsWithPersonalRaDetails as $institution) {
-            $this->repository->addIfNotExists(InstitutionWithPersonalRaDetails::createFrom($institution));
+            $this->repository->addIfNotExists(InstitutionWithPersonalRaDetails::createFrom(new Institution($institution)));
         }
     }
 }

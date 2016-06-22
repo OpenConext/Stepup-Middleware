@@ -30,9 +30,9 @@ final class InstitutionWithRaLocationsController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $personalRaDetailsEnabled = $this->getService()->institutionShowsRaLocations($institution);
+        $institutionShowsRaLocations = $this->getService()->institutionShowsRaLocations($institution);
 
-        return new JsonResponse($personalRaDetailsEnabled);
+        return new JsonResponse($institutionShowsRaLocations);
     }
 
     /**

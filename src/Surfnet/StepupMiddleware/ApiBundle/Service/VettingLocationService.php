@@ -34,7 +34,7 @@ final class VettingLocationService implements VettingLocationServiceInterface
     /**
      * @var InstitutionWithRaLocationsService
      */
-    private $personalRaDetailsService;
+    private $institutionWithRaLocations;
 
     /**
      * @var RaLocationService
@@ -47,13 +47,13 @@ final class VettingLocationService implements VettingLocationServiceInterface
     private $raListingService;
 
     public function __construct(
-        InstitutionWithRaLocationsService $personalRaDetailsService,
+        InstitutionWithRaLocationsService $institutionWithRaLocationsService,
         RaLocationService $raLocationService,
         RaListingService $raListingService
     ) {
-        $this->personalRaDetailsService = $personalRaDetailsService;
-        $this->raLocationService        = $raLocationService;
-        $this->raListingService         = $raListingService;
+        $this->institutionWithRaLocations = $institutionWithRaLocationsService;
+        $this->raLocationService          = $raLocationService;
+        $this->raListingService           = $raListingService;
     }
 
     /**
@@ -64,7 +64,7 @@ final class VettingLocationService implements VettingLocationServiceInterface
     {
         $configurationInstitution = new ConfigurationInstitution($institution->getInstitution());
 
-        if ($this->personalRaDetailsService->institutionShowsRaLocations($configurationInstitution)) {
+        if ($this->institutionWithRaLocations->institutionShowsRaLocations($configurationInstitution)) {
             return array_map(
                 function (RaLocation $raLocation) {
                     return new VettingLocation(

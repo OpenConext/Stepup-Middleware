@@ -19,17 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
-use RuntimeException;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
-use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
-use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationProjector extends Projector
 {

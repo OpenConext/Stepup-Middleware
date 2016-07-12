@@ -71,11 +71,16 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
 
         try {
+           /** @var InstitutionConfiguration $institutionConfiguration */
             $institutionConfiguration = $this->repository->load(
                 $institutionConfigurationId->getInstitutionConfigurationId()
             );
         } catch (AggregateNotFoundException $exception) {
-            $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+            throw new InstitutionConfigurationNotFoundException(sprintf(
+                'Cannot add RA location "%s": its InstitutionConfiguration with id "%s" not found',
+                $command->raLocationId,
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            ));
         }
 
         $institutionConfiguration->addRaLocation(

@@ -132,41 +132,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_ra_location_is_added_to_a_newly_created_an_institution_configuration_is_created_when_there_is_none()
-    {
-        $command                     = new AddRaLocationCommand();
-        $command->raLocationId       = self::uuid();
-        $command->institution        = 'An institution';
-        $command->raLocationName     = 'An RA location name';
-        $command->location           = 'A location';
-        $command->contactInformation = 'Some contact information';
-
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        $this->scenario
-            ->withAggregateId($institutionConfigurationId)
-            ->when($command)
-            ->then([
-                new NewInstitutionConfigurationCreatedEvent(
-                    $institutionConfigurationId,
-                    $institution
-                ),
-                new RaLocationAddedEvent(
-                    $institutionConfigurationId,
-                    $institution,
-                    new RaLocationId($command->raLocationId),
-                    new RaLocationName($command->raLocationName),
-                    new Location($command->location),
-                    new ContactInformation($command->contactInformation)
-                )
-            ]);
-    }
-
-    /**
-     * @test
-     * @group command-handler
-     */
     public function the_same_ra_location_cannot_be_added_twice()
     {
         $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'already present');

@@ -23,7 +23,6 @@ use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventHandling\EventListenerInterface;
 use Exception;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\AlreadyFlushingException;
 
 class BufferedEventBus implements EventBusInterface
 {
@@ -62,7 +61,11 @@ class BufferedEventBus implements EventBusInterface
     public function flush()
     {
         if ($this->isFlushing) {
-            throw new AlreadyFlushingException('Cannot flush BufferedEventBus when it is still flushing');
+            // If already flushing, we're in a nested pipeline. This means that an event that is currently being
+            // handled, triggered a command. This command caused events, which are collected in the buffer.
+            // These events may only be flushed when all current events have been handled.
+            // Therefore, we return here and check if there are events in the buffer after handling all current events.
+            return;
         }
 
         $this->isFlushing = true;
@@ -86,7 +89,11 @@ class BufferedEventBus implements EventBusInterface
         }
 
         $this->isFlushing = false;
-
         unset($buffer);
+
+        // if during the handling of events new events have been queued, we need to flush them
+        if (!empty($this->buffer)) {
+            $this->flush();
+        }
     }
 }

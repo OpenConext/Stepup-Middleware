@@ -37,12 +37,60 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 {
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_institution_configuration_is_created_when_there_is_none_for_a_given_institution()
+    {
+        $command                     = new CreateInstitutionConfigurationCommand();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->when($command)
+            ->then([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_institution_configuration_is_not_created_when_there_already_is_one_for_a_given_institution()
+    {
+        $command                     = new CreateInstitutionConfigurationCommand();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                ),
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
     /**
      * @test
      * @group command-handler

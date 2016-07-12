@@ -30,6 +30,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException;
 
@@ -46,6 +47,22 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
+    }
+
+    public function handleCreateInstitutionConfigurationCommand(CreateInstitutionConfigurationCommand $command)
+    {
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        try {
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
+            $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        }
+
+        $this->repository->save($institutionConfiguration);
     }
 
     public function handleAddRaLocationCommand(AddRaLocationCommand $command)

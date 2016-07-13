@@ -22,7 +22,7 @@ use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 
-final class ConfiguredInstitutionRepository extends EntityRepository
+class ConfiguredInstitutionRepository extends EntityRepository
 {
     /**
      * @param ConfiguredInstitution $configuredInstitution

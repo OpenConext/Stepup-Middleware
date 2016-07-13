@@ -26,9 +26,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
 {
     /**
-     * @var integer
+     * @var bool
      */
-    private $callCount = 0;
+    private $firstEventHandled = false;
 
     /**
      * @var BufferedEventBus
@@ -62,9 +62,9 @@ class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListen
     {
         $this->recordedEvents[] = $domainMessage;
 
-        if ($this->callCount === 0) {
+        if (!$this->firstEventHandled) {
             $this->eventBus->publish($this->toPublish);
-            $this->callCount = 1;
+            $this->firstEventHandled = true;
         }
     }
 

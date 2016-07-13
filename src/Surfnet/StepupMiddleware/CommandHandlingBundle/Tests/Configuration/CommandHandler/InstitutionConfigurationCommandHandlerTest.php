@@ -71,8 +71,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_institution_configuration_is_not_created_when_there_already_is_one_for_a_given_institution()
+    public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution()
     {
+        $this->setExpectedException('Broadway\EventStore\EventStoreException', 'already committed');
+
         $command                     = new CreateInstitutionConfigurationCommand();
         $command->institution        = 'An institution';
 
@@ -87,8 +89,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution
                 ),
             ])
-            ->when($command)
-            ->then([]);
+            ->when($command);
     }
 
     /**

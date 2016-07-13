@@ -53,14 +53,7 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     {
         $institution                = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        try {
-            $institutionConfiguration = $this->repository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
-            );
-        } catch (AggregateNotFoundException $exception) {
-            $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
-        }
+        $institutionConfiguration   = InstitutionConfiguration::create($institutionConfigurationId, $institution);
 
         $this->repository->save($institutionConfiguration);
     }

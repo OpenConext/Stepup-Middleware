@@ -96,8 +96,6 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $secondEventInCurrentBuffer = $this->createDummyDomainMessage('Second event in current buffer');
         $eventCausedByFirstEvent = $this->createDummyDomainMessage('Event caused by first event in current buffer');
 
-        $expectedEventSequence = [$firstEventInCurrentBuffer, $secondEventInCurrentBuffer, $eventCausedByFirstEvent];
-
         $listener = new RecordEventsAndPublishToBusOnFirstCallEventListener(
             $bus,
             new DomainEventStream([$eventCausedByFirstEvent])
@@ -107,6 +105,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $bus->publish(new DomainEventStream([$firstEventInCurrentBuffer, $secondEventInCurrentBuffer]));
         $bus->flush();
 
+        $expectedEventSequence = [$firstEventInCurrentBuffer, $secondEventInCurrentBuffer, $eventCausedByFirstEvent];
         $actualEventSequence = $listener->getRecordedEvents();
 
         $this->assertEquals($expectedEventSequence, $actualEventSequence);

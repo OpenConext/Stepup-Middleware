@@ -245,10 +245,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_changed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException',
-            'not found'
-        );
+        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
 
         $command                     = new ChangeRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -367,10 +364,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException',
-            'not found'
-        );
+        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
 
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();

@@ -33,7 +33,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_buffers_events()
     {
-        $event = $this->createDummyDomainMessage();
+        $event = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->never()
             ->getMock();
@@ -51,7 +51,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_flushes_events()
     {
-        $event = $this->createDummyDomainMessage();
+        $event = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -71,7 +71,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
     {
-        $event    = $this->createDummyDomainMessage();
+        $event    = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -92,12 +92,9 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     {
         $bus = new BufferedEventBus();
 
-        $firstEventInCurrentBuffer = $this->createDummyDomainMessage(null, 'First event in current buffer');
-        $eventCausedByFirstEvent = $this->createDummyDomainMessage(
-            null,
-            'Event caused by first event in current buffer'
-        );
-        $secondEventInCurrentBuffer = $this->createDummyDomainMessage(null, 'Second event in current buffer');
+        $firstEventInCurrentBuffer = $this->createDummyDomainMessage('First event in current buffer');
+        $secondEventInCurrentBuffer = $this->createDummyDomainMessage('Second event in current buffer');
+        $eventCausedByFirstEvent = $this->createDummyDomainMessage('Event caused by first event in current buffer');
 
         $expectedEventSequence = [$firstEventInCurrentBuffer, $secondEventInCurrentBuffer, $eventCausedByFirstEvent];
 
@@ -116,13 +113,12 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $id
-     * @param null $payload
+     * @param mixed $payload
      * @return DomainMessage
      */
-    private function createDummyDomainMessage($id = '1', $payload = null)
+    private function createDummyDomainMessage($payload)
     {
-        return new DomainMessage($id, 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
+        return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
     }
 }
 

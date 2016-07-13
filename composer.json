@@ -12,7 +12,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4|^7",
+        "php": "^5.6|^7.0",
         "ext-gmp": "*",
         "symfony/symfony": "~2.7.0",
         "doctrine/dbal": "~2.5",
@@ -36,13 +36,13 @@
         "jms/translation-bundle": "~1.1",
         "jms/di-extra-bundle": "~1.5",
         "jms/aop-bundle": "~1.0",
-        "guzzlehttp/guzzle": "^4"
+        "guzzlehttp/guzzle": "^4",
+        "rhumsaa/uuid": "^2.8"
     },
     "require-dev": {
         "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*",
         "moontoast/math": "~1.1",
-        "rhumsaa/uuid": "~2.8",
         "mockery/mockery": "~0.9",
         "liip/functional-test-bundle": "~1.2",
         "doctrine/data-fixtures": "~1.1"

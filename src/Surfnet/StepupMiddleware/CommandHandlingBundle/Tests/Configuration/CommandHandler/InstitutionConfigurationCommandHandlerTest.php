@@ -37,12 +37,61 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 {
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_institution_configuration_is_created_when_there_is_none_for_a_given_institution()
+    {
+        $command                     = new CreateInstitutionConfigurationCommand();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->when($command)
+            ->then([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution()
+    {
+        $this->setExpectedException('Broadway\EventStore\EventStoreException', 'already committed');
+
+        $command                     = new CreateInstitutionConfigurationCommand();
+        $command->institution        = 'An institution';
+
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution
+                ),
+            ])
+            ->when($command);
+    }
+
     /**
      * @test
      * @group command-handler
@@ -69,41 +118,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new RaLocationAddedEvent(
-                    $institutionConfigurationId,
-                    $institution,
-                    new RaLocationId($command->raLocationId),
-                    new RaLocationName($command->raLocationName),
-                    new Location($command->location),
-                    new ContactInformation($command->contactInformation)
-                )
-            ]);
-    }
-
-    /**
-     * @test
-     * @group command-handler
-     */
-    public function an_ra_location_is_added_to_a_newly_created_an_institution_configuration_is_created_when_there_is_none()
-    {
-        $command                     = new AddRaLocationCommand();
-        $command->raLocationId       = self::uuid();
-        $command->institution        = 'An institution';
-        $command->raLocationName     = 'An RA location name';
-        $command->location           = 'A location';
-        $command->contactInformation = 'Some contact information';
-
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
-        $this->scenario
-            ->withAggregateId($institutionConfigurationId)
-            ->when($command)
-            ->then([
-                new NewInstitutionConfigurationCreatedEvent(
-                    $institutionConfigurationId,
-                    $institution
-                ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
                     $institution,
@@ -231,10 +245,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_changed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException',
-            'not found'
-        );
+        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
 
         $command                     = new ChangeRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -353,10 +364,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InstitutionConfigurationNotFoundException',
-            'not found'
-        );
+        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
 
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();

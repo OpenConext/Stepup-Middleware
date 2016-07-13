@@ -16,8 +16,17 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
-class InstitutionConfigurationNotFoundException extends RuntimeException
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+
+class CreateInstitutionConfigurationCommand extends AbstractCommand
 {
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $institution;
 }

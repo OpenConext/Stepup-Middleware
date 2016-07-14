@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\EventListener;
 
-use Broadway\Domain\DomainMessage;
-use Broadway\EventHandling\EventListenerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -29,7 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstit
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
-final class WhitelistEventListener implements EventListenerInterface
+final class WhitelistEventListener extends EventListener
 {
     /**
      * @var ConfiguredInstitutionRepository
@@ -45,23 +43,6 @@ final class WhitelistEventListener implements EventListenerInterface
     {
         $this->configuredInstitutionRepository = $configuredInstitutionRepository;
         $this->pipeline                        = $pipeline;
-    }
-
-    /**
-     * @param DomainMessage $domainMessage
-     */
-    public function handle(DomainMessage $domainMessage)
-    {
-        $event  = $domainMessage->getPayload();
-
-        $classParts = explode('\\', get_class($event));
-        $method = 'apply' . end($classParts);
-
-        if (!method_exists($this, $method)) {
-            return;
-        }
-
-        $this->$method($event, $domainMessage);
     }
 
     public function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)

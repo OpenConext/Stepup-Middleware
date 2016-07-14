@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\EventListener;
 
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
+use Surfnet\Stepup\Configuration\Api\InstitutionConfigurationCreationService;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -28,59 +29,52 @@ use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\EventListener\WhitelistEventListener;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
 class WhitelistEventListenerTest extends TestCase
 {
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions()
+    public function institution_configurations_are_created_when_a_whitelist_was_created_containing_non_configured_institutions()
     {
-        $firstInstitution = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitutionName  = 'First institution';
+        $secondInstitutionName = 'Second institution';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(new InstitutionCollection([
-            new Institution($firstInstitution),
-            new Institution($secondInstitution),
+            new Institution($firstInstitutionName),
+            new Institution($secondInstitutionName),
         ]));
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
         $repositoryMock->shouldReceive('hasConfigurationFor')
             ->andReturn(false);
 
-        $firstExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $firstExpectedCommand->institution = new ConfigurationInstitution($firstInstitution);
+        $firstExpectedInstitution = new ConfigurationInstitution($firstInstitutionName);
+        $secondExpectedInstitution = new ConfigurationInstitution($secondInstitutionName);
 
-        $secondExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $secondExpectedCommand->institution = new ConfigurationInstitution($secondInstitution);
-
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $firstActualCommand) use ($firstExpectedCommand) {
-                $this->assertEquals($firstExpectedCommand->institution, $firstActualCommand->institution);
-            });
-        $pipelineMock->shouldReceive('process')
+            ->andReturn(Mockery::mustBe($firstExpectedInstitution));
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $secondActualCommand) use ($secondExpectedCommand) {
-                $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($secondExpectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyWhitelistCreatedEvent($whitelistCreatedEvent);
     }
 
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function no_create_institution_configuration_commands_are_processed_for_an_already_configured_institution_when_a_whitelist_was_created()
+    public function no_institution_configuration_is_created_for_an_already_configured_institution_when_a_whitelist_was_created()
     {
         $alreadyPresentInstitution = 'Already present';
-        $newInstitution = 'New';
+        $newInstitution            = 'New';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(new InstitutionCollection([
             new Institution($alreadyPresentInstitution),
@@ -95,17 +89,14 @@ class WhitelistEventListenerTest extends TestCase
             ->once()
             ->andReturn(false);
 
-        $expectedCommand              = new CreateInstitutionConfigurationCommand;
-        $expectedCommand->institution = new ConfigurationInstitution($newInstitution);
+        $expectedInstitution = new ConfigurationInstitution($newInstitution);
 
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
-                $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($expectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyWhitelistCreatedEvent($whitelistCreatedEvent);
     }
 
@@ -113,50 +104,44 @@ class WhitelistEventListenerTest extends TestCase
      * @test
      * @group event-listener
      */
-    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_replaced_containing_non_configured_institutions()
+    public function institution_configurations_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions()
     {
-        $firstInstitution = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitutionName  = 'First institution';
+        $secondInstitutionName = 'Second institution';
 
         $whitelistReplacedEvent = new WhitelistReplacedEvent(new InstitutionCollection([
-            new Institution($firstInstitution),
-            new Institution($secondInstitution),
+            new Institution($firstInstitutionName),
+            new Institution($secondInstitutionName),
         ]));
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
         $repositoryMock->shouldReceive('hasConfigurationFor')
             ->andReturn(false);
 
-        $firstExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $firstExpectedCommand->institution = new ConfigurationInstitution($firstInstitution);
+        $firstExpectedInstitution  = new ConfigurationInstitution($firstInstitutionName);
+        $secondExpectedInstitution = new ConfigurationInstitution($secondInstitutionName);
 
-        $secondExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $secondExpectedCommand->institution = new ConfigurationInstitution($secondInstitution);
-
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $firstActualCommand) use ($firstExpectedCommand) {
-                $this->assertEquals($firstExpectedCommand->institution, $firstActualCommand->institution);
-            });
-        $pipelineMock->shouldReceive('process')
+            ->andReturn(Mockery::mustBe($firstExpectedInstitution));
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $secondActualCommand) use ($secondExpectedCommand) {
-                $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($secondExpectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyWhitelistReplacedEvent($whitelistReplacedEvent);
     }
 
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function no_create_institution_configuration_commands_are_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced()
+    public function no_institution_configuration_is_created_for_an_already_configured_institution_when_a_whitelist_was_replaced()
     {
         $alreadyPresentInstitution = 'Already present';
-        $newInstitution = 'New';
+        $newInstitution            = 'New';
 
         $whitelistCreatedEvent = new WhitelistReplacedEvent(new InstitutionCollection([
             new Institution($alreadyPresentInstitution),
@@ -171,68 +156,61 @@ class WhitelistEventListenerTest extends TestCase
             ->once()
             ->andReturn(false);
 
-        $expectedCommand              = new CreateInstitutionConfigurationCommand;
-        $expectedCommand->institution = new ConfigurationInstitution($newInstitution);
+        $expectedInstitution = new ConfigurationInstitution($newInstitution);
 
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
-                $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($expectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyWhitelistReplacedEvent($whitelistCreatedEvent);
     }
 
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_processed_when_non_configured_institutions_are_added_to_the_whitelist()
+    public function institution_configurations_are_created_when_non_configured_institutions_are_added_to_the_whitelist()
     {
-        $firstInstitution = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitutionName  = 'First institution';
+        $secondInstitutionName = 'Second institution';
 
         $institutionsAddedToWhitelistEvent = new InstitutionsAddedToWhitelistEvent(new InstitutionCollection([
-            new Institution($firstInstitution),
-            new Institution($secondInstitution),
+            new Institution($firstInstitutionName),
+            new Institution($secondInstitutionName),
         ]));
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
         $repositoryMock->shouldReceive('hasConfigurationFor')
             ->andReturn(false);
 
-        $firstExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $firstExpectedCommand->institution = new ConfigurationInstitution($firstInstitution);
+        $firstExpectedInstitution = new ConfigurationInstitution($firstInstitutionName);
+        $secondExpectedInstitution = new ConfigurationInstitution($secondInstitutionName);
 
-        $secondExpectedCommand              = new CreateInstitutionConfigurationCommand;
-        $secondExpectedCommand->institution = new ConfigurationInstitution($secondInstitution);
-
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $firstActualCommand) use ($firstExpectedCommand) {
-                $this->assertEquals($firstExpectedCommand->institution, $firstActualCommand->institution);
-            });
-        $pipelineMock->shouldReceive('process')
-            ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $secondActualCommand) use ($secondExpectedCommand) {
-                $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($firstExpectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
+            ->once()
+            ->andReturn(Mockery::mustBe($secondExpectedInstitution));
+
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
     }
 
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function no_create_institution_configuration_commands_are_processed_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist()
+    public function no_institution_configuration_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist()
     {
         $alreadyPresentInstitution = 'Already present';
-        $newInstitution = 'New';
+        $newInstitution            = 'New';
 
         $whitelistCreatedEvent = new InstitutionsAddedToWhitelistEvent(new InstitutionCollection([
             new Institution($alreadyPresentInstitution),
@@ -247,17 +225,14 @@ class WhitelistEventListenerTest extends TestCase
             ->once()
             ->andReturn(false);
 
-        $expectedCommand              = new CreateInstitutionConfigurationCommand;
-        $expectedCommand->institution = new ConfigurationInstitution($newInstitution);
+        $expectedInstitution = new ConfigurationInstitution($newInstitution);
 
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
-                $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
-            });
+            ->andReturn(Mockery::mustBe($expectedInstitution));
 
-        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
+        $whitelistEventListener = new WhitelistEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $whitelistEventListener->applyInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);
     }
 }

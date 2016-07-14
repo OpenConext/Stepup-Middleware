@@ -18,14 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\EventListener;
 
-use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Configuration\Api\InstitutionConfigurationCreationService;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
 final class WhitelistEventListener extends EventListener
 {
@@ -35,14 +33,16 @@ final class WhitelistEventListener extends EventListener
     private $configuredInstitutionRepository;
 
     /**
-     * @var Pipeline
+     * @var InstitutionConfigurationCreationService
      */
-    private $pipeline;
+    private $institutionConfigurationCreationService;
 
-    public function __construct(ConfiguredInstitutionRepository $configuredInstitutionRepository, Pipeline $pipeline)
-    {
+    public function __construct(
+        ConfiguredInstitutionRepository $configuredInstitutionRepository,
+        InstitutionConfigurationCreationService $institutionConfigurationCreationService
+    ) {
         $this->configuredInstitutionRepository = $configuredInstitutionRepository;
-        $this->pipeline                        = $pipeline;
+        $this->institutionConfigurationCreationService = $institutionConfigurationCreationService;
     }
 
     public function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
@@ -54,7 +54,7 @@ final class WhitelistEventListener extends EventListener
                 continue;
             }
 
-            $this->createInstitutionConfigurationFor($institution);
+            $this->institutionConfigurationCreationService->createConfigurationFor($institution);
         }
     }
 
@@ -67,7 +67,7 @@ final class WhitelistEventListener extends EventListener
                 continue;
             }
 
-            $this->createInstitutionConfigurationFor($institution);
+            $this->institutionConfigurationCreationService->createConfigurationFor($institution);
         }
     }
 
@@ -80,19 +80,7 @@ final class WhitelistEventListener extends EventListener
                 continue;
             }
 
-            $this->createInstitutionConfigurationFor($institution);
+            $this->institutionConfigurationCreationService->createConfigurationFor($institution);
         }
-    }
-
-    /**
-     * @param Institution $institution
-     */
-    private function createInstitutionConfigurationFor(Institution $institution)
-    {
-        $command              = new CreateInstitutionConfigurationCommand();
-        $command->UUID        = (string) Uuid::uuid4();
-        $command->institution = $institution;
-
-        $this->pipeline->process($command);
     }
 }

@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\EventListener;
 
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
+use Surfnet\Stepup\Configuration\Api\InstitutionConfigurationCreationService;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -30,16 +31,15 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\EventListener\IdentityEventListener;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
 class IdentityEventListenerTest extends TestCase
 {
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution()
+    public function an_institution_configuration_command_is_created_when_an_identity_was_created_with_a_non_configured_institution()
     {
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
@@ -54,27 +54,25 @@ class IdentityEventListenerTest extends TestCase
         $repositoryMock->shouldReceive('hasConfigurationFor')
             ->andReturn(false);
 
-        $expectedCommand              = new CreateInstitutionConfigurationCommand;
-        $expectedCommand->institution = new ConfigurationInstitution(
+        $expectedInstitution = new ConfigurationInstitution(
             $identityCreatedEvent->identityInstitution->getInstitution()
         );
 
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldReceive('process')
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldReceive('createConfigurationFor')
             ->once()
-            ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
-                $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
-            });
+            ->with(Mockery::mustBe($expectedInstitution));
 
-        $identityEventListener = new IdentityEventListener($repositoryMock, $pipelineMock);
+        $identityEventListener = new IdentityEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $identityEventListener->applyIdentityCreatedEvent($identityCreatedEvent);
     }
 
     /**
      * @test
      * @group event-listener
+     * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_an_already_configured_institution()
+    public function no_institution_configuration_command_is_created_when_an_identity_was_created_with_an_already_configured_institution()
     {
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
@@ -89,15 +87,10 @@ class IdentityEventListenerTest extends TestCase
         $repositoryMock->shouldReceive('hasConfigurationFor')
             ->andReturn(true);
 
-        $expectedCommand              = new CreateInstitutionConfigurationCommand;
-        $expectedCommand->institution = new ConfigurationInstitution(
-            $identityCreatedEvent->identityInstitution->getInstitution()
-        );
+        $institutionConfigurationCreationServiceMock = Mockery::mock(InstitutionConfigurationCreationService::class);
+        $institutionConfigurationCreationServiceMock->shouldNotReceive('createConfigurationFor');
 
-        $pipelineMock = Mockery::mock(Pipeline::class);
-        $pipelineMock->shouldNotReceive('process');
-
-        $identityEventListener = new IdentityEventListener($repositoryMock, $pipelineMock);
+        $identityEventListener = new IdentityEventListener($repositoryMock, $institutionConfigurationCreationServiceMock);
         $identityEventListener->applyIdentityCreatedEvent($identityCreatedEvent);
     }
 }

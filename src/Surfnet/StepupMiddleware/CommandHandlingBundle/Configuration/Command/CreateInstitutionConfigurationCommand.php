@@ -19,8 +19,9 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 
-class CreateInstitutionConfigurationCommand extends AbstractCommand
+class CreateInstitutionConfigurationCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
      * @Assert\NotBlank()

@@ -69,7 +69,6 @@ class WhitelistEventListenerTest extends TestCase
                 $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
             });
 
-
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyWhitelistCreatedEvent($whitelistCreatedEvent);
     }
@@ -105,7 +104,6 @@ class WhitelistEventListenerTest extends TestCase
             ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
                 $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
             });
-
 
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyWhitelistCreatedEvent($whitelistCreatedEvent);
@@ -147,7 +145,6 @@ class WhitelistEventListenerTest extends TestCase
                 $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
             });
 
-
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyWhitelistReplacedEvent($whitelistReplacedEvent);
     }
@@ -183,7 +180,6 @@ class WhitelistEventListenerTest extends TestCase
             ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
                 $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
             });
-
 
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyWhitelistReplacedEvent($whitelistCreatedEvent);
@@ -225,7 +221,6 @@ class WhitelistEventListenerTest extends TestCase
                 $this->assertEquals($secondExpectedCommand->institution, $secondActualCommand->institution);
             });
 
-
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
     }
@@ -261,7 +256,6 @@ class WhitelistEventListenerTest extends TestCase
             ->andReturnUsing(function(CreateInstitutionConfigurationCommand $actualCommand) use ($expectedCommand) {
                 $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
             });
-
 
         $whitelistEventListener = new WhitelistEventListener($repositoryMock, $pipelineMock);
         $whitelistEventListener->applyInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);

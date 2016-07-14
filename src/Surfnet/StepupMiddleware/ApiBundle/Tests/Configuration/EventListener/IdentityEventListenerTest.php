@@ -66,7 +66,6 @@ class IdentityEventListenerTest extends TestCase
                 $this->assertEquals($expectedCommand->institution, $actualCommand->institution);
             });
 
-
         $identityEventListener = new IdentityEventListener($repositoryMock, $pipelineMock);
         $identityEventListener->applyIdentityCreatedEvent($identityCreatedEvent);
     }

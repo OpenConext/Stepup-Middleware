@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Dispatcher;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Dispatcher;
 
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfigurationCreationService;

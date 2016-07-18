@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Dispatcher;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\Dispatcher;
 
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Dispatcher\CreateInstitutionConfigurationCommandDispatcher;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Dispatcher\CreateInstitutionConfigurationCommandDispatcher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 

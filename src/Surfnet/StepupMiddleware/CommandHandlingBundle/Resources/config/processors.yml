@@ -24,6 +24,6 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender
         arguments:
-            - ''
-            - ''
+            - '' # Name is set in bundle extension
+            - '' # Email is set in bundle extension
 

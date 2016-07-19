@@ -14,9 +14,9 @@ services:
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@templating"
-            - '' # Verification URL set in bundle extension
+            - "" # Verification URL set in bundle extension
             - "@surfnet_stepup_middleware_management.service.email_template"
-            - '' # Fallback locale
+            - "" # Fallback locale
             - "@logger"
             - true
 
@@ -24,8 +24,8 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender
         arguments:
-            - '' # Name is set in bundle extension
-            - '' # Email is set in bundle extension
+            - "" # Name is set in bundle extension
+            - "" # Email is set in bundle extension
 
     surfnet_stepup_middleware_command_handling.processor.institution_configuration:
         public: false

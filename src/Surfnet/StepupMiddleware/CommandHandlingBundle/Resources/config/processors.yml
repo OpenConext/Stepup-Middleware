@@ -27,3 +27,9 @@ services:
             - '' # Name is set in bundle extension
             - '' # Email is set in bundle extension
 
+    surfnet_stepup_middleware_command_handling.processor.institution_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor\InstitutionConfigurationProcessor
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.configured_institution"
+            - "@pipeline"

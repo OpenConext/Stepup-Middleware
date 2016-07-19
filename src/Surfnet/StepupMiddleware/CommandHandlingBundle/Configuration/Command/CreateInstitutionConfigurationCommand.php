@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateInstitutionConfigurationCommand extends AbstractCommand
 {

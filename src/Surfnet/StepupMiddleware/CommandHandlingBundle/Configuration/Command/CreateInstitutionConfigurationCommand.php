@@ -20,9 +20,10 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateInstitutionConfigurationCommand extends AbstractCommand implements ManagementExecutable
+class CreateInstitutionConfigurationCommand extends AbstractCommand implements ManagementExecutable, SelfServiceExecutable
 {
     /**
      * @Assert\NotBlank()

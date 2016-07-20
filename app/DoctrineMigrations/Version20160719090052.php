@@ -5,9 +5,9 @@ namespace Surfnet\StepupMiddleware\Migrations;
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
@@ -34,20 +34,20 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
      */
     public function up(Schema $schema)
     {
-        $whitelistEntries = array_map(
+        $whitelistEntryInstitutions = array_map(
             function (WhitelistEntry $whitelistEntry) {
                 return $whitelistEntry->institution;
             },
             $this->getWhitelistEntryRepository()->findAll()
         );
-        $identities = array_map(
-            function (Identity $identity) {
-                return $identity->institution;
+        $institutionListingInstitutions = array_map(
+            function (InstitutionListing $institutionListing) {
+                return $institutionListing->institution;
             },
-            $this->getIdentityRepository()->findAll()
+            $this->getInstitutionListingRepository()->findAll()
         );
 
-        $allInstitutions = array_unique(array_merge($whitelistEntries, $identities));
+        $allInstitutions = array_unique(array_merge($whitelistEntryInstitutions, $institutionListingInstitutions));
 
         $pipeline = $this->getPipeline();
 
@@ -77,11 +77,11 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
     }
 
     /**
-     * @return IdentityRepository
+     * @return InstitutionListingRepository
      */
-    private function getIdentityRepository()
+    private function getInstitutionListingRepository()
     {
-        return $this->container->get('surfnet_stepup_middleware_api.repository.identity');
+        return $this->container->get('surfnet_stepup_middleware_api.repository.institution_listing');
     }
 
     /**

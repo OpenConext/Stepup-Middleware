@@ -44,7 +44,7 @@ class EventStreamReplayer
     private $connectionHelper;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $middlewareTables = [
         'unverified_second_factor',
@@ -63,7 +63,7 @@ class EventStreamReplayer
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
     private $gatewayTables = [
         'second_factor',

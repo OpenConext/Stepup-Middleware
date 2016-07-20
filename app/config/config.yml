@@ -44,12 +44,12 @@ services:
         arguments:
             - [ if, else, elseif, for ] # Allowed tags
             - [ escape ] # Allowed filters
-            - # Allowed methods
-                Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
-                    - getCommonName
-                    - getLocation
-                    - getContactInformation
-            - [] # Allowed properties
+            - [] # Allowed methods
+            - # Allowed properties
+                Surfnet\StepupMiddleware\CommandHandlingBundle\Dto\VettingLocation:
+                    - name
+                    - location
+                    - contactInformation
             - [] # Allowed functions
 
 # Doctrine Configuration

@@ -50,6 +50,8 @@ class EventStreamReplayer
         'unverified_second_factor',
         'verified_second_factor',
         'vetted_second_factor',
+        'configured_institution',
+        'ra_location',
         'ra_second_factor',
         'identity',
         'sraa',

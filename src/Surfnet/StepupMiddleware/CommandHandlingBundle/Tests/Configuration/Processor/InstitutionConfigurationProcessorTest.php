@@ -36,6 +36,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstit
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor\InstitutionConfigurationProcessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\HasConfigurationInstitutionMatcher;
 
 class InstitutionConfigurationProcessorTest extends TestCase
 {
@@ -66,9 +67,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing((function (CreateInstitutionConfigurationCommand $command) use ($expectedInstitution) {
-                $this->assertEquals($expectedInstitution, $command->institution);
-            }));
+            ->with(new HasConfigurationInstitutionMatcher($expectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyIdentityCreatedEvent($identityCreatedEvent);
@@ -130,14 +129,10 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($firstExpectedInstitution) {
-                $this->assertEquals($firstExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($firstExpectedInstitution));
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($secondExpectedInstitution) {
-                $this->assertEquals($secondExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($secondExpectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyWhitelistCreatedEvent($whitelistCreatedEvent);
@@ -175,9 +170,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($expectedInstitution) {
-                $this->assertEquals($expectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($expectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyWhitelistCreatedEvent($whitelistCreatedEvent);
@@ -212,14 +205,10 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($firstExpectedInstitution) {
-                $this->assertEquals($firstExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($firstExpectedInstitution));
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($secondExpectedInstitution) {
-                $this->assertEquals($secondExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($secondExpectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyWhitelistReplacedEvent($whitelistReplacedEvent);
@@ -257,9 +246,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($expectedInstitution) {
-                $this->assertEquals($expectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($expectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyWhitelistReplacedEvent($whitelistCreatedEvent);
@@ -294,14 +281,10 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($firstExpectedInstitution) {
-                $this->assertEquals($firstExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($firstExpectedInstitution));
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($secondExpectedInstitution) {
-                $this->assertEquals($secondExpectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($secondExpectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
@@ -339,9 +322,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
         $pipelineMock = Mockery::mock(Pipeline::class);
         $pipelineMock->shouldReceive('process')
             ->once()
-            ->andReturnUsing(function (CreateInstitutionConfigurationCommand $command) use ($expectedInstitution) {
-                $this->assertEquals($expectedInstitution, $command->institution);
-            });
+            ->with(new HasConfigurationInstitutionMatcher($expectedInstitution));
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor($repositoryMock, $pipelineMock);
         $institutionConfigurationProcessor->applyInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);

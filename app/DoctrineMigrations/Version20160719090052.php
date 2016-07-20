@@ -66,6 +66,7 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
     public function down(Schema $schema)
     {
         // No down-migration needed as the structure has not changed.
+        $this->write('No down migration executed: this was a data only migration.');
     }
 
     /**

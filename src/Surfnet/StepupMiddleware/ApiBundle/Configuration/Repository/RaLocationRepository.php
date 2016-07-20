@@ -93,6 +93,6 @@ class RaLocationRepository extends EntityRepository
             ->where('rl.institution = :institution')
             ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
     }
 }

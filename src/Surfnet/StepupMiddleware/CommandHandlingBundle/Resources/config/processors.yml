@@ -2,28 +2,34 @@ services:
     surfnet_stepup_middleware_command_handling.processor.email:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\EmailProcessor
         arguments:
-            - @surfnet_stepup_middleware_command_handling.service.second_factor_mail
-            - @surfnet_stepup_middleware_api.service.vetting_location
+            - "@surfnet_stepup_middleware_command_handling.service.second_factor_mail"
+            - "@surfnet_stepup_middleware_api.service.vetting_location"
         tags: [{ name: event_bus.event_listener }]
 
     surfnet_stepup_middleware_command_handling.service.second_factor_mail:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService
         arguments:
-            - @mailer
-            - @surfnet_stepup_middleware_command_handling.email_sender
-            - @translator
-            - @templating
-            - '' # Verification URL set in bundle extension
-            - @surfnet_stepup_middleware_management.service.email_template
-            - '' # Fallback locale
-            - @logger
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@templating"
+            - "" # Verification URL set in bundle extension
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+            - "@logger"
             - true
 
     surfnet_stepup_middleware_command_handling.email_sender:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender
         arguments:
-            - ''
-            - ''
+            - "" # Name is set in bundle extension
+            - "" # Email is set in bundle extension
 
+    surfnet_stepup_middleware_command_handling.processor.institution_configuration:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor\InstitutionConfigurationProcessor
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.configured_institution"
+            - "@pipeline"

@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class AddRaLocationCommand extends AbstractCommand
+class AddRaLocationCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * @Assert\NotBlank()

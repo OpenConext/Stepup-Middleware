@@ -13,6 +13,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateI
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -34,6 +36,18 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
      */
     public function up(Schema $schema)
     {
+        $tokenStorage = $this->getTokenStorage();
+
+        // Authenticate as management user, so commands requiring the management role can be sent
+        $tokenStorage->setToken(
+            new UsernamePasswordToken(
+                'management',
+                $this->container->getParameter('management_password'),
+                'in_memory',
+                ['ROLE_MANAGEMENT']
+            )
+        );
+
         $whitelistEntryInstitutions = array_map(
             function (WhitelistEntry $whitelistEntry) {
                 return $whitelistEntry->institution;
@@ -58,6 +72,8 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
 
             $pipeline->process($createInstitutionConfigurationCommand);
         }
+
+        $tokenStorage->setToken(null);
     }
 
     /**
@@ -91,5 +107,13 @@ class Version20160719090052 extends AbstractMigration implements ContainerAwareI
     private function getPipeline()
     {
         return $this->container->get('pipeline');
+    }
+
+    /**
+     * @return TokenStorage
+     */
+    private function getTokenStorage()
+    {
+        return $this->container->get('security.token_storage');
     }
 }

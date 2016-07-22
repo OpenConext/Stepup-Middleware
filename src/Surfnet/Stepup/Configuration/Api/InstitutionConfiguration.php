@@ -33,16 +33,9 @@ interface InstitutionConfiguration extends AggregateRoot
     /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
-     * @param UseRaLocationsOption $useRaLocationsOption
-     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return InstitutionConfiguration
      */
-    public static function create(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption
-    );
+    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution);
 
     /**
      * @param UseRaLocationsOption $useRaLocationsOption
@@ -51,10 +44,12 @@ interface InstitutionConfiguration extends AggregateRoot
     public function changeUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption);
 
     /**
-     * @param ShowRaaContactInformationOption $raaContactInformationOption
+     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return void
      */
-    public function changeShowRaaContactInformationOption(ShowRaaContactInformationOption $raaContactInformationOption);
+    public function changeShowRaaContactInformationOption(
+        ShowRaaContactInformationOption $showRaaContactInformationOption
+    );
 
     /**
      * @param RaLocationId $raLocationId

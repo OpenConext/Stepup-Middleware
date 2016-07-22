@@ -74,23 +74,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
-     * @param UseRaLocationsOption $useRaLocationsOption
-     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return InstitutionConfiguration
      */
-    public static function create(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption = null,
-        ShowRaaContactInformationOption $showRaaContactInformationOption = null
-    ) {
-        if ($useRaLocationsOption === null) {
-            $useRaLocationsOption = new UseRaLocationsOption(false);
-        }
-
-        if ($showRaaContactInformationOption === null) {
-            $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-        }
+    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
+    {
+        $useRaLocationsOption            = new UseRaLocationsOption(false);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(

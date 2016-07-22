@@ -38,7 +38,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
-        $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
 
@@ -46,9 +46,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->when(function () use ($institution, $institutionConfigurationId, $showRaaContactInformationOption) {
                 return InstitutionConfiguration::create(
                     $institutionConfigurationId,
-                    $institution,
-                    null,
-                    $showRaaContactInformationOption
+                    $institution
                 );
             })->then([
                 new NewInstitutionConfigurationCreatedEvent(
@@ -68,7 +66,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
     {
         $institution                = new Institution('Institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-        $useRaLocationsOption       = new UseRaLocationsOption(true);
+        $useRaLocationsOption       = new UseRaLocationsOption(false);
 
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -76,8 +74,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             ->when(function () use ($institution, $institutionConfigurationId, $useRaLocationsOption) {
                 return InstitutionConfiguration::create(
                     $institutionConfigurationId,
-                    $institution,
-                    $useRaLocationsOption
+                    $institution
                 );
             })->then([
                 new NewInstitutionConfigurationCreatedEvent(

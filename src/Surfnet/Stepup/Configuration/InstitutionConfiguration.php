@@ -98,7 +98,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     {
     }
 
-    public function changeUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption)
+    public function configureUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption)
     {
         if ($this->useRaLocationOption->equals($useRaLocationsOption)) {
             return;
@@ -113,7 +113,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    public function changeShowRaaContactInformationOption(ShowRaaContactInformationOption $showRaaContactInformationOption)
+    public function configureShowRaaContactInformationOption(ShowRaaContactInformationOption $showRaaContactInformationOption)
     {
         if ($this->showRaaContactInformationOption->equals($showRaaContactInformationOption)) {
             return;

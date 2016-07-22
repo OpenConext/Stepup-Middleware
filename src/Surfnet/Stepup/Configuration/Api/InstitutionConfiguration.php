@@ -41,13 +41,13 @@ interface InstitutionConfiguration extends AggregateRoot
      * @param UseRaLocationsOption $useRaLocationsOption
      * @return void
      */
-    public function changeUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption);
+    public function configureUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption);
 
     /**
      * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return void
      */
-    public function changeShowRaaContactInformationOption(
+    public function configureShowRaaContactInformationOption(
         ShowRaaContactInformationOption $showRaaContactInformationOption
     );
 

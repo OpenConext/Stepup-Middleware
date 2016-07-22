@@ -110,7 +110,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($theSameUseRaLocationsOption) {
-                $institutionConfiguration->changeUseRaLocationsOption($theSameUseRaLocationsOption);
+                $institutionConfiguration->configureUseRaLocationsOption($theSameUseRaLocationsOption);
             })
             ->then([]);
     }
@@ -139,7 +139,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($sameShowRaaContactInformationOption) {
-                $institutionConfiguration->changeShowRaaContactInformationOption($sameShowRaaContactInformationOption);
+                $institutionConfiguration->configureShowRaaContactInformationOption($sameShowRaaContactInformationOption);
             })
             ->then([]);
     }
@@ -168,7 +168,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedUseRaLocationsOption) {
-                $institutionConfiguration->changeUseRaLocationsOption($expectedUseRaLocationsOption);
+                $institutionConfiguration->configureUseRaLocationsOption($expectedUseRaLocationsOption);
             })
             ->then([
                 new UseRaLocationsOptionChangedEvent(
@@ -203,7 +203,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedShowRaaContactInformationOption) {
-                $institutionConfiguration->changeShowRaaContactInformationOption($expectedShowRaaContactInformationOption);
+                $institutionConfiguration->configureShowRaaContactInformationOption($expectedShowRaaContactInformationOption);
             })
             ->then([
                 new ShowRaaContactInformationOptionChangedEvent(

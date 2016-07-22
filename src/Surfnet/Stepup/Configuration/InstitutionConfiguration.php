@@ -34,6 +34,8 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Exception\DomainException;
 
 /**
@@ -58,15 +60,44 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $raLocations;
 
     /**
+     * @var UseRaLocationsOption
+     */
+    private $useRaLocationOption;
+
+    /**
+     * @var ShowRaaContactInformationOption
+     */
+    private $showRaaContactInformationOption;
+
+    /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
+     * @param UseRaLocationsOption $useRaLocationsOption
+     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return InstitutionConfiguration
      */
-    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
-    {
+    public static function create(
+        InstitutionConfigurationId $institutionConfigurationId,
+        Institution $institution,
+        UseRaLocationsOption $useRaLocationsOption = null,
+        ShowRaaContactInformationOption $showRaaContactInformationOption = null
+    ) {
+        if ($useRaLocationsOption === null) {
+            $useRaLocationsOption = new UseRaLocationsOption(false);
+        }
+
+        if ($showRaaContactInformationOption === null) {
+            $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        }
+
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(
-            new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
+            new NewInstitutionConfigurationCreatedEvent(
+                $institutionConfigurationId,
+                $institution,
+                $useRaLocationsOption,
+                $showRaaContactInformationOption
+            )
         );
 
         return $institutionConfiguration;
@@ -175,9 +206,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        $this->institutionConfigurationId = $event->institutionConfigurationId;
-        $this->institution = $event->institution;
-        $this->raLocations = new RaLocationList([]);
+        $this->institutionConfigurationId      = $event->institutionConfigurationId;
+        $this->institution                     = $event->institution;
+        $this->useRaLocationOption             = $event->useRaLocationsOption;
+        $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
+        $this->raLocations                     = new RaLocationList([]);
     }
 
     protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event)

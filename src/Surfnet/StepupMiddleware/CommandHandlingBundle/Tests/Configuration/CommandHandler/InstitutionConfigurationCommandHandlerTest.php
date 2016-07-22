@@ -35,6 +35,8 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
@@ -50,11 +52,13 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_institution_configuration_is_created_when_there_is_none_for_a_given_institution()
     {
-        $command                     = new CreateInstitutionConfigurationCommand();
-        $command->institution        = 'An institution';
+        $command              = new CreateInstitutionConfigurationCommand();
+        $command->institution = 'An institution';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                            = new Institution($command->institution);
+        $institutionConfigurationId             = InstitutionConfigurationId::from($institution);
+        $defaultUseRaLocationsOption            = new UseRaLocationsOption(false);
+        $defaultShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -62,7 +66,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $defaultUseRaLocationsOption,
+                    $defaultShowRaaContactInformationOption
                 )
             ]);
     }
@@ -78,15 +84,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command                     = new CreateInstitutionConfigurationCommand();
         $command->institution        = 'An institution';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
             ])
             ->when($command);
@@ -105,15 +115,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
             ])
             ->when($command)
@@ -144,15 +158,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -181,15 +199,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -225,15 +247,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 )
             ])
             ->when($command);
@@ -254,15 +280,20 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
 
         $this->scenario
             ->withAggregateId(self::uuid())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 )
             ])
             ->when($command);
@@ -284,15 +315,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -329,15 +364,20 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'A location';
         $command->contactInformation = 'Some contact information';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -370,15 +410,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->raLocationId       = self::uuid();
         $command->institution        = 'An institution';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId(self::uuid())
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 )
             ])
             ->when($command);
@@ -396,15 +440,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->raLocationId       = self::uuid();
         $command->institution        = 'An institution';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 )
             ])
             ->when($command);
@@ -424,12 +472,19 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institution                = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
 
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
             ->given([
                 new NewInstitutionConfigurationCreatedEvent(
                     $institutionConfigurationId,
-                    $institution
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,

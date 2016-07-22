@@ -25,15 +25,24 @@ use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
 interface InstitutionConfiguration extends AggregateRoot
 {
     /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
+     * @param UseRaLocationsOption $useRaLocationsOption
+     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @return InstitutionConfiguration
      */
-    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution);
+    public static function create(
+        InstitutionConfigurationId $institutionConfigurationId,
+        Institution $institution,
+        UseRaLocationsOption $useRaLocationsOption,
+        ShowRaaContactInformationOption $showRaaContactInformationOption
+    );
 
     /**
      * @param RaLocationId $raLocationId

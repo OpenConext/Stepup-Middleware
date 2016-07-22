@@ -118,7 +118,12 @@ class EventSerializationAndDeserializationTest extends TestCase
 
             // InstitutionConfiguration
             'NewInstitutionConfigurationCreatedEvent' => [
-                new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new UseRaLocationsOption(true),
+                    new ShowRaaContactInformationOption(true)
+                )
             ],
             'UseRaLocationsOptionChangedEvent' => [
                 new UseRaLocationsOptionChangedEvent(

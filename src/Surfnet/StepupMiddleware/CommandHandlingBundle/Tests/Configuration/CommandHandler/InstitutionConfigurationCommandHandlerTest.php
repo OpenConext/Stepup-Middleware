@@ -469,9 +469,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->raLocationId       = self::uuid();
         $command->institution        = 'An institution';
 
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-
         $institution                     = new Institution($command->institution);
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);

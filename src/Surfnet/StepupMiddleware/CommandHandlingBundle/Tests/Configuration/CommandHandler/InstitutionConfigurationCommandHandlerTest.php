@@ -86,7 +86,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $institution                     = new Institution($command->institution);
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
-        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario

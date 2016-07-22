@@ -27,6 +27,8 @@ use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -105,6 +107,36 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     final public function __construct()
     {
+    }
+
+    public function changeUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption)
+    {
+        if ($this->useRaLocationOption->equals($useRaLocationsOption)) {
+            return;
+        }
+
+        $this->apply(
+            new UseRaLocationsOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $useRaLocationsOption
+            )
+        );
+    }
+
+    public function changeShowRaaContactInformationOption(ShowRaaContactInformationOption $showRaaContactInformationOption)
+    {
+        if ($this->showRaaContactInformationOption->equals($showRaaContactInformationOption)) {
+            return;
+        }
+
+        $this->apply(
+            new ShowRaaContactInformationOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $showRaaContactInformationOption
+            )
+        );
     }
 
     /**
@@ -211,6 +243,17 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationOption             = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->raLocations                     = new RaLocationList([]);
+    }
+
+    protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
+    {
+        $this->useRaLocationOption = $event->useRaLocationsOption;
+    }
+
+    protected function applyShowRaaContactInformationOptionChangedEvent(
+        ShowRaaContactInformationOptionChangedEvent $event
+    ) {
+        $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
     }
 
     protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event)

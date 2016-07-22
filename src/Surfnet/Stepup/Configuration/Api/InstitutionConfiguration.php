@@ -45,6 +45,18 @@ interface InstitutionConfiguration extends AggregateRoot
     );
 
     /**
+     * @param UseRaLocationsOption $useRaLocationsOption
+     * @return void
+     */
+    public function changeUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption);
+
+    /**
+     * @param ShowRaaContactInformationOption $raaContactInformationOption
+     * @return void
+     */
+    public function changeShowRaaContactInformationOption(ShowRaaContactInformationOption $raaContactInformationOption);
+
+    /**
      * @param RaLocationId $raLocationId
      * @param RaLocationName $raLocationName
      * @param Location $location

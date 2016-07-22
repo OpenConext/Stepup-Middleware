@@ -22,9 +22,8 @@ use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
-class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
+final class ShowRaaContactInformationOptionChangedEvent implements SerializableInterface
 {
     /**
      * @var InstitutionConfigurationId
@@ -35,10 +34,6 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
      * @var Institution
      */
     public $institution;
-    /**
-     * @var UseRaLocationsOption
-     */
-    public $useRaLocationsOption;
 
     /**
      * @var ShowRaaContactInformationOption
@@ -48,12 +43,10 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
-        $this->useRaLocationsOption            = $useRaLocationsOption;
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
     }
 
@@ -62,7 +55,6 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new UseRaLocationsOption($data['use_ra_locations_option']),
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option'])
         );
     }
@@ -72,7 +64,6 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         return [
             'institution_configuration_id'        => $this->institutionConfigurationId->getInstitutionConfigurationId(),
             'institution'                         => $this->institution->getInstitution(),
-            'use_ra_locations_option'             => $this->useRaLocationsOption->isEnabled(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
         ];
     }

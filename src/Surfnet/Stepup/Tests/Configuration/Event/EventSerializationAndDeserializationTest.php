@@ -34,13 +34,17 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
 class EventSerializationAndDeserializationTest extends TestCase
 {
@@ -114,7 +118,26 @@ class EventSerializationAndDeserializationTest extends TestCase
 
             // InstitutionConfiguration
             'NewInstitutionConfigurationCreatedEvent' => [
-                new NewInstitutionConfigurationCreatedEvent($institutionConfigurationId, $institution)
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new UseRaLocationsOption(true),
+                    new ShowRaaContactInformationOption(true)
+                )
+            ],
+            'UseRaLocationsOptionChangedEvent' => [
+                new UseRaLocationsOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new UseRaLocationsOption(true)
+                )
+            ],
+            'ShowRaaContactInformationOptionChangedEvent' => [
+                new ShowRaaContactInformationOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new ShowRaaContactInformationOption(true)
+                )
             ],
             'RaLocationAddedEvent' => [
                 new RaLocationAddedEvent(

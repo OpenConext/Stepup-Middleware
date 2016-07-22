@@ -29,6 +29,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -41,6 +42,7 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureShowRaaContactInformationOptionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureUseRaLocationsOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
@@ -108,6 +110,31 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
+    public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(false);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $command                       = new ConfigureUseRaLocationsOptionCommand();
+        $command->institution          = $institution->getInstitution();
+        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
+
+        $this->scenario
+            ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                )
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
     /**
      * @test
      * @group command-handler
@@ -135,6 +162,43 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(false);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $differentUseRaLocationsOptionValue = true;
+
+        $command                       = new ConfigureUseRaLocationsOptionCommand();
+        $command->institution          = $institution->getInstitution();
+        $command->useRaLocationsOption = $differentUseRaLocationsOptionValue;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                )
+            ])
+            ->when($command)
+            ->then([
+                new UseRaLocationsOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new UseRaLocationsOption($differentUseRaLocationsOptionValue)
+                )
+            ]);
     }
 
     /**

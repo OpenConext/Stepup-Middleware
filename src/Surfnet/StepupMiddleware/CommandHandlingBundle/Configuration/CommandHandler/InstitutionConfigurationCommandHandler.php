@@ -27,8 +27,10 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
+use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureShowRaaContactInformationOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
@@ -52,6 +54,23 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $institution                = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
         $institutionConfiguration   = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+
+        $this->repository->save($institutionConfiguration);
+    }
+
+    public function handleConfigureShowRaaContactInformationOptionCommand(
+        ConfigureShowRaaContactInformationOptionCommand $command
+    ) {
+        $institution = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        $institutionConfiguration = $this->repository->load(
+            $institutionConfigurationId->getInstitutionConfigurationId()
+        );
+
+        $institutionConfiguration->configureShowRaaContactInformationOption(
+            new ShowRaaContactInformationOption($command->showRaaContactInformationOption)
+        );
 
         $this->repository->save($institutionConfiguration);
     }

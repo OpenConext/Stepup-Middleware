@@ -28,6 +28,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -39,6 +40,7 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureShowRaaContactInformationOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
@@ -100,6 +102,76 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 ),
             ])
             ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(false);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $command                                  = new ConfigureShowRaaContactInformationOptionCommand();
+        $command->institution                     = $institution->getInstitution();
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                )
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $differentShowRaaContactInformationOptionValue = false;
+
+        $command                                  = new ConfigureShowRaaContactInformationOptionCommand();
+        $command->institution                     = $institution->getInstitution();
+        $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                )
+            ])
+            ->when($command)
+            ->then([
+                new ShowRaaContactInformationOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new ShowRaaContactInformationOption($differentShowRaaContactInformationOptionValue)
+                )
+            ]);
     }
 
     /**

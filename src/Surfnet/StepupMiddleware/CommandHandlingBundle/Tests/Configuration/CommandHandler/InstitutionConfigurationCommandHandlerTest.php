@@ -41,6 +41,7 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureShowRaaContactInformationOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureUseRaLocationsOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
@@ -110,44 +111,16 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
+    public function institution_configuration_options_are_not_changed_if_their_given_value_is_not_different_from_their_current_value()
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
-        $command                       = new ConfigureUseRaLocationsOptionCommand();
-        $command->institution          = $institution->getInstitution();
-        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
-
-        $this->scenario
-            ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
-            ->given([
-                new NewInstitutionConfigurationCreatedEvent(
-                    $institutionConfigurationId,
-                    $institution,
-                    $useRaLocationsOption,
-                    $showRaaContactInformationOption
-                )
-            ])
-            ->when($command)
-            ->then([]);
-    }
-
-    /**
-     * @test
-     * @group command-handler
-     */
-    public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
-    {
-        $institution                     = new Institution('Institution');
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
-        $useRaLocationsOption            = new UseRaLocationsOption(false);
-        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-
-        $command                                  = new ConfigureShowRaaContactInformationOptionCommand();
+        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
+        $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
 
         $this->scenario
@@ -177,9 +150,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $differentUseRaLocationsOptionValue = true;
 
-        $command                       = new ConfigureUseRaLocationsOptionCommand();
-        $command->institution          = $institution->getInstitution();
-        $command->useRaLocationsOption = $differentUseRaLocationsOptionValue;
+        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
+        $command->institution                     = $institution->getInstitution();
+        $command->useRaLocationsOption            = $differentUseRaLocationsOptionValue;
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -214,9 +188,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $differentShowRaaContactInformationOptionValue = false;
 
-        $command                                  = new ConfigureShowRaaContactInformationOptionCommand();
+        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
+        $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)

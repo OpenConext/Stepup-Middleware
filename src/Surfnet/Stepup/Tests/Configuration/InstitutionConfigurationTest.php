@@ -97,7 +97,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalUseRaLocationsOption    = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
-        $theSameUseRaLocationsOption =$originalUseRaLocationsOption;
+        $theSameUseRaLocationsOption = $originalUseRaLocationsOption;
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())

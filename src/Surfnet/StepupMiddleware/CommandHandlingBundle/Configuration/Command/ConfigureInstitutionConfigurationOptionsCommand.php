@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 final class ConfigureInstitutionConfigurationOptionsCommand
 {
     /**

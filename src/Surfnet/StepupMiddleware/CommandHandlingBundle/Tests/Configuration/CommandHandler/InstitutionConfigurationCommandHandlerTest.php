@@ -41,7 +41,7 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureInstitutionConfigurationOptionsCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureShowRaaContactInformationOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureUseRaLocationsOptionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
@@ -118,7 +118,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
-        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
+        $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
@@ -150,7 +150,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $differentUseRaLocationsOptionValue = true;
 
-        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
+        $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $differentUseRaLocationsOptionValue;
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
@@ -188,7 +188,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $differentShowRaaContactInformationOptionValue = false;
 
-        $command                                  = new ConfigureInstitutionConfigurationOptionsCommand();
+        $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();

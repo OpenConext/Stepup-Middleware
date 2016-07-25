@@ -22,7 +22,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ConfigureInstitutionConfigurationOptionsCommand extends AbstractCommand implements ManagementExecutable
+final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
      * @Assert\NotBlank()

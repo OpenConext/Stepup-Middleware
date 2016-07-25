@@ -31,7 +31,7 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ConfigureInstitutionConfigurationOptionsCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
@@ -59,8 +59,8 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $this->repository->save($institutionConfiguration);
     }
 
-    public function handleConfigureInstitutionConfigurationOptionsCommand(
-        ConfigureInstitutionConfigurationOptionsCommand $command
+    public function handleReconfigureInstitutionConfigurationOptionsCommand(
+        ReconfigureInstitutionConfigurationOptionsCommand $command
     ) {
         $institution                = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);

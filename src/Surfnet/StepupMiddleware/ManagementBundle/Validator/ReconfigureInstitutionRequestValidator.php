@@ -137,7 +137,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         $this->configuredInstitutions = array_map(
             function (ConfiguredInstitution $configuredInstitution) {
-                return $configuredInstitution->institution;
+                return $configuredInstitution->institution->getInstitution();
             },
             $this->configuredInstitutionsService->getAll()
         );

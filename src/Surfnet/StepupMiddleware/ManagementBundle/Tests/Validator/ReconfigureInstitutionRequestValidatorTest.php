@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\ValidReconfigureInstitutionsRequest;
@@ -58,11 +59,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $expectedPropertyPath,
         $expectErrorMessageToContain
     ) {
-        $existingInstitution              = new ConfiguredInstitution;
-        $existingInstitution->institution = 'surfnet.nl';
-
-        $anotherExistingInstitution              = new ConfiguredInstitution;
-        $anotherExistingInstitution->institution = 'another-organisation.test';
+        $existingInstitution        = ConfiguredInstitution::createFrom(new Institution('surfnet.nl'));
+        $anotherExistingInstitution = ConfiguredInstitution::createFrom(new Institution('another-organisation.test'));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock
@@ -146,8 +144,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             ],
         ];
 
-        $existingInstitution = new ConfiguredInstitution;
-        $existingInstitution->institution = $institution;
+        $existingInstitution = ConfiguredInstitution::createFrom(new Institution($institution));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock

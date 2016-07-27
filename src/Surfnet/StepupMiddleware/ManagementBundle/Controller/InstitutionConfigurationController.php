@@ -35,6 +35,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Validator\ConstraintViolation;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class InstitutionConfigurationController extends Controller
 {
     public function reconfigureAction(Request $request)

@@ -112,7 +112,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function json_is_returned_from_the_configuration_api()
+    public function json_is_returned_from_the_institution_configuration_api()
     {
         $this->client->request(
             'POST',

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
+use Exception;
 use GuzzleHttp;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
@@ -27,6 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\ValidReconfigureInstitutionsRequest;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -47,10 +49,7 @@ final class InstitutionConfigurationController extends Controller
 
         $violations = $this->getValidator()->validate($configuration, new ValidReconfigureInstitutionsRequest());
         if ($violations->count() > 0) {
-            throw BadCommandRequestException::withViolations(
-                'Invalid reconfigure institutions request',
-                $violations
-            );
+            throw BadCommandRequestException::withViolations('Invalid reconfigure institutions request', $violations);
         }
 
         if (empty($configuration)) {
@@ -78,10 +77,7 @@ final class InstitutionConfigurationController extends Controller
             sprintf('Executing %s reconfigure institution configuration options commands', count($commands))
         );
 
-        $pipeline = $this->getPipeline();
-        foreach ($commands as $command) {
-            $this->handleCommand($pipeline, $command);
-        }
+        $this->handleCommands($commands);
 
         return new JsonResponse([
             'status'       => 'OK',
@@ -91,19 +87,34 @@ final class InstitutionConfigurationController extends Controller
     }
 
     /**
-     * @param Pipeline $pipeline
-     * @param Command $command
+     * @param Command[] $commands
+     * @throws Exception
      */
-    private function handleCommand(Pipeline $pipeline, Command $command)
+    private function handleCommands(array $commands)
     {
-        try {
-            $pipeline->process($command);
-        } catch (ForbiddenException $e) {
-            throw new AccessDeniedHttpException(
-                sprintf('Processing of command "%s" is forbidden for this client', $command),
-                $e
-            );
+        $pipeline         = $this->getPipeline();
+        $connectionHelper = $this->getConnectionHelper();
+
+        $connectionHelper->beginTransaction();
+
+        foreach ($commands as $command) {
+            try {
+                $pipeline->process($command);
+            } catch (ForbiddenException $e) {
+                $connectionHelper->rollBack();
+
+                throw new AccessDeniedHttpException(
+                    sprintf('Processing of command "%s" is forbidden for this client', $command),
+                    $e
+                );
+            } catch (Exception $exception) {
+                $connectionHelper->rollBack();
+
+                throw $exception;
+            }
         }
+
+        $connectionHelper->commit();
     }
 
     /**
@@ -128,5 +139,13 @@ final class InstitutionConfigurationController extends Controller
     private function getPipeline()
     {
         return $this->get('pipeline');
+    }
+
+    /**
+     * @return DBALConnectionHelper
+     */
+    private function getConnectionHelper()
+    {
+        return $this->get('surfnet_stepup_middleware_management.dbal_connection_helper');
     }
 }

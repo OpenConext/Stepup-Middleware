@@ -22,6 +22,7 @@ use DateTime;
 use GuzzleHttp;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
@@ -48,11 +49,10 @@ final class InstitutionConfigurationController extends Controller
 
         $violations = $this->getValidator()->validate($configuration, new ValidReconfigureInstitutionsRequest());
         if ($violations->count() > 0) {
-            $errors = array_map(function (ConstraintViolation $violation) {
-                return sprintf('%s: %s', $violation->getPropertyPath(), $violation->getMessage());
-            }, iterator_to_array($violations));
-
-            return new JsonResponse(['errors' => $errors], 400);
+            throw BadCommandRequestException::withViolations(
+                'Invalid reconfigure institutions request',
+                $violations
+            );
         }
 
         $commands = [];

@@ -53,6 +53,16 @@ final class InstitutionConfigurationController extends Controller
             );
         }
 
+        if (empty($configuration)) {
+            $this->getLogger()->notice(sprintf('No institutions to reconfigure: empty configuration received'));
+
+            return new JsonResponse([
+                'status'       => 'OK',
+                'processed_by' =>  $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
+                'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
+            ]);
+        }
+
         $commands = [];
         foreach ($configuration as $institution => $options) {
             $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
@@ -64,29 +74,25 @@ final class InstitutionConfigurationController extends Controller
             $commands[] = $command;
         }
 
-        if (empty($commands)) {
-            $this->getLogger()->notice('Institution configuration will not be reconfigured: no commands to execute.');
-        }
+        $this->getLogger()->notice(
+            sprintf('Executing %s reconfigure institution configuration options commands', count($commands))
+        );
 
         $pipeline = $this->getPipeline();
         foreach ($commands as $command) {
             $this->handleCommand($pipeline, $command);
         }
 
-        $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response   = new JsonResponse([
+        return new JsonResponse([
             'status'       => 'OK',
-            'processed_by' => $serverName,
+            'processed_by' =>  $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR'),
             'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
         ]);
-
-        return $response;
     }
 
     /**
      * @param Pipeline $pipeline
      * @param Command $command
-     * @return JsonResponse
      */
     private function handleCommand(Pipeline $pipeline, Command $command)
     {

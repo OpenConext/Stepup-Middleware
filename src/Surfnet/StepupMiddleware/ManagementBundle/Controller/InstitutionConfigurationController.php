@@ -111,7 +111,7 @@ final class InstitutionConfigurationController extends Controller
      */
     private function getValidator()
     {
-        return $this->container->get('validator');
+        return $this->get('validator');
     }
 
     /**

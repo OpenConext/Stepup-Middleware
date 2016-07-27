@@ -49,3 +49,10 @@ services:
     surfnet_stepup_middleware_management.service.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
         arguments: [ @surfnet_stepup_middleware_management.repository.email_template ]
+
+    surfnet_stepup_middleware_management.dbal_connection_helper:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper
+        arguments:
+            -
+                middleware: @doctrine.dbal.middleware_connection
+                gateway: @doctrine.dbal.gateway_connection

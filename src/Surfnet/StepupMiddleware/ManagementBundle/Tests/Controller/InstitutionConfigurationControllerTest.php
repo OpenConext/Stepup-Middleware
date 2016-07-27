@@ -38,7 +38,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         $this->loadFixtures([]);
 
         $this->client = static::createClient();
-        $this->password = 'management_password_test';
+        $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
     }
 
     /**

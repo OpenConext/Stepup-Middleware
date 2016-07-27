@@ -45,6 +45,29 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
+    public function requests_with_invalid_content_are_bad_requests()
+    {
+        $this->client->request(
+            'POST',
+            '/management/configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT'   => 'application/json',
+                'CONTENT_TYPE'  => 'application/json',
+                'PHP_AUTH_USER' => 'management',
+                'PHP_AUTH_PW'   => $this->password,
+            ],
+            json_encode([])
+        );
+
+        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @group management
+     */
     public function authorization_is_required()
     {
         $this->client->request(

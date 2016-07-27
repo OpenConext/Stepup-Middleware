@@ -23,6 +23,7 @@ use Exception;
 use GuzzleHttp;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
@@ -45,7 +46,7 @@ final class InstitutionConfigurationController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $configuration = GuzzleHttp\json_decode($request->getContent(), true);
+        $configuration = JsonHelper::decode($request->getContent());
 
         $violations = $this->getValidator()->validate($configuration, new ValidReconfigureInstitutionsRequest());
         if ($violations->count() > 0) {

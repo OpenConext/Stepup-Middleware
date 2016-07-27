@@ -22,6 +22,7 @@ use Assert\Assertion as Assert;
 use Assert\InvalidArgumentException as AssertionException;
 use GuzzleHttp;
 use InvalidArgumentException as CoreInvalidArgumentException;
+use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -74,7 +75,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
 
     private function decodeJson($rawValue)
     {
-        return GuzzleHttp\json_decode($rawValue, true);
+        return JsonHelper::decode($rawValue);
     }
 
     public function validateRoot($configuration)

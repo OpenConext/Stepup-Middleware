@@ -97,6 +97,8 @@ doctrine:
             stepup_configuration_institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType
             stepup_configuration_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationContactInformationType
             stepup_configuration_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType
+            stepup_use_ra_locations_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType
+            stepup_show_raa_contact_information_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

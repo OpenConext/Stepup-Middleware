@@ -83,3 +83,9 @@ services:
         arguments:
             - "@surfnet_stepup_middleware_api.repository.configured_institution"
         tags: [{ name: event_bus.event_listener }]
+
+    surfnet_stepup_middleware_api.projector.institution_configuration_options:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\InstitutionConfigurationOptionsProjector
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+        tags: [{ name: event_bus.event_listener }]

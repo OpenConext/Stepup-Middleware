@@ -1,3 +1,9 @@
+management_institution_configuration_show:
+    path:      /institution-configuration
+    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:InstitutionConfiguration:show }
+    methods:   [GET]
+    condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 management_configuration_update:
     path:     /configuration
     defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Configuration:update }

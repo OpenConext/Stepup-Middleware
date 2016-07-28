@@ -90,8 +90,9 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @group management
      *
      * @dataProvider invalidHttpMethodProvider
+     * @param $invalidHttpMethod
      */
-    public function only_post_requests_are_accepted($invalidHttpMethod)
+    public function only_post_and_get_requests_are_accepted($invalidHttpMethod)
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -106,6 +107,29 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         );
 
         $this->assertEquals('405', $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @group management
+     */
+    public function a_get_request_without_content_is_valid()
+    {
+        $this->client->request(
+            'GET',
+            '/management/institution-configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT'  => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
+                'PHP_AUTH_USER' => 'management',
+                'PHP_AUTH_PW'   => $this->password,
+            ],
+            json_encode([])
+        );
+
+        $this->assertEquals('200', $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -137,16 +161,14 @@ class InstitutionConfigurationControllerTest extends WebTestCase
     }
 
     /**
-     * Dataprovider for only_post_requests_are_accepted
+     * Dataprovider for only_post_and_get_requests_are_accepted
      */
     public function invalidHttpMethodProvider()
     {
         return [
-            'GET' => ['GET'],
-            'DELETE' => ['DELETE'],
-            'HEAD' => ['HEAD'],
-            'PUT' => ['PUT'],
-            'OPTIONS' => ['OPTIONS']
+            'DELETE'  => ['DELETE'],
+            'PUT'     => ['PUT'],
+            'OPTIONS' => ['OPTIONS'],
         ];
     }
 }

@@ -143,3 +143,11 @@ ra_location:
     requirements:
         raLocationId: ".+"
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+institution_configuration_options_for_institution:
+    path:    /institution-configuration-options/{institution}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionConfigurationOptions:getForInstitution }
+    methods:  [GET]
+    requirements:
+        institution: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

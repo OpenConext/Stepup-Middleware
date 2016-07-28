@@ -24,6 +24,8 @@ use GuzzleHttp;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
+use Surfnet\StepupMiddleware\ApiBundle\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
@@ -42,6 +44,23 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 final class InstitutionConfigurationController extends Controller
 {
+    public function showAction()
+    {
+        $response = array_map(
+            function (InstitutionConfigurationOptions $options) {
+                return [
+                    $options->institution->getInstitution() => [
+                        'use_ra_locations'             => $options->useRaLocationsOption->isEnabled(),
+                        'show_raa_contact_information' => $options->showRaaContactInformationOption->isEnabled(),
+                    ],
+                ];
+            },
+            $this->getInstitutionConfigurationOptionsService()->findAllInstitutionConfigurationOptions()
+        );
+
+        return new JsonResponse($response);
+    }
+
     public function reconfigureAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
@@ -116,6 +135,14 @@ final class InstitutionConfigurationController extends Controller
         }
 
         $connectionHelper->commit();
+    }
+
+    /**
+     * @return InstitutionConfigurationOptionsService
+     */
+    private function getInstitutionConfigurationOptionsService()
+    {
+        return $this->get('surfnet_stepup_middleware_api.service.institution_configuration_options');
     }
 
     /**

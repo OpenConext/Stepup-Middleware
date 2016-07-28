@@ -28,6 +28,13 @@ services:
         arguments:
             - '' # Default locale
 
+    surfnet_stepup_middleware_management.validator.reconfigure_institution_request:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator
+        arguments:
+            - "@surfnet_stepup_middleware_api.service.configured_institutions"
+        tags:
+            - { name: validator.constraint_validator, alias: reconfigure_institution_configuration_structure_validator }
+
     surfnet_stepup_middleware_management.projector.email_templates:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
         arguments:
@@ -42,3 +49,10 @@ services:
     surfnet_stepup_middleware_management.service.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
         arguments: [ @surfnet_stepup_middleware_management.repository.email_template ]
+
+    surfnet_stepup_middleware_management.dbal_connection_helper:
+        class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper
+        arguments:
+            -
+                middleware: @doctrine.dbal.middleware_connection
+                gateway: @doctrine.dbal.gateway_connection

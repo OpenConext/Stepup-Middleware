@@ -29,9 +29,9 @@ parameters:
     # - selfservice - user "ss"
     # - registration - user "ra"
     # - management - user "management"
-    selfservice_api_password: ~
-    registration_authority_api_password: ~
-    management_password: ~
+    selfservice_api_password: secret
+    registration_authority_api_password: secret
+    management_password: secret
 
     # Hostname for the graylog server. Protocol GELF UDP, Port 12200
     graylog_hostname: graylog.host.tld

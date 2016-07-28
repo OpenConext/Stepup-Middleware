@@ -48,4 +48,5 @@ services:
 
     surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\InvalidCommandExceptionListener
-        tags: [{ name: kernel.event_subscriber }]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }

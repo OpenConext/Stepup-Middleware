@@ -76,6 +76,11 @@ services:
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
 
     # Domain Services
+    surfnet_stepup_middleware_api.service.configured_institutions:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.configured_institution"
+
     surfnet_stepup_middleware_api.service.ra_location:
             class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService
             arguments:

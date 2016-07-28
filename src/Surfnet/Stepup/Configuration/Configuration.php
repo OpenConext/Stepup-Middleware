@@ -28,6 +28,7 @@ use Surfnet\Stepup\Configuration\Event\InstitutionsWithRaLocationsUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
+use Surfnet\Stepup\Helper\JsonHelper;
 
 class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
 {
@@ -51,7 +52,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
 
     public function update($configurationAsJson)
     {
-        $decodedConfiguration = GuzzleHttp\json_decode($configurationAsJson, true);
+        $decodedConfiguration = JsonHelper::decode($configurationAsJson);
 
         $this->apply(new ConfigurationUpdatedEvent(
             self::CONFIGURATION_ID,

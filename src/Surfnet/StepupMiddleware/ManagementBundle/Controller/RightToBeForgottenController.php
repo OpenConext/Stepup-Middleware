@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use GuzzleHttp;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -37,7 +38,7 @@ class RightToBeForgottenController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $payload = GuzzleHttp\json_decode($request->getContent(), true);
+        $payload = JsonHelper::decode($request->getContent());
 
         if (!isset($payload['name_id'])) {
             throw new BadRequestHttpException('Please specify a NameID in the property "name_id"');

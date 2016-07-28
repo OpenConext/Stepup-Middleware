@@ -32,7 +32,7 @@ final class ConfiguredInstitution
      * @ORM\Id
      * @ORM\Column(type="stepup_configuration_institution")
      *
-     * @var string
+     * @var Institution
      */
     public $institution;
 

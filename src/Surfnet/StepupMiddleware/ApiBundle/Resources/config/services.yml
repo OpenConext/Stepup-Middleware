@@ -81,6 +81,11 @@ services:
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
 
     # Domain Services
+    surfnet_stepup_middleware_api.service.institution_configuration_options:
+        class: Surfnet\StepupMiddleware\ApiBundle\Service\InstitutionConfigurationOptionsService
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+
     surfnet_stepup_middleware_api.service.configured_institutions:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService
         arguments:

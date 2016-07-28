@@ -40,16 +40,16 @@ final class InstitutionConfigurationOptions implements JsonSerializable
     public $institution;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="stepup_use_ra_locations_option")
      *
-     * @var bool
+     * @var UseRaLocationsOption
      */
     public $useRaLocationsOption;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="stepup_show_raa_contact_information_option")
      *
-     * @var bool
+     * @var ShowRaaContactInformationOption
      */
     public $showRaaContactInformationOption;
 
@@ -61,8 +61,8 @@ final class InstitutionConfigurationOptions implements JsonSerializable
         $options = new self;
 
         $options->institution                     = $institution;
-        $options->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
-        $options->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $options->useRaLocationsOption            = $useRaLocationsOption;
+        $options->showRaaContactInformationOption = $showRaaContactInformationOption;
 
         return $options;
     }

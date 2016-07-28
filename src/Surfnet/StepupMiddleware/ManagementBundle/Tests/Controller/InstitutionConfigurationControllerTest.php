@@ -45,10 +45,31 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required()
+    public function authorization_is_required_for_posting()
     {
         $this->client->request(
             'POST',
+            '/management/institution-configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT'   => 'application/json',
+                'CONTENT_TYPE'  => 'application/json',
+            ],
+            json_encode([])
+        );
+
+        $this->assertEquals('401', $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @group management
+     */
+    public function authorization_is_required_for_getting()
+    {
+        $this->client->request(
+            'GET',
             '/management/institution-configuration',
             [],
             [],

@@ -46,6 +46,8 @@ final class InstitutionConfigurationController extends Controller
 {
     public function showAction()
     {
+        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+
         $response = array_map(
             function (InstitutionConfigurationOptions $options) {
                 return [

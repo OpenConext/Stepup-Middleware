@@ -25,7 +25,7 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
- * Custom Type for the UseRaLocationOption Value Object
+ * Custom Type for the UseRaLocationsOption Value Object
  */
 class UseRaLocationsOptionType extends Type
 {
@@ -33,7 +33,7 @@ class UseRaLocationsOptionType extends Type
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBooleanTypeDeclarationSQL($fieldDeclaration);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)

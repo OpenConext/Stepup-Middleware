@@ -33,13 +33,8 @@ final class InstitutionConfigurationOptionsController extends Controller
             ->getInstitutionConfigurationOptionsService()
             ->findInstitutionConfigurationOptionsFor(new Institution($institution));
 
-        return new JsonResponse(
-            [
-                'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption->isEnabled(),
-                'show_raa_contact_information' => $institutionConfigurationOptions
-                    ->showRaaContactInformationOption->isEnabled(),
-            ]
-        );
+
+        return new JsonResponse($institutionConfigurationOptions);
     }
 
     /**

@@ -119,16 +119,4 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\UseRaLocationsOption', $output);
         $this->assertEquals(new UseRaLocationsOption($input), $output);
     }
-
-    /**
-     * @test
-     * @group doctrine
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
-     */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
-    {
-        $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
-
-        $configurationInstitution->convertToPHPValue('a non-boolean value', $this->platform);
-    }
 }

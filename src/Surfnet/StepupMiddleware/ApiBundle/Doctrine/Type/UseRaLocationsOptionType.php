@@ -61,13 +61,6 @@ class UseRaLocationsOptionType extends Type
             return $value;
         }
 
-        // Prevent a too lenient boolean conversion on non-postgresql platforms
-        if ($platform->getName() !== 'postgresql') {
-            if ($value !== 1 && $value !== 0 && $value !== '1' && $value !== '0' && !is_bool($value)) {
-                throw ConversionException::conversionFailed($value, $this->getName());
-            }
-        }
-
         try {
             $useRaLocationsOption = new UseRaLocationsOption($platform->convertFromBoolean($value));
         } catch (InvalidArgumentException $e) {

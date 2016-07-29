@@ -18,9 +18,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class UseRaLocationsOption
+final class UseRaLocationsOption implements JsonSerializable
 {
     /**
      * @var bool

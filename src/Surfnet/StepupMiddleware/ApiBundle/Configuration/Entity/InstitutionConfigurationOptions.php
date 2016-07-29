@@ -69,10 +69,12 @@ final class InstitutionConfigurationOptions implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return [
-            'institution' => $this->institution,
-            'use_ra_locations' => $this->useRaLocationsOption,
-            'show_raa_contact_information' => $this->showRaaContactInformationOption,
-        ];
+        return
+            [
+                $this->institution->getInstitution() => [
+                    'use_ra_locations'             => $this->useRaLocationsOption,
+                    'show_raa_contact_information' => $this->showRaaContactInformationOption,
+                ],
+            ];
     }
 }

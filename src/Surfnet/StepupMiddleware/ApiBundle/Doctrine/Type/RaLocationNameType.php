@@ -65,10 +65,9 @@ class RaLocationNameType extends Type
             $raLocationName = new RaLocationName($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
-            $doctrineExceptionMessage = ConversionException::conversionFailedFormat(
+            $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName(),
-                $platform->getDateTimeFormatString()
+                $this->getName()
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

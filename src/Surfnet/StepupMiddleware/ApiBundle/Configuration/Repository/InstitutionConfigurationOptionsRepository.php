@@ -38,7 +38,7 @@ final class InstitutionConfigurationOptionsRepository extends EntityRepository
             ->where('ico.institution = :institution')
             ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
-            ->getSingleResult();
+            ->getOneOrNullResult();
     }
 
     /**

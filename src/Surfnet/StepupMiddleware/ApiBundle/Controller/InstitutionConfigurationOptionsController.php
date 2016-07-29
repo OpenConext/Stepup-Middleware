@@ -19,10 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Service\InstitutionConfigurationOptionsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class InstitutionConfigurationOptionsController extends Controller
 {
@@ -35,9 +35,9 @@ final class InstitutionConfigurationOptionsController extends Controller
             ->findInstitutionConfigurationOptionsFor(new Institution($institution));
 
         if ($institutionConfigurationOptions === null) {
-            throw new BadApiRequestException([
+            throw new NotFoundHttpException(
                 sprintf('No institution configuration options found for institution "%s"', $institution)
-            ]);
+            );
         }
 
         return new JsonResponse($institutionConfigurationOptions);

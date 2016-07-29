@@ -48,19 +48,10 @@ final class InstitutionConfigurationController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $response = array_map(
-            function (InstitutionConfigurationOptions $options) {
-                return [
-                    $options->institution->getInstitution() => [
-                        'use_ra_locations'             => $options->useRaLocationsOption->isEnabled(),
-                        'show_raa_contact_information' => $options->showRaaContactInformationOption->isEnabled(),
-                    ],
-                ];
-            },
-            $this->getInstitutionConfigurationOptionsService()->findAllInstitutionConfigurationOptions()
-        );
+        $institutionConfigurationOptions = $this->getInstitutionConfigurationOptionsService()
+            ->findAllInstitutionConfigurationOptions();
 
-        return new JsonResponse($response);
+        return new JsonResponse($institutionConfigurationOptions);
     }
 
     public function reconfigureAction(Request $request)

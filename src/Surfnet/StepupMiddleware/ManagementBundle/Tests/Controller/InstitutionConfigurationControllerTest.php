@@ -45,7 +45,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required_for_posting()
+    public function authorization_is_required_for_reconfiguring_institution_configuration_options()
     {
         $this->client->request(
             'POST',
@@ -66,7 +66,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required_for_getting()
+    public function authorization_is_required_for_querying_institution_configuration_options()
     {
         $this->client->request(
             'GET',

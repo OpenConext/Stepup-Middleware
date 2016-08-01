@@ -33,8 +33,8 @@ class InstitutionConfigurationOptionsTest extends TestCase
     public function institution_configuration_options_are_correctly_serialized_to_json()
     {
         $deserializedInstitutionConfigurationOptions = [
-            'institution'                          => 'surfnet.nl',
-            'use_ra_locations'                     => true,
+            'institution'                  => 'surfnet.nl',
+            'use_ra_locations'             => true,
             'show_raa_contact_information' => true,
         ];
 

@@ -51,7 +51,12 @@ final class InstitutionConfigurationController extends Controller
         $institutionConfigurationOptions = $this->getInstitutionConfigurationOptionsService()
             ->findAllInstitutionConfigurationOptions();
 
-        return new JsonResponse($institutionConfigurationOptions);
+        $overview = [];
+        foreach ($institutionConfigurationOptions as $options) {
+            $overview[$options->institution->getInstitution()] = $options;
+        }
+
+        return new JsonResponse($overview);
     }
 
     public function reconfigureAction(Request $request)

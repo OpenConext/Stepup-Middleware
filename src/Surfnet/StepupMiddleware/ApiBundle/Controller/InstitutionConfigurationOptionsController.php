@@ -40,7 +40,10 @@ final class InstitutionConfigurationOptionsController extends Controller
             );
         }
 
-        return new JsonResponse($institutionConfigurationOptions);
+        return new JsonResponse([
+            'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
+            'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
+        ]);
     }
 
     /**

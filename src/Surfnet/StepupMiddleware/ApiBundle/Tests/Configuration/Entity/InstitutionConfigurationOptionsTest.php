@@ -41,9 +41,21 @@ class InstitutionConfigurationOptionsTest extends TestCase
         $serialized   = json_encode($institutionConfigurationOptions);
         $deserialized = json_decode($serialized, true);
 
-        $this->assertArrayHasKey('institution', $deserialized);
-        $this->assertArrayHasKey('use_ra_locations', $deserialized);
-        $this->assertArrayHasKey('show_raa_contact_information', $deserialized);
+        $expectedKeys = ['institution', 'use_ra_locations', 'show_raa_contact_information'];
+
+        $this->assertCount(
+            count($expectedKeys),
+            $deserialized,
+            'Serialized InstitutionConfigurationOptions do not have the expected amount of keys'
+        );
+
+        foreach ($expectedKeys as $key) {
+            $this->assertArrayHasKey(
+                $key,
+                $deserialized,
+                sprintf('Serialized InstitutionConfigurationOptions are missing key "%s"', $key)
+            );
+        }
     }
 
     /**

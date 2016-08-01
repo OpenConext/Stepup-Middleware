@@ -30,60 +30,28 @@ class InstitutionConfigurationOptionsTest extends TestCase
      * @test
      * @group entity
      */
-    public function serialized_institution_configuration_options_have_the_correct_keys()
+    public function institution_configuration_options_are_correctly_serialized_to_json()
     {
+        $deserializedInstitutionConfigurationOptions = [
+            'institution'                          => 'surfnet.nl',
+            'use_ra_locations'                     => true,
+            'show_raa_contact_information' => true,
+        ];
+
         $institutionConfigurationOptions = InstitutionConfigurationOptions::create(
-            new Institution('An institution'),
-            new UseRaLocationsOption(true),
-            new ShowRaaContactInformationOption(true)
+            new Institution($deserializedInstitutionConfigurationOptions['institution']),
+            new UseRaLocationsOption($deserializedInstitutionConfigurationOptions['use_ra_locations']),
+            new ShowRaaContactInformationOption(
+                $deserializedInstitutionConfigurationOptions['show_raa_contact_information']
+            )
         );
 
-        $serialized   = json_encode($institutionConfigurationOptions);
-        $deserialized = json_decode($serialized, true);
-
-        $expectedKeys = ['institution', 'use_ra_locations', 'show_raa_contact_information'];
-
-        $this->assertCount(
-            count($expectedKeys),
-            $deserialized,
-            'Serialized InstitutionConfigurationOptions do not have the expected amount of keys'
-        );
-
-        foreach ($expectedKeys as $key) {
-            $this->assertArrayHasKey(
-                $key,
-                $deserialized,
-                sprintf('Serialized InstitutionConfigurationOptions are missing key "%s"', $key)
-            );
-        }
-    }
-
-    /**
-     * @test
-     * @group entity
-     */
-    public function serialized_institution_configuration_options_have_the_correct_values()
-    {
-        $institutionConfigurationOptions = InstitutionConfigurationOptions::create(
-            new Institution('An institution'),
-            new UseRaLocationsOption(true),
-            new ShowRaaContactInformationOption(true)
-        );
-
-        $serialized   = json_encode($institutionConfigurationOptions);
-        $deserialized = json_decode($serialized, true);
+        $expectedSerializedInstitutionConfigurationOptions = json_encode($deserializedInstitutionConfigurationOptions);
+        $actualSerializedInstitutionConfigurationOptions   = json_encode($institutionConfigurationOptions);
 
         $this->assertSame(
-            $institutionConfigurationOptions->institution->getInstitution(),
-            $deserialized['institution']
-        );
-        $this->assertSame(
-            $institutionConfigurationOptions->useRaLocationsOption->isEnabled(),
-            $deserialized['use_ra_locations']
-        );
-        $this->assertSame(
-            $institutionConfigurationOptions->showRaaContactInformationOption->isEnabled(),
-            $deserialized['show_raa_contact_information']
+            $expectedSerializedInstitutionConfigurationOptions,
+            $actualSerializedInstitutionConfigurationOptions
         );
     }
 }

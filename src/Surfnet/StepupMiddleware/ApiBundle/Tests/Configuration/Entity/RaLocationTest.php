@@ -31,56 +31,27 @@ class RaLocationTest extends TestCase
      * @test
      * @group entity
      */
-    public function serialized_ra_location_has_the_correct_keys()
+    public function an_ra_location_is_correctly_serialized_to_json()
     {
+        $deserializedRaLocation = [
+            'id'                  => 'An id',
+            'institution'         => 'surfnet.nl',
+            'name'                => 'An RA location',
+            'location'            => 'A location',
+            'contact_information' => 'Contact information',
+        ];
+
         $raLocation = RaLocation::create(
-            'An id',
-            new Institution('An institution'),
-            new RaLocationName('An RA location'),
-            new Location('A location'),
-            new ContactInformation('Contact information')
+            $deserializedRaLocation['id'],
+            new Institution($deserializedRaLocation['institution']),
+            new RaLocationName($deserializedRaLocation['name']),
+            new Location($deserializedRaLocation['location']),
+            new ContactInformation($deserializedRaLocation['contact_information'])
         );
 
-        $serialized   = json_encode($raLocation);
-        $deserialized = json_decode($serialized, true);
+        $expectedSerialization = json_encode($deserializedRaLocation);
+        $actualSerialization   = json_encode($raLocation);
 
-        $expectedKeys = ['id', 'institution', 'name', 'location', 'contact_information'];
-
-        $this->assertCount(
-            count($expectedKeys),
-            $deserialized,
-            'Serialized RaLocation does not have the expected amount of keys'
-        );
-
-        foreach ($expectedKeys as $key) {
-            $this->assertArrayHasKey($key, $deserialized, sprintf('Serialized RaLocation is missing key "%s"', $key));
-        }
-    }
-
-    /**
-     * @test
-     * @group entity
-     */
-    public function serialized_ra_location_has_the_correct_values()
-    {
-        $raLocation = RaLocation::create(
-            'An id',
-            new Institution('An institution'),
-            new RaLocationName('An RA location'),
-            new Location('A location'),
-            new ContactInformation('Contact information')
-        );
-
-        $serialized   = json_encode($raLocation);
-        $deserialized = json_decode($serialized, true);
-
-        $this->assertSame($raLocation->id, $deserialized['id']);
-        $this->assertSame($raLocation->institution->getInstitution(), $deserialized['institution']);
-        $this->assertSame($raLocation->name->getRaLocationName(), $deserialized['name']);
-        $this->assertSame($raLocation->location->getLocation(), $deserialized['location']);
-        $this->assertSame(
-            $raLocation->contactInformation->getContactInformation(),
-            $deserialized['contact_information']
-        );
+       $this->assertSame($expectedSerialization, $actualSerialization);
     }
 }

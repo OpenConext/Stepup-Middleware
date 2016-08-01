@@ -29,37 +29,16 @@ class ConfiguredInstitutionTest extends TestCase
      * @test
      * @group entity
      */
-    public function serialized_configured_institution_has_the_correct_keys()
+    public function a_configured_institution_is_correctly_serialized_to_json()
     {
-        $configuredInstitution = ConfiguredInstitution::createFrom(new Institution('An institution'));
-
-        $serialized   = json_encode($configuredInstitution);
-        $deserialized = json_decode($serialized, true);
-
-        $expectedKeys = ['institution'];
-
-        $this->assertCount(
-            count($expectedKeys),
-            $deserialized,
-            'Serialized ConfiguredInstitution does not have the expected amount of keys'
+        $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];
+        $configuredInstitution = ConfiguredInstitution::createFrom(
+            new Institution($deserializedConfiguredInstitution['institution'])
         );
 
-        foreach ($expectedKeys as $key) {
-            $this->assertArrayHasKey($key, $deserialized, sprintf('Serialized ConfiguredInstitution is missing key "%s"', $key));
-        }
-    }
+        $expectedSerializedConfiguredInstitution = json_encode($deserializedConfiguredInstitution);
+        $actualSerializedConfiguredInstitution   = json_encode($configuredInstitution);
 
-    /**
-     * @test
-     * @group entity
-     */
-    public function serialized_configured_institution_has_the_correct_values()
-    {
-        $configuredInstitution = ConfiguredInstitution::createFrom(new Institution('An institution'));
-
-        $serialized   = json_encode($configuredInstitution);
-        $deserialized = json_decode($serialized, true);
-
-        $this->assertSame($configuredInstitution->institution->getInstitution(), $deserialized['institution']);
+        $this->assertSame($expectedSerializedConfiguredInstitution, $actualSerializedConfiguredInstitution);
     }
 }

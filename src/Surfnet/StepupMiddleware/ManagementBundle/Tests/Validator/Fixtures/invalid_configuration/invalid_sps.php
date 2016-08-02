@@ -28,6 +28,5 @@ return [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
         ],
-        'institutions_with_ra_locations' => ['institution.test'],
     ]
 ];

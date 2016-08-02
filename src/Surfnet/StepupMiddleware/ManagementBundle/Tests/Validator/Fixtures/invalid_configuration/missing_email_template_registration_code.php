@@ -40,6 +40,5 @@ return [
         'email_templates' => [
             'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
         ],
-        'institutions_with_ra_locations' => ['institution.test'],
     ]
 ];

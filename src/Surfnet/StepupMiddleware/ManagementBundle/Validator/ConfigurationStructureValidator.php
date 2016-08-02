@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion as Assert;
 use Assert\InvalidArgumentException as AssertionException;
-use GuzzleHttp;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
@@ -82,7 +81,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
     {
         Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
-        $acceptedProperties = ['gateway', 'sraa', 'email_templates', 'institutions_with_ra_locations'];
+        $acceptedProperties = ['gateway', 'sraa', 'email_templates'];
         StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
@@ -93,10 +92,6 @@ class ConfigurationStructureValidator extends ConstraintValidator
         $this->validateGatewayConfiguration($configuration, 'gateway');
         $this->validateSraaConfiguration($configuration, 'sraa');
         $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
-        $this->validateInstitutionsWithRaLocationsConfiguration(
-            $configuration,
-            'institutions_with_ra_locations'
-        );
     }
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
@@ -132,20 +127,5 @@ class ConfigurationStructureValidator extends ConstraintValidator
         );
 
         $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);
-    }
-
-    private function validateInstitutionsWithRaLocationsConfiguration($configuration, $propertyPath)
-    {
-        Assert::isArray(
-            $configuration[$propertyPath],
-            sprintf('Property "%s" must be an array of institutions', $propertyPath),
-            $propertyPath
-        );
-
-        Assert::allString(
-            $configuration[$propertyPath],
-            sprintf('The institutions configured under property "%s" should be strings', $propertyPath),
-            $propertyPath
-        );
     }
 }

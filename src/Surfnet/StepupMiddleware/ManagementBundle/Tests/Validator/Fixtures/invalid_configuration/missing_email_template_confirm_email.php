@@ -40,6 +40,5 @@ return [
         'email_templates' => [
             'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
         ],
-        'institutions_with_ra_locations' => ['institution.test'],
     ]
 ];

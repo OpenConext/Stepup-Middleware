@@ -19,12 +19,10 @@
 namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
-use GuzzleHttp;
 use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\InstitutionsWithRaLocationsUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
@@ -70,10 +68,6 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         ));
         $this->apply(new SraaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['sraa']));
         $this->apply(new EmailTemplatesUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['email_templates']));
-        $this->apply(new InstitutionsWithRaLocationsUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration['institutions_with_ra_locations']
-        ));
     }
 
     public function getAggregateRootId()

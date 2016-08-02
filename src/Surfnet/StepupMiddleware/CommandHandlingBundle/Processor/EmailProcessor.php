@@ -25,9 +25,8 @@ use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Service\VettingLocationService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
 class EmailProcessor extends Processor
 {
@@ -37,18 +36,18 @@ class EmailProcessor extends Processor
     private $mailService;
 
     /**
-     * @var VettingLocationService
+     * @var RaListingService
      */
-    private $vettingLocationService;
+    private $raListingService;
 
     /**
      * @param SecondFactorMailService $mailService
-     * @param VettingLocationService $vettingLocationService
+     * @param RaListingService $raListingService
      */
-    public function __construct(SecondFactorMailService $mailService, VettingLocationService $vettingLocationService)
+    public function __construct(SecondFactorMailService $mailService, RaListingService $raListingService)
     {
-        $this->mailService            = $mailService;
-        $this->vettingLocationService = $vettingLocationService;
+        $this->mailService      = $mailService;
+        $this->raListingService = $raListingService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
@@ -98,9 +97,7 @@ class EmailProcessor extends Processor
             (string) $event->commonName,
             (string) $event->email,
             $event->registrationCode,
-            $this->vettingLocationService->getVettingLocationsFor(
-                new Institution($event->identityInstitution->getInstitution())
-            )
+            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
         );
     }
 

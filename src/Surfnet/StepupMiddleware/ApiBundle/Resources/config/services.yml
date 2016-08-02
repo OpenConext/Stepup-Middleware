@@ -77,7 +77,7 @@ services:
 
     # Domain Services
     surfnet_stepup_middleware_api.service.institution_configuration_options:
-        class: Surfnet\StepupMiddleware\ApiBundle\Service\InstitutionConfigurationOptionsService
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
 

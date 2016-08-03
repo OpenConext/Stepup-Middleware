@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")

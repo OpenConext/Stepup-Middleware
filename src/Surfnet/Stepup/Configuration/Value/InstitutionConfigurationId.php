@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class InstitutionConfigurationId implements JsonSerializable

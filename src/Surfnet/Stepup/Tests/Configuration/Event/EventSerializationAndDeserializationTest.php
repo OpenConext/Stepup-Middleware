@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\SerializableInterface;
 use PHPUnit_Framework_TestCase as TestCase;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;

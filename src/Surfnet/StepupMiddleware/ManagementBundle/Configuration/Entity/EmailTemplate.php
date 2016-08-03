@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * @ORM\Entity(

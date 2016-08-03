@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Exception;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Symfony\Component\Console\Command\Command;

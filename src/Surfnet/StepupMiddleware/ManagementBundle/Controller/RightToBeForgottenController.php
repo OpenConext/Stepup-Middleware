@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use GuzzleHttp;
-use Ramsey\Uuid\Uuid;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;

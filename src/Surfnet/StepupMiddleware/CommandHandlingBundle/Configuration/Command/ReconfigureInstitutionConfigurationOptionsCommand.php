@@ -33,7 +33,6 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $institution;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Type(type="boolean")
      *
      * @var bool
@@ -41,7 +40,6 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $useRaLocationsOption;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Type(type="boolean")
      *
      * @var bool

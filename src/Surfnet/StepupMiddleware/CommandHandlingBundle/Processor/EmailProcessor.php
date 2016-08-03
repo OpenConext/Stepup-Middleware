@@ -19,12 +19,15 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
@@ -39,15 +42,31 @@ class EmailProcessor extends Processor
      * @var RaListingService
      */
     private $raListingService;
+    /**
+     * @var InstitutionConfigurationOptionsService
+     */
+    private $institutionConfigurationOptionsService;
+    /**
+     * @var RaLocationService
+     */
+    private $raLocationsService;
 
     /**
      * @param SecondFactorMailService $mailService
      * @param RaListingService $raListingService
+     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
+     * @param RaLocationService $raLocationsService
      */
-    public function __construct(SecondFactorMailService $mailService, RaListingService $raListingService)
-    {
-        $this->mailService      = $mailService;
-        $this->raListingService = $raListingService;
+    public function __construct(
+        SecondFactorMailService $mailService,
+        RaListingService $raListingService,
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        RaLocationService $raLocationsService
+    ) {
+        $this->mailService                            = $mailService;
+        $this->raListingService                       = $raListingService;
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->raLocationsService                     = $raLocationsService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
@@ -92,7 +111,23 @@ class EmailProcessor extends Processor
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->mailService->sendRegistrationEmail(
+        $institution = new Institution($event->identityInstitution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($institution);
+
+        if ($institutionConfigurationOptions->useRaLocationsOption === true) {
+            $this->mailService->sendRegistrationEmailWithRaLocations(
+                (string) $event->preferredLocale,
+                (string) $event->commonName,
+                (string) $event->email,
+                $event->registrationCode,
+                $this->raLocationsService->listRaLocationsFor($institution)
+            );
+
+            return;
+        }
+
+        $this->mailService->sendRegistrationEmailWithRas(
             (string) $event->preferredLocale,
             (string) $event->commonName,
             (string) $event->email,

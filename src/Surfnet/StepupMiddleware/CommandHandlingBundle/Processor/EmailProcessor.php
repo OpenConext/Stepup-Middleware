@@ -42,10 +42,12 @@ class EmailProcessor extends Processor
      * @var RaListingService
      */
     private $raListingService;
+
     /**
      * @var InstitutionConfigurationOptionsService
      */
     private $institutionConfigurationOptionsService;
+
     /**
      * @var RaLocationService
      */
@@ -111,7 +113,7 @@ class EmailProcessor extends Processor
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $institution = new Institution($event->identityInstitution);
+        $institution = new Institution($event->identityInstitution->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
 

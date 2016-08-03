@@ -197,7 +197,7 @@ final class SecondFactorMailService
             $locale
         );
 
-        $emailTemplate = $this->findEmailTemplate('registration_code', $locale, $this->fallbackLocale);
+        $emailTemplate = $this->findEmailTemplate('registration_code_with_ras', $locale, $this->fallbackLocale);
         if (!$emailTemplate) {
             return;
         }

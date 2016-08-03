@@ -38,7 +38,9 @@ return [
         ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [
-            'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+            'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
+            'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
+            'vetted'                              => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
     ]
 ];

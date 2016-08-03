@@ -114,8 +114,9 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                 ],
             ],
             'email_templates' => [
-                'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
-                'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+                'confirm_email'                       => ['en_GB' => 'Verify {{ commonName }}'],
+                'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
+                'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
             ],
         ];
 

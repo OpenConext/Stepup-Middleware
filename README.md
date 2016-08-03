@@ -68,9 +68,17 @@ As a full example:
             "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het registreren van je token. Klik op onderstaande link om je e-mailadres te bevestigen:</p>\n<p><a href=\"{{ verificationUrl }}\">{{ verificationUrl }}</a></p>\n<p>Is klikken op de link niet mogelijk? Kopieer dan de link en plak deze in de adresbalk van je browser.</p>\n<p>SURFnet</p>",
             "en_GB":"<p>Dear {{ commonName }},</p>\n\n<p>Thank you for registering your token. Please visit this link to verify your email address:</p>\n<p><a href=\"{{ verificationUrl }}\">{{ verificationUrl }}</a></p>\n<p>If you can not click on the URL, please copy the link and paste it in the address bar of your browser.</p>\n<p>SURFnet</p>"
         },
-        "registration_code": {
-            "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga naar de Service Desk om je token te laten activeren. </p>\n<p>Neem aub het volgende mee:</p>\n<ul>\n    <li>Je token</li>\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\n    <li>De registratiecode uit deze e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Service Desk medewerkers die je token kunnen activeren:</p>\n\n{% if vettingLocations is empty %}\n    <p>Er zijn geen Service Desk medewerkers beschikbaar.</p>\n{% else %}\n    <ul>\n        {% for vettingLocation in vettingLocations %}\n            <li>\n                <address>\n                    <strong>{{ vettingLocation.name }}</strong><br>\n                    {{ vettingLocation.location }}<br>\n                    {{ vettingLocation.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}",
-            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for registering your token, you are almost ready now. Please visit the Service Desk to activate your token.</p>\n<p>Please bring the following:</p>\n<ul>\n    <li>Your token</li>\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\n    <li>The registration code from this e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Service Desk employees authorized to activate your token:</p>\n\n{% if vettingLocations is empty %}\n    <p>No Service Desk employees are available.</p>\n{% else %}\n    <ul>\n        {% for vettingLocation in vettingLocations %}\n            <li>\n                <address>\n                    <strong>{{ vettingLocation.name }}</strong><br>\n                    {{ vettingLocation.location }}<br>\n                    {{ vettingLocation.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}"
+        "registration_code_with_ras": {
+            "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga naar de Service Desk om je token te laten activeren. </p>\n<p>Neem aub het volgende mee:</p>\n<ul>\n    <li>Je token</li>\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\n    <li>De registratiecode uit deze e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Service Desk medewerkers die je token kunnen activeren:</p>\n\n{% if ras is empty %}\n    <p>Er zijn geen Service Desk medewerkers beschikbaar.</p>\n{% else %}\n    <ul>\n        {% for ra in ras %}\n            <li>\n                <address>\n                    <strong>{{ ra.commonName }}</strong><br>\n                    {{ ra.location }}<br>\n                    {{ ra.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}",
+            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for registering your token, you are almost ready now. Please visit the Service Desk to activate your token.</p>\n<p>Please bring the following:</p>\n<ul>\n    <li>Your token</li>\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\n    <li>The registration code from this e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Service Desk employees authorized to activate your token:</p>\n\n{% if ras is empty %}\n    <p>No Service Desk employees are available.</p>\n{% else %}\n    <ul>\n        {% for ra in ras %}\n            <li>\n                <address>\n                    <strong>{{ ra.commonName }}</strong><br>\n                    {{ ra.location }}<br>\n                    {{ ra.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}"
+        },
+        "registration_code_with_ra_locations": {
+            "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga naar de Service Desk om je token te laten activeren. </p>\n<p>Neem aub het volgende mee:</p>\n<ul>\n    <li>Je token</li>\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\n    <li>De registratiecode uit deze e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Locaties waar je je token kunt activeren:</p>\n\n{% if ra_locations is empty %}\n    <p>Er zijn geen locaties beschikbaar.</p>\n{% else %}\n    <ul>\n        {% for ra_location in ra_locations %}\n            <li>\n                <address>\n                    <strong>{{ ra_location.name }}</strong><br>\n                    {{ ra_location.location }}<br>\n                    {{ ra_location.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}",
+            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for registering your token, you are almost ready now. Please visit the Service Desk to activate your token.</p>\n<p>Please bring the following:</p>\n<ul>\n    <li>Your token</li>\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\n    <li>The registration code from this e-mail</li>\n</ul>\n\n<p style=\"font-size: 150%; text-align: center\">\n    <code>{{ registrationCode }}</code>\n</p>\n\n<p>Locations where  your token can be activated:</p>\n\n{% if ra_locations is empty %}\n    <p>No locations are available.</p>\n{% else %}\n    <ul>\n        {% for ra_location in ra_locations %}\n            <li>\n                <address>\n                    <strong>{{ ra_location.name }}</strong><br>\n                    {{ ra_location.location }}<br>\n                    {{ ra_location.contactInformation }}\n                </address>\n            </li>\n        {% endfor %}\n    </ul>\n{% endif %}"
+        },
+        "vetted": {
+            "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het activeren van je token. Je token is nu klaar voor gebruik.</p>",
+            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for activating your token. Your token is now ready for use.</p>"
         }
     },
     "gateway": {
@@ -164,7 +172,8 @@ The list of current SRAA's will be deleted and the supplied list of SRAAs will b
 The email_templates key must contain an object. 
 Each property of this object denotes a specific type of email, the types available will be:
 * ```confirm_email```: **(required)** the email sent when the Registrant should prove the possession of his email address.
-* ```registration_code```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor.
+* ```registration_code_with_ras```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor for institutions not using RA locations.
+* ```registration_code_with_ra_locations```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor for institutions using RA locations.
 * ```vetted```: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
 
 The following list of emails is intended to be used in the future, 
@@ -200,80 +209,25 @@ All previous templates will be removed from the database and the new templates w
 | email           | string | jan@modaal.nl                                           |
 | verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
 
-#### registration (registration_code)
-<table>
-	<thead>
-		<tr>
-			<th>
-			<p>variable name</p>
-			</th>
-			<th>
-			<p>type</p>
-			</th>
-			<th>
-			<p>example</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>commonName</td>
-			<td>string</td>
-			<td>Jan Modaal</td>
-		</tr>
-		<tr>
-			<td>email</td>
-			<td>string</td>
-			<td>jan@modaal.nl</td>
-		</tr>
-		<tr>
-			<td>registrationCode</td>
-			<td>string</td>
-			<td>ABC23456</td>
-		</tr>
-		<tr>
-			<td colspan="1">ras</td>
-			<td colspan="1">array</td>
-			<td colspan="1">
-			<table border="0" cellpadding="0" cellspacing="0">
-				<tbody>
-					<tr>
-						<td>
-						<p><code>[</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Jan Modaal&#39;</code><code>,</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Goeman Borgesiuslaan 77, Utrecht&#39;</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@ibuildings.nl&#39;</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>],</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>[</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;commonName&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Henk Modaal&#39;</code><code>,</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;location&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;Moreelsepark, Utrecht&#39;</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code>&#39;contactInformation&#39;</code>&nbsp;<code>=&gt;&nbsp;</code><code>&#39;mail naar info@surfnet.nl&#39;</code></p>
-						<p><code>&nbsp;&nbsp;&nbsp;&nbsp;</code><code>]</code></p>
-						<p><code>]</code></p>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="1">╰ commonName</td>
-			<td colspan="1">string</td>
-			<td colspan="1">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="1">╰ location</td>
-			<td colspan="1">string</td>
-			<td colspan="1">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="1">╰ contactInformation</td>
-			<td colspan="1">string</td>
-			<td colspan="1">&nbsp;</td>
-		</tr>
-	</tbody>
-</table>
+#### registration (registration_code_with_ras)
+| variable name         | type   | example                   |
+|-----------------------|--------|---------------------------|
+| commonName            | string | Jan Modaal                |
+| email                 | string | jan@modaal.nl             |
+| ras                   | array  |                           |
+| ╰ commonName          | string | Henk Modaal               |
+| ╰ location            | string | Moreelsepark, Utrecht     |
+| ╰ contactInformation  | string | mail naar info@surfnet.nl |
+
+#### registration (registration_code_with_ra_locations)
+| variable name         | type   | example                   |
+|-----------------------|--------|---------------------------|
+| commonName            | string | Jan Modaal                |
+| email                 | string | jan@modaal.nl             |
+| raLocations           | array  |                           |
+| ╰ name                | string | Servicebalie              |
+| ╰ location            | string | Moreelsepark, Utrecht     |
+| ╰ contactInformation  | string | mail naar info@surfnet.nl |
 
 #### After vetting (vetted)
 

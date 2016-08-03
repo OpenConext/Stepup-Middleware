@@ -37,7 +37,8 @@
         "jms/di-extra-bundle": "~1.5",
         "jms/aop-bundle": "~1.0",
         "guzzlehttp/guzzle": "^4",
-        "rhumsaa/uuid": "^2.8"
+        "rhumsaa/uuid": "^2.8",
+        "ramsey/uuid": "^3.5"
     },
     "require-dev": {
         "ibuildings/qa-tools": "~1.1,>=1.1.27",

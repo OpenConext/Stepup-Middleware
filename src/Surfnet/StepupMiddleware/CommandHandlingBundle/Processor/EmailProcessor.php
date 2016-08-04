@@ -118,28 +118,45 @@ class EmailProcessor extends Processor
             ->findInstitutionConfigurationOptionsFor($institution);
 
         if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
-            $this->mailService->sendRegistrationEmailWithRaLocations(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->registrationCode,
-                $this->raLocationsService->listRaLocationsFor($institution)
-            );
+            $this->sendRegistrationEmailWithRaLocations($event, $institution);
 
             return;
         }
 
-        $this->mailService->sendRegistrationEmailWithRas(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->registrationCode,
-            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
-        );
+        $this->sendRegistrationEmailWithRas($event);
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+    }
+
+    /**
+     * @param EmailVerifiedEvent $event
+     * @param $institution
+     */
+    private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, $institution)
+    {
+        $this->mailService->sendRegistrationEmailWithRaLocations(
+            (string)$event->preferredLocale,
+            (string)$event->commonName,
+            (string)$event->email,
+            $event->registrationCode,
+            $this->raLocationsService->listRaLocationsFor($institution)
+        );
+    }
+
+    /**
+     * @param EmailVerifiedEvent $event
+     */
+    private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event)
+    {
+        $this->mailService->sendRegistrationEmailWithRas(
+            (string)$event->preferredLocale,
+            (string)$event->commonName,
+            (string)$event->email,
+            $event->registrationCode,
+            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
+        );
     }
 }

@@ -20,11 +20,9 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Exception;
-use GuzzleHttp;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -53,7 +51,10 @@ final class InstitutionConfigurationController extends Controller
 
         $overview = [];
         foreach ($institutionConfigurationOptions as $options) {
-            $overview[$options->institution->getInstitution()] = $options;
+            $overview[$options->institution->getInstitution()] = [
+                'use_ra_locations' => $options->useRaLocationsOption,
+                'show_raa_contact_information' => $options->showRaaContactInformationOption,
+            ];
         }
 
         return new JsonResponse($overview);

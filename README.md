@@ -5,7 +5,7 @@ Step-up Middleware
 
 ## Requirements
 
- * PHP 5.4+
+ * PHP 5.6+ or PHP7
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 10

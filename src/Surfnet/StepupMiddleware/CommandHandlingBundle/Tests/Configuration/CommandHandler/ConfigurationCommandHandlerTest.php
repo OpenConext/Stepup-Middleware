@@ -25,7 +25,6 @@ use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\InstitutionsWithRaLocationsUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
@@ -57,7 +56,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                 'confirm_email'     => ['en_GB' => ''],
                 'registration_code' => ['en_GB' => ''],
             ],
-            'institutions_with_ra_locations' => []
         ];
 
         $this->scenario
@@ -83,7 +81,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                 'confirm_email'     => ['en_GB' => ''],
                 'registration_code' => ['en_GB' => ''],
             ],
-            'institutions_with_ra_locations' => []
         ];
 
         $configuration2 = [
@@ -117,10 +114,10 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                 ],
             ],
             'email_templates' => [
-                'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
-                'registration_code' => ['en_GB' => 'Code {{ commonName }}'],
+                'confirm_email'                       => ['en_GB' => 'Verify {{ commonName }}'],
+                'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
+                'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
             ],
-            'institutions_with_ra_locations' => []
         ];
 
         $this->scenario
@@ -175,10 +172,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
             new IdentityProvidersUpdatedEvent(self::CID, $newConfiguration['gateway']['identity_providers']),
             new SraaUpdatedEvent(self::CID, $newConfiguration['sraa']),
             new EmailTemplatesUpdatedEvent(self::CID, $newConfiguration['email_templates']),
-            new InstitutionsWithRaLocationsUpdatedEvent(
-                self::CID,
-                $newConfiguration['institutions_with_ra_locations']
-            ),
         ];
     }
 }

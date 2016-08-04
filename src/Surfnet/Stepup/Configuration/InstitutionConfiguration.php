@@ -64,7 +64,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * @var UseRaLocationsOption
      */
-    private $useRaLocationOption;
+    private $useRaLocationsOption;
 
     /**
      * @var ShowRaaContactInformationOption
@@ -100,7 +100,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption)
     {
-        if ($this->useRaLocationOption->equals($useRaLocationsOption)) {
+        if ($this->useRaLocationsOption->equals($useRaLocationsOption)) {
             return;
         }
 
@@ -229,14 +229,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     {
         $this->institutionConfigurationId      = $event->institutionConfigurationId;
         $this->institution                     = $event->institution;
-        $this->useRaLocationOption             = $event->useRaLocationsOption;
+        $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->raLocations                     = new RaLocationList([]);
     }
 
     protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
     {
-        $this->useRaLocationOption = $event->useRaLocationsOption;
+        $this->useRaLocationsOption = $event->useRaLocationsOption;
     }
 
     protected function applyShowRaaContactInformationOptionChangedEvent(

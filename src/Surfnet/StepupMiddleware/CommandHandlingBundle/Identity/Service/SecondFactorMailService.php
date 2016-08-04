@@ -22,8 +22,9 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Dto\VettingLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
@@ -180,14 +181,14 @@ final class SecondFactorMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
-     * @param VettingLocation[] $vettingLocations
+     * @param RegistrationAuthorityCredentials[] $ras
      */
-    public function sendRegistrationEmail(
+    public function sendRegistrationEmailWithRas(
         $locale,
         $commonName,
         $email,
         $registrationCode,
-        array $vettingLocations
+        array $ras
     ) {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
@@ -196,7 +197,7 @@ final class SecondFactorMailService
             $locale
         );
 
-        $emailTemplate = $this->findEmailTemplate('registration_code', $locale, $this->fallbackLocale);
+        $emailTemplate = $this->findEmailTemplate('registration_code_with_ras', $locale, $this->fallbackLocale);
         if (!$emailTemplate) {
             return;
         }
@@ -207,7 +208,60 @@ final class SecondFactorMailService
             'commonName'       => $commonName,
             'email'            => $email,
             'registrationCode' => $registrationCode,
-            'vettingLocations' => $vettingLocations,
+            'ras'              => $ras,
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email, $commonName)
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param string $locale
+     * @param string $commonName
+     * @param string $email
+     * @param string $registrationCode
+     * @param RaLocation[] $raLocations
+     */
+    public function sendRegistrationEmailWithRaLocations(
+        $locale,
+        $commonName,
+        $email,
+        $registrationCode,
+        array $raLocations
+    ) {
+        $subject = $this->translator->trans(
+            'ss.mail.registration_email.subject',
+            ['%commonName%' => $commonName],
+            null,
+            $locale
+        );
+
+        $emailTemplate = $this->findEmailTemplate('registration_code_with_ra_locations', $locale, $this->fallbackLocale);
+        if (!$emailTemplate) {
+            return;
+        }
+
+        $parameters = [
+            'templateString'   => $emailTemplate->htmlContent,
+            'locale'           => $locale,
+            'commonName'       => $commonName,
+            'email'            => $email,
+            'registrationCode' => $registrationCode,
+            'raLocations'      => $raLocations,
         ];
 
         // Rendering file template instead of string

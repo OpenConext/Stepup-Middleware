@@ -19,15 +19,17 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Service\VettingLocationService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
 class EmailProcessor extends Processor
 {
@@ -37,18 +39,36 @@ class EmailProcessor extends Processor
     private $mailService;
 
     /**
-     * @var VettingLocationService
+     * @var RaListingService
      */
-    private $vettingLocationService;
+    private $raListingService;
+
+    /**
+     * @var InstitutionConfigurationOptionsService
+     */
+    private $institutionConfigurationOptionsService;
+
+    /**
+     * @var RaLocationService
+     */
+    private $raLocationsService;
 
     /**
      * @param SecondFactorMailService $mailService
-     * @param VettingLocationService $vettingLocationService
+     * @param RaListingService $raListingService
+     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
+     * @param RaLocationService $raLocationsService
      */
-    public function __construct(SecondFactorMailService $mailService, VettingLocationService $vettingLocationService)
-    {
-        $this->mailService            = $mailService;
-        $this->vettingLocationService = $vettingLocationService;
+    public function __construct(
+        SecondFactorMailService $mailService,
+        RaListingService $raListingService,
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        RaLocationService $raLocationsService
+    ) {
+        $this->mailService                            = $mailService;
+        $this->raListingService                       = $raListingService;
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->raLocationsService                     = $raLocationsService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
@@ -93,19 +113,50 @@ class EmailProcessor extends Processor
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
-        $this->mailService->sendRegistrationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->registrationCode,
-            $this->vettingLocationService->getVettingLocationsFor(
-                new Institution($event->identityInstitution->getInstitution())
-            )
-        );
+        $institution = new Institution($event->identityInstitution->getInstitution());
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($institution);
+
+        if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
+            $this->sendRegistrationEmailWithRaLocations($event, $institution);
+
+            return;
+        }
+
+        $this->sendRegistrationEmailWithRas($event);
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+    }
+
+    /**
+     * @param EmailVerifiedEvent $event
+     * @param $institution
+     */
+    private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, $institution)
+    {
+        $this->mailService->sendRegistrationEmailWithRaLocations(
+            (string)$event->preferredLocale,
+            (string)$event->commonName,
+            (string)$event->email,
+            $event->registrationCode,
+            $this->raLocationsService->listRaLocationsFor($institution)
+        );
+    }
+
+    /**
+     * @param EmailVerifiedEvent $event
+     */
+    private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event)
+    {
+        $this->mailService->sendRegistrationEmailWithRas(
+            (string)$event->preferredLocale,
+            (string)$event->commonName,
+            (string)$event->email,
+            $event->registrationCode,
+            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
+        );
     }
 }

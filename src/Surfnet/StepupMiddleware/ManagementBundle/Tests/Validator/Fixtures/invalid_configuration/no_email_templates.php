@@ -22,5 +22,4 @@ return [
         'gateway' => [],
         'sraa'    => [],
     ],
-    'institutions_with_ra_locations' => ['institution.test'],
 ];

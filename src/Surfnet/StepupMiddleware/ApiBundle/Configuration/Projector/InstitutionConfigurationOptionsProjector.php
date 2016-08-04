@@ -50,28 +50,18 @@ final class InstitutionConfigurationOptionsProjector extends Projector
         $this->repository->save($institutionConfigurationOptions);
     }
 
-    public function applyUseRaLocationOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
+    public function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
     {
-        $currentOptions = $this->repository->findConfigurationOptionsFor($event->institution);
-
-        $institutionConfigurationOptions = InstitutionConfigurationOptions::create(
-            $event->institution,
-            $event->useRaLocationsOption,
-            new ShowRaaContactInformationOption($currentOptions->showRaaContactInformationOption)
-        );
+        $institutionConfigurationOptions = $this->repository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->useRaLocationsOption = $event->useRaLocationsOption;
 
         $this->repository->save($institutionConfigurationOptions);
     }
 
     public function applyShowRaaContactInformationOptionChangedEvent(ShowRaaContactInformationOptionChangedEvent $event)
     {
-        $currentOptions = $this->repository->findConfigurationOptionsFor($event->institution);
-
-        $institutionConfigurationOptions = InstitutionConfigurationOptions::create(
-            $event->institution,
-            new UseRaLocationsOption($currentOptions->useRaLocationsOption),
-            $event->showRaaContactInformationOption
-        );
+        $institutionConfigurationOptions = $this->repository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->showRaaContactInformationOption = $event->showRaaContactInformationOption;
 
         $this->repository->save($institutionConfigurationOptions);
     }

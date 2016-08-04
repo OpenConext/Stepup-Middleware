@@ -25,11 +25,6 @@ services:
         factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
 
-    surfnet_stepup_middleware_api.repository.institution_with_ra_locations:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionWithRaLocationsRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionWithRaLocations ]
-
     surfnet_stepup_middleware_api.repository.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
         factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
@@ -82,7 +77,7 @@ services:
 
     # Domain Services
     surfnet_stepup_middleware_api.service.institution_configuration_options:
-        class: Surfnet\StepupMiddleware\ApiBundle\Service\InstitutionConfigurationOptionsService
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
 
@@ -113,11 +108,6 @@ services:
         parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_listing"
-
-    surfnet_stepup_middleware_api.service.institution_with_ra_locations:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionWithRaLocationsService
-        arguments:
-            - "@surfnet_stepup_middleware_api.repository.institution_with_ra_locations"
 
     surfnet_stepup_middleware_api.service.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService
@@ -200,11 +190,3 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint\JsonBasicAuthenticationEntryPoint
         arguments:
             - ~ # HTTP Basic realm string, see extension
-
-    # Application Services
-    surfnet_stepup_middleware_api.service.vetting_location:
-        class: Surfnet\StepupMiddleware\ApiBundle\Service\VettingLocationService
-        arguments:
-            - "@surfnet_stepup_middleware_api.service.institution_with_ra_locations"
-            - "@surfnet_stepup_middleware_api.service.ra_location"
-            - "@surfnet_stepup_middleware_api.service.ra_listing"

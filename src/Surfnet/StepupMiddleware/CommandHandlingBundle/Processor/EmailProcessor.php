@@ -117,7 +117,7 @@ class EmailProcessor extends Processor
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($institutionConfigurationOptions->useRaLocationsOption === true) {
+        if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
             $this->mailService->sendRegistrationEmailWithRaLocations(
                 (string) $event->preferredLocale,
                 (string) $event->commonName,

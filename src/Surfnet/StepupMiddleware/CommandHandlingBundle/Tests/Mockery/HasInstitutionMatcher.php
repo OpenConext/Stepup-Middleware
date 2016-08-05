@@ -20,15 +20,14 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
 use Mockery\Exception\RuntimeException;
 use Mockery\Matcher\MatcherAbstract;
-use Surfnet\Stepup\Configuration\Value\Institution;
 
-final class HasConfigurationInstitutionMatcher extends MatcherAbstract
+final class HasInstitutionMatcher extends MatcherAbstract
 {
     public function __construct($expected)
     {
-        if (!$expected instanceof Institution) {
+        if (!is_string($expected)) {
             throw new RuntimeException(
-                sprintf('In order to use the %s, a "%s" object should be given.', self::class, Institution::class)
+                sprintf('In order to use the %s, a string should be given.', self::class)
             );
         }
 
@@ -37,19 +36,22 @@ final class HasConfigurationInstitutionMatcher extends MatcherAbstract
 
     public function match(&$actual)
     {
-        if (!is_object($actual) || !property_exists($actual, 'institution')) {
+        if (!is_object($actual)) {
             return false;
         }
 
-        if (!$actual->institution instanceof Institution) {
-            return false;
+        if (method_exists($actual, 'getInstitution')) {
+            return $this->_expected === $actual->getInstitution();
+        }
+        if (property_exists($actual, 'institution')) {
+            return $this->_expected === $actual->institution;
         }
 
-        return $this->_expected->equals($actual->institution);
+        return false;
     }
 
     public function __toString()
     {
-        return sprintf('<HasConfigurationInstitutionMatcher($s)>', $this->_expected);
+        return sprintf('<HasInstitutionMatcher($s)>', $this->_expected);
     }
 }

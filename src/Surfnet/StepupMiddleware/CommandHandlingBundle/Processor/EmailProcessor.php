@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
 class EmailProcessor extends Processor
@@ -123,7 +124,19 @@ class EmailProcessor extends Processor
             return;
         }
 
-        $this->sendRegistrationEmailWithRas($event);
+        $ras = $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution);
+
+        if ($institutionConfigurationOptions->showRaaContactInformationOption->isEnabled()) {
+            $this->sendRegistrationEmailWithRas($event, $ras);
+
+            return;
+        }
+
+        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
+            return !$ra->isRaa();
+        });
+
+        $this->sendRegistrationEmailWithRas($event, $rasWithoutRaas);
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
@@ -148,15 +161,16 @@ class EmailProcessor extends Processor
 
     /**
      * @param EmailVerifiedEvent $event
+     * @param RegistrationAuthorityCredentials[] $ras
      */
-    private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event)
+    private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event, array $ras)
     {
         $this->mailService->sendRegistrationEmailWithRas(
             (string)$event->preferredLocale,
             (string)$event->commonName,
             (string)$event->email,
             $event->registrationCode,
-            $this->raListingService->listRegistrationAuthoritiesFor($event->identityInstitution)
+            $ras
         );
     }
 }

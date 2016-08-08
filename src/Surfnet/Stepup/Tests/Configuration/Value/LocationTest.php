@@ -26,14 +26,14 @@ class LocationTest extends UnitTest
     /**
      * @test
      * @group domain
-     * @dataProvider nonStringOrEmptyStringProvider
+     * @dataProvider nonStringProvider
      * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
-     * @param mixed $nonStringOrEmptyString
+     * @param mixed $nonString
      */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
+    public function it_cannot_be_created_with_anything_but_a_string($nonString)
     {
-        new Location($nonStringOrEmptyString);
+        new Location($nonString);
     }
 
     /**
@@ -55,13 +55,15 @@ class LocationTest extends UnitTest
     /**
      * dataprovider
      */
-    public function nonStringOrEmptyStringProvider()
+    public function nonStringProvider()
     {
         return [
+            'null'         => [null],
+            'boolean'      => [false],
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new \stdClass()],
         ];
     }
 }

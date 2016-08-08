@@ -27,7 +27,7 @@ use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
 {
@@ -37,17 +37,26 @@ final class InstitutionConfigurationProcessor extends Processor
     private $configuredInstitutionRepository;
 
     /**
-     * @var Pipeline
+     * @var ContainerInterface
      */
-    private $pipeline;
+    private $container;
 
-    public function __construct(ConfiguredInstitutionRepository $configuredInstitutionRepository, Pipeline $pipeline)
-    {
+    /**
+     * The container needs to be called during runtime in order to prevent a circular reference
+     * during container compilation.
+     *
+     * @param ConfiguredInstitutionRepository $configuredInstitutionRepository
+     * @param ContainerInterface $container
+     */
+    public function __construct(
+        ConfiguredInstitutionRepository $configuredInstitutionRepository,
+        ContainerInterface $container
+    ) {
         $this->configuredInstitutionRepository = $configuredInstitutionRepository;
-        $this->pipeline = $pipeline;
+        $this->container                       = $container;
     }
 
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function handleIdentityCreatedEvent(IdentityCreatedEvent $event)
     {
         $institution = new Institution($event->identityInstitution->getInstitution());
 
@@ -58,7 +67,7 @@ final class InstitutionConfigurationProcessor extends Processor
         $this->createConfigurationFor($institution);
     }
 
-    public function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    public function handleWhitelistCreatedEvent(WhitelistCreatedEvent $event)
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -71,7 +80,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    public function handleWhitelistReplacedEvent(WhitelistReplacedEvent $event)
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -84,7 +93,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    public function handleInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
     {
         foreach ($event->addedInstitutions as $addedInstitution) {
             $institution = new Institution($addedInstitution->getInstitution());
@@ -104,8 +113,8 @@ final class InstitutionConfigurationProcessor extends Processor
     {
         $command              = new CreateInstitutionConfigurationCommand();
         $command->UUID        = (string) Uuid::uuid4();
-        $command->institution = $institution;
+        $command->institution = $institution->getInstitution();
 
-        $this->pipeline->process($command);
+        $this->container->get('pipeline')->process($command);
     }
 }

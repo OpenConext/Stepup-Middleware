@@ -39,7 +39,7 @@ services:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
         arguments:
             - @surfnet_stepup_middleware_management.repository.email_template
-        tags: [{ name: event_bus.event_listener }]
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
     surfnet_stepup_middleware_management.repository.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository

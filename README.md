@@ -202,7 +202,7 @@ All previous templates will be removed from the database and the new templates w
 
 ### Template Variables
 
-##### e-mail verification (confirm_email)
+#### e-mail verification (confirm_email)
 | variable name   | type   | example                                                 |
 |-----------------|--------|---------------------------------------------------------|
 | commonName      | string | Jan Modaal                                              |

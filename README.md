@@ -316,6 +316,53 @@ Second Factor Only mode requires that AuthnRequests use LOA aliases. However the
 }
 ```
 
+## Institution Configuration API
+Institution configuration options for all institutions can be queried through the Institution Configuration API 
+using a `GET` request:
+```
+curl -XGET -v \
+    -u username:password \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    http://middleware.tld/management/institution-configuration
+```
+A json object containing institution names as keys and objects with all options as values is returned.
+
+
+Institution configuration options can be configured through the Institution Configuration API using a `POST` request:
+```
+curl -XPOST -v \
+    -u username:password \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -d @institution_configuration_options.json \
+    http://middleware.tld/management/institution-configuration
+```
+
+### Institution Configuration Structure
+The institution configuration options must be a json object containing institution names as keys
+ and objects with all options as values.
+
+The options must have the following keys:
+* `use_ra_locations`: (boolean) whether an institution uses configurable RA locations instead of
+ information of specific RA(A)s
+* `show_raa_contact_information`: (boolean) whether an institution shows RAAs' contact information when
+ listing RAs, for example when showing locations for the vetting process
+
+The structure of an institution configuration is therefore:
+```
+{
+    "organisation.example": {
+        "use_ra_locations": false,
+        "show_raa_contact_information": true
+    },
+    "another-organisation.example": {
+        "use_ra_locations": true,
+        "show_raa_contact_information": false
+    }
+}
+```
+
 ## Notes
 
 ### Mocking time

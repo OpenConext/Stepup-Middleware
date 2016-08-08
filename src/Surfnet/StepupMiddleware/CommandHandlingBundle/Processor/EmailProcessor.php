@@ -146,9 +146,9 @@ class EmailProcessor extends Processor
 
     /**
      * @param EmailVerifiedEvent $event
-     * @param $institution
+     * @param Institution $institution
      */
-    private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, $institution)
+    private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, Institution $institution)
     {
         $this->mailService->sendRegistrationEmailWithRaLocations(
             (string)$event->preferredLocale,

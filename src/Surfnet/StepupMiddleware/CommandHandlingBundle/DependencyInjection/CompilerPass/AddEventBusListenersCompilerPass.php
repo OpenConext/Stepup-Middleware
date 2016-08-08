@@ -30,7 +30,7 @@ class AddEventBusListenersCompilerPass implements CompilerPassInterface
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.event_bus.buffered');
         $eventListenerDefinitions = $container->findTaggedServiceIds('event_bus.event_listener');
 
-        // When replaying events, certain listeners might not be interested in acting upon, for instance
+        // When replaying events, certain listeners should not be allowed to run again, for instance
         // when they are no longer relevant at the time of replaying (i.e. sending emails)
         if (!in_array($container->getParameter('kernel.environment'), ['dev_event_replay', 'prod_event_replay'])) {
             foreach (array_keys($eventListenerDefinitions) as $serviceId) {

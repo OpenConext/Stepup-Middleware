@@ -44,12 +44,15 @@ class EventStreamReplayer
     private $connectionHelper;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $middlewareTables = [
         'unverified_second_factor',
         'verified_second_factor',
         'vetted_second_factor',
+        'configured_institution',
+        'institution_configuration_options',
+        'ra_location',
         'ra_second_factor',
         'identity',
         'sraa',
@@ -61,7 +64,7 @@ class EventStreamReplayer
     ];
 
     /**
-     * @var array
+     * @var string[]
      */
     private $gatewayTables = [
         'second_factor',

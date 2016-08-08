@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
@@ -108,7 +109,7 @@ class WhitelistController extends Controller
      */
     private function getInstitutionsFromBody(Request $request)
     {
-        $decoded = \GuzzleHttp\json_decode($request->getContent(), true);
+        $decoded = JsonHelper::decode($request->getContent());
 
         if (!isset($decoded['institutions']) || !is_array($decoded['institutions'])) {
             throw new BadRequestHttpException(

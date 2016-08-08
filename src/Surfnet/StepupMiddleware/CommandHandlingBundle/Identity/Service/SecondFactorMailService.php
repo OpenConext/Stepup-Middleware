@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
@@ -29,7 +31,10 @@ use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class SecondFactorMailService
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+final class SecondFactorMailService
 {
     /**
      * @var Mailer
@@ -67,6 +72,11 @@ class SecondFactorMailService
     private $fallbackLocale;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
@@ -74,6 +84,7 @@ class SecondFactorMailService
      * @param string $emailVerificationUrlTemplate
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Mailer $mailer,
@@ -82,7 +93,8 @@ class SecondFactorMailService
         EngineInterface $templateEngine,
         $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale
+        $fallbackLocale,
+        LoggerInterface $logger
     ) {
         $this->mailer = $mailer;
         $this->sender = $sender;
@@ -91,6 +103,7 @@ class SecondFactorMailService
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
+        $this->logger = $logger;
     }
 
     /**
@@ -152,7 +165,7 @@ class SecondFactorMailService
      * @param string $registrationCode
      * @param RegistrationAuthorityCredentials[] $ras
      */
-    public function sendRegistrationEmail(
+    public function sendRegistrationEmailWithRas(
         $locale,
         $commonName,
         $email,
@@ -167,10 +180,11 @@ class SecondFactorMailService
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
-            'registration_code',
+            'registration_code_with_ras',
             $locale,
             $this->fallbackLocale
         );
+
         $parameters = [
             'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale,
@@ -178,6 +192,60 @@ class SecondFactorMailService
             'email'            => $email,
             'registrationCode' => $registrationCode,
             'ras'              => $ras,
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email, $commonName)
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param string $locale
+     * @param string $commonName
+     * @param string $email
+     * @param string $registrationCode
+     * @param RaLocation[] $raLocations
+     */
+    public function sendRegistrationEmailWithRaLocations(
+        $locale,
+        $commonName,
+        $email,
+        $registrationCode,
+        array $raLocations
+    ) {
+        $subject = $this->translator->trans(
+            'ss.mail.registration_email.subject',
+            ['%commonName%' => $commonName],
+            null,
+            $locale
+        );
+
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'registration_code_with_ra_locations',
+            $locale,
+            $this->fallbackLocale
+        );
+
+        $parameters = [
+            'templateString'   => $emailTemplate->htmlContent,
+            'locale'           => $locale,
+            'commonName'       => $commonName,
+            'email'            => $email,
+            'registrationCode' => $registrationCode,
+            'raLocations'      => $raLocations,
         ];
 
         // Rendering file template instead of string
@@ -215,11 +283,7 @@ class SecondFactorMailService
             $locale->getLocale()
         );
 
-        $emailTemplate = $this->emailTemplateService->findByName(
-            'vetted',
-            $locale->getLocale(),
-            $this->fallbackLocale
-        );
+        $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
         $parameters = [
             'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale->getLocale(),

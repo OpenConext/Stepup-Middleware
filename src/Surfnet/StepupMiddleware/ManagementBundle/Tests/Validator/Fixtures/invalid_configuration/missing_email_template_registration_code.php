@@ -38,7 +38,8 @@ return [
         ],
         'sraa' => ['20394-4320423-439248324'],
         'email_templates' => [
-            'confirm_email'     => ['en_GB' => 'Verify {{ commonName }}'],
+            'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
+            'vetted'        => ['en_GB' => 'Vetted {{ commonName }}'],
         ],
     ]
 ];

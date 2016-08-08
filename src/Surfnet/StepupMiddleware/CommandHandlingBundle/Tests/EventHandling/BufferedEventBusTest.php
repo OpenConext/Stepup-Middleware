@@ -33,7 +33,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_buffers_events()
     {
-        $event = $this->createDummyDomainMessage();
+        $event = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->never()
             ->getMock();
@@ -51,7 +51,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function it_flushes_events()
     {
-        $event = $this->createDummyDomainMessage();
+        $event = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -71,7 +71,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
     {
-        $event    = $this->createDummyDomainMessage();
+        $event    = $this->createDummyDomainMessage(null);
         $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -85,38 +85,39 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * This is tested by publishing an event when flushing and flushing again afterwards
-     *
      * @test
      * @group event-handling
      */
-    public function new_event_can_be_buffered_while_flushing()
+    public function an_event_caused_by_an_event_in_the_current_buffer_being_flushed_is_buffered_and_flushed_after_events_in_the_current_buffer()
     {
-        $event = $this->createDummyDomainMessage();
         $bus = new BufferedEventBus();
 
-        // in php7 replace this with anonymous class
-        $listener = new OnFirstCallPublishesToBusAndCountingCallsEventListener(
+        $firstEventInCurrentBuffer = $this->createDummyDomainMessage('First event in current buffer');
+        $secondEventInCurrentBuffer = $this->createDummyDomainMessage('Second event in current buffer');
+        $eventCausedByFirstEvent = $this->createDummyDomainMessage('Event caused by first event in current buffer');
+
+        $listener = new RecordEventsAndPublishToBusOnFirstCallEventListener(
             $bus,
-            new DomainEventStream([$event])
+            new DomainEventStream([$eventCausedByFirstEvent])
         );
 
         $bus->subscribe($listener);
-
-        $bus->publish(new DomainEventStream([$event]));
-
-        $this->assertEquals(0, $listener->callCount, 'Prior to the first flush, the callcount should be 0');
-        $bus->flush();
+        $bus->publish(new DomainEventStream([$firstEventInCurrentBuffer, $secondEventInCurrentBuffer]));
         $bus->flush();
 
-        $this->assertEquals(2, $listener->callCount, 'After flushing twice, the callcount should be 2');
+        $expectedEventSequence = [$firstEventInCurrentBuffer, $secondEventInCurrentBuffer, $eventCausedByFirstEvent];
+        $actualEventSequence = $listener->getRecordedEvents();
+
+        $this->assertEquals($expectedEventSequence, $actualEventSequence);
     }
 
     /**
+     * @param mixed $payload
      * @return DomainMessage
      */
-    private function createDummyDomainMessage()
+    private function createDummyDomainMessage($payload)
     {
-        return new DomainMessage('1', 0, new Metadata(), null, DateTime::fromString('1970-01-01H00:00:00.000'));
+        return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
     }
 }
+

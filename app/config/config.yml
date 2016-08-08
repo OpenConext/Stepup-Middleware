@@ -49,7 +49,11 @@ services:
                     - getCommonName
                     - getLocation
                     - getContactInformation
-            - [] # Allowed properties
+            - # Allowed properties
+                Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation:
+                    - name
+                    - location
+                    - contactInformation
             - [] # Allowed functions
 
 # Doctrine Configuration
@@ -82,16 +86,23 @@ doctrine:
                 password: "%database_deploy_password%"
                 charset:  UTF8
         types:
-            institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
             authority_role: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
-            stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
-            stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType
+            stepup_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
             stepup_common_name: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType
+            stepup_datetime: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType
+            stepup_document_number: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType
             stepup_email: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType
             stepup_name_id: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType
             stepup_locale: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType
             stepup_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType
-            stepup_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType
+            stepup_second_factor_status: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
+            stepup_ra_location_name: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType
+            stepup_configuration_institution: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType
+            stepup_configuration_contact_information: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationContactInformationType
+            stepup_configuration_location: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType
+            stepup_use_ra_locations_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType
+            stepup_show_raa_contact_information_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -103,8 +114,8 @@ doctrine:
                     api:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
-                        prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
+                        prefix: Surfnet\StepupMiddleware\ApiBundle
                         is_bundle: false
                     management_configuration:
                         mapping: true
@@ -171,6 +182,7 @@ surfnet_stepup_middleware_command_handling:
     email_sender:
         name: %email_sender_name%
         email: %email_sender_email%
+    warn_on_missing_email_template: true
 
 surfnet_stepup_middleware_middleware:
     email_verification_window: %email_verification_window%

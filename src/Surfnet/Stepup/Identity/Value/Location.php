@@ -49,9 +49,17 @@ final class Location implements JsonSerializable
         return $this->location === $otherLocation->location;
     }
 
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
     public function jsonSerialize()
     {
-        return (string) $this;
+        return $this->location;
     }
 
     public function __toString()

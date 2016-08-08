@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListenerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
-class OnFirstCallPublishesToBusAndCountingCallsEventListener implements EventListenerInterface
+class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
 {
     /**
-     * @var int
+     * @var bool
      */
-    public $callCount = 0;
+    private $firstEventHandled = false;
 
     /**
      * @var BufferedEventBus
@@ -41,21 +41,38 @@ class OnFirstCallPublishesToBusAndCountingCallsEventListener implements EventLis
     private $toPublish;
 
     /**
-     * @param BufferedEventBus  $eventBus
+     * @var DomainMessage[]
+     */
+    private $recordedEvents = [];
+
+    /**
+     * @param BufferedEventBus $eventBus
      * @param DomainEventStream $toPublish
      */
     public function __construct(BufferedEventBus $eventBus, DomainEventStream $toPublish)
     {
-        $this->eventBus = $eventBus;
+        $this->eventBus  = $eventBus;
         $this->toPublish = $toPublish;
     }
 
+    /**
+     * @param DomainMessage $domainMessage
+     */
     public function handle(DomainMessage $domainMessage)
     {
-        if ($this->callCount === 0) {
-            $this->eventBus->publish($this->toPublish);
-        }
+        $this->recordedEvents[] = $domainMessage;
 
-        $this->callCount++;
+        if (!$this->firstEventHandled) {
+            $this->eventBus->publish($this->toPublish);
+            $this->firstEventHandled = true;
+        }
+    }
+
+    /**
+     * @return DomainMessage[]
+     */
+    public function getRecordedEvents()
+    {
+        return $this->recordedEvents;
     }
 }

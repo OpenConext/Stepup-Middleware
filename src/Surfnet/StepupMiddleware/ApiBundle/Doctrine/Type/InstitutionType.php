@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * Custom Type for the Institution Value Object
@@ -49,7 +51,19 @@ class InstitutionType extends Type
             return $value;
         }
 
-        return new Institution($value);
+        try {
+            $institution = new Institution($value);
+        } catch (InvalidArgumentException $e) {
+            // get nice standard message, so we can throw it keeping the exception chain
+            $doctrineExceptionMessage = ConversionException::conversionFailed(
+                $value,
+                $this->getName()
+            )->getMessage();
+
+            throw new ConversionException($doctrineExceptionMessage, 0, $e);
+        }
+
+        return $institution;
     }
 
     public function getName()

@@ -19,7 +19,6 @@
 namespace Surfnet\Stepup\Configuration;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
-use GuzzleHttp;
 use Surfnet\Stepup\Configuration\Api\Configuration as ConfigurationInterface;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
@@ -27,6 +26,7 @@ use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
+use Surfnet\Stepup\Helper\JsonHelper;
 
 class Configuration extends EventSourcedAggregateRoot implements ConfigurationInterface
 {
@@ -50,7 +50,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
 
     public function update($configurationAsJson)
     {
-        $decodedConfiguration = GuzzleHttp\json_decode($configurationAsJson, true);
+        $decodedConfiguration = JsonHelper::decode($configurationAsJson);
 
         $this->apply(new ConfigurationUpdatedEvent(
             self::CONFIGURATION_ID,

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,14 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
-
-class AlreadyFlushingException extends LogicException
-{
-}
+return [
+    'expectedPropertyPath' => 'Institution(another-organisation.test)',
+    'expectErrorMessageToContain' => 'Expected only options',
+    'reconfigureInstitutionRequest' => [
+        'surfnet.nl' => [
+            'use_ra_locations' => true,
+            'show_raa_contact_information' => true,
+        ],
+        'another-organisation.test' => []
+    ],
+];

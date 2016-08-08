@@ -98,7 +98,6 @@ class SecondFactorProjector extends Projector
         $secondFactor->type = 'yubikey';
         $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
-        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
         $this->unverifiedRepository->save($secondFactor);
     }
@@ -111,7 +110,6 @@ class SecondFactorProjector extends Projector
         $secondFactor->type = 'sms';
         $secondFactor->secondFactorIdentifier = $event->phoneNumber->getValue();
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
-        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
         $this->unverifiedRepository->save($secondFactor);
     }
@@ -124,7 +122,6 @@ class SecondFactorProjector extends Projector
         $secondFactor->type = $event->stepupProvider->getStepupProvider();
         $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
-        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
         $this->unverifiedRepository->save($secondFactor);
     }
@@ -137,7 +134,6 @@ class SecondFactorProjector extends Projector
         $secondFactor->type = 'u2f';
         $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
-        $secondFactor->verificationNonceValidUntil = $event->emailVerificationWindow->openUntil();
 
         $this->unverifiedRepository->save($secondFactor);
     }

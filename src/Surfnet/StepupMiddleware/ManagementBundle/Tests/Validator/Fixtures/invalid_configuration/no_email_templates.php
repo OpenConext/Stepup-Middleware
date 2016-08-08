@@ -21,5 +21,5 @@ return [
     'configuration'        => [
         'gateway' => [],
         'sraa'    => [],
-    ]
+    ],
 ];

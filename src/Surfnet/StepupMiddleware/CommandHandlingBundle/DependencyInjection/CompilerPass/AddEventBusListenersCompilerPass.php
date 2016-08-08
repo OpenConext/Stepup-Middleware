@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass;
 
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -29,8 +30,31 @@ class AddEventBusListenersCompilerPass implements CompilerPassInterface
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.event_bus.buffered');
         $eventListenerDefinitions = $container->findTaggedServiceIds('event_bus.event_listener');
 
-        foreach (array_keys($eventListenerDefinitions) as $id) {
-            $definition->addMethodCall('subscribe', [new Reference($id)]);
+        // When replaying events, certain listeners should not be allowed to run again, for instance
+        // when they are no longer relevant at the time of replaying (i.e. sending emails)
+        if (!in_array($container->getParameter('kernel.environment'), ['dev_event_replay', 'prod_event_replay'])) {
+            foreach (array_keys($eventListenerDefinitions) as $serviceId) {
+                $definition->addMethodCall('subscribe', [new Reference($serviceId)]);
+            }
+
+            return;
+        }
+
+        foreach ($eventListenerDefinitions as $serviceId => $tags) {
+            foreach ($tags as $attributes) {
+                if (!isset($attributes['disable_for_replay'])) {
+                    throw new LogicException(sprintf(
+                        'Cannot replay events: Expected option "disable_for_replay" to be set for service id "%s"',
+                        $serviceId
+                    ));
+                }
+
+                if ($attributes['disable_for_replay']) {
+                    continue;
+                }
+
+                $definition->addMethodCall('subscribe', [new Reference($serviceId)]);
+            }
         }
     }
 }

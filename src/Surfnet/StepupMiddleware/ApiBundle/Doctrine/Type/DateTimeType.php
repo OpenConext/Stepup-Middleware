@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use DateTime as CoreDateTime;
+use DateTimeZone;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
@@ -53,6 +54,9 @@ class DateTimeType extends Type
             return null;
         }
 
+        // Note that we have no guarantee here that UTC is coming in.
+        // See: https://www.pivotaltracker.com/projects/1163646/stories/121758429
+
         return $value->format($platform->getDateTimeFormatString());
     }
 
@@ -68,7 +72,7 @@ class DateTimeType extends Type
             return $value;
         }
 
-        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value);
+        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value, new DateTimeZone('UTC'));
 
         if (!$dateTime) {
             throw ConversionException::conversionFailedFormat(

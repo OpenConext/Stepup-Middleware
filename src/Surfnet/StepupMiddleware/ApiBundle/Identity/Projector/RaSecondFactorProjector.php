@@ -35,6 +35,7 @@ use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -192,7 +193,12 @@ class RaSecondFactorProjector extends Projector
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $this->updateStatus($event->secondFactorId, SecondFactorStatus::vetted());
+        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+
+        $secondFactor->documentNumber = $event->documentNumber;
+        $secondFactor->status = SecondFactorStatus::vetted();
+
+        $this->raSecondFactorRepository->save($secondFactor);
     }
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)

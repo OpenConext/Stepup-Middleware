@@ -111,11 +111,17 @@ doctrine:
                 connection: middleware
                 naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
-                    api:
+                    api_identity:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle
-                        prefix: Surfnet\StepupMiddleware\ApiBundle
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
+                        prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
+                        is_bundle: false
+                    api_configuration:
+                        mapping: true
+                        type: annotation
+                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Configuration
+                        prefix: Surfnet\StepupMiddleware\ApiBundle\Configuration
                         is_bundle: false
                     management_configuration:
                         mapping: true

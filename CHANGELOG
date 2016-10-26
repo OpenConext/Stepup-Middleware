@@ -2,6 +2,9 @@
 VERSION 2  RELEASE 2.0.0
 ========================
 
+   Version 2.1 - Update documentation and fix replaying events with increment sizes larger than 1
+      26/10/2016 09:43  2.1.0  initial release
+
    Version 2.0 - Release 2.0.0
       10/08/2016 12:18  2.0.2  Bugfix release that ensures that all migrations run in the correct order
       10/08/2016 11:43  2.0.1  Bugfix release that ensures the cache can be cleared on production

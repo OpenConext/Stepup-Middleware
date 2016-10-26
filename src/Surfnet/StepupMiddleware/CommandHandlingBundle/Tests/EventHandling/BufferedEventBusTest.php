@@ -22,6 +22,7 @@ use Broadway\Domain\DateTime;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
+use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
@@ -38,7 +39,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('handle')->never()
             ->getMock();
 
-        $bus = new BufferedEventBus();
+        $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);
 
         // Currently buses typehint against the concrete DomainEventStream.
@@ -56,7 +57,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
-        $bus = new BufferedEventBus();
+        $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);
 
         // Currently buses typehint against the concrete DomainEventStream.
@@ -76,7 +77,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
-        $bus = new BufferedEventBus();
+        $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);
 
         $bus->publish(new DomainEventStream([$event]));
@@ -90,7 +91,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
      */
     public function an_event_caused_by_an_event_in_the_current_buffer_being_flushed_is_buffered_and_flushed_after_events_in_the_current_buffer()
     {
-        $bus = new BufferedEventBus();
+        $bus = new BufferedEventBus($this->getDummyEntityManager());
 
         $firstEventInCurrentBuffer = $this->createDummyDomainMessage('First event in current buffer');
         $secondEventInCurrentBuffer = $this->createDummyDomainMessage('Second event in current buffer');
@@ -118,6 +119,11 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     private function createDummyDomainMessage($payload)
     {
         return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
+    }
+
+    private function getDummyEntityManager()
+    {
+        return m::mock(EntityManagerInterface::class)->shouldIgnoreMissing(true);
     }
 }
 

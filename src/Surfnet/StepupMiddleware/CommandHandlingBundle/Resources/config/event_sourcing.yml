@@ -55,6 +55,8 @@ services:
     surfnet_stepup_middleware_command_handling.event_bus.buffered:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus
+        arguments:
+            - @doctrine.orm.entity_manager
 
     # Sensitive data
     surfnet_stepup_middleware_command_handling.repository.sensitive_data_message:

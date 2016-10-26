@@ -22,6 +22,7 @@ use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventHandling\EventListenerInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class BufferedEventBus implements EventBusInterface
@@ -42,6 +43,16 @@ class BufferedEventBus implements EventBusInterface
      * @var bool
      */
     private $isFlushing = false;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     public function subscribe(EventListenerInterface $eventListener)
     {
@@ -79,6 +90,10 @@ class BufferedEventBus implements EventBusInterface
                 foreach ($this->eventListeners as $eventListener) {
                     $eventListener->handle($domainMessage);
                 }
+
+                // After handling an event, clear the entity manager to prevent collisions in Doctrine's object tracking
+                // This comes with a caveat: event listeners cannot hold references to certain entities between events
+                $this->entityManager->clear();
             }
         } catch (Exception $e) {
             $this->isFlushing = false;

@@ -70,6 +70,7 @@ class AuditLogRepository extends EntityRepository
         switch ($query->orderBy) {
             case 'secondFactorId':
             case 'secondFactorType':
+            case 'secondFactorIdentifier':
             case 'event':
             case 'recordedOn':
             case 'actorId':

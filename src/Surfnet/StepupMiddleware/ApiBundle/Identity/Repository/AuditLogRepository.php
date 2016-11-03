@@ -74,6 +74,7 @@ class AuditLogRepository extends EntityRepository
             case 'event':
             case 'recordedOn':
             case 'actorId':
+            case 'actorCommonName':
                 $queryBuilder->orderBy(
                     sprintf('al.%s', $query->orderBy),
                     $query->orderDirection === 'desc' ? 'DESC' : 'ASC'

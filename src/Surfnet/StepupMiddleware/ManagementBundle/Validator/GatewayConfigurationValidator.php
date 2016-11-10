@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Assert\Assertion as Assert;
+use Assert\Assertion;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class GatewayConfigurationValidator implements ConfigurationValidatorInterface
@@ -66,7 +66,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 
     private function validateIdentityProviders($identityProviders, $propertyPath)
     {
-        Assert::isArray(
+        Assertion::isArray(
             $identityProviders,
             'identity_providers must have an array of identity provider configurations as value',
             $propertyPath
@@ -74,7 +74,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 
         foreach ($identityProviders as $index => $identityProvider) {
             $path = $propertyPath . '[' . $index . ']';
-            Assert::isArray($identityProvider, 'Identity provider must be an object', $path);
+            Assertion::isArray($identityProvider, 'Identity provider must be an object', $path);
 
             $this->identityProviderConfigurationValidator->validate($identityProvider, $path);
         }
@@ -82,12 +82,12 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 
     private function validateServiceProviders($serviceProviders, $propertyPath)
     {
-        Assert::isArray(
+        Assertion::isArray(
             $serviceProviders,
             'service_providers must have an array of service provider configurations as value',
             $propertyPath
         );
-        Assert::true(
+        Assertion::true(
             count($serviceProviders) >= 1,
             'at least one service_provider must be configured',
             $propertyPath
@@ -95,7 +95,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 
         foreach ($serviceProviders as $index => $serviceProvider) {
             $path = $propertyPath . '[' . $index . ']';
-            Assert::isArray($serviceProvider, 'Service provider must be an object', $path);
+            Assertion::isArray($serviceProvider, 'Service provider must be an object', $path);
 
             $this->serviceProviderConfigurationValidator->validate($serviceProvider, $path);
         }

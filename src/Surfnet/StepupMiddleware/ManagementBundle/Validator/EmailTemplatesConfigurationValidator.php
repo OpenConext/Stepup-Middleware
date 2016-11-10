@@ -48,6 +48,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
             'registration_code_with_ras',
             'registration_code_with_ra_locations',
             'vetted',
+            'second_factor_revoked',
         ];
 
         StepupAssert::keysMatch(

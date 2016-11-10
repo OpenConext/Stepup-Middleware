@@ -124,7 +124,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.email_verification_email.subject',
             ['%commonName%' => $commonName],
-            null,
+            'messages',
             $locale
         );
 
@@ -178,7 +178,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
-            null,
+            'messages',
             $locale
         );
 
@@ -232,7 +232,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
-            null,
+            'messages',
             $locale
         );
 
@@ -282,7 +282,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.vetted_email.subject',
             ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
-            null,
+            'messages',
             $locale->getLocale()
         );
 

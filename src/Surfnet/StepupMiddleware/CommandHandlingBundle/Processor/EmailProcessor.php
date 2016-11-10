@@ -20,18 +20,24 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Uses several services for information needed for relevant emails
+ */
 class EmailProcessor extends Processor
 {
     /**
@@ -55,21 +61,29 @@ class EmailProcessor extends Processor
     private $raLocationsService;
 
     /**
+     * @var IdentityService
+     */
+    private $identityService;
+
+    /**
      * @param SecondFactorMailService $mailService
      * @param RaListingService $raListingService
      * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
      * @param RaLocationService $raLocationsService
+     * @param IdentityService $identityService
      */
     public function __construct(
         SecondFactorMailService $mailService,
         RaListingService $raListingService,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        RaLocationService $raLocationsService
+        RaLocationService $raLocationsService,
+        IdentityService $identityService
     ) {
         $this->mailService                            = $mailService;
         $this->raListingService                       = $raListingService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->raLocationsService                     = $raLocationsService;
+        $this->identityService                        = $identityService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
@@ -142,6 +156,41 @@ class EmailProcessor extends Processor
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+    }
+
+    public function handleCompliedWithVettedSecondFactorRevocationEvent(
+        CompliedWithVettedSecondFactorRevocationEvent $event
+    ) {
+        $identity = $this->identityService->find($event->identityId->getIdentityId());
+
+        if ($identity === null) {
+            return;
+        }
+
+        $this->mailService->sendVettedSecondFactorRevokedByRaEmail(
+            $identity->preferredLocale,
+            $identity->commonName,
+            $identity->email,
+            $event->secondFactorType,
+            $event->secondFactorIdentifier
+        );
+    }
+
+    public function handleVettedSecondFactorRevokedEvent(SecondFactorRevokedEvent $event)
+    {
+        $identity = $this->identityService->find($event->identityId->getIdentityId());
+
+        if ($identity === null) {
+            return;
+        }
+
+        $this->mailService->sendVettedSecondFactorRevokedBySelfEmail(
+            $identity->preferredLocale,
+            $identity->commonName,
+            $identity->email,
+            $event->secondFactorType,
+            $event->secondFactorIdentifier
+        );
     }
 
     /**

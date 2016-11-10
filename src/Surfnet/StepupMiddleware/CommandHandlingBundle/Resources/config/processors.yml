@@ -6,6 +6,7 @@ services:
             - "@surfnet_stepup_middleware_api.service.ra_listing"
             - "@surfnet_stepup_middleware_api.service.institution_configuration_options"
             - "@surfnet_stepup_middleware_api.service.ra_location"
+            - "@surfnet_stepup_middleware_api.service.identity"
         tags: [{ name: event_bus.event_listener, disable_for_replay: true }]
 
     surfnet_stepup_middleware_command_handling.service.second_factor_mail:

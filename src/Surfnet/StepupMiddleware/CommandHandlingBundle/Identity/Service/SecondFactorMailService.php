@@ -22,6 +22,8 @@ use Assert\Assertion;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
@@ -292,6 +294,119 @@ final class SecondFactorMailService
             'locale'           => $locale->getLocale(),
             'commonName'       => $commonName->getCommonName(),
             'email'            => $email->getEmail(),
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email->getEmail(), $commonName->getCommonName())
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param Locale $locale
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param SecondFactorType $secondFactorType
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @throws \Exception
+     */
+    public function sendVettedSecondFactorRevokedByRaEmail(
+        Locale $locale,
+        CommonName $commonName,
+        Email $email,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier
+    ) {
+        $subject = $this->translator->trans(
+            'mw.mail.second_factor_revoked.subject',
+            [
+                '%tokenType%' => $secondFactorType
+            ],
+            'messages',
+            $locale->getLocale()
+        );
+
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'second_factor_revoked',
+            $locale->getLocale(),
+            $this->fallbackLocale
+        );
+        $parameters = [
+            'isRevokedByRa'   => true,
+            'templateString'  => $emailTemplate->htmlContent,
+            'commonName'      => $commonName->getCommonName(),
+            'tokenType'       => $secondFactorType->getSecondFactorType(),
+            'tokenIdentifier' => $secondFactorIdentifier->getValue(),
+            'selfServiceUrl'  => $this->selfServiceUrl,
+            'locale'          => $locale->getLocale(),
+        ];
+
+        // Rendering file template instead of string
+        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
+        $body = $this->templateEngine->render(
+            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            $parameters
+        );
+
+        /** @var Message $message */
+        $message = $this->mailer->createMessage();
+        $message
+            ->setFrom($this->sender->getEmail(), $this->sender->getName())
+            ->addTo($email->getEmail(), $commonName->getCommonName())
+            ->setSubject($subject)
+            ->setBody($body, 'text/html', 'utf-8');
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param Locale $locale
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param SecondFactorType $secondFactorType
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     */
+    public function sendVettedSecondFactorRevokedBySelfEmail(
+        Locale $locale,
+        CommonName $commonName,
+        Email $email,
+        SecondFactorType $secondFactorType,
+        SecondFactorIdentifier $secondFactorIdentifier
+    ) {
+        $subject = $this->translator->trans(
+            'mw.mail.second_factor_revoked.subject',
+            [
+                '%tokenType%' => $secondFactorType
+            ],
+            'messages',
+            $locale->getLocale()
+        );
+
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'second_factor_revoked',
+            $locale->getLocale(),
+            $this->fallbackLocale
+        );
+        $parameters = [
+            'isRevokedByRa'   => false,
+            'templateString'  => $emailTemplate->htmlContent,
+            'commonName'      => $commonName->getCommonName(),
+            'tokenType'       => $secondFactorType->getSecondFactorType(),
+            'tokenIdentifier' => $secondFactorIdentifier->getValue(),
+            'selfServiceUrl'  => $this->selfServiceUrl,
+            'locale'          => $locale->getLocale(),
         ];
 
         // Rendering file template instead of string

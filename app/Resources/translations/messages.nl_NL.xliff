@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2014-12-04T14:04:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+  <file date="2016-11-10T12:02:12Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
     </header>
     <body>
+      <trans-unit id="39fa7a2a290c8ead04a3f657443b7bc99549008f" resname="mw.mail.second_factor_revoked.subject">
+        <source>mw.mail.second_factor_revoked.subject</source>
+        <target>Je %tokenType% token is ingetrokken
+        </target>
+      </trans-unit>
       <trans-unit id="a4ecaec491b38e8084eeaa53a7e5479a7714feb2" resname="ss.mail.email_verification_email.subject">
         <jms:reference-file line="87">Identity/Service/SecondFactorMailService.php</jms:reference-file>
         <source>ss.mail.email_verification_email.subject</source>

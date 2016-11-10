@@ -206,14 +206,14 @@ All previous templates will be removed from the database and the new templates w
 
 ### Template Variables
 
-#### e-mail verification (confirm_email)
+#### E-mail verification (confirm_email)
 | variable name   | type   | example                                                 |
 |-----------------|--------|---------------------------------------------------------|
 | commonName      | string | Jan Modaal                                              |
 | email           | string | jan@modaal.nl                                           |
 | verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
 
-#### registration (registration_code_with_ras)
+#### Registration (registration_code_with_ras)
 | variable name         | type   | example                   |
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
@@ -223,7 +223,7 @@ All previous templates will be removed from the database and the new templates w
 | ╰ location            | string | Moreelsepark, Utrecht     |
 | ╰ contactInformation  | string | mail naar info@surfnet.nl |
 
-#### registration (registration_code_with_ra_locations)
+#### Registration (registration_code_with_ra_locations)
 | variable name         | type   | example                   |
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |

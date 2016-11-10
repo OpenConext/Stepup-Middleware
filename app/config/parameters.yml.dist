@@ -45,3 +45,5 @@ parameters:
     stepup_loa_loa1: https://gateway.tld/authentication/loa1
     stepup_loa_loa2: https://gateway.tld/authentication/loa2
     stepup_loa_loa3: https://gateway.tld/authentication/loa3
+
+    self_service_url: https://selfservice.tld

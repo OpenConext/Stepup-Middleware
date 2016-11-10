@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
-use Psr\Log\LoggerInterface;
+use Assert\Assertion;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -72,9 +72,9 @@ final class SecondFactorMailService
     private $fallbackLocale;
 
     /**
-     * @var LoggerInterface
+     * @var string
      */
-    private $logger;
+    private $selfServiceUrl;
 
     /**
      * @param Mailer $mailer
@@ -84,7 +84,7 @@ final class SecondFactorMailService
      * @param string $emailVerificationUrlTemplate
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
-     * @param LoggerInterface $logger
+     * @param string $selfServiceUrl
      */
     public function __construct(
         Mailer $mailer,
@@ -94,8 +94,11 @@ final class SecondFactorMailService
         $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
-        LoggerInterface $logger
+        $selfServiceUrl
     ) {
+        Assertion::string($fallbackLocale);
+        Assertion::string($selfServiceUrl);
+
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
@@ -103,7 +106,7 @@ final class SecondFactorMailService
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->logger = $logger;
+        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     /**

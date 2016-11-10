@@ -19,7 +19,7 @@ services:
             - "" # Verification URL set in bundle extension
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
-            - "@logger"
+            - "" # Self service url is set in bundle extension
 
     surfnet_stepup_middleware_command_handling.email_sender:
         public: false

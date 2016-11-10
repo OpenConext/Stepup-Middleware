@@ -20,7 +20,6 @@ services:
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "@logger"
-            - true
 
     surfnet_stepup_middleware_command_handling.email_sender:
         public: false

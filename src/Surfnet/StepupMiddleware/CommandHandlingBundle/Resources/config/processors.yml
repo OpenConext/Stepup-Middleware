@@ -40,6 +40,52 @@ services:
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
 
+    surfnet_stepup_middleware_command_handling.service.email_verification_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerificationMailService
+        arguments:
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@templating"
+            - "" # Verification URL set in bundle extension
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+
+    surfnet_stepup_middleware_command_handling.service.registration_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService
+        arguments:
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@templating"
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+
+    surfnet_stepup_middleware_command_handling.service.second_factor_revocation_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorRevocationMailService
+        arguments:
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@templating"
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+            - "" # Self service url is set in bundle extension
+
+    surfnet_stepup_middleware_command_handling.service.second_factor_vetted_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorVettedMailService
+        arguments:
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@templating"
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+
     surfnet_stepup_middleware_command_handling.email_sender:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender

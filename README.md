@@ -3,6 +3,8 @@ Step-up Middleware
 
 [![Build Status](https://travis-ci.org/SURFnet/Stepup-Middleware.svg)](https://travis-ci.org/SURFnet/Stepup-Middleware) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/SURFnet/Stepup-Middleware/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/SURFnet/Stepup-Middleware/?branch=develop) [![SensioLabs Insight](https://insight.sensiolabs.com/projects/ffe7f88f-648e-4ad8-b809-31ff4fead16a/mini.png)](https://insight.sensiolabs.com/projects/ffe7f88f-648e-4ad8-b809-31ff4fead16a)
 
+This component is part of "Step-up Authentication as-a Service". See [Stepup-Deploy](https://github.com/SURFnet/Stepup-Deploy) for an overview. 
+
 ## Requirements
 
  * PHP 5.6+ or PHP7

@@ -378,7 +378,7 @@ final class SecondFactorMailService
      * @param SecondFactorType $secondFactorType
      * @param SecondFactorIdentifier $secondFactorIdentifier
      */
-    public function sendVettedSecondFactorRevokedBySelfEmail(
+    public function sendVettedSecondFactorRevokedByRegistrantEmail(
         Locale $locale,
         CommonName $commonName,
         Email $email,

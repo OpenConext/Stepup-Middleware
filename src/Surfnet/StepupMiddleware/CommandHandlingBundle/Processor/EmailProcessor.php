@@ -184,7 +184,7 @@ class EmailProcessor extends Processor
             return;
         }
 
-        $this->mailService->sendVettedSecondFactorRevokedBySelfEmail(
+        $this->mailService->sendVettedSecondFactorRevokedByRegistrantEmail(
             $identity->preferredLocale,
             $identity->commonName,
             $identity->email,

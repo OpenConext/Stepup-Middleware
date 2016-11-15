@@ -25,7 +25,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigur
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 
 final class RegistrationEmailProcessor extends Processor
 {
@@ -35,9 +35,9 @@ final class RegistrationEmailProcessor extends Processor
     private $raLocationsService;
 
     /**
-     * @var SecondFactorMailService
+     * @var RegistrationMailService
      */
-    private $mailService;
+    private $registrationMailService;
 
     /**
      * @var InstitutionConfigurationOptionsService
@@ -50,12 +50,12 @@ final class RegistrationEmailProcessor extends Processor
     private $raListingService;
 
     public function __construct(
-        SecondFactorMailService $mailService,
+        RegistrationMailService $registrationMailService,
         RaListingService $raListingService,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaLocationService $raLocationsService
     ) {
-        $this->mailService                            = $mailService;
+        $this->registrationMailService                = $registrationMailService;
         $this->raListingService                       = $raListingService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->raLocationsService                     = $raLocationsService;
@@ -94,7 +94,7 @@ final class RegistrationEmailProcessor extends Processor
      */
     private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, Institution $institution)
     {
-        $this->mailService->sendRegistrationEmailWithRaLocations(
+        $this->registrationMailService->sendRegistrationEmailWithRaLocations(
             (string)$event->preferredLocale,
             (string)$event->commonName,
             (string)$event->email,
@@ -109,7 +109,7 @@ final class RegistrationEmailProcessor extends Processor
      */
     private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event, array $ras)
     {
-        $this->mailService->sendRegistrationEmailWithRas(
+        $this->registrationMailService->sendRegistrationEmailWithRas(
             (string)$event->preferredLocale,
             (string)$event->commonName,
             (string)$event->email,

@@ -20,22 +20,22 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorVettedMailService;
 
 final class SecondFactorVettedEmailProcessor extends Processor
 {
     /**
-     * @var SecondFactorMailService
+     * @var SecondFactorVettedMailService
      */
-    private $mailService;
+    private $secondFactorVettedMailService;
 
-    public function __construct(SecondFactorMailService $mailService)
+    public function __construct(SecondFactorVettedMailService $secondFactorVettedMailService)
     {
-        $this->mailService = $mailService;
+        $this->secondFactorVettedMailService = $secondFactorVettedMailService;
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+        $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
     }
 }

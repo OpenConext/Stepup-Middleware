@@ -22,12 +22,12 @@ use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorRevokedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorRevocationMailService;
 
 final class SecondFactorRevocationEmailProcessor extends Processor
 {
     /**
-     * @var SecondFactorMailService
+     * @var SecondFactorRevocationMailService
      */
     private $mailService;
 
@@ -37,12 +37,14 @@ final class SecondFactorRevocationEmailProcessor extends Processor
     private $identityService;
 
     /**
-     * @param SecondFactorMailService $mailService
+     * @param SecondFactorRevocationMailService $secondFactorRevocationMailService
      * @param IdentityService $identityService
      */
-    public function __construct(SecondFactorMailService $mailService, IdentityService $identityService)
-    {
-        $this->mailService = $mailService;
+    public function __construct(
+        SecondFactorRevocationMailService $secondFactorRevocationMailService,
+        IdentityService $identityService
+    ) {
+        $this->mailService = $secondFactorRevocationMailService;
         $this->identityService = $identityService;
     }
 

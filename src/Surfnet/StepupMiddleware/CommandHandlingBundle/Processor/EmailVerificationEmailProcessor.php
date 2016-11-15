@@ -23,23 +23,23 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerificationMailService;
 
 final class EmailVerificationEmailProcessor extends Processor
 {
     /**
-     * @var SecondFactorMailService
+     * @var EmailVerificationMailService
      */
-    private $mailService;
+    private $emailVerificationMailService;
 
-    public function __construct(SecondFactorMailService $mailService)
+    public function __construct(EmailVerificationMailService $emailVerificationMailService)
     {
-        $this->mailService = $mailService;
+        $this->emailVerificationMailService = $emailVerificationMailService;
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->mailService->sendEmailVerificationEmail(
+        $this->emailVerificationMailService->sendEmailVerificationEmail(
             (string) $event->preferredLocale,
             (string) $event->commonName,
             (string) $event->email,
@@ -49,7 +49,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->mailService->sendEmailVerificationEmail(
+        $this->emailVerificationMailService->sendEmailVerificationEmail(
             (string) $event->preferredLocale,
             (string) $event->commonName,
             (string) $event->email,
@@ -59,7 +59,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $this->mailService->sendEmailVerificationEmail(
+        $this->emailVerificationMailService->sendEmailVerificationEmail(
             (string) $event->preferredLocale,
             (string) $event->commonName,
             (string) $event->email,
@@ -69,7 +69,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handleU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
-        $this->mailService->sendEmailVerificationEmail(
+        $this->emailVerificationMailService->sendEmailVerificationEmail(
             (string) $event->preferredLocale,
             (string) $event->commonName,
             (string) $event->email,

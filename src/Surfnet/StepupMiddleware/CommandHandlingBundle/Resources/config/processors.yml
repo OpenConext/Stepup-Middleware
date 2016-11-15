@@ -27,19 +27,6 @@ services:
             - "@surfnet_stepup_middleware_command_handling.service.second_factor_vetted_mail"
         tags: [{ name: event_bus.event_listener, disable_for_replay: true }]
 
-    surfnet_stepup_middleware_command_handling.service.second_factor_mail:
-        public: false
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService
-        arguments:
-            - "@mailer"
-            - "@surfnet_stepup_middleware_command_handling.email_sender"
-            - "@translator"
-            - "@templating"
-            - "" # Verification URL set in bundle extension
-            - "@surfnet_stepup_middleware_management.service.email_template"
-            - "" # Fallback locale
-            - "" # Self service url is set in bundle extension
-
     surfnet_stepup_middleware_command_handling.service.email_verification_mail:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerificationMailService

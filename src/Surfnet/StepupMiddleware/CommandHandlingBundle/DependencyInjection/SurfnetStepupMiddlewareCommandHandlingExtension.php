@@ -46,12 +46,6 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
             ->replaceArgument(1, $config['email_sender']['email']);
 
         $container
-            ->getDefinition('surfnet_stepup_middleware_command_handling.service.second_factor_mail')
-            ->replaceArgument(4, $config['self_service_email_verification_url_template'])
-            ->replaceArgument(6, $config['email_fallback_locale'])
-            ->replaceArgument(7, $config['self_service_url']);
-
-        $container
             ->getDefinition('surfnet_stepup_middleware_command_handling.service.email_verification_mail')
             ->replaceArgument(4, $config['self_service_email_verification_url_template'])
             ->replaceArgument(6, $config['email_fallback_locale']);

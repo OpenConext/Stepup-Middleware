@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Assert\Assertion as Assert;
+use Assert\Assertion;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\Stepup\Helper\JsonHelper;
@@ -79,7 +79,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
 
     public function validateRoot($configuration)
     {
-        Assert::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
+        Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
         $acceptedProperties = ['gateway', 'sraa', 'email_templates'];
         StepupAssert::keysMatch(
@@ -96,21 +96,21 @@ class ConfigurationStructureValidator extends ConstraintValidator
 
     private function validateGatewayConfiguration($configuration, $propertyPath)
     {
-        Assert::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
+        Assertion::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
 
         $this->gatewayConfigurationValidator->validate($configuration['gateway'], $propertyPath);
     }
 
     private function validateSraaConfiguration($configuration, $propertyPath)
     {
-        Assert::isArray(
+        Assertion::isArray(
             $configuration['sraa'],
             'Property sraa must have an array of name_ids (string) as value',
             $propertyPath
         );
 
         foreach ($configuration['sraa'] as $index => $value) {
-            Assert::string(
+            Assertion::string(
                 $value,
                 'value must be a string (the name_id of the SRAA)',
                 $propertyPath . '[' . $index. ']'
@@ -120,7 +120,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
 
     private function validateEmailTemplatesConfiguration($configuration, $propertyPath)
     {
-        Assert::isArray(
+        Assertion::isArray(
             $configuration['email_templates'],
             'Property "email_templates" must have an object as value',
             $propertyPath

@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Assert\Assertion as Assert;
+use Assert\Assertion;
 use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
@@ -48,6 +48,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
             'registration_code_with_ras',
             'registration_code_with_ra_locations',
             'vetted',
+            'second_factor_revoked',
         ];
 
         StepupAssert::keysMatch(
@@ -58,7 +59,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         );
 
         foreach ($templateNames as $templateName) {
-            Assert::isArray(
+            Assertion::isArray(
                 $configuration[$templateName],
                 'Property "' . $templateName . '" must have an object as value',
                 $propertyPath
@@ -66,7 +67,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
 
             $templatePropertyPath = $propertyPath . '.' . $templateName;
 
-            Assert::keyExists(
+            Assertion::keyExists(
                 $configuration[$templateName],
                 $this->requiredLocale,
                 "Required property '" . $this->requiredLocale . "' is missing",
@@ -75,12 +76,12 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
 
             foreach ($configuration[$templateName] as $locale => $template) {
                 $localePropertyPath = $templatePropertyPath . '[' . $locale . ']';
-                Assert::string(
+                Assertion::string(
                     $locale,
                     'Locale must be string',
                     $localePropertyPath
                 );
-                Assert::string(
+                Assertion::string(
                     $template,
                     "Property '" . $this->requiredLocale . "' must have a string as value",
                     $localePropertyPath

@@ -18,14 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Assert\Assertion as Assert;
+use Assert\Assertion;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class IdentityProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
     public function validate(array $configuration, $propertyPath)
     {
-        Assert::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
+        Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
         $acceptedProperties = [
             'entity_id',
@@ -52,7 +52,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
      */
     private function validateStringValue($configuration, $name, $propertyPath)
     {
-        Assert::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
+        Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
     /**
@@ -64,8 +64,8 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
         $value = $configuration['loa'];
         $path  = $propertyPath . '.loa';
 
-        Assert::isArray($value, 'must be an object', $path);
-        Assert::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
-        Assert::allString($value, 'all properties must contain strings as values', $path);
+        Assertion::isArray($value, 'must be an object', $path);
+        Assertion::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
+        Assertion::allString($value, 'all properties must contain strings as values', $path);
     }
 }

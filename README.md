@@ -81,6 +81,10 @@ As a full example:
        "vetted": {
            "nl_NL": "<p>Beste {{ commonName }},</p>\n\n<p>Bedankt voor het activeren van je token. Je token is nu klaar voor gebruik.</p>",
            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for activating your token. Your token is now ready for use.</p>"
+       },
+       "second_factor_revoked": {
+            "nl_NL": "<p>Beste {{ commonName }},</p><p>{% if isRevokedByRa %}De registratie van je {{ tokenType }} token met ID {{ tokenIdentifier }} is verwijderd door een beheerder.{% else %}Je hebt de registratie voor je {{ tokenType }} token met ID {{ tokenIdentifier }} verwijderd. Neem direct contact op met de helpdesk van je instelling als je dit zelf niet gedaan hebt, omdat dit kan betekenen dat je account gecompromitteerd is.{% endif %}</p> Je kunt dit token niet meer gebruiken om in te loggen bij op SURFconext aangesloten services die een tweede inlogstap vereisen.</p><p> Wil je een nieuw token aanvragen? Ga dan naar <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> en doorloop het registratieproces opnieuw.</p><p> Voor meer informatie kun je terecht op onze wiki: <a href=\"https://support.surfconext.nl/faq-sterke-authenticatie\">https://support.surfconext.nl/faq-sterke-authenticatie</a></p><p>Met vriendelijke groet,</p><p>SURFnet</p>",
+            "en_GB": "<p>Dear {{ commonName }},</p><p>{% if isRevokedByRa %}The registration of your {{ tokenType }} with ID {{ tokenIdentifier }} was deleted by an administrator.{% else %}You have deleted the registration of your {{ tokenType }} token with ID {{ tokenIdentifier }}. If you did not delete your token you must immediately contact the support desk of your institution, as this may indicate that your account has been compromised.{% endif %}</p> You can no longer use this token to access SURFconext services that require two-step authentication.</p><p>Do you want to replace your token? Please visit <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> and register a new token.</p><p>For more info please visit our wiki: <a href=\"https://support.surfconext.nl/faq-strong-authentication\">https://support.surfconext.nl/faq-strong-authentication</a></p><p>Best regards,</p><p>SURFnet</p>"
        }
     },
     "gateway": {
@@ -177,13 +181,13 @@ Each property of this object denotes a specific type of email, the types availab
 * ```registration_code_with_ras```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor for institutions not using RA locations.
 * ```registration_code_with_ra_locations```: **(required)** the email sent when the Registrant has successfully registered a new Second Factor for institutions using RA locations.
 * ```vetted```: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
+* ```second_factor_revoked``` **(required)**: the email sent when a Second Factor has successfully been revoked.
 
 The following list of emails is intended to be used in the future, 
 the functionality requiring these is not yet implemented. 
 * ```registration_code_expiration_warning```: the email sent when the Registrant has not vetted his Second Factor after 1 week.
 * ```second_factor_expiration_first_reminder```: the email sent when the Second Factor has not been used for 5 months
 * ```second_factor_expiration_second_reminder```: the email sent when the Second Factor has not been used for 5 months + 2 weeks.
-* ```second_factor_revocation_confirmation```: the email sent when a Second Factor has successfully been revoked.
 
 Each email contains an object, where each property corresponds with an IETF language tag (2 letter lower cased language code + underscore + 2 letter upper cased country code, i.e. nl_NL, nl_BE) that may be supported in the application.
 
@@ -204,14 +208,14 @@ All previous templates will be removed from the database and the new templates w
 
 ### Template Variables
 
-#### e-mail verification (confirm_email)
+#### E-mail verification (confirm_email)
 | variable name   | type   | example                                                 |
 |-----------------|--------|---------------------------------------------------------|
 | commonName      | string | Jan Modaal                                              |
 | email           | string | jan@modaal.nl                                           |
 | verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
 
-#### registration (registration_code_with_ras)
+#### Registration (registration_code_with_ras)
 | variable name         | type   | example                   |
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
@@ -221,7 +225,7 @@ All previous templates will be removed from the database and the new templates w
 | ╰ location            | string | Moreelsepark, Utrecht     |
 | ╰ contactInformation  | string | mail naar info@surfnet.nl |
 
-#### registration (registration_code_with_ra_locations)
+#### Registration (registration_code_with_ra_locations)
 | variable name         | type   | example                   |
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
@@ -238,6 +242,15 @@ All previous templates will be removed from the database and the new templates w
 | commonName | string | Jan Modaal    |
 | email      | string | jan@modaal.nl |
 
+#### Second factor revocation (second_factor_revoked)
+| name           | type    | example                    |
+|----------------|---------|----------------------------|
+| commonName     | string  | Jan Modaal                 |
+| email          | string  | jan@modaal.nl              |
+| tokenType      | string  | yubikey                    |
+| tokenId        | string  | 123923                     |
+| isRevokedByRa  | boolean | true                       |
+| selfServiceUrl | string  | http://selfservice.example |
 
 ## Gateway
 ### Specification:

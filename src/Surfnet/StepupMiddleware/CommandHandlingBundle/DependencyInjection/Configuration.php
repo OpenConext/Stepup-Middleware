@@ -46,6 +46,18 @@ class Configuration implements ConfigurationInterface
                             )
                         ->end()
                     ->end()
+                    ->scalarNode('self_service_url')
+                        ->isRequired()
+                        ->info('Configures the URL for Self Service.')
+                        ->validate()
+                            ->ifTrue(
+                                function ($url) {
+                                    return filter_var($url, FILTER_VALIDATE_URL) === false;
+                                }
+                            )
+                            ->thenInvalid('self_service_url must be a valid url')
+                        ->end()
+                    ->end()
                     ->arrayNode('email_sender')
                         ->isRequired()
                         ->info('Configures the sender used for all outgoing e-mail messages')
@@ -71,7 +83,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->scalarNode('email_fallback_locale')->isRequired()->end()
-                    ->scalarNode('warn_on_missing_email_template')->defaultValue(true)->end()
                 ->end();
 
         return $treeBuilder;

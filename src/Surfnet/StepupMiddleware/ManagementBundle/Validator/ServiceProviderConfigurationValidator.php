@@ -18,14 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
-use Assert\Assertion as Assert;
+use Assert\Assertion;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
     public function validate(array $configuration, $propertyPath)
     {
-        Assert::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
+        Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
         $acceptedProperties = [
             'entity_id',
@@ -80,7 +80,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateStringValue($configuration, $name, $propertyPath)
     {
-        Assert::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
+        Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
     /**
@@ -90,8 +90,8 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateStringValues($configuration, $name, $propertyPath)
     {
-        Assert::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
-        Assert::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
+        Assertion::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
+        Assertion::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
     }
 
     /**
@@ -101,7 +101,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      */
     private function validateBooleanValue($configuration, $name, $propertyPath)
     {
-        Assert::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
+        Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
     /**
@@ -113,9 +113,9 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $value = $configuration['acs'];
         $propertyPath = $propertyPath . '.acs';
 
-        Assert::isArray($value, 'must contain a non-empty array of strings', $propertyPath);
-        Assert::true(count($value) >= 1, 'array must contain at least one value', $propertyPath);
-        Assert::allString($value, 'must be an array of strings', $propertyPath);
+        Assertion::isArray($value, 'must contain a non-empty array of strings', $propertyPath);
+        Assertion::true(count($value) >= 1, 'array must contain at least one value', $propertyPath);
+        Assertion::allString($value, 'must be an array of strings', $propertyPath);
     }
 
     /**
@@ -127,9 +127,9 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $value = $configuration['loa'];
         $path  = $propertyPath . '.loa';
 
-        Assert::isArray($value, 'must be an object', $path);
-        Assert::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
-        Assert::allString($value, 'all properties must contain strings as values', $path);
+        Assertion::isArray($value, 'must be an object', $path);
+        Assertion::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
+        Assertion::allString($value, 'all properties must contain strings as values', $path);
     }
 
     /**
@@ -142,7 +142,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         $value = $configuration[$name];
         $propertyPath = $propertyPath . '.' . $name;
 
-        Assert::isArray($value, 'must contain an array', $propertyPath);
-        Assert::allString($value, 'must be an array of strings', $propertyPath);
+        Assertion::isArray($value, 'must contain an array', $propertyPath);
+        Assertion::allString($value, 'must be an array of strings', $propertyPath);
     }
 }

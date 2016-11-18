@@ -17,14 +17,14 @@
  */
 
 return [
-    'expectedPropertyPath' => 'gateway.service_providers[0].public_key',
+    'expectedPropertyPath' => 'email_templates',
     'configuration'        => [
         'gateway'         => [
             'identity_providers' => [],
             'service_providers'  => [
                 [
                     "entity_id"                          => "https://entity.tld/id",
-                    "public_key"                         => 9,
+                    "public_key"                         => "MIIE...",
                     "acs"                                => ["https://entity.tld/consume-assertion"],
                     "loa"                                => [
                         "__default__" => "https://entity.tld/authentication/loa2",
@@ -42,7 +42,6 @@ return [
             'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
             'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
             'vetted'                              => ['en_GB' => 'Vetted {{ commonName }}'],
-            'second_factor_revoked'               => ['en_GB' => 'Revoked token for {{ commonName }}'],
         ],
     ],
 ];

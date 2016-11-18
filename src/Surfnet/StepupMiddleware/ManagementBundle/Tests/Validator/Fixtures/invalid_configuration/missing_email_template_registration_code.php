@@ -18,28 +18,29 @@
 
 return [
     'expectedPropertyPath' => 'email_templates',
-    'configuration' => [
-        'gateway' => [
+    'configuration'        => [
+        'gateway'         => [
             'identity_providers' => [],
-            'service_providers' => [
+            'service_providers'  => [
                 [
-                    "entity_id"  => "https://entity.tld/id",
-                    "public_key" => "MIIE...",
-                    "acs"        => ["https://entity.tld/consume-assertion"],
-                    "loa"        => [
+                    "entity_id"                          => "https://entity.tld/id",
+                    "public_key"                         => "MIIE...",
+                    "acs"                                => ["https://entity.tld/consume-assertion"],
+                    "loa"                                => [
                         "__default__" => "https://entity.tld/authentication/loa2",
                     ],
-                    "second_factor_only" => false,
+                    "second_factor_only"                 => false,
                     "second_factor_only_nameid_patterns" => [],
-                    "assertion_encryption_enabled"      => false,
-                    "blacklisted_encryption_algorithms" => []
-                ]
+                    "assertion_encryption_enabled"       => false,
+                    "blacklisted_encryption_algorithms"  => [],
+                ],
             ],
         ],
-        'sraa' => ['20394-4320423-439248324'],
+        'sraa'            => ['20394-4320423-439248324'],
         'email_templates' => [
-            'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
-            'vetted'        => ['en_GB' => 'Vetted {{ commonName }}'],
+            'confirm_email'         => ['en_GB' => 'Verify {{ commonName }}'],
+            'vetted'                => ['en_GB' => 'Vetted {{ commonName }}'],
+            'second_factor_revoked' => ['en_GB' => 'Revoked token for {{ commonName }}'],
         ],
-    ]
+    ],
 ];

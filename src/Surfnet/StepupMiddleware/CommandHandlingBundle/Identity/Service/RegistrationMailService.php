@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
-use Psr\Log\LoggerInterface;
-use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\Locale;
+use Assert\Assertion;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
@@ -31,10 +28,7 @@ use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-final class SecondFactorMailService
+final class RegistrationMailService
 {
     /**
      * @var Mailer
@@ -57,11 +51,6 @@ final class SecondFactorMailService
     private $templateEngine;
 
     /**
-     * @var string
-     */
-    private $emailVerificationUrlTemplate;
-
-    /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
      */
     private $emailTemplateService;
@@ -72,90 +61,29 @@ final class SecondFactorMailService
     private $fallbackLocale;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
-     * @param string $emailVerificationUrlTemplate
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
-     * @param LoggerInterface $logger
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
-        $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        LoggerInterface $logger
+        $fallbackLocale
     ) {
+        Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
+
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
         $this->templateEngine = $templateEngine;
-        $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param string $verificationNonce
-     */
-    public function sendEmailVerificationEmail(
-        $locale,
-        $commonName,
-        $email,
-        $verificationNonce
-    ) {
-        $subject = $this->translator->trans(
-            'ss.mail.email_verification_email.subject',
-            ['%commonName%' => $commonName],
-            null,
-            $locale
-        );
-
-        $verificationUrl = str_replace(
-            '{nonce}',
-            urlencode($verificationNonce),
-            $this->emailVerificationUrlTemplate
-        );
-        $emailTemplate = $this->emailTemplateService->findByName('confirm_email', $locale, $this->fallbackLocale);
-
-        $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale,
-            'commonName'       => $commonName,
-            'email'            => $email,
-            'verificationUrl'  => $verificationUrl
-        ];
-
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
-            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        $this->mailer->send($message);
     }
 
     /**
@@ -175,7 +103,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
-            null,
+            'messages',
             $locale
         );
 
@@ -229,7 +157,7 @@ final class SecondFactorMailService
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
-            null,
+            'messages',
             $locale
         );
 
@@ -260,49 +188,6 @@ final class SecondFactorMailService
         $message
             ->setFrom($this->sender->getEmail(), $this->sender->getName())
             ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        $this->mailer->send($message);
-    }
-
-    /**
-     * @param Locale     $locale
-     * @param CommonName $commonName
-     * @param Email      $email
-     */
-    public function sendVettedEmail(
-        Locale $locale,
-        CommonName $commonName,
-        Email $email
-    ) {
-        $subject = $this->translator->trans(
-            'ss.mail.vetted_email.subject',
-            ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
-            null,
-            $locale->getLocale()
-        );
-
-        $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
-        $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale->getLocale(),
-            'commonName'       => $commonName->getCommonName(),
-            'email'            => $email->getEmail(),
-        ];
-
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
-            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email->getEmail(), $commonName->getCommonName())
             ->setSubject($subject)
             ->setBody($body, 'text/html', 'utf-8');
 

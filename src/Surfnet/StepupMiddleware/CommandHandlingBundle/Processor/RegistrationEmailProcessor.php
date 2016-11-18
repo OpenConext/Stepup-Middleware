@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2016 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,28 +21,23 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
-use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
-use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorMailService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 
-class EmailProcessor extends Processor
+final class RegistrationEmailProcessor extends Processor
 {
     /**
-     * @var SecondFactorMailService
+     * @var RaLocationService
      */
-    private $mailService;
+    private $raLocationsService;
 
     /**
-     * @var RaListingService
+     * @var RegistrationMailService
      */
-    private $raListingService;
+    private $registrationMailService;
 
     /**
      * @var InstitutionConfigurationOptionsService
@@ -50,66 +45,20 @@ class EmailProcessor extends Processor
     private $institutionConfigurationOptionsService;
 
     /**
-     * @var RaLocationService
+     * @var RaListingService
      */
-    private $raLocationsService;
+    private $raListingService;
 
-    /**
-     * @param SecondFactorMailService $mailService
-     * @param RaListingService $raListingService
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param RaLocationService $raLocationsService
-     */
     public function __construct(
-        SecondFactorMailService $mailService,
+        RegistrationMailService $registrationMailService,
         RaListingService $raListingService,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaLocationService $raLocationsService
     ) {
-        $this->mailService                            = $mailService;
+        $this->registrationMailService                = $registrationMailService;
         $this->raListingService                       = $raListingService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->raLocationsService                     = $raLocationsService;
-    }
-
-    public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
-    {
-        $this->mailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
-    }
-
-    public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
-    {
-        $this->mailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
-    }
-
-    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
-    {
-        $this->mailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
-    }
-
-    public function handleU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
-    {
-        $this->mailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
     }
 
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
@@ -139,18 +88,13 @@ class EmailProcessor extends Processor
         $this->sendRegistrationEmailWithRas($event, $rasWithoutRaas);
     }
 
-    public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
-    {
-        $this->mailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
-    }
-
     /**
      * @param EmailVerifiedEvent $event
      * @param Institution $institution
      */
     private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, Institution $institution)
     {
-        $this->mailService->sendRegistrationEmailWithRaLocations(
+        $this->registrationMailService->sendRegistrationEmailWithRaLocations(
             (string)$event->preferredLocale,
             (string)$event->commonName,
             (string)$event->email,
@@ -165,7 +109,7 @@ class EmailProcessor extends Processor
      */
     private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event, array $ras)
     {
-        $this->mailService->sendRegistrationEmailWithRas(
+        $this->registrationMailService->sendRegistrationEmailWithRas(
             (string)$event->preferredLocale,
             (string)$event->commonName,
             (string)$event->email,

@@ -934,6 +934,103 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
+    public function only_registration_authorities_can_vet_second_factors()
+    {
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'vetting Identity is not a registration authority'
+        );
+
+        $command                         = new VetSecondFactorCommand();
+        $command->authorityId            = 'AID';
+        $command->identityId             = 'IID';
+        $command->secondFactorId         = 'ISFID';
+        $command->registrationCode       = 'REGCODE';
+        $command->secondFactorType       = 'yubikey';
+        $command->secondFactorIdentifier = '00028278';
+        $command->documentNumber         = 'NH9392';
+        $command->identityVerified       = true;
+
+        $authorityId                = new IdentityId($command->authorityId);
+        $authorityNameId            = new NameId($this->uuid());
+        $authorityInstitution       = new Institution('A Corp.');
+        $authorityEmail             = new Email('info@domain.invalid');
+        $authorityCommonName        = new CommonName('Henk Westbroek');
+
+        $registrantId                = new IdentityId($command->identityId);
+        $registrantInstitution       = new Institution('A Corp.');
+        $registrantNameId            = new NameId('3');
+        $registrantEmail             = new Email('reg@domain.invalid');
+        $registrantCommonName        = new CommonName('Reginald Waterloo');
+        $registrantSecFacId          = new SecondFactorId('ISFID');
+        $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
+
+        $this->scenario
+            ->withAggregateId($authorityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityNameId,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB'),
+                    new SecondFactorId($this->uuid()),
+                    new YubikeyPublicId('00000012')
+                ),
+            ])
+            ->withAggregateId($registrantId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecFacIdentifier,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecFacIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
     public function a_second_factor_can_be_vetted_even_though_the_sraa_belongs_to_a_different_institution_than_the_registrant()
     {
         $command                         = new VetSecondFactorCommand();

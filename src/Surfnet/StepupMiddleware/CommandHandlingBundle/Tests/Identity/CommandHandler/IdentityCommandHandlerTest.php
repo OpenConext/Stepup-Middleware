@@ -27,6 +27,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
@@ -38,6 +39,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
@@ -45,8 +47,10 @@ use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
@@ -862,6 +866,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new Locale('en_GB'),
                     new SecondFactorId($this->uuid()),
                     new YubikeyPublicId('00000012')
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_SRAA),
+                    new Location('House'),
+                    new ContactInformation('Telephone')
                 )
             ])
             ->withAggregateId($registrantId)
@@ -921,10 +933,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /**
      * @test
      * @group command-handler
-     * @expectedException \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage the RA belongs to a different institution
      */
-    public function a_second_factor_cannot_be_vetted_if_the_ra_belongs_to_a_different_institution_than_the_registrant()
+    public function a_second_factor_can_be_vetted_even_though_the_sraa_belongs_to_a_different_institution_than_the_registrant()
     {
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
@@ -970,6 +980,163 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new Locale('en_GB'),
                     new SecondFactorId($this->uuid()),
                     new YubikeyPublicId('00000012')
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_SRAA),
+                    new Location('House'),
+                    new ContactInformation('Telephone')
+                )
+            ])
+            ->withAggregateId($registrantId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecFacIdentifier,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecFacIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('00028278'),
+                    new DocumentNumber('NH9392'),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function a_second_factor_cannot_be_vetted_if_the_ra_belongs_to_a_different_institution_than_the_registrant()
+    {
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'the RA belongs to a different institution'
+        );
+
+        $command                         = new VetSecondFactorCommand();
+        $command->authorityId            = 'AID';
+        $command->identityId             = 'IID';
+        $command->secondFactorId         = 'ISFID';
+        $command->registrationCode       = 'REGCODE';
+        $command->secondFactorType       = 'yubikey';
+        $command->secondFactorIdentifier = '00028278';
+        $command->documentNumber         = 'NH9392';
+        $command->identityVerified       = true;
+
+        $authorityId                = new IdentityId($command->authorityId);
+        $authorityNameId            = new NameId($this->uuid());
+        $authorityInstitution       = new Institution('A Corp.');
+        $authorityEmail             = new Email('info@domain.invalid');
+        $authorityCommonName        = new CommonName('Henk Westbroek');
+        $authoritySecFacId          = new SecondFactorId('AISFID');
+        $authoritySecFacIdentifier  = new YubikeyPublicId('00128278');
+
+        $registrantId                = new IdentityId($command->identityId);
+        $registrantInstitution       = new Institution('A Different Institution Inc.');
+        $registrantNameId            = new NameId('3');
+        $registrantEmail             = new Email('reg@domain.invalid');
+        $registrantCommonName        = new CommonName('Reginald Waterloo');
+        $registrantSecFacId          = new SecondFactorId('ISFID');
+        $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
+
+        $this->scenario
+            ->withAggregateId($authorityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityNameId,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authoritySecFacId,
+                    $authoritySecFacIdentifier,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authoritySecFacId,
+                    new SecondFactorType('yubikey'),
+                    $authoritySecFacIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authoritySecFacId,
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('00128278'),
+                    new DocumentNumber('XX9392'),
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('House'),
+                    new ContactInformation('Telephone')
                 )
             ])
             ->withAggregateId($registrantId)
@@ -1108,6 +1275,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB')
+                ),
+                new IdentityAccreditedAsRaEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('House'),
+                    new ContactInformation('Telephone')
                 )
             ])
             ->withAggregateId($registrantId)

@@ -348,8 +348,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Will not vet second factor when physical identity has not been verified.');
         }
 
-        if (!$registrant->getInstitution()->equals($this->institution)
-        && !$this->registrationAuthority->getRole()->isSraa()) {
+        $raHasDifferentInstitution = !$registrant->getInstitution()->equals($this->institution);
+        $raIsNotSraa               = !$this->registrationAuthority->getRole()->isSraa();
+
+        if ($raHasDifferentInstitution && $raIsNotSraa) {
             throw new DomainException(sprintf(
                 'Cannot vet registrant of institution "%s", because the RA belongs to a different institution: "%s"',
                 $registrant->getInstitution()->getInstitution(),

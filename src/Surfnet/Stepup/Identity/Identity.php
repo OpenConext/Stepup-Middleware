@@ -326,6 +326,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $this->assertNotForgotten();
 
+        if ($this->registrationAuthority === null) {
+            throw new DomainException('Cannot vet second factor: vetting Identity is not a registration authority');
+        }
+
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
         $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa();
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
@@ -342,6 +346,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         if (!$identityVerified) {
             throw new DomainException('Will not vet second factor when physical identity has not been verified.');
+        }
+
+        $raHasDifferentInstitution = !$registrant->getInstitution()->equals($this->institution);
+        $raIsNotSraa               = !$this->registrationAuthority->getRole()->isSraa();
+
+        if ($raHasDifferentInstitution && $raIsNotSraa) {
+            throw new DomainException(sprintf(
+                'Cannot vet registrant of institution "%s", because the RA belongs to a different institution: "%s"',
+                $registrant->getInstitution()->getInstitution(),
+                $this->institution->getInstitution()
+            ));
         }
 
         $registrant->complyWithVettingOfSecondFactor(

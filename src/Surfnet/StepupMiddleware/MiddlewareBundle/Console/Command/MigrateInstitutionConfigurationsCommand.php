@@ -26,7 +26,7 @@ final class MigrateInstitutionConfigurationsCommand extends Command
 {
     protected function configure()
     {
-        $this->setName('middleware:migrate:institution-configuration');
+        $this->setName('stepup:migrate:institution-configuration');
         $this->setDescription(
             'Migrates institution configurations to work with UUIDv5 identifiers'
             . 'based on institutions with normalized casing'

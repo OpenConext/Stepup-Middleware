@@ -28,6 +28,14 @@ final class UseRaLocationsOption implements JsonSerializable
      */
     private $useRaLocationsOption;
 
+    /**
+     * @return UseRaLocationsOption
+     */
+    public static function getDefault()
+    {
+        return new self(false);
+    }
+
     public function __construct($useRaLocationsOption)
     {
         if (!is_bool($useRaLocationsOption)) {

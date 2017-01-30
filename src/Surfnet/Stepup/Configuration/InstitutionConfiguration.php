@@ -290,7 +290,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) we just don't use it.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param InstitutionConfigurationRemovedEvent $event
      */
     protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {

@@ -33,6 +33,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
 /**
@@ -127,6 +128,22 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         );
 
         $institutionConfiguration->removeRaLocation(new RaLocationId($command->raLocationId));
+
+        $this->repository->save($institutionConfiguration);
+    }
+
+    public function handleRemoveInstitutionConfigurationByUnnormalizedIdCommand(
+        RemoveInstitutionConfigurationByUnnormalizedIdCommand $command
+    ) {
+        $institution                = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+
+        /** @var InstitutionConfiguration $institutionConfiguration */
+        $institutionConfiguration = $this->repository->load(
+            $institutionConfigurationId->getInstitutionConfigurationId()
+        );
+
+        $institutionConfiguration->destroy();
 
         $this->repository->save($institutionConfiguration);
     }

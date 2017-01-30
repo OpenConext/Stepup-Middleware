@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
@@ -43,6 +44,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
@@ -573,7 +575,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_can_be_removed()
     {
-
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();
         $command->institution        = 'An institution';
@@ -608,6 +609,43 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     new RaLocationId($command->raLocationId)
                 )
             ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function an_institution_configuration_can_be_removed()
+    {
+        $command               = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
+        $command->institution  = 'Babelfish Inc.';
+
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given(
+                [
+                    new NewInstitutionConfigurationCreatedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $useRaLocationsOption,
+                        $showRaaContactInformationOption
+                    )
+                ]
+            )
+            ->when($command)
+            ->then(
+                [
+                    new InstitutionConfigurationRemovedEvent(
+                        $institutionConfigurationId,
+                        $institution
+                    )
+                ]
+            );
     }
 
     /**

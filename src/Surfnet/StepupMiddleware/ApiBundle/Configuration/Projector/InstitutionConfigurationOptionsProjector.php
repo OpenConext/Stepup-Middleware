@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
@@ -64,5 +65,10 @@ final class InstitutionConfigurationOptionsProjector extends Projector
         $institutionConfigurationOptions->showRaaContactInformationOption = $event->showRaaContactInformationOption;
 
         $this->repository->save($institutionConfigurationOptions);
+    }
+
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    {
+        $this->repository->removeConfigurationOptionsFor($event->institution);
     }
 }

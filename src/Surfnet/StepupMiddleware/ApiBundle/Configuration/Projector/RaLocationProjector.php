@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
@@ -86,6 +87,11 @@ class RaLocationProjector extends Projector
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
         $this->repository->remove($raLocation);
+    }
+
+    public function removeRaLocationsFor(InstitutionConfigurationRemovedEvent $event)
+    {
+        $this->repository->removeRaLocationsFor($event->institution);
     }
 
     /**

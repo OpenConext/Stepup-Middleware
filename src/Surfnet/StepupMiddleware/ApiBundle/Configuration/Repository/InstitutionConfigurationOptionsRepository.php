@@ -50,4 +50,17 @@ final class InstitutionConfigurationOptionsRepository extends EntityRepository
         $entityManager->persist($institutionConfigurationOptions);
         $entityManager->flush();
     }
+
+    /**
+     * @param Institution $institution
+     */
+    public function removeConfigurationOptionsFor(Institution $institution)
+    {
+        $this->createQueryBuilder('ico')
+            ->delete()
+            ->where('ico.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->execute();
+    }
 }

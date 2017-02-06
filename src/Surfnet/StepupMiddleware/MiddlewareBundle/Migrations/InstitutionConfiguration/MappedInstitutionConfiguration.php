@@ -86,7 +86,7 @@ final class MappedInstitutionConfiguration
     public function inferCreateInstitutionConfigurationCommand()
     {
         $command              = new CreateInstitutionConfigurationCommand();
-        $command->UUID        = Uuid::uuid4();
+        $command->UUID        = (string) Uuid::uuid4();
         $command->institution = $this->institution->getInstitution();
 
         return $command;

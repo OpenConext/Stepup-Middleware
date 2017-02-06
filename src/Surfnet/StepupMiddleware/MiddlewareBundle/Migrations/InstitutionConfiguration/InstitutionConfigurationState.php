@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigura
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\RuntimeException;
 
-class InstitutionConfigurationState
+final class InstitutionConfigurationState
 {
     /**
      * @var MappedInstitutionConfiguration[]

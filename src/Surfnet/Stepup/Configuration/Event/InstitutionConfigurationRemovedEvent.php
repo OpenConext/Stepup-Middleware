@@ -18,12 +18,47 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
+use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 
-class InstitutionConfigurationRemovedEvent
+class InstitutionConfigurationRemovedEvent implements SerializableInterface
 {
     /**
      * @var Institution
      */
     public $institution;
+
+    /**
+     * @var InstitutionConfigurationId
+     */
+    public $institutionConfigurationId;
+
+    public function __construct(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
+    {
+        $this->institutionConfigurationId = $institutionConfigurationId;
+        $this->institution                = $institution;
+    }
+
+    /**
+     * @return mixed The object instance
+     */
+    public static function deserialize(array $data)
+    {
+        return new self(
+            new InstitutionConfigurationId($data['institution_configuration_id']),
+            new Institution($data['institution'])
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize()
+    {
+        return [
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution'                  => $this->institution->getInstitution()
+        ];
+    }
 }

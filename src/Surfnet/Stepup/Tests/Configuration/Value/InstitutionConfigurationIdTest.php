@@ -76,6 +76,47 @@ class InstitutionConfigurationIdTest extends TestCase
     }
 
     /**
+     * @test
+     * @group domain
+     */
+    public function institution_configuration_ids_are_created_case_insensitively_from_institutions()
+    {
+        $mixedCaseInstitution = new Institution('An InStItUtIoN');
+        $lowerCaseInstitution = new Institution('an institution');
+
+        $mixedCaseInstitutionConfigurationId = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
+        $lowerCaseInstitutionConfigurationId = InstitutionConfigurationId::normalizedFrom($lowerCaseInstitution);
+
+        $sameId = $mixedCaseInstitutionConfigurationId->equals($lowerCaseInstitutionConfigurationId);
+
+        $this->assertTrue(
+            $sameId,
+            'An InstitutionConfigurationId based on an institution with mixed casing'
+            . 'should match an InstitutionConfigurationId based on the same institution in lower case'
+        );
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_not_the_same()
+    {
+        $mixedCaseInstitution = new Institution('An InStItUtIoN');
+
+        $unnormalizedInstitutionConfigurationId = InstitutionConfigurationId::from($mixedCaseInstitution);
+        $normalizedInstitutionConfigurationId   = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
+
+        $sameId = $unnormalizedInstitutionConfigurationId->equals($normalizedInstitutionConfigurationId);
+
+        $this->assertFalse(
+            $sameId,
+            'An normalized InstitutionConfigurationId based on an institution with mixed casing'
+            . 'should not match an unnormalized InstitutionConfigurationId based on the same institution'
+        );
+    }
+
+    /**
      * dataprovider
      */
     public function nonStringOrEmptyStringProvider()

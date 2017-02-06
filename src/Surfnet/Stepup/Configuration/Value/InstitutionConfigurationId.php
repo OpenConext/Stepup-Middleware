@@ -29,12 +29,23 @@ final class InstitutionConfigurationId implements JsonSerializable
     private $institutionConfigurationId;
 
     /**
+     * @deprecated To be removed in next release; use normalizedFrom method to account for case-(in)sensitivity issues
+     *
      * @param Institution $institution
      * @return InstitutionConfigurationId
      */
     public static function from(Institution $institution)
     {
         return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
+    }
+
+    /**
+     * @param Institution $institution
+     * @return InstitutionConfigurationId
+     */
+    public static function normalizedFrom(Institution $institution)
+    {
+        return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
     }
 
     public function __construct($institutionConfigurationId)

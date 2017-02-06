@@ -66,6 +66,19 @@ class UseRaLocationsTest extends TestCase
         $this->assertFalse($useRaLocationsOption->equals($different));
     }
 
+    /**
+     * @test
+     * @group domain
+     * @group institution-configuration-option
+     */
+    public function default_value_is_false()
+    {
+        $default = UseRaLocationsOption::getDefault();
+        $false   = new UseRaLocationsOption(false);
+
+        $this->assertTrue($default->equals($false));
+    }
+
     public function nonBooleanProvider()
     {
         return [

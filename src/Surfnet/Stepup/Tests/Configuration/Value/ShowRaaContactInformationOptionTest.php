@@ -66,6 +66,19 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertFalse($showRaaContactInformationOption->equals($different));
     }
 
+    /**
+     * @test
+     * @group domain
+     * @group institution-configuration-option
+     */
+    public function default_value_is_true()
+    {
+        $default = ShowRaaContactInformationOption::getDefault();
+        $true = new ShowRaaContactInformationOption(true);
+
+        $this->assertTrue($default->equals($true));
+    }
+
     public function nonBooleanProvider()
     {
         return [

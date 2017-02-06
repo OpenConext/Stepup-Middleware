@@ -34,14 +34,17 @@ final class MappedInstitutionConfiguration
      * @var Institution
      */
     private $institution;
+
     /**
      * @var ShowRaaContactInformationOption
      */
     private $showRaaContactInformationOption;
+
     /**
      * @var UseRaLocationsOption
      */
     private $useRaLocationsOption;
+
     /**
      * @var array|RaLocation[]
      */

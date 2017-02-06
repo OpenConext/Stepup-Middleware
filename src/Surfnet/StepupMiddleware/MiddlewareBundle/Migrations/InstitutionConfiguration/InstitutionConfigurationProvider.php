@@ -28,10 +28,12 @@ final class InstitutionConfigurationProvider
      * @var ConfiguredInstitutionService
      */
     private $configuredInstitutionService;
+
     /**
      * @var InstitutionConfigurationOptionsService
      */
     private $institutionConfigurationOptionsService;
+
     /**
      * @var RaLocationService
      */

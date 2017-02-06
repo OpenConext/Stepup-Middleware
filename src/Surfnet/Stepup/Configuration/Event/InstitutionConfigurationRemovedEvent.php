@@ -41,7 +41,8 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     }
 
     /**
-     * @return mixed The object instance
+     * @param array $data
+     * @return InstitutionConfigurationRemovedEvent
      */
     public static function deserialize(array $data)
     {

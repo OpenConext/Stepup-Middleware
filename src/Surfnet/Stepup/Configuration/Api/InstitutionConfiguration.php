@@ -84,4 +84,9 @@ interface InstitutionConfiguration extends AggregateRoot
      * @return void
      */
     public function removeRaLocation(RaLocationId $raLocationId);
+
+    /**
+     * @return void
+     */
+    public function destroy();
 }

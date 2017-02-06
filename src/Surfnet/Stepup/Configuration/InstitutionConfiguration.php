@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Configuration;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration as InstitutionConfigurationInterface;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
@@ -220,6 +221,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->apply(new RaLocationRemovedEvent($this->institutionConfigurationId, $raLocationId));
     }
 
+    /**
+     * @return void
+     */
+    public function destroy()
+    {
+        $this->apply(new InstitutionConfigurationRemovedEvent($this->institutionConfigurationId, $this->institution));
+    }
+
     public function getAggregateRootId()
     {
         return $this->institutionConfigurationId;
@@ -278,5 +287,17 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     protected function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
     {
         $this->raLocations->removeWithId($event->raLocationId);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param InstitutionConfigurationRemovedEvent $event
+     */
+    protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    {
+        // reset to defaults. This way, should it be resurrected, it seems it is new again
+        $this->raLocations                     = [];
+        $this->useRaLocationsOption            = new UseRaLocationsOption(false);
+        $this->showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
     }
 }

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
@@ -38,5 +39,10 @@ final class ConfiguredInstitutionProjector extends Projector
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
         $this->configuredInstitutionRepository->save(ConfiguredInstitution::createFrom($event->institution));
+    }
+
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    {
+        $this->configuredInstitutionRepository->removeConfigurationFor($event->institution);
     }
 }

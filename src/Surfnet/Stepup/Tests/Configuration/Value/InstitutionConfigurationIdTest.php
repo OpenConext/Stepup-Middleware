@@ -87,10 +87,10 @@ class InstitutionConfigurationIdTest extends TestCase
         $mixedCaseInstitutionConfigurationId = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
         $lowerCaseInstitutionConfigurationId = InstitutionConfigurationId::normalizedFrom($lowerCaseInstitution);
 
-        $sameId = $mixedCaseInstitutionConfigurationId->equals($lowerCaseInstitutionConfigurationId);
+        $isSameId = $mixedCaseInstitutionConfigurationId->equals($lowerCaseInstitutionConfigurationId);
 
         $this->assertTrue(
-            $sameId,
+            $isSameId,
             'An InstitutionConfigurationId based on an institution with mixed casing'
             . 'should match an InstitutionConfigurationId based on the same institution in lower case'
         );
@@ -107,10 +107,10 @@ class InstitutionConfigurationIdTest extends TestCase
         $unnormalizedInstitutionConfigurationId = InstitutionConfigurationId::from($mixedCaseInstitution);
         $normalizedInstitutionConfigurationId   = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
 
-        $sameId = $unnormalizedInstitutionConfigurationId->equals($normalizedInstitutionConfigurationId);
+        $isSameId = $unnormalizedInstitutionConfigurationId->equals($normalizedInstitutionConfigurationId);
 
         $this->assertFalse(
-            $sameId,
+            $isSameId,
             'An normalized InstitutionConfigurationId based on an institution with mixed casing'
             . 'should not match an unnormalized InstitutionConfigurationId based on the same institution'
         );

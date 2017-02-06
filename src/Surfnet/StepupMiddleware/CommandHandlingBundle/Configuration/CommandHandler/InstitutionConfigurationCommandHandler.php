@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
+use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -53,9 +54,20 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleCreateInstitutionConfigurationCommand(CreateInstitutionConfigurationCommand $command)
     {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-        $institutionConfiguration   = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        $institution = new Institution($command->institution);
+        $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
+
+        try {
+            /** @var InstitutionConfiguration $institutionConfiguration */
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+
+            $institutionConfiguration->rebuild();
+
+        } catch (AggregateNotFoundException $exception) {
+            $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
+        }
 
         $this->repository->save($institutionConfiguration);
     }
@@ -63,13 +75,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     public function handleReconfigureInstitutionConfigurationOptionsCommand(
         ReconfigureInstitutionConfigurationOptionsCommand $command
     ) {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution = new Institution($command->institution);
 
-        $institutionConfiguration = $this->repository->load(
-            $institutionConfigurationId->getInstitutionConfigurationId()
-        );
-
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->configureUseRaLocationsOption(
             new UseRaLocationsOption($command->useRaLocationsOption)
         );
@@ -82,13 +90,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleAddRaLocationCommand(AddRaLocationCommand $command)
     {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution = new Institution($command->institution);
 
-        $institutionConfiguration = $this->repository->load(
-            $institutionConfigurationId->getInstitutionConfigurationId()
-        );
-
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->addRaLocation(
             new RaLocationId($command->raLocationId),
             new RaLocationName($command->raLocationName),
@@ -101,13 +105,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleChangeRaLocationCommand(ChangeRaLocationCommand $command)
     {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution = new Institution($command->institution);
 
-        $institutionConfiguration = $this->repository->load(
-            $institutionConfigurationId->getInstitutionConfigurationId()
-        );
-
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->changeRaLocation(
             new RaLocationId($command->raLocationId),
             new RaLocationName($command->raLocationName),
@@ -120,13 +120,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
 
     public function handleRemoveRaLocationCommand(RemoveRaLocationCommand $command)
     {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution = new Institution($command->institution);
 
-        $institutionConfiguration = $this->repository->load(
-            $institutionConfigurationId->getInstitutionConfigurationId()
-        );
-
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->removeRaLocation(new RaLocationId($command->raLocationId));
 
         $this->repository->save($institutionConfiguration);
@@ -135,16 +131,37 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     public function handleRemoveInstitutionConfigurationByUnnormalizedIdCommand(
         RemoveInstitutionConfigurationByUnnormalizedIdCommand $command
     ) {
-        $institution                = new Institution($command->institution);
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institution = new Institution($command->institution);
 
-        /** @var InstitutionConfiguration $institutionConfiguration */
+        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
         $institutionConfiguration = $this->repository->load(
             $institutionConfigurationId->getInstitutionConfigurationId()
         );
-
         $institutionConfiguration->destroy();
 
         $this->repository->save($institutionConfiguration);
+    }
+
+    /**
+     * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
+     *
+     * @param Institution $institution
+     * @return InstitutionConfiguration
+     */
+    private function loadInstitutionConfigurationFor(Institution $institution)
+    {
+        try {
+            $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
+            $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+            $institutionConfiguration = $this->repository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        }
+
+        return $institutionConfiguration;
     }
 }

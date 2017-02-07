@@ -73,6 +73,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $showRaaContactInformationOption;
 
     /**
+     * @var boolean
+     */
+    private $isMarkedAsDestroyed;
+
+    /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
      * @return InstitutionConfiguration
@@ -93,6 +98,28 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
 
         return $institutionConfiguration;
+    }
+
+    /**
+     * @return InstitutionConfiguration
+     */
+    public function rebuild()
+    {
+        // We can only rebuild a destroyed InstitutionConfiguration, all other cases are not valid
+        if ($this->isMarkedAsDestroyed !== true) {
+            throw new DomainException('Cannot rebuild InstitutionConfiguration as it has not been destroyed');
+        }
+
+        $this->apply(
+            new NewInstitutionConfigurationCreatedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                UseRaLocationsOption::getDefault(),
+                ShowRaaContactInformationOption::getDefault()
+            )
+        );
+
+        return $this;
     }
 
     final public function __construct()
@@ -241,6 +268,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->raLocations                     = new RaLocationList([]);
+        $this->isMarkedAsDestroyed             = false;
     }
 
     protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
@@ -299,5 +327,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->raLocations                     = [];
         $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+
+        $this->isMarkedAsDestroyed             = true;
     }
 }

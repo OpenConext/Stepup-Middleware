@@ -68,7 +68,7 @@ final class MigrateInstitutionConfigurationsCommand extends Command
         $connectionHelper = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
         $provider         = $container->get('surfnet_stepup_middleware_middleware.institution_configuration_provider');
         $pipeline         = $container->get('pipeline');
-        $eventBus         = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
+        $entityManager    = $container->get('doctrine.orm.middleware_entity_manager');
 
         // The InstitutionConfiguration commands require ROLE_MANAGEMENT
         // Note that the new events will not have any actor metadata associated with them
@@ -84,22 +84,26 @@ final class MigrateInstitutionConfigurationsCommand extends Command
             foreach ($state->inferRemovalCommands() as $removalCommand) {
                 $pipeline->process($removalCommand);
             }
-            $eventBus->flush();
+            $entityManager->flush();
+            $entityManager->clear();
 
             foreach ($state->inferCreateCommands() as $createCommand) {
                 $pipeline->process($createCommand);
             }
-            $eventBus->flush();
+            $entityManager->flush();
+            $entityManager->clear();
 
             foreach ($state->inferReconfigureCommands() as $reconfigureCommand) {
                 $pipeline->process($reconfigureCommand);
             }
-            $eventBus->flush();
+            $entityManager->flush();
+            $entityManager->clear();
 
             foreach ($state->inferAddRaLocationCommands() as $addRaLocationCommand) {
                 $pipeline->process($addRaLocationCommand);
             }
-            $eventBus->flush();
+            $entityManager->flush();
+            $entityManager->clear();
 
             $connectionHelper->commit();
             $output->writeln('<info>Successfully migrated institution configurations.</info>');

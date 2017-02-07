@@ -378,15 +378,34 @@ The structure of an institution configuration is therefore:
 }
 ```
 
-## Notes
+## Caveats
 
-### Institution
+### Institutions
 
-Institutions are identified case-insensitively within the context of Configuration.
+Institutions are based on schacHomeOrganizations, 
+for which [casing is irrelevant](https://www.terena.org/activities/tf-emc2/docs/schac/schac-schema-IAD-1.3.0.pdf) 
+conform [RFC 1035](https://www.ietf.org/rfc/rfc1035.txt).
+
+Institutions, used as a natural identifier within several projections, 
+are therefore identified case-insensitively.
 This means that the same institution is configured regardless of the casing of its name.
 
 For example, it does not matter whether one adds RaLocations to `my-institution` or
 or to `My-Institution`: the RaLocations will be added to the same institution.
+
+Because institutions were not always identified case-insensitively,
+`InstitutionConfigurationId` has been adapted with a creation method ignoring casing,
+deprecating its old method. 
+Existing InstitutionConfigurations are migrated using 
+the `app/console stepup:migrate:institution-configurations` command.
+
+In the future, after the InstitutionConfigurations have been migrated,
+The `InstitutionConfigurationId` and the `InstitutionConfigurationCommandHandler`
+should be updated to no longer support case-sensitive institution identifiers.
+
+Note that the database is collated using `utf8_collate_ci`, which is case-insensitive.
+
+## Notes
 
 ### Mocking time
 

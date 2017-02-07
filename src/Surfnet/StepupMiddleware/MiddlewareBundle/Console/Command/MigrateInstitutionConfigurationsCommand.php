@@ -72,7 +72,9 @@ final class MigrateInstitutionConfigurationsCommand extends Command
 
         // The InstitutionConfiguration commands require ROLE_MANAGEMENT
         // Note that the new events will not have any actor metadata associated with them
-        $tokenStorage->setToken(new AnonymousToken('console', 'console', ['ROLE_MANAGEMENT']));
+        $tokenStorage->setToken(
+            new AnonymousToken('cli.institution_configuration_migration', 'cli', ['ROLE_MANAGEMENT'])
+        );
 
         $connectionHelper->beginTransaction();
 

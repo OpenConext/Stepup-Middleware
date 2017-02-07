@@ -3,5 +3,5 @@ services:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper
         arguments:
             -
-                middleware: @doctrine.dbal.middleware_connection
-                gateway: @doctrine.dbal.gateway_connection
+                middleware: "@doctrine.dbal.middleware_connection"
+                gateway: "@doctrine.dbal.gateway_connection"

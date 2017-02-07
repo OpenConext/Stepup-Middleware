@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class RemoveInstitutionConfigurationByUnnormalizedIdCommand extends AbstractCommand implements
     ManagementExecutable

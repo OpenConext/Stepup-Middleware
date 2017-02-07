@@ -380,6 +380,14 @@ The structure of an institution configuration is therefore:
 
 ## Notes
 
+### Institution
+
+Institutions are identified case-insensitively within the context of Configuration.
+This means that the same institution is configured regardless of the casing of its name.
+
+For example, it does not matter whether one adds RaLocations to `my-institution` or
+or to `My-Institution`: the RaLocations will be added to the same institution.
+
 ### Mocking time
 
 Due to a limitation of mocking of static methods, to mock time, the helper `DateTimeHelper::stubNow(DateTime $now)` was

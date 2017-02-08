@@ -3,6 +3,3 @@ imports:
 
 swiftmailer:
     disable_delivery: true
-
-surfnet_stepup_middleware_command_handling:
-    warn_on_missing_email_template: false

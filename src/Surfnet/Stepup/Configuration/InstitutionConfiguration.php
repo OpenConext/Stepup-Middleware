@@ -323,8 +323,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      */
     protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
-        // reset all configuration to defaults. This way, should it be rebuild, it seems it is new again
-        $this->raLocations                     = [];
+        // reset all configuration to defaults. This way, should it be rebuild, it seems like it is new again
+        $this->raLocations                     = new RaLocationList([]);
         $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
 

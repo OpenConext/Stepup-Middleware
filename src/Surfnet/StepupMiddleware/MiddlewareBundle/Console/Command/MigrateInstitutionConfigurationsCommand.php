@@ -70,10 +70,10 @@ final class MigrateInstitutionConfigurationsCommand extends Command
         $pipeline         = $container->get('pipeline');
         $entityManager    = $container->get('doctrine.orm.middleware_entity_manager');
 
-        // The InstitutionConfiguration commands require ROLE_MANAGEMENT
+        // The InstitutionConfiguration commands require ROLE_MANAGEMENT, AddRaLocation requires ROLE_RA
         // Note that the new events will not have any actor metadata associated with them
         $tokenStorage->setToken(
-            new AnonymousToken('cli.institution_configuration_migration', 'cli', ['ROLE_MANAGEMENT'])
+            new AnonymousToken('cli.institution_configuration_migration', 'cli', ['ROLE_MANAGEMENT', 'ROLE_RA'])
         );
 
         $connectionHelper->beginTransaction();

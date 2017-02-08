@@ -46,10 +46,11 @@ final class InstitutionConfigurationState
         }, $institutionConfigurationOptions);
         $mappedConfigurationOptions = array_combine($optionInstitutions, $institutionConfigurationOptions);
 
-        $raLocationInstitutions = array_map(function (RaLocation $raLocation) {
-            return $raLocation->institution->getInstitution();
-        }, $raLocations);
-        $mappedRaLocations = array_combine($raLocationInstitutions, $raLocations);
+        $mappedRaLocations = [];
+        foreach ($raLocations as $raLocation) {
+            $institution = $raLocation->institution->getInstitution();
+            $mappedRaLocations[$institution][] = $raLocation;
+        }
 
         $mappedInstitutionConfigurations = [];
         foreach ($configuredInstitutions as $institution) {

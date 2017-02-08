@@ -21,42 +21,34 @@ namespace Surfnet\Stepup\Configuration\Value;
 use ArrayIterator;
 use IteratorAggregate;
 use JsonSerializable;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class AllowedSecondFactorList implements JsonSerializable, IteratorAggregate
 {
     /**
-     * @var SecondFactor[]
+     * @var SecondFactorType[]
      */
     private $allowedSecondFactors;
 
     public function __construct(array $allowedSecondFactors)
     {
         foreach ($allowedSecondFactors as $allowedSecondFactor) {
-            if (!$allowedSecondFactor instanceof SecondFactor) {
-                throw InvalidArgumentException::invalidType(
-                    SecondFactor::class,
-                    'allowedSecondFactor',
-                    $allowedSecondFactor
-                );
-            }
+            $this->initializeWith($allowedSecondFactor);
         }
-
-        $this->allowedSecondFactors = $allowedSecondFactors;
     }
 
     /**
-     * @param SecondFactor $other
+     * @param SecondFactorType $secondFactor
      * @return bool
      */
-    public function isAllowed(SecondFactor $other)
+    public function isAllowed(SecondFactorType $secondFactor)
     {
         if (empty($this->allowedSecondFactors)) {
             return true;
         }
 
-        foreach ($this->allowedSecondFactors as $secondFactorType) {
-            if ($secondFactorType->equals($other)) {
+        foreach ($this->allowedSecondFactors as $allowedSecondFactor) {
+            if ($allowedSecondFactor->equals($secondFactor)) {
                 return true;
             }
         }
@@ -74,5 +66,10 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return [
             'allowedSecondFactors' => $this->allowedSecondFactors
         ];
+    }
+
+    private function initializeWith(SecondFactorType $allowedSecondFactor)
+    {
+        $this->allowedSecondFactors[] = $allowedSecondFactor;
     }
 }

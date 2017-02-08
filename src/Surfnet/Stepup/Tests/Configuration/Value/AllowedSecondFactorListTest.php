@@ -19,25 +19,11 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use stdClass;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
-use Surfnet\Stepup\Configuration\Value\SecondFactor;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class AllowedSecondFactorListTest extends TestCase
 {
-    /**
-     * @test
-     * @group domain
-     * @dataProvider nonSecondFactorProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     *
-     * @param $nonSecondFactor
-     */
-    public function an_allowed_second_factor_list_can_only_contain_second_factors($nonSecondFactor)
-    {
-        new AllowedSecondFactorList([$nonSecondFactor]);
-    }
-
     /**
      * @test
      * @group domain
@@ -45,7 +31,7 @@ class AllowedSecondFactorListTest extends TestCase
     public function an_empty_allowed_second_factor_list_allows_all_second_factors()
     {
         $allowedSecondFactorList = new AllowedSecondFactorList([]);
-        $secondFactor = new SecondFactor('sms');
+        $secondFactor            = new SecondFactorType('sms');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($secondFactor);
 
@@ -61,8 +47,8 @@ class AllowedSecondFactorListTest extends TestCase
      */
     public function a_second_factor_on_the_allowed_second_factor_list_is_allowed()
     {
-        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactor('sms')]);
-        $allowedSecondFactor = new SecondFactor('sms');
+        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
+        $allowedSecondFactor     = new SecondFactorType('sms');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($allowedSecondFactor);
 
@@ -78,8 +64,8 @@ class AllowedSecondFactorListTest extends TestCase
      */
     public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed()
     {
-        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactor('sms')]);
-        $disallowedSecondFactor = new SecondFactor('yubikey');
+        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
+        $disallowedSecondFactor  = new SecondFactorType('yubikey');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($disallowedSecondFactor);
 
@@ -87,18 +73,5 @@ class AllowedSecondFactorListTest extends TestCase
             $isSecondFactorAllowed,
             'An allowed second factor list should not allow an unlisted second factor but it does not'
         );
-    }
-
-    public function nonSecondFactorProvider()
-    {
-        return [
-            'null' => [null],
-            'boolean' => [false],
-            'integer' => [1],
-            'float' => [1.23],
-            'string' => ['second factor'],
-            'object' => [new stdClass()],
-            'array' => [[]],
-        ];
     }
 }

@@ -117,11 +117,13 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             sprintf('Option "use_ra_locations" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
+
         Assertion::boolean(
             $options['show_raa_contact_information'],
             sprintf('Option "show_raa_contact_information" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
+
         Assertion::isArray(
             $options['allowed_second_factors'],
             sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),

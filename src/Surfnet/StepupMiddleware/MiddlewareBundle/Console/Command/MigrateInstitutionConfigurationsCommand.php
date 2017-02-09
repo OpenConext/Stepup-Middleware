@@ -76,29 +76,35 @@ final class MigrateInstitutionConfigurationsCommand extends Command
             new AnonymousToken('cli.institution_configuration_migration', 'cli', ['ROLE_MANAGEMENT', 'ROLE_RA'])
         );
 
+        $output->writeln('<info>Starting institution configuration migrations</info>');
         $connectionHelper->beginTransaction();
 
         try {
+            $output->writeln('<info>Loading existing institution configuration data</info>');
             $state = $provider->loadData();
 
+            $output->writeln('<info>Removing existing institution configurations</info>');
             foreach ($state->inferRemovalCommands() as $removalCommand) {
                 $pipeline->process($removalCommand);
             }
             $entityManager->flush();
             $entityManager->clear();
 
+            $output->writeln('<info>Creating new institution configurations</info>');
             foreach ($state->inferCreateCommands() as $createCommand) {
                 $pipeline->process($createCommand);
             }
             $entityManager->flush();
             $entityManager->clear();
 
+            $output->writeln('<info>Reconfiguring institution configurations</info>');
             foreach ($state->inferReconfigureCommands() as $reconfigureCommand) {
                 $pipeline->process($reconfigureCommand);
             }
             $entityManager->flush();
             $entityManager->clear();
 
+            $output->writeln('<info>Adding RA locations</info>');
             foreach ($state->inferAddRaLocationCommands() as $addRaLocationCommand) {
                 $pipeline->process($addRaLocationCommand);
             }

@@ -136,7 +136,7 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ShowRaaContactInformationOption(true)
                 )
             ],
-            'AllowedSecondFactorListUpdatedEvent' => [
+            'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
                     $institution,
@@ -144,6 +144,13 @@ class EventSerializationAndDeserializationTest extends TestCase
                         new SecondFactorType('yubikey'),
                         new SecondFactorType('sms'),
                     ])
+                )
+            ],
+            'AllowedSecondFactorListUpdatedEvent:blank' => [
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    AllowedSecondFactorList::blank()
                 )
             ],
             'RaLocationAddedEvent' => [

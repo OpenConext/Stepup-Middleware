@@ -363,17 +363,21 @@ The options must have the following keys:
  information of specific RA(A)s
 * `show_raa_contact_information`: (boolean) whether an institution shows RAAs' contact information when
  listing RAs, for example when showing locations for the vetting process
+ * `allowed_second_factors`: (string[]) a list of second factor types that are allowed by this institution.
+ If the list is empty all supported second factors are allowed.
 
 The structure of an institution configuration is therefore:
 ```
 {
     "organisation.example": {
         "use_ra_locations": false,
-        "show_raa_contact_information": true
+        "show_raa_contact_information": true,
+        "allowed_second_factors": ["yubikey", "sms"]
     },
     "another-organisation.example": {
         "use_ra_locations": true,
-        "show_raa_contact_information": false
+        "show_raa_contact_information": false,
+        "allowed_second_factors": []
     }
 }
 ```

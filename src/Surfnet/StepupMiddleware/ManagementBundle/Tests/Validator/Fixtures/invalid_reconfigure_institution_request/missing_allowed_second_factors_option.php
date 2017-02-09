@@ -18,12 +18,11 @@
 
 return [
     'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'must be a boolean',
+    'expectErrorMessageToContain' => 'Expected only options',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,
-            'show_raa_contact_information' => 1,
-            'allowed_second_factors' => [],
+            'show_raa_contact_information' => true,
         ]
     ]
 ];

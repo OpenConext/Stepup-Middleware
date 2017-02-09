@@ -64,7 +64,7 @@ final class AllowedSecondFactorListUpdatedEvent implements SerializableInterface
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
             'institution'                  => $this->institution->getInstitution(),
-            'allowed_second_factor_list'  => $this->allowedSecondFactorList->serialize(),
+            'allowed_second_factor_list'   => $this->allowedSecondFactorList->serialize(),
         ];
     }
 }

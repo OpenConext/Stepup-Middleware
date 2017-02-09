@@ -30,7 +30,7 @@
         "doctrine/doctrine-migrations-bundle": "~1.0.0",
         "doctrine/migrations": "~1.0.0|1.0.0@alpha",
         "broadway/broadway": "~0.5.0",
-        "surfnet/stepup-bundle": "^1.5",
+        "surfnet/stepup-bundle": "^1.6",
         "pagerfanta/pagerfanta": "~1.0",
         "sensio/generator-bundle": "~2.3",
         "jms/translation-bundle": "~1.1",

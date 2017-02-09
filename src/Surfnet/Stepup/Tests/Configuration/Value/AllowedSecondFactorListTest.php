@@ -149,8 +149,10 @@ class AllowedSecondFactorListTest extends TestCase
 
     public function availableSecondFactorTypeProvider()
     {
-        return array_map(function ($availableSecondFactorType) {
+        $secondFactorTypes = array_map(function ($availableSecondFactorType) {
             return [new SecondFactorType($availableSecondFactorType)];
         }, SecondFactorType::getAvailableSecondFactorTypes());
+
+        return array_combine(SecondFactorType::getAvailableSecondFactorTypes(), $secondFactorTypes);
     }
 }

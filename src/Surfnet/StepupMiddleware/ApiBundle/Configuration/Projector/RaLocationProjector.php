@@ -89,7 +89,7 @@ class RaLocationProjector extends Projector
         $this->repository->remove($raLocation);
     }
 
-    public function removeRaLocationsFor(InstitutionConfigurationRemovedEvent $event)
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
         $this->repository->removeRaLocationsFor($event->institution);
     }

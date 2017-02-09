@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\Institution
 
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -28,6 +27,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
@@ -143,7 +143,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $raLocation                      = RaLocation::create(
-            new RaLocationId((string) Uuid::uuid4()),
+            (string) Uuid::uuid4(),
+            $institution,
             new RaLocationName('Some Location'),
             new Location('Somewhere here or there'),
             new ContactInformation('Per phone.')
@@ -175,13 +176,15 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $firstRaLocation                 = RaLocation::create(
-            new RaLocationId((string) Uuid::uuid4()),
+            (string) Uuid::uuid4(),
+            $institution,
             new RaLocationName('Some Location'),
             new Location('Somewhere here or there'),
             new ContactInformation('Per phone.')
         );
         $secondRaLocation                = RaLocation::create(
-            new RaLocationId((string) Uuid::uuid4()),
+            (string) Uuid::uuid4(),
+            $institution,
             new RaLocationName('Somewhere else'),
             new Location('Utrecht, The Netherlands'),
             new ContactInformation('Shout really hard')
@@ -208,11 +211,11 @@ class MappedInstitutionConfigurationTest extends UnitTest
         RaLocation $raLocation
     ) {
         $this->assertEquals($institution->getInstitution(), $command->institution);
-        $this->assertEquals($raLocation->getId()->getRaLocationId(), $command->raLocationId);
-        $this->assertEquals($raLocation->getName()->getRaLocationName(), $command->raLocationName);
-        $this->assertEquals($raLocation->getLocation()->getLocation(), $command->location);
+        $this->assertEquals($raLocation->id, $command->raLocationId);
+        $this->assertEquals($raLocation->name->getRaLocationName(), $command->raLocationName);
+        $this->assertEquals($raLocation->location->getLocation(), $command->location);
         $this->assertEquals(
-            $raLocation->getContactInformation()->getContactInformation(),
+            $raLocation->contactInformation->getContactInformation(),
             $command->contactInformation
         );
     }

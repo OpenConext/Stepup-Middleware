@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration;
 
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
@@ -46,7 +46,7 @@ final class MappedInstitutionConfiguration
     private $useRaLocationsOption;
 
     /**
-     * @var array|RaLocation[]
+     * @var RaLocation[]
      */
     private $raLocations;
 
@@ -118,10 +118,10 @@ final class MappedInstitutionConfiguration
             $command                     = new AddRaLocationCommand();
             $command->UUID               = (string) Uuid::uuid4();
             $command->institution        = $institution;
-            $command->raLocationId       = $raLocation->getId()->getRaLocationId();
-            $command->raLocationName     = $raLocation->getName()->getRaLocationName();
-            $command->contactInformation = $raLocation->getContactInformation()->getContactInformation();
-            $command->location           = $raLocation->getLocation()->getLocation();
+            $command->raLocationId       = $raLocation->id ;
+            $command->raLocationName     = $raLocation->name->getRaLocationName();
+            $command->contactInformation = $raLocation->contactInformation->getContactInformation();
+            $command->location           = $raLocation->location->getLocation();
 
             $commands[] = $command;
         }

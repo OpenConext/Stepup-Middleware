@@ -18,9 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Exception;
+use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class MigrateInstitutionConfigurationsCommand extends Command
 {
@@ -35,5 +40,86 @@ final class MigrateInstitutionConfigurationsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var QuestionHelper $questionHelper */
+        $questionHelper = $this->getHelper('question');
+
+        $output->writeln([
+            '<error>WARNING: you are about to migrate institution configurations'
+            . ' to work with identifiers based on insitutions with normalized casing.</error>',
+            '<error>This command is intended to be run only once.</error>',
+            ''
+        ]);
+
+        $confirmationQuestion = new ConfirmationQuestion(
+            'Are you sure you want to run the institution configuration migrations? [y/N]',
+            false
+        );
+        $confirmed = $questionHelper->ask($input, $output, $confirmationQuestion);
+
+        if (!$confirmed) {
+            $output->writeln('<info>Exiting without running migrations.</info>');
+            return;
+        }
+
+        /** @var Container $container */
+        $container = $this->getApplication()->getKernel()->getContainer();
+
+        $tokenStorage     = $container->get('security.token_storage');
+        $connectionHelper = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
+        $provider         = $container->get('surfnet_stepup_middleware_middleware.institution_configuration_provider');
+        $pipeline         = $container->get('pipeline');
+        $entityManager    = $container->get('doctrine.orm.middleware_entity_manager');
+
+        // The InstitutionConfiguration commands require ROLE_MANAGEMENT, AddRaLocation requires ROLE_RA
+        // Note that the new events will not have any actor metadata associated with them
+        $tokenStorage->setToken(
+            new AnonymousToken('cli.institution_configuration_migration', 'cli', ['ROLE_MANAGEMENT', 'ROLE_RA'])
+        );
+
+        $output->writeln('<info>Starting institution configuration migrations</info>');
+        $connectionHelper->beginTransaction();
+
+        try {
+            $output->writeln('<info>Loading existing institution configuration data</info>');
+            $state = $provider->loadData();
+
+            $output->writeln('<info>Removing existing institution configurations</info>');
+            foreach ($state->inferRemovalCommands() as $removalCommand) {
+                $pipeline->process($removalCommand);
+            }
+            $entityManager->flush();
+            $entityManager->clear();
+
+            $output->writeln('<info>Creating new institution configurations</info>');
+            foreach ($state->inferCreateCommands() as $createCommand) {
+                $pipeline->process($createCommand);
+            }
+            $entityManager->flush();
+            $entityManager->clear();
+
+            $output->writeln('<info>Reconfiguring institution configurations</info>');
+            foreach ($state->inferReconfigureCommands() as $reconfigureCommand) {
+                $pipeline->process($reconfigureCommand);
+            }
+            $entityManager->flush();
+            $entityManager->clear();
+
+            $output->writeln('<info>Adding RA locations</info>');
+            foreach ($state->inferAddRaLocationCommands() as $addRaLocationCommand) {
+                $pipeline->process($addRaLocationCommand);
+            }
+            $entityManager->flush();
+            $entityManager->clear();
+
+            $connectionHelper->commit();
+            $output->writeln('<info>Successfully migrated institution configurations.</info>');
+        } catch (Exception $exception) {
+            $output->writeln(
+                sprintf('<error>Could not migrate institution configurations: %s</error>', $exception->getMessage())
+            );
+            $connectionHelper->rollBack();
+
+            throw $exception;
+        }
     }
 }

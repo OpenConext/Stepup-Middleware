@@ -47,6 +47,58 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
+    public function an_allowed_second_factor_list_contains_a_given_second_factor()
+    {
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
+        $allowedSecondFactor     = new SecondFactorType('sms');
+
+        $containsSecondFactor = $allowedSecondFactorList->contains($allowedSecondFactor);
+
+        $this->assertTrue(
+            $containsSecondFactor,
+            'An allowed second factor list should contain a listed second factor but it does not'
+        );
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function an_allowed_second_factor_list_does_not_contain_a_given_second_factor()
+    {
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
+        $allowedSecondFactor     = new SecondFactorType('yubikey');
+
+        $containsSecondFactor = $allowedSecondFactorList->contains($allowedSecondFactor);
+
+        $this->assertFalse(
+            $containsSecondFactor,
+            'An allowed second factor list should not contain a listed second factor but it does'
+        );
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function an_allowed_second_factor_list_contains_the_given_second_factors()
+    {
+        $secondFactorTypes = [
+            new SecondFactorType('sms'),
+            new SecondFactorType('yubikey'),
+        ];
+
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes($secondFactorTypes);
+
+        foreach ($allowedSecondFactorList as $index => $actualSecondFactorType) {
+            $this->assertTrue($secondFactorTypes[$index]->equals($actualSecondFactorType));
+        }
+    }
+
+    /**
+     * @test
+     * @group domain
+     */
     public function a_second_factor_on_the_allowed_second_factor_list_is_allowed()
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);

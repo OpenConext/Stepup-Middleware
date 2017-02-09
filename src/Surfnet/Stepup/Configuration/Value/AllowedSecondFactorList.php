@@ -60,10 +60,23 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
      */
     public function allows(SecondFactorType $secondFactor)
     {
-        if (empty($this->allowedSecondFactors)) {
-            return true;
-        }
+        return $this->isBlank() || $this->contains($secondFactor);
+    }
 
+    /**
+     * @return bool
+     */
+    public function isBlank()
+    {
+        return empty($this->allowedSecondFactors);
+    }
+
+    /**
+     * @param SecondFactorType $secondFactor
+     * @return bool
+     */
+    public function contains(SecondFactorType $secondFactor)
+    {
         foreach ($this->allowedSecondFactors as $allowedSecondFactor) {
             if ($allowedSecondFactor->equals($secondFactor)) {
                 return true;

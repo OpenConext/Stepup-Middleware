@@ -27,17 +27,19 @@ class AllowedSecondFactorListTest extends TestCase
     /**
      * @test
      * @group domain
+     *
+     * @dataProvider availableSecondFactorTypeProvider
+     * @param $availableSecondFactorType
      */
-    public function an_empty_allowed_second_factor_list_allows_all_second_factors()
+    public function a_blank_allowed_second_factor_list_allows_all_second_factors($availableSecondFactorType)
     {
-        $allowedSecondFactorList = AllowedSecondFactorList::blank([]);
-        $secondFactor            = new SecondFactorType('sms');
+        $allowedSecondFactorList = AllowedSecondFactorList::blank();
 
-        $isSecondFactorAllowed = $allowedSecondFactorList->allows($secondFactor);
+        $isSecondFactorAllowed = $allowedSecondFactorList->allows($availableSecondFactorType);
 
         $this->assertTrue(
             $isSecondFactorAllowed,
-            'An empty allowed second factor list should allow all second factors but it does not'
+            'A blank allowed second factor list should allow all second factors but it does not'
         );
     }
 
@@ -73,5 +75,12 @@ class AllowedSecondFactorListTest extends TestCase
             $isSecondFactorAllowed,
             'An allowed second factor list should not allow an unlisted second factor but it does not'
         );
+    }
+
+    public function availableSecondFactorTypeProvider()
+    {
+        return array_map(function ($availableSecondFactorType) {
+            return [new SecondFactorType($availableSecondFactorType)];
+        }, SecondFactorType::getAvailableSecondFactorTypes());
     }
 }

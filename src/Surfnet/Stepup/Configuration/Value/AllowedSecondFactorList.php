@@ -89,19 +89,27 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
 
     public static function deserialize(array $data)
     {
-        $secondFactorTypes = array_map(function ($secondFactorString) {
-            return new SecondFactorType($secondFactorString);
-        }, $data['allowed_second_factors']);
+        $secondFactorTypes = array_map(
+            function ($secondFactorString) {
+                return new SecondFactorType($secondFactorString);
+            },
+            $data['allowed_second_factors']
+        );
 
         return new self($secondFactorTypes);
     }
 
     public function serialize()
     {
-        return [
-            'allowed_second_factors' => array_map(function (SecondFactorType $secondFactorType) {
+        $allowedSecondFactors = array_map(
+            function (SecondFactorType $secondFactorType) {
                 return $secondFactorType->getSecondFactorType();
-            }, $this->allowedSecondFactors),
+            },
+            $this->allowedSecondFactors
+        );
+
+        return [
+            'allowed_second_factors' => $allowedSecondFactors,
         ];
     }
 

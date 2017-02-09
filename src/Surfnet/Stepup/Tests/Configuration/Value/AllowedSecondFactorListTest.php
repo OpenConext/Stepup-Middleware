@@ -33,7 +33,7 @@ class AllowedSecondFactorListTest extends TestCase
         $allowedSecondFactorList = new AllowedSecondFactorList([]);
         $secondFactor            = new SecondFactorType('sms');
 
-        $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($secondFactor);
+        $isSecondFactorAllowed = $allowedSecondFactorList->allows($secondFactor);
 
         $this->assertTrue(
             $isSecondFactorAllowed,
@@ -50,7 +50,7 @@ class AllowedSecondFactorListTest extends TestCase
         $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
         $allowedSecondFactor     = new SecondFactorType('sms');
 
-        $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($allowedSecondFactor);
+        $isSecondFactorAllowed = $allowedSecondFactorList->allows($allowedSecondFactor);
 
         $this->assertTrue(
             $isSecondFactorAllowed,
@@ -67,7 +67,7 @@ class AllowedSecondFactorListTest extends TestCase
         $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
         $disallowedSecondFactor  = new SecondFactorType('yubikey');
 
-        $isSecondFactorAllowed = $allowedSecondFactorList->isAllowed($disallowedSecondFactor);
+        $isSecondFactorAllowed = $allowedSecondFactorList->allows($disallowedSecondFactor);
 
         $this->assertFalse(
             $isSecondFactorAllowed,

@@ -41,7 +41,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
      * @param SecondFactorType $secondFactor
      * @return bool
      */
-    public function isAllowed(SecondFactorType $secondFactor)
+    public function allows(SecondFactorType $secondFactor)
     {
         if (empty($this->allowedSecondFactors)) {
             return true;

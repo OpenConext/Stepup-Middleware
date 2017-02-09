@@ -27,6 +27,24 @@ class AllowedSecondFactorListTest extends TestCase
     /**
      * @test
      * @group domain
+     */
+    public function an_allowed_second_factor_list_deduplicates_its_second_factors_upon_creation()
+    {
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
+            new SecondFactorType('sms'),
+            new SecondFactorType('sms'),
+        ]);
+
+        $this->assertCount(
+            1,
+            $allowedSecondFactorList,
+            'The AllowedSecondFactorList should have deduplicated its second factors, but it did not'
+        );
+    }
+
+    /**
+     * @test
+     * @group domain
      *
      * @dataProvider availableSecondFactorTypeProvider
      * @param $availableSecondFactorType

@@ -28,7 +28,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
     /**
      * @var SecondFactorType[]
      */
-    private $allowedSecondFactors;
+    private $allowedSecondFactors = [];
 
     private function __construct(array $allowedSecondFactors)
     {
@@ -100,6 +100,8 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
 
     private function initializeWith(SecondFactorType $allowedSecondFactor)
     {
-        $this->allowedSecondFactors[] = $allowedSecondFactor;
+        if (!$this->contains($allowedSecondFactor)) {
+            $this->allowedSecondFactors[] = $allowedSecondFactor;
+        }
     }
 }

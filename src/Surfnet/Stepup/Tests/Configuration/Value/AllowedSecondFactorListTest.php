@@ -55,10 +55,7 @@ class AllowedSecondFactorListTest extends TestCase
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($availableSecondFactorType);
 
-        $this->assertTrue(
-            $isSecondFactorAllowed,
-            'A blank allowed second factor list should allow all second factors but it does not'
-        );
+        $this->assertTrue($isSecondFactorAllowed);
     }
 
     /**

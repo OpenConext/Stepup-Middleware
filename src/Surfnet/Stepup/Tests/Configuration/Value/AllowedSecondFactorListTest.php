@@ -37,7 +37,7 @@ class AllowedSecondFactorListTest extends TestCase
 
         $this->assertCount(
             1,
-            $allowedSecondFactorList,
+            iterator_to_array($allowedSecondFactorList),
             'The AllowedSecondFactorList should have deduplicated its second factors, but it did not'
         );
     }

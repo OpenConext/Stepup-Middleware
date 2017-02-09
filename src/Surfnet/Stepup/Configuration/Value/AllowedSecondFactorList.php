@@ -30,11 +30,28 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
      */
     private $allowedSecondFactors;
 
-    public function __construct(array $allowedSecondFactors)
+    private function __construct(array $allowedSecondFactors)
     {
         foreach ($allowedSecondFactors as $allowedSecondFactor) {
             $this->initializeWith($allowedSecondFactor);
         }
+    }
+
+    /**
+     * @return AllowedSecondFactorList
+     */
+    public static function blank()
+    {
+        return new self([]);
+    }
+
+    /**
+     * @param $allowedSecondFactors
+     * @return AllowedSecondFactorList
+     */
+    public static function ofTypes($allowedSecondFactors)
+    {
+        return new self($allowedSecondFactors);
     }
 
     /**

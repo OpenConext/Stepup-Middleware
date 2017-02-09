@@ -30,7 +30,7 @@ class AllowedSecondFactorListTest extends TestCase
      */
     public function an_empty_allowed_second_factor_list_allows_all_second_factors()
     {
-        $allowedSecondFactorList = new AllowedSecondFactorList([]);
+        $allowedSecondFactorList = AllowedSecondFactorList::blank([]);
         $secondFactor            = new SecondFactorType('sms');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($secondFactor);
@@ -47,7 +47,7 @@ class AllowedSecondFactorListTest extends TestCase
      */
     public function a_second_factor_on_the_allowed_second_factor_list_is_allowed()
     {
-        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $allowedSecondFactor     = new SecondFactorType('sms');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($allowedSecondFactor);
@@ -64,7 +64,7 @@ class AllowedSecondFactorListTest extends TestCase
      */
     public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed()
     {
-        $allowedSecondFactorList = new AllowedSecondFactorList([new SecondFactorType('sms')]);
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $disallowedSecondFactor  = new SecondFactorType('yubikey');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($disallowedSecondFactor);

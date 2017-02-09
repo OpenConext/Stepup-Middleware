@@ -45,4 +45,14 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      * @var bool
      */
     public $showRaaContactInformationOption;
+
+    /**
+     * @Assert\All({
+     *     @Assert\Choice(
+     *         callback={"Surfnet\StepupBundle\Value\SecondFactorType", "getAvailableSecondFactorTypes"},
+     *         message="may only contain supported second factor types"
+     *     )
+     * })
+     */
+    public $allowedSecondFactors;
 }

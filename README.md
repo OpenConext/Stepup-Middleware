@@ -378,6 +378,25 @@ The structure of an institution configuration is therefore:
 }
 ```
 
+## Caveats
+
+### Institutions
+
+Institutions are based on schacHomeOrganizations, 
+for which [casing is irrelevant](https://www.terena.org/activities/tf-emc2/docs/schac/schac-schema-IAD-1.3.0.pdf) 
+conform [RFC 1035](https://www.ietf.org/rfc/rfc1035.txt).
+
+Institutions, used as a natural identifier within several projections, 
+are therefore identified case-insensitively.
+
+Because institutions were not always identified case-insensitively,
+`InstitutionConfigurationId` has been adapted with a creation method ignoring casing,
+deprecating its old method. 
+Existing InstitutionConfigurations are migrated using 
+the `app/console stepup:migrate:institution-configurations` command.
+
+Note that the database is collated using `utf8_collate_ci`, which is case-insensitive.
+
 ## Notes
 
 ### Mocking time

@@ -20,8 +20,8 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
 use Assert\InvalidArgumentException as AssertionException;
-use GuzzleHttp;
 use InvalidArgumentException as CoreInvalidArgumentException;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
 use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException;
@@ -104,7 +104,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
 
-        $acceptedOptions = ['use_ra_locations', 'show_raa_contact_information'];
+        $acceptedOptions = ['use_ra_locations', 'show_raa_contact_information', 'allowed_second_factors'];
         StepupAssert::keysMatch(
             $options,
             $acceptedOptions,
@@ -117,9 +117,27 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             sprintf('Option "use_ra_locations" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
+
         Assertion::boolean(
             $options['show_raa_contact_information'],
             sprintf('Option "show_raa_contact_information" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::isArray(
+            $options['allowed_second_factors'],
+            sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),
+            $propertyPath
+        );
+        Assertion::allString(
+            $options['allowed_second_factors'],
+            sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),
+            $propertyPath
+        );
+        Assertion::allInArray(
+            $options['allowed_second_factors'],
+            SecondFactorType::getAvailableSecondFactorTypes(),
+            'Option "allowed_second_factors" for "%s" must contain valid second factor types',
             $propertyPath
         );
     }

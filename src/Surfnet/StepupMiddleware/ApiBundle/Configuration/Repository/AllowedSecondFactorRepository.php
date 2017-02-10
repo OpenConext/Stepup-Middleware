@@ -31,6 +31,20 @@ final class AllowedSecondFactorRepository extends EntityRepository
         $entityManager->flush();
     }
 
+    /**
+     * @param Institution $institution
+     * @return AllowedSecondFactor[]
+     */
+    public function getAllowedSecondFactorsFor(Institution $institution)
+    {
+        return $this->createQueryBuilder('asf')
+            ->select()
+            ->where('asf.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->execute();
+    }
+
     public function clearAllowedSecondFactorListFor(Institution $institution)
     {
         $this->createQueryBuilder('asf')

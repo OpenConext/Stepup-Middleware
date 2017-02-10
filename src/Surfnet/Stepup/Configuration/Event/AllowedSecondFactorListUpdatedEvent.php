@@ -28,17 +28,17 @@ final class AllowedSecondFactorListUpdatedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    private $institutionConfigurationId;
+    public $institutionConfigurationId;
 
     /**
      * @var Institution
      */
-    private $institution;
+    public $institution;
 
     /**
      * @var AllowedSecondFactorList
      */
-    private $allowedSecondFactorList;
+    public $allowedSecondFactorList;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

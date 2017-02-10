@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
+use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
@@ -32,6 +33,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -62,8 +64,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 
         $institution                            = new Institution($command->institution);
         $institutionConfigurationId             = InstitutionConfigurationId::normalizedFrom($institution);
-        $defaultUseRaLocationsOption            = new UseRaLocationsOption(false);
-        $defaultShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultUseRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $defaultShowRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $defaultAllowedSecondFactorList         = AllowedSecondFactorList::blank();
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -74,7 +77,13 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $defaultUseRaLocationsOption,
                     $defaultShowRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
+
             ]);
     }
 

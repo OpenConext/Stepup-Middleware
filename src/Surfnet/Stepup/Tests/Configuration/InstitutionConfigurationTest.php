@@ -19,10 +19,12 @@
 namespace Surfnet\Stepup\Tests\Configuration;
 
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
+use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
@@ -54,7 +56,12 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $expectedUseRaLocationsOption,
                     $showRaaContactInformationOption
-                )
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    AllowedSecondFactorList::blank()
+                ),
             ]);
     }
 
@@ -82,7 +89,12 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $useRaLocationsOption,
                     $expectedShowRaaContactInformationOption
-                )
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    AllowedSecondFactorList::blank()
+                ),
             ]);
     }
 

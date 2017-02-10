@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorMap;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
@@ -43,32 +44,23 @@ final class AllowedSecondFactorListService
     }
 
     /**
-     * @return AllowedSecondFactorList[]
+     * @return AllowedSecondFactorMap
      */
-    public function getAllowedSecondFactorListsPerInstitution()
+    public function getAllowedSecondFactorMap()
     {
-        $allowedSecondFactors = $this->allowedSecondFactorRepository->findAll();
+        $allInstitutions = array_map(function (ConfiguredInstitution $configuredInstitution) {
+            return $configuredInstitution->institution;
+        }, $this->configuredInstitutionRepository->findAll());
 
-        $mappedAllowedSecondFactors = [];
-        foreach ($allowedSecondFactors as $allowedSecondFactor) {
-            $institution = $allowedSecondFactor->institution->getInstitution();
-            $mappedAllowedSecondFactors[$institution][] = $allowedSecondFactor->secondFactorType;
+        $allowedSecondFactorMap = AllowedSecondFactorMap::mappedTo($allInstitutions);
+
+        foreach ($this->allowedSecondFactorRepository->findAll() as $allowedSecondFactor) {
+            $allowedSecondFactorMap->institutionAllows(
+                $allowedSecondFactor->institution,
+                $allowedSecondFactor->secondFactorType
+            );
         }
 
-        $configuredInstitutions = $this->configuredInstitutionRepository->findAll();
-
-        $mappedAllowedSecondFactorLists = [];
-        foreach ($configuredInstitutions as $configuredInstitution) {
-            $institution = $configuredInstitution->institution->getInstitution();
-
-            if (isset($mappedAllowedSecondFactors[$institution])) {
-                $mappedAllowedSecondFactorLists[$institution] =
-                    AllowedSecondFactorList::ofTypes($mappedAllowedSecondFactors[$institution]);
-            } else {
-                $mappedAllowedSecondFactorLists[$institution] = AllowedSecondFactorList::blank();
-            }
-        }
-
-        return $mappedAllowedSecondFactorLists;
+        return $allowedSecondFactorMap;
     }
 }

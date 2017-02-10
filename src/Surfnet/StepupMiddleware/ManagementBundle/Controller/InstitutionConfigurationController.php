@@ -51,17 +51,14 @@ final class InstitutionConfigurationController extends Controller
         $institutionConfigurationOptions = $this->getInstitutionConfigurationOptionsService()
             ->findAllInstitutionConfigurationOptions();
 
-        $allowedSecondFactorLists = $this->getAllowedSecondFactorListService()
-            ->getAllowedSecondFactorListsPerInstitution();
+        $allowedSecondFactorMap = $this->getAllowedSecondFactorListService()->getAllowedSecondFactorMap();
 
         $overview = [];
         foreach ($institutionConfigurationOptions as $options) {
-            $institution = $options->institution->getInstitution();
-
-            $overview[$institution] = [
+            $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
-                'allowed_second_factors' => $allowedSecondFactorLists[$institution],
+                'allowed_second_factors' => $allowedSecondFactorMap->getSecondFactorListFor($options->institution),
             ];
         }
 

@@ -22,7 +22,9 @@ use DateTime;
 use Exception;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Helper\JsonHelper;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -49,11 +51,17 @@ final class InstitutionConfigurationController extends Controller
         $institutionConfigurationOptions = $this->getInstitutionConfigurationOptionsService()
             ->findAllInstitutionConfigurationOptions();
 
+        $allowedSecondFactorLists = $this->getAllowedSecondFactorListService()
+            ->getAllowedSecondFactorListsPerInstitution();
+
         $overview = [];
         foreach ($institutionConfigurationOptions as $options) {
-            $overview[$options->institution->getInstitution()] = [
+            $institution = $options->institution->getInstitution();
+
+            $overview[$institution] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
+                'allowed_second_factors' => $allowedSecondFactorLists[$institution],
             ];
         }
 
@@ -143,6 +151,14 @@ final class InstitutionConfigurationController extends Controller
     private function getInstitutionConfigurationOptionsService()
     {
         return $this->get('surfnet_stepup_middleware_api.service.institution_configuration_options');
+    }
+
+    /**
+     * @return AllowedSecondFactorListService
+     */
+    private function getAllowedSecondFactorListService()
+    {
+        return $this->get('surfnet_stepup_middleware_api.service.allowed_second_factor_list');
     }
 
     /**

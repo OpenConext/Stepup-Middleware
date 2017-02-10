@@ -42,6 +42,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
@@ -129,11 +130,13 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -143,6 +146,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -159,6 +167,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentUseRaLocationsOptionValue = true;
 
@@ -166,6 +175,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $differentUseRaLocationsOptionValue;
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -175,6 +185,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -197,6 +212,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentShowRaaContactInformationOptionValue = false;
 
@@ -204,6 +220,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -213,6 +230,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -223,6 +245,98 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     new ShowRaaContactInformationOption($differentShowRaaContactInformationOptionValue)
                 )
             ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function allowed_second_factor_list_is_changed_if_its_values_are_different_than_the_current_list()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
+        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $originalAllowedSecondFactorList = AllowedSecondFactorList::blank();
+
+        $secondFactorsToAllow = ['sms', 'yubikey'];
+
+        $allowedSecondFactors = array_map(function ($secondFactorType) {
+            return new SecondFactorType($secondFactorType);
+        }, $secondFactorsToAllow);
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes($allowedSecondFactors);
+
+        $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+        $command->institution = $institution->getInstitution();
+        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors = $secondFactorsToAllow;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $originalAllowedSecondFactorList
+                )
+            ])
+            ->when($command)
+            ->then([
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $allowedSecondFactorList
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function allowed_second_factor_list_is_not_changed_if_its_values_are_the_same_as_the_current_list()
+    {
+        $secondFactorsToAllow = ['sms', 'yubikey'];
+        $allowedSecondFactors = array_map(function ($secondFactorType) {
+            return new SecondFactorType($secondFactorType);
+        }, $secondFactorsToAllow);
+
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
+        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $originalAllowedSecondFactorList = AllowedSecondFactorList::ofTypes($allowedSecondFactors);
+
+        $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+        $command->institution = $institution->getInstitution();
+        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors = $secondFactorsToAllow;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $originalAllowedSecondFactorList
+                )
+            ])
+            ->when($command)
+            ->then([]);
     }
 
     /**

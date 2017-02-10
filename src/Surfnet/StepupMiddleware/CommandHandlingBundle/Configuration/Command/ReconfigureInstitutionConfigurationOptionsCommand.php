@@ -47,6 +47,7 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $showRaaContactInformationOption;
 
     /**
+     * @Assert\NotNull()
      * @Assert\All({
      *     @Assert\Choice(
      *         callback={"Surfnet\StepupBundle\Value\SecondFactorType", "getAvailableSecondFactorTypes"},

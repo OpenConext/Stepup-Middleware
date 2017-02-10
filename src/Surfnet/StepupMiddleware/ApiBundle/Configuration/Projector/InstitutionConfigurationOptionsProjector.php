@@ -23,9 +23,8 @@ use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
 final class InstitutionConfigurationOptionsProjector extends Projector
@@ -35,9 +34,17 @@ final class InstitutionConfigurationOptionsProjector extends Projector
      */
     private $repository;
 
-    public function __construct(InstitutionConfigurationOptionsRepository $repository)
-    {
-        $this->repository = $repository;
+    /**
+     * @var AllowedSecondFactorRepository
+     */
+    private $allowedSecondFactorRepository;
+
+    public function __construct(
+        InstitutionConfigurationOptionsRepository $repository,
+        AllowedSecondFactorRepository $allowedSecondFactorRepository
+    ) {
+        $this->repository                    = $repository;
+        $this->allowedSecondFactorRepository = $allowedSecondFactorRepository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
@@ -70,5 +77,6 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
         $this->repository->removeConfigurationOptionsFor($event->institution);
+        $this->allowedSecondFactorRepository->clearAllowedSecondFactorListFor($event->institution);
     }
 }

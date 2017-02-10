@@ -10,6 +10,11 @@ services:
         factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions ]
 
+    surfnet_stepup_middleware_api.repository.allowed_second_factor:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository
+        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
+        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor ]
+
     surfnet_stepup_middleware_api.repository.ra_location:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository
         factory: ["@doctrine.orm.middleware_entity_manager", getRepository]

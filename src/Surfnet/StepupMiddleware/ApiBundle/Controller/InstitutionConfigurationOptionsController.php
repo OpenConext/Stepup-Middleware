@@ -26,11 +26,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class InstitutionConfigurationOptionsController extends Controller
 {
-    public function getForInstitutionAction($institutionValue)
+    public function getForInstitutionAction($institutionName)
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA']);
 
-        $institution = new Institution($institutionValue);
+        $institution = new Institution($institutionName);
 
         $institutionConfigurationOptions = $this
             ->getInstitutionConfigurationOptionsService()
@@ -42,7 +42,7 @@ final class InstitutionConfigurationOptionsController extends Controller
 
         if ($institutionConfigurationOptions === null) {
             throw new NotFoundHttpException(
-                sprintf('No institution configuration options found for institution "%s"', $institutionValue)
+                sprintf('No institution configuration options found for institution "%s"', $institution)
             );
         }
 

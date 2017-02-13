@@ -18,13 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\ProcessingAbortedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class InvalidCommandExceptionListener implements EventSubscriberInterface
+class CommandProcessingExceptionListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
@@ -35,10 +35,16 @@ class InvalidCommandExceptionListener implements EventSubscriberInterface
     {
         $exception = $event->getException();
 
-        if (!$exception instanceof InvalidCommandException) {
+        if (!$exception instanceof ProcessingAbortedException) {
             return;
         }
 
-        $event->setResponse(new JsonResponse(['errors' => $exception->getErrors()], 400));
+        $event->setResponse(new JsonResponse(
+            [
+                'exception' => get_class($exception),
+                'errors' => $exception->getErrors(),
+            ],
+            400
+        ));
     }
 }

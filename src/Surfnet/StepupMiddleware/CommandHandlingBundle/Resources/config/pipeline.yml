@@ -47,6 +47,6 @@ services:
         class: Broadway\CommandHandling\SimpleCommandBus
 
     surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\InvalidCommandExceptionListener
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\CommandProcessingExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }

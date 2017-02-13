@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\RepositoryInterface;
+use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Identity;
@@ -38,6 +39,8 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -70,13 +73,23 @@ class IdentityCommandHandler extends CommandHandler
     private $configurableSettings;
 
     /**
-     * @param RepositoryInterface  $repository
-     * @param ConfigurableSettings $configurableSettings
+     * @var AllowedSecondFactorListService
      */
-    public function __construct(RepositoryInterface $repository, ConfigurableSettings $configurableSettings)
-    {
-        $this->repository           = $repository;
+    private $allowedSecondFactorListService;
+
+    /**
+     * @param RepositoryInterface $repository
+     * @param ConfigurableSettings $configurableSettings
+     * @param AllowedSecondFactorListService $allowedSecondFactorListService
+     */
+    public function __construct(
+        RepositoryInterface $repository,
+        ConfigurableSettings $configurableSettings,
+        AllowedSecondFactorListService $allowedSecondFactorListService
+    ) {
+        $this->repository = $repository;
         $this->configurableSettings = $configurableSettings;
+        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -136,6 +149,8 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('yubikey'), $identity->getInstitution());
+
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId),
@@ -152,6 +167,8 @@ class IdentityCommandHandler extends CommandHandler
     {
         /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('sms'), $identity->getInstitution());
 
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
@@ -170,6 +187,9 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
+        // Assume tiqr is being used as it is the only GSSF currently supported
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('tiqr'), $identity->getInstitution());
+
         $identity->provePossessionOfGssf(
             new SecondFactorId($command->secondFactorId),
             new StepupProvider($command->stepupProvider),
@@ -184,6 +204,8 @@ class IdentityCommandHandler extends CommandHandler
     {
         /** @var IdentityApi $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
+
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('u2f'), $identity->getInstitution());
 
         $identity->provePossessionOfU2fDevice(
             new SecondFactorId($command->secondFactorId),
@@ -276,6 +298,22 @@ class IdentityCommandHandler extends CommandHandler
             throw new UnsupportedLocaleException(
                 sprintf('Given locale "%s" is not a supported locale', (string) $locale)
             );
+        }
+    }
+
+    private function assertSecondFactorIsAllowedFor(SecondFactorType $secondFactor, Institution $institution)
+    {
+        $isSecondFactorAllowed = $this->allowedSecondFactorListService->isSecondFactorAllowedFor(
+            $secondFactor,
+            new ConfigurationInstitution($institution->getInstitution())
+        );
+
+        if ($isSecondFactorAllowed === false) {
+            throw new SecondFactorNotAllowedException(sprintf(
+                'Institution "%s" does not support second factor "%s"',
+                $institution->getInstitution(),
+                $secondFactor->getSecondFactorType()
+            ));
         }
     }
 }

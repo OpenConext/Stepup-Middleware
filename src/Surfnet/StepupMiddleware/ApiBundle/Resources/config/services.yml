@@ -86,6 +86,12 @@ services:
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
 
+    surfnet_stepup_middleware_api.service.allowed_second_factor_list:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.allowed_second_factor"
+            - "@surfnet_stepup_middleware_api.repository.configured_institution"
+
     surfnet_stepup_middleware_api.service.configured_institutions:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService
         arguments:

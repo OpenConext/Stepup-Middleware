@@ -58,7 +58,9 @@ final class InstitutionConfigurationController extends Controller
             $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
-                'allowed_second_factors' => $allowedSecondFactorMap->getSecondFactorListFor($options->institution),
+                'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
+                    $options->institution
+                ),
             ];
         }
 

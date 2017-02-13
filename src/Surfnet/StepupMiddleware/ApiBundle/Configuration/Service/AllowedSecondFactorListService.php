@@ -48,19 +48,6 @@ final class AllowedSecondFactorListService
      */
     public function getAllowedSecondFactorMap()
     {
-        $allInstitutions = array_map(function (ConfiguredInstitution $configuredInstitution) {
-            return $configuredInstitution->institution;
-        }, $this->configuredInstitutionRepository->findAll());
-
-        $allowedSecondFactorMap = AllowedSecondFactorMap::mappedTo($allInstitutions);
-
-        foreach ($this->allowedSecondFactorRepository->findAll() as $allowedSecondFactor) {
-            $allowedSecondFactorMap->institutionAllows(
-                $allowedSecondFactor->institution,
-                $allowedSecondFactor->secondFactorType
-            );
-        }
-
-        return $allowedSecondFactorMap;
+        return AllowedSecondFactorMap::from($this->allowedSecondFactorRepository->findAll());
     }
 }

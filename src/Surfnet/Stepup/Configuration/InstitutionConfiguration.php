@@ -172,7 +172,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateAllowedSecondFactorList(AllowedSecondFactorList $allowedSecondFactorList)
     {
-        if ($this->allowedSecondFactorList->equals($allowedSecondFactorList)) {
+        if ($this->allowedSecondFactorList !== null
+            && $this->allowedSecondFactorList->equals($allowedSecondFactorList)
+        ) {
             return;
         }
 

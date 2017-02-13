@@ -23,9 +23,8 @@ use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
 final class InstitutionConfigurationOptionsProjector extends Projector
@@ -33,11 +32,19 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     /**
      * @var InstitutionConfigurationOptionsRepository
      */
-    private $repository;
+    private $institutionConfigurationOptionsRepository;
 
-    public function __construct(InstitutionConfigurationOptionsRepository $repository)
-    {
-        $this->repository = $repository;
+    /**
+     * @var AllowedSecondFactorRepository
+     */
+    private $allowedSecondFactorRepository;
+
+    public function __construct(
+        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
+        AllowedSecondFactorRepository $allowedSecondFactorRepository
+    ) {
+        $this->institutionConfigurationOptionsRepository = $institutionConfigurationOptionsRepository;
+        $this->allowedSecondFactorRepository             = $allowedSecondFactorRepository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
@@ -48,27 +55,28 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->showRaaContactInformationOption
         );
 
-        $this->repository->save($institutionConfigurationOptions);
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 
     public function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
     {
-        $institutionConfigurationOptions = $this->repository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
         $institutionConfigurationOptions->useRaLocationsOption = $event->useRaLocationsOption;
 
-        $this->repository->save($institutionConfigurationOptions);
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 
     public function applyShowRaaContactInformationOptionChangedEvent(ShowRaaContactInformationOptionChangedEvent $event)
     {
-        $institutionConfigurationOptions = $this->repository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
         $institutionConfigurationOptions->showRaaContactInformationOption = $event->showRaaContactInformationOption;
 
-        $this->repository->save($institutionConfigurationOptions);
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 
     public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
-        $this->repository->removeConfigurationOptionsFor($event->institution);
+        $this->institutionConfigurationOptionsRepository->removeConfigurationOptionsFor($event->institution);
+        $this->allowedSecondFactorRepository->clearAllowedSecondFactorListFor($event->institution);
     }
 }

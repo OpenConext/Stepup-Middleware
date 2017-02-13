@@ -82,4 +82,5 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\InstitutionConfigurationOptionsProjector
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+            - "@surfnet_stepup_middleware_api.repository.allowed_second_factor"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]

@@ -79,6 +79,11 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     ) {
         $institution = new Institution($command->institution);
 
+        $allowedSecondFactors = array_map(function ($allowedSecondFactor) {
+            return new SecondFactorType($allowedSecondFactor);
+        }, $command->allowedSecondFactors);
+
+
         $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->configureUseRaLocationsOption(
             new UseRaLocationsOption($command->useRaLocationsOption)
@@ -86,11 +91,6 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $institutionConfiguration->configureShowRaaContactInformationOption(
             new ShowRaaContactInformationOption($command->showRaaContactInformationOption)
         );
-
-        $allowedSecondFactors = array_map(function ($allowedSecondFactor) {
-            return new SecondFactorType($allowedSecondFactor);
-        }, $command->allowedSecondFactors);
-
         $institutionConfiguration->updateAllowedSecondFactorList(
             AllowedSecondFactorList::ofTypes($allowedSecondFactors)
         );

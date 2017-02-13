@@ -52,7 +52,7 @@ class SecondFactorTypeType extends Type
         }
 
         try {
-            $institution = new SecondFactorType($value);
+            $secondFactorType = new SecondFactorType($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
@@ -63,7 +63,7 @@ class SecondFactorTypeType extends Type
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
         }
 
-        return $institution;
+        return $secondFactorType;
     }
 
     public function getName()

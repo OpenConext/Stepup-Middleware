@@ -61,4 +61,16 @@ class AllowedSecondFactorListService
     {
         return AllowedSecondFactorMap::from($this->allowedSecondFactorRepository->findAll());
     }
+
+    /**
+     * @param SecondFactorType $secondFactor
+     * @param Institution $institution
+     * @return bool
+     */
+    public function isSecondFactorAllowedFor(SecondFactorType $secondFactor, Institution $institution)
+    {
+        $allowedSecondFactorList = $this->getAllowedSecondFactorListFor($institution);
+
+        return $allowedSecondFactorList->allows($secondFactor);
+    }
 }

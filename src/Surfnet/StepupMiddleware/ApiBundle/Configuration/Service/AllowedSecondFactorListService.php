@@ -20,11 +20,12 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
-final class AllowedSecondFactorListService
+class AllowedSecondFactorListService
 {
     /**
      * @var AllowedSecondFactorRepository

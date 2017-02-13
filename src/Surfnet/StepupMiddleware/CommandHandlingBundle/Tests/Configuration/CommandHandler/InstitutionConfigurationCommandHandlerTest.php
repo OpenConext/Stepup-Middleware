@@ -259,11 +259,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $originalAllowedSecondFactorList = AllowedSecondFactorList::blank();
 
         $secondFactorsToAllow = ['sms', 'yubikey'];
-
-        $allowedSecondFactors = array_map(function ($secondFactorType) {
-            return new SecondFactorType($secondFactorType);
-        }, $secondFactorsToAllow);
-        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes($allowedSecondFactors);
+        $updatedAllowedSecondFactorList = AllowedSecondFactorList::ofTypes([
+            new SecondFactorType($secondFactorsToAllow[0]),
+            new SecondFactorType($secondFactorsToAllow[1])
+        ]);
 
         $command = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution = $institution->getInstitution();
@@ -291,7 +290,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    $allowedSecondFactorList
+                    $updatedAllowedSecondFactorList
                 )
             ]);
     }
@@ -303,15 +302,16 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     public function allowed_second_factor_list_is_not_changed_if_its_values_are_the_same_as_the_current_list()
     {
         $secondFactorsToAllow = ['sms', 'yubikey'];
-        $allowedSecondFactors = array_map(function ($secondFactorType) {
-            return new SecondFactorType($secondFactorType);
-        }, $secondFactorsToAllow);
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
+            new SecondFactorType($secondFactorsToAllow[0]),
+            new SecondFactorType($secondFactorsToAllow[1])
+        ]);
 
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
-        $originalAllowedSecondFactorList = AllowedSecondFactorList::ofTypes($allowedSecondFactors);
+        $originalAllowedSecondFactorList = $allowedSecondFactorList;
 
         $command = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution = $institution->getInstitution();

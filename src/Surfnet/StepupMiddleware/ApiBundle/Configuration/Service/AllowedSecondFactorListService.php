@@ -18,9 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
-use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
-use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorMap;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 

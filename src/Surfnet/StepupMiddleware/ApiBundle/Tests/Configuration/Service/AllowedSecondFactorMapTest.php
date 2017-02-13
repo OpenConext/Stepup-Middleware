@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Tests\Configuration\Value;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;

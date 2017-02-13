@@ -16,8 +16,10 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Configuration\Value;
+namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 
 final class AllowedSecondFactorMap

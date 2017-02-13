@@ -22,7 +22,6 @@ use DateTime;
 use Exception;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;

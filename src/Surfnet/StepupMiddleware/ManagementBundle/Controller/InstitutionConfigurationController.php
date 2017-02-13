@@ -88,6 +88,7 @@ final class InstitutionConfigurationController extends Controller
             $command->institution                     = $institution;
             $command->useRaLocationsOption            = $options['use_ra_locations'];
             $command->showRaaContactInformationOption = $options['show_raa_contact_information'];
+            $command->allowedSecondFactors            = $options['allowed_second_factors'];
 
             $commands[] = $command;
         }

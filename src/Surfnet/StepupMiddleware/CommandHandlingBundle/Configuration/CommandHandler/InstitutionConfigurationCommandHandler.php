@@ -22,18 +22,20 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\RepositoryInterface;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
+use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
-use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 
@@ -77,12 +79,20 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
     ) {
         $institution = new Institution($command->institution);
 
+        $allowedSecondFactors = array_map(function ($allowedSecondFactor) {
+            return new SecondFactorType($allowedSecondFactor);
+        }, $command->allowedSecondFactors);
+
+
         $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->configureUseRaLocationsOption(
             new UseRaLocationsOption($command->useRaLocationsOption)
         );
         $institutionConfiguration->configureShowRaaContactInformationOption(
             new ShowRaaContactInformationOption($command->showRaaContactInformationOption)
+        );
+        $institutionConfiguration->updateAllowedSecondFactorList(
+            AllowedSecondFactorList::ofTypes($allowedSecondFactors)
         );
 
         $this->repository->save($institutionConfiguration);

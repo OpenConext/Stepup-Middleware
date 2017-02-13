@@ -87,6 +87,21 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return false;
     }
 
+    public function equals(AllowedSecondFactorList $other)
+    {
+        if (count($other->allowedSecondFactors) !== count($this->allowedSecondFactors)) {
+            return false;
+        }
+
+        foreach ($other->allowedSecondFactors as $allowedSecondFactor) {
+            if (!$this->contains($allowedSecondFactor)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function deserialize(array $data)
     {
         $secondFactorTypes = array_map(

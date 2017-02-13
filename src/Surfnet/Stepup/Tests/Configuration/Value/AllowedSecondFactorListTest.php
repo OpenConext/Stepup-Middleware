@@ -144,6 +144,82 @@ class AllowedSecondFactorListTest extends TestCase
         );
     }
 
+    /**
+     * @test
+     * @group domain
+     *
+     * @dataProvider differentAllowedSecondFactorListsProvider
+     * @param SecondFactorType[] $firstList
+     * @param SecondFactorType[] $secondList
+     */
+    public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(array $firstList, array $secondList)
+    {
+        $base  = AllowedSecondFactorList::ofTypes($firstList);
+        $other = AllowedSecondFactorList::ofTypes($secondList);
+
+        $this->assertFalse($base->equals($other));
+    }
+
+    /**
+     * @test
+     * @group domain
+     *
+     * @dataProvider sameAllowedSecondFactorListsProvider
+     * @param SecondFactorType[] $firstList
+     * @param SecondFactorType[] $secondList
+     */
+    public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(array $firstList, array $secondList)
+    {
+        $base  = AllowedSecondFactorList::ofTypes($firstList);
+        $other = AllowedSecondFactorList::ofTypes($secondList);
+
+        $this->assertTrue($base->equals($other));
+    }
+
+    public function differentAllowedSecondFactorListsProvider()
+    {
+        return [
+            'Different second factor types' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('yubikey'), new SecondFactorType('tiqr')]
+            ],
+            'First list contains second list' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr'), new SecondFactorType('yubikey')],
+                [new SecondFactorType('yubikey')]
+            ],
+            'First list is empty' => [
+                [],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ],
+            'Second list is empty' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [],
+            ]
+        ];
+    }
+
+    public function sameAllowedSecondFactorListsProvider()
+    {
+        return [
+            'Same second factor types' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ],
+            'Both empty' => [
+                [],
+                [],
+            ],
+            'Same second factor types, different order' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('tiqr'), new SecondFactorType('sms')],
+            ],
+            'Same second factor types, due to deduplication in first list' => [
+                [new SecondFactorType('sms'), new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ]
+        ];
+    }
+
     public function availableSecondFactorTypeProvider()
     {
         $secondFactorTypes = array_map(function ($availableSecondFactorType) {

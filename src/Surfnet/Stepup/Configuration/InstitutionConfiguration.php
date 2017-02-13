@@ -91,23 +91,19 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      */
     public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
     {
-        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
-        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
-        $allowedSecondFactorList         = AllowedSecondFactorList::blank();
-
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(
             new NewInstitutionConfigurationCreatedEvent(
                 $institutionConfigurationId,
                 $institution,
-                $useRaLocationsOption,
-                $showRaaContactInformationOption
+                UseRaLocationsOption::getDefault(),
+                ShowRaaContactInformationOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
             $institutionConfigurationId,
             $institution,
-            $allowedSecondFactorList
+            AllowedSecondFactorList::blank()
         ));
 
         return $institutionConfiguration;
@@ -123,22 +119,18 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             throw new DomainException('Cannot rebuild InstitutionConfiguration as it has not been destroyed');
         }
 
-        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
-        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
-        $allowedSecondFactorList         = AllowedSecondFactorList::blank();
-
         $this->apply(
             new NewInstitutionConfigurationCreatedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $useRaLocationsOption,
-                $showRaaContactInformationOption
+                UseRaLocationsOption::getDefault(),
+                ShowRaaContactInformationOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
             $this->institutionConfigurationId,
             $this->institution,
-            $allowedSecondFactorList
+            AllowedSecondFactorList::blank()
         ));
 
         return $this;

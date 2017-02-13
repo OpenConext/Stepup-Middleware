@@ -84,7 +84,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $defaultAllowedSecondFactorList
                 )
-
             ]);
     }
 

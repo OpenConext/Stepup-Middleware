@@ -147,71 +147,77 @@ class AllowedSecondFactorListTest extends TestCase
     /**
      * @test
      * @group domain
+     *
+     * @dataProvider differentAllowedSecondFactorListsProvider
+     * @param SecondFactorType[] $firstList
+     * @param SecondFactorType[] $secondList
      */
-    public function an_allowed_second_factor_list_equals_an_allowed_second_factor_list_with_the_same_values()
+    public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(array $firstList, array $secondList)
     {
-        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('yubikey'),
-        ]);
-        $sameAllowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('yubikey'),
-        ]);
+        $base  = AllowedSecondFactorList::ofTypes($firstList);
+        $other = AllowedSecondFactorList::ofTypes($secondList);
 
-        $isSameAllowedSecondFactorList = $allowedSecondFactorList->equals($sameAllowedSecondFactorList);
-
-        $this->assertTrue(
-            $isSameAllowedSecondFactorList,
-            'An allowed second factor list should equal a second factor list with the same values but it does not'
-        );
+        $this->assertFalse($base->equals($other));
     }
 
     /**
      * @test
      * @group domain
+     *
+     * @dataProvider sameAllowedSecondFactorListsProvider
+     * @param SecondFactorType[] $firstList
+     * @param SecondFactorType[] $secondList
      */
-    public function an_allowed_second_factor_list_does_not_equal_an_allowed_second_factor_list_with_different_values()
+    public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(array $firstList, array $secondList)
     {
-        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('yubikey'),
-        ]);
-        $differentAllowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('u2f'),
-        ]);
+        $base  = AllowedSecondFactorList::ofTypes($firstList);
+        $other = AllowedSecondFactorList::ofTypes($secondList);
 
-        $isSameAllowedSecondFactorList = $allowedSecondFactorList->equals($differentAllowedSecondFactorList);
-
-        $this->assertFalse(
-            $isSameAllowedSecondFactorList,
-            'An allowed second factor list should not equal a second factor list with different values but it does'
-        );
+        $this->assertTrue($base->equals($other));
     }
 
-    /**
-     * @test
-     * @group domain
-     */
-    public function an_allowed_second_factor_list_does_not_equal_an_allowed_second_factor_list_with_a_different_amount_of_values()
+    public function differentAllowedSecondFactorListsProvider()
     {
-        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('yubikey'),
-            new SecondFactorType('u2f'),
-        ]);
-        $differentAllowedSecondFactorList = AllowedSecondFactorList::ofTypes([
-            new SecondFactorType('sms'),
-            new SecondFactorType('u2f'),
-        ]);
+        return [
+            'Different second factor types' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('yubikey'), new SecondFactorType('tiqr')]
+            ],
+            'First list contains second list' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr'), new SecondFactorType('yubikey')],
+                [new SecondFactorType('yubikey')]
+            ],
+            'First list is empty' => [
+                [],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ],
+            'Second list is empty' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [],
+            ]
+        ];
+    }
 
-        $isSameAllowedSecondFactorList = $allowedSecondFactorList->equals($differentAllowedSecondFactorList);
-
-        $this->assertFalse(
-            $isSameAllowedSecondFactorList,
-            'An allowed second factor list should not equal a second factor list with a different amount of values but it does'
-        );
+    public function sameAllowedSecondFactorListsProvider()
+    {
+        return [
+            'Same second factor types' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ],
+            'Both empty' => [
+                [],
+                [],
+            ],
+            'Same second factor types, different order' => [
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('tiqr'), new SecondFactorType('sms')],
+            ],
+            'Same second factor types, due to deduplication in first list' => [
+                [new SecondFactorType('sms'), new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+                [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
+            ]
+        ];
     }
 
     public function availableSecondFactorTypeProvider()

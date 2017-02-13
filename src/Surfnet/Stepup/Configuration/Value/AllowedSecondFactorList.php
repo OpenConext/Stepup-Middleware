@@ -87,7 +87,6 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return false;
     }
 
-
     public function equals(AllowedSecondFactorList $other)
     {
         if (count($other->allowedSecondFactors) !== count($this->allowedSecondFactors)) {

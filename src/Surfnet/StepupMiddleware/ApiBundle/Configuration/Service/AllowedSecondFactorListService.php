@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
-final class AllowedSecondFactorListService
+class AllowedSecondFactorListService
 {
     /**
      * @var AllowedSecondFactorRepository

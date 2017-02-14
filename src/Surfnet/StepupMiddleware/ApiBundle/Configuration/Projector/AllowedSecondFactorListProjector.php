@@ -40,6 +40,10 @@ final class AllowedSecondFactorListProjector extends Projector
      */
     public function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event)
     {
+        if ($event->allowedSecondFactorList->isBlank()) {
+            $this->allowedSecondFactorRepository->clearAllowedSecondFactorListFor($event->institution);
+        }
+
         foreach ($event->allowedSecondFactorList as $secondFactor) {
             $allowedSecondFactor = AllowedSecondFactor::createFrom($event->institution, $secondFactor);
             $this->allowedSecondFactorRepository->save($allowedSecondFactor);

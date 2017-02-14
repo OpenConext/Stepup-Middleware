@@ -23,7 +23,7 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
-use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
@@ -80,13 +80,17 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /**
      * @var AllowedSecondFactorListService|m\MockInterface
      */
-    private $mockAllowedSecondFactorListService;
+    private $allowedSecondFactorListServiceMock;
+
+    public function setUp()
+    {
+        $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
+        parent::setUp();
+    }
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
-
-        $this->mockAllowedSecondFactorListService = m::mock(AllowedSecondFactorListService::class);
 
         return new IdentityCommandHandler(
             new IdentityRepository(
@@ -95,7 +99,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 $aggregateFactory
             ),
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
-            $this->mockAllowedSecondFactorListService
+            $this->allowedSecondFactorListServiceMock
         );
     }
 
@@ -116,9 +120,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId  = 'SF-ID';
         $command->yubikeyPublicId = '93193884';
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $identityId = new IdentityId($command->identityId);
         $this->scenario
@@ -174,9 +178,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId  = (string) $secFacId;
         $command->yubikeyPublicId = (string) $pubId;
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $this->scenario
             ->withAggregateId($id)
@@ -235,9 +239,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId  = (string) $secFacId;
         $command->yubikeyPublicId = (string) $pubId;
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(false);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]));
 
         $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
 
@@ -271,9 +275,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId1         = new SecondFactorId(self::uuid());
         $pubId1            = new YubikeyPublicId('00028278');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $command                  = new ProveYubikeyPossessionCommand();
         $command->identityId      = (string) $id;
@@ -332,9 +336,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId          = new SecondFactorId(self::uuid());
         $phoneNumber       = new PhoneNumber('+31 (0) 612345678');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $command                 = new ProvePhonePossessionCommand();
         $command->identityId     = (string) $id;
@@ -393,9 +397,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId          = new SecondFactorId(self::uuid());
         $phoneNumber       = new PhoneNumber('+31 (0) 612345678');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(false);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('yubikey')]));
 
         $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
 
@@ -444,9 +448,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $stepupProvider    = new StepupProvider('tiqr');
         $gssfId            = new GssfId('_' . md5('Surfnet'));
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $command                 = new ProveGssfPossessionCommand();
         $command->identityId     = (string) $identityId;
@@ -511,9 +515,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $stepupProvider    = new StepupProvider('tiqr');
         $gssfId            = new GssfId('_' . md5('Surfnet'));
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(false);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]));
 
         $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
 
@@ -560,9 +564,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId          = new SecondFactorId(self::uuid());
         $keyHandle         = new U2fKeyHandle('DMUV_wX');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $command                 = new ProveU2fDevicePossessionCommand();
         $command->identityId     = (string) $id;
@@ -621,9 +625,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $secFacId          = new SecondFactorId(self::uuid());
         $keyHandle         = new U2fKeyHandle('DMUV_wX');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(false);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('yubikey')]));
 
         $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
 
@@ -668,9 +672,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId = (string) $secFacId1;
         $command->phoneNumber    = (string) $phoneNumber1;
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $this->scenario
             ->withAggregateId($id)
@@ -719,9 +723,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $publicId          = new YubikeyPublicId('00028278');
         $phoneNumber       = new PhoneNumber('+31 (0) 676543210');
 
-        $this->mockAllowedSecondFactorListService
-            ->shouldReceive('isSecondFactorAllowedFor')
-            ->andReturn(true);
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(AllowedSecondFactorList::blank());
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;

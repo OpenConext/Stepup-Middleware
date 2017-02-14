@@ -303,12 +303,11 @@ class IdentityCommandHandler extends CommandHandler
 
     private function assertSecondFactorIsAllowedFor(SecondFactorType $secondFactor, Institution $institution)
     {
-        $isSecondFactorAllowed = $this->allowedSecondFactorListService->isSecondFactorAllowedFor(
-            $secondFactor,
+        $allowedSecondFactorList = $this->allowedSecondFactorListService->getAllowedSecondFactorListFor(
             new ConfigurationInstitution($institution->getInstitution())
         );
 
-        if ($isSecondFactorAllowed === false) {
+        if (!$allowedSecondFactorList->allows($secondFactor)) {
             throw new SecondFactorNotAllowedException(sprintf(
                 'Institution "%s" does not support second factor "%s"',
                 $institution->getInstitution(),

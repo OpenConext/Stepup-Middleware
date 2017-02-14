@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class CommandProcessingExceptionListener implements EventSubscriberInterface
+class ProcessingAbortedExceptionListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {

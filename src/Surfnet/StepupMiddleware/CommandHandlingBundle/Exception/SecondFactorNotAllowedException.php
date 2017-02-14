@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-use Exception;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\ProcessingAbortedException;
 
 class SecondFactorNotAllowedException extends RuntimeException implements ProcessingAbortedException

@@ -30,7 +30,7 @@ class ReplaySpecificEventsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('middleware:event:specific_replay')
+            ->setName('stepup:event:replay')
             ->setDescription('replay specified events for specified projectors');
     }
 

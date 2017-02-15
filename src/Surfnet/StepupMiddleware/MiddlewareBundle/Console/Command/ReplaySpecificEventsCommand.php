@@ -46,7 +46,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
                 self::OPTION_LIST_PROJECTORS,
                 null,
                 InputOption::VALUE_NONE,
-                'List all projectors available to use when replaying events'
+                'List all projectors available for which events can be replayed'
             );
     }
 
@@ -73,7 +73,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
                 iterator_to_array($projectorCollection)
             );
 
-            $output->writeln('<info>The following projectors can be used when replaying events:</info>');
+            $output->writeln('<info>Events can be replayed for the following projectors:</info>');
             $output->writeln(!empty($availableProjectors) ? $availableProjectors : 'None.');
 
             return;

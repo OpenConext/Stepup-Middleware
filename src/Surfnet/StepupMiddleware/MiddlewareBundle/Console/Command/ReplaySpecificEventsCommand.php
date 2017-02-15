@@ -18,25 +18,66 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Broadway\ReadModel\ProjectorInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class ReplaySpecificEventsCommand extends ContainerAwareCommand
 {
+    const OPTION_LIST_EVENTS = 'list-events';
+    const OPTION_LIST_PROJECTORS = 'list-projectors';
+
     protected function configure()
     {
         $this
             ->setName('stepup:event:replay')
-            ->setDescription('replay specified events for specified projectors');
+            ->setDescription('replay specified events for specified projectors')
+            ->addOption(
+                self::OPTION_LIST_EVENTS,
+                null,
+                InputOption::VALUE_NONE,
+                'List all events available to replay'
+            )
+            ->addOption(
+                self::OPTION_LIST_PROJECTORS,
+                null,
+                InputOption::VALUE_NONE,
+                'List all projectors available for which events can be replayed'
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $eventCollection = $container->get('middleware.event_replay.event_collection');
+        $eventCollection     = $container->get('middleware.event_replay.event_collection');
+        $projectorCollection = $container->get('middleware.event_replay.projector_collection');
+
+        if ($input->getOption(self::OPTION_LIST_EVENTS)) {
+            $availableEvents = iterator_to_array($eventCollection);
+
+            $output->writeln('<info>The following events can be replayed:</info>');
+            $output->writeln(!empty($availableEvents) ? $availableEvents : 'None.');
+
+            return;
+        }
+
+        if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
+            $availableProjectors = array_map(
+                function (ProjectorInterface $projector) {
+                    return get_class($projector);
+                },
+                iterator_to_array($projectorCollection)
+            );
+
+            $output->writeln('<info>Events can be replayed for the following projectors:</info>');
+            $output->writeln(!empty($availableProjectors) ? $availableProjectors : 'None.');
+
+            return;
+        }
 
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
@@ -47,7 +88,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         );
         $selectEventsQuestion->setMultiselect(true);
 
-        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventCollection->select($chosenEvents);
     }
 }

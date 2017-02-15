@@ -48,8 +48,10 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $eventCollection = $container->get('middleware.event_replay.event_collection');
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
+            $availableEvents = iterator_to_array($eventCollection);
+
             $output->writeln('<info>The following events can be replayed:</info>');
-            $output->writeln(iterator_to_array($eventCollection));
+            $output->writeln(!empty($availableEvents) ? $availableEvents : 'None.');
 
             return;
         }

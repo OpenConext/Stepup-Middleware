@@ -1,4 +1,9 @@
 services:
+    middleware.event_replay.event_collection:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection
+        arguments:
+            - "%registered_events%"
+
     middleware.event_replay.projector_collection:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection
 

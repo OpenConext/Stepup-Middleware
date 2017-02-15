@@ -18,11 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Symfony\Component\Console\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class ReplaySpecificEventsCommand extends Command
+class ReplaySpecificEventsCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -33,5 +35,19 @@ class ReplaySpecificEventsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $container = $this->getContainer();
+        $eventCollection = $container->get('middleware.event_replay.event_collection');
+
+        /** @var QuestionHelper $questionHelper */
+        $questionHelper = $this->getHelper('question');
+
+        $selectEventsQuestion = new ChoiceQuestion(
+            'Which events would you like to replay? Please supply a comma-separated list of numbers.',
+            iterator_to_array($eventCollection)
+        );
+        $selectEventsQuestion->setMultiselect(true);
+
+        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $eventCollection->select($chosenEvents);
     }
 }

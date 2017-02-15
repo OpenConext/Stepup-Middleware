@@ -18,16 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
+use ArrayIterator;
+use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
-final class EventCollection
+final class EventCollection implements IteratorAggregate
 {
     /**
      * @var string[]
      */
     private $eventNames = [];
 
-    public function __construct($eventNames)
+    public function __construct(array $eventNames)
     {
         foreach ($eventNames as $eventName) {
             if (!is_string($eventName) || empty($eventName)) {
@@ -43,5 +45,30 @@ final class EventCollection
 
             $this->eventNames[] = $eventName;
         }
+    }
+
+    /**
+     * @param array $subset
+     * @return EventCollection
+     */
+    public function select(array $subset)
+    {
+        $nonAvailableEventNames = array_diff($subset, $this->eventNames);
+
+        if (!empty($nonAvailableEventNames)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Subset of event names contains event names not present in collection: %s',
+                    implode(', ', $nonAvailableEventNames)
+                )
+            );
+        }
+
+        return new self($subset);
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->eventNames);
     }
 }

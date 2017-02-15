@@ -20,6 +20,8 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\EventSourcing;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use stdClass;
+use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
@@ -53,6 +55,35 @@ class EventCollectionTest extends TestCase
         $nonExistantClass = 'This\Class\Does\Not\Exist';
 
         new EventCollection([$nonExistantClass]);
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function a_subset_of_events_can_be_selected_from_an_event_collection()
+    {
+        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
+
+        $expectedSubset = new EventCollection([NewConfigurationCreatedEvent::class]);
+        $subset = $eventCollection->select([NewConfigurationCreatedEvent::class]);
+
+        $this->assertEquals($expectedSubset, $subset);
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function a_subset_containing_events_not_present_in_the_event_collection_cannot_be_selected()
+    {
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Subset of event names contains event names not present in collection'
+        );
+
+        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class]);
+        $eventCollection->select([SecondFactorVettedEvent::class]);
     }
 
     public function emptyOrNonStringProvider()

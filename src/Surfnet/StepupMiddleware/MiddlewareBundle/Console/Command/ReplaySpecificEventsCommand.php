@@ -19,11 +19,8 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class ReplaySpecificEventsCommand extends Command
 {
@@ -36,37 +33,5 @@ class ReplaySpecificEventsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var FormatterHelper $formatter */
-        $formatter = $this->getHelper('formatter');
-
-        /** @var QuestionHelper $interrogator */
-        $interrogator = $this->getHelper('question');
-
-        $output->writeln(['', $formatter->formatBlock([
-            '',
-            'WARNING!!!!',
-            '',
-            'You are about to WIPE all read data and recreate all data based on chosen events and projectors.',
-            '',
-            'This can take a while and should not be interrupted',
-            ''
-        ], 'error'), '']);
-        $question = "Are you sure you wish to continue? (y/N)";
-
-        $question = sprintf($question, 'error', 'error');
-        $areYouSure = new ConfirmationQuestion(sprintf("<question>%s</question>\n", $question), false);
-        if (!$interrogator->ask($input, $output, $areYouSure)) {
-            $output->writeln('<comment>Replay cancelled!</comment>');
-
-            return;
-        }
-
-        $output->writeln(['',$formatter->formatBlock('Starting Event Replay', 'info')]);
-        $output->writeln(
-            $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
-        );
-
-        // ensures the progressbar doesn't overwrite the messages above
-        $output->writeln(['','',''], 'info');
     }
 }

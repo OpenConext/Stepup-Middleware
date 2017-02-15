@@ -1,4 +1,7 @@
 services:
+    middleware.event_replay.projector_collection:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection
+
     middleware.event_replay.dbal_event_hydrator:
         public: false
         class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator

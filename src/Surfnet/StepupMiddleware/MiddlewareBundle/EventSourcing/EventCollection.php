@@ -25,7 +25,7 @@ final class EventCollection
     /**
      * @var string[]
      */
-    public $eventNames = [];
+    private $eventNames = [];
 
     public function __construct($eventNames)
     {

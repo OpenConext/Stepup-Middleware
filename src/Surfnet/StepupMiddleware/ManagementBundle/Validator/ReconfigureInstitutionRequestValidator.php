@@ -84,7 +84,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         $configuredInstitutions = $this->getConfiguredInstitutions();
 
         $nonExistentInstitutions = array_filter($institutions, function ($institution) use ($configuredInstitutions) {
-            return !in_array($institution, $configuredInstitutions);
+            return !in_array(strtolower($institution), $configuredInstitutions);
         });
 
         if (!empty($nonExistentInstitutions)) {
@@ -155,7 +155,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         $this->configuredInstitutions = array_map(
             function (ConfiguredInstitution $configuredInstitution) {
-                return $configuredInstitution->institution->getInstitution();
+                return strtolower($configuredInstitution->institution->getInstitution());
             },
             $this->configuredInstitutionsService->getAll()
         );

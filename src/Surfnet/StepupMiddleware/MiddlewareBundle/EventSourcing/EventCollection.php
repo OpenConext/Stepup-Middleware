@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
+use ArrayIterator;
+use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
-final class EventCollection
+final class EventCollection implements IteratorAggregate
 {
     /**
      * @var string[]
@@ -43,5 +45,10 @@ final class EventCollection
 
             $this->eventNames[] = $eventName;
         }
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->eventNames);
     }
 }

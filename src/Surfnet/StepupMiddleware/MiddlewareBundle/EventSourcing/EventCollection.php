@@ -34,6 +34,13 @@ final class EventCollection
                 throw InvalidArgumentException::invalidType('non-empty string', 'eventName', $eventName);
             }
 
+            if (!class_exists($eventName)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot create EventCollection: class "%s" does not exist',
+                    $eventName
+                ));
+            }
+
             $this->eventNames[] = $eventName;
         }
     }

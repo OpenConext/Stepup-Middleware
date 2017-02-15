@@ -42,6 +42,19 @@ class EventCollectionTest extends TestCase
         new EventCollection([$emptyOrNonString]);
     }
 
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function an_event_collection_must_contain_event_names_that_are_existing_class_names()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, 'does not exist');
+
+        $nonExistantClass = 'This\Class\Does\Not\Exist';
+
+        new EventCollection([$nonExistantClass]);
+    }
+
     public function emptyOrNonStringProvider()
     {
         return [

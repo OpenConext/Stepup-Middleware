@@ -63,7 +63,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         );
         $selectEventsQuestion->setMultiselect(true);
 
-        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventCollection->select($chosenEvents);
     }
 }

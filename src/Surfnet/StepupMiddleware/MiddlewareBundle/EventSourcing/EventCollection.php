@@ -27,7 +27,7 @@ final class EventCollection
      */
     private $eventNames = [];
 
-    public function __construct($eventNames)
+    public function __construct(array $eventNames)
     {
         foreach ($eventNames as $eventName) {
             if (!is_string($eventName) || empty($eventName)) {

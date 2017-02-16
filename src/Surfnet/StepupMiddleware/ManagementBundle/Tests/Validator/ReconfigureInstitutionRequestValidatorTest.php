@@ -134,6 +134,40 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @test
      * @group validator
      */
+    public function validation_for_existing_institutions_is_done_case_insensitively()
+    {
+        $existingInstitutions = [ConfiguredInstitution::createFrom(new Institution('surfnet.nl'))];
+        $differentlyCasedButSameInstitution = 'Surfnet.nl';
+
+        $invalidRequest = [
+            $differentlyCasedButSameInstitution => [
+                'use_ra_locations'             => false,
+                'show_raa_contact_information' => true,
+                'allowed_second_factors'       => [],
+            ],
+        ];
+
+        $builder = Mockery::mock(ConstraintViolationBuilderInterface::class);
+        $builder->shouldNotReceive('addViolation');
+
+        $context = Mockery::mock(ExecutionContextInterface::class);
+        $context->shouldNotReceive('buildViolation');
+
+        $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
+        $configuredInstitutionServiceMock
+            ->shouldReceive('getAll')
+            ->andReturn($existingInstitutions);
+
+        $validator = new ReconfigureInstitutionRequestValidator($configuredInstitutionServiceMock);
+        $validator->initialize($context);
+
+        $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
+    }
+
+    /**
+     * @test
+     * @group validator
+     */
     public function valid_reconfigure_institution_requests_do_not_cause_any_violations()
     {
         $institution = 'surfnet.nl';

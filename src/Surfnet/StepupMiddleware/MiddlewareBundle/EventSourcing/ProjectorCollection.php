@@ -69,7 +69,7 @@ final class ProjectorCollection implements IteratorAggregate
                 );
             }
 
-            $subsetCollection->projectors[$projectorName] = $this->projectors;
+            $subsetCollection->add($this->projectors[$projectorName]);
         }
 
         return $subsetCollection;

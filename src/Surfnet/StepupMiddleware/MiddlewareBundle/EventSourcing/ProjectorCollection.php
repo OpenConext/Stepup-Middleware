@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 use ArrayIterator;
 use Broadway\ReadModel\ProjectorInterface;
 use IteratorAggregate;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
 final class ProjectorCollection implements IteratorAggregate
 {
@@ -35,6 +36,30 @@ final class ProjectorCollection implements IteratorAggregate
     public function add(ProjectorInterface $projector)
     {
         $this->projectors[get_class($projector)] = $projector;
+    }
+
+    /**
+     * @param array $projectorNames
+     * @return ProjectorCollection
+     */
+    public function selectByNames(array $projectorNames)
+    {
+        $subsetCollection = new ProjectorCollection;
+
+        foreach ($projectorNames as $projectorName) {
+            if (!array_key_exists($projectorName, $this->projectors)) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Cannot select a subset of projectors, because projector "%s" is not present in the collection',
+                        $projectorName
+                    )
+                );
+            }
+
+            $subsetCollection->projectors[$projectorName] = $this->projectors;
+        }
+
+        return $subsetCollection;
     }
 
     /**

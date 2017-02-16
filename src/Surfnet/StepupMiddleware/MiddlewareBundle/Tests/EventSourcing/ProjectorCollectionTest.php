@@ -51,4 +51,46 @@ class ProjectorCollectionTest extends TestCase
             'ProjectorCollection should have contained added WhitelistProjector but it did not'
         );
     }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function a_subset_of_projectors_can_be_selected_from_a_projector_collection()
+    {
+        $sraaProjector      = new SraaProjector( m::mock(SraaRepository::class));
+        $whitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
+
+        $projectorCollection = new ProjectorCollection;
+        $projectorCollection->add($sraaProjector);
+        $projectorCollection->add($whitelistProjector);
+
+        $projectorSelection = $projectorCollection->selectByNames([get_class($sraaProjector)]);
+
+        $this->assertTrue(
+            $projectorSelection->contains($sraaProjector),
+            'Subset of ProjectorCollection should contain SraaProjector but it did not'
+        );
+        $this->assertFalse(
+            $projectorSelection->contains($whitelistProjector),
+            'Subset of ProjectorCollection should contain WhitelistProjector but it did not'
+        );
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function a_subset_containing_projectors_not_present_in_a_projector_collection_cannot_be_selected()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, 'not present in the collection');
+
+        $sraaProjector                = new SraaProjector( m::mock(SraaRepository::class));
+        $nonPresentWhitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
+
+        $projectorCollection = new ProjectorCollection;
+        $projectorCollection->add($sraaProjector);
+
+        $projectorCollection->selectByNames([get_class($nonPresentWhitelistProjector)]);
+    }
 }

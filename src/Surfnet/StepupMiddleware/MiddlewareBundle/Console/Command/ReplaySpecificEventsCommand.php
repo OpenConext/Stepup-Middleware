@@ -95,5 +95,15 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
 
         $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventCollection->select($chosenEvents);
+
+        $selectProjectorsQuestion = new ChoiceQuestion(
+            'For which projectors would you like to replay the selected events? '
+            . 'Please supply a comma-separated list of numbers',
+            $availableProjectors
+        );
+        $selectProjectorsQuestion->setMultiselect(true);
+
+        $chosenProjectors = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
+        $projectorCollection->selectByNames($chosenProjectors);
     }
 }

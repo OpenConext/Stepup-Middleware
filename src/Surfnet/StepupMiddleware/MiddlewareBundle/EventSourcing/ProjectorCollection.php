@@ -29,9 +29,21 @@ final class ProjectorCollection implements IteratorAggregate
      */
     private $projectors = [];
 
+    /**
+     * @param ProjectorInterface $projector
+     */
     public function add(ProjectorInterface $projector)
     {
-        $this->projectors[] = $projector;
+        $this->projectors[get_class($projector)] = $projector;
+    }
+
+    /**
+     * @param ProjectorInterface $projector
+     * @return bool
+     */
+    public function contains(ProjectorInterface $projector)
+    {
+        return array_key_exists(get_class($projector), $this->projectors);
     }
 
     public function getIterator()

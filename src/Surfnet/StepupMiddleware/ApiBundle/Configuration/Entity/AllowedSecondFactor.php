@@ -38,6 +38,7 @@ final class AllowedSecondFactor
     public $institution;
 
     /**
+     * @ORM\Id
      * @ORM\Column(type="stepup_second_factor_type")
      *
      * @var SecondFactorType

@@ -83,9 +83,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     {
         $configuredInstitutions = $this->getConfiguredInstitutions();
 
-        $nonExistentInstitutions = array_filter($institutions, function ($institution) use ($configuredInstitutions) {
-            return !in_array(strtolower($institution), $configuredInstitutions);
-        });
+        $nonExistentInstitutions = $this->determineNonExistentInstitutions($institutions, $configuredInstitutions);
 
         if (!empty($nonExistentInstitutions)) {
             throw new InvalidArgumentException(
@@ -155,11 +153,35 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         $this->configuredInstitutions = array_map(
             function (ConfiguredInstitution $configuredInstitution) {
-                return strtolower($configuredInstitution->institution->getInstitution());
+                return $configuredInstitution->institution->getInstitution();
             },
             $this->configuredInstitutionsService->getAll()
         );
 
         return $this->configuredInstitutions;
+    }
+
+    /**
+     * @param string[] $institutions
+     * @param $configuredInstitutions
+     * @return string[]
+     */
+    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions)
+    {
+        $normalizedConfiguredInstitutions = array_map(
+            function ($institution) {
+                return strtolower($institution);
+            },
+            $configuredInstitutions
+        );
+
+        return array_filter(
+            $institutions,
+            function ($institution) use ($normalizedConfiguredInstitutions) {
+                $normalizedInstitution = strtolower($institution);
+
+                return !in_array($normalizedInstitution, $normalizedConfiguredInstitutions);
+            }
+        );
     }
 }

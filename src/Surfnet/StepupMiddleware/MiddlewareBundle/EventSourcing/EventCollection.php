@@ -67,6 +67,15 @@ final class EventCollection implements IteratorAggregate
         return new self($subset);
     }
 
+    /**
+     * @param $eventName
+     * @return bool
+     */
+    public function contains($eventName)
+    {
+        return in_array($eventName, $this->eventNames);
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->eventNames);

@@ -61,14 +61,48 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
+    public function an_event_collection_contains_given_event_names()
+    {
+        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
+
+        $this->assertTrue(
+            $eventCollection->contains(NewConfigurationCreatedEvent::class),
+            'EventCollection should contain NewConfigurationCreatedEvent but it does not'
+        );
+        $this->assertTrue(
+            $eventCollection->contains(SecondFactorVettedEvent::class),
+            'EventCollection should contain SecondFactorVettedEvent but it does not'
+        );
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function an_event_collection_does_not_contain_given_event_names()
+    {
+        $eventCollection = new EventCollection([SecondFactorVettedEvent::class]);
+
+        $this->assertFalse(
+            $eventCollection->contains(NewConfigurationCreatedEvent::class),
+            'EventCollection should not contain NewConfigurationCreatedEvent but it does'
+        );
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
     public function a_subset_of_events_can_be_selected_from_an_event_collection()
     {
         $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
 
-        $expectedSubset = new EventCollection([NewConfigurationCreatedEvent::class]);
         $subset = $eventCollection->select([NewConfigurationCreatedEvent::class]);
 
-        $this->assertEquals($expectedSubset, $subset);
+        $this->assertTrue(
+            $subset->contains(NewConfigurationCreatedEvent::class),
+            'EventCollection subset should contain NewConfigurationCreatedEvent but it did not'
+        );
     }
 
     /**

@@ -63,15 +63,29 @@ class EventCollectionTest extends TestCase
      */
     public function an_event_collection_contains_given_event_names()
     {
-        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
+        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class]);
 
         $this->assertTrue(
             $eventCollection->contains(NewConfigurationCreatedEvent::class),
             'EventCollection should contain NewConfigurationCreatedEvent but it does not'
         );
-        $this->assertTrue(
-            $eventCollection->contains(SecondFactorVettedEvent::class),
-            'EventCollection should contain SecondFactorVettedEvent but it does not'
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function event_names_can_be_retrieved_from_an_event_collection()
+    {
+        $eventNames = [NewConfigurationCreatedEvent::class];
+        $eventCollection = new EventCollection($eventNames);
+
+        $actualEventNames = $eventCollection->getEventNames();
+
+        $this->assertSame(
+            $eventNames,
+            $actualEventNames,
+            'Event names cannot be correctly retrieved from an EventCollection'
         );
     }
 

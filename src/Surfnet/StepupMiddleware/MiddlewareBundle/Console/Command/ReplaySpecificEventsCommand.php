@@ -56,13 +56,8 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $eventCollection     = $container->get('middleware.event_replay.event_collection');
         $projectorCollection = $container->get('middleware.event_replay.projector_collection');
 
-        $availableEvents = iterator_to_array($eventCollection);
-        $availableProjectors = array_map(
-            function (ProjectorInterface $projector) {
-                return get_class($projector);
-            },
-            array_values(iterator_to_array($projectorCollection))
-        );
+        $availableEvents     = $eventCollection->getEventNames();
+        $availableProjectors = $projectorCollection->getProjectorNames();
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');

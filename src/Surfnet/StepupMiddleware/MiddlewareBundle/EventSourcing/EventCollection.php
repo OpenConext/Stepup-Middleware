@@ -48,6 +48,14 @@ final class EventCollection implements IteratorAggregate
     }
 
     /**
+     * @return string[]
+     */
+    public function getEventNames()
+    {
+        return $this->eventNames;
+    }
+
+    /**
      * @param array $subset
      * @return EventCollection
      */

@@ -56,6 +56,29 @@ class ProjectorCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
+    public function projector_names_can_be_retrieved_from_a_projector_collection()
+    {
+        $sraaProjector      = new SraaProjector(m::mock(SraaRepository::class));
+        $whitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
+
+        $projectorCollection = new ProjectorCollection;
+        $projectorCollection->add($sraaProjector);
+        $projectorCollection->add($whitelistProjector);
+
+        $expectedProjectorNames = [SraaProjector::class, WhitelistProjector::class];
+        $actualProjectorNames   = $projectorCollection->getProjectorNames();
+
+        $this->assertSame(
+            $expectedProjectorNames,
+            $actualProjectorNames,
+            'Projector names cannot be retrieved correctly from a ProjectorCollection'
+        );
+    }
+
+    /**
+     * @test
+     * @group event-replay
+     */
     public function a_subset_of_projectors_can_be_selected_from_a_projector_collection()
     {
         $sraaProjector      = new SraaProjector( m::mock(SraaRepository::class));

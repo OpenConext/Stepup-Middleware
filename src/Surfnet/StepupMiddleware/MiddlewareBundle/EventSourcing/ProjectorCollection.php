@@ -39,6 +39,19 @@ final class ProjectorCollection implements IteratorAggregate
     }
 
     /**
+     * @return string[]
+     */
+    public function getProjectorNames()
+    {
+        return array_map(
+            function (ProjectorInterface $projector) {
+                return get_class($projector);
+            },
+            array_values($this->projectors)
+        );
+    }
+
+    /**
      * @param array $projectorNames
      * @return ProjectorCollection
      */

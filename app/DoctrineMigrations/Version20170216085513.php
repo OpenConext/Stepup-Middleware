@@ -19,7 +19,6 @@ class Version20170216085513 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE allowed_second_factor DROP PRIMARY KEY');
-        $this->addSql('ALTER TABLE allowed_second_factor CHANGE institution institution VARCHAR(255) NOT NULL, CHANGE second_factor_type second_factor_type VARCHAR(255) NOT NULL');
         $this->addSql('ALTER TABLE allowed_second_factor ADD PRIMARY KEY (institution, second_factor_type)');
     }
 
@@ -32,7 +31,6 @@ class Version20170216085513 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE allowed_second_factor DROP PRIMARY KEY');
-        $this->addSql('ALTER TABLE allowed_second_factor CHANGE institution institution VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci, CHANGE second_factor_type second_factor_type VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci');
         $this->addSql('ALTER TABLE allowed_second_factor ADD PRIMARY KEY (institution)');
     }
 }

@@ -101,6 +101,6 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $projectorSelection = $projectorCollection->selectByNames($chosenProjectors);
 
         $eventDispatcher = $container->get('middleware.event_replay.specific_event_dispatcher');
-        $eventDispatcher->dispatchEventsForProjectors($eventSelection, $projectorSelection);
+        $eventDispatcher->dispatchEventsForProjectors($eventSelection, $projectorSelection, $output);
     }
 }

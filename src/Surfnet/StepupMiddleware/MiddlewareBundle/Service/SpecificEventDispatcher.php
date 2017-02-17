@@ -18,10 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
+use Broadway\Domain\DomainMessage;
 use Exception;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection;
+use Symfony\Component\Console\Output\OutputInterface;
 
 final class SpecificEventDispatcher
 {
@@ -43,22 +45,35 @@ final class SpecificEventDispatcher
 
     public function dispatchEventsForProjectors(
         EventCollection $eventCollection,
-        ProjectorCollection $projectorCollection
+        ProjectorCollection $projectorCollection,
+        OutputInterface $output
     ) {
+        $output->writeln('<info>Starting event dispatch</info>');
         $this->connectionHelper->beginTransaction();
 
         try {
+            $output->writeln('<info>Hydrating selected events</info>');
             $events = $this->eventHydrator->getEventsFrom($eventCollection);
 
+            $output->writeln('<info>Attempting to handle selected events with selected projectors:</info>');
+
+            /** @var DomainMessage $event */
             foreach ($events as $event) {
-                foreach ($projectorCollection as $projector) {
+                $output->writeln(sprintf(' <info>> Event</info> "%s"', $event->getType()));
+
+                foreach ($projectorCollection as $projectorName => $projector) {
+                    $output->writeln(sprintf('   <info>> Projector</info> "%s"', $projectorName));
                     $projector->handle($event);
                 }
             }
 
+            $output->writeln('Event dispatch successful');
             $this->connectionHelper->commit();
         } catch (Exception $exception) {
+            $output->writeln(sprintf('<error>Event dispatch failed: %s</error>', $exception->getMessage()));
             $this->connectionHelper->rollBack();
+
+            throw $exception;
         }
     }
 }

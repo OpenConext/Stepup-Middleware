@@ -404,6 +404,13 @@ Note that the database is collated using `utf8_collate_ci`, which is case-insens
 
 ## Notes
 
+### Adding new events
+
+Whenever adding a new event, be sure to update `app/config/events.yml`.
+This is a list of events that is shown when replaying events.
+Also be sure to create or update the event serialization/deserialization tests,
+for example see [EventSerializationAndDeserializationTest for Configuration events][event-serialization-example]
+
 ### Mocking time
 
 Due to a limitation of mocking of static methods, to mock time, the helper `DateTimeHelper::stubNow(DateTime $now)` was
@@ -437,3 +444,5 @@ gssp_allowed_sps:
    - 'https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/biometric/metadata'
 ```
  * Configure these SPs through the Middleware configuration API.
+
+[event-serialization-example]: ./src/Surfnet/Stepup/Tests/Configuration/Event/EventSerializationAndDeserializationTest.php

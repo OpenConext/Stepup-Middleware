@@ -50,8 +50,8 @@ final class SpecificEventDispatcher
         try {
             $events = $this->eventHydrator->getEventsFrom($eventCollection);
 
-            foreach ($projectorCollection as $projector) {
-                foreach ($events as $event) {
+            foreach ($events as $event) {
+                foreach ($projectorCollection as $projector) {
                     $projector->handle($event);
                 }
             }

@@ -54,9 +54,9 @@ final class SpecificEventDispatcher
                 foreach ($events as $event) {
                     $projector->handle($event);
                 }
-
-                $this->connectionHelper->commit();
             }
+
+            $this->connectionHelper->commit();
         } catch (Exception $exception) {
             $this->connectionHelper->rollBack();
         }

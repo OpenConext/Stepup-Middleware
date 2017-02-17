@@ -48,11 +48,15 @@ final class SpecificEventDispatcher
         $this->connectionHelper->beginTransaction();
 
         try {
-            // Get hydrated events
+            $events = $this->eventHydrator->getEventsFrom($eventCollection);
 
-            // foreach event; foreach projector; $projector->handle($event)
+            foreach ($projectorCollection as $projector) {
+                foreach ($events as $event) {
+                    $projector->handle($event);
+                }
 
-            $this->connectionHelper->commit();
+                $this->connectionHelper->commit();
+            }
         } catch (Exception $exception) {
             $this->connectionHelper->rollBack();
         }

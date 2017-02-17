@@ -56,9 +56,10 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $eventCollection     = $container->get('middleware.event_replay.event_collection');
         $projectorCollection = $container->get('middleware.event_replay.projector_collection');
 
-        if ($input->getOption(self::OPTION_LIST_EVENTS)) {
-            $availableEvents = iterator_to_array($eventCollection);
+        $availableEvents     = $eventCollection->getEventNames();
+        $availableProjectors = $projectorCollection->getProjectorNames();
 
+        if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');
             $output->writeln(!empty($availableEvents) ? $availableEvents : 'None.');
 
@@ -66,15 +67,14 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         }
 
         if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
-            $availableProjectors = array_map(
-                function (ProjectorInterface $projector) {
-                    return get_class($projector);
-                },
-                iterator_to_array($projectorCollection)
-            );
-
             $output->writeln('<info>Events can be replayed for the following projectors:</info>');
             $output->writeln(!empty($availableProjectors) ? $availableProjectors : 'None.');
+
+            return;
+        }
+
+        if (count($availableProjectors) === 0) {
+            $output->writeln('<error>There are no projectors configured to reply events for</error>');
 
             return;
         }
@@ -84,11 +84,21 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
 
         $selectEventsQuestion = new ChoiceQuestion(
             'Which events would you like to replay? Please supply a comma-separated list of numbers.',
-            iterator_to_array($eventCollection)
+            $availableEvents
         );
         $selectEventsQuestion->setMultiselect(true);
 
         $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventCollection->select($chosenEvents);
+
+        $selectProjectorsQuestion = new ChoiceQuestion(
+            'For which projectors would you like to replay the selected events? '
+            . 'Please supply a comma-separated list of numbers',
+            $availableProjectors
+        );
+        $selectProjectorsQuestion->setMultiselect(true);
+
+        $chosenProjectors = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
+        $projectorCollection->selectByNames($chosenProjectors);
     }
 }

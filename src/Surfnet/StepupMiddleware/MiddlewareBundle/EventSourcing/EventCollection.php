@@ -48,6 +48,14 @@ final class EventCollection implements IteratorAggregate
     }
 
     /**
+     * @return string[]
+     */
+    public function getEventNames()
+    {
+        return $this->eventNames;
+    }
+
+    /**
      * @param array $subset
      * @return EventCollection
      */
@@ -65,6 +73,15 @@ final class EventCollection implements IteratorAggregate
         }
 
         return new self($subset);
+    }
+
+    /**
+     * @param $eventName
+     * @return bool
+     */
+    public function contains($eventName)
+    {
+        return in_array($eventName, $this->eventNames);
     }
 
     public function getIterator()

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\SerializableInterface;
+use DateTime as CoreDateTime;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -101,7 +102,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      */
     public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization()
     {
-        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now());
+        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000')));
 
         $this->assertTrue($window == EmailVerificationWindow::deserialize($window->serialize()));
     }
@@ -206,7 +207,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('sms'),
                     new PhoneNumber('+0 (0) 000000000'),
-                    DateTime::now(),
+                    new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
@@ -220,7 +221,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('01906382'),
-                    DateTime::now(),
+                    new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
@@ -234,7 +235,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new SecondFactorType('tiqr'),
                     new GssfId('bleep-blorp'),
-                    DateTime::now(),
+                    new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
@@ -271,7 +272,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new PhoneNumber('+31 (0) 612345678'),
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
@@ -365,7 +366,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new SecondFactorId(static::UUID()),
                     new YubikeyPublicId('19382933'),
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
@@ -379,7 +380,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new SecondFactorId(static::UUID()),
                     new StepupProvider('tiqr'),
                     new GssfId('_' . md5('Tiqr')),
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), DateTime::now()),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),

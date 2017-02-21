@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
 class RaCandidateRepository extends EntityRepository
@@ -87,6 +88,13 @@ class RaCandidateRepository extends EntityRepository
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(rac.email, :email) > 0')
                 ->setParameter('email', $query->email);
+        }
+
+        if (!empty($query->secondFactorTypes)) {
+            $queryBuilder
+                ->innerJoin(VettedSecondFactor::class, 'vsf')
+                ->andWhere('vsf.type IN (:secondFactorTypes)')
+                ->setParameter('secondFactorTypes', $query->secondFactorTypes);
         }
 
         return $queryBuilder->getQuery();

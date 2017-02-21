@@ -78,7 +78,7 @@ class AuthorizingStage implements Stage
                 implode(', ', $allowedRoles)
             ));
 
-            throw new ForbiddenException('Processing of Command "%s" is forbidden.');
+            throw new ForbiddenException(sprintf('Processing of Command "%s" is forbidden.', $command));
         }
 
         $this->logger->debug(sprintf('Client authorized to execute command "%s"', $command));

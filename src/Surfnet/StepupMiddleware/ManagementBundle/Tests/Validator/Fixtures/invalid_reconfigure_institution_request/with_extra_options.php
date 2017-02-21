@@ -23,7 +23,8 @@ return [
         'surfnet.nl' => [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
-            'extra_option' => 'cannot be handled'
+            'allowed_second_factors' => [],
+            'extra_option' => 'cannot be handled',
         ]
     ]
 ];

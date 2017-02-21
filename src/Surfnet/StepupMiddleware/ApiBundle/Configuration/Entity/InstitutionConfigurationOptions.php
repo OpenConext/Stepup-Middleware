@@ -29,7 +29,7 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository"
  * )
  */
-final class InstitutionConfigurationOptions implements JsonSerializable
+final class InstitutionConfigurationOptions
 {
     /**
      * @ORM\Id
@@ -65,15 +65,5 @@ final class InstitutionConfigurationOptions implements JsonSerializable
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
 
         return $options;
-    }
-
-    public function jsonSerialize()
-    {
-        return
-            [
-                'institution'                  => $this->institution,
-                'use_ra_locations'             => $this->useRaLocationsOption,
-                'show_raa_contact_information' => $this->showRaaContactInformationOption,
-            ];
     }
 }

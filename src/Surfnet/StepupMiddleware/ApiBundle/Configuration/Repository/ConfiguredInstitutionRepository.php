@@ -49,4 +49,17 @@ class ConfiguredInstitutionRepository extends EntityRepository
 
         return $result !== null;
     }
+
+    /**
+     * @param Institution $institution
+     */
+    public function removeConfigurationFor(Institution $institution)
+    {
+        $this->createQueryBuilder('ci')
+            ->delete()
+            ->where('ci.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->execute();
+    }
 }

@@ -28,6 +28,11 @@ final class ShowRaaContactInformationOption implements JsonSerializable
      */
     private $showRaaContactInformationOption;
 
+    public static function getDefault()
+    {
+        return new self(true);
+    }
+
     public function __construct($showRaaContactInformationOption)
     {
         if (!is_bool($showRaaContactInformationOption)) {

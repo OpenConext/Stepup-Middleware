@@ -115,10 +115,9 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    public function getEventsFrom(EventCollection $eventCollection)
+    public function fetchByEventTypes($eventTypes)
     {
-        $eventTypes = $eventCollection->formatAsEventStreamTypes();
-        $eventNamePlaceholders = str_repeat('?, ', count($eventTypes) -1) . '?';
+        $eventTypePlaceholders = str_repeat('?, ', count($eventTypes) -1) . '?';
 
         $query = str_replace(
             ['%es%', '%sd%'],
@@ -128,7 +127,7 @@ class DBALEventHydrator
                 LEFT JOIN %sd%
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
-                WHERE %es%.type IN ($eventNamePlaceholders)
+                WHERE %es%.type IN ($eventTypePlaceholders)
                 ORDER BY recorded_on, playhead ASC"
         );
 

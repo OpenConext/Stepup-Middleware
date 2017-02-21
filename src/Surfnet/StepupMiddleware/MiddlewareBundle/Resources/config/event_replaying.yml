@@ -7,10 +7,18 @@ services:
     middleware.event_replay.projector_collection:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection
 
-    middleware.event_replay.specific_event_dispatcher:
-        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\SpecificEventDispatcher
+    middleware.event_replay.transaction_aware_event_dispatcher:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionAwareEventDispatcher
         arguments:
             - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+            - "@middleware.event_replay.replaying_event_dispatcher"
+
+    middleware.event_replay.replaying_event_dispatcher:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\ReplayingEventDispatcher
+
+    middleware.event_replay.past_events_service:
+        class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\PastEventsService
+        arguments:
             - "@middleware.event_replay.dbal_event_hydrator"
 
     middleware.event_replay.dbal_event_hydrator:

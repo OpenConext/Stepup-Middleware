@@ -92,7 +92,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
 
         $selectProjectorsQuestion = new ChoiceQuestion(
             'For which projectors would you like to replay the selected events? '
-            . 'Please supply a comma-separated list of numbers',
+            . 'Please supply a comma-separated list of numbers.',
             $availableProjectors
         );
         $selectProjectorsQuestion->setMultiselect(true);
@@ -100,7 +100,17 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $chosenProjectors   = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
         $projectorSelection = $projectorCollection->selectByNames($chosenProjectors);
 
-        $eventDispatcher = $container->get('middleware.event_replay.specific_event_dispatcher');
-        $eventDispatcher->dispatchEventsForProjectors($eventSelection, $projectorSelection, $output);
+        $pastEventsService = $container->get('middleware.event_replay.past_events_service');
+        $events = $pastEventsService->findEventsBy($eventSelection);
+
+        $eventReplayer = $container->get('middleware.event_replay.transaction_aware_event_dispatcher');
+
+        $output->writeln('<info>Registering projectors</info>');
+        foreach ($projectorSelection as $projector) {
+            $eventReplayer->registerProjector($projector);
+        }
+
+        $output->writeln('<info>Dispatching events</info>');
+        $eventReplayer->dispatch($events);
     }
 }

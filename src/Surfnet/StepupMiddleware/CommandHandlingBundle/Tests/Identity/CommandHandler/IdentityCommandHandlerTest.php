@@ -55,6 +55,7 @@ use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -66,6 +67,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikey
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
@@ -82,6 +84,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $allowedSecondFactorListServiceMock;
 
+    /**
+     * @var m\MockInterface|IdentityProjectionRepository
+     */
+    private $identityProjectionRepository;
+
     public function setUp()
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
@@ -92,12 +99,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
+        $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
+
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory
             ),
+            $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
             $this->allowedSecondFactorListServiceMock
         );
@@ -119,6 +129,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->preferredLocale = 'nl_NL';
         $command->secondFactorId  = 'SF-ID';
         $command->yubikeyPublicId = '93193884';
+
+        $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(false);
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -148,6 +160,33 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new YubikeyPublicId('93193884')
                 )
             ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function an_identity_cannot_be_bootstrapped_twice()
+    {
+        $command                  = new BootstrapIdentityWithYubikeySecondFactorCommand();
+        $command->identityId      = 'ID-ID';
+        $command->nameId          = 'N-ID';
+        $command->institution     = 'Institution';
+        $command->commonName      = 'Enrique';
+        $command->email           = 'foo@domain.invalid';
+        $command->preferredLocale = 'nl_NL';
+        $command->secondFactorId  = 'SF-ID';
+        $command->yubikeyPublicId = '93193884';
+
+        $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
+
+        $this->setExpectedException(DuplicateIdentityException::class);
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->when($command)
+            ->then([]);
     }
 
     /**

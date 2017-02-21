@@ -20,6 +20,8 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Exception;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Symfony\Component\Console\Command\Command;
@@ -50,10 +52,26 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Container $container */
-        $container  = $this->getApplication()->getKernel()->getContainer();
-        $pipeline   = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
-        $eventBus   = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
-        $connection = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
+        $container            = $this->getApplication()->getKernel()->getContainer();
+        $projectionRepository = $container->get('surfnet_stepup_middleware_api.repository.identity');
+        $pipeline             = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
+        $eventBus             = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
+        $connection           = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
+
+        $nameId      = new NameId($input->getArgument('name-id'));
+        $institution = new Institution($input->getArgument('institution'));
+
+        if ($projectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+            $output->writeln(
+                sprintf(
+                    '<error>An identity with name ID "%s" from institution "%s" already exists</error>',
+                    $nameId->getNameId(),
+                    $institution->getInstitution()
+                )
+            );
+
+            return 1;
+        }
 
         $command                  = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
         $command->UUID            = (string) Uuid::uuid4();

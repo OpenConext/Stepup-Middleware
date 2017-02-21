@@ -40,6 +40,7 @@ use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
@@ -54,6 +55,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegist
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -65,7 +67,12 @@ class IdentityCommandHandler extends CommandHandler
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
      */
-    private $repository;
+    private $eventSourcedRepository;
+
+    /**
+     * @var IdentityRepository
+     */
+    private $identityProjectionRepository;
 
     /**
      * @var \Surfnet\Stepup\Identity\Entity\ConfigurableSettings
@@ -78,16 +85,19 @@ class IdentityCommandHandler extends CommandHandler
     private $allowedSecondFactorListService;
 
     /**
-     * @param RepositoryInterface $repository
-     * @param ConfigurableSettings $configurableSettings
+     * @param RepositoryInterface            $eventSourcedRepository
+     * @param IdentityRepository             $identityProjectionRepository
+     * @param ConfigurableSettings           $configurableSettings
      * @param AllowedSecondFactorListService $allowedSecondFactorListService
      */
     public function __construct(
-        RepositoryInterface $repository,
+        RepositoryInterface $eventSourcedRepository,
+        IdentityRepository $identityProjectionRepository,
         ConfigurableSettings $configurableSettings,
         AllowedSecondFactorListService $allowedSecondFactorListService
     ) {
-        $this->repository = $repository;
+        $this->eventSourcedRepository = $eventSourcedRepository;
+        $this->identityProjectionRepository = $identityProjectionRepository;
         $this->configurableSettings = $configurableSettings;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
@@ -106,18 +116,18 @@ class IdentityCommandHandler extends CommandHandler
             $preferredLocale
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->id));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->id));
 
         $identity->rename(new CommonName($command->commonName));
         $identity->changeEmail(new Email($command->email));
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleBootstrapIdentityWithYubikeySecondFactorCommand(
@@ -126,11 +136,17 @@ class IdentityCommandHandler extends CommandHandler
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
-        // @todo add check if Identity does not already exist based on NameId
+        $institution = new Institution($command->institution);
+        $nameId = new NameId($command->nameId);
+
+        if ($this->identityProjectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+            throw DuplicateIdentityException::forBootstrappingWithYubikeySecondFactor($nameId, $institution);
+        }
+
         $identity = Identity::create(
             new IdentityId($command->identityId),
-            new Institution($command->institution),
-            new NameId($command->nameId),
+            $institution,
+            $nameId,
             new CommonName($command->commonName),
             new Email($command->email),
             $preferredLocale
@@ -141,13 +157,13 @@ class IdentityCommandHandler extends CommandHandler
             new YubikeyPublicId($command->yubikeyPublicId)
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('yubikey'), $identity->getInstitution());
 
@@ -157,7 +173,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     /**
@@ -166,7 +182,7 @@ class IdentityCommandHandler extends CommandHandler
     public function handleProvePhonePossessionCommand(ProvePhonePossessionCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('sms'), $identity->getInstitution());
 
@@ -176,7 +192,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     /**
@@ -185,7 +201,7 @@ class IdentityCommandHandler extends CommandHandler
     public function handleProveGssfPossessionCommand(ProveGssfPossessionCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         // Assume tiqr is being used as it is the only GSSF currently supported
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('tiqr'), $identity->getInstitution());
@@ -197,13 +213,13 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleProveU2fDevicePossessionCommand(ProveU2fDevicePossessionCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('u2f'), $identity->getInstitution());
 
@@ -213,7 +229,7 @@ class IdentityCommandHandler extends CommandHandler
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     /**
@@ -222,19 +238,19 @@ class IdentityCommandHandler extends CommandHandler
     public function handleVerifyEmailCommand(VerifyEmailCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $identity->verifyEmail($command->verificationNonce);
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
     {
         /** @var IdentityApi $authority */
-        $authority = $this->repository->load(new IdentityId($command->authorityId));
+        $authority = $this->eventSourcedRepository->load(new IdentityId($command->authorityId));
         /** @var IdentityApi $registrant */
-        $registrant = $this->repository->load(new IdentityId($command->identityId));
+        $registrant = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $secondFactorType = new SecondFactorType($command->secondFactorType);
         $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
@@ -252,29 +268,29 @@ class IdentityCommandHandler extends CommandHandler
             $command->identityVerified
         );
 
-        $this->repository->save($authority);
-        $this->repository->save($registrant);
+        $this->eventSourcedRepository->save($authority);
+        $this->eventSourcedRepository->save($registrant);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
         $identity->revokeSecondFactor(new SecondFactorId($command->secondFactorId));
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
     {
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
         $identity->complyWithSecondFactorRevocation(
             new SecondFactorId($command->secondFactorId),
             new IdentityId($command->authorityId)
         );
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command)
@@ -283,10 +299,10 @@ class IdentityCommandHandler extends CommandHandler
         $this->assertIsValidLocale($preferredLocale);
 
         /** @var IdentityApi $identity */
-        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
         $identity->expressPreferredLocale($preferredLocale);
 
-        $this->repository->save($identity);
+        $this->eventSourcedRepository->save($identity);
     }
 
     /**

@@ -95,4 +95,17 @@ class RaLocationRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param Institution $institution
+     */
+    public function removeRaLocationsFor(Institution $institution)
+    {
+        $this->createQueryBuilder('rl')
+            ->delete()
+            ->where('rl.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->execute();
+    }
 }

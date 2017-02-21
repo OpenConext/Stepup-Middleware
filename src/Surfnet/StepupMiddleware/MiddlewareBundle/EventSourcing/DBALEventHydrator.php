@@ -115,6 +115,33 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
+    public function fetchByEventTypes($eventTypes)
+    {
+        $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
+
+        $query = str_replace(
+            ['%es%', '%sd%'],
+            [$this->eventStreamTableName, $this->sensitiveDataTable],
+            "SELECT %es%.uuid, %es%.playhead, %es%.metadata, %es%.payload, %es%.recorded_on, %sd%.sensitive_data
+                FROM %es%
+                LEFT JOIN %sd%
+                    ON %es%.uuid = %sd%.identity_id
+                        AND %es%.playhead = %sd%.playhead
+                WHERE %es%.type IN ($eventTypePlaceholders)
+                ORDER BY recorded_on, playhead ASC"
+        );
+
+        $statement = $this->connection->prepare($query);
+        $statement->execute($eventTypes);
+
+        $events = array();
+        while ($row = $statement->fetch()) {
+            $events[] = $this->deserializeEvent($row);
+        }
+
+        return new DomainEventStream($events);
+    }
+
     private function deserializeEvent($row)
     {
         $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));

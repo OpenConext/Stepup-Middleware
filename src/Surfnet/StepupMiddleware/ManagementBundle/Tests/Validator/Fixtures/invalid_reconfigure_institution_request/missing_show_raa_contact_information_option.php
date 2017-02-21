@@ -21,7 +21,8 @@ return [
     'expectErrorMessageToContain' => 'Expected only options',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
-            'use_ra_locations' => true
+            'use_ra_locations' => true,
+            'allowed_second_factors' => [],
         ]
     ]
 ];

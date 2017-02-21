@@ -22,6 +22,8 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
+use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
@@ -31,18 +33,21 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
+use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
-use Surfnet\Stepup\Configuration\Value\ContactInformation;
-use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
@@ -59,9 +64,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution = 'An institution';
 
         $institution                            = new Institution($command->institution);
-        $institutionConfigurationId             = InstitutionConfigurationId::from($institution);
-        $defaultUseRaLocationsOption            = new UseRaLocationsOption(false);
-        $defaultShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $institutionConfigurationId             = InstitutionConfigurationId::normalizedFrom($institution);
+        $defaultUseRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $defaultShowRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $defaultAllowedSecondFactorList         = AllowedSecondFactorList::blank();
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -72,6 +78,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $defaultUseRaLocationsOption,
                     $defaultShowRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ]);
     }
@@ -82,13 +93,16 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution()
     {
-        $this->setExpectedException('Broadway\EventStore\EventStoreException', 'already committed');
+        $this->setExpectedException(
+            'Surfnet\Stepup\Exception\DomainException',
+            'Cannot rebuild InstitutionConfiguration as it has not been destroyed'
+        );
 
         $command                     = new CreateInstitutionConfigurationCommand();
         $command->institution        = 'An institution';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -112,14 +126,16 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     public function institution_configuration_options_are_not_changed_if_their_given_value_is_not_different_from_their_current_value()
     {
         $institution                     = new Institution('Institution');
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -129,6 +145,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -142,9 +163,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value()
     {
         $institution                     = new Institution('Institution');
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentUseRaLocationsOptionValue = true;
 
@@ -152,6 +174,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $differentUseRaLocationsOptionValue;
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -161,6 +184,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -180,9 +208,10 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value()
     {
         $institution                     = new Institution('Institution');
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentShowRaaContactInformationOptionValue = false;
 
@@ -190,6 +219,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
+        $command->allowedSecondFactors            = [];
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -199,6 +229,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $useRaLocationsOption,
                     $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $defaultAllowedSecondFactorList
                 )
             ])
             ->when($command)
@@ -215,6 +250,98 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
+    public function allowed_second_factor_list_is_changed_if_its_values_are_different_than_the_current_list()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
+        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $originalAllowedSecondFactorList = AllowedSecondFactorList::blank();
+
+        $secondFactorsToAllow = ['sms', 'yubikey'];
+        $updatedAllowedSecondFactorList = AllowedSecondFactorList::ofTypes([
+            new SecondFactorType($secondFactorsToAllow[0]),
+            new SecondFactorType($secondFactorsToAllow[1])
+        ]);
+
+        $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+        $command->institution = $institution->getInstitution();
+        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors = $secondFactorsToAllow;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $originalAllowedSecondFactorList
+                )
+            ])
+            ->when($command)
+            ->then([
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $updatedAllowedSecondFactorList
+                )
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function allowed_second_factor_list_is_not_changed_if_its_values_are_the_same_as_the_current_list()
+    {
+        $secondFactorsToAllow = ['sms', 'yubikey'];
+        $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
+            new SecondFactorType($secondFactorsToAllow[0]),
+            new SecondFactorType($secondFactorsToAllow[1])
+        ]);
+
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
+        $useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $originalAllowedSecondFactorList = $allowedSecondFactorList;
+
+        $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+        $command->institution = $institution->getInstitution();
+        $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
+        $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->allowedSecondFactors = $secondFactorsToAllow;
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given([
+                new NewInstitutionConfigurationCreatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $useRaLocationsOption,
+                    $showRaaContactInformationOption
+                ),
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $originalAllowedSecondFactorList
+                )
+            ])
+            ->when($command)
+            ->then([]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     */
     public function an_ra_location_can_be_added_to_an_existing_institution_configuration()
     {
         $command                     = new AddRaLocationCommand();
@@ -225,7 +352,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -268,7 +395,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -309,7 +436,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -357,7 +484,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -390,7 +517,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -425,7 +552,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -474,7 +601,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Some contact information';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -510,6 +637,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     /**
      * @test
      * @group command-handler
+     * @group institution-configuration
      */
     public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
     {
@@ -520,7 +648,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution        = 'An institution';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -540,6 +668,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     /**
      * @test
      * @group command-handler
+     * @group institution-configuration
      */
     public function an_ra_location_cannot_be_removed_if_it_is_not_present_within_an_institution_configuration()
     {
@@ -550,7 +679,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution        = 'An institution';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -570,16 +699,16 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
     /**
      * @test
      * @group command-handler
+     * @group institution-configuration
      */
     public function an_ra_location_can_be_removed()
     {
-
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();
         $command->institution        = 'An institution';
 
         $institution                     = new Institution($command->institution);
-        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
@@ -608,6 +737,44 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     new RaLocationId($command->raLocationId)
                 )
             ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @group institution-configuration
+     */
+    public function an_institution_configuration_with_unnormalized_institution_configuration_id_can_be_removed()
+    {
+        $command               = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
+        $command->institution  = 'Babelfish Inc.';
+
+        $institution                     = new Institution($command->institution);
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $useRaLocationsOption            = new UseRaLocationsOption(true);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+
+        $this->scenario
+            ->withAggregateId($institutionConfigurationId)
+            ->given(
+                [
+                    new NewInstitutionConfigurationCreatedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $useRaLocationsOption,
+                        $showRaaContactInformationOption
+                    )
+                ]
+            )
+            ->when($command)
+            ->then(
+                [
+                    new InstitutionConfigurationRemovedEvent(
+                        $institutionConfigurationId,
+                        $institution
+                    )
+                ]
+            );
     }
 
     /**

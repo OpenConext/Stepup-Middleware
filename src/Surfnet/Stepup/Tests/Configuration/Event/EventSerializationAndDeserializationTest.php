@@ -22,9 +22,11 @@ use Broadway\Serializer\SerializableInterface;
 use PHPUnit_Framework_TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
+use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\IdentityProvidersUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
@@ -36,6 +38,7 @@ use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -44,6 +47,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EventSerializationAndDeserializationTest extends TestCase
 {
@@ -132,6 +136,23 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ShowRaaContactInformationOption(true)
                 )
             ],
+            'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    AllowedSecondFactorList::ofTypes([
+                        new SecondFactorType('yubikey'),
+                        new SecondFactorType('sms'),
+                    ])
+                )
+            ],
+            'AllowedSecondFactorListUpdatedEvent:blank' => [
+                new AllowedSecondFactorListUpdatedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    AllowedSecondFactorList::blank()
+                )
+            ],
             'RaLocationAddedEvent' => [
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -169,6 +190,12 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new RaLocationId($uuid)
                 )
             ],
+            'InstitutionConfigurationRemovedEvent' => [
+                new InstitutionConfigurationRemovedEvent(
+                    $institutionConfigurationId,
+                    new Institution('Babelfish Inc')
+                )
+            ]
         ];
     }
 }

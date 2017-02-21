@@ -21,6 +21,8 @@ namespace Surfnet\Stepup\Configuration;
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration as InstitutionConfigurationInterface;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
@@ -29,6 +31,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -72,26 +75,65 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $showRaaContactInformationOption;
 
     /**
+     * @var AllowedSecondFactorList
+     */
+    private $allowedSecondFactorList;
+
+    /**
+     * @var boolean
+     */
+    private $isMarkedAsDestroyed;
+
+    /**
      * @param InstitutionConfigurationId $institutionConfigurationId
      * @param Institution $institution
      * @return InstitutionConfiguration
      */
     public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
     {
-        $useRaLocationsOption            = new UseRaLocationsOption(false);
-        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(
             new NewInstitutionConfigurationCreatedEvent(
                 $institutionConfigurationId,
                 $institution,
-                $useRaLocationsOption,
-                $showRaaContactInformationOption
+                UseRaLocationsOption::getDefault(),
+                ShowRaaContactInformationOption::getDefault()
             )
         );
+        $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
+            $institutionConfigurationId,
+            $institution,
+            AllowedSecondFactorList::blank()
+        ));
 
         return $institutionConfiguration;
+    }
+
+    /**
+     * @return InstitutionConfiguration
+     */
+    public function rebuild()
+    {
+        // We can only rebuild a destroyed InstitutionConfiguration, all other cases are not valid
+        if ($this->isMarkedAsDestroyed !== true) {
+            throw new DomainException('Cannot rebuild InstitutionConfiguration as it has not been destroyed');
+        }
+
+        $this->apply(
+            new NewInstitutionConfigurationCreatedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                UseRaLocationsOption::getDefault(),
+                ShowRaaContactInformationOption::getDefault()
+            )
+        );
+        $this->apply(new AllowedSecondFactorListUpdatedEvent(
+            $this->institutionConfigurationId,
+            $this->institution,
+            AllowedSecondFactorList::blank()
+        ));
+
+        return $this;
     }
 
     final public function __construct()
@@ -124,6 +166,24 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $showRaaContactInformationOption
+            )
+        );
+    }
+
+    public function updateAllowedSecondFactorList(AllowedSecondFactorList $allowedSecondFactorList)
+    {
+        // AllowedSecondFactorList can be null for InstitutionConfigurations for which this functionality did not exist
+        if ($this->allowedSecondFactorList !== null
+            && $this->allowedSecondFactorList->equals($allowedSecondFactorList)
+        ) {
+            return;
+        }
+
+        $this->apply(
+            new AllowedSecondFactorListUpdatedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $allowedSecondFactorList
             )
         );
     }
@@ -220,6 +280,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->apply(new RaLocationRemovedEvent($this->institutionConfigurationId, $raLocationId));
     }
 
+    /**
+     * @return void
+     */
+    public function destroy()
+    {
+        $this->apply(new InstitutionConfigurationRemovedEvent($this->institutionConfigurationId, $this->institution));
+    }
+
     public function getAggregateRootId()
     {
         return $this->institutionConfigurationId;
@@ -232,6 +300,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->raLocations                     = new RaLocationList([]);
+        $this->isMarkedAsDestroyed             = false;
     }
 
     protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
@@ -243,6 +312,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         ShowRaaContactInformationOptionChangedEvent $event
     ) {
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
+    }
+
+    protected function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event)
+    {
+        $this->allowedSecondFactorList = $event->allowedSecondFactorList;
     }
 
     protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
@@ -278,5 +352,20 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     protected function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
     {
         $this->raLocations->removeWithId($event->raLocationId);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param InstitutionConfigurationRemovedEvent $event
+     */
+    protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    {
+        // reset all configuration to defaults. This way, should it be rebuild, it seems like it is new again
+        $this->raLocations                     = new RaLocationList([]);
+        $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
+
+        $this->isMarkedAsDestroyed             = true;
     }
 }

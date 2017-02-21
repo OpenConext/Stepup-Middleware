@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1c5f52e2b37c6c34b9fbeef96e80c943",
-    "content-hash": "ef7671c95154e1727a0d95d517e6aea2",
+    "hash": "cbdf264e42df6b568a32e367cfa298f5",
+    "content-hash": "1aaf32b625ea95551bf09f2544a8aa87",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -71,12 +71,12 @@
             "version": "0.5.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/qandidate-labs/broadway.git",
+                "url": "https://github.com/broadway/broadway.git",
                 "reference": "0fce8c532086ad249a46fec179759c1fa089e35d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qandidate-labs/broadway/zipball/0fce8c532086ad249a46fec179759c1fa089e35d",
+                "url": "https://api.github.com/repos/broadway/broadway/zipball/0fce8c532086ad249a46fec179759c1fa089e35d",
                 "reference": "0fce8c532086ad249a46fec179759c1fa089e35d",
                 "shasum": ""
             },
@@ -2252,16 +2252,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/SURFnet/Stepup-bundle.git",
-                "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2"
+                "url": "https://github.com/OpenConext/Stepup-bundle.git",
+                "reference": "aff0a98d38b6dfb3a501877329e36538a7abc2b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SURFnet/Stepup-bundle/zipball/4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
-                "reference": "4ad7ebe9f9075ec39c5d1fc8449fe8fef33e60d2",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/aff0a98d38b6dfb3a501877329e36538a7abc2b7",
+                "reference": "aff0a98d38b6dfb3a501877329e36538a7abc2b7",
                 "shasum": ""
             },
             "require": {
@@ -2301,7 +2301,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2016-08-03 07:45:32"
+            "time": "2017-02-08 16:36:17"
         },
         {
             "name": "swiftmailer/swiftmailer",

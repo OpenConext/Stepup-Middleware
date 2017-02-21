@@ -63,4 +63,12 @@ class RaLocationService
     {
         return $this->repository->findByInstitution($institution);
     }
+
+    /**
+     * @return RaLocation[]
+     */
+    public function getAllRaLocations()
+    {
+        return $this->repository->findAll();
+    }
 }

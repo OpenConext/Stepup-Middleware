@@ -55,6 +55,16 @@ final class EventCollection implements IteratorAggregate
         return $this->eventNames;
     }
 
+    public function formatAsEventStreamTypes()
+    {
+        return array_map(
+            function ($eventName) {
+                return strtr($eventName, '\\', '.');
+            },
+            $this->eventNames
+        );
+    }
+
     /**
      * @param array $subset
      * @return EventCollection

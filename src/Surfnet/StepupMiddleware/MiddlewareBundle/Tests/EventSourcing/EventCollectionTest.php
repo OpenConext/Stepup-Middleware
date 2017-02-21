@@ -134,6 +134,27 @@ class EventCollectionTest extends TestCase
         $eventCollection->select([SecondFactorVettedEvent::class]);
     }
 
+    /**
+     * @test
+     * @group event-replay
+     */
+    public function events_in_an_event_collection_can_be_formatted_as_event_stream_compatible_event_types()
+    {
+        $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
+
+        $expectedEventTypes = [
+            'Surfnet.Stepup.Configuration.Event.NewConfigurationCreatedEvent',
+            'Surfnet.Stepup.Identity.Event.SecondFactorVettedEvent',
+        ];
+        $actualEventTypes = $eventCollection->formatAsEventStreamTypes();
+
+        $this->assertEquals(
+            $expectedEventTypes,
+            $actualEventTypes,
+            'The events in the event collection should have been formatted as event stream compatible event types but they have not'
+        );
+    }
+
     public function emptyOrNonStringProvider()
     {
         return [

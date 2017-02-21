@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Broadway\ReadModel\ProjectorInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -88,17 +87,30 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         );
         $selectEventsQuestion->setMultiselect(true);
 
-        $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
-        $eventCollection->select($chosenEvents);
+        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $eventSelection = $eventCollection->select($chosenEvents);
 
         $selectProjectorsQuestion = new ChoiceQuestion(
             'For which projectors would you like to replay the selected events? '
-            . 'Please supply a comma-separated list of numbers',
+            . 'Please supply a comma-separated list of numbers.',
             $availableProjectors
         );
         $selectProjectorsQuestion->setMultiselect(true);
 
-        $chosenProjectors = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
-        $projectorCollection->selectByNames($chosenProjectors);
+        $chosenProjectors   = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
+        $projectorSelection = $projectorCollection->selectByNames($chosenProjectors);
+
+        $pastEventsService = $container->get('middleware.event_replay.past_events_service');
+        $events = $pastEventsService->findEventsBy($eventSelection);
+
+        $eventReplayer = $container->get('middleware.event_replay.transaction_aware_event_dispatcher');
+
+        $output->writeln('<info>Registering projectors</info>');
+        foreach ($projectorSelection as $projector) {
+            $eventReplayer->registerProjector($projector);
+        }
+
+        $output->writeln('<info>Dispatching events</info>');
+        $eventReplayer->dispatch($events);
     }
 }

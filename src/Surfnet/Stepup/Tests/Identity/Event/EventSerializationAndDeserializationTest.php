@@ -102,7 +102,9 @@ class EventSerializationAndDeserializationTest extends UnitTest
      */
     public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization()
     {
-        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000')));
+        // use a fixed datetime instance, to prevent microsecond precision issues in PHP 7.1+
+        $startDateTime = new DateTime(new CoreDateTime('@1000'));
+        $window = EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), $startDateTime);
 
         $this->assertTrue($window == EmailVerificationWindow::deserialize($window->serialize()));
     }

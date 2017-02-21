@@ -117,7 +117,7 @@ class DBALEventHydrator
 
     public function fetchByEventTypes($eventTypes)
     {
-        $eventTypePlaceholders = str_repeat('?, ', count($eventTypes) -1) . '?';
+        $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
 
         $query = str_replace(
             ['%es%', '%sd%'],

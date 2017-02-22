@@ -37,7 +37,8 @@
         "jms/di-extra-bundle": "~1.5",
         "jms/aop-bundle": "~1.0",
         "guzzlehttp/guzzle": "^4",
-        "ramsey/uuid": "^2.9"
+        "ramsey/uuid": "^2.9",
+        "ext-mcrypt": "*"
     },
     "require-dev": {
         "ibuildings/qa-tools": "~1.1,>=1.1.27",

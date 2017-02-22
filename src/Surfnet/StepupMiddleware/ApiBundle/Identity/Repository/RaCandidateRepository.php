@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
@@ -92,7 +93,7 @@ class RaCandidateRepository extends EntityRepository
 
         if (!empty($query->secondFactorTypes)) {
             $queryBuilder
-                ->innerJoin(VettedSecondFactor::class, 'vsf')
+                ->innerJoin(VettedSecondFactor::class, 'vsf', Join::WITH, 'rac.identityId = vsf.identityId')
                 ->andWhere('vsf.type IN (:secondFactorTypes)')
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);
         }

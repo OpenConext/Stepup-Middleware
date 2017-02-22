@@ -37,11 +37,12 @@ class RaCandidateController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query              = new RaCandidateQuery();
-        $query->institution = $institution;
-        $query->commonName  = $request->get('commonName');
-        $query->email       = $request->get('email');
-        $query->pageNumber  = (int) $request->get('p', 1);
+        $query                    = new RaCandidateQuery();
+        $query->institution       = $institution;
+        $query->commonName        = $request->get('commonName');
+        $query->email             = $request->get('email');
+        $query->secondFactorTypes = $request->get('secondFactorTypes');
+        $query->pageNumber        = (int) $request->get('p', 1);
 
         $paginator = $this->get('surfnet_stepup_middleware_api.service.ra_candidate')->search($query);
 

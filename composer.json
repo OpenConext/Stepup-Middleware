@@ -36,7 +36,6 @@
         "jms/translation-bundle": "~1.1",
         "jms/di-extra-bundle": "~1.5",
         "jms/aop-bundle": "~1.0",
-        "guzzlehttp/guzzle": "^4",
         "ramsey/uuid": "^2.9"
     },
     "require-dev": {

@@ -39,7 +39,6 @@
         "ramsey/uuid": "^2.9"
     },
     "require-dev": {
-        "ibuildings/qa-tools": "~1.1,>=1.1.27",
         "liip/rmt": "1.1.*",
         "moontoast/math": "~1.1",
         "mockery/mockery": "~0.9",

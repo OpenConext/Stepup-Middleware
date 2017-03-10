@@ -100,6 +100,26 @@ class IdentityRepository extends EntityRepository
     /**
      * @param NameId      $nameId
      * @param Institution $institution
+     *
+     * @return bool
+     */
+    public function hasIdentityWithNameIdAndInstitution(NameId $nameId, Institution $institution)
+    {
+        $identityCount = $this->createQueryBuilder('i')
+            ->select('COUNT(i.id)')
+            ->where('i.nameId = :nameId')
+            ->andWhere('i.institution = :institution')
+            ->setParameter('nameId', $nameId->getNameId())
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $identityCount > 0;
+    }
+
+    /**
+     * @param NameId      $nameId
+     * @param Institution $institution
      * @return Identity
      */
     public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution)

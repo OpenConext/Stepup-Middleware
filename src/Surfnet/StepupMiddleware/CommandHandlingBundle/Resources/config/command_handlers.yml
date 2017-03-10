@@ -3,6 +3,7 @@ services:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler
         arguments:
             - @surfnet_stepup.repository.identity
+            - @surfnet_stepup_middleware_api.repository.identity
             - @identity.entity.configurable_settings
             - @surfnet_stepup_middleware_api.service.allowed_second_factor_list
         tags: [{ name: command_bus.command_handler }]

@@ -34,4 +34,9 @@ class RaCandidateQuery extends AbstractQuery
      * @var string
      */
     public $email;
+
+    /**
+     * @var string[]
+     */
+    public $secondFactorTypes;
 }

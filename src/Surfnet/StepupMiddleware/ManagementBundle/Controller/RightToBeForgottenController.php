@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use GuzzleHttp;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;

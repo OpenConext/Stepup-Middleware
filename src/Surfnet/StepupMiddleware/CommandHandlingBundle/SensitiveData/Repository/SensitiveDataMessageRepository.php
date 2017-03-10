@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repositor
 
 use Doctrine\DBAL\Connection;
 use Exception as CoreException;
-use GuzzleHttp;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;

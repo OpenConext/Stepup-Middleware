@@ -49,6 +49,7 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
@@ -71,6 +72,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory
             ),
+            m::mock(IdentityProjectionRepository::class),
             ConfigurableSettings::create(self::$window, []),
             m::mock(AllowedSecondFactorListService::class)
         );

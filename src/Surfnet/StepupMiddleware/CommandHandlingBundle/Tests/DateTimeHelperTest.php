@@ -47,7 +47,9 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
 
         DateTimeHelper::setCurrentTime(null);
-        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
+        // Deliberately assigned temporary variable due to microsecond precision in PHP 7.1
+        $now = DateTime::now();
+        $this->assertTrue((new DateTime())->comesAfterOrIsEqual($now));
     }
 
     /**
@@ -57,6 +59,8 @@ class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
     public function it_works_with_separate_processes()
     {
         // The stub value has been removed.
-        $this->assertTrue((new DateTime())->comesAfterOrIsEqual(DateTime::now()));
+        // Deliberately assigned temporary variable due to microsecond precision in PHP 7.1
+        $now = DateTime::now();
+        $this->assertTrue((new DateTime())->comesAfterOrIsEqual($now));
     }
 }

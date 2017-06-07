@@ -33,9 +33,4 @@ abstract class AbstractSecondFactor extends EventSourcedEntity implements Second
     {
         return $service->hasEqualOrLowerLoaComparedTo($this->getType(), $type);
     }
-
-    /**
-     * @return SecondFactorType
-     */
-    abstract protected function getType();
 }

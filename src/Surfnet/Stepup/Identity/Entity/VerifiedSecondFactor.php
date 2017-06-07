@@ -191,7 +191,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
-    protected function getType()
+    public function getType()
     {
         return $this->type;
     }

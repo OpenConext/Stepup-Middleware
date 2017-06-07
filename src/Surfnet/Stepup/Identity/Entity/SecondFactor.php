@@ -36,4 +36,10 @@ interface SecondFactor
      * @return bool
      */
     public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service);
+
+    /**
+     * @return SecondFactorType
+     */
+    public function getType();
+
 }

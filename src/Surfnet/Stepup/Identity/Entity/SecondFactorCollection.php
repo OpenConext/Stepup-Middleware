@@ -32,7 +32,7 @@ final class SecondFactorCollection extends ArrayCollection
         return array_reduce(
             $this->toArray(),
             function (SecondFactor $carry, SecondFactor $item) use ($service) {
-                return $service->hasEqualOrHigherLoaComparedTo($carry, $item->getType()) ? $carry : $item;
+                return $service->hasEqualOrHigherLoaComparedTo($carry->getType(), $item->getType()) ? $carry : $item;
             },
             $this->first() ?: null
         );

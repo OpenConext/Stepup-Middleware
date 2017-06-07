@@ -42,5 +42,10 @@ class SurfnetStepupMiddlewareMiddlewareExtension extends Extension
             ->setArguments([$config['email_verification_window'], $container->getParameter('locales')]);
 
         $container->setDefinition('identity.entity.configurable_settings', $definition);
+
+        $container->setParameter(
+            'middleware.enabled_generic_second_factors',
+            $config['enabled_generic_second_factors']
+        );
     }
 }

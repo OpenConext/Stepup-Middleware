@@ -19,18 +19,20 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 
 final class SecondFactorCollection extends ArrayCollection
 {
     /**
-     * @return SecondFactor|null
+     * @param SecondFactorTypeService $service
+     * @return null|SecondFactor
      */
-    public function getSecondFactorWithHighestLoa()
+    public function getSecondFactorWithHighestLoa(SecondFactorTypeService $service)
     {
         return array_reduce(
             $this->toArray(),
-            function (SecondFactor $carry, SecondFactor $item) {
-                return $carry->hasEqualOrHigherLoaComparedTo($item) ? $carry : $item;
+            function (SecondFactor $carry, SecondFactor $item) use ($service) {
+                return $service->hasEqualOrHigherLoaComparedTo($carry, $item->getType()) ? $carry : $item;
             },
             $this->first() ?: null
         );

@@ -38,6 +38,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -84,22 +85,28 @@ class IdentityCommandHandler extends CommandHandler
      */
     private $allowedSecondFactorListService;
 
+    /** @var SecondFactorTypeService */
+    private $secondFactorTypeService;
+
     /**
      * @param RepositoryInterface            $eventSourcedRepository
      * @param IdentityRepository             $identityProjectionRepository
      * @param ConfigurableSettings           $configurableSettings
      * @param AllowedSecondFactorListService $allowedSecondFactorListService
+     * @param SecondFactorTypeService        $secondFactorTypeService
      */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
         IdentityRepository $identityProjectionRepository,
         ConfigurableSettings $configurableSettings,
-        AllowedSecondFactorListService $allowedSecondFactorListService
+        AllowedSecondFactorListService $allowedSecondFactorListService,
+        SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
         $this->configurableSettings = $configurableSettings;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
+        $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -265,7 +272,8 @@ class IdentityCommandHandler extends CommandHandler
             $secondFactorIdentifier,
             $command->registrationCode,
             new DocumentNumber($command->documentNumber),
-            $command->identityVerified
+            $command->identityVerified,
+            $this->secondFactorTypeService
         );
 
         $this->eventSourcedRepository->save($authority);

@@ -69,6 +69,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -322,12 +323,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber,
-        $identityVerified
+        $identityVerified,
+        SecondFactorTypeService $secondFactorTypeService
     ) {
         $this->assertNotForgotten();
 
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
-        $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa();
+        $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa($secondFactorTypeService);
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
 
         if ($registrantsSecondFactor === null) {
@@ -336,7 +338,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo($registrantsSecondFactor)) {
+        if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo(
+            $registrantsSecondFactor,
+            $secondFactorTypeService
+        )) {
             throw new DomainException("Authority does not have the required LoA to vet the registrant's second factor");
         }
 

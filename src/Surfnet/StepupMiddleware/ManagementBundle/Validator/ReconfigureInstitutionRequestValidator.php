@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 use Assert\Assertion;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
@@ -41,9 +42,17 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private $configuredInstitutions;
 
-    public function __construct(ConfiguredInstitutionService $configuredInstitutionsService)
-    {
+    /**
+     * @var SecondFactorTypeService
+     */
+    private $secondFactorTypeService;
+
+    public function __construct(
+        ConfiguredInstitutionService $configuredInstitutionsService,
+        SecondFactorTypeService $secondFactorTypeService
+    ) {
         $this->configuredInstitutionsService = $configuredInstitutionsService;
+        $this->secondFactorTypeService = $secondFactorTypeService;
     }
 
     public function validate($value, Constraint $constraint)
@@ -134,7 +143,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         );
         Assertion::allInArray(
             $options['allowed_second_factors'],
-            SecondFactorType::getAvailableSecondFactorTypes(),
+            $this->secondFactorTypeService->getAvailableSecondFactorTypes(),
             'Option "allowed_second_factors" for "%s" must contain valid second factor types',
             $propertyPath
         );

@@ -42,6 +42,15 @@ class Configuration implements ConfigurationInterface
                             )
                         ->end()
                     ->end()
+                    ->arrayNode('enabled_generic_second_factors')
+                        ->isRequired()
+                        ->prototype('array')
+                        ->children()
+                            ->scalarNode('loa')
+                            ->isRequired()
+                            ->info('The lao level of the Gssf')
+                        ->end()
+                    ->end()
                 ->end();
 
         return $treeBuilder;

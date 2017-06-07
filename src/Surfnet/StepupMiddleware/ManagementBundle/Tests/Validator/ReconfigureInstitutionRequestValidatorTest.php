@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\ValidReconfigureInstitutionsRequest;
@@ -77,8 +78,13 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $context = Mockery::mock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $context->shouldReceive('buildViolation')->with(self::spy($actualErrorMessage))->once()->andReturn($builder);
 
+        $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
+        $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
 
-        $validator = new ReconfigureInstitutionRequestValidator($configuredInstitutionServiceMock);
+        $validator = new ReconfigureInstitutionRequestValidator(
+            $configuredInstitutionServiceMock,
+            $secondFactorTypeServiceMock
+        );
         $validator->initialize($context);
         $validator->validate($reconfigureRequest, new ValidReconfigureInstitutionsRequest);
 
@@ -122,7 +128,13 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             ->shouldReceive('getAll')
             ->andReturn($existingInstitutions);
 
-        $validator = new ReconfigureInstitutionRequestValidator($configuredInstitutionServiceMock);
+        $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
+        $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
+
+        $validator = new ReconfigureInstitutionRequestValidator(
+            $configuredInstitutionServiceMock,
+            $secondFactorTypeServiceMock
+        );
         $validator->initialize($context);
         
         $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
@@ -157,8 +169,13 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $configuredInstitutionServiceMock
             ->shouldReceive('getAll')
             ->andReturn($existingInstitutions);
+        $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
+        $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
 
-        $validator = new ReconfigureInstitutionRequestValidator($configuredInstitutionServiceMock);
+        $validator = new ReconfigureInstitutionRequestValidator(
+            $configuredInstitutionServiceMock,
+            $secondFactorTypeServiceMock
+        );
         $validator->initialize($context);
 
         $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
@@ -189,7 +206,13 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $context = Mockery::mock(ExecutionContextInterface::class);
         $context->shouldNotReceive('buildViolation');
 
-        $validator = new ReconfigureInstitutionRequestValidator($configuredInstitutionServiceMock);
+        $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
+        $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
+
+        $validator = new ReconfigureInstitutionRequestValidator(
+            $configuredInstitutionServiceMock,
+            $secondFactorTypeServiceMock
+        );
         $validator->initialize($context);
         $validator->validate($validRequest, new ValidReconfigureInstitutionsRequest);
     }

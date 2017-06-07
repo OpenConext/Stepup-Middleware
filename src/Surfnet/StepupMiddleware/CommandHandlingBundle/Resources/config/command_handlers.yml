@@ -6,6 +6,7 @@ services:
             - @surfnet_stepup_middleware_api.repository.identity
             - @identity.entity.configurable_settings
             - @surfnet_stepup_middleware_api.service.allowed_second_factor_list
+            - @surfnet_stepup.service.second_factor_type
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.registration_authority_command_handler:

@@ -41,5 +41,4 @@ interface SecondFactor
      * @return SecondFactorType
      */
     public function getType();
-
 }

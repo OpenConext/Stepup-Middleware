@@ -36,7 +36,7 @@
         "jms/di-extra-bundle": "~1.5",
         "jms/aop-bundle": "~1.0",
         "ramsey/uuid": "^2.9",
-        "surfnet/stepup-bundle": "^1.7"
+        "surfnet/stepup-bundle": "^2.0"
     },
     "require-dev": {
         "liip/rmt": "1.1.*",

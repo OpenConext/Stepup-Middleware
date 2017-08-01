@@ -32,6 +32,7 @@ services:
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator
         arguments:
             - "@surfnet_stepup_middleware_api.service.configured_institutions"
+            - "@surfnet_stepup.service.second_factor_type"
         tags:
             - { name: validator.constraint_validator, alias: reconfigure_institution_configuration_structure_validator }
 

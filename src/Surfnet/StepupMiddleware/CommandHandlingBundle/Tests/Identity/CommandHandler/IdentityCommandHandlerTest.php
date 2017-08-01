@@ -53,6 +53,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
@@ -89,6 +90,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $identityProjectionRepository;
 
+    /**
+     * @var SecondFactorTypeService
+     */
+    private $secondFactorTypeService;
+
     public function setUp()
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
@@ -100,7 +106,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
-
+        $this->secondFactorTypeService = m::mock(SecondFactorTypeService::class);
+        $this->secondFactorTypeService->shouldIgnoreMissing();
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
@@ -109,7 +116,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
-            $this->allowedSecondFactorListServiceMock
+            $this->allowedSecondFactorListServiceMock,
+            $this->secondFactorTypeService
         );
     }
 
@@ -1124,6 +1132,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantSecFacId          = new SecondFactorId('ISFID');
         $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
 
+        $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(true);
+
         $this->scenario
             ->withAggregateId($authorityId)
             ->given([
@@ -1233,6 +1243,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $registrantCommonName        = new CommonName('Reginald Waterloo');
         $registrantSecFacId          = new SecondFactorId('ISFID');
         $registrantPubId             = new YubikeyPublicId('00028278');
+
+        $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(false);
 
         $this->scenario
             ->withAggregateId($authorityId)

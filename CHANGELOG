@@ -2,6 +2,9 @@
 VERSION 2  RELEASE 2.0.0
 ========================
 
+   Version 2.6 - Release of version 2.6.0
+      01/08/2017 09:32  2.6.0  initial release
+
    Version 2.5 - Updated Guzzle, prevent bootstrapping of an existing identity & allow to filter RA candidates on second factor type
       10/03/2017 11:49  2.5.0  initial release
 

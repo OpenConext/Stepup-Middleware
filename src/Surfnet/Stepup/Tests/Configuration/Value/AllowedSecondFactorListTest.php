@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class AllowedSecondFactorListTest extends TestCase
@@ -222,10 +223,14 @@ class AllowedSecondFactorListTest extends TestCase
 
     public function availableSecondFactorTypeProvider()
     {
+        $service = new SecondFactorTypeService([
+            'biometric' => ['loa' => 3],
+            'tiqr' => ['loa' => 3],
+        ]);
         $secondFactorTypes = array_map(function ($availableSecondFactorType) {
             return [new SecondFactorType($availableSecondFactorType)];
-        }, SecondFactorType::getAvailableSecondFactorTypes());
+        }, $service->getAvailableSecondFactorTypes());
 
-        return array_combine(SecondFactorType::getAvailableSecondFactorTypes(), $secondFactorTypes);
+        return array_combine($service->getAvailableSecondFactorTypes(), $secondFactorTypes);
     }
 }

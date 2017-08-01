@@ -47,3 +47,9 @@ parameters:
     stepup_loa_loa3: https://gateway.tld/authentication/loa3
 
     self_service_url: https://selfservice.tld
+
+    enabled_generic_second_factors:
+        biometric:
+            loa: 3
+        tiqr:
+            loa: 3

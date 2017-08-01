@@ -39,6 +39,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
@@ -147,15 +148,15 @@ interface Identity extends AggregateRoot
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param Identity               $registrant
-     * @param SecondFactorId         $registrantsSecondFactorId
-     * @param SecondFactorType       $registrantsSecondFactorType
+     * @param Identity $registrant
+     * @param SecondFactorId $registrantsSecondFactorId
+     * @param SecondFactorType $registrantsSecondFactorType
      * @param SecondFactorIdentifier $registrantsSecondFactorIdentifier
-     * @param string                 $registrationCode
-     * @param DocumentNumber         $documentNumber
-     * @param bool                   $identityVerified
+     * @param string $registrationCode
+     * @param DocumentNumber $documentNumber
+     * @param bool $identityVerified
+     * @param SecondFactorTypeService $secondFactorTypeService
      * @return void
-     * @throws DomainException
      */
     public function vetSecondFactor(
         Identity $registrant,
@@ -164,7 +165,8 @@ interface Identity extends AggregateRoot
         SecondFactorIdentifier $registrantsSecondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber,
-        $identityVerified
+        $identityVerified,
+        SecondFactorTypeService $secondFactorTypeService
     );
 
     /**

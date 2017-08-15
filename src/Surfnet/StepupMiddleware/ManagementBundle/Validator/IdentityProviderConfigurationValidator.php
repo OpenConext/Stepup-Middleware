@@ -27,22 +27,29 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
     {
         Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
-        $acceptedProperties = [
+        $requiredProperties = [
             'entity_id',
             'loa',
+            'use_pdp'
         ];
+
+        if (empty($configuration['use_pdp'])) {
+            $configuration['use_pdp'] = false;
+        }
+
         StepupAssert::keysMatch(
             $configuration,
-            $acceptedProperties,
+            $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                join("', '", $acceptedProperties)
+                join("', '", $requiredProperties)
             ),
             $propertyPath
         );
 
         $this->validateStringValue($configuration, 'entity_id', $propertyPath);
         $this->validateLoaDefinition($configuration, $propertyPath);
+        $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
     }
 
     /**
@@ -53,6 +60,16 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
     private function validateStringValue($configuration, $name, $propertyPath)
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
+    }
+
+    /**
+     * @param array  $configuration
+     * @param string $name
+     * @param string $propertyPath
+     */
+    private function validateBooleanValue($configuration, $name, $propertyPath)
+    {
+        Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
     /**

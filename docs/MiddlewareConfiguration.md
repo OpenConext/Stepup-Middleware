@@ -180,7 +180,7 @@ Each element in the ```service_providers``` array must be an object and contain 
 * `second_factor_only_nameid_patterns` contains a list of patterns (strings that may contain a '*' wildcard character) that are allowed to use the Second Factor Only mode. E.g. the wilcard pattern `urn:collab:person:example.org:*` matches all NameIDs that start with "urn:collab:person:example.org:". Does nothing if `second_factor_only` is not set to true.
 * ```assertion_encryption_enabled``` must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted.
 * ```blacklisted_encryption_algorithms``` contains an array that lists (each as single string-element) algorithms that may not be used for encryption. When left empty, no algorithms are blacklisted. As the gateway currently only allows the " http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" algorithm this option is of little practical use.
-
+* `use_pdp` optional boolean value, defaults to false, the PDP policy decision is enforced when enabled
 
 #### Identity Providers
 
@@ -189,6 +189,7 @@ This array can be empty, in which case no IdP specific configuration is used.
 Each element in the `identity_providers` array must be an object and contain the `entity_id` and `loa` properties.
 * `entity_id` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion.
 * The `loa` property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
+* `use_pdp` optional boolean value, defaults to false, the PDP policy decision is enforced when enabled
 
 Note: This option has not seen any use in practice.
 

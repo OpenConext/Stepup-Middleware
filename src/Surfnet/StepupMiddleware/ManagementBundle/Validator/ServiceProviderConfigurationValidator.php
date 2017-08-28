@@ -27,7 +27,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
     {
         Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
-        $acceptedProperties = [
+        $requiredProperties = [
             'entity_id',
             'public_key',
             'acs',
@@ -36,13 +36,19 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'second_factor_only',
             'second_factor_only_nameid_patterns',
             'blacklisted_encryption_algorithms',
+            'use_pdp'
         ];
+
+        if (empty($configuration['use_pdp'])) {
+            $configuration['use_pdp'] = false;
+        }
+
         StepupAssert::keysMatch(
             $configuration,
-            $acceptedProperties,
+            $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                join("', '", $acceptedProperties)
+                join("', '", $requiredProperties)
             ),
             $propertyPath
         );
@@ -71,6 +77,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'blacklisted_encryption_algorithms',
             $propertyPath
         );
+        $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
     }
 
     /**

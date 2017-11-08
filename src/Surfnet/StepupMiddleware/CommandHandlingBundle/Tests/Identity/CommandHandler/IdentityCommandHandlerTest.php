@@ -117,7 +117,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
             $this->allowedSecondFactorListServiceMock,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
+            1
         );
     }
 
@@ -311,7 +312,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function yubikey_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -703,7 +704,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function phone_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -758,7 +759,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_prove_possession_of_arbitrary_second_factor_type_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');

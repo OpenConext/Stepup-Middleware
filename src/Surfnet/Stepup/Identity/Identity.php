@@ -135,6 +135,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private $forgotten;
 
+    /**
+     * @var int
+     */
+    private $maxNumberOfTokens = 1;
+
     public static function create(
         IdentityId $id,
         Institution $institution,
@@ -175,6 +180,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         $this->email = $email;
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $email));
+    }
+
+    /**
+     * @param int $numberOfTokens
+     */
+    public function setMaxNumberOfTokens($numberOfTokens)
+    {
+        $this->maxNumberOfTokens = $numberOfTokens;
     }
 
     public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
@@ -818,9 +831,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         if (count($this->unverifiedSecondFactors) +
             count($this->verifiedSecondFactors) +
-            count($this->vettedSecondFactors) > 0
+            count($this->vettedSecondFactors) >= $this->maxNumberOfTokens
         ) {
-            throw new DomainException('User may not have more than one token');
+            throw new DomainException(
+                sprintf('User may not have more than %d token(s)', $this->maxNumberOfTokens)
+            );
         }
     }
 

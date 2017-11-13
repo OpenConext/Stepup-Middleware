@@ -150,6 +150,7 @@ class SecondFactorProjector extends Projector
         $verified->type = $event->secondFactorType->getSecondFactorType();
         $verified->secondFactorIdentifier = $unverified->secondFactorIdentifier;
         $verified->registrationCode = $event->registrationCode;
+        $verified->registrationRequestedAt = $event->registrationRequestedAt;
 
         $this->verifiedRepository->save($verified);
         $this->unverifiedRepository->remove($unverified);

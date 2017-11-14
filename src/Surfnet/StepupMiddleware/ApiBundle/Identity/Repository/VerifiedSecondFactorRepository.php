@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -36,6 +37,27 @@ class VerifiedSecondFactorRepository extends EntityRepository
         $secondFactor = parent::find($id);
 
         return $secondFactor;
+    }
+
+    /**
+     * @param DateTime $requestedAt
+     * @return VerifiedSecondFactor[]
+     */
+    public function findByDate(DateTime $requestedAt)
+    {
+        $fromDate = clone $requestedAt;
+        $fromDate->setTime(0, 0, 0);
+
+        $toDate = clone $requestedAt;
+        $toDate->setTime(23, 59, 59);
+
+        return $this->createQueryBuilder('sf')
+            ->where('sf.registrationRequestedAt <= :toDate')
+            ->andWhere('sf.registrationRequestedAt >= :fromDate')
+            ->setParameter('toDate', $toDate)
+            ->setParameter('fromDate', $fromDate)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

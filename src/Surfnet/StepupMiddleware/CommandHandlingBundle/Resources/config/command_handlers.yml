@@ -42,3 +42,10 @@ services:
                 - @surfnet_stepup_middleware_command_handling.service.sensitive_data
                 - @surfnet_stepup_middleware_api.repository.sraa
             tags: [{ name: command_bus.command_handler }]
+
+    surfnet_stepup_middleware_command_handling.command_handler.reminder_email:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\ReminderEmailCommandHandler
+        arguments:
+          - @surfnet_stepup_middleware_middleware.verfied_second_factor_reminder
+        tags: [{ name: command_bus.command_handler }]
+

@@ -77,6 +77,13 @@ class VerifiedSecondFactor implements \JsonSerializable
      */
     public $registrationCode;
 
+    /**
+     * @ORM\Column(type="datetime")
+     *
+     * @var \DateTime
+     */
+    public $registrationRequestedAt;
+
     public function jsonSerialize()
     {
         return [
@@ -84,6 +91,7 @@ class VerifiedSecondFactor implements \JsonSerializable
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'registration_code' => $this->registrationCode,
+            'registration_requested_at' => $this->registrationRequestedAt->format('c'),
             'identity_id' => $this->identityId,
             'institution' => $this->institution,
             'common_name' => $this->commonName,

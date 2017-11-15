@@ -44,7 +44,7 @@ services:
         class: Twig_Sandbox_SecurityPolicy
         arguments:
             - [ if, else, elseif, for ] # Allowed tags
-            - [ escape ] # Allowed filters
+            - [ escape, localizeddate ] # Allowed filters
             - # Allowed methods
                 Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
                     - getCommonName
@@ -56,6 +56,10 @@ services:
                     - location
                     - contactInformation
             - [] # Allowed functions
+
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags: [{ name: twig.extension }]
 
 # Doctrine Configuration
 doctrine:

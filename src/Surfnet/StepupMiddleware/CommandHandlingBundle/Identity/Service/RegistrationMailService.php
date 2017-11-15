@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
@@ -91,6 +92,7 @@ final class RegistrationMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
+     * @param DateTime $expirationDate
      * @param RegistrationAuthorityCredentials[] $ras
      */
     public function sendRegistrationEmailWithRas(
@@ -98,6 +100,7 @@ final class RegistrationMailService
         $commonName,
         $email,
         $registrationCode,
+        DateTime $expirationDate,
         array $ras
     ) {
         $subject = $this->translator->trans(
@@ -119,6 +122,7 @@ final class RegistrationMailService
             'commonName'       => $commonName,
             'email'            => $email,
             'registrationCode' => $registrationCode,
+            'expirationDate'   => $expirationDate,
             'ras'              => $ras,
         ];
 
@@ -145,6 +149,7 @@ final class RegistrationMailService
      * @param string $commonName
      * @param string $email
      * @param string $registrationCode
+     * @param DateTime $expirationDate
      * @param RaLocation[] $raLocations
      */
     public function sendRegistrationEmailWithRaLocations(
@@ -152,6 +157,7 @@ final class RegistrationMailService
         $commonName,
         $email,
         $registrationCode,
+        DateTime $expirationDate,
         array $raLocations
     ) {
         $subject = $this->translator->trans(
@@ -173,6 +179,7 @@ final class RegistrationMailService
             'commonName'       => $commonName,
             'email'            => $email,
             'registrationCode' => $registrationCode,
+            'expirationDate'   => $expirationDate,
             'raLocations'      => $raLocations,
         ];
 

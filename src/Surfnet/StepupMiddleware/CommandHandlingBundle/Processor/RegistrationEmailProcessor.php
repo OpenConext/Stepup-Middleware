@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
+use DateInterval;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
@@ -99,6 +101,7 @@ final class RegistrationEmailProcessor extends Processor
             (string)$event->commonName,
             (string)$event->email,
             $event->registrationCode,
+            $this->getExpirationDateOfRegistration($event),
             $this->raLocationsService->listRaLocationsFor($institution)
         );
     }
@@ -114,7 +117,19 @@ final class RegistrationEmailProcessor extends Processor
             (string)$event->commonName,
             (string)$event->email,
             $event->registrationCode,
+            $this->getExpirationDateOfRegistration($event),
             $ras
         );
+    }
+
+    /**
+     * @param EmailVerifiedEvent $event
+     * @return DateTime
+     */
+    private function getExpirationDateOfRegistration(EmailVerifiedEvent $event)
+    {
+        return $event->registrationRequestedAt->add(
+            new DateInterval('P14D')
+        )->endOfDay();
     }
 }

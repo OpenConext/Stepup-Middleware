@@ -285,4 +285,9 @@ interface Identity extends AggregateRoot
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
     public function getAggregateRootId();
+
+    /**
+     * @param int $numberOfTokens
+     */
+    public function setMaxNumberOfTokens($numberOfTokens);
 }

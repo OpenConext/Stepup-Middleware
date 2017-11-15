@@ -77,7 +77,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(IdentityProjectionRepository::class),
             ConfigurableSettings::create(self::$window, []),
             m::mock(AllowedSecondFactorListService::class),
-            $service
+            $service,
+            1
         );
     }
 

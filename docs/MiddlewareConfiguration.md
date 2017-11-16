@@ -78,6 +78,8 @@ Each property of this object denotes a specific type of email, the types availab
 * `confirm_email`: **(required)** the email sent when the Registrant is asked prove the possession of his email address.
 * `registration_code_with_ras`: **(required)** the email sent when the Registrant has successfully registered a new Second Factor and is invited to visit an RA for institutions not using RA locations.
 * `registration_code_with_ra_locations`: **(required)** the email sent when the Registrant has successfully registered a new Second Factor and is invited to visit an RA for institutions using RA locations.
+* `second_factor_verification_reminder_with_ras`: **(required)** the reminder email sent when the registrant registered it's token 7 days ago and is invited to visit an RA for institutions not using RA locations.
+* `second_factor_verification_reminder_with_ra_locations`: **(required)** the email sent when the registrant registered it's token 7 days ago and is invited to visit an RA for institutions using RA locations.
 * `vetted`: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
 * `second_factor_revoked` **(required)**: the email sent when a Second Factor has been revoked.
 
@@ -111,7 +113,7 @@ Send as part of the user self service registration process when the user must va
 | email           | string | jan@modaal.nl                                           |
 | verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
 
-#### Registration (registration_code_with_ras)
+#### Registration (registration_code_with_ras & second_factor_verification_reminder_with_ras)
 
 Sent after completion of the user self service registration process to inform the user that he/she must visit a registration authority (RA) to get their token vetted. The RA location information is taken from the location information provided by each RA(A)'s in the RA interface. One location for each RA. Used when `use_ra_locations` is `false` in the Institution Configuration of the user's institution. The `show_raa_contact_information` option in the Institution Configuration determines whether RAA contacts will be listed in addition to the RA contacts.
 
@@ -119,12 +121,13 @@ Sent after completion of the user self service registration process to inform th
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
 | email                 | string | jan@modaal.nl             |
+| expirationDate        | string | 2017-01-01                |
 | ras                   | array  |                           |
 | ╰ commonName          | string | Henk Modaal               |
 | ╰ location            | string | Moreelsepark, Utrecht     |
 | ╰ contactInformation  | string | mail naar info@surfnet.nl |
 
-#### Registration (registration_code_with_ra_locations)
+#### Registration (registration_code_with_ra_locations & second_factor_verification_reminder_with_ra_locations)
 
 Sent after completion of the user self service registration process to inform the user that he/she must visit a registration authority (RA) to get their token vetted. The RA location information is taken from the location information provided by the RAA's of the user's institution in the RA interface. Used when `use_ra_locations` is `true` in the Institution Configuration of the user's institution.
 
@@ -132,6 +135,7 @@ Sent after completion of the user self service registration process to inform th
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
 | email                 | string | jan@modaal.nl             |
+| expirationDate        | string | 2017-01-01                |
 | raLocations           | array  |                           |
 | ╰ name                | string | Servicebalie              |
 | ╰ location            | string | Moreelsepark, Utrecht     |

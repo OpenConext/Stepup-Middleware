@@ -462,7 +462,75 @@ Request parameters:
 }
 ```
 
+### Registration Authority Candidate - Search second factors
 
+#### Request
+URL: `http://middleware.tld/ra-second-factors?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&p=}`
+Method: GET
+Request parameters:
+- institution: (required) string, the institution as scope determination
+- name: (optional) string, the second factor name to match against
+- type: (optional) string, the type to match against
+- secondFactorId: (optional) string, the secondFactorId to match against
+- email: (optional) string, the email to match against
+- status: (optional) string, the status to match against
+- p: (optional, default 1) integer, the requested result page
+
+#### Response
+`200 OK`
+```json
+{
+    "collection": {
+        "total_items": 1,
+        "page": 1,
+        "page_size": 25
+    },
+    "items": [
+        {
+            "id": "45b8220b-0ac2-43da-88ce-ecd0d1e9ce2f",
+            "type": "yubikey",
+            "second_factor_id": "02513949",
+            "status": "unverified",
+            "identity_id": "8fd69a41-0d37-4365-9e46-a6a4a70572af",
+            "name": "Yubi",
+            "document_number": null,
+            "email": "info@ibuildings.nl",
+            "institution": "Ibuildings",
+        }
+    ]
+}
+```
+
+### Registration Authority Candidate - Search second factors for export
+
+#### Request
+URL: `http://middleware.tld/ra-second-factors-export?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
+Method: GET
+Request parameters:
+- institution: (required) string, the institution as scope determination
+- name: (optional) string, the second factor name to match against
+- type: (optional) string, the type to match against
+- secondFactorId: (optional) string, the secondFactorId to match against
+- email: (optional) string, the email to match against
+- status: (optional) string, the status to match against
+
+#### Response
+`200 OK`
+```json
+[
+    {
+        "id": "45b8220b-0ac2-43da-88ce-ecd0d1e9ce2f",
+        "type": "yubikey",
+        "second_factor_id": "02513949",
+        "status": "unverified",
+        "identity_id": "8fd69a41-0d37-4365-9e46-a6a4a70572af",
+        "name": "Yubi",
+        "document_number": null,
+        "email": "info@ibuildings.nl",
+        "institution": "Ibuildings",
+    }
+]
+```
 
 ## AuditLog
 

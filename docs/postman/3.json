@@ -495,6 +495,54 @@
 			"description": "nothing",
 			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
 			"responses": []
+		},
+		{
+			"id": "e1a3744d-4990-1bdf-080f-981d4cad6a2e",
+			"headers": "Accept: application/json\nAuthorization: Basic cmE6YmFy\n",
+			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-second-factors?institution=dev.organisation.example",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "basicAuth",
+			"helperAttributes": {
+				"username": "ra",
+				"password": "bar",
+				"id": "basic",
+				"timestamp": 1424175900505
+			},
+			"time": 1434543588287,
+			"name": "/ra-second-factors",
+			"description": "nothing",
+			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
+			"responses": []
+		},
+		{
+			"id": "a1a3744d-4990-1bdf-080f-981d4cad6a2a",
+			"headers": "Accept: application/json\nAuthorization: Basic cmE6YmFy\n",
+			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-second-factors-export?institution=dev.organisation.example",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "basicAuth",
+			"helperAttributes": {
+				"username": "ra",
+				"password": "bar",
+				"id": "basic",
+				"timestamp": 1424175900505
+			},
+			"time": 1434543588287,
+			"name": "/ra-second-factors-export",
+			"description": "nothing",
+			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
+			"responses": []
 		}
 	]
 }

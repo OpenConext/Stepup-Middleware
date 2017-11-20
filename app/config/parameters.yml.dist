@@ -53,3 +53,6 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
+
+    # The maximum number of tokens each identity (person) can register.
+    number_of_tokens_per_identity: 2

@@ -60,6 +60,12 @@ ra_second_factors:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+ra_second_factors_export:
+    path:     /ra-second-factors-export
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaSecondFactor:export }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 identity_ra_list:
     path:      /registration-authority
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Ra:list }

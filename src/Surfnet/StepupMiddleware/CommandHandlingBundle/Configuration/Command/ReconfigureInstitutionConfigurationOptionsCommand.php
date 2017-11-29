@@ -48,12 +48,6 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
 
     /**
      * @Assert\NotNull()
-     * @Assert\All({
-     *     @Assert\Choice(
-     *         callback={"Surfnet\StepupBundle\Value\SecondFactorType", "getAvailableSecondFactorTypes"},
-     *         message="may only contain supported second factor types"
-     *     )
-     * })
      */
     public $allowedSecondFactors;
 }

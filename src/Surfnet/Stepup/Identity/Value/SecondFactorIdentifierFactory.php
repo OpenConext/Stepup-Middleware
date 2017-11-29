@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use Surfnet\Stepup\Exception\LogicException;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorIdentifierFactory
@@ -38,15 +37,11 @@ final class SecondFactorIdentifierFactory
             return new YubikeyPublicId($secondFactorIdentifier);
         }
 
-        if ($type->isGssf()) {
-            return new GssfId($secondFactorIdentifier);
-        }
-
         if ($type->isU2f()) {
             return new U2fKeyHandle($secondFactorIdentifier);
         }
-
-        throw new LogicException(sprintf('Unknown second factor type "%s" encountered', $type->getSecondFactorType()));
+        // Assume the SecondFactorType is gssf if it isn't one of the specified types.
+        return new GssfId($secondFactorIdentifier);
     }
 
     /**
@@ -63,14 +58,10 @@ final class SecondFactorIdentifierFactory
             return YubikeyPublicId::unknown();
         }
 
-        if ($type->isGssf()) {
-            return GssfId::unknown();
-        }
-
         if ($type->isU2f()) {
             return U2fKeyHandle::unknown();
         }
-
-        throw new LogicException(sprintf('Unknown second factor type "%s" encountered', $type->getSecondFactorType()));
+        // Assume the SecondFactorType is gssf if it isn't one of the specified types.
+        return GssfId::unknown();
     }
 }

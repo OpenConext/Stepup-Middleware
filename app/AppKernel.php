@@ -33,6 +33,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Nelmio\SecurityBundle\NelmioSecurityBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
+            new OpenConext\MonitorBundle\OpenConextMonitorBundle(),
             new Surfnet\StepupMiddleware\CommandHandlingBundle\SurfnetStepupMiddlewareCommandHandlingBundle(),
             new Surfnet\StepupMiddleware\ApiBundle\SurfnetStepupMiddlewareApiBundle(),
             new Surfnet\StepupMiddleware\MiddlewareBundle\SurfnetStepupMiddlewareMiddlewareBundle(),

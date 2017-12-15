@@ -3,6 +3,7 @@ VERSION 2  RELEASE 2.0.0
 ========================
 
    Version 2.6 - Release of version 2.6.0
+      15/12/2017 15:29  2.6.4  Installation of stepup-bundle 3
       08/12/2017 14:31  2.6.3  Fix error on institution configuration push
       29/11/2017 -- --  2.6.2  intermediate release / undocumented
       29/11/2017 -- --  2.6.1  intermediate release / undocumented

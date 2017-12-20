@@ -7,6 +7,9 @@ security:
             http_basic: ~
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
             stateless:  true
+        monitor:
+            pattern: ^/(info|health)$
+            security: false
 
     access_control:
         - { path: ^/management, roles: [ROLE_MANAGEMENT] } # can be expanded with hosts: or ip:

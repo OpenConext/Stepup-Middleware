@@ -111,7 +111,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
 
-        $acceptedOptions = ['use_ra_locations', 'show_raa_contact_information', 'allowed_second_factors'];
+        $acceptedOptions = ['use_ra_locations', 'show_raa_contact_information', 'verify_email', 'allowed_second_factors'];
         StepupAssert::keysMatch(
             $options,
             $acceptedOptions,
@@ -128,6 +128,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         Assertion::boolean(
             $options['show_raa_contact_information'],
             sprintf('Option "show_raa_contact_information" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::boolean(
+            $options['verify_email'],
+            sprintf('Option "verify_email" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
 

@@ -22,6 +22,7 @@ return [
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,
+            'verify_email' => false,
             'allowed_second_factors' => [],
         ]
     ]

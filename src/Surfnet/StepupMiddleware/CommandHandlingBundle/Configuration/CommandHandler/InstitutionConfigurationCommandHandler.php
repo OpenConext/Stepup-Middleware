@@ -31,6 +31,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
@@ -87,6 +88,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->configureUseRaLocationsOption(
             new UseRaLocationsOption($command->useRaLocationsOption)
+        );
+        $institutionConfiguration->configureVerifyEmailOption(
+            new VerifyEmailOption($command->verifyEmailOption)
         );
         $institutionConfiguration->configureShowRaaContactInformationOption(
             new ShowRaaContactInformationOption($command->showRaaContactInformationOption)

@@ -23,6 +23,7 @@ return [
         'surfnet.nl' => [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
+            'verify_email' => false,
             'allowed_second_factors' => [],
         ],
         'another-organisation.test' => []

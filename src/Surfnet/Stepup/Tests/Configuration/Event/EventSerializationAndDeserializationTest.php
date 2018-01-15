@@ -38,6 +38,7 @@ use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -47,6 +48,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EventSerializationAndDeserializationTest extends TestCase
@@ -119,7 +121,8 @@ class EventSerializationAndDeserializationTest extends TestCase
                     $institutionConfigurationId,
                     $institution,
                     new UseRaLocationsOption(true),
-                    new ShowRaaContactInformationOption(true)
+                    new ShowRaaContactInformationOption(true),
+                    new VerifyEmailOption(true)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [
@@ -134,6 +137,13 @@ class EventSerializationAndDeserializationTest extends TestCase
                     $institutionConfigurationId,
                     $institution,
                     new ShowRaaContactInformationOption(true)
+                )
+            ],
+            'VerifyEmailOptionChangedEvent' => [
+                new VerifyEmailOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new VerifyEmailOption(true)
                 )
             ],
             'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [

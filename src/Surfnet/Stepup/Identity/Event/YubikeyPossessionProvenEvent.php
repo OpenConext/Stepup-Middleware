@@ -46,6 +46,11 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
     public $yubikeyPublicId;
 
     /**
+     * @var bool
+     */
+    public $emailVerificationRequired;
+
+    /**
      * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $emailVerificationRequestedAt;
@@ -80,17 +85,21 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
      * @param Institution             $institution
      * @param SecondFactorId          $secondFactorId
      * @param YubikeyPublicId         $yubikeyPublicId
+     * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string                  $emailVerificationNonce
      * @param CommonName              $commonName
      * @param Email                   $email
      * @param Locale                  $preferredLocale
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $emailVerificationNonce,
         CommonName $commonName,
@@ -99,13 +108,14 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->secondFactorId          = $secondFactorId;
-        $this->yubikeyPublicId         = $yubikeyPublicId;
-        $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce  = $emailVerificationNonce;
-        $this->commonName              = $commonName;
-        $this->email                   = $email;
-        $this->preferredLocale         = $preferredLocale;
+        $this->secondFactorId            = $secondFactorId;
+        $this->yubikeyPublicId           = $yubikeyPublicId;
+        $this->emailVerificationRequired = $emailVerificationRequired;
+        $this->emailVerificationWindow   = $emailVerificationWindow;
+        $this->emailVerificationNonce    = $emailVerificationNonce;
+        $this->commonName                = $commonName;
+        $this->email                     = $email;
+        $this->preferredLocale           = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
@@ -122,11 +132,16 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
 
     public static function deserialize(array $data)
     {
+        if (!isset($data['email_verification_required'])) {
+            $data['email_verification_required'] = true;
+        }
+
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             YubikeyPublicId::unknown(),
+            $data['email_verification_required'],
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             CommonName::unknown(),
@@ -138,12 +153,13 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable
     public function serialize()
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'preferred_locale'          => (string) $this->preferredLocale,
+            'identity_id'                 => (string) $this->identityId,
+            'identity_institution'        => (string) $this->identityInstitution,
+            'second_factor_id'            => (string) $this->secondFactorId,
+            'email_verification_required' => (bool) $this->emailVerificationRequired,
+            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
+            'preferred_locale'            => (string) $this->preferredLocale,
         ];
     }
 

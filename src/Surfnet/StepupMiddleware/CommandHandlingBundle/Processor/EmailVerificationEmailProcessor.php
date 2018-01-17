@@ -39,41 +39,49 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $this->emailVerificationMailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
+        if ($event->emailVerificationRequired !== false) {
+            $this->emailVerificationMailService->sendEmailVerificationEmail(
+                (string) $event->preferredLocale,
+                (string) $event->commonName,
+                (string) $event->email,
+                $event->emailVerificationNonce
+            );
+        }
     }
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $this->emailVerificationMailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
+        if ($event->emailVerificationRequired !== false) {
+            $this->emailVerificationMailService->sendEmailVerificationEmail(
+                (string) $event->preferredLocale,
+                (string) $event->commonName,
+                (string) $event->email,
+                $event->emailVerificationNonce
+            );
+        }
     }
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $this->emailVerificationMailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
+        if ($event->emailVerificationRequired !== false) {
+            $this->emailVerificationMailService->sendEmailVerificationEmail(
+                (string) $event->preferredLocale,
+                (string) $event->commonName,
+                (string) $event->email,
+                $event->emailVerificationNonce
+            );
+        }
     }
 
     public function handleU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
-        $this->emailVerificationMailService->sendEmailVerificationEmail(
-            (string) $event->preferredLocale,
-            (string) $event->commonName,
-            (string) $event->email,
-            $event->emailVerificationNonce
-        );
+        if ($event->emailVerificationRequired !== false) {
+            $this->emailVerificationMailService->sendEmailVerificationEmail(
+                (string) $event->preferredLocale,
+                (string) $event->commonName,
+                (string) $event->email,
+                $event->emailVerificationNonce
+            );
+        }
     }
 }

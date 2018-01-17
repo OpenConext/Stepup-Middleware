@@ -44,6 +44,11 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public $keyHandle;
 
     /**
+     * @var bool
+     */
+    public $emailVerificationRequired;
+
+    /**
      * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
      */
     public $emailVerificationWindow;
@@ -73,17 +78,21 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
      * @param U2fKeyHandle $keyHandle
+     * @param bool $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string $emailVerificationNonce
      * @param CommonName $commonName
      * @param Email $email
      * @param Locale $preferredLocale
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $emailVerificationNonce,
         CommonName $commonName,
@@ -94,6 +103,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
 
         $this->secondFactorId = $secondFactorId;
         $this->keyHandle = $keyHandle;
+        $this->emailVerificationRequired = $emailVerificationRequired;
         $this->emailVerificationWindow = $emailVerificationWindow;
         $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
@@ -115,11 +125,16 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
 
     public static function deserialize(array $data)
     {
+        if (!isset($data['email_verification_required'])) {
+            $data['email_verification_required'] = true;
+        }
+
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             U2fKeyHandle::unknown(),
+            $data['email_verification_required'],
             EmailVerificationWindow::deserialize($data['email_verification_window']),
             $data['email_verification_nonce'],
             CommonName::unknown(),
@@ -131,12 +146,13 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public function serialize()
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'preferred_locale'          => (string) $this->preferredLocale,
+            'identity_id'                 => (string) $this->identityId,
+            'identity_institution'        => (string) $this->identityInstitution,
+            'second_factor_id'            => (string) $this->secondFactorId,
+            'email_verification_required' => (bool) $this->emailVerificationRequired,
+            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
+            'preferred_locale'            => (string) $this->preferredLocale,
         ];
     }
 

@@ -23,6 +23,7 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
@@ -45,25 +46,37 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
      */
     public $showRaaContactInformationOption;
 
+    /**
+     * @var VerifyEmailOption
+     */
+    public $verifyEmailOption;
+
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption
+        ShowRaaContactInformationOption $showRaaContactInformationOption,
+        VerifyEmailOption $verifyEmailOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
         $this->useRaLocationsOption            = $useRaLocationsOption;
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
+        $this->verifyEmailOption               = $verifyEmailOption;
     }
 
     public static function deserialize(array $data)
     {
+        if (!isset($data['verify_email_option'])) {
+            $data['verify_email_option'] = true;
+        }
+
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
             new UseRaLocationsOption($data['use_ra_locations_option']),
-            new ShowRaaContactInformationOption($data['show_raa_contact_information_option'])
+            new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
+            new VerifyEmailOption($data['verify_email_option'])
         );
     }
 
@@ -74,6 +87,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'institution'                         => $this->institution->getInstitution(),
             'use_ra_locations_option'             => $this->useRaLocationsOption->isEnabled(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
+            'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
         ];
     }
 }

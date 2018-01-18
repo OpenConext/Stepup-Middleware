@@ -31,6 +31,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -41,6 +42,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
 
 /**
@@ -75,6 +77,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $showRaaContactInformationOption;
 
     /**
+     * @var VerifyEmailOption
+     */
+    private $verifyEmailOption;
+
+    /**
      * @var AllowedSecondFactorList
      */
     private $allowedSecondFactorList;
@@ -97,7 +104,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $institutionConfigurationId,
                 $institution,
                 UseRaLocationsOption::getDefault(),
-                ShowRaaContactInformationOption::getDefault()
+                ShowRaaContactInformationOption::getDefault(),
+                VerifyEmailOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -124,7 +132,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 UseRaLocationsOption::getDefault(),
-                ShowRaaContactInformationOption::getDefault()
+                ShowRaaContactInformationOption::getDefault(),
+                VerifyEmailOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -166,6 +175,21 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $showRaaContactInformationOption
+            )
+        );
+    }
+
+    public function configureVerifyEmailOption(VerifyEmailOption $verifyEmailOption)
+    {
+        if ($this->verifyEmailOption->equals($verifyEmailOption)) {
+            return;
+        }
+
+        $this->apply(
+            new VerifyEmailOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $verifyEmailOption
             )
         );
     }
@@ -299,6 +323,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->institution                     = $event->institution;
         $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
+        $this->verifyEmailOption               = $event->verifyEmailOption;
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
     }
@@ -312,6 +337,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         ShowRaaContactInformationOptionChangedEvent $event
     ) {
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
+    }
+
+    protected function applyVerifyEmailOptionChangedEvent(
+        VerifyEmailOptionChangedEvent $event
+    ) {
+        $this->verifyEmailOption = $event->verifyEmailOption;
     }
 
     protected function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event)
@@ -364,6 +395,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->raLocations                     = new RaLocationList([]);
         $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $this->verifyEmailOption               = VerifyEmailOption::getDefault();
         $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
 
         $this->isMarkedAsDestroyed             = true;

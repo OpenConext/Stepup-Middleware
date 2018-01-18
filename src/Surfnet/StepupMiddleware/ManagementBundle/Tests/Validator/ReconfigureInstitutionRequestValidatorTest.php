@@ -136,7 +136,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             $secondFactorTypeServiceMock
         );
         $validator->initialize($context);
-        
+
         $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
 
         $this->assertContains($expectedErrorMessage, $errorMessage);
@@ -155,6 +155,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             $differentlyCasedButSameInstitution => [
                 'use_ra_locations'             => false,
                 'show_raa_contact_information' => true,
+                'verify_email'                 => false,
                 'allowed_second_factors'       => [],
             ],
         ];
@@ -192,6 +193,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             $institution => [
                 'use_ra_locations'             => true,
                 'show_raa_contact_information' => true,
+                'verify_email'                 => true,
                 'allowed_second_factors'       => [],
             ],
         ];

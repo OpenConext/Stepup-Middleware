@@ -382,6 +382,7 @@ The options must have the following keys:
 * `use_ra_locations`: (boolean) whether an institution uses configurable RA locations instead of
  information of specific RA(A)s. Default: false
 * `show_raa_contact_information`: (boolean) whether an institution shows RAAs' contact information when listing RAs, for example when showing locations for the vetting process. Default: true
+* `verify_email`: (boolean) If disabled, users of this institution are not required to validate their e-mail address when registering new tokens. Default: true
 * `allowed_second_factors`: (string[]) a list of second factor types that are allowed to be registered by users of this institution. This option only affects the registration of new second factors, it does not affect second factors that have been registered or vetted. If the list is empty all supported second factors are allowed. The supported second factors are found in the [Stepup-bundle](https://github.com/OpenConext/Stepup-bundle/blob/develop/src/Value/SecondFactorType.php#L31-L37). Default: empty list (all available second factors are allowed).
 
 The structure of an institution configuration is therefore:
@@ -390,11 +391,13 @@ The structure of an institution configuration is therefore:
     "organisation.example": {
         "use_ra_locations": false,
         "show_raa_contact_information": true,
+        "verify_email": true,
         "allowed_second_factors": ["yubikey", "sms"]
     },
     "another-organisation.example": {
         "use_ra_locations": true,
         "show_raa_contact_information": false,
+        "verify_email": true,
         "allowed_second_factors": []
     }
 }

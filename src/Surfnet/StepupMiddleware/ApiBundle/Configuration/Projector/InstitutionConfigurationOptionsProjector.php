@@ -23,6 +23,7 @@ use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
@@ -52,7 +53,8 @@ final class InstitutionConfigurationOptionsProjector extends Projector
         $institutionConfigurationOptions = InstitutionConfigurationOptions::create(
             $event->institution,
             $event->useRaLocationsOption,
-            $event->showRaaContactInformationOption
+            $event->showRaaContactInformationOption,
+            $event->verifyEmailOption
         );
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -70,6 +72,14 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     {
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
         $institutionConfigurationOptions->showRaaContactInformationOption = $event->showRaaContactInformationOption;
+
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
+    }
+
+    public function applyVerifyEmailOptionChangedEvent(VerifyEmailOptionChangedEvent $event)
+    {
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->verifyEmailOption = $event->verifyEmailOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }

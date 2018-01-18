@@ -32,6 +32,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -42,6 +43,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
@@ -67,6 +69,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId             = InstitutionConfigurationId::normalizedFrom($institution);
         $defaultUseRaLocationsOption            = UseRaLocationsOption::getDefault();
         $defaultShowRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $defaultVerifyEmailOption               = VerifyEmailOption::getDefault();
         $defaultAllowedSecondFactorList         = AllowedSecondFactorList::blank();
 
         $this->scenario
@@ -77,7 +80,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $defaultUseRaLocationsOption,
-                    $defaultShowRaaContactInformationOption
+                    $defaultShowRaaContactInformationOption,
+                    $defaultVerifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -105,6 +109,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -113,7 +118,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
             ])
             ->when($command);
@@ -129,12 +135,14 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->allowedSecondFactors            = [];
 
         $this->scenario
@@ -144,7 +152,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -166,6 +175,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(false);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentUseRaLocationsOptionValue = true;
@@ -174,6 +184,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->useRaLocationsOption            = $differentUseRaLocationsOptionValue;
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->allowedSecondFactors            = [];
 
         $this->scenario
@@ -183,7 +194,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -211,6 +223,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $defaultAllowedSecondFactorList  = AllowedSecondFactorList::blank();
 
         $differentShowRaaContactInformationOptionValue = false;
@@ -219,6 +232,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution                     = $institution->getInstitution();
         $command->showRaaContactInformationOption = $differentShowRaaContactInformationOptionValue;
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
+        $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->allowedSecondFactors            = [];
 
         $this->scenario
@@ -228,7 +242,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -256,6 +271,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $originalAllowedSecondFactorList = AllowedSecondFactorList::blank();
 
         $secondFactorsToAllow = ['sms', 'yubikey'];
@@ -268,6 +284,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->institution = $institution->getInstitution();
         $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->allowedSecondFactors = $secondFactorsToAllow;
 
         $this->scenario
@@ -277,7 +294,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -311,12 +329,14 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $originalAllowedSecondFactorList = $allowedSecondFactorList;
 
         $command = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->institution = $institution->getInstitution();
         $command->useRaLocationsOption = $useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
+        $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->allowedSecondFactors = $secondFactorsToAllow;
 
         $this->scenario
@@ -326,7 +346,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -355,6 +376,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -363,7 +385,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
             ])
             ->when($command)
@@ -398,6 +421,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -406,7 +430,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -439,6 +464,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -447,7 +473,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -487,6 +514,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -495,7 +523,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 )
             ])
             ->when($command);
@@ -520,7 +549,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId(self::uuid())
@@ -529,7 +558,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 )
             ])
             ->when($command);
@@ -555,6 +585,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -563,7 +594,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -604,7 +636,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -613,7 +645,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -651,6 +684,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId(self::uuid())
@@ -659,7 +693,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 )
             ])
             ->when($command);
@@ -682,6 +717,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -690,7 +726,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 )
             ])
             ->when($command);
@@ -711,6 +748,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -719,7 +757,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $useRaLocationsOption,
-                    $showRaaContactInformationOption
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption
                 ),
                 new RaLocationAddedEvent(
                     $institutionConfigurationId,
@@ -753,6 +792,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
 
         $this->scenario
             ->withAggregateId($institutionConfigurationId)
@@ -762,7 +802,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                         $institutionConfigurationId,
                         $institution,
                         $useRaLocationsOption,
-                        $showRaaContactInformationOption
+                        $showRaaContactInformationOption,
+                        $verifyEmailOption
                     )
                 ]
             )

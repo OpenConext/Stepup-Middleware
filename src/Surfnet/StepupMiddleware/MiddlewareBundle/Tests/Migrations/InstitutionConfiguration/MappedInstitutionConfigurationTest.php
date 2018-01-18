@@ -27,6 +27,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
@@ -45,12 +46,14 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $verifyEmailOption = VerifyEmailOption::getDefault();
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 
@@ -69,12 +72,14 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
+        $verifyEmailOption = VerifyEmailOption::getDefault();
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 
@@ -93,12 +98,14 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
+        $verifyEmailOption = new VerifyEmailOption(true);
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 
@@ -108,6 +115,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals($institution->getInstitution(), $command->institution);
         $this->assertEquals($useRaLocationsOption->isEnabled(), $command->useRaLocationsOption);
         $this->assertEquals($showRaaContactInformationOption->isEnabled(), $command->showRaaContactInformationOption);
+        $this->assertEquals($verifyEmailOption->isEnabled(), $command->verifyEmailOption);
     }
 
     /**
@@ -119,12 +127,14 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $raLocations                     = [];
 
         $mapped = new MappedInstitutionConfiguration(
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 
@@ -142,6 +152,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $raLocation                      = RaLocation::create(
             (string) Uuid::uuid4(),
             $institution,
@@ -155,6 +166,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 
@@ -175,6 +187,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
+        $verifyEmailOption               = new VerifyEmailOption(true);
         $firstRaLocation                 = RaLocation::create(
             (string) Uuid::uuid4(),
             $institution,
@@ -195,6 +208,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $institution,
             $useRaLocationsOption,
             $showRaaContactInformationOption,
+            $verifyEmailOption,
             $raLocations
         );
 

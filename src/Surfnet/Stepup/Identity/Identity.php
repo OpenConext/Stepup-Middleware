@@ -212,10 +212,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function provePossessionOfYubikey(
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
+        $emailVerificationNonce = TokenGenerator::generateNonce();
 
         $this->apply(
             new YubikeyPossessionProvenEvent(
@@ -223,22 +226,30 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $secondFactorId,
                 $yubikeyPublicId,
+                $emailVerificationRequired,
                 $emailVerificationWindow,
-                TokenGenerator::generateNonce(),
+                $emailVerificationNonce,
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
             )
         );
+
+        if ($emailVerificationRequired === false) {
+            $this->verifyEmail($emailVerificationNonce);
+        }
     }
 
     public function provePossessionOfPhone(
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
+        $emailVerificationNonce = TokenGenerator::generateNonce();
 
         $this->apply(
             new PhonePossessionProvenEvent(
@@ -246,23 +257,31 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $secondFactorId,
                 $phoneNumber,
+                $emailVerificationRequired,
                 $emailVerificationWindow,
-                TokenGenerator::generateNonce(),
+                $emailVerificationNonce,
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
             )
         );
+
+        if ($emailVerificationRequired === false) {
+            $this->verifyEmail($emailVerificationNonce);
+        }
     }
 
     public function provePossessionOfGssf(
         SecondFactorId $secondFactorId,
         StepupProvider $provider,
         GssfId $gssfId,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
+        $emailVerificationNonce = TokenGenerator::generateNonce();
 
         $this->apply(
             new GssfPossessionProvenEvent(
@@ -271,22 +290,30 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $secondFactorId,
                 $provider,
                 $gssfId,
+                $emailVerificationRequired,
                 $emailVerificationWindow,
-                TokenGenerator::generateNonce(),
+                $emailVerificationNonce,
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
             )
         );
+
+        if ($emailVerificationRequired === false) {
+            $this->verifyEmail($emailVerificationNonce);
+        }
     }
 
     public function provePossessionOfU2fDevice(
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
+
+        $emailVerificationNonce = TokenGenerator::generateNonce();
 
         $this->apply(
             new U2fDevicePossessionProvenEvent(
@@ -294,13 +321,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $secondFactorId,
                 $keyHandle,
+                $emailVerificationRequired,
                 $emailVerificationWindow,
-                TokenGenerator::generateNonce(),
+                $emailVerificationNonce,
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
             )
         );
+
+        if ($emailVerificationRequired === false) {
+            $this->verifyEmail($emailVerificationNonce);
+        }
     }
 
     public function verifyEmail($verificationNonce)

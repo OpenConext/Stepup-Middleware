@@ -137,6 +137,13 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         Assertion::isArray($value, 'must be an object', $path);
         Assertion::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
         Assertion::allString($value, 'all properties must contain strings as values', $path);
+
+        // Test if all SP specific LoA configuration entries are lower case.
+        $this->assertValidInstitutionIdentifiers(
+            $value,
+            'The shacHomeOrganisation names in SP LoA configuration must all be lower case',
+            $path
+        );
     }
 
     /**
@@ -151,5 +158,30 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
 
         Assertion::isArray($value, 'must contain an array', $propertyPath);
         Assertion::allString($value, 'must be an array of strings', $propertyPath);
+    }
+
+    /**
+     * All institution names (SHO values) should be lowercase.
+     *
+     * For example:
+     *  [
+     *     '__default__'      => 'loa1', // valid
+     *     'institution-1.nl' => 'loa1', // valid
+     *     'My.Institution'   => 'loa2', // invalid
+     *  ]
+     *
+     * @param array $spLoaConfiguration
+     * @param string $message
+     * @param $propertyPath
+     */
+    private function assertValidInstitutionIdentifiers(array $spLoaConfiguration, $message, $propertyPath)
+    {
+        $assertLowerCase = function ($sho) {
+            return ($sho === strtolower($sho));
+        };
+
+        // The array keys match the institution name / SHO.
+        $lowerCaseTestResults = array_map($assertLowerCase, array_keys($spLoaConfiguration));
+        Assertion::allTrue($lowerCaseTestResults, $message, $propertyPath);
     }
 }

@@ -22,6 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Rhumsaa\Uuid\Uuid;
 
 /**
+ * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!
+ * @see Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Gateway project)
+ *
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
  * @ORM\Table(
  *      indexes={
@@ -43,6 +46,7 @@ class SecondFactor
     /**
      * @var string
      *
+     * @ORM\Id
      * @ORM\Column(length=36)
      */
     private $identityId;

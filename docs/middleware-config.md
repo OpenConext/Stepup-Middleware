@@ -109,8 +109,8 @@ Specification
 The Super Registration Authority Authority is configured by sending a list of NameIDs that should be granted SRAA rights when logged in to the RA application with a sufficient LOA.
 
 sraa: [
-	"NameID of RAA as received by the Gateway from SURFConext",
-	"NameID of a different RAA as received by the Gateway from SURFConext"
+	"NameID of RAA as received by the Gateway from OpenConext",
+	"NameID of a different RAA as received by the Gateway from OpenConext"
 ]
 
 Processing

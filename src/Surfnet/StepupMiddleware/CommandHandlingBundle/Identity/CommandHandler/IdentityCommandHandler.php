@@ -235,14 +235,16 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
-        // Assume tiqr is being used as it is the only GSSF currently supported
-        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('tiqr'), $identity->getInstitution());
+        $secondFactorType = $command->stepupProvider;
+
+        // Validate that the chosen second factor type (stepupProvider) is allowed for the users instituti
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType($secondFactorType), $identity->getInstitution());
 
         $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
 
         $identity->provePossessionOfGssf(
             new SecondFactorId($command->secondFactorId),
-            new StepupProvider($command->stepupProvider),
+            new StepupProvider($secondFactorType),
             new GssfId($command->gssfId),
             $this->emailVerificationIsRequired($identity),
             $this->configurableSettings->createNewEmailVerificationWindow()

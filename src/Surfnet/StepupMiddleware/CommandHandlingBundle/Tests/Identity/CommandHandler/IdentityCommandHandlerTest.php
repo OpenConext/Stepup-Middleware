@@ -511,7 +511,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
-            ->andReturn(AllowedSecondFactorList::blank());
+            ->andReturn(
+                AllowedSecondFactorList::ofTypes(
+                    [
+                        new SecondFactorType('biometric'),
+                        new SecondFactorType('tiqr'),
+                        new SecondFactorType('anotherGssp'),
+                    ]
+                )
+            );
 
         $command                 = new ProveGssfPossessionCommand();
         $command->identityId     = (string) $identityId;

@@ -123,7 +123,11 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      */
     public function canBeVettedNow()
     {
-        return !DateTime::now()->comesAfter($this->registrationRequestedAt->add(new \DateInterval('P14D')));
+        return !DateTime::now()->comesAfter(
+            $this->registrationRequestedAt
+                ->add(new \DateInterval('P14D'))
+                ->endOfDay()
+        );
     }
 
     public function vet(DocumentNumber $documentNumber)

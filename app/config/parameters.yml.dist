@@ -53,3 +53,5 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
+    # Sets the number of tokens allowed for each identity
+    number_of_tokens_per_identity: 3

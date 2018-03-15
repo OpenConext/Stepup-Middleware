@@ -56,6 +56,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
@@ -95,6 +96,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $secondFactorTypeService;
 
+    /**
+     * @var InstitutionConfigurationOptionsService $configService
+     */
+    private $configService;
+
     public function setUp()
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
@@ -108,6 +114,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
         $this->secondFactorTypeService = m::mock(SecondFactorTypeService::class);
         $this->secondFactorTypeService->shouldIgnoreMissing();
+        $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
+        $this->configService->shouldIgnoreMissing();
+
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
@@ -117,7 +126,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
             $this->allowedSecondFactorListServiceMock,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
+            $this->configService,
+            1
         );
     }
 
@@ -246,6 +257,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId,
                     $pubId,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -311,7 +323,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function yubikey_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -347,6 +359,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId1,
                     $pubId1,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -409,6 +422,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId,
                     $phoneNumber,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -497,7 +511,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
-            ->andReturn(AllowedSecondFactorList::blank());
+            ->andReturn(
+                AllowedSecondFactorList::ofTypes(
+                    [
+                        new SecondFactorType('biometric'),
+                        new SecondFactorType('tiqr'),
+                        new SecondFactorType('anotherGssp'),
+                    ]
+                )
+            );
 
         $command                 = new ProveGssfPossessionCommand();
         $command->identityId     = (string) $identityId;
@@ -523,6 +545,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $stepupProvider,
                     $gssfId,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -637,6 +660,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId,
                     $keyHandle,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -703,7 +727,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function phone_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -739,6 +763,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId1,
                     $phoneNumber1,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -758,7 +783,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_prove_possession_of_arbitrary_second_factor_type_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than one token');
+        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -795,6 +820,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secFacId1,
                     $publicId,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -849,6 +875,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -916,6 +943,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -981,6 +1009,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $publicId,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         new DateTime(new CoreDateTime('-2 days'))
@@ -1171,6 +1200,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     $registrantSecFacIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -1262,6 +1292,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityInstitution,
                     $authorityPhoneSfId,
                     $authorityPhoneNo,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -1311,6 +1342,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecFacId,
                     $registrantPubId,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()

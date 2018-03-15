@@ -92,24 +92,28 @@ interface Identity extends AggregateRoot
     /**
      * @param SecondFactorId          $secondFactorId
      * @param YubikeyPublicId         $yubikeyPublicId
+     * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
     public function provePossessionOfYubikey(
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     );
 
     /**
      * @param SecondFactorId          $secondFactorId
      * @param PhoneNumber             $phoneNumber
+     * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
     public function provePossessionOfPhone(
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     );
 
@@ -117,6 +121,7 @@ interface Identity extends AggregateRoot
      * @param SecondFactorId          $secondFactorId
      * @param StepupProvider          $provider
      * @param GssfId                  $gssfId
+     * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
@@ -124,18 +129,21 @@ interface Identity extends AggregateRoot
         SecondFactorId $secondFactorId,
         StepupProvider $provider,
         GssfId $gssfId,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     );
 
     /**
      * @param SecondFactorId          $secondFactorId
      * @param U2fKeyHandle            $keyHandle
+     * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @return void
      */
     public function provePossessionOfU2fDevice(
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
+        $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
     );
 
@@ -285,4 +293,9 @@ interface Identity extends AggregateRoot
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
     public function getAggregateRootId();
+
+    /**
+     * @param int $numberOfTokens
+     */
+    public function setMaxNumberOfTokens($numberOfTokens);
 }

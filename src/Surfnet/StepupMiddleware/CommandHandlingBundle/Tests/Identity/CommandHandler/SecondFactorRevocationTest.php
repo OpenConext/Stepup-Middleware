@@ -50,6 +50,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
@@ -66,8 +67,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
-        $service = m::mock(SecondFactorTypeService::class);
-        $service->shouldIgnoreMissing();
+
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
@@ -77,7 +77,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(IdentityProjectionRepository::class),
             ConfigurableSettings::create(self::$window, []),
             m::mock(AllowedSecondFactorListService::class),
-            $service
+            m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
+            m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
+            1
         );
     }
 
@@ -114,6 +116,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -169,6 +172,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -238,6 +242,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $institution,
                     $secondFactorId,
                     $secondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -346,6 +351,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -432,6 +438,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()
@@ -530,6 +537,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantInstitution,
                     $registrantSecondFactorId,
                     $registrantSecondFactorIdentifier,
+                    true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
                         DateTime::now()

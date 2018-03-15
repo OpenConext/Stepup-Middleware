@@ -50,6 +50,7 @@ final class InstitutionConfigurationOptionsController extends Controller
             'institution'                  => $institutionConfigurationOptions->institution,
             'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
+            'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
             'allowed_second_factors'       => $allowedSecondFactorList
         ]);
     }

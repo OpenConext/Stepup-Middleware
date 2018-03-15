@@ -48,4 +48,13 @@ class RaSecondFactorService extends AbstractSearchService
 
         return $paginator;
     }
+
+    /**
+     * @param RaSecondFactorQuery $query
+     * @return array
+     */
+    public function searchUnpaginated(RaSecondFactorQuery $query)
+    {
+        return $this->repository->createSearchQuery($query)->getResult();
+    }
 }

@@ -57,6 +57,7 @@ final class InstitutionConfigurationController extends Controller
             $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
+                'verify_email' => $options->verifyEmailOption,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
                 ),
@@ -94,6 +95,7 @@ final class InstitutionConfigurationController extends Controller
             $command->institution                     = $institution;
             $command->useRaLocationsOption            = $options['use_ra_locations'];
             $command->showRaaContactInformationOption = $options['show_raa_contact_information'];
+            $command->verifyEmailOption               = $options['verify_email'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
 
             $commands[] = $command;

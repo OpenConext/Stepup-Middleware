@@ -41,6 +41,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
@@ -89,24 +90,40 @@ class IdentityCommandHandler extends CommandHandler
     private $secondFactorTypeService;
 
     /**
-     * @param RepositoryInterface            $eventSourcedRepository
-     * @param IdentityRepository             $identityProjectionRepository
-     * @param ConfigurableSettings           $configurableSettings
-     * @param AllowedSecondFactorListService $allowedSecondFactorListService
-     * @param SecondFactorTypeService        $secondFactorTypeService
+     * @var InstitutionConfigurationOptionsService
+     */
+    private $institutionConfigurationOptionsService;
+
+    /**
+     * @var int
+     */
+    private $numberOfTokensPerIdentity;
+
+    /**
+     * @param RepositoryInterface                    $eventSourcedRepository
+     * @param IdentityRepository                     $identityProjectionRepository
+     * @param ConfigurableSettings                   $configurableSettings
+     * @param AllowedSecondFactorListService         $allowedSecondFactorListService
+     * @param SecondFactorTypeService                $secondFactorTypeService
+     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
+     * @param int                                    $numberOfTokensPerIdentity
      */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
         IdentityRepository $identityProjectionRepository,
         ConfigurableSettings $configurableSettings,
         AllowedSecondFactorListService $allowedSecondFactorListService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        $numberOfTokensPerIdentity
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
         $this->configurableSettings = $configurableSettings;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -159,6 +176,8 @@ class IdentityCommandHandler extends CommandHandler
             $preferredLocale
         );
 
+        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+
         $identity->bootstrapYubikeySecondFactor(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId)
@@ -172,11 +191,14 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
+        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('yubikey'), $identity->getInstitution());
 
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId),
+            $this->emailVerificationIsRequired($identity),
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
@@ -193,9 +215,12 @@ class IdentityCommandHandler extends CommandHandler
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('sms'), $identity->getInstitution());
 
+        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
             new PhoneNumber($command->phoneNumber),
+            $this->emailVerificationIsRequired($identity),
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
@@ -210,13 +235,18 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
-        // Assume tiqr is being used as it is the only GSSF currently supported
-        $this->assertSecondFactorIsAllowedFor(new SecondFactorType('tiqr'), $identity->getInstitution());
+        $secondFactorType = $command->stepupProvider;
+
+        // Validate that the chosen second factor type (stepupProvider) is allowed for the users instituti
+        $this->assertSecondFactorIsAllowedFor(new SecondFactorType($secondFactorType), $identity->getInstitution());
+
+        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
 
         $identity->provePossessionOfGssf(
             new SecondFactorId($command->secondFactorId),
-            new StepupProvider($command->stepupProvider),
+            new StepupProvider($secondFactorType),
             new GssfId($command->gssfId),
+            $this->emailVerificationIsRequired($identity),
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
@@ -230,9 +260,12 @@ class IdentityCommandHandler extends CommandHandler
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('u2f'), $identity->getInstitution());
 
+        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+
         $identity->provePossessionOfU2fDevice(
             new SecondFactorId($command->secondFactorId),
             new U2fKeyHandle($command->keyHandle),
+            $this->emailVerificationIsRequired($identity),
             $this->configurableSettings->createNewEmailVerificationWindow()
         );
 
@@ -338,5 +371,25 @@ class IdentityCommandHandler extends CommandHandler
                 $secondFactor->getSecondFactorType()
             ));
         }
+    }
+
+    /**
+     * @param IdentityApi $identity
+     * @return bool
+     */
+    private function emailVerificationIsRequired(IdentityApi $identity)
+    {
+        $institution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+
+        $configuration = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($institution);
+
+        if ($configuration === null) {
+            return true;
+        }
+
+        return $configuration->verifyEmailOption->isEnabled();
     }
 }

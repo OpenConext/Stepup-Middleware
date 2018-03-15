@@ -78,6 +78,8 @@ Each property of this object denotes a specific type of email, the types availab
 * `confirm_email`: **(required)** the email sent when the Registrant is asked prove the possession of his email address.
 * `registration_code_with_ras`: **(required)** the email sent when the Registrant has successfully registered a new Second Factor and is invited to visit an RA for institutions not using RA locations.
 * `registration_code_with_ra_locations`: **(required)** the email sent when the Registrant has successfully registered a new Second Factor and is invited to visit an RA for institutions using RA locations.
+* `second_factor_verification_reminder_with_ras`: **(required)** the reminder email sent when the registrant registered it's token 7 days ago and is invited to visit an RA for institutions not using RA locations.
+* `second_factor_verification_reminder_with_ra_locations`: **(required)** the email sent when the registrant registered it's token 7 days ago and is invited to visit an RA for institutions using RA locations.
 * `vetted`: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
 * `second_factor_revoked` **(required)**: the email sent when a Second Factor has been revoked.
 
@@ -111,7 +113,7 @@ Send as part of the user self service registration process when the user must va
 | email           | string | jan@modaal.nl                                           |
 | verificationUrl | string | http://self-service.com/verify-email?n=0123456789abcdef |
 
-#### Registration (registration_code_with_ras)
+#### Registration (registration_code_with_ras & second_factor_verification_reminder_with_ras)
 
 Sent after completion of the user self service registration process to inform the user that he/she must visit a registration authority (RA) to get their token vetted. The RA location information is taken from the location information provided by each RA(A)'s in the RA interface. One location for each RA. Used when `use_ra_locations` is `false` in the Institution Configuration of the user's institution. The `show_raa_contact_information` option in the Institution Configuration determines whether RAA contacts will be listed in addition to the RA contacts.
 
@@ -119,12 +121,13 @@ Sent after completion of the user self service registration process to inform th
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
 | email                 | string | jan@modaal.nl             |
+| expirationDate        | string | 2017-01-01                |
 | ras                   | array  |                           |
 | ╰ commonName          | string | Henk Modaal               |
 | ╰ location            | string | Moreelsepark, Utrecht     |
 | ╰ contactInformation  | string | mail naar info@surfnet.nl |
 
-#### Registration (registration_code_with_ra_locations)
+#### Registration (registration_code_with_ra_locations & second_factor_verification_reminder_with_ra_locations)
 
 Sent after completion of the user self service registration process to inform the user that he/she must visit a registration authority (RA) to get their token vetted. The RA location information is taken from the location information provided by the RAA's of the user's institution in the RA interface. Used when `use_ra_locations` is `true` in the Institution Configuration of the user's institution.
 
@@ -132,6 +135,7 @@ Sent after completion of the user self service registration process to inform th
 |-----------------------|--------|---------------------------|
 | commonName            | string | Jan Modaal                |
 | email                 | string | jan@modaal.nl             |
+| expirationDate        | string | 2017-01-01                |
 | raLocations           | array  |                           |
 | ╰ name                | string | Servicebalie              |
 | ╰ location            | string | Moreelsepark, Utrecht     |
@@ -180,7 +184,7 @@ Each element in the ```service_providers``` array must be an object and contain 
 * `second_factor_only_nameid_patterns` contains a list of patterns (strings that may contain a '*' wildcard character) that are allowed to use the Second Factor Only mode. E.g. the wilcard pattern `urn:collab:person:example.org:*` matches all NameIDs that start with "urn:collab:person:example.org:". Does nothing if `second_factor_only` is not set to true.
 * ```assertion_encryption_enabled``` must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted.
 * ```blacklisted_encryption_algorithms``` contains an array that lists (each as single string-element) algorithms that may not be used for encryption. When left empty, no algorithms are blacklisted. As the gateway currently only allows the " http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" algorithm this option is of little practical use.
-
+* `use_pdp` optional boolean value, defaults to false, the PDP policy decision is enforced when enabled
 
 #### Identity Providers
 
@@ -189,6 +193,7 @@ This array can be empty, in which case no IdP specific configuration is used.
 Each element in the `identity_providers` array must be an object and contain the `entity_id` and `loa` properties.
 * `entity_id` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion.
 * The `loa` property must contain a hash (object) with at least the key __default__ with the default required loa as value. Each additional key is used as EntityID of an SP, with the value as the minimum required LoA for that SP that should be required when you log in.
+* `use_pdp` optional boolean value, defaults to false, the PDP policy decision is enforced when enabled
 
 Note: This option has not seen any use in practice.
 
@@ -377,6 +382,7 @@ The options must have the following keys:
 * `use_ra_locations`: (boolean) whether an institution uses configurable RA locations instead of
  information of specific RA(A)s. Default: false
 * `show_raa_contact_information`: (boolean) whether an institution shows RAAs' contact information when listing RAs, for example when showing locations for the vetting process. Default: true
+* `verify_email`: (boolean) If disabled, users of this institution are not required to validate their e-mail address when registering new tokens. Default: true
 * `allowed_second_factors`: (string[]) a list of second factor types that are allowed to be registered by users of this institution. This option only affects the registration of new second factors, it does not affect second factors that have been registered or vetted. If the list is empty all supported second factors are allowed. The supported second factors are found in the [Stepup-bundle](https://github.com/OpenConext/Stepup-bundle/blob/develop/src/Value/SecondFactorType.php#L31-L37). Default: empty list (all available second factors are allowed).
 
 The structure of an institution configuration is therefore:
@@ -385,11 +391,13 @@ The structure of an institution configuration is therefore:
     "organisation.example": {
         "use_ra_locations": false,
         "show_raa_contact_information": true,
+        "verify_email": true,
         "allowed_second_factors": ["yubikey", "sms"]
     },
     "another-organisation.example": {
         "use_ra_locations": true,
         "show_raa_contact_information": false,
+        "verify_email": true,
         "allowed_second_factors": []
     }
 }

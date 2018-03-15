@@ -47,6 +47,13 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $showRaaContactInformationOption;
 
     /**
+     * @Assert\Type(type="boolean")
+     *
+     * @var bool
+     */
+    public $verifyEmailOption;
+
+    /**
      * @Assert\NotNull()
      */
     public $allowedSecondFactors;

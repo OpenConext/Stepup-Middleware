@@ -23,6 +23,7 @@ use JsonSerializable;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 /**
  * @ORM\Entity(
@@ -53,16 +54,25 @@ final class InstitutionConfigurationOptions
      */
     public $showRaaContactInformationOption;
 
+    /**
+     * @ORM\Column(type="stepup_verify_email_option")
+     *
+     * @var VerifyEmailOption
+     */
+    public $verifyEmailOption;
+
     public static function create(
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption
+        ShowRaaContactInformationOption $showRaaContactInformationOption,
+        VerifyEmailOption $verifyEmailOption
     ) {
         $options = new self;
 
         $options->institution                     = $institution;
         $options->useRaLocationsOption            = $useRaLocationsOption;
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
+        $options->verifyEmailOption               = $verifyEmailOption;
 
         return $options;
     }

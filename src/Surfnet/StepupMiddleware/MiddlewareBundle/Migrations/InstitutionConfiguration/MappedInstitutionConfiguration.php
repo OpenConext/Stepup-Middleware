@@ -23,6 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
@@ -46,6 +47,11 @@ final class MappedInstitutionConfiguration
     private $useRaLocationsOption;
 
     /**
+     * @var VerifyEmailOption
+     */
+    private $verifyEmailOption;
+
+    /**
      * @var RaLocation[]
      */
     private $raLocations;
@@ -54,17 +60,20 @@ final class MappedInstitutionConfiguration
      * @param Institution                     $institution
      * @param UseRaLocationsOption            $useRaLocationsOption
      * @param ShowRaaContactInformationOption $showRaaContactInformationOption
+     * @param VerifyEmail                     $verifyEmailOption
      * @param RaLocation[]                    $raLocations
      */
     public function __construct(
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
+        VerifyEmailOption $verifyEmailOption,
         array $raLocations
     ) {
         $this->institution                     = $institution;
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->useRaLocationsOption            = $useRaLocationsOption;
+        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
+        $this->verifyEmailOption               = $verifyEmailOption;
         $this->raLocations                     = $raLocations;
     }
 
@@ -102,6 +111,7 @@ final class MappedInstitutionConfiguration
         $command->institution                     = $this->institution->getInstitution();
         $command->useRaLocationsOption            = $this->useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $this->showRaaContactInformationOption->isEnabled();
+        $command->verifyEmailOption               = $this->verifyEmailOption->isEnabled();
 
         return $command;
     }

@@ -22,7 +22,7 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
-final class InstitutionConfigurationOptionsService
+class InstitutionConfigurationOptionsService
 {
     /**
      * @var InstitutionConfigurationOptionsRepository

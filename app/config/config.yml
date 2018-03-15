@@ -44,7 +44,7 @@ services:
         class: Twig_Sandbox_SecurityPolicy
         arguments:
             - [ if, else, elseif, for ] # Allowed tags
-            - [ escape ] # Allowed filters
+            - [ escape, localizeddate ] # Allowed filters
             - # Allowed methods
                 Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
                     - getCommonName
@@ -56,6 +56,10 @@ services:
                     - location
                     - contactInformation
             - [] # Allowed functions
+
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags: [{ name: twig.extension }]
 
 # Doctrine Configuration
 doctrine:
@@ -105,6 +109,7 @@ doctrine:
             stepup_use_ra_locations_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType
             stepup_show_raa_contact_information_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType
             stepup_second_factor_type: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorTypeType
+            stepup_verify_email_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VerifyEmailOptionType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

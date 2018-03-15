@@ -106,6 +106,17 @@ class DateTime
     }
 
     /**
+     * @return DateTime
+     */
+    public function endOfDay()
+    {
+        $dateTime = clone $this->dateTime;
+        $dateTime->setTime(23, 59, 59);
+
+        return new self($dateTime);
+    }
+
+    /**
      * @param DateTime $dateTime
      * @return boolean
      */

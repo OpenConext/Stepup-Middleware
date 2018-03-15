@@ -3,6 +3,9 @@ security:
         dev:
             pattern: ^/_trans(/|$)
             security: false
+        monitor:
+            pattern: ^/(info|health)$
+            security: false
         api:
             http_basic: ~
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point

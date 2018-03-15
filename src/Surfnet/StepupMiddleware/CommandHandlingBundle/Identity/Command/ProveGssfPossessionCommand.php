@@ -45,7 +45,9 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
     public $secondFactorId;
 
     /**
-     * The phone number
+     * The SecondFactorType identifier. 
+     * 
+     * For example in the case of a Tiqr GSSP it would be 'tiqr'.
      *
      * @Assert\NotBlank()
      * @Assert\Type(type="string")
@@ -55,7 +57,7 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
     public $stepupProvider;
 
     /**
-     * The phone number
+     * The identifier of the generic Stepup second factor type
      *
      * @Assert\NotBlank()
      * @Assert\Type(type="string")

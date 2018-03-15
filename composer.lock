@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "303821049126ba2f75df24b2766ea3b3",
+    "content-hash": "62921130e811d2758ccee572f2b88238",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -2425,16 +2425,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "3.0.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0"
+                "reference": "547c5bcb8fe1841fa657bbf43c5ea4b8e575ec3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0",
-                "reference": "4564d2b468a9a9a0bcfa6356e055aacbd3c4e4f0",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/547c5bcb8fe1841fa657bbf43c5ea4b8e575ec3a",
+                "reference": "547c5bcb8fe1841fa657bbf43c5ea4b8e575ec3a",
                 "shasum": ""
             },
             "require": {
@@ -2478,7 +2478,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2017-11-30T07:47:43+00:00"
+            "time": "2018-03-14T13:11:17+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

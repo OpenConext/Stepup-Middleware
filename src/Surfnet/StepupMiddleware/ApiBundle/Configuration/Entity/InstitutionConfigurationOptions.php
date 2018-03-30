@@ -55,7 +55,7 @@ final class InstitutionConfigurationOptions
     public $showRaaContactInformationOption;
 
     /**
-     * @ORM\Column(type="stepup_verify_email_option")
+     * @ORM\Column(type="stepup_verify_email_option", options={"default" : 1})
      *
      * @var VerifyEmailOption
      */

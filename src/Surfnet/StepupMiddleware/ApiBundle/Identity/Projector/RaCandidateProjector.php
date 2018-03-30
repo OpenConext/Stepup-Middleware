@@ -68,7 +68,7 @@ class RaCandidateProjector extends Projector
             $event->email
         );
 
-        $this->raCandidateRepository->save($candidate);
+        $this->raCandidateRepository->merge($candidate);
     }
 
     /**
@@ -85,7 +85,7 @@ class RaCandidateProjector extends Projector
             $event->email
         );
 
-        $this->raCandidateRepository->save($candidate);
+        $this->raCandidateRepository->merge($candidate);
     }
 
     /**
@@ -150,7 +150,7 @@ class RaCandidateProjector extends Projector
             $event->email
         );
 
-        $this->raCandidateRepository->save($candidate);
+        $this->raCandidateRepository->merge($candidate);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

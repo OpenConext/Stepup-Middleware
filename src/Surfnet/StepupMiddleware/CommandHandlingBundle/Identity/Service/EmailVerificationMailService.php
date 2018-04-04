@@ -63,6 +63,23 @@ final class EmailVerificationMailService
      */
     private $templateEngine;
 
+    /**
+     * @var string
+     */
+    private $selfServiceUrl;
+
+    /**
+     * @param Mailer $mailer
+     * @param Sender $sender
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $templateEngine
+     * @param string $emailVerificationUrlTemplate
+     * @param EmailTemplateService $emailTemplateService
+     * @param string $fallbackLocale
+     * @param string $selfServiceUrl
+     *
+     * @throws \Assert\AssertionFailedException
+     */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
@@ -70,7 +87,8 @@ final class EmailVerificationMailService
         EngineInterface $templateEngine,
         $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale
+        $fallbackLocale,
+        $selfServiceUrl
     ) {
         Assertion::string(
             $emailVerificationUrlTemplate,
@@ -84,6 +102,7 @@ final class EmailVerificationMailService
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
+        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     /**
@@ -117,7 +136,8 @@ final class EmailVerificationMailService
             'locale'           => $locale,
             'commonName'       => $commonName,
             'email'            => $email,
-            'verificationUrl'  => $verificationUrl
+            'verificationUrl'  => $verificationUrl,
+            'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
         // Rendering file template instead of string

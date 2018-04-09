@@ -11,7 +11,6 @@ This component is part of "Step-up Authentication as-a Service". See [Stepup-Dep
  * [Composer](https://getcomposer.org/)
  * A web server (Apache, Nginx)
  * MariaDB 10
- * Graylog2 (or disable this Monolog handler)
  * A working [Gateway](https://github.com/OpenConext/Stepup-Gateway)
 
 ## Installation

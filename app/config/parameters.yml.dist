@@ -33,9 +33,6 @@ parameters:
     registration_authority_api_password: secret
     management_password: secret
 
-    # Hostname for the graylog server. Protocol GELF UDP, Port 12200
-    graylog_hostname: graylog.host.tld
-    
     self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl

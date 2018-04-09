@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JsonSerializable;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -61,11 +61,19 @@ final class InstitutionConfigurationOptions
      */
     public $verifyEmailOption;
 
+    /**
+     * @ORM\Column(type="stepup_number_of_tokens_per_identity_option", options={"default" : 0})
+     *
+     * @var NumberOfTokensPerIdentityOption
+     */
+    public $numberOfTokensPerIdentityOption;
+
     public static function create(
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
-        VerifyEmailOption $verifyEmailOption
+        VerifyEmailOption $verifyEmailOption,
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
     ) {
         $options = new self;
 
@@ -73,6 +81,7 @@ final class InstitutionConfigurationOptions
         $options->useRaLocationsOption            = $useRaLocationsOption;
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
         $options->verifyEmailOption               = $verifyEmailOption;
+        $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
 
         return $options;
     }

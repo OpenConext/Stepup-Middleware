@@ -150,6 +150,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->yubikeyPublicId = '93193884';
 
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(false);
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -199,6 +200,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->yubikeyPublicId = '93193884';
 
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
         $this->setExpectedException(DuplicateIdentityException::class);
 
@@ -235,6 +237,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId      = (string) $id;
         $command->secondFactorId  = (string) $secFacId;
         $command->yubikeyPublicId = (string) $pubId;
+
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -298,6 +302,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId  = (string) $secFacId;
         $command->yubikeyPublicId = (string) $pubId;
 
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
+
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]));
@@ -337,6 +343,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
+
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(1);
 
         $command                  = new ProveYubikeyPossessionCommand();
         $command->identityId      = (string) $id;
@@ -399,6 +407,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
+
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
         $command                 = new ProvePhonePossessionCommand();
         $command->identityId     = (string) $id;
@@ -521,6 +531,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 )
             );
 
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
+
         $command                 = new ProveGssfPossessionCommand();
         $command->identityId     = (string) $identityId;
         $command->secondFactorId = (string) $secondFactorId;
@@ -638,6 +650,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
 
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
+
         $command                 = new ProveU2fDevicePossessionCommand();
         $command->identityId     = (string) $id;
         $command->secondFactorId = (string) $secFacId;
@@ -747,6 +761,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
 
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(1);
+
         $this->scenario
             ->withAggregateId($id)
             ->given([
@@ -798,6 +814,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
+
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(1);
 
         $command = new ProvePhonePossessionCommand();
         $command->identityId = (string) $id;

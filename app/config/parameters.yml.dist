@@ -50,5 +50,10 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
-    # Sets the number of tokens allowed for each identity
+
+    # Sets the number of tokens allowed for each identity.
+    #
+    # This is the global, application wide default. This configuration should be specified for each institution in the
+    # institution config (middleware api). The value configured in the parameters.yml will be used as the
+    # fallback/default value.
     number_of_tokens_per_identity: 3

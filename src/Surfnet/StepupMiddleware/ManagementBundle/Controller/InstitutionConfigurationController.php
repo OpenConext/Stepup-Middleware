@@ -22,6 +22,7 @@ use DateTime;
 use Exception;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
@@ -54,10 +55,15 @@ final class InstitutionConfigurationController extends Controller
 
         $overview = [];
         foreach ($institutionConfigurationOptions as $options) {
+            // Load the numberOfTokensPerIdentity from the institution config options service
+            $numberOfTokensPerIdentity = $this->getInstitutionConfigurationOptionsService()
+                ->getMaxNumberOfTokensFor(new Institution($options->institution->getInstitution()));
+
             $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
                 'verify_email' => $options->verifyEmailOption,
+                'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
                 ),
@@ -96,6 +102,7 @@ final class InstitutionConfigurationController extends Controller
             $command->useRaLocationsOption            = $options['use_ra_locations'];
             $command->showRaaContactInformationOption = $options['show_raa_contact_information'];
             $command->verifyEmailOption               = $options['verify_email'];
+            $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
 
             $commands[] = $command;

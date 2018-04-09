@@ -70,6 +70,8 @@ final class InstitutionConfigurationState
                 $institution->institution,
                 $options->useRaLocationsOption,
                 $options->showRaaContactInformationOption,
+                $options->verifyEmailOption,
+                $options->numberOfTokensPerIdentityOption,
                 $locations
             );
         }

@@ -46,12 +46,17 @@ final class InstitutionConfigurationOptionsController extends Controller
             );
         }
 
+        $numberOfTokensPerIdentity = $this
+            ->getInstitutionConfigurationOptionsService()
+            ->getMaxNumberOfTokensFor($institution);
+
         return new JsonResponse([
             'institution'                  => $institutionConfigurationOptions->institution,
             'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
             'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
-            'allowed_second_factors'       => $allowedSecondFactorList
+            'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
+            'allowed_second_factors'       => $allowedSecondFactorList,
         ]);
     }
 

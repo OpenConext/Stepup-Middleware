@@ -27,6 +27,7 @@ use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -43,7 +44,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
 
         $this->scenario
@@ -58,7 +59,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $expectedUseRaLocationsOption,
                     $showRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -78,7 +80,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
         $useRaLocationsOption       = new UseRaLocationsOption(false);
         $verifyEmailOption          = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
 
         $this->scenario
@@ -93,7 +95,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $useRaLocationsOption,
                     $expectedShowRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 ),
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
@@ -114,7 +117,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalUseRaLocationsOption    = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $theSameUseRaLocationsOption = $originalUseRaLocationsOption;
 
         $this->scenario
@@ -125,7 +128,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $originalUseRaLocationsOption,
                     $showRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($theSameUseRaLocationsOption) {
@@ -145,7 +149,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaLocationsOption                    = new UseRaLocationsOption(true);
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption                       = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $sameShowRaaContactInformationOption = $originalShowRaaContactInformationOption;
 
         $this->scenario
@@ -156,7 +160,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $useRaLocationsOption,
                     $originalShowRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($sameShowRaaContactInformationOption) {
@@ -176,7 +181,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalUseRaLocationsOption    = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
 
         $this->scenario
@@ -187,7 +192,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $originalUseRaLocationsOption,
                     $showRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedUseRaLocationsOption) {
@@ -213,7 +219,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaLocationsOption                    = new UseRaLocationsOption(true);
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption                       = new VerifyEmailOption(true);
-
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(false);
 
         $this->scenario
@@ -224,7 +230,8 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $institution,
                     $useRaLocationsOption,
                     $originalShowRaaContactInformationOption,
-                    $verifyEmailOption
+                    $verifyEmailOption,
+                    $numberOfTokensPerIdentityOption
                 )
             ])
             ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedShowRaaContactInformationOption) {

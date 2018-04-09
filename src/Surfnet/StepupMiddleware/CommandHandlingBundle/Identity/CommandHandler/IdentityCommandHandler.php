@@ -95,18 +95,12 @@ class IdentityCommandHandler extends CommandHandler
     private $institutionConfigurationOptionsService;
 
     /**
-     * @var int
-     */
-    private $numberOfTokensPerIdentity;
-
-    /**
      * @param RepositoryInterface                    $eventSourcedRepository
      * @param IdentityRepository                     $identityProjectionRepository
      * @param ConfigurableSettings                   $configurableSettings
      * @param AllowedSecondFactorListService         $allowedSecondFactorListService
      * @param SecondFactorTypeService                $secondFactorTypeService
      * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param int                                    $numberOfTokensPerIdentity
      */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
@@ -114,8 +108,7 @@ class IdentityCommandHandler extends CommandHandler
         ConfigurableSettings $configurableSettings,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         SecondFactorTypeService $secondFactorTypeService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        $numberOfTokensPerIdentity
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -123,7 +116,6 @@ class IdentityCommandHandler extends CommandHandler
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
         $this->secondFactorTypeService = $secondFactorTypeService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -176,7 +168,12 @@ class IdentityCommandHandler extends CommandHandler
             $preferredLocale
         );
 
-        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->bootstrapYubikeySecondFactor(
             new SecondFactorId($command->secondFactorId),
@@ -191,9 +188,13 @@ class IdentityCommandHandler extends CommandHandler
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
-        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
-
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('yubikey'), $identity->getInstitution());
+
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
@@ -215,7 +216,12 @@ class IdentityCommandHandler extends CommandHandler
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('sms'), $identity->getInstitution());
 
-        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
@@ -234,13 +240,17 @@ class IdentityCommandHandler extends CommandHandler
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
-
         $secondFactorType = $command->stepupProvider;
 
         // Validate that the chosen second factor type (stepupProvider) is allowed for the users instituti
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType($secondFactorType), $identity->getInstitution());
 
-        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfGssf(
             new SecondFactorId($command->secondFactorId),
@@ -260,7 +270,12 @@ class IdentityCommandHandler extends CommandHandler
 
         $this->assertSecondFactorIsAllowedFor(new SecondFactorType('u2f'), $identity->getInstitution());
 
-        $identity->setMaxNumberOfTokens($this->numberOfTokensPerIdentity);
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $identity->getInstitution()
+        );
+
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfU2fDevice(
             new SecondFactorId($command->secondFactorId),

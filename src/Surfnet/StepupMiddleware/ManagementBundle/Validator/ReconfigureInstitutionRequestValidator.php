@@ -111,7 +111,14 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
 
-        $acceptedOptions = ['use_ra_locations', 'show_raa_contact_information', 'verify_email', 'allowed_second_factors'];
+        $acceptedOptions = [
+            'use_ra_locations',
+            'show_raa_contact_information',
+            'verify_email',
+            'number_of_tokens_per_identity',
+            'allowed_second_factors',
+        ];
+        
         StepupAssert::keysMatch(
             $options,
             $acceptedOptions,
@@ -134,6 +141,19 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         Assertion::boolean(
             $options['verify_email'],
             sprintf('Option "verify_email" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::integer(
+            $options['number_of_tokens_per_identity'],
+            sprintf('Option "number_of_tokens_per_identity" for "%s" must be an integer value', $institution),
+            $propertyPath
+        );
+        
+        Assertion::min(
+            $options['number_of_tokens_per_identity'],
+            0,
+            sprintf('Option "number_of_tokens_per_identity" for "%s" must be greater than or equal to 0', $institution),
             $propertyPath
         );
 

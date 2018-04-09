@@ -24,6 +24,7 @@ use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\NumberOfTokensPerIdentityOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationAddedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
@@ -37,6 +38,7 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
@@ -82,6 +84,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $verifyEmailOption;
 
     /**
+     * @var NumberOfTokensPerIdentityOption
+     */
+    private $numberOfTokensPerIdentityOption;
+
+    /**
      * @var AllowedSecondFactorList
      */
     private $allowedSecondFactorList;
@@ -105,7 +112,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $institution,
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
-                VerifyEmailOption::getDefault()
+                VerifyEmailOption::getDefault(),
+                NumberOfTokensPerIdentityOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -133,7 +141,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institution,
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
-                VerifyEmailOption::getDefault()
+                VerifyEmailOption::getDefault(),
+                NumberOfTokensPerIdentityOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -190,6 +199,22 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $verifyEmailOption
+            )
+        );
+    }
+
+    public function configureNumberOfTokensPerIdentityOption(
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
+    ) {
+        if ($this->numberOfTokensPerIdentityOption->equals($numberOfTokensPerIdentityOption)) {
+            return;
+        }
+
+        $this->apply(
+            new NumberOfTokensPerIdentityOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $numberOfTokensPerIdentityOption
             )
         );
     }
@@ -324,6 +349,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->verifyEmailOption               = $event->verifyEmailOption;
+        $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
     }
@@ -343,6 +369,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         VerifyEmailOptionChangedEvent $event
     ) {
         $this->verifyEmailOption = $event->verifyEmailOption;
+    }
+
+    protected function applyNumberOfTokensPerIdentityOptionChangedEvent(
+        NumberOfTokensPerIdentityOptionChangedEvent $event
+    ) {
+        $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
     }
 
     protected function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event)
@@ -396,6 +428,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
         $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
         $this->verifyEmailOption               = VerifyEmailOption::getDefault();
+        $this->numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
 
         $this->isMarkedAsDestroyed             = true;

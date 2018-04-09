@@ -44,6 +44,7 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
@@ -122,7 +123,8 @@ class EventSerializationAndDeserializationTest extends TestCase
                     $institution,
                     new UseRaLocationsOption(true),
                     new ShowRaaContactInformationOption(true),
-                    new VerifyEmailOption(true)
+                    new VerifyEmailOption(true),
+                    new NumberOfTokensPerIdentityOption(0)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

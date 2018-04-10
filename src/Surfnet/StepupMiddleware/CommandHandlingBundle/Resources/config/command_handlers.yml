@@ -8,7 +8,6 @@ services:
             - @surfnet_stepup_middleware_api.service.allowed_second_factor_list
             - @surfnet_stepup.service.second_factor_type
             - @surfnet_stepup_middleware_api.service.institution_configuration_options
-            - %number_of_tokens_per_identity%
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.registration_authority_command_handler:

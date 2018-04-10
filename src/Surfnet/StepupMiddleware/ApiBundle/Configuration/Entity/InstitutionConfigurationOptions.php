@@ -30,7 +30,7 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository"
  * )
  */
-final class InstitutionConfigurationOptions
+class InstitutionConfigurationOptions
 {
     /**
      * @ORM\Id

@@ -24,7 +24,7 @@ use Doctrine\ORM\NoResultException;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 
-final class InstitutionConfigurationOptionsRepository extends EntityRepository
+class InstitutionConfigurationOptionsRepository extends EntityRepository
 {
     /**
      * @param Institution $institution

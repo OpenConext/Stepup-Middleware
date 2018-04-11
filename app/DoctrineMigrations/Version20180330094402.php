@@ -19,7 +19,6 @@ class Version20180330094402 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE institution_configuration_options CHANGE verify_email_option verify_email_option TINYINT(1) DEFAULT \'1\' NOT NULL');
-        $this->addSql('UPDATE institution_configuration_options SET verify_email_option = 1');
     }
 
     /**

@@ -23,7 +23,7 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
-use Surfnet\Stepup\Configuration\Value\RaLocationId;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
@@ -47,6 +47,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
         $verifyEmailOption = VerifyEmailOption::getDefault();
+        $numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
@@ -54,6 +55,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 
@@ -73,6 +75,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
         $verifyEmailOption = VerifyEmailOption::getDefault();
+        $numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
@@ -80,6 +83,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 
@@ -99,6 +103,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption = new VerifyEmailOption(true);
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(2);
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
@@ -106,6 +111,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 
@@ -128,6 +134,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(1);
         $raLocations                     = [];
 
         $mapped = new MappedInstitutionConfiguration(
@@ -135,6 +142,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 
@@ -153,6 +161,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $raLocation                      = RaLocation::create(
             (string) Uuid::uuid4(),
             $institution,
@@ -167,6 +176,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 
@@ -188,6 +198,8 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(2);
+
         $firstRaLocation                 = RaLocation::create(
             (string) Uuid::uuid4(),
             $institution,
@@ -209,6 +221,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $numberOfTokensPerIdentityOption,
             $raLocations
         );
 

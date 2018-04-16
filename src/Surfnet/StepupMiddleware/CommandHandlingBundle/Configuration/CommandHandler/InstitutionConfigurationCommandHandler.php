@@ -27,6 +27,7 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
@@ -91,6 +92,9 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         );
         $institutionConfiguration->configureVerifyEmailOption(
             new VerifyEmailOption($command->verifyEmailOption)
+        );
+        $institutionConfiguration->configureNumberOfTokensPerIdentityOption(
+            new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption)
         );
         $institutionConfiguration->configureShowRaaContactInformationOption(
             new ShowRaaContactInformationOption($command->showRaaContactInformationOption)

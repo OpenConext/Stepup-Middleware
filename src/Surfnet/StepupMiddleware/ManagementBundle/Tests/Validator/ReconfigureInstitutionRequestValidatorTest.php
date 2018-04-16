@@ -156,6 +156,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
                 'use_ra_locations'             => false,
                 'show_raa_contact_information' => true,
                 'verify_email'                 => false,
+                'number_of_tokens_per_identity' => 1,
                 'allowed_second_factors'       => [],
             ],
         ];
@@ -194,6 +195,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
                 'use_ra_locations'             => true,
                 'show_raa_contact_information' => true,
                 'verify_email'                 => true,
+                'number_of_tokens_per_identity' => 3,
                 'allowed_second_factors'       => [],
             ],
         ];

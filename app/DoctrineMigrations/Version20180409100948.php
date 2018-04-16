@@ -4,11 +4,12 @@ namespace Surfnet\StepupMiddleware\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180330094402 extends AbstractMigration
+class Version20180409100948 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -18,7 +19,12 @@ class Version20180330094402 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE institution_configuration_options CHANGE verify_email_option verify_email_option TINYINT(1) DEFAULT \'1\' NOT NULL');
+        $this->addSql(
+            sprintf(
+            "ALTER TABLE institution_configuration_options ADD number_of_tokens_per_identity_option TINYINT(1) DEFAULT '%d' NOT NULL",
+                NumberOfTokensPerIdentityOption::DISABLED
+            )
+        );
     }
 
     /**
@@ -28,7 +34,6 @@ class Version20180330094402 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
-        $this->addSql('ALTER TABLE institution_configuration_options CHANGE verify_email_option verify_email_option TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE institution_configuration_options DROP number_of_tokens_per_identity_option');
     }
 }

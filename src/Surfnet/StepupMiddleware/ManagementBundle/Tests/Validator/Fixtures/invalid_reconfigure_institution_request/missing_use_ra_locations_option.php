@@ -23,6 +23,7 @@ return [
         'surfnet.nl' => [
             'show_raa_contact_information' => true,
             'verify_email' => false,
+            'number_of_tokens_per_identity' => 1,
             'allowed_second_factors' => [],
         ]
     ]

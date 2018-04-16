@@ -24,6 +24,7 @@ return [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
             'verify_email' => false,
+            'number_of_tokens_per_identity' => 1,
         ]
     ]
 ];

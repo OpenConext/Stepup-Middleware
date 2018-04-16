@@ -79,6 +79,8 @@ final class SecondFactorRevocationMailService
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
      * @param string $selfServiceUrl
+     *
+     * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,

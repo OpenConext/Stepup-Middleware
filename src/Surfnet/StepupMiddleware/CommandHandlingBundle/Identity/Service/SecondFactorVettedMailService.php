@@ -61,6 +61,10 @@ final class SecondFactorVettedMailService
      */
     private $fallbackLocale;
 
+    /**
+     * @var string
+     */
+    private $selfServiceUrl;
 
     /**
      * @param Mailer $mailer
@@ -69,6 +73,8 @@ final class SecondFactorVettedMailService
      * @param EngineInterface $templateEngine
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
+     * @param string $selfServiceUrl
+     * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
@@ -76,7 +82,8 @@ final class SecondFactorVettedMailService
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale
+        $fallbackLocale,
+        $selfServiceUrl
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
@@ -86,9 +93,8 @@ final class SecondFactorVettedMailService
         $this->templateEngine = $templateEngine;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
+        $this->selfServiceUrl = $selfServiceUrl;
     }
-
-
 
     /**
      * @param Locale     $locale
@@ -112,6 +118,7 @@ final class SecondFactorVettedMailService
             'templateString'   => $emailTemplate->htmlContent,
             'locale'           => $locale->getLocale(),
             'commonName'       => $commonName->getCommonName(),
+            'selfServiceUrl'   => $this->selfServiceUrl,
             'email'            => $email->getEmail(),
         ];
 

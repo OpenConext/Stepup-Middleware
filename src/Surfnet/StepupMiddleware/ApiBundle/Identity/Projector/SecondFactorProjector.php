@@ -23,14 +23,18 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
@@ -44,6 +48,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SecondFactorProjector extends Projector
 {
@@ -102,6 +107,21 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save($secondFactor);
     }
 
+    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = new VerifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->institution = $event->identityInstitution->getInstitution();
+        $secondFactor->type = 'yubikey';
+        $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
+        $secondFactor->commonName = $event->commonName;
+        $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
+        $secondFactor->registrationCode = $event->registrationCode;
+
+        $this->verifiedRepository->save($secondFactor);
+    }
+
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
         $secondFactor = new UnverifiedSecondFactor();
@@ -112,6 +132,21 @@ class SecondFactorProjector extends Projector
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
         $this->unverifiedRepository->save($secondFactor);
+    }
+
+    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = new VerifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->institution = $event->identityInstitution->getInstitution();
+        $secondFactor->type = 'sms';
+        $secondFactor->secondFactorIdentifier = $event->phoneNumber->getValue();
+        $secondFactor->commonName = $event->commonName;
+        $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
+        $secondFactor->registrationCode = $event->registrationCode;
+
+        $this->verifiedRepository->save($secondFactor);
     }
 
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
@@ -126,6 +161,21 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save($secondFactor);
     }
 
+    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = new VerifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->institution = $event->identityInstitution->getInstitution();
+        $secondFactor->type = $event->stepupProvider->getStepupProvider();
+        $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
+        $secondFactor->commonName = $event->commonName;
+        $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
+        $secondFactor->registrationCode = $event->registrationCode;
+
+        $this->verifiedRepository->save($secondFactor);
+    }
+
     public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
         $secondFactor = new UnverifiedSecondFactor();
@@ -136,6 +186,21 @@ class SecondFactorProjector extends Projector
         $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
         $this->unverifiedRepository->save($secondFactor);
+    }
+
+    public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = new VerifiedSecondFactor();
+        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+        $secondFactor->identityId = $event->identityId->getIdentityId();
+        $secondFactor->institution = $event->identityInstitution->getInstitution();
+        $secondFactor->type = 'u2f';
+        $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
+        $secondFactor->commonName = $event->commonName;
+        $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
+        $secondFactor->registrationCode = $event->registrationCode;
+
+        $this->verifiedRepository->save($secondFactor);
     }
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)

@@ -23,6 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\ImplicitlyVerifiedByIdp;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -30,6 +31,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -108,6 +110,14 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     }
 
     /**
+     * @return SecondFactorId
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @param string $registrationCode
      * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
@@ -116,6 +126,21 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
             && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
+    }
+
+    public function verifyImplicitly()
+    {
+        $this->apply(
+            new ImplicitlyVerifiedByIdp(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->id,
+                $this->type,
+                $this->secondFactorIdentifier,
+                DateTime::now(),
+                OtpGenerator::generate(8)
+            )
+        );
     }
 
     /**

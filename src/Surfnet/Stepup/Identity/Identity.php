@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
@@ -39,6 +40,7 @@ use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\ImplicitlyVerifiedByIdp;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
@@ -69,6 +71,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -235,8 +238,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             )
         );
 
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+        if (!$emailVerificationRequired) {
+            $this->verifyImplicitly($secondFactorId);
         }
     }
 
@@ -266,8 +269,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             )
         );
 
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+        if (!$emailVerificationRequired) {
+            $this->verifyImplicitly($secondFactorId);
         }
     }
 
@@ -299,8 +302,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             )
         );
 
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+        if (!$emailVerificationRequired) {
+            $this->verifyImplicitly($secondFactorId);
         }
     }
 
@@ -330,8 +333,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             )
         );
 
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+        if (!$emailVerificationRequired) {
+            $this->verifyImplicitly($secondFactorId);
         }
     }
 
@@ -359,6 +362,30 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $secondFactorToVerify->verifyEmail();
+    }
+
+    /**
+     * @param string $secondFactorId
+     */
+    public function verifyImplicitly($secondFactorId)
+    {
+        $this->assertNotForgotten();
+
+        $secondFactorToVerify = null;
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            /** @var Entity\UnverifiedSecondFactor $secondFactor */
+            if ($secondFactor->getId() === $secondFactorId) {
+                $secondFactorToVerify = $secondFactor;
+            }
+        }
+
+        if (!$secondFactorToVerify) {
+            throw new DomainException(
+                'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
+            );
+        }
+
+        $secondFactorToVerify->verifyImplicitly();
     }
 
     public function vetSecondFactor(
@@ -670,58 +697,127 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $secondFactor = UnverifiedSecondFactor::create(
-            $event->secondFactorId,
-            $this,
-            new SecondFactorType('yubikey'),
-            $event->yubikeyPublicId,
-            $event->emailVerificationWindow,
-            $event->emailVerificationNonce
-        );
+        $secondFactorType = new SecondFactorType('yubikey');
 
-        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+        if ($event->emailVerificationRequired) {
+            $secondFactor = UnverifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->yubikeyPublicId,
+                $event->emailVerificationWindow,
+                $event->emailVerificationNonce
+            );
+
+            $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        } else {
+            $secondFactor = VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->yubikeyPublicId,
+                DateTime::now(),
+                OtpGenerator::generate(8)
+            );
+
+            $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        }
     }
 
     protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $secondFactor = UnverifiedSecondFactor::create(
-            $event->secondFactorId,
-            $this,
-            new SecondFactorType('sms'),
-            $event->phoneNumber,
-            $event->emailVerificationWindow,
-            $event->emailVerificationNonce
-        );
+        $secondFactorType = new SecondFactorType('sms');
 
-        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+        if ($event->emailVerificationRequired) {
+            $secondFactor = UnverifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->phoneNumber,
+                $event->emailVerificationWindow,
+                $event->emailVerificationNonce
+            );
+
+            $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        } else {
+            $secondFactor = VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->phoneNumber,
+                DateTime::now(),
+                OtpGenerator::generate(8)
+            );
+
+            $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        }
     }
 
     protected function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $secondFactor = UnverifiedSecondFactor::create(
-            $event->secondFactorId,
-            $this,
-            new SecondFactorType((string) $event->stepupProvider),
-            $event->gssfId,
-            $event->emailVerificationWindow,
-            $event->emailVerificationNonce
-        );
+        $secondFactorType = new SecondFactorType((string)$event->stepupProvider);
 
-        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+        if ($event->emailVerificationRequired) {
+            $secondFactor = UnverifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->gssfId,
+                $event->emailVerificationWindow,
+                $event->emailVerificationNonce
+            );
+
+            $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        } else {
+            // WIP! Culprit here!
+            //
+            // In 2.7, we can't create the verified second factor here,
+            // because that's done via the email verified event. Post 2.7, we
+            // want to create it directly. But that's in conflict because this
+            // breaks replay of old events.
+            //
+            // To solve this, we need to introduce a version on the event to
+            // distinguish between version 2.7 and 2.8.
+            $secondFactor = VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->gssfId,
+                DateTime::now(),
+                OtpGenerator::generate(8)
+            );
+
+            $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        }
     }
 
     protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
-        $secondFactor = UnverifiedSecondFactor::create(
-            $event->secondFactorId,
-            $this,
-            new SecondFactorType('u2f'),
-            $event->keyHandle,
-            $event->emailVerificationWindow,
-            $event->emailVerificationNonce
-        );
+        $secondFactorType = new SecondFactorType('u2f');
 
-        $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+        if ($event->emailVerificationRequired) {
+            $secondFactor = UnverifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->keyHandle,
+                $event->emailVerificationWindow,
+                $event->emailVerificationNonce
+            );
+
+            $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        } else {
+            $secondFactor = VerifiedSecondFactor::create(
+                $event->secondFactorId,
+                $this,
+                $secondFactorType,
+                $event->keyHandle,
+                DateTime::now(),
+                OtpGenerator::generate(8)
+            );
+
+            $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+        }
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
@@ -730,10 +826,28 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         /** @var UnverifiedSecondFactor $unverified */
         $unverified = $this->unverifiedSecondFactors->get($secondFactorId);
-        $verified = $unverified->asVerified($event->registrationRequestedAt, $event->registrationCode);
 
-        $this->unverifiedSecondFactors->remove($secondFactorId);
-        $this->verifiedSecondFactors->set($secondFactorId, $verified);
+        // In version 2.7.x of middleware, institutions that do not require
+        // email verification still transitioned from unverified to verified,
+        // but having an EmailVerifiedEvent applied when handling a
+        // "possession proven" event.
+        //
+        // Starting from 2.8.0, the proven event immediately creates a
+        // verified second factor without triggering the "email verified"
+        // event. The 2.7-style events must be supported in later versions of
+        // Stepup because they are replayed by Broadway when revoking
+        // tokens. To accomodate revocation of tokens created without email
+        // verification in release 2.7, we check an unverified second factor
+        // exists before removing it.
+        //
+        // So, "$unverified === null" occurs when email verification is
+        // enabled, or when email verification was disabled in release 2.7.
+        if ($unverified !== null) {
+            $verified = $unverified->asVerified($event->registrationRequestedAt, $event->registrationCode);
+
+            $this->unverifiedSecondFactors->remove($secondFactorId);
+            $this->verifiedSecondFactors->set($secondFactorId, $verified);
+        }
     }
 
     protected function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)

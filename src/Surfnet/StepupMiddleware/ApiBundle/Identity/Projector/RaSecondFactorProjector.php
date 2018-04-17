@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\ImplicitlyVerifiedByIdp;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -187,6 +188,11 @@ class RaSecondFactorProjector extends Projector
     }
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $this->updateStatus($event->secondFactorId, SecondFactorStatus::verified());
+    }
+
+    public function applyImplicitlyVerifiedByIdpEvent(ImplicitlyVerifiedByIdp $event)
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::verified());
     }

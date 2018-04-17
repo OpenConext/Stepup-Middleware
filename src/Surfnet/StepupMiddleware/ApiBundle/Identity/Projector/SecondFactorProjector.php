@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\ImplicitlyVerifiedByIdp;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -92,50 +93,58 @@ class SecondFactorProjector extends Projector
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $secondFactor = new UnverifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->type = 'yubikey';
-        $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
-        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        if ($event->emailVerificationRequired) {
+            $secondFactor = new UnverifiedSecondFactor();
+            $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+            $secondFactor->identityId = $event->identityId->getIdentityId();
+            $secondFactor->type = 'yubikey';
+            $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
+            $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
-        $this->unverifiedRepository->save($secondFactor);
+            $this->unverifiedRepository->save($secondFactor);
+        }
     }
 
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $secondFactor = new UnverifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->type = 'sms';
-        $secondFactor->secondFactorIdentifier = $event->phoneNumber->getValue();
-        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        if ($event->emailVerificationRequired) {
+            $secondFactor = new UnverifiedSecondFactor();
+            $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+            $secondFactor->identityId = $event->identityId->getIdentityId();
+            $secondFactor->type = 'sms';
+            $secondFactor->secondFactorIdentifier = $event->phoneNumber->getValue();
+            $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
-        $this->unverifiedRepository->save($secondFactor);
+            $this->unverifiedRepository->save($secondFactor);
+        }
     }
 
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $secondFactor = new UnverifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->type = $event->stepupProvider->getStepupProvider();
-        $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
-        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        if ($event->emailVerificationRequired) {
+            $secondFactor = new UnverifiedSecondFactor();
+            $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+            $secondFactor->identityId = $event->identityId->getIdentityId();
+            $secondFactor->type = $event->stepupProvider->getStepupProvider();
+            $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
+            $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
-        $this->unverifiedRepository->save($secondFactor);
+            $this->unverifiedRepository->save($secondFactor);
+        }
     }
 
     public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
-        $secondFactor = new UnverifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->type = 'u2f';
-        $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
-        $secondFactor->verificationNonce = $event->emailVerificationNonce;
+        if ($event->emailVerificationRequired) {
+            $secondFactor = new UnverifiedSecondFactor();
+            $secondFactor->id = $event->secondFactorId->getSecondFactorId();
+            $secondFactor->identityId = $event->identityId->getIdentityId();
+            $secondFactor->type = 'u2f';
+            $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
+            $secondFactor->verificationNonce = $event->emailVerificationNonce;
 
-        $this->unverifiedRepository->save($secondFactor);
+            $this->unverifiedRepository->save($secondFactor);
+        }
     }
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
@@ -154,6 +163,20 @@ class SecondFactorProjector extends Projector
 
         $this->verifiedRepository->save($verified);
         $this->unverifiedRepository->remove($unverified);
+    }
+
+    public function applyImplicitlyVerifiedByIdpEvent(ImplicitlyVerifiedByIdp $event)
+    {
+        $verified = new VerifiedSecondFactor();
+        $verified->id = $event->secondFactorId->getSecondFactorId();
+        $verified->identityId = $event->identityId->getIdentityId();
+        $verified->institution = $event->identityInstitution->getInstitution();
+        $verified->type = $event->secondFactorType->getSecondFactorType();
+        $verified->secondFactorIdentifier = $event->secondFactorIdentifier;
+        $verified->registrationCode = $event->registrationCode;
+        $verified->registrationRequestedAt = $event->registrationRequestedAt;
+
+        $this->verifiedRepository->save($verified);
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)

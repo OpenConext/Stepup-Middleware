@@ -33,9 +33,6 @@ parameters:
     registration_authority_api_password: secret
     management_password: secret
 
-    # Hostname for the graylog server. Protocol GELF UDP, Port 12200
-    graylog_hostname: graylog.host.tld
-    
     self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}
     email_sender_name: SURFnet bv
     email_sender_email: noreply@surfnet.nl
@@ -53,5 +50,10 @@ parameters:
             loa: 3
         tiqr:
             loa: 3
-    # Sets the number of tokens allowed for each identity
-    number_of_tokens_per_identity: 3
+
+    # Sets the number of tokens allowed for each identity.
+    #
+    # This is the global, application wide default. This configuration should be specified for each institution in the
+    # institution config (middleware api). The value configured in the parameters.yml will be used as the
+    # fallback/default value.
+    number_of_tokens_per_identity: 1

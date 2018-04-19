@@ -62,12 +62,20 @@ final class RegistrationMailService
     private $fallbackLocale;
 
     /**
+     * @var string
+     */
+    private $selfServiceUrl;
+
+    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
      * @param EngineInterface $templateEngine
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
+     * @param $selfServiceUrl
+     *
+     * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
@@ -75,7 +83,8 @@ final class RegistrationMailService
         TranslatorInterface $translator,
         EngineInterface $templateEngine,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale
+        $fallbackLocale,
+        $selfServiceUrl
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
@@ -85,6 +94,7 @@ final class RegistrationMailService
         $this->templateEngine = $templateEngine;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
+        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     /**
@@ -124,6 +134,7 @@ final class RegistrationMailService
             'registrationCode' => $registrationCode,
             'expirationDate'   => $expirationDate,
             'ras'              => $ras,
+            'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
         // Rendering file template instead of string
@@ -181,6 +192,7 @@ final class RegistrationMailService
             'registrationCode' => $registrationCode,
             'expirationDate'   => $expirationDate,
             'raLocations'      => $raLocations,
+            'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
         // Rendering file template instead of string

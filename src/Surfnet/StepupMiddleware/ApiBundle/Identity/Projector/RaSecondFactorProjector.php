@@ -23,19 +23,25 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -45,6 +51,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RaSecondFactorProjector extends Projector
 {
@@ -120,68 +127,127 @@ class RaSecondFactorProjector extends Projector
 
     public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'yubikey',
+            (string) $event->yubikeyPublicId,
+            $event->commonName,
+            $event->email
+        );
+    }
 
-        $this->raSecondFactorRepository->save(
-            new RaSecondFactor(
-                (string) $event->secondFactorId,
-                'yubikey',
-                (string) $event->yubikeyPublicId,
-                $identity->id,
-                $identity->institution,
-                $event->commonName,
-                $event->email
-            )
+    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    {
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'yubikey',
+            (string) $event->yubikeyPublicId,
+            $event->commonName,
+            $event->email
         );
     }
 
     public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'sms',
+            (string) $event->phoneNumber,
+            $event->commonName,
+            $event->email
+        );
+    }
 
-        $this->raSecondFactorRepository->save(
-            new RaSecondFactor(
-                (string) $event->secondFactorId,
-                'sms',
-                (string) $event->phoneNumber,
-                $identity->id,
-                $identity->institution,
-                $event->commonName,
-                $event->email
-            )
+    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    {
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'sms',
+            (string) $event->phoneNumber,
+            $event->commonName,
+            $event->email
         );
     }
 
     public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            (string) $event->stepupProvider,
+            (string) $event->gssfId,
+            $event->commonName,
+            $event->email
+        );
+    }
 
-        $this->raSecondFactorRepository->save(
-            new RaSecondFactor(
-                (string) $event->secondFactorId,
-                (string) $event->stepupProvider,
-                (string) $event->gssfId,
-                $identity->id,
-                $identity->institution,
-                $event->commonName,
-                $event->email
-            )
+    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    {
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            (string) $event->stepupProvider,
+            (string) $event->gssfId,
+            $event->commonName,
+            $event->email
         );
     }
 
     public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'u2f',
+            $event->keyHandle->getValue(),
+            $event->commonName,
+            $event->email
+        );
+    }
+
+    public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    {
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->secondFactorId,
+            'u2f',
+            $event->keyHandle->getValue(),
+            $event->commonName,
+            $event->email
+        );
+    }
+
+    /**
+     * @param string $identityId
+     * @param string $secondFactorId
+     * @param string $secondFactorType
+     * @param string $secondFactorIdentifier
+     * @param CommonName $commonName
+     * @param Email $email
+     */
+    private function saveRaSecondFactor(
+        $identityId,
+        $secondFactorId,
+        $secondFactorType,
+        $secondFactorIdentifier,
+        CommonName $commonName,
+        Email $email
+    ) {
+        $identity = $this->identityRepository->find($identityId);
 
         $this->raSecondFactorRepository->save(
             new RaSecondFactor(
-                (string) $event->secondFactorId,
-                'u2f',
-                $event->keyHandle->getValue(),
+                (string) $secondFactorId,
+                $secondFactorType,
+                $secondFactorIdentifier,
                 $identity->id,
                 $identity->institution,
-                $event->commonName,
-                $event->email
+                $commonName,
+                $email
             )
         );
     }

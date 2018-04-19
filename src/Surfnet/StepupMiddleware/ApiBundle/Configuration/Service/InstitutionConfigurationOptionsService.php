@@ -29,9 +29,21 @@ class InstitutionConfigurationOptionsService
      */
     private $repository;
 
-    public function __construct(InstitutionConfigurationOptionsRepository $repository)
-    {
+    /**
+     * @var int
+     */
+    private $numberOfTokensPerIdentity;
+
+    /**
+     * @param InstitutionConfigurationOptionsRepository $repository
+     * @param int $numberOfTokensPerIdentity
+     */
+    public function __construct(
+        InstitutionConfigurationOptionsRepository $repository,
+        $numberOfTokensPerIdentity
+    ) {
         $this->repository = $repository;
+        $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
     /**
@@ -49,5 +61,26 @@ class InstitutionConfigurationOptionsService
     public function findInstitutionConfigurationOptionsFor(Institution $institution)
     {
         return $this->repository->findConfigurationOptionsFor($institution);
+    }
+
+    /**
+     * Retrieve the number of tokens an identity is allowed to register/vet for a given institution.
+     *
+     * When the DISABLED value is set on the institution (when no specific configuration was pushed) the application
+     * default is returned.
+     *
+     * @param Institution $institution
+     * @return int
+     */
+    public function getMaxNumberOfTokensFor(Institution $institution)
+    {
+        $configuration = $this->findInstitutionConfigurationOptionsFor($institution);
+
+        if ($configuration->numberOfTokensPerIdentityOption->isEnabled()) {
+            return $configuration->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
+        }
+
+        // Return the application globally set default when no institution specific value was set
+        return $this->numberOfTokensPerIdentity;
     }
 }

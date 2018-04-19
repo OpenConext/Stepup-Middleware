@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016 SURFnet B.V.
+ * Copyright 2018 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
  */
 
 return [
-    'expectedPropertyPath' => 'Institution(another-organisation.test)',
-    'expectErrorMessageToContain' => 'Expected only options',
+    'expectedPropertyPath' => 'Institution(surfnet.nl)',
+    'expectErrorMessageToContain' => 'must be an integer',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
             'verify_email' => false,
-            'number_of_tokens_per_identity' => 1,
+            'number_of_tokens_per_identity' => true,
             'allowed_second_factors' => [],
-        ],
-        'another-organisation.test' => []
-    ],
+        ]
+    ]
 ];

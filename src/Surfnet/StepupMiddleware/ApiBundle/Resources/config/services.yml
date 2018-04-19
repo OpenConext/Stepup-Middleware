@@ -85,6 +85,7 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+            - "%number_of_tokens_per_identity%"
 
     surfnet_stepup_middleware_api.service.allowed_second_factor_list:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService

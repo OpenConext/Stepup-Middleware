@@ -54,6 +54,13 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $verifyEmailOption;
 
     /**
+     * @Assert\Type(type="integer")
+     *
+     * @var int
+     */
+    public $numberOfTokensPerIdentityOption;
+
+    /**
      * @Assert\NotNull()
      */
     public $allowedSecondFactors;

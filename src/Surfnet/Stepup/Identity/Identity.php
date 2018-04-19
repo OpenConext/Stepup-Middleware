@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
@@ -32,6 +33,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEv
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
@@ -40,14 +42,17 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -69,6 +74,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -218,25 +224,36 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
-        $emailVerificationNonce = TokenGenerator::generateNonce();
+        if ($emailVerificationRequired) {
+            $emailVerificationNonce = TokenGenerator::generateNonce();
 
-        $this->apply(
-            new YubikeyPossessionProvenEvent(
-                $this->id,
-                $this->institution,
-                $secondFactorId,
-                $yubikeyPublicId,
-                $emailVerificationRequired,
-                $emailVerificationWindow,
-                $emailVerificationNonce,
-                $this->commonName,
-                $this->email,
-                $this->preferredLocale
-            )
-        );
-
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+            $this->apply(
+                new YubikeyPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    $emailVerificationRequired,
+                    $emailVerificationWindow,
+                    $emailVerificationNonce,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            );
+        } else {
+            $this->apply(
+                new YubikeyPossessionProvenAndVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    $this->commonName,
+                    $this->email,
+                    DateTime::now(),
+                    OtpGenerator::generate(8)
+                )
+            );
         }
     }
 
@@ -249,25 +266,36 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
-        $emailVerificationNonce = TokenGenerator::generateNonce();
+        if ($emailVerificationRequired) {
+            $emailVerificationNonce = TokenGenerator::generateNonce();
 
-        $this->apply(
-            new PhonePossessionProvenEvent(
-                $this->id,
-                $this->institution,
-                $secondFactorId,
-                $phoneNumber,
-                $emailVerificationRequired,
-                $emailVerificationWindow,
-                $emailVerificationNonce,
-                $this->commonName,
-                $this->email,
-                $this->preferredLocale
-            )
-        );
-
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+            $this->apply(
+                new PhonePossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $phoneNumber,
+                    $emailVerificationRequired,
+                    $emailVerificationWindow,
+                    $emailVerificationNonce,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            );
+        } else {
+            $this->apply(
+                new PhonePossessionProvenAndVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $phoneNumber,
+                    $this->commonName,
+                    $this->email,
+                    DateTime::now(),
+                    OtpGenerator::generate(8)
+                )
+            );
         }
     }
 
@@ -281,26 +309,38 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
-        $emailVerificationNonce = TokenGenerator::generateNonce();
+        if ($emailVerificationRequired) {
+            $emailVerificationNonce = TokenGenerator::generateNonce();
 
-        $this->apply(
-            new GssfPossessionProvenEvent(
-                $this->id,
-                $this->institution,
-                $secondFactorId,
-                $provider,
-                $gssfId,
-                $emailVerificationRequired,
-                $emailVerificationWindow,
-                $emailVerificationNonce,
-                $this->commonName,
-                $this->email,
-                $this->preferredLocale
-            )
-        );
-
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+            $this->apply(
+                new GssfPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $provider,
+                    $gssfId,
+                    $emailVerificationRequired,
+                    $emailVerificationWindow,
+                    $emailVerificationNonce,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            );
+        } else {
+            $this->apply(
+                new GssfPossessionProvenAndVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $provider,
+                    $gssfId,
+                    $this->commonName,
+                    $this->email,
+                    DateTime::now(),
+                    OtpGenerator::generate(8)
+                )
+            );
         }
     }
 
@@ -313,25 +353,36 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
-        $emailVerificationNonce = TokenGenerator::generateNonce();
+        if ($emailVerificationRequired) {
+            $emailVerificationNonce = TokenGenerator::generateNonce();
 
-        $this->apply(
-            new U2fDevicePossessionProvenEvent(
-                $this->id,
-                $this->institution,
-                $secondFactorId,
-                $keyHandle,
-                $emailVerificationRequired,
-                $emailVerificationWindow,
-                $emailVerificationNonce,
-                $this->commonName,
-                $this->email,
-                $this->preferredLocale
-            )
-        );
-
-        if ($emailVerificationRequired === false) {
-            $this->verifyEmail($emailVerificationNonce);
+            $this->apply(
+                new U2fDevicePossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $keyHandle,
+                    $emailVerificationRequired,
+                    $emailVerificationWindow,
+                    $emailVerificationNonce,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            );
+        } else {
+            $this->apply(
+                new U2fDevicePossessionProvenAndVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $keyHandle,
+                    $this->commonName,
+                    $this->email,
+                    DateTime::now(),
+                    OtpGenerator::generate(8)
+                )
+            );
         }
     }
 
@@ -682,6 +733,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
+    protected function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = VerifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType('yubikey'),
+            $event->yubikeyPublicId,
+            $event->registrationRequestedAt,
+            $event->registrationCode
+        );
+
+        $this->verifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
     protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
     {
         $secondFactor = UnverifiedSecondFactor::create(
@@ -694,6 +759,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
 
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = VerifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType('sms'),
+            $event->phoneNumber,
+            $event->registrationRequestedAt,
+            $event->registrationCode
+        );
+
+        $this->verifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
     protected function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
@@ -710,6 +789,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
+    protected function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = VerifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType((string) $event->stepupProvider),
+            $event->gssfId,
+            $event->registrationRequestedAt,
+            $event->registrationCode
+        );
+
+        $this->verifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
     protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
         $secondFactor = UnverifiedSecondFactor::create(
@@ -722,6 +815,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
 
         $this->unverifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    {
+        $secondFactor = VerifiedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            new SecondFactorType('u2f'),
+            $event->keyHandle,
+            $event->registrationRequestedAt,
+            $event->registrationCode
+        );
+
+        $this->verifiedSecondFactors->set((string) $secondFactor->getId(), $secondFactor);
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)

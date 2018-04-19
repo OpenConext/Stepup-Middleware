@@ -281,8 +281,8 @@ Second Factor Only (SFO) mode requires that AuthnRequests use LoA aliases in the
            "en_GB": "<p>Dear {{ commonName }},</p>\n\n<p>Thank you for activating your token. Your token is now ready for use.</p>"
        },
        "second_factor_revoked": {
-            "nl_NL": "<p>Beste {{ commonName }},</p><p>{% if isRevokedByRa %}De registratie van je {{ tokenType }} token met ID {{ tokenIdentifier }} is verwijderd door een beheerder.{% else %}Je hebt de registratie voor je {{ tokenType }} token met ID {{ tokenIdentifier }} verwijderd. Neem direct contact op met de helpdesk van je instelling als je dit zelf niet gedaan hebt, omdat dit kan betekenen dat je account gecompromitteerd is.{% endif %}</p> Je kunt dit token niet meer gebruiken om in te loggen bij op SURFconext aangesloten services die een tweede inlogstap vereisen.</p><p> Wil je een nieuw token aanvragen? Ga dan naar <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> en doorloop het registratieproces opnieuw.</p><p> Voor meer informatie kun je terecht op onze wiki: <a href=\"https://support.surfconext.nl/faq-sterke-authenticatie\">https://support.surfconext.nl/faq-sterke-authenticatie</a></p><p>Met vriendelijke groet,</p><p>SURFnet</p>",
-            "en_GB": "<p>Dear {{ commonName }},</p><p>{% if isRevokedByRa %}The registration of your {{ tokenType }} with ID {{ tokenIdentifier }} was deleted by an administrator.{% else %}You have deleted the registration of your {{ tokenType }} token with ID {{ tokenIdentifier }}. If you did not delete your token you must immediately contact the support desk of your institution, as this may indicate that your account has been compromised.{% endif %}</p> You can no longer use this token to access SURFconext services that require two-step authentication.</p><p>Do you want to replace your token? Please visit <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> and register a new token.</p><p>For more info please visit our wiki: <a href=\"https://support.surfconext.nl/faq-strong-authentication\">https://support.surfconext.nl/faq-strong-authentication</a></p><p>Best regards,</p><p>SURFnet</p>"
+            "nl_NL": "<p>Beste {{ commonName }},</p><p>{% if isRevokedByRa %}De registratie van je {{ tokenType }} token met ID {{ tokenIdentifier }} is verwijderd door een beheerder.{% else %}Je hebt de registratie voor je {{ tokenType }} token met ID {{ tokenIdentifier }} verwijderd. Neem direct contact op met de helpdesk van je instelling als je dit zelf niet gedaan hebt, omdat dit kan betekenen dat je account gecompromitteerd is.{% endif %}</p> Je kunt dit token niet meer gebruiken om in te loggen bij op OpenConext aangesloten services die een tweede inlogstap vereisen.</p><p> Wil je een nieuw token aanvragen? Ga dan naar <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> en doorloop het registratieproces opnieuw.</p><p> Voor meer informatie kun je terecht op onze wiki: <a href=\"https://support.surfconext.nl/faq-sterke-authenticatie\">https://support.surfconext.nl/faq-sterke-authenticatie</a></p><p>Met vriendelijke groet,</p><p>SURFnet</p>",
+            "en_GB": "<p>Dear {{ commonName }},</p><p>{% if isRevokedByRa %}The registration of your {{ tokenType }} with ID {{ tokenIdentifier }} was deleted by an administrator.{% else %}You have deleted the registration of your {{ tokenType }} token with ID {{ tokenIdentifier }}. If you did not delete your token you must immediately contact the support desk of your institution, as this may indicate that your account has been compromised.{% endif %}</p> You can no longer use this token to access OpenConext services that require two-step authentication.</p><p>Do you want to replace your token? Please visit <a href=\"{{ selfServiceUrl }}\">{{ selfServiceUrl }}</a> and register a new token.</p><p>For more info please visit our wiki: <a href=\"https://support.surfconext.nl/faq-strong-authentication\">https://support.surfconext.nl/faq-strong-authentication</a></p><p>Best regards,</p><p>SURFnet</p>"
        }
     },
     "gateway": {
@@ -383,6 +383,7 @@ The options must have the following keys:
  information of specific RA(A)s. Default: false
 * `show_raa_contact_information`: (boolean) whether an institution shows RAAs' contact information when listing RAs, for example when showing locations for the vetting process. Default: true
 * `verify_email`: (boolean) If disabled, users of this institution are not required to validate their e-mail address when registering new tokens. Default: true
+* `number_of_tokens_per_identity` (integer) The number of tokens an identity is allowed to vet. If the option is not set, the default value of `1` is set.
 * `allowed_second_factors`: (string[]) a list of second factor types that are allowed to be registered by users of this institution. This option only affects the registration of new second factors, it does not affect second factors that have been registered or vetted. If the list is empty all supported second factors are allowed. The supported second factors are found in the [Stepup-bundle](https://github.com/OpenConext/Stepup-bundle/blob/develop/src/Value/SecondFactorType.php#L31-L37). Default: empty list (all available second factors are allowed).
 
 The structure of an institution configuration is therefore:
@@ -392,12 +393,14 @@ The structure of an institution configuration is therefore:
         "use_ra_locations": false,
         "show_raa_contact_information": true,
         "verify_email": true,
+        "number_of_tokens_per_identity": 3,
         "allowed_second_factors": ["yubikey", "sms"]
     },
     "another-organisation.example": {
         "use_ra_locations": true,
         "show_raa_contact_information": false,
         "verify_email": true,
+        "number_of_tokens_per_identity": 1,
         "allowed_second_factors": []
     }
 }

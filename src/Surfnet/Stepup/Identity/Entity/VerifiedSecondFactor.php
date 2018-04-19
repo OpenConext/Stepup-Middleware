@@ -108,6 +108,14 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     }
 
     /**
+     * @return SecondFactorId
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * @param string $registrationCode
      * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool

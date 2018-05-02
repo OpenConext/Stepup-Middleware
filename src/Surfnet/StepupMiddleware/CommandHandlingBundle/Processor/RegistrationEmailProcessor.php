@@ -23,12 +23,20 @@ use DateInterval;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\PossessionProvenAndVerified;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class RegistrationEmailProcessor extends Processor
 {
     /**
@@ -63,7 +71,32 @@ final class RegistrationEmailProcessor extends Processor
         $this->raLocationsService                     = $raLocationsService;
     }
 
+    public function handlePhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    {
+        $this->handlePossessionProvenAndVerifiedEvent($event);
+    }
+
+    public function handleYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    {
+        $this->handlePossessionProvenAndVerifiedEvent($event);
+    }
+
+    public function handleU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    {
+        $this->handlePossessionProvenAndVerifiedEvent($event);
+    }
+
+    public function handleGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    {
+        $this->handlePossessionProvenAndVerifiedEvent($event);
+    }
+
     public function handleEmailVerifiedEvent(EmailVerifiedEvent $event)
+    {
+        $this->handlePossessionProvenAndVerifiedEvent($event);
+    }
+
+    private function handlePossessionProvenAndVerifiedEvent(PossessionProvenAndVerified $event)
     {
         $institution = new Institution($event->identityInstitution->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
@@ -94,7 +127,7 @@ final class RegistrationEmailProcessor extends Processor
      * @param EmailVerifiedEvent $event
      * @param Institution $institution
      */
-    private function sendRegistrationEmailWithRaLocations(EmailVerifiedEvent $event, Institution $institution)
+    private function sendRegistrationEmailWithRaLocations(PossessionProvenAndVerified $event, Institution $institution)
     {
         $this->registrationMailService->sendRegistrationEmailWithRaLocations(
             (string)$event->preferredLocale,
@@ -107,10 +140,10 @@ final class RegistrationEmailProcessor extends Processor
     }
 
     /**
-     * @param EmailVerifiedEvent $event
+     * @param PossessionProvenAndVerified $event
      * @param RegistrationAuthorityCredentials[] $ras
      */
-    private function sendRegistrationEmailWithRas(EmailVerifiedEvent $event, array $ras)
+    private function sendRegistrationEmailWithRas(PossessionProvenAndVerified $event, array $ras)
     {
         $this->registrationMailService->sendRegistrationEmailWithRas(
             (string)$event->preferredLocale,
@@ -126,7 +159,7 @@ final class RegistrationEmailProcessor extends Processor
      * @param EmailVerifiedEvent $event
      * @return DateTime
      */
-    private function getExpirationDateOfRegistration(EmailVerifiedEvent $event)
+    private function getExpirationDateOfRegistration(PossessionProvenAndVerified $event)
     {
         return $event->registrationRequestedAt->add(
             new DateInterval('P14D')

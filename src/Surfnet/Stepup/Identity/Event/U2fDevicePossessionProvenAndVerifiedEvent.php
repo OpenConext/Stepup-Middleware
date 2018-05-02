@@ -24,13 +24,14 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable
+class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
@@ -53,6 +54,11 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     public $email;
 
     /**
+     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     */
+    public $preferredLocale;
+
+    /**
      * @var \Surfnet\Stepup\DateTime\DateTime
      */
     public $registrationRequestedAt;
@@ -69,6 +75,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param U2fKeyHandle $keyHandle
      * @param CommonName $commonName
      * @param Email $email
+     * @param Locale $locale
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      */
@@ -79,6 +86,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         U2fKeyHandle $keyHandle,
         CommonName $commonName,
         Email $email,
+        Locale $locale,
         DateTime $registrationRequestedAt,
         $registrationCode
     ) {
@@ -88,6 +96,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         $this->keyHandle = $keyHandle;
         $this->commonName = $commonName;
         $this->email = $email;
+        $this->preferredLocale = $locale;
         $this->registrationRequestedAt = $registrationRequestedAt;
         $this->registrationCode = $registrationCode;
     }
@@ -106,6 +115,11 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public static function deserialize(array $data)
     {
+        // BC compatibility for event replay in test-environment only (2.8.0, fixed in 2.8.1)
+        if (!isset($data['preferred_locale'])) {
+            $data['preferred_locale'] = 'en_GB';
+        }
+
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
@@ -113,6 +127,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
             U2fKeyHandle::unknown(),
             CommonName::unknown(),
             Email::unknown(),
+            new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
             (string) $data['registration_code']
         );
@@ -126,6 +141,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
             'second_factor_id'            => (string) $this->secondFactorId,
             'registration_requested_at'   => (string) $this->registrationRequestedAt,
             'registration_code'           => $this->registrationCode,
+            'preferred_locale'            => (string) $this->preferredLocale,
         ];
     }
 

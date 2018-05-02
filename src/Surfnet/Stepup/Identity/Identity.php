@@ -250,6 +250,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                     $yubikeyPublicId,
                     $this->commonName,
                     $this->email,
+                    $this->preferredLocale,
                     DateTime::now(),
                     OtpGenerator::generate(8)
                 )
@@ -292,6 +293,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                     $phoneNumber,
                     $this->commonName,
                     $this->email,
+                    $this->preferredLocale,
                     DateTime::now(),
                     OtpGenerator::generate(8)
                 )
@@ -337,6 +339,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                     $gssfId,
                     $this->commonName,
                     $this->email,
+                    $this->preferredLocale,
                     DateTime::now(),
                     OtpGenerator::generate(8)
                 )
@@ -379,6 +382,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                     $keyHandle,
                     $this->commonName,
                     $this->email,
+                    $this->preferredLocale,
                     DateTime::now(),
                     OtpGenerator::generate(8)
                 )

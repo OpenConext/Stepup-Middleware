@@ -32,7 +32,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class EmailVerifiedEvent extends IdentityEvent implements Forgettable
+class EmailVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId

@@ -438,7 +438,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo(
+        if ($secondFactorWithHighestLoa === null || !$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo(
             $registrantsSecondFactor,
             $secondFactorTypeService
         )) {

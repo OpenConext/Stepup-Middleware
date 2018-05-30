@@ -438,7 +438,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        if ($secondFactorWithHighestLoa === null || !$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo(
+        if ($secondFactorWithHighestLoa === null) {
+            throw new DomainException(
+                sprintf(
+                    'Vetting failed: authority %s has %d vetted second factors!',
+                    $this->id,
+                    count($this->vettedSecondFactors)
+                )
+            );
+        }
+
+        if (!$secondFactorWithHighestLoa->hasEqualOrHigherLoaComparedTo(
             $registrantsSecondFactor,
             $secondFactorTypeService
         )) {

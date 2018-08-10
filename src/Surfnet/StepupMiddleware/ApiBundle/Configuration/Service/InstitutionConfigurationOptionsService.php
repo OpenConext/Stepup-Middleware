@@ -56,7 +56,7 @@ class InstitutionConfigurationOptionsService
 
     /**
      * @param Institution $institution
-     * @return InstitutionConfigurationOptions
+     * @return InstitutionConfigurationOptions|null
      */
     public function findInstitutionConfigurationOptionsFor(Institution $institution)
     {
@@ -76,7 +76,7 @@ class InstitutionConfigurationOptionsService
     {
         $configuration = $this->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($configuration->numberOfTokensPerIdentityOption->isEnabled()) {
+        if ($configuration !== null && $configuration->numberOfTokensPerIdentityOption->isEnabled()) {
             return $configuration->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         }
 

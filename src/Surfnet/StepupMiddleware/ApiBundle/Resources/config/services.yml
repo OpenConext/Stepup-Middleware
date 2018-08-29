@@ -1,4 +1,8 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
     # Repositories
     surfnet_stepup_middleware_api.repository.configured_institution:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository
@@ -103,13 +107,8 @@ services:
             arguments:
                 - "@surfnet_stepup_middleware_api.repository.ra_location"
 
-    surfnet_stepup_middleware_api.service.abstract_search:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AbstractSearchService
-        abstract: true
-
     surfnet_stepup_middleware_api.service.second_factor:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.unverified_second_factor"
             - "@surfnet_stepup_middleware_api.repository.verified_second_factor"
@@ -117,25 +116,21 @@ services:
 
     surfnet_stepup_middleware_api.service.institution_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\InstitutionListingService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.institution_listing"
 
     surfnet_stepup_middleware_api.service.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.ra_candidate"
 
     surfnet_stepup_middleware_api.service.ra_second_factor:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.ra_second_factor"
 
     surfnet_stepup_middleware_api.service.identity:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.identity"
             - "@surfnet_stepup_middleware_api.repository.ra_listing"
@@ -143,19 +138,16 @@ services:
 
     surfnet_stepup_middleware_api.service.ra_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.ra_listing"
 
     surfnet_stepup_middleware_api.service.sraa:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.sraa"
 
     surfnet_stepup_middleware_api.service.audit_log:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService
-        parent: surfnet_stepup_middleware_api.service.abstract_search
         arguments:
             - "@surfnet_stepup_middleware_api.repository.audit_log"
 

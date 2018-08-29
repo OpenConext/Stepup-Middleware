@@ -25,15 +25,15 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator
         arguments:
-            - @doctrine.dbal.middleware_connection
-            - @surfnet_stepup.event_store.simple_serializer
-            - @surfnet_stepup.event_store.simple_serializer
+            - "@doctrine.dbal.middleware_connection"
+            - "@surfnet_stepup.event_store.simple_serializer"
+            - "@surfnet_stepup.event_store.simple_serializer"
             - 'event_stream'
             - 'event_stream_sensitive_data'
 
     middleware.event_replay.event_stream_replayer:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer
         arguments:
-            - @surfnet_stepup_middleware_command_handling.event_bus.buffered
-            - @middleware.event_replay.dbal_event_hydrator
-            - @surfnet_stepup_middleware_middleware.dbal_connection_helper
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@middleware.event_replay.dbal_event_hydrator"
+            - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"

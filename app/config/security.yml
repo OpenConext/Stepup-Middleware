@@ -8,6 +8,7 @@ security:
             security: false
         api:
             http_basic: ~
+            logout_on_user_change: true
             entry_point: surfnet_stepup_middleware_api.security.json_basic_auth_entry_point
             stateless:  true
 
@@ -20,13 +21,13 @@ security:
             memory:
                 users:
                     ss:
-                        password: %selfservice_api_password%
+                        password: "%selfservice_api_password%"
                         roles: 'ROLE_SS'
                     ra:
-                        password: %registration_authority_api_password%
+                        password: "%registration_authority_api_password%"
                         roles: 'ROLE_RA'
                     management:
-                        password: %management_password%
+                        password: "%management_password%"
                         roles: 'ROLE_MANAGEMENT'
 
     encoders:

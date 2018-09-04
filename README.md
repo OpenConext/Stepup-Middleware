@@ -70,4 +70,7 @@ gssp_allowed_sps:
 ```
  * Configure these SPs through the Middleware configuration API.
 
+## Release strategy
+Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
+
 [event-serialization-example]: ./src/Surfnet/Stepup/Tests/Configuration/Event/EventSerializationAndDeserializationTest.php

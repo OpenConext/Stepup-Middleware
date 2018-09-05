@@ -9,9 +9,9 @@ The configuration uses the JSON syntax.
 
 The configuration must be a json object with the following keys:
 
-* [sraa](sraa)
-* [email_templates](template-variables)
-* [gateway](gateway)
+* [sraa](#sraa)
+* [email_templates](#template-variables)
+* [gateway](#gateway)
 
 Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is therefore:
 

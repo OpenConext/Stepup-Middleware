@@ -147,7 +147,7 @@ The following list of emails is intended to be used in the future, the functiona
 
 Each email contains an object, where each property corresponds with an IETF language tag (2 letter lower cased language code + underscore + 2 letter upper cased country code, i.e. nl_NL, nl_BE) that may be supported in the application.
 
-
+```
 email_templates: {
     confirm_email: {
         nl_NL: "Volledige template met een {{ variableName }} variabele in Twig syntax. May include <b>HTML</b> and 
@@ -155,8 +155,9 @@ new lines.",
         en_GB: "Full template with a {{ variableName }} variable in Twig syntax"
     }
 }
+```
 
-Processing
+### Processing
 
 There will only be validation if the required email-template properties are present, each with at least the default language ("en_GB") template available. All previous templates will be removed from the database and the new templates will be inserted. 
 Template Variables
@@ -213,6 +214,7 @@ Processing
 Everything will be validated against the requirements listed above. Once the validation passes, the whole configuration that is in the database is removed and the new configuration is inserted. In other words: the configuration is overwritten.
 Example
 
+```
 gateway: {
 	identity_providers: [
 		{
@@ -250,3 +252,4 @@ gateway: {
         }
     ]
 }
+```

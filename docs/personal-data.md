@@ -277,4 +277,4 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 
 ## Configuration Events
 
-The configuration events [configuration events](../../../tree/develop/src/Surfnet/Stepup/Configuraton/Event/) in Stepup handle the the run time configuration of Stepup. With the exception of [SraaUpdatedEvent](../src/Surfnet/Stepup/Configuration/Event/SraaUpdatedEvent.php), which contains the *name_id* of the SRAA's, these events do not involve Personal Data
+The configuration events [configuration events](../../../tree/develop/src/Surfnet/Stepup/Configuration/Event/) in Stepup handle the the run time configuration of Stepup. With the exception of [SraaUpdatedEvent](../src/Surfnet/Stepup/Configuration/Event/SraaUpdatedEvent.php), which contains the *name_id* of the SRAA's, these events do not involve Personal Data

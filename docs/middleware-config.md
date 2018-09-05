@@ -1,20 +1,21 @@
 
-The middleware exposes a REST interface for configuring the middlewre. 
+The middleware exposes a REST interface for configuring the middleware. 
 The configuration is stored in the database. This page is documents the 
 requirements and structure of the configuration.
 
 The configuration uses the JSON syntax.
 
-Structure
+# Structure
 
 The configuration must be a json object with the following keys:
 
-    sraa
-    email_templates
-    gateway
+* sraa
+* email_templates
+* gateway
 
 Each of these keys will be described in detail in a section below. The minimum structure the configuration must have is therefore:
 
+```
 {
     sraa: [],
     email_templates: {},
@@ -23,9 +24,11 @@ Each of these keys will be described in detail in a section below. The minimum s
         service_providers: []
     }
 } 
+```
 
 As a full example:
 
+```
 {
   "sraa": [
     "39ba648867aa14a873339bb2a3031791ef319894"
@@ -98,22 +101,25 @@ As a full example:
     ]
   }
 }
+```
 
-
-Usage
+# Usage
 
 See the README.md in the repository
-SRAA
-Specification
+
+## SRAA
+### Specification
 
 The Super Registration Authority Authority is configured by sending a list of NameIDs that should be granted SRAA rights when logged in to the RA application with a sufficient LOA.
 
+```
 sraa: [
 	"NameID of RAA as received by the Gateway from OpenConext",
 	"NameID of a different RAA as received by the Gateway from OpenConext"
 ]
+```
 
-Processing
+### Processing
 
 The list of current SRAA's will be deleted and the supplied list of SRAAs will be stored.
 Example
@@ -123,20 +129,20 @@ Example
 ]
 
 
-Email Templates
-Specification
+## Email Templates
+### Specification
 
 The email_templates key must contain an object. Each property of this object denotes a specific type of email, the types available will be:
 
-    confirm_email: (required) the email sent when the Registrant should prove the possession of his email address.
-    registration_code: (required) the email sent when the Registrant has successfully registered a new Second Factor.
-    vetted: (required) the email sent when the Registrant has successfully vetted a Second Factor.
+* confirm_email: (required) the email sent when the Registrant should prove the possession of his email address.
+* registration_code: (required) the email sent when the Registrant has successfully registered a new Second Factor.
+* vetted: (required) the email sent when the Registrant has successfully vetted a Second Factor.
 
 The following list of emails is intended to be used in the future, the functionality requiring these is not yet implemented. 
 
-    registration_code_expiration_warning: the email sent when the Registrant has not vetted his Second Factor after 1 week.
-    second_factor_expiration_first_reminder: the email sent when the Second Factor has not been used for 5 months
-    second_factor_expiration_second_reminder: the email sent when the Second Factor has not been used for 5 months + 2 weeks.
+* registration_code_expiration_warning: the email sent when the Registrant has not vetted his Second Factor after 1 week.
+* second_factor_expiration_first_reminder: the email sent when the Second Factor has not been used for 5 months
+* second_factor_expiration_second_reminder: the email sent when the Second Factor has not been used for 5 months + 2 weeks.
     second_factor_revocation_confirmation: the email sent when a Second Factor has successfully been revoked.
 
 Each email contains an object, where each property corresponds with an IETF language tag (2 letter lower cased language code + underscore + 2 letter upper cased country code, i.e. nl_NL, nl_BE) that may be supported in the application.

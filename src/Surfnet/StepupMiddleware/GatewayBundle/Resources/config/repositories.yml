@@ -1,18 +1,18 @@
 services:
     middleware.gateway_repository.saml_entities:
         class:   Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository
-        factory: [@doctrine.orm.gateway_entity_manager, getRepository]
+        factory: ["@doctrine.orm.gateway_entity_manager", getRepository]
         arguments:
             - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity'
 
     middleware.gateway_repository.second_factors:
         class:   Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository
-        factory: [@doctrine.orm.gateway_entity_manager, getRepository]
+        factory: ["@doctrine.orm.gateway_entity_manager", getRepository]
         arguments:
             - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor'
 
     middleware.gateway_repository.whitelist_entry:
         class:   Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository
-        factory: [@doctrine.orm.gateway_entity_manager, getRepository]
+        factory: ["@doctrine.orm.gateway_entity_manager", getRepository]
         arguments:
             - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\WhitelistEntry'

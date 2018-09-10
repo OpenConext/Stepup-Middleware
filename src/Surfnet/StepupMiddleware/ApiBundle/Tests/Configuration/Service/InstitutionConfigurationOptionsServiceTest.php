@@ -43,7 +43,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
      * is configured in the parameters.yml under the moniker of 'number_of_tokens_per_identity'
      * @var int
      */
-    private $numberOfTokensPerIdentityDefault = 1;
+    private $numberOfTokensPerIdentityDefault = 13;
 
     public function setUp()
     {
@@ -72,8 +72,8 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
     }
 
     /**
-     * Simulates the use case where an institution does not have specific institution config, but defaults are used
-     * instead.
+     * Simulates the use case where an institution does have a specific institution config, but the token setting is
+     * disabled.
      */
     public function test_get_max_number_of_tokens_for_with_default_institution_configuration_settings()
     {
@@ -88,7 +88,27 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
         $numberOfTokens = $this->service->getMaxNumberOfTokensFor($institution);
 
         // One is configured as the globally set application default
-        $expectedNumberOfTokens = 1;
+        $expectedNumberOfTokens = 13;
+        $this->assertEquals($expectedNumberOfTokens, $numberOfTokens);
+    }
+
+
+    /**
+     * Simulates the use case where an institution does not have specific institution config, but defaults are used
+     * instead.
+     */
+    public function test_nullable_tokens_per_identity_options_in_institution_configuration_settings()
+    {
+        $institution = new Institution('surfnet.nl');
+
+        $this->repository
+            ->shouldReceive('findConfigurationOptionsFor')
+            ->andReturn(null);
+
+        $numberOfTokens = $this->service->getMaxNumberOfTokensFor($institution);
+
+        // One is configured as the globally set application default
+        $expectedNumberOfTokens = 13;
         $this->assertEquals($expectedNumberOfTokens, $numberOfTokens);
     }
 

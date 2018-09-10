@@ -1,4 +1,12 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
+    logger:
+        alias: 'monolog.logger'
+        public: true
+
     surfnet_stepup_middleware_middleware.dbal_connection_helper:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper
         arguments:

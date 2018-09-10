@@ -12,4 +12,4 @@ nelmio_security_report:
     methods: [POST]
 
 surfnet_stepup_middleware_api:
-    resource: @SurfnetStepupMiddlewareApiBundle/Resources/config/routing.yml
+    resource: "@SurfnetStepupMiddlewareApiBundle/Resources/config/routing.yml"

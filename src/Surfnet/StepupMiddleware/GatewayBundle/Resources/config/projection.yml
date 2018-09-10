@@ -2,17 +2,17 @@ services:
     surfnet_stepup_middleware_gateway.projector.second_factor:
         class: Surfnet\StepupMiddleware\GatewayBundle\Projector\SecondFactorProjector
         arguments:
-            - @middleware.gateway_repository.second_factors
+            - "@middleware.gateway_repository.second_factors"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
     surfnet_stepup_middleware_gateway.projector.saml_entity:
         class: Surfnet\StepupMiddleware\GatewayBundle\Projector\SamlEntityProjector
         arguments:
-            - @middleware.gateway_repository.saml_entities
+            - "@middleware.gateway_repository.saml_entities"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
     surfnet_stepup_middleware_gateway.projector.whitelist_entry:
         class: Surfnet\StepupMiddleware\GatewayBundle\Projector\WhitelistProjector
         arguments:
-            - @middleware.gateway_repository.whitelist_entry
+            - "@middleware.gateway_repository.whitelist_entry"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]

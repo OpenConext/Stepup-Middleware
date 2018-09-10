@@ -2,50 +2,50 @@ services:
     surfnet_stepup_middleware_command_handling.command_handler.identity_command_handler:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler
         arguments:
-            - @surfnet_stepup.repository.identity
-            - @surfnet_stepup_middleware_api.repository.identity
-            - @identity.entity.configurable_settings
-            - @surfnet_stepup_middleware_api.service.allowed_second_factor_list
-            - @surfnet_stepup.service.second_factor_type
-            - @surfnet_stepup_middleware_api.service.institution_configuration_options
+            - "@surfnet_stepup.repository.identity"
+            - "@surfnet_stepup_middleware_api.repository.identity"
+            - "@identity.entity.configurable_settings"
+            - "@surfnet_stepup_middleware_api.service.allowed_second_factor_list"
+            - "@surfnet_stepup.service.second_factor_type"
+            - "@surfnet_stepup_middleware_api.service.institution_configuration_options"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.registration_authority_command_handler:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler
         arguments:
-            - @surfnet_stepup.repository.identity
+            - "@surfnet_stepup.repository.identity"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.configuration:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler
         arguments:
-            - @surfnet_stepup.repository.configuration
+            - "@surfnet_stepup.repository.configuration"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.institution_configuration:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\InstitutionConfigurationCommandHandler
         arguments:
-            - @surfnet_stepup.repository.institution_configuration
+            - "@surfnet_stepup.repository.institution_configuration"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.whitelist:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\WhitelistCommandHandler
         arguments:
-            - @surfnet_stepup.repository.whitelist
+            - "@surfnet_stepup.repository.whitelist"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.right_to_be_forgotten_command_handler:
             class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler
             arguments:
-                - @surfnet_stepup.repository.identity
-                - @surfnet_stepup_middleware_api.repository.identity
-                - @surfnet_stepup_middleware_command_handling.service.sensitive_data
-                - @surfnet_stepup_middleware_api.repository.sraa
+                - "@surfnet_stepup.repository.identity"
+                - "@surfnet_stepup_middleware_api.repository.identity"
+                - "@surfnet_stepup_middleware_command_handling.service.sensitive_data"
+                - "@surfnet_stepup_middleware_api.repository.sraa"
             tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.reminder_email:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\ReminderEmailCommandHandler
         arguments:
-          - @surfnet_stepup_middleware_middleware.verfied_second_factor_reminder
+          - "@surfnet_stepup_middleware_middleware.verfied_second_factor_reminder"
         tags: [{ name: command_bus.command_handler }]
 

@@ -19,7 +19,6 @@ framework:
         #assets_version: SomeVersionScheme
     default_locale:  "%default_locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # handler_id set to null will use default session handler from php.ini
         handler_id:  ~
@@ -38,7 +37,7 @@ services:
         tags: [{ name: twig.extension }]
     twig.extension.sandbox:
         class: Twig_Extension_Sandbox
-        arguments: [ @twig.extension.sandbox.policy ]
+        arguments: [ "@twig.extension.sandbox.policy" ]
         tags: [{ name: twig.extension }]
     twig.extension.sandbox.policy:
         class: Twig_Sandbox_SecurityPolicy
@@ -122,19 +121,19 @@ doctrine:
                     api_identity:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity
+                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
                     api_configuration:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Configuration
+                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Configuration
                         is_bundle: false
                     management_configuration:
                         mapping: true
                         type: annotation
-                        dir: %kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration
+                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
                 dql:
@@ -184,23 +183,23 @@ surfnet_stepup:
     logging:
         application_name: middleware
     loa_definition:
-        loa1: %stepup_loa_loa1%
-        loa2: %stepup_loa_loa2%
-        loa3: %stepup_loa_loa3%
+        loa1: "%stepup_loa_loa1%"
+        loa2: "%stepup_loa_loa2%"
+        loa3: "%stepup_loa_loa3%"
     sms:
         enabled: false
 
 surfnet_stepup_middleware_command_handling:
-    self_service_email_verification_url_template: %self_service_email_verification_url_template%
-    self_service_url: %self_service_url%
-    email_fallback_locale: %default_locale%
+    self_service_email_verification_url_template: "%self_service_email_verification_url_template%"
+    self_service_url: "%self_service_url%"
+    email_fallback_locale: "%default_locale%"
     email_sender:
-        name: %email_sender_name%
-        email: %email_sender_email%
+        name: "%email_sender_name%"
+        email: "%email_sender_email%"
 
 surfnet_stepup_middleware_middleware:
-    email_verification_window: %email_verification_window%
-    enabled_generic_second_factors: %enabled_generic_second_factors%
+    email_verification_window: "%email_verification_window%"
+    enabled_generic_second_factors: "%enabled_generic_second_factors%"
 
 surfnet_stepup_middleware_management:
-    email_required_locale: %default_locale%
+    email_required_locale: "%default_locale%"

@@ -12,6 +12,12 @@
             <directory suffix="Test.php">../src</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <server name="KERNEL_DIR" value="app" />
+        <server name="KERNEL_CLASS" value="AppKernel" />
+    </php>
+
     <filter>
         <whitelist>
             <directory>../src</directory>

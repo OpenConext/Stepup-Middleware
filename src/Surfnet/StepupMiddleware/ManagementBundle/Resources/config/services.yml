@@ -1,9 +1,13 @@
 services:
+    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
+    _defaults:
+        public: true
+
     surfnet_stepup_middleware_management.validator.configuration:
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
         arguments:
-            - @surfnet_stepup_middleware_management.validator.gateway_configuration
-            - @surfnet_stepup_middleware_management.validator.email_templates_configuration
+            - "@surfnet_stepup_middleware_management.validator.gateway_configuration"
+            - "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
         tags:
             - { name: validator.constraint_validator, alias: configuration_structure_validator }
 
@@ -11,8 +15,8 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
         arguments:
-            - @surfnet_stepup_middleware_management.validator.identity_provider_configuration
-            - @surfnet_stepup_middleware_management.validator.service_provider_configuration
+            - "@surfnet_stepup_middleware_management.validator.identity_provider_configuration"
+            - "@surfnet_stepup_middleware_management.validator.service_provider_configuration"
 
     surfnet_stepup_middleware_management.validator.service_provider_configuration:
         public: false
@@ -39,21 +43,21 @@ services:
     surfnet_stepup_middleware_management.projector.email_templates:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Projector\EmailTemplatesProjector
         arguments:
-            - @surfnet_stepup_middleware_management.repository.email_template
+            - "@surfnet_stepup_middleware_management.repository.email_template"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
     surfnet_stepup_middleware_management.repository.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
-        factory: [@doctrine.orm.middleware_entity_manager, getRepository]
+        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate ]
 
     surfnet_stepup_middleware_management.service.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService
-        arguments: [ @surfnet_stepup_middleware_management.repository.email_template ]
+        arguments: [ "@surfnet_stepup_middleware_management.repository.email_template" ]
 
     surfnet_stepup_middleware_management.dbal_connection_helper:
         class: Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper
         arguments:
             -
-                middleware: @doctrine.dbal.middleware_connection
-                gateway: @doctrine.dbal.gateway_connection
+                middleware: "@doctrine.dbal.middleware_connection"
+                gateway: "@doctrine.dbal.gateway_connection"

@@ -27,7 +27,7 @@ monolog:
             type: stream
             handler: logfile
             level: NOTICE
-            path: %kernel.logs_dir%/%kernel.environment%.log
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
 
 swiftmailer:
     port: 1025
@@ -38,11 +38,11 @@ services:
         tags: [{ name: twig.extension }]
 
 jms_translation:
-    locales: %locales%
+    locales: "%locales%"
     configs:
         default:
-            dirs: [%kernel.root_dir%/../src, %kernel.root_dir%]
-            output_dir: %kernel.root_dir%/Resources/translations
+            dirs: ["%kernel.root_dir%/../src", "%kernel.root_dir%"]
+            output_dir: "%kernel.root_dir%/Resources/translations"
             ignored_domains: []
             excluded_names: ['*TestCase.php', '*Test.php']
             excluded_dirs: [cache, data, logs, Tests]

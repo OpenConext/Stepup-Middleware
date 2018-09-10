@@ -73,10 +73,7 @@
         ]
     },
     "config": {
-        "optimize-autoloader": true,
-        "platform": {
-            "php": "5.6"
-        }
+        "optimize-autoloader": true
     },
     "extra": {
         "symfony-app-dir": "app",

@@ -20,14 +20,29 @@ doctrine:
         default_connection: middleware
         connections:
             middleware:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/middleware.db"
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   middleware_test
+                user:     "%database_middleware_user%"
+                password: "%database_middleware_password%"
+                charset:  UTF8
             gateway:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/gateway.db"
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   gateway_test
+                user:     "%database_gateway_user%"
+                password: "%database_gateway_password%"
+                charset:  UTF8
             deploy:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/deploy.db"
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   middleware_test
+                user:     "%database_deploy_user%"
+                password: "%database_deploy_password%"
+                charset:  UTF8
 
 liip_functional_test:
     cache_sqlite_db: true

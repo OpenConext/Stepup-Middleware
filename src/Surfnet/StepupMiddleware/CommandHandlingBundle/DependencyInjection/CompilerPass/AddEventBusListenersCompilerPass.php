@@ -32,7 +32,7 @@ class AddEventBusListenersCompilerPass implements CompilerPassInterface
 
         // When replaying events, certain listeners should not be allowed to run again, for instance
         // when they are no longer relevant at the time of replaying (i.e. sending emails)
-        if (!in_array($container->getParameter('kernel.environment'), ['dev_event_replay', 'prod_event_replay'])) {
+        if (!in_array($container->getParameter('kernel.environment'), ['dev_event_replay', 'prod_event_replay', 'test_event_replay'])) {
             foreach (array_keys($eventListenerDefinitions) as $serviceId) {
                 $definition->addMethodCall('subscribe', [new Reference($serviceId)]);
             }

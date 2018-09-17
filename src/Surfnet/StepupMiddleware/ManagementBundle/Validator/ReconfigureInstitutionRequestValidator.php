@@ -22,9 +22,10 @@ use Assert\Assertion;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
@@ -47,12 +48,24 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private $secondFactorTypeService;
 
+    /**
+     * @var WhitelistService
+     */
+    private $whitelistService;
+
+    /**
+     * @var string[] internal cache, access through getWhitelistedInstitutions()
+     */
+    private $whitelistedInstitutions;
+
     public function __construct(
         ConfiguredInstitutionService $configuredInstitutionsService,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        WhitelistService $whitelistService
     ) {
         $this->configuredInstitutionsService = $configuredInstitutionsService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->whitelistService = $whitelistService;
     }
 
     public function validate($value, Constraint $constraint)
@@ -111,18 +124,25 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
 
-        $acceptedOptions = [
+        $requiredOptions = [
             'use_ra_locations',
             'show_raa_contact_information',
             'verify_email',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];
-        
-        StepupAssert::keysMatch(
+
+        $optionalOptions = [
+            'use_ra',
+            'use_raa',
+            'select_raa',
+        ];
+
+        StepupAssert::requiredAndOptionalOptions(
             $options,
-            $acceptedOptions,
-            sprintf('Expected only options "%s" for "%s"', join(', ', $acceptedOptions), $institution),
+            $requiredOptions,
+            $optionalOptions,
+            sprintf('Expected only options "%s" for "%s"', join(', ', $requiredOptions), $institution),
             $propertyPath
         );
 
@@ -149,7 +169,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be an integer value', $institution),
             $propertyPath
         );
-        
+
         Assertion::min(
             $options['number_of_tokens_per_identity'],
             0,
@@ -173,6 +193,8 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'Option "allowed_second_factors" for "%s" must contain valid second factor types',
             $propertyPath
         );
+
+        $this->validateAuthorizationSettings($options, $institution, $propertyPath);
     }
 
     /**
@@ -197,6 +219,27 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     }
 
     /**
+     * Accessor for whitelisted institutions to be able to use an internal cache
+     *
+     * @return string[]
+     */
+    private function getWhitelistedInstitutions()
+    {
+        if (!empty($this->whitelistedInstitutions)) {
+            return $this->whitelistedInstitutions;
+        }
+
+        $this->whitelistedInstitutions = array_map(
+            function (WhitelistEntry $whitelistEntry) {
+                return (string)$whitelistEntry->institution;
+            },
+            $this->whitelistService->getAllEntries()->toArray()
+        );
+
+        return $this->whitelistedInstitutions;
+    }
+
+    /**
      * @param string[] $institutions
      * @param $configuredInstitutions
      * @return string[]
@@ -218,5 +261,69 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                 return !in_array($normalizedInstitution, $normalizedConfiguredInstitutions);
             }
         );
+    }
+
+    /**
+     * Validates if the authorization_settings array is configured correctly
+     *
+     *  - The optional options should contain whitelisted institutions
+     *  - Or be empty
+     *
+     * @param $authorizationSettings
+     * @param $institution
+     * @param $propertyPath
+     * @throws \Assert\AssertionFailedException
+     */
+    private function validateAuthorizationSettings($authorizationSettings, $institution, $propertyPath)
+    {
+        $acceptedOptions = [
+            'use_ra',
+            'use_raa',
+            'select_raa',
+        ];
+
+        $whitelistedInstitutions = $this->getWhitelistedInstitutions();
+
+        foreach ($authorizationSettings as $optionName => $setting) {
+            if (in_array($optionName, $acceptedOptions)) {
+
+                // 1. Value must be array
+                Assertion::isArray(
+                    $authorizationSettings[$optionName],
+                    sprintf(
+                        'Option "%s" for "%s" must be an array of strings. ("%s") was passed.',
+                        $optionName,
+                        $institution,
+                        var_export($setting, true)
+                    ),
+                    $propertyPath
+                );
+
+                // 2. The contents of the array must be empty or string
+                Assertion::allString(
+                    $authorizationSettings[$optionName],
+                    sprintf(
+                        'All values of option "%s" should be of type string. ("%s") was passed.',
+                        $optionName,
+                        $institution,
+                        var_export($setting, true)
+                    ),
+                    $propertyPath
+                );
+
+                // 3. The institutions that are used in the configuration, should be known, configured, institutions
+                Assertion::allInArray(
+                    $authorizationSettings[$optionName],
+                    $whitelistedInstitutions,
+                    sprintf(
+                        'All values of option "%s" should be known institutions. ("%s") was passed.',
+                        $optionName,
+                        $institution,
+                        var_export($setting, true)
+                    ),
+                    $propertyPath
+                );
+            }
+        }
     }
 }

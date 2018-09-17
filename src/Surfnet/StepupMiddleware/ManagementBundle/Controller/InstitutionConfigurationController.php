@@ -105,6 +105,11 @@ final class InstitutionConfigurationController extends Controller
             $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
 
+            // The useRa, useRaa and selectRaa options are optional
+            $command->useRaOption = isset($options['use_ra']) ? $options['use_ra'] : null;
+            $command->useRaaOption = isset($options['use_raa']) ? $options['use_raa'] : null;
+            $command->selectRaaOption = isset($options['select_raa']) ? $options['select_raa'] : null;
+
             $commands[] = $command;
         }
 

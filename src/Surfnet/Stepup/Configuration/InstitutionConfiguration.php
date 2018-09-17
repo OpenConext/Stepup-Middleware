@@ -30,8 +30,11 @@ use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -42,8 +45,11 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\UseRaOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
 
@@ -215,6 +221,39 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $numberOfTokensPerIdentityOption
+            )
+        );
+    }
+
+    public function configureUseRaOption(UseRaOption $useRaOption)
+    {
+        $this->apply(
+            new UseRaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $useRaOption
+            )
+        );
+    }
+
+    public function configureUseRaaOption(UseRaaOption $useRaaOption)
+    {
+        $this->apply(
+            new UseRaaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $useRaaOption
+            )
+        );
+    }
+
+    public function configureSelectRaaOption(SelectRaaOption $selectRaaOption)
+    {
+        $this->apply(
+            new SelectRaaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $selectRaaOption
             )
         );
     }

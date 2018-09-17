@@ -40,4 +40,29 @@ final class Assert
             ['expected' => $keys, 'actual' => $keysOfValue]
         );
     }
+
+    public static function requiredAndOptionalOptions(array $value, array $required, array $optional, $message = null, $propertyPath = null)
+    {
+        // Filter out the optional items from the value array
+        $requiredValueSet = array_diff_key($value, array_flip($optional));
+
+        // Verify the required keys match.
+        self::keysMatch($requiredValueSet, $required, $message, $propertyPath);
+
+        // Verify the optional keys do not contain illegal entries.
+        $keysOfValue = array_keys($value);
+        $extraKeys = array_diff($keysOfValue, array_merge($optional, $required));
+
+        if (count($extraKeys) === 0) {
+            return;
+        }
+
+        throw new InvalidArgumentException(
+            $message,
+            0,
+            $propertyPath,
+            $value,
+            ['expected' => $optional, 'actual' => $keysOfValue]
+        );
+    }
 }

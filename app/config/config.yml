@@ -110,6 +110,9 @@ doctrine:
             stepup_second_factor_type: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorTypeType
             stepup_verify_email_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VerifyEmailOptionType
             stepup_number_of_tokens_per_identity_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType
+            stepup_use_ra_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaOptionType
+            stepup_use_raa_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaaOptionType
+            stepup_select_raa_option: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelectRaaOptionType
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

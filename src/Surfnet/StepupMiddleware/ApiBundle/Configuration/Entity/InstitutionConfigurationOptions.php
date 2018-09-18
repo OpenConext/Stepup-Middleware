@@ -21,8 +21,11 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
+use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\UseRaOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 /**
@@ -68,12 +71,36 @@ class InstitutionConfigurationOptions
      */
     public $numberOfTokensPerIdentityOption;
 
+    /**
+     * @ORM\Column(type="stepup_use_ra_option", nullable=true)
+     *
+     * @var UseRaOption
+     */
+    public $useRaOption;
+
+    /**
+     * @ORM\Column(type="stepup_use_raa_option", nullable=true)
+     *
+     * @var UseRaaOption
+     */
+    public $useRaaOption;
+
+    /**
+     * @ORM\Column(type="stepup_select_raa_option", nullable=true)
+     *
+     * @var SelectRaaOption
+     */
+    public $selectRaaOption;
+
     public static function create(
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        UseRaOption $useRaOption,
+        UseRaaOption $useRaaOption,
+        SelectRaaOption $selectRaaOption
     ) {
         $options = new self;
 
@@ -82,6 +109,10 @@ class InstitutionConfigurationOptions
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
         $options->verifyEmailOption               = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
+
+        $options->useRaOption = $useRaOption;
+        $options->useRaaOption = $useRaaOption;
+        $options->selectRaaOption = $selectRaaOption;
 
         return $options;
     }

@@ -1,5 +1,9 @@
 # Changelog
 
+## Develop
+**New features**
+* New institution configuration options can be configured (useRa, useRaa and selectRaa) #232 #233
+
 ## 2.9.0
 **Bugfix**
 * Fix SRAA command for institution without config #228

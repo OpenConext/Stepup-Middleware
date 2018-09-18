@@ -54,6 +54,15 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
 
 /**
+ * InstitutionConfiguration aggregate root
+ *
+ * Some things to know about this aggregate:
+ *
+ * 1. The aggregate is instantiated by InstitutionConfigurationCommandHandler by calling the
+ *    handleReconfigureInstitutionConfigurationOptionsCommand method. It does so, not by using the projections to build
+ *    the aggregate but by playing the events onto the aggregate.
+ * 2. If one of the configuration options should be nullable, take a look at the applyUseRaOptionChangedEvent doc block
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
  * @SuppressWarnings(PHPMD.TooManyMethods) AggregateRoot
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregateRoot
@@ -432,6 +441,33 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
+    }
+
+    /**
+     * Apply the UseRaOptionChangedEvent
+     *
+     * To ensure the aggregate is correctly populated with the FGA options we ensure the UseRaOptionChangedEvent
+     * can be applied on the aggregate. Refraining from doing this would result in the $this->useRaOption field only
+     * being applied when applyNewInstitutionConfigurationCreatedEvent is called. And this might not be the case if
+     * the fields where null'ed (removed from configuration).
+     *
+     * This also applies for applyUseRaaOptionChangedEvent & applySelectRaaOptionChangedEvent
+     *
+     * @param UseRaOptionChangedEvent $event
+     */
+    protected function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
+    {
+        $this->useRaOption = $event->useRaOption;
+    }
+
+    protected function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
+    {
+        $this->useRaaOption = $event->useRaaOption;
+    }
+
+    protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
+    {
+        $this->selectRaaOption = $event->selectRaaOption;
     }
 
     protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)

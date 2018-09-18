@@ -24,11 +24,15 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 class UseRaaOption implements JsonSerializable
 {
     /**
-     * @var array
+     * @var string[]|null
      */
     private $useRaaOption;
 
-    public function __construct(array $useRaaOption)
+    /**
+     * UseRaaOption constructor.
+     * @param string[]|null $useRaaOption
+     */
+    public function __construct($useRaaOption)
     {
         if (!is_null($useRaaOption) && !is_array($useRaaOption)) {
             throw InvalidArgumentException::invalidType(
@@ -37,12 +41,28 @@ class UseRaaOption implements JsonSerializable
                 $useRaaOption
             );
         }
+
         $this->useRaaOption = $useRaaOption;
+        
+        // Sort the array values alphabetically
+        if (is_array($this->useRaaOption)) {
+            sort($this->useRaaOption);
+        }
+    }
+
+    public static function getDefault()
+    {
+        return new self(null);
     }
 
     public function getUseRaaOption()
     {
         return $this->useRaaOption;
+    }
+
+    public function equals(UseRaaOption $other)
+    {
+        return $this->getUseRaaOption() === $other->getUseRaaOption();
     }
 
     public function jsonSerialize()

@@ -55,6 +55,7 @@ use Surfnet\Stepup\Exception\DomainException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
+ * @SuppressWarnings(PHPMD.TooManyMethods) AggregateRoot
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregateRoot
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
@@ -95,6 +96,22 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $numberOfTokensPerIdentityOption;
 
     /**
+     * @var UseRaOption
+     */
+    private $useRaOption;
+
+    /**
+     * @var UseRaaOption
+     */
+
+    private $useRaaOption;
+
+    /**
+     * @var SelectRaaOption
+     */
+    private $selectRaaOption;
+
+    /**
      * @var AllowedSecondFactorList
      */
     private $allowedSecondFactorList;
@@ -119,7 +136,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                UseRaOption::getDefault(),
+                UseRaaOption::getDefault(),
+                SelectRaaOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -148,7 +168,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                UseRaOption::getDefault(),
+                UseRaaOption::getDefault(),
+                SelectRaaOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -227,6 +250,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureUseRaOption(UseRaOption $useRaOption)
     {
+        if ($this->useRaOption->equals($useRaOption)) {
+            return;
+        }
+
         $this->apply(
             new UseRaOptionChangedEvent(
                 $this->institutionConfigurationId,
@@ -238,6 +265,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureUseRaaOption(UseRaaOption $useRaaOption)
     {
+        if ($this->useRaaOption->equals($useRaaOption)) {
+            return;
+        }
+
         $this->apply(
             new UseRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
@@ -249,6 +280,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSelectRaaOption(SelectRaaOption $selectRaaOption)
     {
+        if ($this->selectRaaOption->equals($selectRaaOption)) {
+            return;
+        }
+
         $this->apply(
             new SelectRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
@@ -389,6 +424,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->verifyEmailOption               = $event->verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
+
+        // Apply the FGA options
+        $this->useRaOption = $event->useRaOption;
+        $this->useRaaOption = $event->useRaaOption;
+        $this->selectRaaOption = $event->selectRaaOption;
+
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
     }
@@ -469,6 +510,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->verifyEmailOption               = VerifyEmailOption::getDefault();
         $this->numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
+        $this->useRaOption = UseRaOption::getDefault();
+        $this->useRaaOption = UseRaaOption::getDefault();
+        $this->selectRaaOption = SelectRaaOption::getDefault();
 
         $this->isMarkedAsDestroyed             = true;
     }

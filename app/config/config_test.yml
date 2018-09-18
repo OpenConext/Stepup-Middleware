@@ -23,7 +23,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   middleware_test
+                dbname:   "%database_middleware_name%_test"
                 user:     "%database_middleware_user%"
                 password: "%database_middleware_password%"
                 charset:  UTF8
@@ -31,7 +31,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   gateway_test
+                dbname:   "%database_gateway_name%_test"
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
                 charset:  UTF8
@@ -39,7 +39,7 @@ doctrine:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
                 port:     "%database_port%"
-                dbname:   middleware_test
+                dbname:   "%database_middleware_name%_test"
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
                 charset:  UTF8

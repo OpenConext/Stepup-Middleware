@@ -67,6 +67,9 @@ final class InstitutionConfigurationController extends Controller
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
                 ),
+                'use_ra' => $options->useRaOption,
+                'use_raa' => $options->useRaaOption,
+                'select_raa' => $options->selectRaaOption,
             ];
         }
 

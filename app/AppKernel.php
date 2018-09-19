@@ -43,7 +43,7 @@ class AppKernel extends Kernel
             new JMS\TranslationBundle\JMSTranslationBundle(),
         );
 
-        if (in_array($this->getEnvironment(), array('dev', 'test', 'test_event_replay'))) {
+        if (in_array($this->getEnvironment(), array('dev', 'test', 'smoketest', 'smoketest_event_replay'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Liip\FunctionalTestBundle\LiipFunctionalTestBundle();

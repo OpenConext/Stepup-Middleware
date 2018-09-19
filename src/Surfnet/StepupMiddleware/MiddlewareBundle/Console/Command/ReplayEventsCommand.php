@@ -58,12 +58,12 @@ class ReplayEventsCommand extends Command
         // Be careful, when using the no-interaction option you will not get the confirmation question
         $noInteraction = $input->getOption('no-interaction');
 
-        if (!in_array($environment, ['dev_event_replay', 'prod_event_replay', 'test_event_replay'])) {
+        if (!in_array($environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
             $output->writeln($formatter->formatBlock(
                 [
                     '',
                     'This command may only be executed using env "dev_event_replay", "prod_event_replay", or 
-                    "test_event_replay"',
+                    "smoketest_event_replay"',
                     ''
                 ],
                 'error'

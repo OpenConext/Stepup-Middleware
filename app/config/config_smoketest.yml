@@ -1,0 +1,74 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+doctrine:
+    dbal:
+        default_connection: middleware
+        connections:
+            middleware:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_middleware_name%_test"
+                user:     "%database_middleware_user%"
+                password: "%database_middleware_password%"
+                charset:  UTF8
+            gateway:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_gateway_name%_test"
+                user:     "%database_gateway_user%"
+                password: "%database_gateway_password%"
+                charset:  UTF8
+            deploy:
+                driver:   "%database_driver%"
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_middleware_name%_test"
+                user:     "%database_deploy_user%"
+                password: "%database_deploy_password%"
+                charset:  UTF8
+
+liip_functional_test:
+    cache_sqlite_db: true
+
+monolog:
+    handlers:
+        # Handlers are merged in from config.yml and config_dev.yml. They cannot be disabled or removed. The practical
+        # solution is to assign them the `null` handler, which discards the records.
+        prod-signaler:
+            type: "null"
+        main_syslog:
+            type: "null"
+        main_logfile:
+            type: "null"
+        console:
+            type: "null"
+
+# In test, it makes sense we use a hard-coded password for the api users. This, to aid the behat tests in Stepup-Deploy.
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    management:
+                        password: "secret"
+                    ss:
+                        password: "secret"
+                    ra:
+                        password: "secret"

@@ -20,14 +20,11 @@ doctrine:
         default_connection: middleware
         connections:
             middleware:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/middleware.db"
+                dbname: "%database_middleware_name%_test"
             gateway:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/gateway.db"
+                dbname: "%database_gateway_name%_test"
             deploy:
-                driver: pdo_sqlite
-                path: "%kernel.cache_dir%/deploy.db"
+                dbname: "%database_middleware_name%_test"
 
 liip_functional_test:
     cache_sqlite_db: true
@@ -44,3 +41,16 @@ monolog:
             type: "null"
         console:
             type: "null"
+
+# In test, it makes sense we use a hard-coded password for the api users. This, to aid the behat tests in Stepup-Deploy.
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    management:
+                        password: "secret"
+                    ss:
+                        password: "secret"
+                    ra:
+                        password: "secret"

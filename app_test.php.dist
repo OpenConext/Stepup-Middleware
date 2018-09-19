@@ -8,7 +8,7 @@ if (PHP_VERSION_ID < 70000) {
 
 Debug::enable();
 
-$kernel = new AppKernel('test', true);
+$kernel = new AppKernel('smoketest', true);
 if (PHP_VERSION_ID < 70000) {
     $kernel->loadClassCache();
 }

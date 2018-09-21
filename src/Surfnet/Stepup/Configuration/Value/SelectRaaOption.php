@@ -54,11 +54,6 @@ class SelectRaaOption implements JsonSerializable
         return new self(null);
     }
 
-    public function getInstitutions()
-    {
-        return $this->institutions;
-    }
-
     public function equals(SelectRaaOption $other)
     {
         $thisValue = null;
@@ -70,6 +65,19 @@ class SelectRaaOption implements JsonSerializable
             $otherValue = $other->getInstitutions()->toScalarArray();
         }
         return $thisValue === $otherValue;
+    }
+
+    public function isOption($option){
+        return is_array($this->institutions) && in_array($this->institutions, $option);
+    }
+
+    public function hasOptions(){
+        return is_array($this->institutions);
+    }
+
+    public function getInstitutions()
+    {
+        return $this->institutions;
     }
 
     public function jsonSerialize()

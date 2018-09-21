@@ -67,6 +67,14 @@ class UseRaOption implements JsonSerializable
         return $thisValue === $otherValue;
     }
 
+    public function isOption($option){
+        return is_array($this->institutions) && in_array($this->institutions, $option);
+    }
+
+    public function hasOptions(){
+        return is_array($this->institutions);
+    }
+
     public function getInstitutions()
     {
         return $this->institutions;

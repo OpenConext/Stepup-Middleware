@@ -29,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class UseRaOptionType extends Type
 {
-    const NAME = 'stepup_select_ra_option';
+    const NAME = 'stepup_use_ra_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

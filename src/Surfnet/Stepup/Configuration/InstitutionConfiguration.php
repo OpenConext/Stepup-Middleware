@@ -30,8 +30,11 @@ use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -42,13 +45,26 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Configuration\Value\UseRaOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
 
 /**
+ * InstitutionConfiguration aggregate root
+ *
+ * Some things to know about this aggregate:
+ *
+ * 1. The aggregate is instantiated by InstitutionConfigurationCommandHandler by calling the
+ *    handleReconfigureInstitutionConfigurationOptionsCommand method. It does so, not by using the projections to build
+ *    the aggregate but by playing the events onto the aggregate.
+ * 2. If one of the configuration options should be nullable, take a look at the applyUseRaOptionChangedEvent doc block
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Events and value objects
+ * @SuppressWarnings(PHPMD.TooManyMethods) AggregateRoot
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) AggregateRoot
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
@@ -89,6 +105,22 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $numberOfTokensPerIdentityOption;
 
     /**
+     * @var UseRaOption
+     */
+    private $useRaOption;
+
+    /**
+     * @var UseRaaOption
+     */
+
+    private $useRaaOption;
+
+    /**
+     * @var SelectRaaOption
+     */
+    private $selectRaaOption;
+
+    /**
      * @var AllowedSecondFactorList
      */
     private $allowedSecondFactorList;
@@ -113,7 +145,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                UseRaOption::getDefault(),
+                UseRaaOption::getDefault(),
+                SelectRaaOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -142,7 +177,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                UseRaOption::getDefault(),
+                UseRaaOption::getDefault(),
+                SelectRaaOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -215,6 +253,51 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $numberOfTokensPerIdentityOption
+            )
+        );
+    }
+
+    public function configureUseRaOption(UseRaOption $useRaOption)
+    {
+        if ($this->useRaOption->equals($useRaOption)) {
+            return;
+        }
+
+        $this->apply(
+            new UseRaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $useRaOption
+            )
+        );
+    }
+
+    public function configureUseRaaOption(UseRaaOption $useRaaOption)
+    {
+        if ($this->useRaaOption->equals($useRaaOption)) {
+            return;
+        }
+
+        $this->apply(
+            new UseRaaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $useRaaOption
+            )
+        );
+    }
+
+    public function configureSelectRaaOption(SelectRaaOption $selectRaaOption)
+    {
+        if ($this->selectRaaOption->equals($selectRaaOption)) {
+            return;
+        }
+
+        $this->apply(
+            new SelectRaaOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $selectRaaOption
             )
         );
     }
@@ -350,8 +433,41 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->verifyEmailOption               = $event->verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
+
+        // Apply the FGA options
+        $this->useRaOption = $event->useRaOption;
+        $this->useRaaOption = $event->useRaaOption;
+        $this->selectRaaOption = $event->selectRaaOption;
+
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
+    }
+
+    /**
+     * Apply the UseRaOptionChangedEvent
+     *
+     * To ensure the aggregate is correctly populated with the FGA options we ensure the UseRaOptionChangedEvent
+     * can be applied on the aggregate. Refraining from doing this would result in the $this->useRaOption field only
+     * being applied when applyNewInstitutionConfigurationCreatedEvent is called. And this might not be the case if
+     * the fields where null'ed (removed from configuration).
+     *
+     * This also applies for applyUseRaaOptionChangedEvent & applySelectRaaOptionChangedEvent
+     *
+     * @param UseRaOptionChangedEvent $event
+     */
+    protected function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
+    {
+        $this->useRaOption = $event->useRaOption;
+    }
+
+    protected function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
+    {
+        $this->useRaaOption = $event->useRaaOption;
+    }
+
+    protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
+    {
+        $this->selectRaaOption = $event->selectRaaOption;
     }
 
     protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
@@ -430,6 +546,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->verifyEmailOption               = VerifyEmailOption::getDefault();
         $this->numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
+        $this->useRaOption = UseRaOption::getDefault();
+        $this->useRaaOption = UseRaaOption::getDefault();
+        $this->selectRaaOption = SelectRaaOption::getDefault();
 
         $this->isMarkedAsDestroyed             = true;
     }

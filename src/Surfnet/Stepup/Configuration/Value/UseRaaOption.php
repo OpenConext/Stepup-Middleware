@@ -24,7 +24,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 class UseRaaOption implements JsonSerializable
 {
     /**
-     * @var string[]|null
+     * @var InstitutionSet|null
      */
     private $institutions;
 
@@ -42,11 +42,10 @@ class UseRaaOption implements JsonSerializable
             );
         }
 
-        $this->institutions = $useRaaOption;
-        
         // Sort the array values alphabetically
-        if (is_array($this->institutions)) {
-            sort($this->institutions);
+        if (is_array($useRaaOption)) {
+            sort($useRaaOption);
+            $this->institutions = InstitutionSet::fromInstitutionConfig($useRaaOption);
         }
     }
 
@@ -55,18 +54,26 @@ class UseRaaOption implements JsonSerializable
         return new self(null);
     }
 
+    public function equals(UseRaaOption $other)
+    {
+        $thisValue = null;
+        $otherValue = null;
+        if (!is_null($this->getInstitutions())) {
+            $thisValue = $this->getInstitutions()->toScalarArray();
+        }
+        if (!is_null($other->getInstitutions())) {
+            $otherValue = $other->getInstitutions()->toScalarArray();
+        }
+        return $thisValue === $otherValue;
+    }
+
     public function getInstitutions()
     {
         return $this->institutions;
     }
 
-    public function equals(UseRaaOption $other)
-    {
-        return $this->getInstitutions() === $other->getInstitutions();
-    }
-
     public function jsonSerialize()
     {
-        return $this->getInstitutions();
+        return $this->getInstitutions()->toScalarArray();
     }
 }

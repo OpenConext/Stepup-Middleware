@@ -20,9 +20,9 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\InstitutionSet;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
+use Surfnet\Stepup\Configuration\Value\UseRaOption;
 
-class SelectRaaOptionTest extends TestCase
+class UseRaOptionTest extends TestCase
 {
     /**
      * @test
@@ -30,8 +30,8 @@ class SelectRaaOptionTest extends TestCase
      */
     public function institution_entries_are_sorted()
     {
-        $selectRaaOption = new SelectRaaOption(['z', 'y', 'x']);
-        $this->assertEquals(['x', 'y', 'z'], $selectRaaOption->getInstitutions()->toScalarArray());
+        $useRaOption = new UseRaOption(['z', 'y', 'x']);
+        $this->assertEquals(['x', 'y', 'z'], $useRaOption->getInstitutions()->toScalarArray());
     }
 
     /**
@@ -41,9 +41,9 @@ class SelectRaaOptionTest extends TestCase
      */
     public function select_raa_option_instances_can_be_compared($expectation, $configurationA, $configurationB)
     {
-        $selectRaaOption = new SelectRaaOption($configurationA);
-        $secondSelectRaaOption = new SelectRaaOption($configurationB);
-        $this->assertEquals($expectation, $selectRaaOption->equals($secondSelectRaaOption));
+        $useRaOption = new UseRaOption($configurationA);
+        $secondUseRaOption = new UseRaOption($configurationB);
+        $this->assertEquals($expectation, $useRaOption->equals($secondUseRaOption));
     }
 
     /**
@@ -52,8 +52,8 @@ class SelectRaaOptionTest extends TestCase
      */
     public function can_be_retrieved_json_encodable()
     {
-        $selectRaaOption = new SelectRaaOption(['z', 'y', 'x']);
-        $this->assertEquals(['x', 'y', 'z'], $selectRaaOption->jsonSerialize());
+        $useRaOption = new UseRaOption(['z', 'y', 'x']);
+        $this->assertEquals(['x', 'y', 'z'], $useRaOption->jsonSerialize());
     }
 
     /**
@@ -64,7 +64,7 @@ class SelectRaaOptionTest extends TestCase
      */
     public function invalid_types_are_rejected_during_construction($arguments)
     {
-        new SelectRaaOption($arguments);
+        new UseRaOption($arguments);
     }
 
     /**
@@ -73,7 +73,7 @@ class SelectRaaOptionTest extends TestCase
      */
     public function the_default_value_is_null()
     {
-        $this->assertNull(SelectRaaOption::getDefault()->getInstitutions());
+        $this->assertNull(UseRaOption::getDefault()->getInstitutions());
     }
 
     public function institutionSetComparisonProvider()

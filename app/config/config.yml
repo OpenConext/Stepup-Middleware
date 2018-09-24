@@ -72,7 +72,7 @@ doctrine:
                 dbname:   "%database_middleware_name%"
                 user:     "%database_middleware_user%"
                 password: "%database_middleware_password%"
-                server_version: '5.6'
+                server_version: "%database_server_version%"
                 charset:  UTF8
             gateway:
                 driver:   "%database_driver%"
@@ -81,7 +81,7 @@ doctrine:
                 dbname:   "%database_gateway_name%"
                 user:     "%database_gateway_user%"
                 password: "%database_gateway_password%"
-                server_version: '5.6'
+                server_version: "%database_server_version%"
                 charset:  UTF8
             deploy:
                 driver:   "%database_driver%"
@@ -90,7 +90,7 @@ doctrine:
                 dbname:   "%database_middleware_name%"
                 user:     "%database_deploy_user%"
                 password: "%database_deploy_password%"
-                server_version: '5.6'
+                server_version: "%database_server_version%"
                 charset:  UTF8
         types:
             authority_role: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType

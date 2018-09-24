@@ -32,12 +32,22 @@ class InstitutionAuthorizationRepository extends EntityRepository
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function findAuthorizationForInstitution(Institution $institution)
+    public function findAuthorizationOptionsForInstitution(Institution $institution)
     {
         return $this->createQueryBuilder('ico')
             ->where('ico.institution = :institution')
             ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param InstitutionAuthorization $institutionAuthorization
+     */
+    public function save(InstitutionAuthorization $institutionAuthorization)
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($institutionAuthorization);
+        $entityManager->flush();
     }
 }

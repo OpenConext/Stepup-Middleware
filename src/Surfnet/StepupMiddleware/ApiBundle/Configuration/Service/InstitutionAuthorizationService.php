@@ -43,7 +43,7 @@ class InstitutionAuthorizationService
      * @param Institution $for
      * @return bool
      */
-    public function couldInstitutionUseRaFor(Institution $institution, Institution $for)
+    public function canInstitutionUseRaFor(Institution $institution, Institution $for)
     {
         $authorization = $this->findAuthorizationFor($institution);
         return $authorization->useRaOption->hasOptions() && $authorization->useRaOption->isOption($for->getInstitution());
@@ -54,7 +54,7 @@ class InstitutionAuthorizationService
      * @param Institution $for
      * @return bool
      */
-    public function couldInstitutionUseRaaFor(Institution $institution, Institution $for)
+    public function canInstitutionUseRaaFor(Institution $institution, Institution $for)
     {
         $authorization = $this->findAuthorizationFor($institution);
         return $authorization->useRaaOption->hasOptions() && $authorization->useRaaOption->isOption($for->getInstitution());
@@ -65,12 +65,11 @@ class InstitutionAuthorizationService
      * @param Institution $for
      * @return bool
      */
-    public function couldInstitutionSelectRaaFor(Institution $institution, Institution $for)
+    public function canInstitutionSelectRaaFor(Institution $institution, Institution $for)
     {
         $authorization = $this->findAuthorizationFor($institution);
         return $authorization->selectRaaOption->hasOptions() && $authorization->selectRaaOption->isOption($for->getInstitution());
     }
-
 
     /**
      * @param Institution $institution
@@ -78,7 +77,6 @@ class InstitutionAuthorizationService
      */
     private function findAuthorizationFor(Institution $institution)
     {
-        return $this->repository->findAuthorizationForInstitution($institution);
+        return $this->repository->findAuthorizationOptionsForInstitution($institution);
     }
-
 }

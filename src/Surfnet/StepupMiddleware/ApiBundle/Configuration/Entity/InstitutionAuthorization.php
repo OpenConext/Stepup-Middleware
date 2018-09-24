@@ -20,13 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
-use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
-use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\UseRaOption;
-use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 /**
  * @ORM\Entity(
@@ -64,4 +60,20 @@ class InstitutionAuthorization
      */
     public $selectRaaOption;
 
+    public static function create(
+        Institution $institution,
+        UseRaOption $useRaOption,
+        UseRaaOption $useRaaOption,
+        SelectRaaOption $selectRaaOption
+    ) {
+        $options = new self;
+
+        $options->institution = $institution;
+
+        $options->useRaOption = $useRaOption;
+        $options->useRaaOption = $useRaaOption;
+        $options->selectRaaOption = $selectRaaOption;
+
+        return $options;
+    }
 }

@@ -22,7 +22,6 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
-use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
@@ -30,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class UseRaaOptionType extends Type
 {
-    const NAME = 'stepup_select_raa_option';
+    const NAME = 'stepup_use_raa_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

@@ -20,8 +20,8 @@ class Version20180918120046 extends AbstractMigration
 
         $this->addSql('
             ALTER TABLE institution_configuration_options 
-              ADD use_ra_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_ra_option)\', 
-              ADD use_raa_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_raa_option)\', 
+              ADD use_ra_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_use_ra_option)\', 
+              ADD use_raa_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_use_raa_option)\', 
               ADD select_raa_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_raa_option)\'
         ');
     }

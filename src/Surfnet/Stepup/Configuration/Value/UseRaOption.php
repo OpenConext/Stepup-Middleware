@@ -84,6 +84,9 @@ class UseRaOption implements JsonSerializable
 
     public function jsonSerialize()
     {
+        if (is_null($this->getInstitutions())) {
+            return $this->getInstitutions();
+        }
         return $this->getInstitutions()->toScalarArray();
     }
 }

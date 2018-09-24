@@ -108,13 +108,13 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 
         // Support FGA options on PRE FGA events
         if (!isset($data['use_ra_option'])) {
-            $data['use_ra_option'] = UseRaOption::getDefault()->getUseRaOption();
+            $data['use_ra_option'] = UseRaOption::getDefault()->getInstitutions();
         }
         if (!isset($data['use_raa_option'])) {
-            $data['use_raa_option'] = UseRaaOption::getDefault()->getUseRaaOption();
+            $data['use_raa_option'] = UseRaaOption::getDefault()->getInstitutions();
         }
         if (!isset($data['select_raa_option'])) {
-            $data['select_raa_option'] = SelectRaaOption::getDefault()->getSelectRaaOption();
+            $data['select_raa_option'] = SelectRaaOption::getDefault()->getInstitutions();
         }
 
         return new self(
@@ -139,9 +139,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
-            'use_ra_option' => $this->useRaOption->getUseRaOption(),
-            'use_raa_option' => $this->useRaaOption->getUseRaaOption(),
-            'select_raa_option' => $this->selectRaaOption->getSelectRaaOption(),
+            'use_ra_option' => $this->useRaOption->getInstitutions(),
+            'use_raa_option' => $this->useRaaOption->getInstitutions(),
+            'select_raa_option' => $this->selectRaaOption->getInstitutions(),
         ];
     }
 }

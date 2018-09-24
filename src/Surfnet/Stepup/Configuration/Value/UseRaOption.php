@@ -26,7 +26,7 @@ class UseRaOption implements JsonSerializable
     /**
      * @var string[]|null
      */
-    private $useRaOption;
+    private $institutions;
 
     /**
      * UseRaOption constructor.
@@ -43,11 +43,11 @@ class UseRaOption implements JsonSerializable
 
         }
 
-        $this->useRaOption = $useRaOption;
+        $this->institutions = $useRaOption;
 
         // Sort the array values alphabetically
-        if (is_array($this->useRaOption)) {
-            sort($this->useRaOption);
+        if (is_array($this->institutions)) {
+            sort($this->institutions);
         }
     }
 
@@ -58,16 +58,16 @@ class UseRaOption implements JsonSerializable
 
     public function equals(UseRaOption $other)
     {
-        return $this->getUseRaOption() === $other->getUseRaOption();
+        return $this->getInstitutions() === $other->getInstitutions();
     }
 
-    public function getUseRaOption()
+    public function getInstitutions()
     {
-        return $this->useRaOption;
+        return $this->institutions;
     }
 
     public function jsonSerialize()
     {
-        return $this->getUseRaOption();
+        return $this->getInstitutions();
     }
 }

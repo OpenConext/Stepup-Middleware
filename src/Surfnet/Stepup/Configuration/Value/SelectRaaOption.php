@@ -26,7 +26,7 @@ class SelectRaaOption implements JsonSerializable
     /**
      * @var string[]|null
      */
-    private $selectRaaOption;
+    private $institutions;
 
     /**
      * SelectRaaOption constructor.
@@ -42,11 +42,11 @@ class SelectRaaOption implements JsonSerializable
             );
         }
 
-        $this->selectRaaOption = $selectRaaOption;
+        $this->institutions = $selectRaaOption;
 
         // Sort the array values alphabetically
-        if (is_array($this->selectRaaOption)) {
-            sort($this->selectRaaOption);
+        if (is_array($this->institutions)) {
+            sort($this->institutions);
         }
     }
 
@@ -55,18 +55,18 @@ class SelectRaaOption implements JsonSerializable
         return new self(null);
     }
 
-    public function getSelectRaaOption()
+    public function getInstitutions()
     {
-        return $this->selectRaaOption;
+        return $this->institutions;
     }
 
     public function equals(SelectRaaOption $other)
     {
-        return $this->getSelectRaaOption() === $other->getSelectRaaOption();
+        return $this->getInstitutions() === $other->getInstitutions();
     }
 
     public function jsonSerialize()
     {
-        return $this->getSelectRaaOption();
+        return $this->getInstitutions();
     }
 }

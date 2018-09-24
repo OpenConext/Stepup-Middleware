@@ -64,7 +64,7 @@ final class UseRaOptionChangedEvent implements SerializableInterface
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
             'institution' => $this->institution->getInstitution(),
-            'use_ra_option' => $this->useRaOption->getUseRaOption(),
+            'use_ra_option' => $this->useRaOption->getInstitutions(),
         ];
     }
 }

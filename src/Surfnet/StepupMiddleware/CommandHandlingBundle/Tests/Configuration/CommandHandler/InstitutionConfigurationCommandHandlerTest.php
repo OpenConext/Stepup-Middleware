@@ -168,9 +168,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
-        $command->useRaOption = $useRaOption->getUseRaOption();
-        $command->useRaaOption = $useRaaOption->getUseRaaOption();
-        $command->selectRaaOption = $selectRaaOption->getSelectRaaOption();
+        $command->useRaOption = $useRaOption->getInstitutions();
+        $command->useRaaOption = $useRaaOption->getInstitutions();
+        $command->selectRaaOption = $selectRaaOption->getInstitutions();
         $command->allowedSecondFactors            = [];
 
         $this->scenario
@@ -223,9 +223,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
-        $command->useRaOption = $useRaOption->getUseRaOption();
-        $command->useRaaOption = $useRaaOption->getUseRaaOption();
-        $command->selectRaaOption = $selectRaaOption->getSelectRaaOption();
+        $command->useRaOption = $useRaOption->getInstitutions();
+        $command->useRaaOption = $useRaaOption->getInstitutions();
+        $command->selectRaaOption = $selectRaaOption->getInstitutions();
         $command->allowedSecondFactors            = [];
 
         $this->scenario

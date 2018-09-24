@@ -20,9 +20,13 @@ namespace Surfnet\Stepup\Tests\Configuration;
 
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
+use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -325,6 +329,93 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                 $institutionConfiguration->configureUseRaOption($useRaOptionRevision);
             })
             ->then([]);
+    }
+
+    /**
+     * @test
+     * @group aggregate
+     */
+    public function test_the_setting_of_fga_options_on_an_institution_configuration()
+    {
+        $institution                     = new Institution('Institution');
+        $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
+        $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
+        $verifyEmailOption               = new VerifyEmailOption(true);
+        $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
+        $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
+        $useRaOption = new UseRaOption(null);
+        $useRaaOption = new UseRaaOption(null);
+        $selectRaaOption = new SelectRaaOption(null);
+
+        $updatedRaOption = new UseRaOption(['Institution']);
+        $updatedRaaOption = new UseRaaOption([]);
+        $updatedSelectRaaOption = new SelectRaaOption(['Institution']);
+
+        $this->scenario
+            ->when(
+                function () use (
+                    $institution,
+                    $institutionConfigurationId,
+                    $showRaaContactInformationOption,
+                    $verifyEmailOption,
+                    $updatedRaOption,
+                    $updatedRaaOption,
+                    $updatedSelectRaaOption
+                ) {
+                    $institutionConfiguration = InstitutionConfiguration::create(
+                        $institutionConfigurationId,
+                        $institution
+                    );
+
+                    // First destroy the current config
+                    $institutionConfiguration->destroy();
+
+                    // Then set the new options
+                    $institutionConfiguration->configureUseRaOption($updatedRaOption);
+                    $institutionConfiguration->configureUseRaaOption($updatedRaaOption);
+                    $institutionConfiguration->configureSelectRaaOption($updatedSelectRaaOption);
+
+                    return $institutionConfiguration;
+                }
+            )->then(
+                [
+                    new NewInstitutionConfigurationCreatedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $expectedUseRaLocationsOption,
+                        $showRaaContactInformationOption,
+                        $verifyEmailOption,
+                        $numberOfTokensPerIdentityOption,
+                        $useRaOption,
+                        $useRaaOption,
+                        $selectRaaOption
+                    ),
+                    new AllowedSecondFactorListUpdatedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        AllowedSecondFactorList::blank()
+                    ),
+                    new InstitutionConfigurationRemovedEvent(
+                        $institutionConfigurationId,
+                        $institution
+                    ),
+                    new UseRaOptionChangedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $updatedRaOption
+                    ),
+                    new UseRaaOptionChangedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $updatedRaaOption
+                    ),
+                    new SelectRaaOptionChangedEvent(
+                        $institutionConfigurationId,
+                        $institution,
+                        $updatedSelectRaaOption
+                    )
+                ]
+            );
     }
 
     protected function getAggregateRootClass()

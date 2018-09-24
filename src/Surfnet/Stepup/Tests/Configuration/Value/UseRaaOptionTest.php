@@ -50,12 +50,22 @@ class UseRaaOptionTest extends TestCase
      * @test
      * @group domain
      */
-    public function can_be_retrieved_json_encodable()
+    public function can_be_retrieved_json_serializable()
     {
         $useRaaOption = new UseRaaOption(['z', 'y', 'x']);
         $this->assertEquals(['x', 'y', 'z'], $useRaaOption->jsonSerialize());
     }
 
+    /**
+     * @test
+     * @group domain
+     */
+    public function can_be_retrieved_json_serializable_on_null()
+    {
+        $useRaOption = UseRaaOption::getDefault();
+        $this->assertEquals(null, $useRaOption->jsonSerialize());
+    }
+    
     /**
      * @test
      * @group domain

@@ -20,9 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
-use Surfnet\Stepup\Configuration\Value\UseRaaOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 
 /**
  * @ORM\Entity(
@@ -40,39 +38,37 @@ class InstitutionAuthorization
     public $institution;
 
     /**
-     * @ORM\Column(type="stepup_use_ra_option", nullable=true)
+     * @ORM\Id
+     * @ORM\Column(type="stepup_configuration_institution")
      *
-     * @var UseRaOption
+     * @var Institution
      */
-    public $useRaOption;
+    public $institutionRelation;
 
     /**
-     * @ORM\Column(type="stepup_use_raa_option", nullable=true)
+     * @ORM\Id
+     * @ORM\Column(type="stepup_institution_role", length=10)
      *
-     * @var UseRaaOption
+     * @var InstitutionRole
      */
-    public $useRaaOption;
+    public $institutionRole;
 
     /**
-     * @ORM\Column(type="stepup_select_raa_option", nullable=true)
-     *
-     * @var SelectRaaOption
+     * @param Institution $institution
+     * @param Institution $institutionRelation
+     * @param InstitutionRole $institutionRole
+     * @return InstitutionAuthorization
      */
-    public $selectRaaOption;
-
     public static function create(
         Institution $institution,
-        UseRaOption $useRaOption,
-        UseRaaOption $useRaaOption,
-        SelectRaaOption $selectRaaOption
+        Institution $institutionRelation,
+        InstitutionRole $institutionRole
     ) {
         $options = new self;
 
         $options->institution = $institution;
-
-        $options->useRaOption = $useRaOption;
-        $options->useRaaOption = $useRaaOption;
-        $options->selectRaaOption = $selectRaaOption;
+        $options->institutionRelation = $institutionRelation;
+        $options->institutionRole = $institutionRole;
 
         return $options;
     }

@@ -21,12 +21,14 @@ namespace Surfnet\Stepup\Configuration\Event;
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
@@ -61,17 +63,17 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
     public $numberOfTokensPerIdentityOption;
 
     /**
-     * @var UseRaOption
+     * @var InstitutionOption
      */
     public $useRaOption;
 
     /**
-     * @var UseRaaOption
+     * @var InstitutionOption
      */
     public $useRaaOption;
 
     /**
-     * @var SelectRaaOption
+     * @var InstitutionOption
      */
     public $selectRaaOption;
 
@@ -82,9 +84,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        UseRaOption $useRaOption,
-        UseRaaOption $useRaaOption,
-        SelectRaaOption $selectRaaOption
+        InstitutionOption $useRaOption,
+        InstitutionOption $useRaaOption,
+        InstitutionOption $selectRaaOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
@@ -108,14 +110,16 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 
         // Support FGA options on PRE FGA events
         if (!isset($data['use_ra_option'])) {
-            $data['use_ra_option'] = UseRaOption::getDefault()->getInstitutions();
+            $data['use_ra_option'] = InstitutionOption::blank();
         }
         if (!isset($data['use_raa_option'])) {
-            $data['use_raa_option'] = UseRaaOption::getDefault()->getInstitutions();
+            $data['use_raa_option'] = InstitutionOption::blank();
         }
         if (!isset($data['select_raa_option'])) {
-            $data['select_raa_option'] = SelectRaaOption::getDefault()->getInstitutions();
+            $data['select_raa_option'] = InstitutionOption::blank();
         }
+
+        $institution = new Institution($data['institution']);
 
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
@@ -124,9 +128,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
             new VerifyEmailOption($data['verify_email_option']),
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
-            new UseRaOption($data['use_ra_option']),
-            new UseRaaOption($data['use_raa_option']),
-            new SelectRaaOption($data['select_raa_option'])
+            InstitutionOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, $data['use_ra_option']),
+            InstitutionOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, $data['use_raa_option']),
+            InstitutionOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, $data['select_raa_option'])
         );
     }
 
@@ -139,9 +143,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
-            'use_ra_option' => $this->useRaOption->getInstitutions(),
-            'use_raa_option' => $this->useRaaOption->getInstitutions(),
-            'select_raa_option' => $this->selectRaaOption->getInstitutions(),
+            'use_ra_option' => $this->useRaOption->getInstitutionSet()->toScalarArray(),
+            'use_raa_option' => $this->useRaaOption->getInstitutionSet()->toScalarArray(),
+            'select_raa_option' => $this->selectRaaOption->getInstitutionSet()->toScalarArray(),
         ];
     }
 }

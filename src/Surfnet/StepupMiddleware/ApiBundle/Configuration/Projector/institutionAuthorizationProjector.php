@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\InstitutionOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 
 final class InstitutionAuthorizationProjector extends Projector
@@ -39,23 +40,23 @@ final class InstitutionAuthorizationProjector extends Projector
 
     public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
     {
-        $institutionAuthorization = $this->institutionAuthorizationRepository->findAuthorizationOptionsForInstitution($event->institution);
-        $institutionAuthorization->useRaOption = $event->useRaOption;
-
-        $this->institutionAuthorizationRepository->save($institutionAuthorization);
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            $event->useRaOption
+        );
     }
     public function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
     {
-        $institutionAuthorization = $this->institutionAuthorizationRepository->findAuthorizationOptionsForInstitution($event->institution);
-        $institutionAuthorization->useRaaOption = $event->useRaaOption;
-
-        $this->institutionAuthorizationRepository->save($institutionAuthorization);
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            $event->useRaaOption
+        );
     }
     public function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
     {
-        $institutionAuthorization = $this->institutionAuthorizationRepository->findAuthorizationOptionsForInstitution($event->institution);
-        $institutionAuthorization->selectRaaOption = $event->selectRaaOption;
-
-        $this->institutionAuthorizationRepository->save($institutionAuthorization);
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            $event->selectRaaOption
+        );
     }
 }

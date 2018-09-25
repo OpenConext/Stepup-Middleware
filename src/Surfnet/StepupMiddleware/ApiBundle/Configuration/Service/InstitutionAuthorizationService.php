@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 
@@ -40,43 +42,18 @@ class InstitutionAuthorizationService
 
     /**
      * @param Institution $institution
-     * @param Institution $for
-     * @return bool
+     * @param InstitutionRole $role
+     * @return InstitutionOption
      */
-    public function canInstitutionUseRaFor(Institution $institution, Institution $for)
+    public function findAuthorizationsFor(Institution $institution, InstitutionRole $role)
     {
-        $authorization = $this->findAuthorizationFor($institution);
-        return $authorization->useRaOption->hasOptions() && $authorization->useRaOption->isOption($for->getInstitution());
-    }
+        $authorizations = $this->repository->findAuthorizationOptionsForInstitution($institution, $role);
 
-    /**
-     * @param Institution $institution
-     * @param Institution $for
-     * @return bool
-     */
-    public function canInstitutionUseRaaFor(Institution $institution, Institution $for)
-    {
-        $authorization = $this->findAuthorizationFor($institution);
-        return $authorization->useRaaOption->hasOptions() && $authorization->useRaaOption->isOption($for->getInstitution());
-    }
+        $institutions = [];
+        foreach ($authorizations as $authorization) {
+            $institutions[] = $authorization->institutionRelation;
+        }
 
-    /**
-     * @param Institution $institution
-     * @param Institution $for
-     * @return bool
-     */
-    public function canInstitutionSelectRaaFor(Institution $institution, Institution $for)
-    {
-        $authorization = $this->findAuthorizationFor($institution);
-        return $authorization->selectRaaOption->hasOptions() && $authorization->selectRaaOption->isOption($for->getInstitution());
-    }
-
-    /**
-     * @param Institution $institution
-     * @return InstitutionAuthorization
-     */
-    private function findAuthorizationFor(Institution $institution)
-    {
-        return $this->repository->findAuthorizationOptionsForInstitution($institution);
+        return InstitutionOption::fromInstitutions($role, $institutions);
     }
 }

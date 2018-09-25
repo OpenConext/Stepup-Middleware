@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180918120046 extends AbstractMigration
+class Version20180926144517 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -18,12 +18,7 @@ class Version20180918120046 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('
-            ALTER TABLE institution_configuration_options 
-              ADD use_ra_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_ra_option)\', 
-              ADD use_raa_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_raa_option)\', 
-              ADD select_raa_option LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:stepup_select_raa_option)\'
-        ');
+        $this->addSql('CREATE TABLE institution_authorization (institution VARCHAR(255) NOT NULL COMMENT \'(DC2Type:stepup_configuration_institution)\', institution_relation VARCHAR(255) NOT NULL COMMENT \'(DC2Type:stepup_configuration_institution)\', institution_role VARCHAR(10) NOT NULL COMMENT \'(DC2Type:stepup_institution_role)\', PRIMARY KEY(institution, institution_relation, institution_role)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
     }
 
     /**
@@ -34,11 +29,6 @@ class Version20180918120046 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('
-            ALTER TABLE institution_configuration_options 
-              DROP use_ra_option, 
-              DROP use_raa_option, 
-              DROP select_raa_option
-        ');
+        $this->addSql('DROP TABLE institution_authorization');
     }
 }

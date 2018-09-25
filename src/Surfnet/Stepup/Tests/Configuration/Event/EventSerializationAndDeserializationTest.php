@@ -43,6 +43,7 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
@@ -51,7 +52,7 @@ use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -128,9 +129,9 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
                     new NumberOfTokensPerIdentityOption(0),
-                    new UseRaOption(null),
-                    new UseRaaOption(null),
-                    new SelectRaaOption(null)
+                    InstitutionOption::getDefault(InstitutionRole::useRa(), $institution),
+                    InstitutionOption::getDefault(InstitutionRole::useRaa(),  $institution),
+                    InstitutionOption::getDefault(InstitutionRole::selectRaa(),  $institution)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

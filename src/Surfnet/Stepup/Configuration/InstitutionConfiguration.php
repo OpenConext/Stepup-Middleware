@@ -40,6 +40,7 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
@@ -49,7 +50,7 @@ use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
 
@@ -105,18 +106,18 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $numberOfTokensPerIdentityOption;
 
     /**
-     * @var UseRaOption
+     * @var InstitutionOption
      */
     private $useRaOption;
 
     /**
-     * @var UseRaaOption
+     * @var InstitutionOption
      */
 
     private $useRaaOption;
 
     /**
-     * @var SelectRaaOption
+     * @var InstitutionOption
      */
     private $selectRaaOption;
 
@@ -146,9 +147,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
-                UseRaOption::getDefault(),
-                UseRaaOption::getDefault(),
-                SelectRaaOption::getDefault()
+                InstitutionOption::getDefault(InstitutionRole::useRa(), $institution),
+                InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution),
+                InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution)
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -178,9 +179,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
-                UseRaOption::getDefault(),
-                UseRaaOption::getDefault(),
-                SelectRaaOption::getDefault()
+                InstitutionOption::getDefault(InstitutionRole::useRa(), $this->institution),
+                InstitutionOption::getDefault(InstitutionRole::useRaa(), $this->institution),
+                InstitutionOption::getDefault(InstitutionRole::selectRaa(), $this->institution)
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -257,7 +258,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    public function configureUseRaOption(UseRaOption $useRaOption)
+    public function configureUseRaOption(InstitutionOption $useRaOption)
     {
         if ($this->useRaOption->equals($useRaOption)) {
             return;
@@ -272,7 +273,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    public function configureUseRaaOption(UseRaaOption $useRaaOption)
+    public function configureUseRaaOption(InstitutionOption $useRaaOption)
     {
         if ($this->useRaaOption->equals($useRaaOption)) {
             return;
@@ -287,7 +288,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    public function configureSelectRaaOption(SelectRaaOption $selectRaaOption)
+    public function configureSelectRaaOption(InstitutionOption $selectRaaOption)
     {
         if ($this->selectRaaOption->equals($selectRaaOption)) {
             return;
@@ -546,9 +547,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->verifyEmailOption               = VerifyEmailOption::getDefault();
         $this->numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
-        $this->useRaOption = UseRaOption::getDefault();
-        $this->useRaaOption = UseRaaOption::getDefault();
-        $this->selectRaaOption = SelectRaaOption::getDefault();
+        $this->useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $event->institution);
+        $this->useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $event->institution);
+        $this->selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $event->institution);
 
         $this->isMarkedAsDestroyed             = true;
     }

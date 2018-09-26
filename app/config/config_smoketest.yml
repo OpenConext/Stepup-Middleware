@@ -12,9 +12,6 @@ web_profiler:
     toolbar: false
     intercept_redirects: false
 
-swiftmailer:
-    disable_delivery: true
-
 doctrine:
     dbal:
         default_connection: middleware
@@ -25,22 +22,6 @@ doctrine:
                 dbname: "%database_gateway_name%_test"
             deploy:
                 dbname: "%database_middleware_name%_test"
-
-liip_functional_test:
-    cache_sqlite_db: true
-
-monolog:
-    handlers:
-        # Handlers are merged in from config.yml and config_dev.yml. They cannot be disabled or removed. The practical
-        # solution is to assign them the `null` handler, which discards the records.
-        prod-signaler:
-            type: "null"
-        main_syslog:
-            type: "null"
-        main_logfile:
-            type: "null"
-        console:
-            type: "null"
 
 # In test, it makes sense we use a hard-coded password for the api users. This, to aid the behat tests in Stepup-Deploy.
 security:

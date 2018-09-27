@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 
@@ -63,10 +63,10 @@ class InstitutionAuthorizationRepository extends EntityRepository
 
     /**
      * @param Institution $institution
-     * @param InstitutionOption $institutionOption
+     * @param InstitutionAuthorizationOption $institutionOption
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function saveInstitutionOption(Institution $institution, InstitutionOption $institutionOption)
+    public function saveInstitutionOption(Institution $institution, InstitutionAuthorizationOption $institutionOption)
     {
         $institutionAuthorizations = [];
 

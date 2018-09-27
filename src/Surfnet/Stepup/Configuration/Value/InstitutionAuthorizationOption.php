@@ -19,7 +19,7 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionOption
+final class InstitutionAuthorizationOption
 {
     /**
      * @var InstitutionRole
@@ -53,7 +53,7 @@ final class InstitutionOption
      * @param InstitutionRole $role
      * @param Institution $institution
      * @param string[]|null
-     * @return InstitutionOption
+     * @return InstitutionAuthorizationOption
      */
     public static function fromInstitutionConfig(InstitutionRole $role, Institution $institution, $institutions = null)
     {
@@ -79,7 +79,7 @@ final class InstitutionOption
     /**
      * @param InstitutionRole $role
      * @param Institution[] $institutions
-     * @return InstitutionOption
+     * @return InstitutionAuthorizationOption
      */
     public static function fromInstitutions(InstitutionRole $role, array $institutions)
     {
@@ -90,7 +90,7 @@ final class InstitutionOption
      * @param InstitutionRole $role
      * @param Institution $institution
      * @param string[]|null
-     * @return InstitutionOption
+     * @return InstitutionAuthorizationOption
      */
     public static function getDefault(InstitutionRole $role, Institution $institution)
     {
@@ -106,10 +106,10 @@ final class InstitutionOption
     }
 
     /**
-     * @param InstitutionOption $option
+     * @param InstitutionAuthorizationOption $option
      * @return bool
      */
-    public function equals(InstitutionOption $option)
+    public function equals(InstitutionAuthorizationOption $option)
     {
         return
             $this->institutionRole->equals($option->getInstitutionRole()) &&

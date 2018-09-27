@@ -52,7 +52,7 @@ use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -129,9 +129,9 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
                     new NumberOfTokensPerIdentityOption(0),
-                    InstitutionOption::getDefault(InstitutionRole::useRa(), $institution),
-                    InstitutionOption::getDefault(InstitutionRole::useRaa(),  $institution),
-                    InstitutionOption::getDefault(InstitutionRole::selectRaa(),  $institution)
+                    InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution),
+                    InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(),  $institution),
+                    InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(),  $institution)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

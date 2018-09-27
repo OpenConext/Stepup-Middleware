@@ -22,9 +22,9 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\InstitutionSet;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 
-class InstitutionOptionOptionTest extends TestCase
+class InstitutionAuthorizationOptionTest extends TestCase
 {
     /**
      * @var Institution
@@ -48,7 +48,7 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function institution_entries_are_sorted()
     {
-        $useRaOption = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, ['z', 'y', 'x']);
+        $useRaOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, ['z', 'y', 'x']);
         $this->assertEquals(['x', 'y', 'z'], $useRaOption->getInstitutionSet()->getInstitutions());
     }
 
@@ -58,8 +58,8 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function institution_entries_default_is_own_institution()
     {
-        $useRaOption1 = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, null);
-        $useRaOption2 = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, [$this->institution->getInstitution()]);
+        $useRaOption1 = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, null);
+        $useRaOption2 = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, [$this->institution->getInstitution()]);
         $this->assertTrue($useRaOption1->equals($useRaOption2));
     }
 
@@ -70,18 +70,18 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function institution_option_instances_can_be_compared($expectation, $configurationA, $configurationB)
     {
-        $useRaOption = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, $configurationA);
-        $secondInstitutionOption = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, $configurationB);
+        $useRaOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, $configurationA);
+        $secondInstitutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, $configurationB);
         $this->assertEquals($expectation, $useRaOption->equals($secondInstitutionOption));
     }
 
-    /**InstitutionOption
+    /**InstitutionAuthorizationOption
      * @test
      * @group domain
      */
     public function can_be_retrieved_json_serializable()
     {
-        $institutionOption = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, ['z', 'y', 'x']);
+        $institutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, ['z', 'y', 'x']);
         $this->assertEquals(['x', 'y', 'z'], $institutionOption->getInstitutionSet()->jsonSerialize());
     }
 
@@ -93,7 +93,7 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function can_be_retrieved_json_serializable_on_empty_set()
     {
-        $institutionOption = InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution);
+        $institutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution);
         $this->assertEquals([$this->institution], $institutionOption->getInstitutionSet()->jsonSerialize());
     }
 
@@ -105,7 +105,7 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function invalid_types_are_rejected_during_construction($arguments)
     {
-        InstitutionOption::fromInstitutionConfig($this->institutionRole, $this->institution, $arguments);
+        InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $this->institution, $arguments);
     }
 
     /**
@@ -114,7 +114,7 @@ class InstitutionOptionOptionTest extends TestCase
      */
     public function the_default_value_is_given_institution()
     {
-        $this->assertEquals([$this->institution], InstitutionOption::getDefault($this->institutionRole, $this->institution)->getInstitutionSet()->getInstitutions());
+        $this->assertEquals([$this->institution], InstitutionAuthorizationOption::getDefault($this->institutionRole, $this->institution)->getInstitutionSet()->getInstitutions());
     }
 
     public function institutionSetComparisonProvider()

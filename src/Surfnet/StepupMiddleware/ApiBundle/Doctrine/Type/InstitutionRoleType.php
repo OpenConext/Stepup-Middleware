@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
@@ -42,7 +42,7 @@ class InstitutionRoleType extends Type
         if (!$value instanceof InstitutionRole) {
             throw new ConversionException(
                 sprintf(
-                    "Encountered illegal location of type %s '%s', expected a InstitutionOption instance",
+                    "Encountered illegal location of type %s '%s', expected a InstitutionAuthorizationOption instance",
                     is_object($value) ? get_class($value) : gettype($value),
                     is_scalar($value) ? (string) $value : ''
                 )

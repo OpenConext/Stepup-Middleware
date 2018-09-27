@@ -21,13 +21,13 @@ doctrine:
         connections:
             middleware:
                 driver: pdo_sqlite
-                path: "%kernel.cache_dir%/middleware.db"
+                path: "/tmp/middleware.db"
             gateway:
                 driver: pdo_sqlite
-                path: "%kernel.cache_dir%/gateway.db"
+                path: "/tmp/gateway.db"
             deploy:
                 driver: pdo_sqlite
-                path: "%kernel.cache_dir%/deploy.db"
+                path: "/tmp/deploy.db"
 
 liip_functional_test:
     cache_sqlite_db: true

@@ -22,13 +22,10 @@ use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
@@ -63,17 +60,17 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
     public $numberOfTokensPerIdentityOption;
 
     /**
-     * @var InstitutionOption
+     * @var InstitutionAuthorizationOption
      */
     public $useRaOption;
 
     /**
-     * @var InstitutionOption
+     * @var InstitutionAuthorizationOption
      */
     public $useRaaOption;
 
     /**
-     * @var InstitutionOption
+     * @var InstitutionAuthorizationOption
      */
     public $selectRaaOption;
 
@@ -84,9 +81,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        InstitutionOption $useRaOption,
-        InstitutionOption $useRaaOption,
-        InstitutionOption $selectRaaOption
+        InstitutionAuthorizationOption $useRaOption,
+        InstitutionAuthorizationOption $useRaaOption,
+        InstitutionAuthorizationOption $selectRaaOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
@@ -110,13 +107,13 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 
         // Support FGA options on PRE FGA events
         if (!isset($data['use_ra_option'])) {
-            $data['use_ra_option'] = InstitutionOption::blank();
+            $data['use_ra_option'] = InstitutionAuthorizationOption::blank();
         }
         if (!isset($data['use_raa_option'])) {
-            $data['use_raa_option'] = InstitutionOption::blank();
+            $data['use_raa_option'] = InstitutionAuthorizationOption::blank();
         }
         if (!isset($data['select_raa_option'])) {
-            $data['select_raa_option'] = InstitutionOption::blank();
+            $data['select_raa_option'] = InstitutionAuthorizationOption::blank();
         }
 
         $institution = new Institution($data['institution']);
@@ -128,9 +125,9 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
             new VerifyEmailOption($data['verify_email_option']),
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
-            InstitutionOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, $data['use_ra_option']),
-            InstitutionOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, $data['use_raa_option']),
-            InstitutionOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, $data['select_raa_option'])
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, $data['use_ra_option']),
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, $data['use_raa_option']),
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, $data['select_raa_option'])
         );
     }
 

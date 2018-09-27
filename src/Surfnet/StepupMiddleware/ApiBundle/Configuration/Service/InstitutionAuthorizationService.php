@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
@@ -43,7 +43,7 @@ class InstitutionAuthorizationService
     /**
      * @param Institution $institution
      * @param InstitutionRole $role
-     * @return InstitutionOption
+     * @return InstitutionAuthorizationOption
      */
     public function findAuthorizationsFor(Institution $institution, InstitutionRole $role)
     {
@@ -54,6 +54,6 @@ class InstitutionAuthorizationService
             $institutions[] = $authorization->institutionRelation;
         }
 
-        return InstitutionOption::fromInstitutions($role, $institutions);
+        return InstitutionAuthorizationOption::fromInstitutions($role, $institutions);
     }
 }

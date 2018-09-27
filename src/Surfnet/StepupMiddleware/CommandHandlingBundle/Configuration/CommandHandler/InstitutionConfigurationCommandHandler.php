@@ -33,7 +33,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
@@ -103,17 +103,17 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         );
 
         // Configure the authorization options on the aggregate
-        $institutionConfiguration->configureUseRaOption(InstitutionOption::fromInstitutionConfig(
+        $institutionConfiguration->configureUseRaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::useRa(),
             $institution,
             $command->useRaOption
         ));
-        $institutionConfiguration->configureUseRaaOption(InstitutionOption::fromInstitutionConfig(
+        $institutionConfiguration->configureUseRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::useRaa(),
             $institution,
             $command->useRaaOption
         ));
-        $institutionConfiguration->configureSelectRaaOption(InstitutionOption::fromInstitutionConfig(
+        $institutionConfiguration->configureSelectRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::selectRaa(),
             $institution,
             $command->selectRaaOption

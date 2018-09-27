@@ -37,7 +37,7 @@ use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
@@ -54,9 +54,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption               = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->when(function () use ($institution, $institutionConfigurationId, $showRaaContactInformationOption, $verifyEmailOption) {
@@ -96,9 +96,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption          = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->when(function () use ($institution, $institutionConfigurationId, $useRaLocationsOption, $verifyEmailOption) {
@@ -139,9 +139,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption               = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $theSameUseRaLocationsOption = $originalUseRaLocationsOption;
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
@@ -177,9 +177,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption                       = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $sameShowRaaContactInformationOption = $originalShowRaaContactInformationOption;
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
@@ -215,9 +215,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption               = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
@@ -259,9 +259,9 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption                       = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedShowRaaContactInformationOption = new ShowRaaContactInformationOption(false);
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
@@ -305,11 +305,11 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
 
         // Configuration might change when it comes to ordering, this should not affect the aggregate state as the value
         // did not change, the order did.
-        $useRaOption = InstitutionOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['institution-a', 'institution-b']);
-        $useRaOptionRevision = InstitutionOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['institution-b', 'institution-a']);
+        $useRaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['institution-a', 'institution-b']);
+        $useRaOptionRevision = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['institution-b', 'institution-a']);
 
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
         $this->scenario
             ->withAggregateId((string) $institutionConfigurationId->getInstitutionConfigurationId())
@@ -344,13 +344,13 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $verifyEmailOption               = new VerifyEmailOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
-        $useRaOption = InstitutionOption::getDefault(InstitutionRole::useRa(), $institution);
-        $useRaaOption = InstitutionOption::getDefault(InstitutionRole::useRaa(), $institution);
-        $selectRaaOption = InstitutionOption::getDefault(InstitutionRole::selectRaa(), $institution);
+        $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa(), $institution);
+        $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa(), $institution);
+        $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa(), $institution);
 
-        $updatedRaOption = InstitutionOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['Institution']);
-        $updatedRaaOption = InstitutionOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, []);
-        $updatedSelectRaaOption = InstitutionOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, ['Institution', 'Institution2']);
+        $updatedRaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, ['Institution']);
+        $updatedRaaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, []);
+        $updatedSelectRaaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, ['Institution', 'Institution2']);
 
         $this->scenario
             ->when(

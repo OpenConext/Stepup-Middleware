@@ -73,7 +73,27 @@ final class InstitutionAuthorizationOption
             return self::getDefault($role, $institution);
         }
 
-        return new self($role, InstitutionSet::createFromStringArray($institutions), false);
+        array_walk(
+            $institutions,
+            function ($institution, $key) use ($institutions) {
+                if (!is_string($institution)  || strlen(trim($institution)) === 0) {
+                    throw InvalidArgumentException::invalidType(
+                        'string',
+                        'institutions',
+                        $institutions[$key]
+                    );
+                }
+            }
+        );
+
+        $set = [];
+        foreach ($institutions as $institutionTitle) {
+            $set[] = new Institution($institutionTitle);
+        }
+
+        $institutionSet = InstitutionSet::create($set);
+
+        return new self($role, $institutionSet, false);
     }
 
     /**

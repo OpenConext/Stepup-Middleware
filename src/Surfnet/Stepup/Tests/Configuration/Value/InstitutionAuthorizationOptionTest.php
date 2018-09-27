@@ -133,7 +133,7 @@ class InstitutionAuthorizationOptionTest extends TestCase
     {
         return [
             'cant-be-boolean' => [false],
-            'cant-be-object' => [InstitutionSet::createFromStringArray(['a', 'b'])],
+            'cant-be-object' => [InstitutionSet::create(['a', 'b'])],
             'cant-be-integer' => [42],
         ];
     }

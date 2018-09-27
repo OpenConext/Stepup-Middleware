@@ -65,34 +65,6 @@ final class InstitutionSet implements JsonSerializable
         return new self($institutions);
     }
 
-    /**
-     * @param array $institutions
-     * @return InstitutionSet
-     */
-    public static function createFromStringArray(array $institutions)
-    {
-        // Verify only strings are collected in the set
-        array_walk(
-            $institutions,
-            function ($institution, $key) use ($institutions) {
-                if (!is_string($institution)  || strlen(trim($institution)) === 0) {
-                    throw InvalidArgumentException::invalidType(
-                        'string',
-                        'institutions',
-                        $institutions[$key]
-                    );
-                }
-            }
-        );
-
-        $set = [];
-        foreach ($institutions as $institutionTitle) {
-            $set[] = new Institution($institutionTitle);
-        }
-
-        return self::create($set);
-    }
-
     public function equals(InstitutionSet $other)
     {
         return $this->toScalarArray() === $other->toScalarArray();

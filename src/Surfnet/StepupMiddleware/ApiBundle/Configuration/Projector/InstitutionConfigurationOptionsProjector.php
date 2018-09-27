@@ -22,11 +22,8 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NumberOfTokensPerIdentityOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
@@ -59,10 +56,7 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->useRaLocationsOption,
             $event->showRaaContactInformationOption,
             $event->verifyEmailOption,
-            $event->numberOfTokensPerIdentityOption,
-            $event->useRaOption,
-            $event->useRaaOption,
-            $event->selectRaaOption
+            $event->numberOfTokensPerIdentityOption
         );
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -104,27 +98,5 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     {
         $this->institutionConfigurationOptionsRepository->removeConfigurationOptionsFor($event->institution);
         $this->allowedSecondFactorRepository->clearAllowedSecondFactorListFor($event->institution);
-    }
-
-    public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
-    {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
-        $institutionConfigurationOptions->useRaOption = $event->useRaOption;
-
-        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
-    }
-    public function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
-    {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
-        $institutionConfigurationOptions->useRaaOption = $event->useRaaOption;
-
-        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
-    }
-    public function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
-    {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
-        $institutionConfigurationOptions->selectRaaOption = $event->selectRaaOption;
-
-        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 }

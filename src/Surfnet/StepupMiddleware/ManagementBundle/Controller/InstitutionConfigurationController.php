@@ -24,8 +24,10 @@ use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -50,6 +52,11 @@ final class InstitutionConfigurationController extends Controller
     private $institutionConfigurationOptionsService;
 
     /**
+     * @return InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationService;
+
+    /**
      * @return DataCollectingValidator
      */
     private $validator;
@@ -69,8 +76,14 @@ final class InstitutionConfigurationController extends Controller
      */
     private $pipeline;
 
+    /**
+     * @var DBALConnectionHelper
+     */
+    private $connectionHelper;
+
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        InstitutionAuthorizationService $institutionAuthorizationService,
         DataCollectingValidator $dataCollectingValidator,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         LoggerInterface $logger,
@@ -78,6 +91,7 @@ final class InstitutionConfigurationController extends Controller
         DBALConnectionHelper $dbalConnectionHelper
     ) {
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->institutionAuthorizationService = $institutionAuthorizationService;
         $this->validator = $dataCollectingValidator;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
         $this->logger = $logger;
@@ -100,6 +114,10 @@ final class InstitutionConfigurationController extends Controller
             $numberOfTokensPerIdentity = $this->institutionConfigurationOptionsService
                 ->getMaxNumberOfTokensFor(new Institution($options->institution->getInstitution()));
 
+            // Get the authorization options for this institution
+            $institutionConfigurationOptionsMap = $this->institutionAuthorizationService
+                ->findAuthorizationsFor($options->institution);
+
             $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
@@ -108,9 +126,9 @@ final class InstitutionConfigurationController extends Controller
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
                 ),
-                'use_ra' => $options->useRaOption,
-                'use_raa' => $options->useRaaOption,
-                'select_raa' => $options->selectRaaOption,
+                'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
+                'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
+                'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
             ];
         }
 

@@ -55,7 +55,7 @@ class InstitutionRoleType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         try {
-            $institutionRole = InstitutionRole::create($value);
+            $institutionRole = new InstitutionRole($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(

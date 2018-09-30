@@ -18,10 +18,9 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
-use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionSet implements JsonSerializable
+final class InstitutionSet
 {
     /**
      * @var Institution[]
@@ -90,11 +89,6 @@ final class InstitutionSet implements JsonSerializable
     public function toScalarArray()
     {
         return array_map('strval', $this->institutions);
-    }
-
-    public function jsonSerialize()
-    {
-        return $this->institutions;
     }
 
     /**

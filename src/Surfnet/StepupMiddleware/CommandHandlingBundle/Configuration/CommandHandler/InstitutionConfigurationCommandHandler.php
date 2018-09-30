@@ -103,19 +103,16 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         );
 
         // Configure the authorization options on the aggregate
-        $institutionConfiguration->configureUseRaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
+        $institutionConfiguration->updateUseRaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::useRa(),
-            $institution,
             $command->useRaOption
         ));
-        $institutionConfiguration->configureUseRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
+        $institutionConfiguration->updateUseRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::useRaa(),
-            $institution,
             $command->useRaaOption
         ));
-        $institutionConfiguration->configureSelectRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
+        $institutionConfiguration->updateSelectRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
             InstitutionRole::selectRaa(),
-            $institution,
             $command->selectRaaOption
         ));
 

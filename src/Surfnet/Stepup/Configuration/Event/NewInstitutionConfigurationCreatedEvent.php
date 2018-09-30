@@ -59,31 +59,13 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
      */
     public $numberOfTokensPerIdentityOption;
 
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    public $useRaOption;
-
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    public $useRaaOption;
-
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    public $selectRaaOption;
-
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        InstitutionAuthorizationOption $useRaOption,
-        InstitutionAuthorizationOption $useRaaOption,
-        InstitutionAuthorizationOption $selectRaaOption
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
@@ -91,9 +73,6 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->verifyEmailOption               = $verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
-        $this->useRaOption = $useRaOption;
-        $this->useRaaOption = $useRaaOption;
-        $this->selectRaaOption = $selectRaaOption;
     }
 
     public static function deserialize(array $data)
@@ -105,29 +84,13 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             $data['number_of_tokens_per_identity_option'] = NumberOfTokensPerIdentityOption::DISABLED;
         }
 
-        // Support FGA options on PRE FGA events
-        if (!isset($data['use_ra_option'])) {
-            $data['use_ra_option'] = InstitutionAuthorizationOption::blank();
-        }
-        if (!isset($data['use_raa_option'])) {
-            $data['use_raa_option'] = InstitutionAuthorizationOption::blank();
-        }
-        if (!isset($data['select_raa_option'])) {
-            $data['select_raa_option'] = InstitutionAuthorizationOption::blank();
-        }
-
-        $institution = new Institution($data['institution']);
-
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
             new UseRaLocationsOption($data['use_ra_locations_option']),
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
             new VerifyEmailOption($data['verify_email_option']),
-            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $institution, $data['use_ra_option']),
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRaa(), $institution, $data['use_raa_option']),
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $institution, $data['select_raa_option'])
+            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option'])
         );
     }
 
@@ -140,9 +103,6 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
-            'use_ra_option' => $this->useRaOption->getInstitutionSet()->toScalarArray(),
-            'use_raa_option' => $this->useRaaOption->getInstitutionSet()->toScalarArray(),
-            'select_raa_option' => $this->selectRaaOption->getInstitutionSet()->toScalarArray(),
         ];
     }
 }

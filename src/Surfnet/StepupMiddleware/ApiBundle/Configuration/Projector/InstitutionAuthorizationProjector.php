@@ -19,9 +19,13 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
+use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 
 final class InstitutionAuthorizationProjector extends Projector
@@ -37,6 +41,22 @@ final class InstitutionAuthorizationProjector extends Projector
         $this->institutionAuthorizationRepository = $institutionAuthorizationRepository;
     }
 
+    public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
+    {
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
+        );
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
+        );
+        $this->institutionAuthorizationRepository->saveInstitutionOption(
+            $event->institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
+        );
+    }
+
     public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
@@ -44,6 +64,7 @@ final class InstitutionAuthorizationProjector extends Projector
             $event->useRaOption
         );
     }
+
     public function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
@@ -51,11 +72,19 @@ final class InstitutionAuthorizationProjector extends Projector
             $event->useRaaOption
         );
     }
+
     public function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
             $event->institution,
             $event->selectRaaOption
+        );
+    }
+
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    {
+        $this->institutionAuthorizationRepository->clearInstitutionOption(
+            $event->institution
         );
     }
 }

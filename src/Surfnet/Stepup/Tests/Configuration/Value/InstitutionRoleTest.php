@@ -35,7 +35,7 @@ class InstitutionRoleTest extends TestCase
      */
     public function invalid_types_are_rejected_during_construction($arguments)
     {
-        InstitutionRole::create($arguments);
+        new InstitutionRole($arguments);
     }
 
     /**
@@ -45,8 +45,8 @@ class InstitutionRoleTest extends TestCase
      */
     public function institution_roles_can_be_created_by_type($type)
     {
-        $role1 = InstitutionRole::create($type);
-        $role2 = InstitutionRole::create($type);
+        $role1 = new InstitutionRole($type);
+        $role2 = new InstitutionRole($type);
 
         $this->assertEquals($type, $role1->getType());
         $this->assertTrue($role1->equals($role2));

@@ -17,9 +17,10 @@
 
 namespace Surfnet\Stepup\Configuration\Value;
 
+use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionAuthorizationOption
+final class InstitutionAuthorizationOption implements JsonSerializable
 {
     /**
      * @var InstitutionRole
@@ -51,14 +52,13 @@ final class InstitutionAuthorizationOption
 
     /**
      * @param InstitutionRole $role
-     * @param Institution $institution
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function fromInstitutionConfig(InstitutionRole $role, Institution $institution, $institutions = null)
+    public static function fromInstitutionConfig(InstitutionRole $role, $institutions = null)
     {
         if (is_null($institutions)) {
-            return self::getDefault($role, $institution);
+            return self::getDefault($role);
         }
 
         if (!is_array($institutions)) {
@@ -67,10 +67,6 @@ final class InstitutionAuthorizationOption
                 'institutions',
                 $institutions
             );
-        }
-
-        if (count($institutions) === 1 && current($institutions) === $institution->getInstitution()) {
-            return self::getDefault($role, $institution);
         }
 
         array_walk(
@@ -98,23 +94,36 @@ final class InstitutionAuthorizationOption
 
     /**
      * @param InstitutionRole $role
+     * @param Institution $institution
      * @param Institution[] $institutions
      * @return InstitutionAuthorizationOption
      */
-    public static function fromInstitutions(InstitutionRole $role, array $institutions)
+    public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions)
     {
+        if (count($institutions) == 1 && current($institutions)->getInstitution() === $institution->getInstitution()) {
+            return new self($role, InstitutionSet::create([]), true);
+        }
         return new self($role, InstitutionSet::create($institutions), false);
     }
 
     /**
      * @param InstitutionRole $role
-     * @param Institution $institution
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function getDefault(InstitutionRole $role, Institution $institution)
+    public static function getDefault(InstitutionRole $role)
     {
-        return new self($role, InstitutionSet::create([$institution]), true);
+        return new self($role, InstitutionSet::create([]), true);
+    }
+
+    /**
+     * @param InstitutionRole $role
+     * @param string[]|null
+     * @return InstitutionAuthorizationOption
+     */
+    public static function getEmpty(InstitutionRole $role)
+    {
+        return new self($role, InstitutionSet::create([]), false);
     }
 
     /**
@@ -154,10 +163,30 @@ final class InstitutionAuthorizationOption
     }
 
     /**
+     * @param Institution $institution
+     * @return Institution[]
+     */
+    public function getInstitutions(Institution $institution)
+    {
+        if ($this->isDefault) {
+            return [$institution];
+        }
+        return $this->institutionSet->getInstitutions();
+    }
+
+    /**
      * @return bool
      */
     public function isDefault()
     {
         return $this->isDefault;
+    }
+
+    public function jsonSerialize()
+    {
+        if ($this->isDefault) {
+            return null;
+        }
+        return $this->institutionSet->toScalarArray();
     }
 }

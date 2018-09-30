@@ -41,22 +41,13 @@ final class InstitutionRole implements JsonSerializable
      * InstitutionRole constructor.
      * @param $type
      */
-    private function __construct($type)
+    public function __construct($type)
     {
         if (!in_array($type, self::$validRoles)) {
             throw new InvalidArgumentException();
         }
 
         $this->type = $type;
-    }
-
-    /**
-     * @param string $type
-     * @return InstitutionRole
-     */
-    public static function create($type)
-    {
-        return new self($type);
     }
 
     /**

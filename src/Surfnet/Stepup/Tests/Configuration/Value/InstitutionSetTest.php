@@ -37,7 +37,7 @@ class InstitutionSetTest extends UnitTest
         $institutionC = new Institution('C');
 
         $set = InstitutionSet::create([$institutionA, $institutionB, $institutionC]);
-        $this->assertTrue(is_array($set->jsonSerialize()));
+        $this->assertTrue(is_array($set->toScalarArray()));
     }
 
     /**
@@ -90,7 +90,7 @@ class InstitutionSetTest extends UnitTest
     {
         $input = [];
         $set = InstitutionSet::create($input);
-        $this->assertEmpty($set->jsonSerialize());
+        $this->assertEmpty($set->toScalarArray());
     }
 
     /**
@@ -108,7 +108,7 @@ class InstitutionSetTest extends UnitTest
         $set = InstitutionSet::create($input);
         $this->assertEquals(
             $input,
-            $set->jsonSerialize()
+            $set->toScalarArray()
         );
     }
 

@@ -64,12 +64,12 @@ class InstitutionAuthorizationServiceTest extends TestCase
         $expectedAuthorizations = $this->buildAuthorizations($expectedInstitutions);
 
         $this->repository
-            ->shouldReceive('findAuthorizationOptionsForInstitution')
+            ->shouldReceive('findAuthorizationOptionsForInstitutionByRole')
             ->andReturn($expectedAuthorizations);
 
-        $institutionOptions = $this->service->findAuthorizationsFor($institution, InstitutionRole::useRa());
+        $institutionOptions = $this->service->findAuthorizationsByRoleFor($institution, InstitutionRole::useRa());
 
-        $this->assertEquals($institutionOptions->getInstitutionSet()->getInstitutions(), $expectedInstitutions);
+        $this->assertEquals($institutionOptions->getInstitutions($institution), $expectedInstitutions);
         $this->assertEquals(InstitutionRole::useRa(), $institutionOptions->getInstitutionRole());
     }
 

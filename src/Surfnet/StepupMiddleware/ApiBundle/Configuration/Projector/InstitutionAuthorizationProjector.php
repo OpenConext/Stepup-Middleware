@@ -24,37 +24,40 @@ use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
+use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
+use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
+use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class InstitutionAuthorizationProjector extends Projector
 {
     /**
      * @var InstitutionAuthorizationRepository
      */
     private $institutionAuthorizationRepository;
+    /**
+     * @var InstitutionConfigurationOptionsRepository
+     */
+    private $institutionConfigurationOptionsRepository;
 
     public function __construct(
-        InstitutionAuthorizationRepository $institutionAuthorizationRepository
+        InstitutionAuthorizationRepository $institutionAuthorizationRepository,
+        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository
     ) {
         $this->institutionAuthorizationRepository = $institutionAuthorizationRepository;
+        $this->institutionConfigurationOptionsRepository = $institutionConfigurationOptionsRepository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        $this->institutionAuthorizationRepository->saveInstitutionOption(
-            $event->institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
-        );
-        $this->institutionAuthorizationRepository->saveInstitutionOption(
-            $event->institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
-        );
-        $this->institutionAuthorizationRepository->saveInstitutionOption(
-            $event->institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
-        );
+        $this->setDefaultInstitutionAuthorizationOption($event->institution);
     }
 
     public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
@@ -86,5 +89,59 @@ final class InstitutionAuthorizationProjector extends Projector
         $this->institutionAuthorizationRepository->clearInstitutionOption(
             $event->institution
         );
+    }
+
+    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    {
+        $this->setToDefaultIfNoConfigurationOptionsExist($event->whitelistedInstitutions);
+    }
+
+    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    {
+        $this->setToDefaultIfNoConfigurationOptionsExist($event->whitelistedInstitutions);
+    }
+
+    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    {
+        $this->setToDefaultIfNoConfigurationOptionsExist($event->addedInstitutions);
+    }
+
+    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
+    {
+        $this->removeIfConfigurationOptionsDoNotExist($event->removedInstitutions);
+    }
+
+    /**
+     * @param InstitutionCollection $institutionCollection
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function setToDefaultIfNoConfigurationOptionsExist(InstitutionCollection $institutionCollection)
+    {
+        foreach ($institutionCollection as $institution) {
+            $configurationInstitution = new Institution($institution->getInstitution());
+            if (!$this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($configurationInstitution)) {
+                $this->institutionAuthorizationRepository->setDefaultInstitutionOption($configurationInstitution);
+            }
+        }
+    }
+
+    /**
+     * @param InstitutionCollection $institutionCollection
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function removeIfConfigurationOptionsDoNotExist(InstitutionCollection $institutionCollection)
+    {
+        foreach ($institutionCollection as $institution) {
+            $configurationInstitution = new Institution($institution->getInstitution());
+            if (!$this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($configurationInstitution)) {
+                $this->institutionAuthorizationRepository->clearInstitutionOption(
+                    $configurationInstitution
+                );
+            }
+        }
     }
 }

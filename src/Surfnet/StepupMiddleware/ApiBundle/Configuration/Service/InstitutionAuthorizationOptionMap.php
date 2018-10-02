@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Configuration\Value;
+namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
+use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 
 final class InstitutionAuthorizationOptionMap
@@ -36,6 +39,7 @@ final class InstitutionAuthorizationOptionMap
         $institutions = [];
         $roles = [];
         foreach ($institutionAuthorizations as $authorization) {
+            // Skip if the authorization is from a different institution
             if (!$authorization->institution->equals($institution)) {
                 continue;
             }

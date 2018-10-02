@@ -38,6 +38,9 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     private $isDefault;
 
     /**
+     * If the default is set to true then the object will use the old default behaviour. That behaviour is that it
+     * will take the current institution into account when returning institutions.
+     *
      * AbstractRoleOption constructor.
      * @param InstitutionRole $role
      * @param InstitutionSet $institutionSet
@@ -163,6 +166,9 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     }
 
     /**
+     * If the default is set to true then the object will use the old default behaviour. That behaviour is that it
+     * will take the current institution into account and this method will return the current institution.
+     *
      * @param Institution $institution
      * @return Institution[]
      */

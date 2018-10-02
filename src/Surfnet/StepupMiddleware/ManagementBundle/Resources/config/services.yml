@@ -1,7 +1,4 @@
 services:
-    # Remove the public: true default once DI is implemented throughout the StepUp applications. See Pivotal #138225085
-    _defaults:
-        public: true
 
     # The ManagementBundle controllers are available as a service
     Surfnet\StepupMiddleware\ManagementBundle\Controller\:
@@ -18,22 +15,18 @@ services:
             - { name: validator.constraint_validator, alias: configuration_structure_validator }
 
     surfnet_stepup_middleware_management.validator.gateway_configuration:
-        public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator
         arguments:
             - "@surfnet_stepup_middleware_management.validator.identity_provider_configuration"
             - "@surfnet_stepup_middleware_management.validator.service_provider_configuration"
 
     surfnet_stepup_middleware_management.validator.service_provider_configuration:
-        public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
 
     surfnet_stepup_middleware_management.validator.identity_provider_configuration:
-        public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
 
     surfnet_stepup_middleware_management.validator.email_templates_configuration:
-        public: false
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator
         arguments:
             - '' # Default locale

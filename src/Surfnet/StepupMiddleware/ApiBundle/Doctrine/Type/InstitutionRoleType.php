@@ -39,10 +39,14 @@ class InstitutionRoleType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        if (is_null($value)) {
+            return $value;
+        }
+
         if (!$value instanceof InstitutionRole) {
             throw new ConversionException(
                 sprintf(
-                    "Encountered illegal location of type %s '%s', expected a InstitutionAuthorizationOption instance",
+                    "Encountered illegal location of type %s '%s', expected a InstitutionRole instance",
                     is_object($value) ? get_class($value) : gettype($value),
                     is_scalar($value) ? (string) $value : ''
                 )
@@ -54,6 +58,10 @@ class InstitutionRoleType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
+        if (is_null($value)) {
+            return $value;
+        }
+
         try {
             $institutionRole = new InstitutionRole($value);
         } catch (InvalidArgumentException $e) {

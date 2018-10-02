@@ -57,7 +57,7 @@ final class InstitutionAuthorizationProjector extends Projector
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        $this->setDefaultInstitutionAuthorizationOption($event->institution);
+        $this->setToDefaultIfNoConfigurationOptionsExist($event->institution);
     }
 
     public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)

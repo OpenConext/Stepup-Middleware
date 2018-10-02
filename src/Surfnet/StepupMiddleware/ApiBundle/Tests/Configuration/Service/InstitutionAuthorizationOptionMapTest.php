@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2017 SURFnet B.V.
+ * Copyright 2018 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOptionMap;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationOptionMap;
 
 class InstitutionAuthorizationOptionMapTest extends TestCase
 {

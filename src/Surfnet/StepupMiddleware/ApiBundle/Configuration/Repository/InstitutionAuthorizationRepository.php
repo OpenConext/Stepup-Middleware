@@ -46,7 +46,6 @@ class InstitutionAuthorizationRepository extends EntityRepository
 
     /**
      * @param Institution $institution
-     * @param InstitutionRole $role
      * @return InstitutionAuthorization[]
      */
     public function findAuthorizationOptionsForInstitution(Institution $institution)
@@ -95,6 +94,27 @@ class InstitutionAuthorizationRepository extends EntityRepository
             ->execute();
 
         $entityManager->flush();
+    }
+
+
+    /**
+     * @param Institution $institution
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function setDefaultInstitutionOption(Institution $institution)
+    {
+        $this->saveInstitutionOption(
+            $institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
+        );
+        $this->saveInstitutionOption(
+            $institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
+        );
+        $this->saveInstitutionOption(
+            $institution,
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
+        );
     }
 
     /**

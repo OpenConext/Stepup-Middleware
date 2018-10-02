@@ -23,8 +23,13 @@ class Version20181001082254 extends AbstractMigration
 
         foreach ($authorizationRoles as $roleType) {
             $this->addSql(
-                "INSERT INTO institution_authorization(institution, institution_relation, institution_role)
+                "INSERT IGNORE INTO institution_authorization(institution, institution_relation, institution_role)
                 SELECT institution, institution, '{$roleType}' FROM institution_configuration_options;"
+            );
+
+            $this->addSql(
+                "INSERT IGNORE INTO institution_authorization(institution, institution_relation, institution_role)
+                SELECT institution, institution, '{$roleType}' FROM whitelist_entry;"
             );
         }
     }

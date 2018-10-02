@@ -30,11 +30,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends Controller
 {
+    /**
+     * @var IdentityService
+     */
+    private $identityService;
+
+    public function __construct(IdentityService $identityService)
+    {
+        $this->identityService = $identityService;
+    }
+
     public function getAction($id)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $identity = $this->getService()->find($id);
+        $identity = $this->identityService->find($id);
 
         if ($identity === null) {
             throw new NotFoundHttpException(sprintf("Identity '%s' does not exist", $id));
@@ -54,7 +64,7 @@ class IdentityController extends Controller
         $query->email       = $request->get('email');
         $query->pageNumber  = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->search($query);
+        $paginator = $this->identityService->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }
@@ -67,7 +77,7 @@ class IdentityController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $identityService = $this->getService();
+        $identityService = $this->identityService;
 
         $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
 
@@ -76,13 +86,5 @@ class IdentityController extends Controller
         }
 
         return new JsonResponse($credentials);
-    }
-
-    /**
-     * @return IdentityService
-     */
-    private function getService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.identity');
     }
 }

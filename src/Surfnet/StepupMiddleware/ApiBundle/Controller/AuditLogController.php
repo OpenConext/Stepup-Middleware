@@ -22,12 +22,23 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 final class AuditLogController extends Controller
 {
+    /**
+     * @var AuditLogService
+     */
+    private $auditLogService;
+
+    public function __construct(AuditLogService $service)
+    {
+        $this->auditLogService = $service;
+    }
+
     public function secondFactorAuditLogAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
@@ -44,16 +55,8 @@ final class AuditLogController extends Controller
         $query->orderDirection      = $request->get('orderDirection', $query->orderDirection);
         $query->pageNumber          = $request->get('p', 1);
 
-        $paginator = $this->getService()->searchSecondFactorAuditLog($query);
+        $paginator = $this->auditLogService->searchSecondFactorAuditLog($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
-    }
-
-    /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService
-     */
-    private function getService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.audit_log');
     }
 }

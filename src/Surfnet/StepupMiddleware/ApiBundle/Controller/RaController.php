@@ -19,27 +19,29 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class RaController extends Controller
 {
+    /**
+     * @var RaListingService
+     */
+    private $raListingService;
+
+    public function __construct(RaListingService $raListingService)
+    {
+        $this->raListingService = $raListingService;
+    }
+
     public function listAction(Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_SS']);
 
-        $service = $this->getRaListingService();
-        $registrationAuthorityCredentials = $service->listRegistrationAuthoritiesFor($institution);
+        $registrationAuthorityCredentials = $this->raListingService->listRegistrationAuthoritiesFor($institution);
         $count = count($registrationAuthorityCredentials);
 
         return new JsonCollectionResponse($count, 1, $count, $registrationAuthorityCredentials);
-    }
-
-    /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
-     */
-    private function getRaListingService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.ra_listing');
     }
 }

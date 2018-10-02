@@ -3,6 +3,12 @@ services:
     _defaults:
         public: true
 
+    # The ManagementBundle controllers are available as a service
+    Surfnet\StepupMiddleware\ApiBundle\Controller\:
+        resource: '../../Controller'
+        autowire: true
+        tags: ['controller.service_arguments']
+
     # Repositories
     surfnet_stepup_middleware_api.repository.configured_institution:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository

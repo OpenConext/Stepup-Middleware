@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,13 +28,23 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaSecondFactorController extends Controller
 {
+    /**
+     * @var RaSecondFactorService
+     */
+    private $raSecondFactorService;
+
+    public function __construct(RaSecondFactorService $raSecondFactorService)
+    {
+        $this->raSecondFactorService = $raSecondFactorService;
+    }
+
     public function collectionAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $query = $this->buildRaSecondFactorQuery($request, $institution);
 
-        $paginator = $this->getService()->search($query);
+        $paginator = $this->raSecondFactorService->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }
@@ -44,7 +55,7 @@ final class RaSecondFactorController extends Controller
 
         $query = $this->buildRaSecondFactorQuery($request, $institution);
 
-        $results = $this->getService()->searchUnpaginated($query);
+        $results = $this->raSecondFactorService->searchUnpaginated($query);
 
         return new JsonResponse($results);
     }
@@ -56,24 +67,17 @@ final class RaSecondFactorController extends Controller
      */
     private function buildRaSecondFactorQuery(Request $request, Institution $institution)
     {
-        $query                 = new RaSecondFactorQuery();
-        $query->institution    = $institution;
-        $query->pageNumber     = (int) $request->get('p', 1);
-        $query->name           = $request->get('name');
-        $query->type           = $request->get('type');
+        $query = new RaSecondFactorQuery();
+        $query->institution = $institution;
+        $query->pageNumber = (int)$request->get('p', 1);
+        $query->name = $request->get('name');
+        $query->type = $request->get('type');
         $query->secondFactorId = $request->get('secondFactorId');
-        $query->email          = $request->get('email');
-        $query->status         = $request->get('status');
-        $query->orderBy        = $request->get('orderBy');
+        $query->email = $request->get('email');
+        $query->status = $request->get('status');
+        $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
-        return $query;
-    }
 
-    /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService
-     */
-    private function getService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.ra_second_factor');
+        return $query;
     }
 }

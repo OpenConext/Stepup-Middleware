@@ -3,6 +3,12 @@ services:
     _defaults:
         public: true
 
+    # The ManagementBundle controllers are available as a service
+    Surfnet\StepupMiddleware\ManagementBundle\Controller\:
+        resource: '../../Controller'
+        autowire: true
+        tags: ['controller.service_arguments']
+
     surfnet_stepup_middleware_management.validator.configuration:
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
         arguments:

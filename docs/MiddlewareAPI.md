@@ -64,6 +64,8 @@ URL: `http://middleware.tld/identity/{identityId}`
 Method: GET
 Request parameters:
 - identityId: UUIDv4 of the identity
+- actorId (optional) string, the UUIDv4 of the actor
+- actorInstitution (optional) string, the institution of the actor, used to determine which other institution indentities should be loaded
 
 #### Response
 `200 OK`

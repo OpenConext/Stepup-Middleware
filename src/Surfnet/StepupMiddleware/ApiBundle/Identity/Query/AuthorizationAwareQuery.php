@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,38 +18,16 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-class IdentityQuery extends AbstractQuery implements AuthorizationAwareQuery
+/**
+ * Makes an AbstractQuery an AuthorizationAwareQuery
+ *
+ * This entails that the query implements methods that help the
+ * repository with smooth Authorization related operations.
+ */
+interface AuthorizationAwareQuery
 {
-    /**
-     * @var string
-     */
-    public $nameId;
-
-    /**
-     * @var string
-     */
-    public $commonName;
-
-    /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $institution;
-
-    /**
-     * @var string
-     */
-    public $email;
-
-    /**
-     * @var InstitutionAuthorizationContext|null
-     */
-    public $authorizationContext;
-
     /**
      * @return bool
      */
-    public function hasAuthorizationContext()
-    {
-        return !is_null($this->authorizationContext);
-    }
+    public function hasAuthorizationContext();
 }

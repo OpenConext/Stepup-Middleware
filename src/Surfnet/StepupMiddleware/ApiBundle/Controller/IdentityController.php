@@ -18,7 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationContextFactoryInterface;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -35,9 +38,26 @@ class IdentityController extends Controller
      */
     private $identityService;
 
-    public function __construct(IdentityService $identityService)
-    {
+    /**
+     * @var InstitutionAuthorizationContextFactoryInterface
+     */
+    private $institutionAuthorizationContextFactory;
+
+    /**
+     * @var InstitutionRoleSet
+     */
+    private $roleRequirements;
+
+    public function __construct(
+        IdentityService $identityService,
+        InstitutionAuthorizationContextFactoryInterface $institutionAuthorizationContextFactory
+    ) {
         $this->identityService = $identityService;
+        $this->institutionAuthorizationContextFactory = $institutionAuthorizationContextFactory;
+
+        $this->roleRequirements = new InstitutionRoleSet(
+            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
+        );
     }
 
     public function getAction($id)
@@ -57,12 +77,17 @@ class IdentityController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $query              = new IdentityQuery();
+        $query = new IdentityQuery();
         $query->institution = $institution;
-        $query->nameId      = $request->get('NameID');
-        $query->commonName  = $request->get('commonName');
-        $query->email       = $request->get('email');
-        $query->pageNumber  = (int) $request->get('p', 1);
+        $query->nameId = $request->get('NameID');
+        $query->commonName = $request->get('commonName');
+        $query->email = $request->get('email');
+        $query->pageNumber = (int)$request->get('p', 1);
+
+        $query->authorizationContext = $this->institutionAuthorizationContextFactory->buildFrom(
+            $request,
+            $this->roleRequirements
+        );
 
         $paginator = $this->identityService->search($query);
 

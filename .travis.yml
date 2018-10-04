@@ -36,4 +36,4 @@ branches:
   only:
     - master
     - develop
-    - feature/update-projections
+    - feature/fine-grained-authorization

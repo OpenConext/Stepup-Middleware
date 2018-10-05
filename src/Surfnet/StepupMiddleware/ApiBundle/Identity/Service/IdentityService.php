@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
@@ -45,20 +46,27 @@ class IdentityService extends AbstractSearchService
      * @var SraaRepository
      */
     private $sraaRepository;
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
 
     /**
-     * @param IdentityRepository  $repository
+     * @param IdentityRepository $repository
      * @param RaListingRepository $raListingRepository
-     * @param SraaRepository      $sraaRepository
+     * @param SraaRepository $sraaRepository
+     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
      */
     public function __construct(
         IdentityRepository $repository,
         RaListingRepository $raListingRepository,
-        SraaRepository $sraaRepository
+        SraaRepository $sraaRepository,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
     ) {
         $this->repository = $repository;
         $this->raListingRepository = $raListingRepository;
         $this->sraaRepository = $sraaRepository;
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
@@ -76,7 +84,7 @@ class IdentityService extends AbstractSearchService
      */
     public function search(IdentityQuery $query)
     {
-        $searchQuery = $this->repository->createSearchQuery($query);
+        $searchQuery = $this->repository->createSearchQuery($query, $this->authorizationRepositoryFilter);
 
         $paginator = $this->createPaginatorFrom($searchQuery, $query);
 

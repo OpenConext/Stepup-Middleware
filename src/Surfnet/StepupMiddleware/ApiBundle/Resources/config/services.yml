@@ -91,6 +91,10 @@ services:
         factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
 
+    # Repository filter
+    surfnet_stepup_middleware_api.repository_filter.authorization:
+        class: Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter
+
     # Domain Services
     surfnet_stepup_middleware_api.service.institution_configuration_options:
         class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService
@@ -152,6 +156,7 @@ services:
             - "@surfnet_stepup_middleware_api.repository.identity"
             - "@surfnet_stepup_middleware_api.repository.ra_listing"
             - "@surfnet_stepup_middleware_api.repository.sraa"
+            - "@surfnet_stepup_middleware_api.repository_filter.authorization"
 
     surfnet_stepup_middleware_api.service.ra_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService

@@ -37,6 +37,8 @@ interface InstitutionAuthorizationContextFactoryInterface
      * the context for use in the repository later. Each individual
      * GET request should specify what role requirements apply.
      *
+     *  The fallback parameter is used as default
+     *
      * @param Request $request
      * @param InstitutionRoleSetInterface $roleRequirements
      * @return InstitutionAuthorizationContextInterface|null

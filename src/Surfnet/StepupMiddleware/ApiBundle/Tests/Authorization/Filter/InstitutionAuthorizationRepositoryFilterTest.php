@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright 2017 SURFnet B.V.
+ * Copyright 2018 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
@@ -60,7 +61,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_querybuilder_object_is_filtered_with_an_institution_authorization_context()
+    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context()
     {
         $roleSet = new InstitutionRoleSet([
             InstitutionRole::useRa(),
@@ -71,11 +72,13 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
             ->willReturn($roleSet);
 
         $this->mockedAuthorizationContext->method('getActorInstitution')
-            ->willReturn('institution.example.com');
+            ->willReturn(new Institution('institution.example.com'));
 
         $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
         $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.id', 'i.institution', 'iacalias');
 
-        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE i.institution=\'institution.example.com\' GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE iacalias.institution = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
+        $this->assertEquals('institution.example.com', $this->queryBuilder->getParameter('iacalias_institution')->getValue());
     }
 }

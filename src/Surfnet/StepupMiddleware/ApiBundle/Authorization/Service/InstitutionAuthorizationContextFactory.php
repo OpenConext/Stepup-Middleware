@@ -45,9 +45,12 @@ class InstitutionAuthorizationContextFactory implements InstitutionAuthorization
 
     public function buildFrom(Request $request, InstitutionRoleSetInterface $roleRequirements)
     {
-        if ($request->get('actorId') && $request->get('actorInstitution')) {
+        $actorId = $request->get('actorId');
+        $actorInstitution = $request->get('actorInstitution');
+        $institution = $request->get('institution');
 
-            $actorId = $request->get('actorId');
+        if ($actorId && $actorInstitution) {
+
             // Retrieve the identity from the service
             $actorIdentity = $this->identityService->find($actorId);
 
@@ -56,12 +59,11 @@ class InstitutionAuthorizationContextFactory implements InstitutionAuthorization
                 throw new InvalidArgumentException('Identity with id "%s" could not be found.');
             }
 
-            $institution = $request->get('actorInstitution');
-            $actorInstitution = new Institution($institution);
+            $institution = new Institution($actorInstitution);
 
-            // The identity that was returned from the service should match the institutio that was provided in the
+            // The identity that was returned from the service should match the institution that was provided in the
             // actorInstitution request parameter.
-            if (!$actorInstitution->equals($actorIdentity->institution)) {
+            if (!$institution->equals($actorIdentity->institution)) {
                 throw new InvalidArgumentException(
                     'The institution of the actor did not match that of the institution found in the actor identity.'
                 );
@@ -69,11 +71,21 @@ class InstitutionAuthorizationContextFactory implements InstitutionAuthorization
 
             return new InstitutionAuthorizationContext(
                 $actorIdentity,
-                $actorInstitution,
+                $institution,
+                $roleRequirements
+            );
+        } else if ($institution) {
+
+            // For backwards compatibility
+            return new InstitutionAuthorizationContext(
+                '',
+                $institution,
                 $roleRequirements
             );
         }
 
-        return null;
+        throw new InvalidArgumentException(
+            'The actorId and actorInstitution were not given in the request.'
+        );
     }
 }

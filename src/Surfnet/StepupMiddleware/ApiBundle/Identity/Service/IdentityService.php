@@ -55,7 +55,8 @@ class IdentityService extends AbstractSearchService
      * @param IdentityRepository $repository
      * @param RaListingRepository $raListingRepository
      * @param SraaRepository $sraaRepository
-     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter The authorization filter is used
+     *        to filter the results for a specific institution based on it's given roles
      */
     public function __construct(
         IdentityRepository $repository,
@@ -107,7 +108,7 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param NameId      $nameId
+     * @param NameId $nameId
      * @param Institution $institution
      * @return RegistrationAuthorityCredentials|null
      */

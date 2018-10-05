@@ -52,17 +52,15 @@ class IdentityRepository extends EntityRepository
 
     /**
      * @param IdentityQuery $query
-     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter The authorization filter is used
+     *        to filter the results for the given institution
      * @return \Doctrine\ORM\Query
      */
     public function createSearchQuery(IdentityQuery $query, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
         $queryBuilder = $this->createQueryBuilder('i');
 
-        $queryBuilder
-            ->where('i.institution = :institution')
-            ->setParameter('institution', $query->institution);
-
+        // Modify query to filter on authorization
         $authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'i.id', 'i.institution', 'iac');
 
         if ($query->nameId) {

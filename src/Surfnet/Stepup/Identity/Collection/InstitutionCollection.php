@@ -86,7 +86,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
             ));
         }
 
-        $elements = array_filter($this->elements, function($inst) use ($institution) {
+        $elements = array_filter($this->elements, function ($inst) use ($institution) {
             return !$institution->equals($inst);
         });
         $this->elements = $elements;

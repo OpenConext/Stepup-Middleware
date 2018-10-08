@@ -17,6 +17,9 @@ $request = Request::createFromGlobals();
 
 $kernel->boot();
 
+$trustedProxies = $kernel->getContainer()->getParameter('trusted_proxies');
+Request::setTrustedProxies($trustedProxies, Request::HEADER_X_FORWARDED_ALL);
+
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

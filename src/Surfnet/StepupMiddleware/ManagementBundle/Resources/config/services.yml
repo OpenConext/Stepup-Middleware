@@ -6,8 +6,7 @@ services:
         autowire: true
         tags: ['controller.service_arguments']
 
-    Liip\FunctionalTestBundle\Validator\DataCollectingValidator:
-        class: Liip\FunctionalTestBundle\Validator\DataCollectingValidator
+    Liip\FunctionalTestBundle\Validator\DataCollectingValidator: '@validator'
 
     surfnet_stepup_middleware_management.validator.configuration:
         class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator

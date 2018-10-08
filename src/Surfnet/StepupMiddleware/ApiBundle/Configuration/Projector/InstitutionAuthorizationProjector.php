@@ -57,7 +57,7 @@ final class InstitutionAuthorizationProjector extends Projector
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        $this->setToDefaultIfNoConfigurationOptionsExist($event->institution);
+        $this->institutionAuthorizationRepository->setDefaultInstitutionOption($event->institution);
     }
 
     public function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
@@ -89,26 +89,6 @@ final class InstitutionAuthorizationProjector extends Projector
         $this->institutionAuthorizationRepository->clearInstitutionOption(
             $event->institution
         );
-    }
-
-    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
-    {
-        $this->setToDefaultIfNoConfigurationOptionsExist($event->whitelistedInstitutions);
-    }
-
-    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
-    {
-        $this->setToDefaultIfNoConfigurationOptionsExist($event->whitelistedInstitutions);
-    }
-
-    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
-    {
-        $this->setToDefaultIfNoConfigurationOptionsExist($event->addedInstitutions);
-    }
-
-    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
-    {
-        $this->removeIfConfigurationOptionsDoNotExist($event->removedInstitutions);
     }
 
     /**

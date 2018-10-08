@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-class IdentityQuery extends AbstractQuery implements AuthorizationAwareQuery
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+
+class IdentityQuery extends AbstractQuery
 {
     /**
      * @var string
@@ -44,12 +46,4 @@ class IdentityQuery extends AbstractQuery implements AuthorizationAwareQuery
      * @var InstitutionAuthorizationContext|null
      */
     public $authorizationContext;
-
-    /**
-     * @return bool
-     */
-    public function hasAuthorizationContext()
-    {
-        return !is_null($this->authorizationContext);
-    }
 }

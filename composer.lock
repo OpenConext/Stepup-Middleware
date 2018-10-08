@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e19805e88457f494d75e9b85e58488df",
+    "content-hash": "62763a41bc629813b55ba0acacc89d3d",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1738,16 +1738,16 @@
         },
         {
             "name": "openconext/monitor-bundle",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Monitor-bundle.git",
-                "reference": "7dfec45d5f5dc6c101383fbef2c6c347adec59a1"
+                "reference": "0c1fe3abfb68e5c315ccf651fa4a23b98d6ad2e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/7dfec45d5f5dc6c101383fbef2c6c347adec59a1",
-                "reference": "7dfec45d5f5dc6c101383fbef2c6c347adec59a1",
+                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/0c1fe3abfb68e5c315ccf651fa4a23b98d6ad2e0",
+                "reference": "0c1fe3abfb68e5c315ccf651fa4a23b98d6ad2e0",
                 "shasum": ""
             },
             "require": {
@@ -1786,7 +1786,7 @@
                 "stepup",
                 "surfnet"
             ],
-            "time": "2018-09-04T10:09:23+00:00"
+            "time": "2018-09-12T13:38:01+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",

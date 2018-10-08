@@ -34,7 +34,10 @@ class ReplayEventsCommand extends Command
     {
         $this
             ->setName('middleware:event:replay')
-            ->setDescription('wipes all read models and repopulates the tables from the event store')
+            ->setDescription(
+                'Wipes all read models and repopulates the tables from the event store. Use the 
+                --no-interaction option to perform the event replay without the additional confirmation question.'
+            )
             ->addOption(
                 'increments',
                 'i',
@@ -47,14 +50,22 @@ class ReplayEventsCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var KernelInterface $kernel */
-        $kernel      = $this->getApplication()->getKernel();
+        $kernel = $this->getApplication()->getKernel();
         $environment = $kernel->getEnvironment();
         /** @var FormatterHelper $formatter */
         $formatter = $this->getHelper('formatter');
 
-        if (!in_array($environment, ['dev_event_replay', 'prod_event_replay'])) {
+        // Be careful, when using the no-interaction option you will not get the confirmation question
+        $noInteraction = $input->getOption('no-interaction');
+
+        if (!in_array($environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
             $output->writeln($formatter->formatBlock(
-                ['', 'This command may only be executed using env "dev_event_replay" or "prod_event_replay"', ''],
+                [
+                    '',
+                    'This command may only be executed using env "dev_event_replay", "prod_event_replay", or 
+                    "smoketest_event_replay"',
+                    ''
+                ],
                 'error'
             ));
 
@@ -66,28 +77,33 @@ class ReplayEventsCommand extends Command
         if ($environment === 'prod_event_replay') {
             $wantToRunOnProd = new ConfirmationQuestion(
                 '<question>You have selected to run this on production. Have you disabled all access to the production '
-                . 'environment? (y/N)</question>',
+                .'environment? (y/N)</question>',
                 false
             );
 
             if (!$interrogator->ask($input, $output, $wantToRunOnProd)) {
                 $output->writeln('<comment>Not starting the replay</comment>');
+
                 return;
             }
         }
 
-        $increments = (int) $input->getOption('increments');
+        $increments = (int)$input->getOption('increments');
         if ($increments < 1) {
-            $output->writeln($formatter->formatBlock(
-                sprintf('Increments must be a positive integer, "%s" given', $input->getOption('increments')),
-                'error'
-            ));
+            $output->writeln(
+                $formatter->formatBlock(
+                    sprintf('Increments must be a positive integer, "%s" given', $input->getOption('increments')),
+                    'error'
+                )
+            );
+
             return;
         }
 
-        $output->writeln(['', $formatter->formatBlock(['', 'WARNING!!!!', ''], 'error'), '']);
+        if (!$noInteraction) {
+            $output->writeln(['', $formatter->formatBlock(['', 'WARNING!!!!', ''], 'error'), '']);
 
-        $question = <<<QUESTION
+            $question = <<<QUESTION
 You are about to WIPE all read data and recreate all data based on the events present, in steps of %d.
 
   <%s>>> This can take a while and should not be interrupted <<</%s>
@@ -95,21 +111,22 @@ You are about to WIPE all read data and recreate all data based on the events pr
 Are you sure you wish to continue? (y/N)
 QUESTION;
 
-        $question = sprintf($question, $increments, 'error', 'error');
-        $areYouSure = new ConfirmationQuestion(sprintf("<question>%s</question>\n", $question), false);
-        if (!$interrogator->ask($input, $output, $areYouSure)) {
-            $output->writeln('<comment>Replay cancelled!</comment>');
+            $question = sprintf($question, $increments, 'error', 'error');
+            $areYouSure = new ConfirmationQuestion(sprintf("<question>%s</question>\n", $question), false);
+            if (!$interrogator->ask($input, $output, $areYouSure)) {
+                $output->writeln('<comment>Replay cancelled!</comment>');
 
-            return;
+                return;
+            }
         }
 
-        $output->writeln(['',$formatter->formatBlock('Starting Event Replay', 'info')]);
+        $output->writeln(['', $formatter->formatBlock('Starting Event Replay', 'info')]);
         $output->writeln(
             $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
         );
 
         // ensures the progressbar doesn't overwrite the messages above
-        $output->writeln(['','',''], 'info');
+        $output->writeln(['', '', ''], 'info');
 
         /** @var Container $container */
         $container = $kernel->getContainer();

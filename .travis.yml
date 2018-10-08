@@ -36,3 +36,4 @@ branches:
   only:
     - master
     - develop
+    - feature/update-projections

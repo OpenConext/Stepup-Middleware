@@ -18,16 +18,17 @@
 
 return [
     'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'must contain valid second factor types',
+    'expectErrorMessageToContain' => 'All values of option "use_raa" should be known institutions.',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
-            'use_ra_locations' => true,
-            'show_raa_contact_information' => true,
-            'verify_email' => false,
-            'number_of_tokens_per_identity' => 4,
-            'allowed_second_factors' => [
-                'faux_second_factor'
-            ],
+            "use_ra_locations" => true,
+            "show_raa_contact_information" => true,
+            "verify_email" => true,
+            "allowed_second_factors" => [],
+            "number_of_tokens_per_identity" => 2,
+            "use_ra" => ["surfnet.nl"],
+            "use_raa" => ["example.com"],
+            "select_raa" => ["surfnet.nl"],
         ]
     ]
 ];

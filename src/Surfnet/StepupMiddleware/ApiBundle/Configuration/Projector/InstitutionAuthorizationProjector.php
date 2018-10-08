@@ -24,12 +24,6 @@ use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
-use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
-use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
-use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
-use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
@@ -89,39 +83,5 @@ final class InstitutionAuthorizationProjector extends Projector
         $this->institutionAuthorizationRepository->clearInstitutionOption(
             $event->institution
         );
-    }
-
-    /**
-     * @param InstitutionCollection $institutionCollection
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    private function setToDefaultIfNoConfigurationOptionsExist(InstitutionCollection $institutionCollection)
-    {
-        foreach ($institutionCollection as $institution) {
-            $configurationInstitution = new Institution($institution->getInstitution());
-            if (!$this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($configurationInstitution)) {
-                $this->institutionAuthorizationRepository->setDefaultInstitutionOption($configurationInstitution);
-            }
-        }
-    }
-
-    /**
-     * @param InstitutionCollection $institutionCollection
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    private function removeIfConfigurationOptionsDoNotExist(InstitutionCollection $institutionCollection)
-    {
-        foreach ($institutionCollection as $institution) {
-            $configurationInstitution = new Institution($institution->getInstitution());
-            if (!$this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($configurationInstitution)) {
-                $this->institutionAuthorizationRepository->clearInstitutionOption(
-                    $configurationInstitution
-                );
-            }
-        }
     }
 }

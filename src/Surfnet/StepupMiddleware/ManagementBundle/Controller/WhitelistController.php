@@ -21,19 +21,40 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class WhitelistController extends Controller
 {
+    /**
+     * @return TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    /**
+     * @var WhitelistService
+     */
+    private $whitelistService;
+
+    public function __construct(TransactionAwarePipeline $pipeline, WhitelistService $whitelistService)
+    {
+        $this->pipeline = $pipeline;
+        $this->whitelistService = $whitelistService;
+    }
+
     public function replaceWhitelistAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
@@ -69,7 +90,7 @@ class WhitelistController extends Controller
 
     public function showWhitelistAction()
     {
-        $entries = $this->get('surfnet_stepup_middleware_api.service.whitelist_entry')->getAllEntries();
+        $entries = $this->whitelistService->getAllEntries();
 
         return new JsonResponse(['institutions' => $entries->getValues()]);
     }
@@ -81,11 +102,8 @@ class WhitelistController extends Controller
      */
     private function handleCommand(Request $request, Command $command)
     {
-        /** @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline $pipeline */
-        $pipeline = $this->get('pipeline');
-
         try {
-            $pipeline->process($command);
+            $this->pipeline->process($command);
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),

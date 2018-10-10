@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,11 +30,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RaListingController extends Controller
 {
+    /**
+     * @var RaListingService
+     */
+    private $raListingService;
+
+    public function __construct(RaListingService $raListingService)
+    {
+        $this->raListingService = $raListingService;
+    }
+
     public function getAction($identityId)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $raListing = $this->getService()->findByIdentityId(new IdentityId($identityId));
+        $raListing = $this->raListingService->findByIdentityId(new IdentityId($identityId));
 
         if ($raListing === null) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));
@@ -52,16 +63,8 @@ class RaListingController extends Controller
         $query->orderBy        = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
 
-        $searchResults = $this->getService()->search($query);
+        $searchResults = $this->raListingService->search($query);
 
         return JsonCollectionResponse::fromPaginator($searchResults);
-    }
-
-    /**
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService
-     */
-    private function getService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.ra_listing');
     }
 }

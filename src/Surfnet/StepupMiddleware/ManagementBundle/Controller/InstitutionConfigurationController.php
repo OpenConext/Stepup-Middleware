@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use Exception;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
+use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Helper\JsonHelper;
@@ -30,10 +31,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\ValidReconfigureInstitutionsRequest;
-use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,19 +44,60 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 final class InstitutionConfigurationController extends Controller
 {
+    /**
+     * @return InstitutionConfigurationOptionsService
+     */
+    private $institutionConfigurationOptionsService;
+
+    /**
+     * @return DataCollectingValidator
+     */
+    private $validator;
+
+    /**
+     * @return AllowedSecondFactorListService
+     */
+    private $allowedSecondFactorListService;
+
+    /**
+     * @return LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @return TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    public function __construct(
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        DataCollectingValidator $dataCollectingValidator,
+        AllowedSecondFactorListService $allowedSecondFactorListService,
+        LoggerInterface $logger,
+        TransactionAwarePipeline $pipeline,
+        DBALConnectionHelper $dbalConnectionHelper
+    ) {
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->validator = $dataCollectingValidator;
+        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
+        $this->logger = $logger;
+        $this->pipeline = $pipeline;
+        $this->connectionHelper = $dbalConnectionHelper;
+    }
+
     public function showAction()
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $institutionConfigurationOptions = $this->getInstitutionConfigurationOptionsService()
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findAllInstitutionConfigurationOptions();
 
-        $allowedSecondFactorMap = $this->getAllowedSecondFactorListService()->getAllowedSecondFactorMap();
+        $allowedSecondFactorMap = $this->allowedSecondFactorListService->getAllowedSecondFactorMap();
 
         $overview = [];
         foreach ($institutionConfigurationOptions as $options) {
             // Load the numberOfTokensPerIdentity from the institution config options service
-            $numberOfTokensPerIdentity = $this->getInstitutionConfigurationOptionsService()
+            $numberOfTokensPerIdentity = $this->institutionConfigurationOptionsService
                 ->getMaxNumberOfTokensFor(new Institution($options->institution->getInstitution()));
 
             $overview[$options->institution->getInstitution()] = [
@@ -82,13 +123,13 @@ final class InstitutionConfigurationController extends Controller
 
         $configuration = JsonHelper::decode($request->getContent());
 
-        $violations = $this->getValidator()->validate($configuration, new ValidReconfigureInstitutionsRequest());
+        $violations = $this->validator->validate($configuration, new ValidReconfigureInstitutionsRequest());
         if ($violations->count() > 0) {
             throw BadCommandRequestException::withViolations('Invalid reconfigure institutions request', $violations);
         }
 
         if (empty($configuration)) {
-            $this->getLogger()->notice(sprintf('No institutions to reconfigure: empty configuration received'));
+            $this->logger->notice(sprintf('No institutions to reconfigure: empty configuration received'));
 
             return new JsonResponse([
                 'status'       => 'OK',
@@ -116,7 +157,7 @@ final class InstitutionConfigurationController extends Controller
             $commands[] = $command;
         }
 
-        $this->getLogger()->notice(
+        $this->logger->notice(
             sprintf('Executing %s reconfigure institution configuration options commands', count($commands))
         );
 
@@ -135,14 +176,13 @@ final class InstitutionConfigurationController extends Controller
      */
     private function handleCommands(array $commands)
     {
-        $pipeline         = $this->getPipeline();
-        $connectionHelper = $this->getConnectionHelper();
+        $connectionHelper = $this->connectionHelper;
 
         $connectionHelper->beginTransaction();
 
         foreach ($commands as $command) {
             try {
-                $pipeline->process($command);
+                $this->pipeline->process($command);
             } catch (ForbiddenException $e) {
                 $connectionHelper->rollBack();
 
@@ -158,53 +198,5 @@ final class InstitutionConfigurationController extends Controller
         }
 
         $connectionHelper->commit();
-    }
-
-    /**
-     * @return InstitutionConfigurationOptionsService
-     */
-    private function getInstitutionConfigurationOptionsService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.institution_configuration_options');
-    }
-
-    /**
-     * @return AllowedSecondFactorListService
-     */
-    private function getAllowedSecondFactorListService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.allowed_second_factor_list');
-    }
-
-    /**
-     * @return DataCollectingValidator
-     */
-    private function getValidator()
-    {
-        return $this->get('validator');
-    }
-
-    /**
-     * @return Logger
-     */
-    private function getLogger()
-    {
-        return $this->get('logger');
-    }
-
-    /**
-     * @return Pipeline
-     */
-    private function getPipeline()
-    {
-        return $this->get('pipeline');
-    }
-
-    /**
-     * @return DBALConnectionHelper
-     */
-    private function getConnectionHelper()
-    {
-        return $this->get('surfnet_stepup_middleware_management.dbal_connection_helper');
     }
 }

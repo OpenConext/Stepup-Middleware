@@ -18,33 +18,83 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Psr\Log\LoggerInterface;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CommandController extends Controller
 {
+    /**
+     * @var WhitelistService
+     */
+    private $whitelistService;
+
+    /**
+     * @var IdentityService
+     */
+    private $identityService;
+
+    /**
+     * @var TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    /**
+     * @var MetadataEnricher
+     */
+    private $metadataEnricher;
+
+    /**
+     * @var AuthorizationChecker
+     */
+    private $authorizationChecker;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        TransactionAwarePipeline $pipeline,
+        WhitelistService $whitelistService,
+        IdentityService $identityService,
+        MetadataEnricher $enricher,
+        AuthorizationChecker $authorizationChecker,
+        LoggerInterface $logger
+    ) {
+        $this->pipeline = $pipeline;
+        $this->whitelistService = $whitelistService;
+        $this->identityService = $identityService;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->metadataEnricher = $enricher;
+        $this->logger = $logger;
+    }
+
     public function handleAction(Command $command, Metadata $metadata, Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        /** @var \Monolog\Logger $logger */
-        $logger = $this->get('logger');
+        $logger = $this->logger;
         $logger->notice(sprintf('Received request to process Command "%s"', $command));
 
-        /** @var MetadataEnricher $metadataEnricher */
-        $metadataEnricher = $this->get('surfnet_stepup_middleware_command_handling.metadata_enricher.actor');
-        $metadataEnricher->setMetadata($metadata);
+        $this->metadataEnricher->setMetadata($metadata);
 
-        if ($this->get('security.authorization_checker')->isGranted('ROLE_MANAGEMENT')) {
+        if ($this->authorizationChecker->isGranted('ROLE_MANAGEMENT')) {
             $logger->notice('Command sent through Management API, not enforcing Whitelist');
         } else {
             $logger->notice('Ensuring that the actor institution is on the whitelist, or the actor is SRAA');
@@ -53,11 +103,8 @@ class CommandController extends Controller
             $this->assertCommandMayBeProcessedOnBehalfOf($institution, $metadata->actorId);
         }
 
-        /** @var Pipeline $pipeline */
-        $pipeline = $this->get('pipeline');
-
         try {
-            $command = $pipeline->process($command);
+            $command = $this->pipeline->process($command);
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),
@@ -104,9 +151,7 @@ class CommandController extends Controller
      */
     private function assertCommandMayBeProcessedOnBehalfOf($institution, $actorId)
     {
-        $whitelistService = $this->get('surfnet_stepup_middleware_api.service.whitelist_entry');
-
-        if ($whitelistService->isWhitelisted($institution)) {
+        if ($this->whitelistService->isWhitelisted($institution)) {
             return;
         }
 
@@ -117,8 +162,7 @@ class CommandController extends Controller
             ));
         }
 
-        $identityService = $this->get('surfnet_stepup_middleware_api.service.identity');
-        $registrationAuthorityCredentials = $identityService->findRegistrationAuthorityCredentialsOf($actorId);
+        $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId);
 
         if ($registrationAuthorityCredentials->isSraa()) {
             return;

@@ -22,12 +22,23 @@ use DateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ConfigurationController extends Controller
 {
+    /**
+     * @return TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    public function __construct(TransactionAwarePipeline $pipeline)
+    {
+        $this->pipeline = $pipeline;
+    }
+
     public function updateAction(Request $request)
     {
         $command                = new UpdateConfigurationCommand();
@@ -44,9 +55,7 @@ class ConfigurationController extends Controller
      */
     private function handleCommand(Request $request, Command $command)
     {
-        /** @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline $pipeline */
-        $pipeline = $this->get('pipeline');
-        $pipeline->process($command);
+        $this->pipeline->process($command);
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response   = new JsonResponse([

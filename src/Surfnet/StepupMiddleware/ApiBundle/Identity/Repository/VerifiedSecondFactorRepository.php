@@ -19,14 +19,39 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
 class VerifiedSecondFactorRepository extends EntityRepository
 {
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
+
+    /**
+     * VerifiedSecondFactorRepository constructor.
+     * @param EntityManager $em
+     * @param Mapping\ClassMetadata $class
+     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+     */
+    public function __construct(
+        EntityManager $em,
+        Mapping\ClassMetadata $class,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+    ) {
+        parent::__construct($em, $class);
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
+    }
+
+
     /**
      * @param string $id
      * @return VerifiedSecondFactor|null
@@ -62,11 +87,16 @@ class VerifiedSecondFactorRepository extends EntityRepository
 
     /**
      * @param VerifiedSecondFactorQuery $query
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
+     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
      * @return Query
      */
     public function createSearchQuery(VerifiedSecondFactorQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('sf');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'sf.id', 'sf.institution', 'iac');
 
         if ($query->identityId) {
             $queryBuilder

@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
@@ -46,28 +46,20 @@ class IdentityService extends AbstractSearchService
      * @var SraaRepository
      */
     private $sraaRepository;
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
 
     /**
      * @param IdentityRepository $repository
      * @param RaListingRepository $raListingRepository
      * @param SraaRepository $sraaRepository
-     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter The authorization filter is used
-     *        to filter the results for a specific institution based on it's given roles
      */
     public function __construct(
         IdentityRepository $repository,
         RaListingRepository $raListingRepository,
-        SraaRepository $sraaRepository,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+        SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
         $this->raListingRepository = $raListingRepository;
         $this->sraaRepository = $sraaRepository;
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
@@ -81,11 +73,12 @@ class IdentityService extends AbstractSearchService
 
     /**
      * @param IdentityQuery $query
+     * @param InstitutionRoleSet $institutionRoles
      * @return \Pagerfanta\Pagerfanta
      */
     public function search(IdentityQuery $query)
     {
-        $searchQuery = $this->repository->createSearchQuery($query, $this->authorizationRepositoryFilter);
+        $searchQuery = $this->repository->createSearchQuery($query);
 
         $paginator = $this->createPaginatorFrom($searchQuery, $query);
 

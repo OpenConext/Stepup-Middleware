@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 
 class VerifiedSecondFactorQuery extends AbstractQuery
 {
@@ -37,4 +38,14 @@ class VerifiedSecondFactorQuery extends AbstractQuery
      * @var string|null
      */
     public $registrationCode;
+
+    /**
+     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     */
+    public $institution;
+
+    /**
+     * @var InstitutionAuthorizationContext
+     */
+    public $authorizationContext;
 }

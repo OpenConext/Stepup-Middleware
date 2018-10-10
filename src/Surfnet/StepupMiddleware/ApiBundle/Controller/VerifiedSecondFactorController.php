@@ -18,8 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -35,9 +39,18 @@ class VerifiedSecondFactorController extends Controller
      */
     private $secondFactorService;
 
+    /**
+     * @var InstitutionRoleSet
+     */
+    private $roleRequirements;
+
     public function __construct(SecondFactorService $secondFactorService)
     {
         $this->secondFactorService = $secondFactorService;
+
+        $this->roleRequirements = new InstitutionRoleSet(
+            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
+        );
     }
 
     public function getAction($id)
@@ -67,8 +80,10 @@ class VerifiedSecondFactorController extends Controller
             $query->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
         }
 
+        $query->institution = new Institution($request->get('institution'));
         $query->registrationCode = $request->get('registrationCode');
         $query->pageNumber       = (int) $request->get('p', 1);
+        $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
 

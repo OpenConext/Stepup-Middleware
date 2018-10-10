@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
+
 final class RaSecondFactorQuery extends AbstractQuery
 {
     /**
@@ -59,4 +61,9 @@ final class RaSecondFactorQuery extends AbstractQuery
      * @var string|null
      */
     public $orderDirection;
+
+    /**
+     * @var InstitutionAuthorizationContextInterface
+     */
+    public $authorizationContext;
 }

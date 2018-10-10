@@ -1,440 +1,990 @@
 {
-	"id": "dc485b03-29e4-7102-2662-6933307906ef",
-	"name": "Step-up Middleware",
-	"description": "",
-	"order": [
-		"830e367e-0232-ac7a-7906-d407264dbd6b",
-		"5a69ceb9-825d-aad5-c963-c98946454718",
-		"62085158-1ec8-0051-5146-102a84685922",
-		"2997475d-2367-73e4-2db5-41a832c333da",
-		"8f4aeb02-ae47-8d29-0d90-5ab6c1efc7a6",
-		"9da1c560-3a9d-53c3-5fea-4997034559e5",
-		"3f4c1363-77f4-482d-7256-b8cf2266deac",
-		"b1af5e58-cab2-de70-6be3-aabce276c1ac",
-		"bd09c863-608b-b4db-b2a9-2c5f3bf9e733",
-		"bf5e2ba6-59fa-116e-aa05-70f19c54432a",
-		"97e24729-f367-d3d5-867c-eb8f76710b5c",
-		"c45181c7-6384-fe6c-f5c8-91ee0be20f42",
-		"2a1e5004-854e-b187-56ae-039b06733868",
-		"2fa5aa75-4961-3c93-4d5a-e956dc3b038b",
-		"7e35ee0e-40bc-7a46-bfe3-a72d5820cbbe",
-		"4b061fc8-6c94-2856-f6d3-cbc2dd439cd8",
-		"b083de66-a463-f1b9-a0b7-5b22a0d3e5bc",
-		"f1a3744d-4990-1bdf-080f-981d4cad6a2f",
-		"ae764a38-640f-2cdd-d07d-d00d2cf16ecb"
-	],
-	"folders": [],
-	"timestamp": 1414573169936,
-	"owner": 0,
-	"public": false,
-	"hasRequests": true,
-	"requests": [
+	"info": {
+		"_postman_id": "87d5d604-ffd5-f02f-02c8-7ad8955fed5c",
+		"name": "Step-up Middleware",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "2997475d-2367-73e4-2db5-41a832c333da",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/unverified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434534276184,
-			"name": "/unverified-second-factors",
-			"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "2a1e5004-854e-b187-56ae-039b06733868",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6cmE=\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/registration-authority/c78240b1-612f-49b7-85b7-83eae5f63a85",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ss",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
-			},
-			"time": 1434533527353,
-			"name": "/registration-authority/{IdentityId}",
-			"description": "Single param:\n\n- `identityId`: UUID of the identity to get",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "2fa5aa75-4961-3c93-4d5a-e956dc3b038b",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic cmE6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-listing?institution=Ibuildings&orderBy=commonName&orderDirection=asc",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1417620195554
-			},
-			"time": 1434541307759,
-			"name": "/ra-listing",
-			"description": "- `institution` required get param\n- `orderBy` optional sorting param\n- `orderDirection` optional sorting param\n- `p` optional paging param\n\n`orderBy` only allows \"commonName\" as value\n\nDefault: `orderBy=commonName&orderDirection=asc`",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "3f4c1363-77f4-482d-7256-b8cf2266deac",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/verified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434535587919,
-			"name": "/verified-second-factor/{secondFactorId}",
-			"description": "- `secondFactorId` UUIDv4 of the second factor",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "4b061fc8-6c94-2856-f6d3-cbc2dd439cd8",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic cmE6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-candidate?institution=Ibuildings",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1417620195554
-			},
-			"time": 1434542301996,
-			"name": "/ra-candidate",
-			"description": "- `institution` required get param\n- `commonName` optional search param\n- `email` optional search param\n- `p` optional paging param\n",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "5a69ceb9-825d-aad5-c963-c98946454718",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/identity?institution=Example Inc",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1418055774544,
-			"name": "/identity",
-			"description": "Must include an `institution` GET parameter\n\nCan include:\n\n- `NameID` -> equals check\n\n- `email` -> MATCH AGAINST\n\n- `commonName` -> MATCH AGAINST",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "62085158-1ec8-0051-5146-102a84685922",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6cmE=\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/identity/45fb401a-22b6-4829-9495-08b9610c18d4",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1431352685434,
-			"name": "/identity/{identityId}",
-			"description": "Single param:\n\n- `identityId`: UUID of the identity to get",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "7e35ee0e-40bc-7a46-bfe3-a72d5820cbbe",
-			"headers": "Accept: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-listing/c78240b1-612f-49b7-85b7-83eae5f63a85",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
-			},
-			"time": 1434541864968,
-			"name": "/ra-listing/{IdentityId}",
-			"description": "Single param:\n\n- `identityId`: UUID of the identity to get",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "830e367e-0232-ac7a-7906-d407264dbd6b",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/command",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434456111556,
 			"name": "/command",
-			"description": "",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": [],
-			"rawModeData": "{\n    \"meta\": {\n        \"actor\": null,\n        \"actor_institution\": null\n    },\n    \"command\": {\n        \"name\":\"Identity:CreateIdentity\",\n        \"uuid\":\"d12cb994-5719-405a-9533-af1beef78ee3\",\n        \"payload\":{\n            \"id\": \"abb1b9f8-20c9-44a9-9694-176f00aaa618\",\n            \"name_id\": \"29c41b84214b4fd5fb4d508e680fc921\",\n            \"institution\": \"Example Orgbhkjglgiliyih.\",\n            \"email\": \"foo@bar.com\",\n            \"common_name\": \"Sjaak Trekhaak\"\n        }\n    }\n}"
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"meta\": {\n        \"actor\": null,\n        \"actor_institution\": null\n    },\n    \"command\": {\n        \"name\":\"Identity:CreateIdentity\",\n        \"uuid\":\"d12cb994-5719-405a-9533-af1beef78ee3\",\n        \"payload\":{\n            \"id\": \"abb1b9f8-20c9-44a9-9694-176f00aaa618\",\n            \"name_id\": \"29c41b84214b4fd5fb4d508e680fc921\",\n            \"institution\": \"Example Orgbhkjglgiliyih.\",\n            \"email\": \"foo@bar.com\",\n            \"common_name\": \"Sjaak Trekhaak\"\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/command",
+					"protocol": "http",
+					"host": [
+						"mw-dev",
+						"stepup",
+						"coin",
+						"surf",
+						"net"
+					],
+					"path": [
+						"app_dev.php",
+						"command"
+					]
+				}
+			},
+			"response": []
 		},
 		{
-			"id": "8f4aeb02-ae47-8d29-0d90-5ab6c1efc7a6",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/unverified-second-factors/4984057f-5952-4a82-a77f-44bc9cd62ce4",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434534380607,
+			"name": "/identity",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/identity?institution=institution-a.example.com&actorId=2c7817b2-23e0-4f77-bd9e-29a1b00608a3&actorInstitution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"identity"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "institution-a.example.com"
+						},
+						{
+							"key": "actorId",
+							"value": "2c7817b2-23e0-4f77-bd9e-29a1b00608a3"
+						},
+						{
+							"key": "actorInstitution",
+							"value": "institution-a.example.com"
+						},
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
+					]
+				},
+				"description": "Must include an `institution` GET parameter\n\nCan include:\n\n- `NameID` -> equals check\n\n- `email` -> MATCH AGAINST\n\n- `commonName` -> MATCH AGAINST"
+			},
+			"response": []
+		},
+		{
+			"name": "/identity/{identityId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6cmE="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/identity/45fb401a-22b6-4829-9495-08b9610c18d4",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"identity",
+						"45fb401a-22b6-4829-9495-08b9610c18d4"
+					]
+				},
+				"description": "Single param:\n\n- `identityId`: UUID of the identity to get"
+			},
+			"response": []
+		},
+		{
+			"name": "/unverified-second-factors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/unverified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"unverified-second-factors"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page"
+			},
+			"response": []
+		},
+		{
 			"name": "/unverified-second-factor/{secondFactorId}",
-			"description": "- `secondFactorId` UUIDv4 of the second factor",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "97e24729-f367-d3d5-867c-eb8f76710b5c",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/sraa/3858f62230ac3c915f300c664312c63f",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1417620195554
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/unverified-second-factors/4984057f-5952-4a82-a77f-44bc9cd62ce4",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"unverified-second-factors",
+						"4984057f-5952-4a82-a77f-44bc9cd62ce4"
+					]
+				},
+				"description": "- `secondFactorId` UUIDv4 of the second factor"
 			},
-			"time": 1434540988036,
-			"name": "/sraa/{nameId}",
-			"description": "- `nameId` required parameter",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"response": []
 		},
 		{
-			"id": "9da1c560-3a9d-53c3-5fea-4997034559e5",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/verified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434535729095,
 			"name": "/verified-second-factors",
-			"description": "- `identityId` optional get param\n- `secondFactorId` optional get param\n- `registrationCode` optional get param\n- `p` page",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
-		},
-		{
-			"id": "ae764a38-640f-2cdd-d07d-d00d2cf16ecb",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/audit-log/second-factors?institution=Ibuildings&identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1&orderBy=recordedOn&orderDirection=asc",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/verified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"verified-second-factors"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `secondFactorId` optional get param\n- `registrationCode` optional get param\n- `p` page"
 			},
-			"time": 1434544396493,
-			"name": "/audit-log/second-factors",
-			"description": "- `institution` required get param\n- `identityId` required get param\n- `orderBy` optional\n- `orderDirection` optional\n- `p` optional, default 1",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"response": []
 		},
 		{
-			"id": "b083de66-a463-f1b9-a0b7-5b22a0d3e5bc",
-			"headers": "Accept: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-candidate/8b5cdd14-74b1-43a2-a806-c171728b1bf1",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
+			"name": "/verified-second-factor/{secondFactorId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/verified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"verified-second-factor",
+						"4984057f-5952-4a82-a77f-44bc9cd62ce4"
+					]
+				},
+				"description": "- `secondFactorId` UUIDv4 of the second factor"
 			},
-			"time": 1434543349114,
-			"name": "/ra-candidate/{IdentityId}",
-			"description": "Single param:\n\n- `identityId`: UUID of the identity to get",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"response": []
 		},
 		{
-			"id": "b1af5e58-cab2-de70-6be3-aabce276c1ac",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/vetted-second-factors?identityId=c78240b1-612f-49b7-85b7-83eae5f63a85",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434536442716,
 			"name": "/vetted-second-factors",
-			"description": "- `identityId` optional get param\n- `p` optional get (page) param",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/vetted-second-factors?identityId=c78240b1-612f-49b7-85b7-83eae5f63a85",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"vetted-second-factors"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "c78240b1-612f-49b7-85b7-83eae5f63a85"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `p` optional get (page) param"
+			},
+			"response": []
 		},
 		{
-			"id": "bd09c863-608b-b4db-b2a9-2c5f3bf9e733",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434536987944,
 			"name": "/vetted-second-factor/{secondFactorId}",
-			"description": "- `secondFactorId` UUIDv4 of the second factor",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
+					"protocol": "http",
+					"host": [
+						"mw-dev",
+						"stepup",
+						"coin",
+						"surf",
+						"net"
+					],
+					"path": [
+						"app_dev.php",
+						"vetted-second-factor",
+						"c732d0ac-9f61-4ae1-924e-40d5172fca86"
+					]
+				},
+				"description": "- `secondFactorId` UUIDv4 of the second factor"
+			},
+			"response": []
 		},
 		{
-			"id": "bf5e2ba6-59fa-116e-aa05-70f19c54432a",
-			"headers": "Accept: application/json\nContent-Type: application/json\nAuthorization: Basic c3M6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1434536987944,
 			"name": "/vetted-second-factor/{secondFactorId} copy",
-			"description": "- `secondFactorId` UUIDv4 of the second factor",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"vetted-second-factor",
+						"c732d0ac-9f61-4ae1-924e-40d5172fca86"
+					]
+				},
+				"description": "- `secondFactorId` UUIDv4 of the second factor"
+			},
+			"response": []
 		},
 		{
-			"id": "c45181c7-6384-fe6c-f5c8-91ee0be20f42",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6cmE=\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/registration-authority?institution=Ibuildings",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ss",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
+			"name": "/sraa/{nameId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/sraa/3858f62230ac3c915f300c664312c63f",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"sraa",
+						"3858f62230ac3c915f300c664312c63f"
+					]
+				},
+				"description": "- `nameId` required parameter"
 			},
-			"time": 1434540834129,
+			"response": []
+		},
+		{
 			"name": "/registration-authority",
-			"description": "- `institution`: required get param for scoping",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6cmE="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/registration-authority?institution=Ibuildings",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"registration-authority"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "Ibuildings"
+						}
+					]
+				},
+				"description": "- `institution`: required get param for scoping"
+			},
+			"response": []
 		},
 		{
-			"id": "f1a3744d-4990-1bdf-080f-981d4cad6a2f",
-			"headers": "Accept: application/json\nAuthorization: Basic cmE6YmFy\n",
-			"url": "http://mw-dev.stepup.coin.surf.net/app_dev.php/institution-listing",
-			"preRequestScript": "",
-			"pathVariables": {},
-			"method": "GET",
-			"data": [],
-			"dataMode": "params",
-			"version": 2,
-			"tests": "",
-			"currentHelper": "basicAuth",
-			"helperAttributes": {
-				"username": "ra",
-				"password": "bar",
-				"id": "basic",
-				"timestamp": 1424175900505
+			"name": "/registration-authority/{IdentityId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6cmE="
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/registration-authority/c78240b1-612f-49b7-85b7-83eae5f63a85",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"registration-authority",
+						"c78240b1-612f-49b7-85b7-83eae5f63a85"
+					]
+				},
+				"description": "Single param:\n\n- `identityId`: UUID of the identity to get"
 			},
-			"time": 1434543588287,
+			"response": []
+		},
+		{
+			"name": "/ra-listing",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-listing?institution=Ibuildings&orderBy=commonName&orderDirection=asc",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-listing"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "Ibuildings"
+						},
+						{
+							"key": "orderBy",
+							"value": "commonName"
+						},
+						{
+							"key": "orderDirection",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "- `institution` required get param\n- `orderBy` optional sorting param\n- `orderDirection` optional sorting param\n- `p` optional paging param\n\n`orderBy` only allows \"commonName\" as value\n\nDefault: `orderBy=commonName&orderDirection=asc`"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-listing/{IdentityId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-listing/c78240b1-612f-49b7-85b7-83eae5f63a85",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-listing",
+						"c78240b1-612f-49b7-85b7-83eae5f63a85"
+					]
+				},
+				"description": "Single param:\n\n- `identityId`: UUID of the identity to get"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-candidate",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-candidate?institution=Ibuildings",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-candidate"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "Ibuildings"
+						}
+					]
+				},
+				"description": "- `institution` required get param\n- `commonName` optional search param\n- `email` optional search param\n- `p` optional paging param\n"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-candidate/{IdentityId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-candidate/8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-candidate",
+						"8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+					]
+				},
+				"description": "Single param:\n\n- `identityId`: UUID of the identity to get"
+			},
+			"response": []
+		},
+		{
 			"name": "/institution-listing",
-			"description": "nothing",
-			"collectionId": "dc485b03-29e4-7102-2662-6933307906ef",
-			"responses": []
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/institution-listing",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"institution-listing"
+					]
+				},
+				"description": "nothing"
+			},
+			"response": []
+		},
+		{
+			"name": "/audit-log/second-factors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/audit-log/second-factors?institution=Ibuildings&identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1&orderBy=recordedOn&orderDirection=asc",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"audit-log",
+						"second-factors"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "Ibuildings"
+						},
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						},
+						{
+							"key": "orderBy",
+							"value": "recordedOn"
+						},
+						{
+							"key": "orderDirection",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "- `institution` required get param\n- `identityId` required get param\n- `orderBy` optional\n- `orderDirection` optional\n- `p` optional, default 1"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-location",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-location?institution=Ibuildings",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-location"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "Ibuildings"
+						}
+					]
+				},
+				"description": "- `institution` required get param\n- `orderBy` optional sorting param\n- `orderDirection` optional sorting param\n\n\nDefault: `orderBy=name&orderDirection=asc`"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-location/{id}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-location/123e4567-e89b-12d3-a456-426655440000",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-location",
+						"123e4567-e89b-12d3-a456-426655440000"
+					]
+				},
+				"description": "- `id` required param"
+			},
+			"response": []
+		},
+		{
+			"name": "/institution-configuration-options/{institution}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/institution-configuration-options/miko.organisation.example",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"institution-configuration-options",
+						"miko.organisation.example"
+					]
+				},
+				"description": "Get the institution configuration options for a certain institution."
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-second-factors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-second-factors?institution=dev.organisation.example&type=biometric",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-second-factors"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "dev.organisation.example"
+						},
+						{
+							"key": "type",
+							"value": "biometric"
+						}
+					]
+				},
+				"description": "nothing"
+			},
+			"response": []
+		},
+		{
+			"name": "/ra-second-factors-export",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic cmE6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/ra-second-factors-export?institution=dev.organisation.example",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"ra-second-factors-export"
+					],
+					"query": [
+						{
+							"key": "institution",
+							"value": "dev.organisation.example"
+						}
+					]
+				},
+				"description": "nothing"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "fo84uw42LE4z6J-",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "ra",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b2e565e1-4333-4344-bd17-7afc7330db97",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "89824809-0445-4be5-93f6-4518ebb0b0e0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

@@ -9,9 +9,6 @@
 		{
 			"name": "/management/configuration",
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -32,17 +29,15 @@
 					"raw": "{\n  \"sraa\": [\n    \"9971dbcf01267b11f6107d9cafb43e5b4009a955\"\n  ],\n  \"email_templates\": {\n    \"confirm_email\": {\n        \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Bedankt voor het registreren van je token. Klik op onderstaande link om je e-mailadres te bevestigen:</p>\\n<p><a href=\\\"{{ verificationUrl }}\\\">{{ verificationUrl }}</a></p>\\n<p>Is klikken op de link niet mogelijk? Kopieer dan de link en plak deze in de adresbalk van je browser.</p>\\n<p>SURFnet</p>\",\n        \"en_GB\":\"<p>Dear {{ commonName }},</p>\\n\\n<p>Thank you for registering your token. Please visit this link to verify your email address:</p>\\n<p><a href=\\\"{{ verificationUrl }}\\\">{{ verificationUrl }}</a></p>\\n<p>If you can not click on the URL, please copy the link and paste it in the address bar of your browser.</p>\\n<p>SURFnet</p>\"\n    },\n    \"registration_code_with_ras\": {\n        \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga uiterlijk {{ expirationDate|localizeddate('full', 'none', locale) }} naar de Service Desk om je token te laten activeren. </p>\\n<p>Neem aub het volgende mee:</p>\\n<ul>\\n    <li>Je token</li>\\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\\n    <li>De registratiecode uit deze e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Service Desk medewerkers die je token kunnen activeren:</p>\\n\\n{% if ras is empty %}\\n    <p>Er zijn geen Service Desk medewerkers beschikbaar.</p>\\n{% else %}\\n    <ul>\\n        {% for ra in ras %}\\n            <li>\\n                <address>\\n                    <strong>{{ ra.commonName }}</strong><br>\\n                    {{ ra.location }}<br>\\n                    {{ ra.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\",\n        \"en_GB\": \"<p>Dear {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Thank you for registering your token, you are almost ready now. Please visit the Service Desk no later than {{ expirationDate|localizeddate('full', 'none', locale) }} to activate your token up.</p>\\n<p>Please bring the following:</p>\\n<ul>\\n    <li>Your token</li>\\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\\n    <li>The registration code from this e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Service Desk employees authorized to activate your token:</p>\\n\\n{% if ras is empty %}\\n    <p>No Service Desk employees are available.</p>\\n{% else %}\\n    <ul>\\n        {% for ra in ras %}\\n            <li>\\n                <address>\\n                    <strong>{{ ra.commonName }}</strong><br>\\n                    {{ ra.location }}<br>\\n                    {{ ra.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\"\n    },\n    \"registration_code_with_ra_locations\": {\n        \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Bedankt voor het registreren van je token. Je token is bijna klaar voor gebruik. Ga uiterlijk {{ expirationDate|localizeddate('full', 'none', locale) }} naar de Service Desk om je token te laten activeren. </p>\\n<p>Neem aub het volgende mee:</p>\\n<ul>\\n    <li>Je token</li>\\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\\n    <li>De registratiecode uit deze e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Locaties waar je je token kunt activeren:</p>\\n\\n{% if raLocations is empty %}\\n    <p>Er zijn geen locaties beschikbaar.</p>\\n{% else %}\\n    <ul>\\n        {% for raLocation in raLocations %}\\n            <li>\\n                <address>\\n                    <strong>{{ raLocation.name }}</strong><br>\\n                    {{ raLocation.location }}<br>\\n                    {{ raLocation.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\",\n        \"en_GB\": \"<p>Dear {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Thank you for registering your token, you are almost ready now. Please visit the Service Desk no later than {{ expirationDate|localizeddate('full', 'none', locale) }} to activate your token.</p>\\n<p>Please bring the following:</p>\\n<ul>\\n    <li>Your token</li>\\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\\n    <li>The registration code from this e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Locations where  your token can be activated:</p>\\n\\n{% if raLocations is empty %}\\n    <p>No locations are available.</p>\\n{% else %}\\n    <ul>\\n        {% for raLocation in raLocations %}\\n            <li>\\n                <address>\\n                    <strong>{{ raLocation.name }}</strong><br>\\n                    {{ raLocation.location }}<br>\\n                    {{ raLocation.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\"\n    },\n    \"second_factor_verification_reminder_with_ras\": {\n    \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Een week geleden heb je een token geregistreerd. Ga uiterlijk {{ expirationDate|localizeddate('full', 'none', locale) }} naar de Service Desk om je token te laten activeren. </p>\\n<p>Neem aub het volgende mee:</p>\\n<ul>\\n    <li>Je token</li>\\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\\n    <li>De registratiecode uit deze e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Service Desk medewerkers die je token kunnen activeren:</p>\\n\\n{% if ras is empty %}\\n    <p>Er zijn geen Service Desk medewerkers beschikbaar.</p>\\n{% else %}\\n    <ul>\\n        {% for ra in ras %}\\n            <li>\\n                <address>\\n                    <strong>{{ ra.commonName }}</strong><br>\\n                    {{ ra.location }}<br>\\n                    {{ ra.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\",\n        \"en_GB\": \"<p>Dear {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} One week ago, you registered a token. Please visit the Service Desk no later than {{ expirationDate|localizeddate('full', 'none', locale) }} to activate your token.</p>\\n<p>Please bring the following:</p>\\n<ul>\\n    <li>Your token</li>\\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\\n    <li>The registration code from this e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Service Desk employees authorized to activate your token:</p>\\n\\n{% if ras is empty %}\\n    <p>No Service Desk employees are available.</p>\\n{% else %}\\n    <ul>\\n        {% for ra in ras %}\\n            <li>\\n                <address>\\n                    <strong>{{ ra.commonName }}</strong><br>\\n                    {{ ra.location }}<br>\\n                    {{ ra.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\"\n   },\n   \"second_factor_verification_reminder_with_ra_locations\": {\n        \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} Een week geleden heb je een token geregistreerd. Ga uiterlijk {{ expirationDate|localizeddate('full', 'none', locale) }} naar de Service Desk om je token te laten activeren. </p>\\n<p>Neem aub het volgende mee:</p>\\n<ul>\\n    <li>Je token</li>\\n    <li>Een geldig legitimatiebewijs (paspoort, rijbewijs of nationale ID-kaart)</li>\\n    <li>De registratiecode uit deze e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Locaties waar je je token kunt activeren:</p>\\n\\n{% if raLocations is empty %}\\n    <p>Er zijn geen locaties beschikbaar.</p>\\n{% else %}\\n    <ul>\\n        {% for raLocation in raLocations %}\\n            <li>\\n                <address>\\n                    <strong>{{ raLocation.name }}</strong><br>\\n                    {{ raLocation.location }}<br>\\n                    {{ raLocation.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\",\n        \"en_GB\": \"<p>Dear {{ commonName }},</p>\\n\\n<p>Ga hier maar eens op kliken! {{ selfServiceUrl }} One week ago, you registered a token. Please visit the Service Desk no later than {{ expirationDate|localizeddate('full', 'none', locale) }} to activate your token.</p>\\n<p>Please bring the following:</p>\\n<ul>\\n    <li>Your token</li>\\n    <li>A valid identity document (passport, drivers license or national ID-card)</li>\\n    <li>The registration code from this e-mail</li>\\n</ul>\\n\\n<p style=\\\"font-size: 150%; text-align: center\\\">\\n    <code>{{ registrationCode }}</code>\\n</p>\\n\\n<p>Locations where  your token can be activated:</p>\\n\\n{% if raLocations is empty %}\\n    <p>No locations are available.</p>\\n{% else %}\\n    <ul>\\n        {% for raLocation in raLocations %}\\n            <li>\\n                <address>\\n                    <strong>{{ raLocation.name }}</strong><br>\\n                    {{ raLocation.location }}<br>\\n                    {{ raLocation.contactInformation }}\\n                </address>\\n            </li>\\n        {% endfor %}\\n    </ul>\\n{% endif %}\"\n    },\n    \"vetted\": {\n       \"nl_NL\": \"<p>Beste {{ commonName }},</p>\\n\\n<p>Bedankt voor het activeren van je token. Je token is nu klaar voor gebruik. Ga hier maar eens op kliken! {{ selfServiceUrl }}</p>\",\n       \"en_GB\": \"<p>Dear {{ commonName }},</p>\\n\\n<p>Thank you for activating your token. Your token is now ready for use. Ga hier maar eens op kliken! {{ selfServiceUrl }}</p>\"\n   },\n   \"second_factor_revoked\": {\n       \"nl_NL\": \"<p>Beste {{ commonName }},</p><p>Ga hier maar eens op kliken! {{ selfServiceUrl }}{% if isRevokedByRa %}De registratie van je {{ tokenType }} token met ID {{ tokenIdentifier }} is verwijderd door een beheerder.{% else %}Je hebt de registratie voor je {{ tokenType }} token met ID {{ tokenIdentifier }} verwijderd. Neem direct contact op met de helpdesk van je instelling als je dit zelf niet gedaan hebt, omdat dit kan betekenen dat je account gecompromitteerd is.{% endif %}</p> Je kunt dit token niet meer gebruiken om in te loggen bij op SURFconext aangesloten services die een tweede inlogstap vereisen.</p><p> Wil je een nieuw token aanvragen? Ga dan naar <a href=\\\"{{ selfServiceUrl }}\\\">{{ selfServiceUrl }}</a> en doorloop het registratieproces opnieuw.</p><p> Voor meer informatie kun je terecht op onze wiki: <a href=\\\"https://support.surfconext.nl/faq-sterke-authenticatie\\\">https://support.surfconext.nl/faq-sterke-authenticatie</a></p><p>Met vriendelijke groet,</p><p>SURFnet</p>\",\n       \"en_GB\": \"<p>Dear {{ commonName }},</p><p>Ga hier maar eens op kliken! {{ selfServiceUrl }}{% if isRevokedByRa %}The registration of your {{ tokenType }} with ID {{ tokenIdentifier }} was deleted by an administrator.{% else %}You have deleted the registration of your {{ tokenType }} token with ID {{ tokenIdentifier }}. If you did not delete your token you must immediately contact the support desk of your institution, as this may indicate that your account has been compromised.{% endif %}</p> You can no longer use this token to access SURFconext services that require two-step authentication.</p><p>Do you want to replace your token? Please visit <a href=\\\"{{ selfServiceUrl }}\\\">{{ selfServiceUrl }}</a> and register a new token.</p><p>For more info please visit our wiki: <a href=\\\"https://support.surfconext.nl/faq-strong-authentication\\\">https://support.surfconext.nl/faq-strong-authentication</a></p><p>Best regards,</p><p>SURFnet</p>\"\n    }\n\n  },\n  \"gateway\": {\n    \"identity_providers\": [],\n    \"service_providers\": [\n        {\n            \"entity_id\": \"https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/metadata\",\n            \"public_key\": \"MIIEJTCCAw2gAwIBAgIJANug+o++1X5IMA0GCSqGSIb3DQEBCwUAMIGoMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEVMBMGA1UECgwMU1VSRm5ldCBCLlYuMRMwEQYDVQQLDApTVVJGY29uZXh0MRwwGgYDVQQDDBNTVVJGbmV0IERldmVsb3BtZW50MSswKQYJKoZIhvcNAQkBFhxzdXJmY29uZXh0LWJlaGVlckBzdXJmbmV0Lm5sMB4XDTE0MTAyMDEyMzkxMVoXDTE0MTExOTEyMzkxMVowgagxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRUwEwYDVQQKDAxTVVJGbmV0IEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxHDAaBgNVBAMME1NVUkZuZXQgRGV2ZWxvcG1lbnQxKzApBgkqhkiG9w0BCQEWHHN1cmZjb25leHQtYmVoZWVyQHN1cmZuZXQubmwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDXuSSBeNJY3d4p060oNRSuAER5nLWT6AIVbv3XrXhcgSwc9m2b8u3ksp14pi8FbaNHAYW3MjlKgnLlopYIylzKD/6Ut/clEx67aO9Hpqsc0HmIP0It6q2bf5yUZ71E4CN2HtQceO5DsEYpe5M7D5i64kS2A7e2NYWVdA5Z01DqUpQGRBc+uMzOwyif6StBiMiLrZH3n2r5q5aVaXU4Vy5EE4VShv3Mp91sgXJj/v155fv0wShgl681v8yf2u2ZMb7NKnQRA4zM2Ng2EUAyy6PQ+Jbn+rALSm1YgiJdVuSlTLhvgwbiHGO2XgBi7bTHhlqSrJFK3Gs4zwIsop/XqQRBAgMBAAGjUDBOMB0GA1UdDgQWBBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAfBgNVHSMEGDAWgBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBd80GpWKjp1J+Dgp0blVAox1s/WPWQlex9xrx1GEYbc5elp3svS+S82s7dFm2llHrrNOBt1HZVC+TdW4f+MR1xq8O5lOYjDRsosxZc/u9jVsYWYc3M9bQAx8VyJ8VGpcAK+fLqRNabYlqTnj/t9bzX8fS90sp8JsALV4g84Aj0G8RpYJokw+pJUmOpuxsZN5U84MmLPnVfmrnuCVh/HkiLNV2c8Pk8LSomg6q1M1dQUTsz/HVxcOhHLj/owwh3IzXf/KXV/E8vSYW8o4WWCAnruYOWdJMI4Z8NG1Mfv7zvb7U3FL1C/KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV\",\n            \"acs\": [\n                \"https://ss-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion\"\n            ], \n            \"loa\": {\n                \"__default__\": \"https://gw-dev.stepup.coin.surf.net/authentication/loa1\"\n            },\n            \"assertion_encryption_enabled\": false,\n            \"blacklisted_encryption_algorithms\": [],\n            \"second_factor_only\": false,\n            \"second_factor_only_nameid_patterns\": []\n        },\n        {\n            \"entity_id\": \"https://ss-dev.stepup.coin.surf.net/app_dev.php/registration/gssf/tiqr/metadata\",\n            \"public_key\": \"MIIEJTCCAw2gAwIBAgIJANug+o++1X5IMA0GCSqGSIb3DQEBCwUAMIGoMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEVMBMGA1UECgwMU1VSRm5ldCBCLlYuMRMwEQYDVQQLDApTVVJGY29uZXh0MRwwGgYDVQQDDBNTVVJGbmV0IERldmVsb3BtZW50MSswKQYJKoZIhvcNAQkBFhxzdXJmY29uZXh0LWJlaGVlckBzdXJmbmV0Lm5sMB4XDTE0MTAyMDEyMzkxMVoXDTE0MTExOTEyMzkxMVowgagxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRUwEwYDVQQKDAxTVVJGbmV0IEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxHDAaBgNVBAMME1NVUkZuZXQgRGV2ZWxvcG1lbnQxKzApBgkqhkiG9w0BCQEWHHN1cmZjb25leHQtYmVoZWVyQHN1cmZuZXQubmwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDXuSSBeNJY3d4p060oNRSuAER5nLWT6AIVbv3XrXhcgSwc9m2b8u3ksp14pi8FbaNHAYW3MjlKgnLlopYIylzKD/6Ut/clEx67aO9Hpqsc0HmIP0It6q2bf5yUZ71E4CN2HtQceO5DsEYpe5M7D5i64kS2A7e2NYWVdA5Z01DqUpQGRBc+uMzOwyif6StBiMiLrZH3n2r5q5aVaXU4Vy5EE4VShv3Mp91sgXJj/v155fv0wShgl681v8yf2u2ZMb7NKnQRA4zM2Ng2EUAyy6PQ+Jbn+rALSm1YgiJdVuSlTLhvgwbiHGO2XgBi7bTHhlqSrJFK3Gs4zwIsop/XqQRBAgMBAAGjUDBOMB0GA1UdDgQWBBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAfBgNVHSMEGDAWgBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBd80GpWKjp1J+Dgp0blVAox1s/WPWQlex9xrx1GEYbc5elp3svS+S82s7dFm2llHrrNOBt1HZVC+TdW4f+MR1xq8O5lOYjDRsosxZc/u9jVsYWYc3M9bQAx8VyJ8VGpcAK+fLqRNabYlqTnj/t9bzX8fS90sp8JsALV4g84Aj0G8RpYJokw+pJUmOpuxsZN5U84MmLPnVfmrnuCVh/HkiLNV2c8Pk8LSomg6q1M1dQUTsz/HVxcOhHLj/owwh3IzXf/KXV/E8vSYW8o4WWCAnruYOWdJMI4Z8NG1Mfv7zvb7U3FL1C/KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV\",\n            \"acs\": [\n                \"https://ss-dev.stepup.coin.surf.net/app_dev.php/registration/gssf/tiqr/consume-assertion\"\n            ], \n            \"loa\": {\n                \"__default__\": \"https://gw-dev.stepup.coin.surf.net/authentication/loa1\"\n            },\n            \"assertion_encryption_enabled\": false,\n            \"blacklisted_encryption_algorithms\": [],\n            \"second_factor_only\": false,\n            \"second_factor_only_nameid_patterns\": []\n        },\n        {\n            \"entity_id\": \"https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/tiqr/metadata\",\n            \"public_key\": \"MIIEJTCCAw2gAwIBAgIJANug+o++1X5IMA0GCSqGSIb3DQEBCwUAMIGoMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEVMBMGA1UECgwMU1VSRm5ldCBCLlYuMRMwEQYDVQQLDApTVVJGY29uZXh0MRwwGgYDVQQDDBNTVVJGbmV0IERldmVsb3BtZW50MSswKQYJKoZIhvcNAQkBFhxzdXJmY29uZXh0LWJlaGVlckBzdXJmbmV0Lm5sMB4XDTE0MTAyMDEyMzkxMVoXDTE0MTExOTEyMzkxMVowgagxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRUwEwYDVQQKDAxTVVJGbmV0IEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxHDAaBgNVBAMME1NVUkZuZXQgRGV2ZWxvcG1lbnQxKzApBgkqhkiG9w0BCQEWHHN1cmZjb25leHQtYmVoZWVyQHN1cmZuZXQubmwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDXuSSBeNJY3d4p060oNRSuAER5nLWT6AIVbv3XrXhcgSwc9m2b8u3ksp14pi8FbaNHAYW3MjlKgnLlopYIylzKD/6Ut/clEx67aO9Hpqsc0HmIP0It6q2bf5yUZ71E4CN2HtQceO5DsEYpe5M7D5i64kS2A7e2NYWVdA5Z01DqUpQGRBc+uMzOwyif6StBiMiLrZH3n2r5q5aVaXU4Vy5EE4VShv3Mp91sgXJj/v155fv0wShgl681v8yf2u2ZMb7NKnQRA4zM2Ng2EUAyy6PQ+Jbn+rALSm1YgiJdVuSlTLhvgwbiHGO2XgBi7bTHhlqSrJFK3Gs4zwIsop/XqQRBAgMBAAGjUDBOMB0GA1UdDgQWBBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAfBgNVHSMEGDAWgBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBd80GpWKjp1J+Dgp0blVAox1s/WPWQlex9xrx1GEYbc5elp3svS+S82s7dFm2llHrrNOBt1HZVC+TdW4f+MR1xq8O5lOYjDRsosxZc/u9jVsYWYc3M9bQAx8VyJ8VGpcAK+fLqRNabYlqTnj/t9bzX8fS90sp8JsALV4g84Aj0G8RpYJokw+pJUmOpuxsZN5U84MmLPnVfmrnuCVh/HkiLNV2c8Pk8LSomg6q1M1dQUTsz/HVxcOhHLj/owwh3IzXf/KXV/E8vSYW8o4WWCAnruYOWdJMI4Z8NG1Mfv7zvb7U3FL1C/KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV\",\n            \"acs\": [\n                \"https://ra-dev.stepup.coin.surf.net/app_dev.php/vetting-procedure/gssf/tiqr/verify\"\n            ], \n            \"loa\": {\n                \"__default__\": \"https://gw-dev.stepup.coin.surf.net/authentication/loa1\"\n            },\n            \"assertion_encryption_enabled\": false,\n            \"blacklisted_encryption_algorithms\": [],\n            \"second_factor_only\": false,\n            \"second_factor_only_nameid_patterns\": []\n        },\n        {\n           \"entity_id\": \"https://ra-dev.stepup.coin.surf.net/app_dev.php/authentication/metadata\",\n           \"public_key\": \"MIIEJTCCAw2gAwIBAgIJANug+o++1X5IMA0GCSqGSIb3DQEBCwUAMIGoMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEVMBMGA1UECgwMU1VSRm5ldCBCLlYuMRMwEQYDVQQLDApTVVJGY29uZXh0MRwwGgYDVQQDDBNTVVJGbmV0IERldmVsb3BtZW50MSswKQYJKoZIhvcNAQkBFhxzdXJmY29uZXh0LWJlaGVlckBzdXJmbmV0Lm5sMB4XDTE0MTAyMDEyMzkxMVoXDTE0MTExOTEyMzkxMVowgagxCzAJBgNVBAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MRUwEwYDVQQKDAxTVVJGbmV0IEIuVi4xEzARBgNVBAsMClNVUkZjb25leHQxHDAaBgNVBAMME1NVUkZuZXQgRGV2ZWxvcG1lbnQxKzApBgkqhkiG9w0BCQEWHHN1cmZjb25leHQtYmVoZWVyQHN1cmZuZXQubmwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDXuSSBeNJY3d4p060oNRSuAER5nLWT6AIVbv3XrXhcgSwc9m2b8u3ksp14pi8FbaNHAYW3MjlKgnLlopYIylzKD/6Ut/clEx67aO9Hpqsc0HmIP0It6q2bf5yUZ71E4CN2HtQceO5DsEYpe5M7D5i64kS2A7e2NYWVdA5Z01DqUpQGRBc+uMzOwyif6StBiMiLrZH3n2r5q5aVaXU4Vy5EE4VShv3Mp91sgXJj/v155fv0wShgl681v8yf2u2ZMb7NKnQRA4zM2Ng2EUAyy6PQ+Jbn+rALSm1YgiJdVuSlTLhvgwbiHGO2XgBi7bTHhlqSrJFK3Gs4zwIsop/XqQRBAgMBAAGjUDBOMB0GA1UdDgQWBBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAfBgNVHSMEGDAWgBQCJmcoa/F7aM3jIFN7Bd4uzWRgzjAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQBd80GpWKjp1J+Dgp0blVAox1s/WPWQlex9xrx1GEYbc5elp3svS+S82s7dFm2llHrrNOBt1HZVC+TdW4f+MR1xq8O5lOYjDRsosxZc/u9jVsYWYc3M9bQAx8VyJ8VGpcAK+fLqRNabYlqTnj/t9bzX8fS90sp8JsALV4g84Aj0G8RpYJokw+pJUmOpuxsZN5U84MmLPnVfmrnuCVh/HkiLNV2c8Pk8LSomg6q1M1dQUTsz/HVxcOhHLj/owwh3IzXf/KXV/E8vSYW8o4WWCAnruYOWdJMI4Z8NG1Mfv7zvb7U3FL1C/KLV04DqzALXGj+LVmxtDvuxqC042apoIDQV\",\n           \"acs\": [\n                \"https://ra-dev.stepup.coin.surf.net/app_dev.php/authentication/consume-assertion\"\n            ], \n            \"loa\": {\n                \"__default__\": \"https://gw-dev.stepup.coin.surf.net/authentication/loa3\"\n            },\n            \"assertion_encryption_enabled\": false,\n            \"blacklisted_encryption_algorithms\": [],\n            \"second_factor_only\": false,\n            \"second_factor_only_nameid_patterns\": []\n        }\n    ]\n  }\n}"
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/management/configuration",
+					"raw": "http://middleware.stepup.example.com/management/configuration",
 					"protocol": "http",
 					"host": [
-						"mw-dev",
+						"middleware",
 						"stepup",
-						"coin",
-						"surf",
-						"net"
+						"example",
+						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"management",
 						"configuration"
 					]
@@ -74,17 +69,15 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/management/whitelist",
+					"raw": "http://middleware.stepup.example.com/management/whitelist",
 					"protocol": "http",
 					"host": [
-						"mw-dev",
+						"middleware",
 						"stepup",
-						"coin",
-						"surf",
-						"net"
+						"example",
+						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"management",
 						"whitelist"
 					]
@@ -154,7 +147,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"institutions\": [\n        \"sms.organisation.example\"\n    ]\n}"
+					"raw": "{\n    \"institutions\": [\n        \"miko.organisation.example.commm\"\n    ]\n}"
 				},
 				"url": {
 					"raw": "http://middleware.stepup.example.com/management/whitelist/remove",
@@ -198,17 +191,15 @@
 					"raw": "{\n  \"institutions\": [\n    \"dev.organisation.example\"\n  ]\n}"
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/management/whitelist/replace",
+					"raw": "http://middleware.stepup.example.com/management/whitelist/replace",
 					"protocol": "http",
 					"host": [
-						"mw-dev",
+						"middleware",
 						"stepup",
-						"coin",
-						"surf",
-						"net"
+						"example",
+						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"management",
 						"whitelist",
 						"replace"
@@ -221,28 +212,6 @@
 		{
 			"name": "/management/forget-identity",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "username",
-							"type": "any"
-						},
-						{
-							"key": "password",
-							"type": "any"
-						},
-						{
-							"key": "saveHelperData",
-							"type": "any"
-						},
-						{
-							"key": "showPassword",
-							"value": false,
-							"type": "boolean"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -263,17 +232,15 @@
 					"raw": "{\n  \"name_id\": \"2592ab2afb52eea9a61f5db90febd631966d49f5\",\n  \"institution\": \"Ibuildings\"\n}"
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/management/forget-identity",
+					"raw": "http://middleware.stepup.example.com/management/forget-identity",
 					"protocol": "http",
 					"host": [
-						"mw-dev",
+						"middleware",
 						"stepup",
-						"coin",
-						"surf",
-						"net"
+						"example",
+						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"management",
 						"forget-identity"
 					]
@@ -290,7 +257,7 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "secret",
+							"value": "QNNBJJSy6UY6cyG",
 							"type": "string"
 						},
 						{
@@ -320,7 +287,7 @@
 					"raw": "{\n    \"dev.organisation.example\": {\n        \"use_ra_locations\": true, \n        \"show_raa_contact_information\": true\n    }\n}"
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/management/institution-configuration",
+					"raw": "http://middleware.stepup.example.com/management/institution-configuration?XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -331,6 +298,12 @@
 					"path": [
 						"management",
 						"institution-configuration"
+					],
+					"query": [
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
 					]
 				},
 				"description": "GET the institution configuration options"
@@ -340,21 +313,6 @@
 		{
 			"name": "/management/institution-configuration",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "secret",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "management",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -372,7 +330,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"institution-a.example.com\": {\n    \"use_ra_locations\": true,\n    \"show_raa_contact_information\": true,\n    \"verify_email\": true,\n    \"allowed_second_factors\": [],\n    \"number_of_tokens_per_identity\": 2,\n    \"authorization_settings\": []\n  },\n  \"institution-b.example.com\": {\n    \"use_ra_locations\": false,\n    \"show_raa_contact_information\": false,\n    \"verify_email\": false,\n    \"allowed_second_factors\": [],\n    \"number_of_tokens_per_identity\": 1\n  },\n  \"institution-d.example.com\": {\n    \"use_ra_locations\": true,\n    \"show_raa_contact_information\": true,\n    \"verify_email\": true,\n    \"allowed_second_factors\": [\"yubikey\", \"tiqr\"],\n    \"number_of_tokens_per_identity\": 1\n  }\n}"
+					"raw": "{\n        \"institution-a.example.com\": {\n          \"use_ra_locations\": true,\n          \"show_raa_contact_information\": true,\n          \"verify_email\": true,\n          \"allowed_second_factors\": [],\n          \"number_of_tokens_per_identity\": 2,\n          \"use_ra\": [\"institution-a.example.com\",\"institution-b.example.com\"],\n\"use_raa\": [\"institution-a.example.com\",\"institution-b.example.com\"],\n\"select_raa\": [\"institution-a.example.com\",\"institution-b.example.com\", \"institution-d.example.com\"]\n          }\n      }"
 				},
 				"url": {
 					"raw": "http://middleware.stepup.example.com/management/institution-configuration?XDEBUG_SESSION_START=PHPSTORM",
@@ -397,6 +355,43 @@
 				"description": "POST the institution configuration options to reconfigure\n"
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "QNNBJJSy6UY6cyG",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "management",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7456684f-cf72-4059-baa5-2dd80c386d6e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0bb76edb-7711-4a2b-bdd3-d0adaa96f9ae",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }

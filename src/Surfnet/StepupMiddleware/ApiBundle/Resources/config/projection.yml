@@ -90,3 +90,10 @@ services:
         arguments:
             - "@surfnet_stepup_middleware_api.repository.allowed_second_factor"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
+    surfnet_stepup_middleware_api.projector.institution_authorization:
+        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Projector\InstitutionAuthorizationProjector
+        arguments:
+        - "@surfnet_stepup_middleware_api.repository.institution_authorization"
+        - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]

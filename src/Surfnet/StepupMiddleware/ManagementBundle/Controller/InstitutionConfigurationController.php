@@ -23,8 +23,11 @@ use Exception;
 use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOptionMap;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -59,6 +62,10 @@ final class InstitutionConfigurationController extends Controller
             $numberOfTokensPerIdentity = $this->getInstitutionConfigurationOptionsService()
                 ->getMaxNumberOfTokensFor(new Institution($options->institution->getInstitution()));
 
+            // Get the authorization options for this institution
+            $institutionConfigurationOptionsMap = $this->getInstitutionAuthorizationService()
+                ->findAuthorizationsFor($options->institution);
+
             $overview[$options->institution->getInstitution()] = [
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
@@ -67,9 +74,9 @@ final class InstitutionConfigurationController extends Controller
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
                 ),
-                'use_ra' => $options->useRaOption,
-                'use_raa' => $options->useRaaOption,
-                'select_raa' => $options->selectRaaOption,
+                'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
+                'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
+                'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
             ];
         }
 
@@ -166,6 +173,14 @@ final class InstitutionConfigurationController extends Controller
     private function getInstitutionConfigurationOptionsService()
     {
         return $this->get('surfnet_stepup_middleware_api.service.institution_configuration_options');
+    }
+
+    /**
+     * @return InstitutionAuthorizationService
+     */
+    private function getInstitutionAuthorizationService()
+    {
+        return $this->get('surfnet_stepup_middleware_api.service.institution_authorization');
     }
 
     /**

@@ -21,7 +21,9 @@ namespace Surfnet\Stepup\Configuration\Event;
 use Broadway\Serializer\SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 
 final class UseRaOptionChangedEvent implements SerializableInterface
 {
@@ -36,14 +38,14 @@ final class UseRaOptionChangedEvent implements SerializableInterface
     public $institution;
 
     /**
-     * @var UseRaOption
+     * @var InstitutionAuthorizationOption
      */
     public $useRaOption;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
-        UseRaOption $useRaOption
+        InstitutionAuthorizationOption $useRaOption
     ) {
         $this->institutionConfigurationId = $institutionConfigurationId;
         $this->institution = $institution;
@@ -52,10 +54,11 @@ final class UseRaOptionChangedEvent implements SerializableInterface
 
     public static function deserialize(array $data)
     {
+        $institution = new Institution($data['institution']);
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
-            new Institution($data['institution']),
-            new UseRaOption($data['use_ra_option'])
+            $institution,
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $data['use_ra_option'])
         );
     }
 
@@ -64,7 +67,7 @@ final class UseRaOptionChangedEvent implements SerializableInterface
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
             'institution' => $this->institution->getInstitution(),
-            'use_ra_option' => $this->useRaOption->getInstitutions(),
+            'use_ra_option' => $this->useRaOption->jsonSerialize(),
         ];
     }
 }

@@ -36,8 +36,8 @@ class InstitutionSetTest extends UnitTest
         $institutionB = new Institution('b');
         $institutionC = new Institution('C');
 
-        $set = new InstitutionSet([$institutionA, $institutionB, $institutionC]);
-        $this->assertTrue(is_array($set->jsonSerialize()));
+        $set = InstitutionSet::create([$institutionA, $institutionB, $institutionC]);
+        $this->assertTrue(is_array($set->toScalarArray()));
     }
 
     /**
@@ -51,7 +51,7 @@ class InstitutionSetTest extends UnitTest
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('b');
 
-        new InstitutionSet([$institutionB, $institutionBDupe]);
+        InstitutionSet::create([$institutionB, $institutionBDupe]);
     }
 
     /**
@@ -65,7 +65,7 @@ class InstitutionSetTest extends UnitTest
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('B');
 
-        new InstitutionSet([$institutionB, $institutionBDupe]);
+        InstitutionSet::create([$institutionB, $institutionBDupe]);
     }
 
     /**
@@ -79,7 +79,7 @@ class InstitutionSetTest extends UnitTest
         $institution = new Institution('b');
         $location = new Location('Foobar');
 
-        new InstitutionSet([$institution, $location]);
+        InstitutionSet::create([$institution, $location]);
     }
 
     /**
@@ -89,8 +89,8 @@ class InstitutionSetTest extends UnitTest
     public function factory_method_can_build_from_empty_array()
     {
         $input = [];
-        $set = InstitutionSet::fromInstitutionConfig($input);
-        $this->assertEmpty($set->jsonSerialize());
+        $set = InstitutionSet::create($input);
+        $this->assertEmpty($set->toScalarArray());
     }
 
     /**
@@ -99,16 +99,16 @@ class InstitutionSetTest extends UnitTest
      */
     public function factory_method_can_build_from_array_of_string()
     {
-        $input = ['a', 'b', 'c', 'd'];
-        $set = InstitutionSet::fromInstitutionConfig($input);
+        $input = [
+            new Institution('a'),
+            new Institution('b'),
+            new Institution('c'),
+            new Institution('d')
+        ];
+        $set = InstitutionSet::create($input);
         $this->assertEquals(
-            [
-                new Institution('a'),
-                new Institution('b'),
-                new Institution('c'),
-                new Institution('d')
-            ],
-            $set->jsonSerialize()
+            $input,
+            $set->toScalarArray()
         );
     }
 
@@ -124,20 +124,7 @@ class InstitutionSetTest extends UnitTest
      */
     public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid)
     {
-        InstitutionSet::fromInstitutionConfig($invalid);
-    }
-
-    /**
-     * @test
-     * @group domain
-     */
-    public function the_set_is_iterable()
-    {
-        $input = ['a', 'b', 'c', 'd'];
-        $set = InstitutionSet::fromInstitutionConfig($input);
-
-        $this->assertInstanceOf(IteratorAggregate::class, $set);
-        $this->assertEquals(4, count($set->getIterator()));
+        InstitutionSet::create($invalid);
     }
 
     /**
@@ -146,9 +133,14 @@ class InstitutionSetTest extends UnitTest
      */
     public function sets_can_be_compared()
     {
-        $input = ['a', 'b', 'c', 'd'];
-        $set = InstitutionSet::fromInstitutionConfig($input);
-        $secondSet = InstitutionSet::fromInstitutionConfig($input);
+        $input = [
+            new Institution('a'),
+            new Institution('b'),
+            new Institution('c'),
+            new Institution('d')
+        ];
+        $set = InstitutionSet::create($input);
+        $secondSet = InstitutionSet::create($input);
         $this->assertTrue($set->equals($secondSet));
     }
 

@@ -21,19 +21,20 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
- * Custom Type for the UseRaOptionType Value Object
+ * Custom Type for the InstitutionRole Value Object
  */
-class UseRaOptionType extends Type
+class InstitutionRoleType extends Type
 {
-    const NAME = 'stepup_select_ra_option';
+    const NAME = 'stepup_institution_role';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        return $platform->getJsonTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -42,17 +43,17 @@ class UseRaOptionType extends Type
             return $value;
         }
 
-        if (!$value instanceof UseRaOption) {
+        if (!$value instanceof InstitutionRole) {
             throw new ConversionException(
                 sprintf(
-                    "Encountered illegal location of type %s '%s', expected a UseRaOption instance",
+                    "Encountered illegal location of type %s '%s', expected a InstitutionRole instance",
                     is_object($value) ? get_class($value) : gettype($value),
                     is_scalar($value) ? (string) $value : ''
                 )
             );
         }
 
-        return json_encode($value);
+        return $value->getType();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -62,7 +63,7 @@ class UseRaOptionType extends Type
         }
 
         try {
-            $useRaLocationsOption = new UseRaOption(json_decode($value));
+            $institutionRole = new InstitutionRole($value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
@@ -73,7 +74,7 @@ class UseRaOptionType extends Type
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
         }
 
-        return $useRaLocationsOption;
+        return $institutionRole;
     }
 
     public function getName()

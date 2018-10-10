@@ -65,83 +65,9 @@ class InstitutionAuthorizationContextFactoryTest extends TestCase
         $roleSet = m::mock(InstitutionRoleSetInterface::class);
 
         $context = $this->factory->buildFrom(
-            $this->configureActorRequest('12345678-1234-1234-1234-123456789101', 'institution-a'),
+            new Institution('institution-a'),
             $roleSet
         );
         $this->assertInstanceOf(InstitutionAuthorizationContext::class, $context);
-    }
-
-    /**
-     * @test
-     * @group domain
-     */
-    public function it_supports_building_a_context_from_an_old_request()
-    {
-        $institution = 'institution-a';
-
-        /** @var Identity $actorInstitution */
-        $actorIdentity = m::mock(Identity::class)->makePartial();
-        $actorIdentity->institution = new Institution($institution);
-        $this->service->shouldReceive('find')->andReturn($actorIdentity);
-
-        $roleSet = m::mock(InstitutionRoleSetInterface::class);
-
-        $context = $this->factory->buildFrom(
-            $this->configureBCRequest('institution-a'),
-            $roleSet
-        );
-        $this->assertInstanceOf(InstitutionAuthorizationContext::class, $context);
-    }
-
-    /**
-     * @test
-     * @group domain
-     * @dataProvider faultyAuthrizationContextProvider
-     *
-     * @expectedException \Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException
-     */
-    public function it_errors_when_invalid_arguments_are_received(
-        $requestActorId,
-        $requestActorInstitution,
-        $actorIdentity
-    )
-    {
-        $this->service->shouldReceive('find')->andReturn($actorIdentity);
-        $roleSet = m::mock(InstitutionRoleSetInterface::class);
-        $this->factory->buildFrom($this->configureActorRequest($requestActorId, $requestActorInstitution), $roleSet);
-    }
-
-    public function faultyAuthrizationContextProvider()
-    {
-        /** @var Identity $actorInstitution */
-        $actorIdentity = m::mock(Identity::class)->makePartial();
-        $actorIdentity->institution = new Institution('institution-a');
-
-        return [
-            'institution does not match that of actor institution' => ['12345678-1234-1234-1234-123456789101', 'institution-b', $actorIdentity],
-            'invalid actor id is provided' => ['invalid', 'institution-a', null],
-        ];
-    }
-
-    private function configureActorRequest($actorId = null, $actorInstitution = null)
-    {
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('get')->with('actorId')->andReturn($actorId);
-        $request->shouldReceive('get')->with('actorInstitution')->andReturn($actorInstitution);
-        $request->shouldReceive('get')->with('institution')->andReturn(null);
-
-        return $request;
-    }
-
-    private function configureBCRequest($institution = null)
-    {
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('get')->with('actorId')->andReturn(null);
-        $request->shouldReceive('get')->with('actorInstitution')->andReturn(null);
-        $request->shouldReceive('get')->with('institution')->andReturn($institution);
-
-        return $request;
     }
 }

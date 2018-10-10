@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSetInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 interface InstitutionAuthorizationContextFactoryInterface
 {
@@ -39,9 +39,9 @@ interface InstitutionAuthorizationContextFactoryInterface
      *
      *  The fallback parameter is used as default
      *
-     * @param Request $request
+     * @param Institution $institution
      * @param InstitutionRoleSetInterface $roleRequirements
-     * @return InstitutionAuthorizationContextInterface|null
+     * @return InstitutionAuthorizationContextInterface
      */
-    public function buildFrom(Request $request, InstitutionRoleSetInterface $roleRequirements);
+    public function buildFrom(Institution $institution, InstitutionRoleSetInterface $roleRequirements);
 }

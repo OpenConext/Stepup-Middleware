@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSetInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
@@ -43,49 +44,16 @@ class InstitutionAuthorizationContextFactory implements InstitutionAuthorization
         $this->identityService = $identityService;
     }
 
-    public function buildFrom(Request $request, InstitutionRoleSetInterface $roleRequirements)
+    /**
+     * @param Institution $institution
+     * @param InstitutionRoleSetInterface $roleRequirements
+     * @return InstitutionAuthorizationContextInterface
+     */
+    public function buildFrom(Institution $institution, InstitutionRoleSetInterface $roleRequirements)
     {
-        $actorId = $request->get('actorId');
-        $actorInstitution = $request->get('actorInstitution');
-        $institution = $request->get('institution');
-
-        if ($actorId && $actorInstitution) {
-
-            // Retrieve the identity from the service
-            $actorIdentity = $this->identityService->find($actorId);
-
-            // The identity of the actor must exist
-            if (!$actorIdentity) {
-                throw new InvalidArgumentException('Identity with id "%s" could not be found.');
-            }
-
-            $institution = new Institution($actorInstitution);
-
-            // The identity that was returned from the service should match the institution that was provided in the
-            // actorInstitution request parameter.
-            if (!$institution->equals($actorIdentity->institution)) {
-                throw new InvalidArgumentException(
-                    'The institution of the actor did not match that of the institution found in the actor identity.'
-                );
-            }
-
-            return new InstitutionAuthorizationContext(
-                $actorIdentity,
-                $institution,
-                $roleRequirements
-            );
-        } else if ($institution) {
-
-            // For backwards compatibility
-            return new InstitutionAuthorizationContext(
-                '',
-                $institution,
-                $roleRequirements
-            );
-        }
-
-        throw new InvalidArgumentException(
-            'The actorId and actorInstitution were not given in the request.'
+        return new InstitutionAuthorizationContext(
+            $institution,
+            $roleRequirements
         );
     }
 }

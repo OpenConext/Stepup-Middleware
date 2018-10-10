@@ -85,7 +85,7 @@ class IdentityController extends Controller
         $query->pageNumber = (int)$request->get('p', 1);
 
         $query->authorizationContext = $this->institutionAuthorizationContextFactory->buildFrom(
-            $request,
+            $institution,
             $this->roleRequirements
         );
 

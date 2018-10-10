@@ -24,11 +24,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
     /**
-     * @var Identity
-     */
-    private $actorId;
-
-    /**
      * @var Institution
      */
     private $actorInstitution;
@@ -44,19 +39,10 @@ class InstitutionAuthorizationContext implements InstitutionAuthorizationContext
      * @param string $actorInstitution
      * @param InstitutionRoleSetInterface $roleRequirements
      */
-    public function __construct($actorId, $actorInstitution, InstitutionRoleSetInterface $roleRequirements)
+    public function __construct($actorInstitution, InstitutionRoleSetInterface $roleRequirements)
     {
-        $this->actorId = $actorId;
         $this->actorInstitution = $actorInstitution;
         $this->roleRequirements = $roleRequirements;
-    }
-
-    /**
-     * @return Identity
-     */
-    public function getActorIdentity()
-    {
-        return $this->actorId;
     }
 
     /**

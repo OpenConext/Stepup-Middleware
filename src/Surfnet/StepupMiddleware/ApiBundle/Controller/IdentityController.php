@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationContextFactoryInterface;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
@@ -39,21 +39,14 @@ class IdentityController extends Controller
     private $identityService;
 
     /**
-     * @var InstitutionAuthorizationContextFactoryInterface
-     */
-    private $institutionAuthorizationContextFactory;
-
-    /**
      * @var InstitutionRoleSet
      */
     private $roleRequirements;
 
     public function __construct(
-        IdentityService $identityService,
-        InstitutionAuthorizationContextFactoryInterface $institutionAuthorizationContextFactory
+        IdentityService $identityService
     ) {
         $this->identityService = $identityService;
-        $this->institutionAuthorizationContextFactory = $institutionAuthorizationContextFactory;
 
         $this->roleRequirements = new InstitutionRoleSet(
             [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
@@ -83,11 +76,7 @@ class IdentityController extends Controller
         $query->commonName = $request->get('commonName');
         $query->email = $request->get('email');
         $query->pageNumber = (int)$request->get('p', 1);
-
-        $query->authorizationContext = $this->institutionAuthorizationContextFactory->buildFrom(
-            $institution,
-            $this->roleRequirements
-        );
+        $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
 
         $paginator = $this->identityService->search($query);
 

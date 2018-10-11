@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -28,6 +30,20 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
 class IdentityRepository extends EntityRepository
 {
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
+
+    public function __construct(
+        EntityManager $em,
+        Mapping\ClassMetadata $class,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+    ) {
+        parent::__construct($em, $class);
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
+    }
+
     /**
      * @param string $id
      * @return Identity|null
@@ -52,16 +68,15 @@ class IdentityRepository extends EntityRepository
 
     /**
      * @param IdentityQuery $query
-     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter The authorization filter is used
-     *        to filter the results for the given institution
      * @return \Doctrine\ORM\Query
      */
-    public function createSearchQuery(IdentityQuery $query, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function createSearchQuery(
+        IdentityQuery $query
+    ) {
         $queryBuilder = $this->createQueryBuilder('i');
 
         // Modify query to filter on authorization
-        $authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'i.id', 'i.institution', 'iac');
+        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'i.id', 'i.institution', 'iac');
 
         if ($query->nameId) {
             $queryBuilder

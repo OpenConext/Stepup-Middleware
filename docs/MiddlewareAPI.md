@@ -201,6 +201,7 @@ Request parameters:
 URL: `http://middleware.tld/verified-second-factors?{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
 Method: GET
 Request parameters:
+- institution: (required))
 - IdentityId: (optional) UUIDv4 of the identity to search for
 - secondFactorId: (optional) UUIDv4 of the second factor to search for
 - registrationCode: (optional) string, registration code to search for

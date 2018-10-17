@@ -25,7 +25,7 @@ final class RaSecondFactorQuery extends AbstractQuery
     /**
      * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
-    public $institution;
+    public $actorInstitution;
 
     /**
      * @var string|null
@@ -46,6 +46,11 @@ final class RaSecondFactorQuery extends AbstractQuery
      * @var string|null
      */
     public $email;
+
+    /**
+     * @var string|null the filter value, not to be confused with the actorInstitution which is used for authorizations.
+     */
+    public $institution;
 
     /**
      * @var string|null One of the ApiBundle\Identity\Entity\RaSecondFactor::STATUS_* constants.

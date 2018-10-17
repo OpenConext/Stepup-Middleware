@@ -132,6 +132,7 @@ class RaSecondFactorRepository extends EntityRepository
             case 'type':
             case 'secondFactorId':
             case 'email':
+            case 'institution':
             case 'status':
                 $queryBuilder->orderBy(
                     sprintf('sf.%s', $query->orderBy),

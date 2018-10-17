@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,15 +35,22 @@ final class InstitutionConfigurationOptionsController extends Controller
     private $institutionConfigurationOptionsService;
 
     /**
+     * @return InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationService;
+
+    /**
      * @var AllowedSecondFactorListService
      */
     private $allowedSecondFactorListService;
 
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        InstitutionAuthorizationService $institutionAuthorizationService,
         AllowedSecondFactorListService $allowedSecondFactorListService
     ) {
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->institutionAuthorizationService = $institutionAuthorizationService;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
@@ -69,6 +78,10 @@ final class InstitutionConfigurationOptionsController extends Controller
             ->institutionConfigurationOptionsService
             ->getMaxNumberOfTokensFor($institution);
 
+        // Get the authorization options for this institution
+        $institutionConfigurationOptionsMap = $this->institutionAuthorizationService
+            ->findAuthorizationsFor($institution);
+
         return new JsonResponse([
             'institution'                  => $institutionConfigurationOptions->institution,
             'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
@@ -76,6 +89,9 @@ final class InstitutionConfigurationOptionsController extends Controller
             'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
             'allowed_second_factors'       => $allowedSecondFactorList,
+            'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
+            'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
+            'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
         ]);
     }
 }

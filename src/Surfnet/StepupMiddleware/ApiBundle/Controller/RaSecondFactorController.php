@@ -50,22 +50,22 @@ final class RaSecondFactorController extends Controller
         );
     }
 
-    public function collectionAction(Request $request, Institution $institution)
+    public function collectionAction(Request $request, Institution $actorInstitution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query = $this->buildRaSecondFactorQuery($request, $institution);
+        $query = $this->buildRaSecondFactorQuery($request, $actorInstitution);
 
         $paginator = $this->raSecondFactorService->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function exportAction(Request $request, Institution $institution)
+    public function exportAction(Request $request, Institution $actorInstitution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query = $this->buildRaSecondFactorQuery($request, $institution);
+        $query = $this->buildRaSecondFactorQuery($request, $actorInstitution);
 
         $results = $this->raSecondFactorService->searchUnpaginated($query);
 
@@ -77,19 +77,20 @@ final class RaSecondFactorController extends Controller
      * @param Institution $institution
      * @return RaSecondFactorQuery
      */
-    private function buildRaSecondFactorQuery(Request $request, Institution $institution)
+    private function buildRaSecondFactorQuery(Request $request, Institution $actorInstitution)
     {
         $query = new RaSecondFactorQuery();
-        $query->institution = $institution;
+        $query->actorInstitution = $actorInstitution;
         $query->pageNumber = (int)$request->get('p', 1);
         $query->name = $request->get('name');
         $query->type = $request->get('type');
         $query->secondFactorId = $request->get('secondFactorId');
         $query->email = $request->get('email');
+        $query->institution = $request->get('institution');
         $query->status = $request->get('status');
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
-        $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
+        $query->authorizationContext = new InstitutionAuthorizationContext($actorInstitution, $this->roleRequirements);
 
         return $query;
     }

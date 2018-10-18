@@ -104,6 +104,10 @@ class RaSecondFactorRepository extends EntityRepository
             $queryBuilder->andWhere('sf.email LIKE :email')->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
+        if ($query->institution) {
+            $queryBuilder->andWhere('sf.institution = :institution')->setParameter('institution', $query->institution);
+        }
+
         if ($query->status) {
             $stringStatus = $query->status;
             if (!SecondFactorStatus::isValidStatus($stringStatus)) {
@@ -132,6 +136,7 @@ class RaSecondFactorRepository extends EntityRepository
             case 'type':
             case 'secondFactorId':
             case 'email':
+            case 'institution':
             case 'status':
                 $queryBuilder->orderBy(
                     sprintf('sf.%s', $query->orderBy),

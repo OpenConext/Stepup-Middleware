@@ -202,6 +202,11 @@ services:
         tags:
             - { name: request.param_converter, priority: -5, converter: surfnet_step_middleware.institution }
 
+    surfnet_stepup_middleware_api.request.actor_institution_param_converter:
+        class: Surfnet\StepupMiddleware\ApiBundle\Request\ActorInstitutionParamConverter
+        tags:
+            - { name: request.param_converter, priority: -5, converter: surfnet_step_middleware.actor_institution }
+
     surfnet_stepup_middleware_api.request.configuration_institution_param_converter:
         class: Surfnet\StepupMiddleware\ApiBundle\Request\ConfigurationInstitutionParamConverter
         tags:

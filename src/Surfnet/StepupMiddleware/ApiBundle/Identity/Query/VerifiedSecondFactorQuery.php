@@ -42,7 +42,7 @@ class VerifiedSecondFactorQuery extends AbstractQuery
     /**
      * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
-    public $institution;
+    public $actorInstitution;
 
     /**
      * @var InstitutionAuthorizationContext

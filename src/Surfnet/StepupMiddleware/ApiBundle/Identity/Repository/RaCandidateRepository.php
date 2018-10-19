@@ -18,15 +18,33 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+
+use Doctrine\ORM\Mapping;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
 class RaCandidateRepository extends EntityRepository
 {
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
+
+    public function __construct(
+        EntityManager $em,
+        Mapping\ClassMetadata $class,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+    ) {
+        parent::__construct($em, $class);
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
+    }
+
     /**
      * @param RaCandidate $raCandidate
      * @return void
@@ -75,9 +93,16 @@ class RaCandidateRepository extends EntityRepository
      */
     public function createSearchQuery(RaCandidateQuery $query)
     {
-        $queryBuilder = $this->createQueryBuilder('rac')
-            ->where('rac.institution = :institution')
-            ->setParameter('institution', $query->institution);
+        $queryBuilder = $this->createQueryBuilder('rac');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'rac.identityId', 'rac.institution', 'iac');
+
+        if ($query->institution) {
+            $queryBuilder
+                ->andWhere('rac.institution = :institution')
+                ->setParameter('institution', $query->institution);
+        }
 
         if ($query->commonName) {
             $queryBuilder

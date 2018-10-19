@@ -19,9 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
@@ -29,6 +32,20 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 class RaListingRepository extends EntityRepository
 {
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
+
+    public function __construct(
+        EntityManager $em,
+        Mapping\ClassMetadata $class,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+    ) {
+        parent::__construct($em, $class);
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
+    }
+
     /**
      * @param IdentityId $identityId The RA's identity id.
      * @return null|RaListing
@@ -50,9 +67,16 @@ class RaListingRepository extends EntityRepository
      */
     public function createSearchQuery(RaListingQuery $query)
     {
-        $queryBuilder = $this->createQueryBuilder('r')
-            ->where('r.institution = :institution')
-            ->setParameter('institution', $query->institution);
+        $queryBuilder = $this->createQueryBuilder('r');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, ['r.identityId', 'r.institution'], 'r.institution', 'iac');
+
+        if ($query->institution) {
+            $queryBuilder
+                ->andWhere('r.institution = :institution')
+                ->setParameter('institution', $query->institution);
+        }
 
         if (!$query->orderBy) {
             return $queryBuilder->getQuery();

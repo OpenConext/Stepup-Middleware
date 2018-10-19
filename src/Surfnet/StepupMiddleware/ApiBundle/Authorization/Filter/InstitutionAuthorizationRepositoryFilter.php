@@ -49,7 +49,13 @@ class InstitutionAuthorizationRepositoryFilter
 
         $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
         $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
-        $queryBuilder->groupBy($groupBy);
+        if (!is_array($groupBy)) {
+            $queryBuilder->groupBy($groupBy);
+        } else {
+            foreach ($groupBy as $by) {
+                $queryBuilder->addGroupBy($by);
+            }
+        }
 
         $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$authorizationContext->getActorInstitution());
     }

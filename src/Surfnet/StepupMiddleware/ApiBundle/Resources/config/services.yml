@@ -50,12 +50,12 @@ services:
 
     surfnet_stepup_middleware_api.repository.ra_candidate:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
+        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate ]
 
     surfnet_stepup_middleware_api.repository.ra_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
+        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
         arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing ]
 
     surfnet_stepup_middleware_api.repository.sraa:

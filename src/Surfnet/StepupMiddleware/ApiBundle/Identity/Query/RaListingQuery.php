@@ -18,8 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
+
 class RaListingQuery extends AbstractQuery
 {
+    /**
+     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     */
+    public $actorInstitution;
+
     /**
      * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
@@ -40,4 +47,9 @@ class RaListingQuery extends AbstractQuery
      * if there are issue they will be tackled later as requested by SURFnet.
      */
     public $itemsPerPage = 1000;
+
+    /**
+     * @var InstitutionAuthorizationContextInterface
+     */
+    public $authorizationContext;
 }

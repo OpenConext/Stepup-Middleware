@@ -224,22 +224,24 @@ interface Identity extends AggregateRoot
     );
 
     /**
+     * @param Institution $institution
      * @param RegistrationAuthorityRole $role
      * @return void
      */
-    public function appointAs(RegistrationAuthorityRole $role);
+    public function appointAs(Institution $institution, RegistrationAuthorityRole $role);
 
     /**
      * @param Location           $location
      * @param ContactInformation $contactInformation
      * @return void
      */
-    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
+    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation);
 
     /**
+     * @param Institution $institution
      * @return void
      */
-    public function retractRegistrationAuthority();
+    public function retractRegistrationAuthority(Institution $institution);
 
     /**
      * @param Locale $preferredLocale

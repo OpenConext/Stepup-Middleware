@@ -47,14 +47,19 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
      * @var ContactInformation
      */
     public $contactInformation;
+    /**
+     * @var Institution
+     */
+    public $raInstitution;
 
     /**
-     * @param IdentityId                $identityId
-     * @param NameId                    $nameId
-     * @param Institution               $institution
+     * @param IdentityId $identityId
+     * @param NameId $nameId
+     * @param Institution $institution
      * @param RegistrationAuthorityRole $role
-     * @param Location                  $location
-     * @param ContactInformation        $contactInformation
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,
@@ -62,7 +67,8 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
         Institution $institution,
         RegistrationAuthorityRole $role,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
@@ -70,6 +76,7 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
         $this->registrationAuthorityRole = $role;
         $this->location                  = $location;
         $this->contactInformation        = $contactInformation;
+        $this->raInstitution             = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -89,7 +96,8 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
             new Institution($data['institution']),
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -101,7 +109,8 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
             'institution'                 => (string) $this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
             'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation
+            'contact_information'         => (string) $this->contactInformation,
+            'ra_institution'              => (string) $this->raInstitution,
         ];
     }
 }

@@ -23,6 +23,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
+use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
@@ -127,9 +128,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $vettedSecondFactors;
 
     /**
-     * @var RegistrationAuthority
+     * @var RegistrationAuthorityCollection|RegistrationAuthority[]
      */
-    private $registrationAuthority;
+    private $registrationAuthorities;
 
     /**
      * @var Locale
@@ -584,8 +585,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        if ($this->registrationAuthority) {
-            throw new DomainException('Cannot accredit Identity as it has already been accredited');
+        if ($this->registrationAuthorities->get($institution)) {
+            throw new DomainException('Cannot accredit Identity as it has already been accredited for institution');
         }
 
         if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
@@ -595,7 +596,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $role,
                 $location,
-                $contactInformation
+                $contactInformation,
+                $institution
             ));
         } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
             $this->apply(new IdentityAccreditedAsRaaEvent(
@@ -604,20 +606,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $role,
                 $location,
-                $contactInformation
+                $contactInformation,
+                $institution
             ));
         } else {
             throw new DomainException('An Identity can only be accredited with either the RA or RAA role');
         }
     }
 
-    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation)
+    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation)
     {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthority) {
+        if (!$this->registrationAuthorities->get($institution)) {
             throw new DomainException(
-                'Cannot amend registration authority information: identity is not a registration authority'
+                'Cannot amend registration authority information: identity is not a registration authority for institution'
             );
         }
 
@@ -627,39 +630,41 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $this->nameId,
                 $location,
-                $contactInformation
+                $contactInformation,
+                $institution
             )
         );
     }
 
-    public function appointAs(RegistrationAuthorityRole $role)
+    public function appointAs(Institution $institution, RegistrationAuthorityRole $role)
     {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthority) {
+        $registrationAuthority = $this->registrationAuthorities->get($institution);
+        if (!$registrationAuthority) {
             throw new DomainException(
-                'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority'
+                'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority for institution'
             );
         }
 
-        if ($this->registrationAuthority->isAppointedAs($role)) {
+        if ($registrationAuthority->isAppointedAs($role)) {
             return;
         }
 
         if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
-            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId));
+            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId, $institution));
         } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
-            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId));
+            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId, $institution));
         } else {
             throw new DomainException('An Identity can only be appointed as either RA or RAA');
         }
     }
 
-    public function retractRegistrationAuthority()
+    public function retractRegistrationAuthority(Institution $institution)
     {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthority) {
+        if (!$this->registrationAuthorities->get($institution)) {
             throw new DomainException(
                 'Cannot Retract Registration Authority as the Identity is not a registration authority'
             );
@@ -670,7 +675,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $this->institution,
             $this->nameId,
             $this->commonName,
-            $this->email
+            $this->email,
+            $institution
         ));
     }
 
@@ -689,7 +695,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->assertNotForgotten();
 
-        if ($this->registrationAuthority) {
+        if ($this->registrationAuthorities->count()) {
             throw new DomainException('Cannot forget an identity that is currently accredited as an RA(A)');
         }
 
@@ -709,6 +715,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors = new SecondFactorCollection();
         $this->verifiedSecondFactors   = new SecondFactorCollection();
         $this->vettedSecondFactors     = new SecondFactorCollection();
+        $this->registrationAuthorities = new RegistrationAuthorityCollection();
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -904,41 +911,41 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
     {
-        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+        $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
             $event->location,
             $event->contactInformation
-        );
+        ));
     }
 
     protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
     {
-        $this->registrationAuthority = RegistrationAuthority::accreditWith(
+        $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
             $event->location,
             $event->contactInformation
-        );
+        ));
     }
 
     protected function applyRegistrationAuthorityInformationAmendedEvent(
         RegistrationAuthorityInformationAmendedEvent $event
     ) {
-        $this->registrationAuthority->amendInformation($event->location, $event->contactInformation);
+        $this->registrationAuthorities->get($event->raInstitution)->amendInformation($event->location, $event->contactInformation);
     }
 
     protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
     {
-        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
+        $this->registrationAuthorities->get($event->raInstitution)->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
     }
 
     protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
     {
-        $this->registrationAuthority->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
+        $this->registrationAuthorities->get($event->raInstitution)->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
     }
 
     protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
     {
-        $this->registrationAuthority = null;
+        $this->registrationAuthorities->remove($event->raInstitution);
     }
 
     protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)

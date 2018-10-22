@@ -477,6 +477,8 @@ Request parameters:
 - institution: (optional) string, the institution to match against
 - status: (optional) string, the status to match against
 - p: (optional, default 1) integer, the requested result page
+- orderBy: (optional) string, sorting column; possible values: name, type, secondFactorId, email, institution, status
+- orderDirection: (optional, default desc) string, sorting direction; only asc or desc allowed.
 
 #### Response
 `200 OK`

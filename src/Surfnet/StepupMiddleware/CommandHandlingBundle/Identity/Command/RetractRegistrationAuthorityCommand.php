@@ -31,4 +31,12 @@ class RetractRegistrationAuthorityCommand extends AbstractCommand implements RaE
      * @var string
      */
     public $identityId;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $raInstitution;
 }

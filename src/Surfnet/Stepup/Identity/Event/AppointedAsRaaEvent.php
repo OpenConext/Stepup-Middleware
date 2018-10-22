@@ -30,14 +30,21 @@ class AppointedAsRaaEvent extends IdentityEvent
      */
     public $nameId;
 
+    /**
+     * @var Institution
+     */
+    public $raInstitution;
+
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId
+        NameId $nameId,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->nameId = $nameId;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -57,7 +64,8 @@ class AppointedAsRaaEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -67,9 +75,10 @@ class AppointedAsRaaEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'name_id'     => (string) $this->nameId
+            'identity_id'    => (string) $this->identityId,
+            'institution'    => (string) $this->identityInstitution,
+            'name_id'        => (string) $this->nameId,
+            'ra_institution' => (string) $this->raInstitution,
         ];
     }
 }

@@ -43,24 +43,32 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
     public $contactInformation;
 
     /**
-     * @param IdentityId         $identityId
-     * @param Institution        $institution
-     * @param NameId             $nameId
-     * @param Location           $location
+     * @var Institution
+     */
+    public $raInstitution;
+
+    /**
+     * @param IdentityId $identityId
+     * @param Institution $institution
+     * @param NameId $nameId
+     * @param Location $location
      * @param ContactInformation $contactInformation
+     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
         NameId $nameId,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
         $this->location = $location;
         $this->contactInformation = $contactInformation;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -79,7 +87,8 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
             new Institution($data['institution']),
             new NameId($data['name_id']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -90,7 +99,8 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
             'institution'         => (string) $this->identityInstitution,
             'name_id'             => (string) $this->nameId,
             'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation
+            'contact_information' => (string) $this->contactInformation,
+            'ra_institution'      => (string) $this->raInstitution,
         ];
     }
 }

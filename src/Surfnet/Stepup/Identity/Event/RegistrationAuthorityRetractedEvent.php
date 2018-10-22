@@ -44,18 +44,25 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
      */
     public $email;
 
+    /**
+     * @var Institution
+     */
+    public $raInstitution;
+
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
         NameId $nameId,
         CommonName $commonName,
-        Email $email
+        Email $email,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
         $this->nameId     = $nameId;
         $this->commonName = $commonName;
         $this->email      = $email;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -74,7 +81,8 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
             new Institution($data['identity_institution']),
             new NameId($data['name_id']),
             CommonName::unknown(),
-            Email::unknown()
+            Email::unknown(),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -83,7 +91,8 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         return [
             'identity_id'          => (string) $this->identityId,
             'identity_institution' => (string) $this->identityInstitution,
-            'name_id'              => (string) $this->nameId
+            'name_id'              => (string) $this->nameId,
+            'ra_institution'       => (string) $this->raInstitution,
         ];
     }
 

@@ -69,6 +69,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->amendRegistrationAuthorityInformation(
+            new Institution($command->raInstitution),
             new Location($command->location),
             new ContactInformation($command->contactInformation)
         );
@@ -83,7 +84,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
 
         $newRole = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 
-        $identity->appointAs($newRole);
+        $identity->appointAs(new Institution($command->raInstitution), $newRole);
 
         $this->repository->save($identity);
     }
@@ -93,7 +94,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
-        $identity->retractRegistrationAuthority();
+        $identity->retractRegistrationAuthority(new Institution($command->raInstitution));
 
         $this->repository->save($identity);
     }

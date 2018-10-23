@@ -399,7 +399,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe')
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'IdentityAccreditedAsRaaEvent' => [
@@ -409,7 +410,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe')
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'RegistrationAuthorityInformationAmendedEvent' => [
@@ -418,21 +420,24 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Blue Note'),
                     new NameId(md5('Coleman Hawkins')),
                     new Location('New York'),
-                    new ContactInformation("131 West 3rd Street, NY")
+                    new ContactInformation("131 West 3rd Street, NY"),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'AppointedAsRaaEvent' => [
                 new AppointedAsRaaEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId'))
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'AppointedAsRaEvent' => [
                 new AppointedAsRaEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId'))
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'RegistrationAuthorityRetractedEvent' => [
@@ -441,7 +446,8 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Institution('Babelfish Inc.'),
                     new NameId(md5('someNameId')),
                     new CommonName('Henk Westbroek'),
-                    new Email('info@example.invalid')
+                    new Email('info@example.invalid'),
+                    new Institution('Babelfish Inc.')
                 )
             ],
             'LocalePreferenceExpressedEvent' => [

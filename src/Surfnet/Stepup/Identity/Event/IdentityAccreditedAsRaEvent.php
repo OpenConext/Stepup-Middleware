@@ -47,6 +47,7 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
      * @var ContactInformation
      */
     public $contactInformation;
+
     /**
      * @var Institution
      */

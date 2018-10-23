@@ -164,7 +164,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @group                    command-handler
      * @group                    ra-command-handler
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited
+     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited for institution
      */
     public function an_identity_cannot_be_accredited_when_it_already_has_been_accredited()
     {
@@ -176,7 +176,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Call me Maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution($command->institution);
+        $raInstitution        = new Institution($command->institution);
+        $institution          = new Institution('Identity institution');
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -211,7 +212,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $institution,
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location('Somewhere behind you'),
-                        new ContactInformation('Call me maybe')
+                        new ContactInformation('Call me maybe'),
+                        $raInstitution
                     )
                 ]
             )
@@ -278,13 +280,14 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
-        $command->institution        = 'Babelfish Inc.';
+        $command->institution        = 'RA institution';
         $command->role               = 'ra';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution($command->institution);
+        $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -323,7 +326,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
-                    new ContactInformation($command->contactInformation)
+                    new ContactInformation($command->contactInformation),
+                    $raInstitution
                 )
             ]);
     }
@@ -343,7 +347,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Call me Maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution($command->institution);
+        $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -383,7 +388,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $institution,
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location($command->location),
-                        new ContactInformation($command->contactInformation)
+                        new ContactInformation($command->contactInformation),
+                        $raInstitution
                     )
                 ]
             );
@@ -400,8 +406,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->identityId         = static::uuid();
         $command->location           = 'New York';
         $command->contactInformation = '131 West 3rd Street, NY';
+        $command->raInstitution      = 'Ra institution';
 
         $identityId           = new IdentityId($command->identityId);
+        $raInstitution        = new Institution($command->raInstitution);
         $institution          = new Institution('Blue Note');
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
@@ -437,7 +445,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $institution,
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location('Somewhere behind you'),
-                        new ContactInformation('Call me Maybe')
+                        new ContactInformation('Call me Maybe'),
+                        $raInstitution
                     ),
                 ]
             )
@@ -449,7 +458,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $institution,
                         $nameId,
                         new Location($command->location),
-                        new ContactInformation($command->contactInformation)
+                        new ContactInformation($command->contactInformation),
+                        $raInstitution
                     )
                 ]
             );
@@ -468,6 +478,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->identityId         = static::uuid();
         $command->location           = 'New York';
         $command->contactInformation = '131 West 3rd Street, NY';
+        $command->raInstitution      = 'Ra institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Blue Note');
@@ -602,13 +613,14 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
-        $command->institution        = 'Babelfish Inc.';
+        $command->institution        = 'Ra institution';
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution($command->institution);
+        $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -647,7 +659,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
-                    new ContactInformation($command->contactInformation)
+                    new ContactInformation($command->contactInformation),
+                    $raInstitution
                 )
             ]);
     }
@@ -657,19 +670,20 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @group                    command-handler
      * @group                    ra-command-handler
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited
+     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited for institution
      */
     public function an_identity_cannot_be_accredited_twice()
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
-        $command->institution        = 'Babelfish Inc.';
+        $command->institution        = 'Ra institution';
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution($command->institution);
+        $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -703,7 +717,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
-                    new ContactInformation($command->contactInformation)
+                    new ContactInformation($command->contactInformation),
+                    $raInstitution
                 )
             ])
             ->when($command);
@@ -767,9 +782,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command                     = new AppointRoleCommand();
         $command->identityId         = static::uuid();
         $command->role               = 'ra';
+        $command->raInstitution      = 'Ra institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->raInstitution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -803,7 +820,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('somewhere'),
-                    new ContactInformation('Call me maybe')
+                    new ContactInformation('Call me maybe'),
+                    $raInstitution
                 )
             ])
             ->when($command)
@@ -811,7 +829,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 new AppointedAsRaEvent(
                     $identityId,
                     $institution,
-                    $nameId
+                    $nameId,
+                    $raInstitution
                 )
             ]);
     }
@@ -826,9 +845,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command                     = new AppointRoleCommand();
         $command->identityId         = static::uuid();
         $command->role               = 'raa';
+        $command->raInstitution      = 'Ra institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution($command->raInstitution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -862,7 +883,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('somewhere'),
-                    new ContactInformation('Call me maybe')
+                    new ContactInformation('Call me maybe'),
+                    $raInstitution
                 )
             ])
             ->when($command)
@@ -870,7 +892,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 new AppointedAsRaaEvent(
                     $identityId,
                     $institution,
-                    $nameId
+                    $nameId,
+                    $raInstitution
                 )
             ]);
     }
@@ -887,6 +910,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command                     = new AppointRoleCommand();
         $command->identityId         = static::uuid();
         $command->role               = 'raa';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
@@ -930,8 +954,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_unaccredited_identity_cannot_have_its_registration_authority_retracted()
     {
-        $command             = new RetractRegistrationAuthorityCommand();
-        $command->identityId = static::uuid();
+        $command                = new RetractRegistrationAuthorityCommand();
+        $command->identityId    = static::uuid();
+        $command->raInstitution = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
@@ -973,6 +998,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
+        $raInstitution        = new Institution('Ra institution');
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -1006,7 +1032,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('somewhere'),
-                    new ContactInformation('Call me maybe')
+                    new ContactInformation('Call me maybe'),
+                    $raInstitution
                 )
             ])
             ->when($command)
@@ -1016,7 +1043,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     $nameId,
                     $commonName,
-                    $email
+                    $email,
+                    $raInstitution
                 )
             ]);
     }

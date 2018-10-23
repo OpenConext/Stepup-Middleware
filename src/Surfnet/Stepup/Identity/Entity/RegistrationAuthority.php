@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\EventSourcedEntity;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
@@ -44,20 +45,28 @@ final class RegistrationAuthority extends EventSourcedEntity
     private $contactInformation;
 
     /**
+     * @var Institution
+     */
+    private $institution;
+
+    /**
      * @param RegistrationAuthorityRole $role
-     * @param Location                  $location
-     * @param ContactInformation        $contactInformation
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     * @param Institution $institution
      * @return RegistrationAuthority
      */
     public static function accreditWith(
         RegistrationAuthorityRole $role,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $institution
     ) {
         $registrationAuthority                     = new self();
         $registrationAuthority->role               = $role;
         $registrationAuthority->location           = $location;
         $registrationAuthority->contactInformation = $contactInformation;
+        $registrationAuthority->institution        = $institution;
 
         return $registrationAuthority;
     }

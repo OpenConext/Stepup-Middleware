@@ -28,7 +28,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthoriza
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 class RaListingRepository extends EntityRepository
 {
@@ -55,6 +54,19 @@ class RaListingRepository extends EntityRepository
         return parent::findOneBy(['identityId' => (string) $identityId]);
     }
 
+    /**
+     * @param IdentityId $identityId The RA's identity id.
+     * @param Institution $raInstitution
+     * @return null|RaListing
+     */
+    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $raInstitution)
+    {
+        return parent::findOneBy([
+            'identityId' => (string) $identityId,
+            'raInstitution' => (string) $raInstitution,
+        ]);
+    }
+
     public function save(RaListing $raListingEntry)
     {
         $this->getEntityManager()->persist($raListingEntry);
@@ -70,7 +82,13 @@ class RaListingRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('r');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, ['r.identityId', 'r.institution'], 'r.institution', 'iac');
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            ['r.identityId', 'r.institution'],
+            'r.institution',
+            'iac'
+        );
 
         if ($query->institution) {
             $queryBuilder
@@ -96,43 +114,14 @@ class RaListingRepository extends EntityRepository
     }
 
     /**
-     * @param string $institution
+     * @param Institution $raInstitution
      * @return ArrayCollection
      */
-    public function getRaasByInstitution($institution)
+    public function listRasFor(Institution $raInstitution)
     {
         $listings = $this->createQueryBuilder('rl')
-            ->where('rl.role = :role')
-            ->andWhere('rl.institution = :institution')
-            ->setParameters([
-                'role'        => AuthorityRole::raa(),
-                'institution' => $institution
-            ])
-            ->getQuery()
-            ->getResult();
-
-        return new ArrayCollection($listings);
-    }
-
-    public function saveAll($listingsToSave)
-    {
-        $em = $this->getEntityManager();
-        foreach ($listingsToSave as $raListing) {
-            $em->persist($raListing);
-        }
-
-        $em->flush();
-    }
-
-    /**
-     * @param Institution $institution
-     * @return ArrayCollection
-     */
-    public function listRasFor(Institution $institution)
-    {
-        $listings = $this->createQueryBuilder('rl')
-            ->where('rl.institution = :institution')
-            ->setParameter('institution', $institution)
+            ->where('rl.ra_institution = :institution')
+            ->setParameter('institution', $raInstitution)
             ->getQuery()
             ->getResult();
 
@@ -148,18 +137,26 @@ class RaListingRepository extends EntityRepository
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
             ->where('ral.identityId = :identityId')
+            ->andWhere('rl.ra_institution = :institution')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
     }
 
     /**
-     * @param RaListing $raListing
+     * @param IdentityId $identityId
+     * @param Institution $raInstitution
      * @return void
      */
-    public function remove(RaListing $raListing)
+    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $raInstitution)
     {
-        $this->getEntityManager()->remove($raListing);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'ral')
+            ->where('ral.identityId = :identityId')
+            ->andWhere('rl.ra_institution = :institution')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->setParameter('institution', $raInstitution)
+            ->getQuery()
+            ->execute();
     }
 }

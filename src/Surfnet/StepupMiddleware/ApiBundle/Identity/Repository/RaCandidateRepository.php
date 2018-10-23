@@ -19,16 +19,23 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RaCandidateRepository extends EntityRepository
 {
     /**
@@ -69,6 +76,70 @@ class RaCandidateRepository extends EntityRepository
 
         $this->getEntityManager()->remove($raCandidate);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param Institution $institution
+     * @param InstitutionCollection $raInstitutions
+     * @return void
+     */
+    public function removeInstitutionsNotInList(Institution $institution, InstitutionCollection $raInstitutions)
+    {
+        $raCandidates = $this->createQueryBuilder('rac')
+            ->where('rac.raInstitution = :raInstitution')
+            ->andWhere('rac.institution NOT IN (:institutions)')
+            ->setParameter('raInstitution', $institution)
+            ->setParameter('institutions', $raInstitutions)
+            ->getQuery()
+            ->getResult();
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * @param Institution $raInstitution
+     * @return void
+     */
+    public function removeByRaInstitution(Institution $raInstitution)
+    {
+        $raCandidates = $this->findByRaInstitution($raInstitution);
+
+        if (empty($raCandidates)) {
+            return;
+        }
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @param Institution $raInstitution
+     * @return void
+     */
+    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    {
+        $raCandidates = $this->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
+
+        if (empty($raCandidates)) {
+            return;
+        }
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
     }
 
     /**
@@ -151,5 +222,37 @@ class RaCandidateRepository extends EntityRepository
             ->setParameter('identityId', $identityId)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $identityId
+     * @param Institution $raInstitution
+     * @return ArrayCollection|RaCandidate[]
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)
+    {
+        return $this->createQueryBuilder('rac')
+            ->where('rac.identityId = :identityId')
+            ->andWhere('rac.raInstitution = :raInstitution')
+            ->setParameter('identityId', $identityId)
+            ->setParameter('raInstitution', $raInstitution)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    /**
+     * @param Institution $raInstitution
+     * @return ArrayCollection|RaCandidate[]
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByRaInstitution(Institution $raInstitution)
+    {
+        return $this->createQueryBuilder('rac')
+            ->where('rac.raInstitution = :raInstitution')
+            ->setParameter('raInstitution', $raInstitution)
+            ->getQuery()
+            ->getResult();
     }
 }

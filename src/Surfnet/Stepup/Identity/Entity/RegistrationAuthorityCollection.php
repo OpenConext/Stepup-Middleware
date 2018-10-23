@@ -18,9 +18,64 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\Stepup\Identity\Value\Institution;
 
-final class RegistrationAuthorityCollection extends ArrayCollection
+final class RegistrationAuthorityCollection
 {
+    /**
+     * @var RegistrationAuthority[]
+     */
+    private $registrationAuthorities = [];
+
+    /**
+     * @param Institution $institution
+     * @param RegistrationAuthority $registrationAuthority
+     */
+    public function set(Institution $institution, RegistrationAuthority $registrationAuthority)
+    {
+        $this->registrationAuthorities[(string)$institution] = $registrationAuthority;
+    }
+
+    /**
+     * @param Institution $institution
+     * @return RegistrationAuthority
+     */
+    public function get(Institution $institution)
+    {
+        return $this->registrationAuthorities[(string)$institution];
+    }
+
+    /**
+     * @param Institution $institution
+     * @return RegistrationAuthority
+     */
+    public function exists(Institution $institution)
+    {
+        return array_key_exists((string)$institution, $this->registrationAuthorities);
+    }
+
+    /**
+     * @param Institution $institution
+     */
+    public function remove(Institution $institution)
+    {
+        unset($this->registrationAuthorities[(string)$institution]);
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->registrationAuthorities);
+    }
+
+    /**
+     * RegistrationAuthority[]
+     */
+    public function getValues()
+    {
+        return array_values($this->registrationAuthorities);
+    }
 
 }

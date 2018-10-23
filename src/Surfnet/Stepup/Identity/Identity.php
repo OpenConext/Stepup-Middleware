@@ -128,7 +128,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $vettedSecondFactors;
 
     /**
-     * @var RegistrationAuthorityCollection|RegistrationAuthority[]
+     * @var RegistrationAuthorityCollection
      */
     private $registrationAuthorities;
 
@@ -575,17 +575,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $this->assertNotForgotten();
 
-        if (!$this->institution->equals($institution)) {
-            throw new DomainException('An Identity may only be accredited within its own institution');
-        }
-
         if (!$this->vettedSecondFactors->count()) {
             throw new DomainException(
                 'An Identity must have at least one vetted second factor before it can be accredited'
             );
         }
 
-        if ($this->registrationAuthorities->get($institution)) {
+        if ($this->registrationAuthorities->exists($institution)) {
             throw new DomainException('Cannot accredit Identity as it has already been accredited for institution');
         }
 
@@ -618,7 +614,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthorities->get($institution)) {
+        if (!$this->registrationAuthorities->exists($institution)) {
             throw new DomainException(
                 'Cannot amend registration authority information: identity is not a registration authority for institution'
             );
@@ -640,12 +636,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->assertNotForgotten();
 
-        $registrationAuthority = $this->registrationAuthorities->get($institution);
-        if (!$registrationAuthority) {
+        if (!$this->registrationAuthorities->exists($institution)) {
             throw new DomainException(
                 'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority for institution'
             );
         }
+
+        $registrationAuthority = $this->registrationAuthorities->get($institution);
 
         if ($registrationAuthority->isAppointedAs($role)) {
             return;
@@ -664,7 +661,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthorities->get($institution)) {
+        if (!$this->registrationAuthorities->exists($institution)) {
             throw new DomainException(
                 'Cannot Retract Registration Authority as the Identity is not a registration authority'
             );
@@ -914,7 +911,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
+            $event->raInstitution
         ));
     }
 
@@ -923,7 +921,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
+            $event->raInstitution
         ));
     }
 
@@ -970,7 +969,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return array_merge(
             $this->unverifiedSecondFactors->getValues(),
             $this->verifiedSecondFactors->getValues(),
-            $this->vettedSecondFactors->getValues()
+            $this->vettedSecondFactors->getValues(),
+            $this->registrationAuthorities->getValues()
         );
     }
 

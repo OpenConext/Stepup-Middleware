@@ -68,7 +68,8 @@ class RaListingProjector extends Projector
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
+            $event->raInstitution
         );
 
         $this->raListingRepository->save($raListing);
@@ -89,7 +90,8 @@ class RaListingProjector extends Projector
             $identity->email,
             AuthorityRole::fromRegistrationAuthorityRole($event->registrationAuthorityRole),
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
+            $event->raInstitution
         );
 
         $this->raListingRepository->save($raListing);
@@ -99,7 +101,7 @@ class RaListingProjector extends Projector
         RegistrationAuthorityInformationAmendedEvent $event
     ) {
         /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->find($event->identityId);
+        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
 
         if (!$raListing) {
             throw new RuntimeException(
@@ -117,7 +119,7 @@ class RaListingProjector extends Projector
     public function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
     {
         /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->find($event->identityId);
+        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
 
         $raListing->role = AuthorityRole::ra();
 
@@ -127,7 +129,7 @@ class RaListingProjector extends Projector
     public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
     {
         /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->find($event->identityId);
+        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
 
         $raListing->role = AuthorityRole::raa();
 
@@ -136,10 +138,7 @@ class RaListingProjector extends Projector
 
     public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
     {
-        /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->find($event->identityId);
-
-        $this->raListingRepository->remove($raListing);
+        $this->raListingRepository->removeByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

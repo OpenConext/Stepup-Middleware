@@ -48,6 +48,14 @@ class RaCandidate implements JsonSerializable
     public $identityId;
 
     /**
+     * @ORM\Id
+     * @ORM\Column(type="institution")
+     *
+     * @var Institution
+     */
+    public $raInstitution;
+
+    /**
      * @ORM\Column(type="institution")
      *
      * @var \Surfnet\Stepup\Identity\Value\Institution
@@ -80,14 +88,16 @@ class RaCandidate implements JsonSerializable
         Institution $institution,
         NameId $nameId,
         CommonName $commonName,
-        Email $email
+        Email $email,
+        Institution $raInstitution
     ) {
-        $candidate              = new self();
-        $candidate->identityId  = (string) $identityId;
-        $candidate->institution = $institution;
-        $candidate->nameId      = $nameId;
-        $candidate->commonName  = $commonName;
-        $candidate->email       = $email;
+        $candidate                = new self();
+        $candidate->identityId    = (string) $identityId;
+        $candidate->institution   = $institution;
+        $candidate->nameId        = $nameId;
+        $candidate->commonName    = $commonName;
+        $candidate->email         = $email;
+        $candidate->raInstitution = $raInstitution;
 
         return $candidate;
     }
@@ -95,11 +105,12 @@ class RaCandidate implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'identity_id' => $this->identityId,
-            'institution' => $this->institution,
-            'common_name' => $this->commonName,
-            'email'       => $this->email,
-            'name_id'     => $this->nameId
+            'identity_id'    => $this->identityId,
+            'institution'    => $this->institution,
+            'common_name'    => $this->commonName,
+            'email'          => $this->email,
+            'name_id'        => $this->nameId,
+            'ra_institution' => $this->raInstitution,
         ];
     }
 }

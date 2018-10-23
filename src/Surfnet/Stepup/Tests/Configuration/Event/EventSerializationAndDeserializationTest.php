@@ -128,10 +128,7 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new UseRaLocationsOption(true),
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
-                    new NumberOfTokensPerIdentityOption(0),
-                    InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa()),
-                    InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa()),
-                    InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
+                    new NumberOfTokensPerIdentityOption(0)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

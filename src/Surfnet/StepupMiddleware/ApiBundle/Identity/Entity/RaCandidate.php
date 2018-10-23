@@ -34,13 +34,24 @@ use Surfnet\Stepup\Identity\Value\NameId;
  *          @ORM\Index(name="idx_ra_candidate_name_id", columns={"name_id"}),
  *          @ORM\Index(name="idxft_ra_candidate_email", columns={"email"}, flags={"FULLTEXT"}),
  *          @ORM\Index(name="idxft_ra_candidate_commonname", columns={"common_name"}, flags={"FULLTEXT"})
- *      }
+ *      },
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="idx_ra_unique_identity_institution", columns={"identity_id", "ra_institution"})
+ *     }
  * )
  */
 class RaCandidate implements JsonSerializable
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    public $id;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string
@@ -48,7 +59,6 @@ class RaCandidate implements JsonSerializable
     public $identityId;
 
     /**
-     * @ORM\Id
      * @ORM\Column(type="institution")
      *
      * @var Institution

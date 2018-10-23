@@ -30,16 +30,28 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository")
+ *
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_ra_listing_institution", columns={"institution"}),
- *      }
+ *      },
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="idx_ra_unique_identity_institution", columns={"identity_id", "ra_institution"})
+ *     }
  * )
  */
 class RaListing implements JsonSerializable
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    public $id;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string
@@ -47,7 +59,6 @@ class RaListing implements JsonSerializable
     public $identityId;
 
     /**
-     * @ORM\Id
      * @ORM\Column(type="institution")
      *
      * @var Institution

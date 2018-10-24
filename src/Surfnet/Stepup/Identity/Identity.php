@@ -81,7 +81,6 @@ use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

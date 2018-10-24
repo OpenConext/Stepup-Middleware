@@ -23,6 +23,8 @@ use DateTime as CoreDateTime;
 use PHPUnit_Framework_TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\AccreditedInstitutionsAddedToIdentityEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
@@ -455,6 +457,15 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new Locale('fi_FI')
+                )
+            ],
+            'AccreditedInstitutionsAddedToIdentityEvent' => [
+                new AccreditedInstitutionsAddedToIdentityEvent(
+                    new IdentityId(static::UUID()),
+                    new InstitutionCollection([
+                        new Institution('test1'),
+                        new Institution('test2')
+                    ])
                 )
             ],
         ];

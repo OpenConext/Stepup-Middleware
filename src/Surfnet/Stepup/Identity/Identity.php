@@ -31,6 +31,7 @@ use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Event\AccreditedInstitutionsAddedToIdentityEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
@@ -81,6 +82,7 @@ use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -161,11 +163,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
-    )
-    {
+        Locale $preferredLocale,
+        Institutions $allowedAccreditInstitutions
+    ) {
         $identity = new self();
         $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
+        $identity->apply(new AccreditedInstitutionsAddedToIdentityEvent($id, $allowedAccreditInstitutions));
 
         return $identity;
     }
@@ -734,6 +737,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
         $this->allowedAccreditInstitutions = new InstitutionCollection();
+
+        // Old behaviour is to add the own institution as allowed ainstitution to become ra or raa
+        $this->allowedAccreditInstitutions->set($this->institution);
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -987,13 +993,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /*
      * The apply methods below are used for fine grained authorization
      */
+    protected function applySAccreditedInstitutionsAddedToIdentityEvent(AccreditedInstitutionsAddedToIdentityEvent $event)
+    {
+        $this->allowedAccreditInstitutions->update($event->institutions);
+    }
+
     protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
     {
-        $institutions = $event->selectRaaOption->getInstitutions($event->institution);
-        foreach ($institutions as $institution) {
-            $valueInstitution = new Institution($institution->getInstitution());
-            if ($this->institution->equals($valueInstitution)) {
-                $this->allowedAccreditInstitutions->set($valueInstitution);
+        $raInstitutions = $event->selectRaaOption->getInstitutions($event->institution);
+        $institution = new Institution($event->institution);
+        $this->allowedAccreditInstitutions->remove($institution);
+        foreach ($raInstitutions as $raInstitution) {
+            $valueRaInstitution = new Institution($raInstitution->getInstitution());
+            if ($this->institution->equals($valueRaInstitution)) {
+                $this->allowedAccreditInstitutions->set($institution);
             }
         }
     }

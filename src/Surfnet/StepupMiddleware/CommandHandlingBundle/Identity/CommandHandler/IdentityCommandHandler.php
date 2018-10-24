@@ -41,6 +41,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
@@ -95,12 +96,18 @@ class IdentityCommandHandler extends CommandHandler
     private $institutionConfigurationOptionsService;
 
     /**
-     * @param RepositoryInterface                    $eventSourcedRepository
-     * @param IdentityRepository                     $identityProjectionRepository
-     * @param ConfigurableSettings                   $configurableSettings
-     * @param AllowedSecondFactorListService         $allowedSecondFactorListService
-     * @param SecondFactorTypeService                $secondFactorTypeService
+     * @var InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationService;
+
+    /**
+     * @param RepositoryInterface $eventSourcedRepository
+     * @param IdentityRepository $identityProjectionRepository
+     * @param ConfigurableSettings $configurableSettings
+     * @param AllowedSecondFactorListService $allowedSecondFactorListService
+     * @param SecondFactorTypeService $secondFactorTypeService
      * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
+     * @param InstitutionAuthorizationService $institutionAuthorizationService
      */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
@@ -108,7 +115,8 @@ class IdentityCommandHandler extends CommandHandler
         ConfigurableSettings $configurableSettings,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         SecondFactorTypeService $secondFactorTypeService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        InstitutionAuthorizationService $institutionAuthorizationService
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -116,6 +124,7 @@ class IdentityCommandHandler extends CommandHandler
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
         $this->secondFactorTypeService = $secondFactorTypeService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->institutionAuthorizationService = $institutionAuthorizationService;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -123,13 +132,17 @@ class IdentityCommandHandler extends CommandHandler
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
+        $allowedInstitutions = $this->institutionAuthorizationService
+            ->findSelectRaaInstitutionsFor(new ConfigurationInstitution($command->institution));
+
         $identity = Identity::create(
             new IdentityId($command->id),
             new Institution($command->institution),
             new NameId($command->nameId),
             new CommonName($command->commonName),
             new Email($command->email),
-            $preferredLocale
+            $preferredLocale,
+            $allowedInstitutions
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -159,13 +172,17 @@ class IdentityCommandHandler extends CommandHandler
             throw DuplicateIdentityException::forBootstrappingWithYubikeySecondFactor($nameId, $institution);
         }
 
+        $allowedInstitutions = $this->institutionAuthorizationService
+            ->findSelectRaaInstitutionsFor(new ConfigurationInstitution($command->institution));
+
         $identity = Identity::create(
             new IdentityId($command->identityId),
             $institution,
             $nameId,
             new CommonName($command->commonName),
             new Email($command->email),
-            $preferredLocale
+            $preferredLocale,
+            $allowedInstitutions
         );
 
         $configurationInstitution = new ConfigurationInstitution(

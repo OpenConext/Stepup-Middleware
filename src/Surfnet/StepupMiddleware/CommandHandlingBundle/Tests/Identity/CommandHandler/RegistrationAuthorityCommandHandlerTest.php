@@ -22,11 +22,6 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
-use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration;
-use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
@@ -112,7 +107,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
-                $this->createSelectRaaOptionChangedEvent($institution),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
@@ -160,7 +154,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
-                $this->createSelectRaaOptionChangedEvent($institution),
             ])
             ->when($command);
     }
@@ -202,7 +195,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
-                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -312,7 +304,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
-                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -374,7 +365,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
-                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -557,7 +547,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
-                $this->createSelectRaaOptionChangedEvent($institution),
             ])
             ->when($command);
     }
@@ -598,7 +587,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
-                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -648,7 +636,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
-                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -710,7 +697,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
-                $this->createSelectRaaOptionChangedEvent($institution),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
@@ -1057,14 +1043,5 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $raInstitution
                 )
             ]);
-    }
-
-    private function createSelectRaaOptionChangedEvent(Institution $institution)
-    {
-        $institutionConfigurationId = new InstitutionConfigurationId(static::uuid());
-        $configurationInstitution = new \Surfnet\Stepup\Configuration\Value\Institution($institution->getInstitution());
-        $selectRaaOption = InstitutionAuthorizationOption::fromInstitutions(InstitutionRole::selectRaa(), $configurationInstitution, [$configurationInstitution]);
-
-        return new SelectRaaOptionChangedEvent($institutionConfigurationId, $configurationInstitution, $selectRaaOption);
     }
 }

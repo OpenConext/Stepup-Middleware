@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -45,12 +46,13 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 interface Identity extends AggregateRoot
 {
     /**
-     * @param IdentityId  $id
+     * @param IdentityId $id
      * @param Institution $institution
-     * @param NameId      $nameId
-     * @param CommonName  $commonName
-     * @param Email       $email
-     * @param Locale      $preferredLocale
+     * @param NameId $nameId
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param Locale $preferredLocale
+     * @param InstitutionCollection $allowedAccreditInstitutions
      * @return Identity
      */
     public static function create(
@@ -59,7 +61,8 @@ interface Identity extends AggregateRoot
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
+        InstitutionCollection $allowedAccreditInstitutions
     );
 
     /**

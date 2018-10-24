@@ -50,6 +50,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
@@ -79,7 +80,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(AllowedSecondFactorListService::class),
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
-            1
+            m::mock(InstitutionAuthorizationService::class)
         );
     }
 

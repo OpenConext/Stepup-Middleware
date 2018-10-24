@@ -20,10 +20,10 @@ class Version20181023151546 extends AbstractMigration
 
         $this->addSql('ALTER TABLE ra_listing DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE ra_listing ADD id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, ADD ra_institution VARCHAR(255) NOT NULL COMMENT \'(DC2Type:institution)\'');
-        $this->addSql('CREATE UNIQUE INDEX idx_ra_unique_identity_institution ON ra_listing (identity_id, ra_institution)');
+        $this->addSql('CREATE UNIQUE INDEX idx_ra_listing_unique_identity_institution ON ra_listing (identity_id, ra_institution)');
         $this->addSql('ALTER TABLE ra_candidate DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE ra_candidate ADD ra_institution VARCHAR(255) NOT NULL COMMENT \'(DC2Type:institution)\'');
-        $this->addSql('CREATE UNIQUE INDEX idx_ra_unique_identity_institution ON ra_candidate (identity_id, ra_institution)');
+        $this->addSql('CREATE UNIQUE INDEX idx_ra_candidate_unique_identity_institution ON ra_candidate (identity_id, ra_institution)');
         $this->addSql('ALTER TABLE ra_candidate ADD id INT');
         $this->addSql('ALTER TABLE ra_candidate ADD INDEX(`id`)');
         $this->addSql('ALTER TABLE ra_candidate CHANGE id id INT NOT NULL AUTO_INCREMENT');
@@ -39,12 +39,12 @@ class Version20181023151546 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ra_candidate MODIFY id INT NOT NULL');
-        $this->addSql('DROP INDEX idx_ra_unique_identity_institution ON ra_candidate');
+        $this->addSql('DROP INDEX idx_ra_candidate_unique_identity_institution ON ra_candidate');
         $this->addSql('ALTER TABLE ra_candidate DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE ra_candidate DROP id, DROP ra_institution');
         $this->addSql('ALTER TABLE ra_candidate ADD PRIMARY KEY (identity_id)');
         $this->addSql('ALTER TABLE ra_listing MODIFY id INT NOT NULL');
-        $this->addSql('DROP INDEX idx_ra_unique_identity_institution ON ra_listing');
+        $this->addSql('DROP INDEX idx_ra_listing_unique_identity_institution ON ra_listing');
         $this->addSql('ALTER TABLE ra_listing DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE ra_listing DROP id, DROP ra_institution');
         $this->addSql('ALTER TABLE ra_listing ADD PRIMARY KEY (identity_id)');

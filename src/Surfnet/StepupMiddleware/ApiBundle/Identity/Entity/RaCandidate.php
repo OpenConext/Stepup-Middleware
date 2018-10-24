@@ -36,7 +36,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
  *          @ORM\Index(name="idxft_ra_candidate_commonname", columns={"common_name"}, flags={"FULLTEXT"})
  *      },
  *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="idx_ra_unique_identity_institution", columns={"identity_id", "ra_institution"})
+ *          @ORM\UniqueConstraint(name="idx_ra_candidate_unique_identity_institution", columns={"identity_id", "ra_institution"})
  *     }
  * )
  */

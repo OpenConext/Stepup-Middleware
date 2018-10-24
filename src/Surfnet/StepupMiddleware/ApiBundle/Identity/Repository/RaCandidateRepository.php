@@ -89,7 +89,7 @@ class RaCandidateRepository extends EntityRepository
             ->where('rac.raInstitution = :raInstitution')
             ->andWhere('rac.institution NOT IN (:institutions)')
             ->setParameter('raInstitution', $institution)
-            ->setParameter('institutions', $raInstitutions)
+            ->setParameter('institutions', $raInstitutions->serialize())
             ->getQuery()
             ->getResult();
 
@@ -128,17 +128,13 @@ class RaCandidateRepository extends EntityRepository
      */
     public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
     {
-        $raCandidates = $this->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
+        $raCandidate = $this->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
 
-        if (empty($raCandidates)) {
+        if (!$raCandidate) {
             return;
         }
-
         $em = $this->getEntityManager();
-        foreach ($raCandidates as $raCandidate) {
-            $em->remove($raCandidate);
-        }
-
+        $em->remove($raCandidate);
         $em->flush();
     }
 
@@ -238,9 +234,8 @@ class RaCandidateRepository extends EntityRepository
             ->setParameter('identityId', $identityId)
             ->setParameter('raInstitution', $raInstitution)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
-
 
     /**
      * @param Institution $raInstitution

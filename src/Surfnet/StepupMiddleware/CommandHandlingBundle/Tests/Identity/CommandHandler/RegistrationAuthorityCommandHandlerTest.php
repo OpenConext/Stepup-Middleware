@@ -22,6 +22,11 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
+use Surfnet\Stepup\Configuration\Api\InstitutionConfiguration;
+use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
@@ -77,7 +82,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @group                    command-handler
      * @group                    ra-command-handler
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity may only be accredited within its own institution
+     * @expectedExceptionMessage An Identity may only be accredited with configured institutions
      */
     public function an_identity_cannot_be_accredited_for_another_institution_than_its_own()
     {
@@ -107,6 +112,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
+                $this->createSelectRaaOptionChangedEvent($institution),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
@@ -154,6 +160,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
+                $this->createSelectRaaOptionChangedEvent($institution),
             ])
             ->when($command);
     }
@@ -176,8 +183,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Call me Maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $raInstitution        = new Institution($command->institution);
-        $institution          = new Institution('Identity institution');
+        $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -196,6 +202,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
+                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -213,7 +220,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location('Somewhere behind you'),
                         new ContactInformation('Call me maybe'),
-                        $raInstitution
+                        $institution
                     )
                 ]
             )
@@ -286,8 +293,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->contactInformation = 'Call me Maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution('Babelfish Inc.');
-        $raInstitution        = new Institution($command->institution);
+        $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -306,6 +312,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
+                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -327,7 +334,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
                     new ContactInformation($command->contactInformation),
-                    $raInstitution
+                    $institution
                 )
             ]);
     }
@@ -367,6 +374,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
+                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -549,6 +557,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
+                $this->createSelectRaaOptionChangedEvent($institution),
             ])
             ->when($command);
     }
@@ -558,7 +567,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @group                    command-handler
      * @group                    ra-command-handler
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity may only be accredited within its own institution
+     * @expectedExceptionMessage An Identity may only be accredited with configured institutions
      */
     public function an_identity_cannot_be_accredited_as_outside_of_its_institution()
     {
@@ -589,6 +598,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
+                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -613,14 +623,13 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
-        $command->institution        = 'Ra institution';
+        $command->institution        = 'Babelfish Inc.';
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution('Babelfish Inc.');
-        $raInstitution        = new Institution($command->institution);
+        $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -639,6 +648,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $email,
                         new Locale('en_GB')
                     ),
+                    $this->createSelectRaaOptionChangedEvent($institution),
                     new YubikeySecondFactorBootstrappedEvent(
                         $identityId,
                         $nameId,
@@ -660,7 +670,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
                     new ContactInformation($command->contactInformation),
-                    $raInstitution
+                    $institution
                 )
             ]);
     }
@@ -676,14 +686,13 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
-        $command->institution        = 'Ra institution';
+        $command->institution        = 'Babelfish Inc.';
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution('Babelfish Inc.');
-        $raInstitution        = new Institution($command->institution);
+        $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -701,6 +710,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $email,
                     new Locale('en_GB')
                 ),
+                $this->createSelectRaaOptionChangedEvent($institution),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
                     $nameId,
@@ -718,7 +728,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
                     new ContactInformation($command->contactInformation),
-                    $raInstitution
+                    $institution
                 )
             ])
             ->when($command);
@@ -1047,5 +1057,14 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $raInstitution
                 )
             ]);
+    }
+
+    private function createSelectRaaOptionChangedEvent(Institution $institution)
+    {
+        $institutionConfigurationId = new InstitutionConfigurationId(static::uuid());
+        $configurationInstitution = new \Surfnet\Stepup\Configuration\Value\Institution($institution->getInstitution());
+        $selectRaaOption = InstitutionAuthorizationOption::fromInstitutions(InstitutionRole::selectRaa(), $configurationInstitution, [$configurationInstitution]);
+
+        return new SelectRaaOptionChangedEvent($institutionConfigurationId, $configurationInstitution, $selectRaaOption);
     }
 }

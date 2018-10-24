@@ -59,6 +59,22 @@ class InstitutionAuthorizationRepository extends EntityRepository
 
     /**
      * @param Institution $institution
+     * @param InstitutionRole $role
+     * @return InstitutionAuthorization[]
+     */
+    public function findSelectRaasForInstitution(Institution $institution, InstitutionRole $role)
+    {
+        return $this->createQueryBuilder('ia')
+            ->where('ia.institutionRelation = :institution')
+            ->andWhere('ia.institutionRole = :role')
+            ->setParameter('institution', $institution->getInstitution())
+            ->setParameter('role', $role->getType())
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param Institution $institution
      * @param InstitutionAuthorizationOption $institutionOption
      * @throws \Doctrine\ORM\OptimisticLockException
      */

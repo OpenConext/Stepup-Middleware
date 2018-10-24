@@ -26,6 +26,8 @@ use Mockery as m;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\AccreditedInstitutionsAddedToIdentityEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -56,6 +58,7 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
@@ -101,9 +104,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $configService;
 
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationServiceMock;
+
     public function setUp()
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
+        $this->institutionAuthorizationServiceMock = m::mock(InstitutionAuthorizationService::class);
         parent::setUp();
     }
 
@@ -128,7 +137,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->allowedSecondFactorListServiceMock,
             $this->secondFactorTypeService,
             $this->configService,
-            1
+            $this->institutionAuthorizationServiceMock
         );
     }
 
@@ -152,9 +161,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(false);
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
+        $allowedInstitutions = new InstitutionCollection([new Institution($command->institution)]);
+
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::blank());
+
+        $this->institutionAuthorizationServiceMock
+            ->shouldReceive('findSelectRaaInstitutionsFor')
+            ->andReturn($allowedInstitutions);
 
         $identityId = new IdentityId($command->identityId);
         $this->scenario
@@ -168,6 +183,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new CommonName($command->commonName),
                     new Email($command->email),
                     new Locale('nl_NL')
+                ),
+                new AccreditedInstitutionsAddedToIdentityEvent(
+                    $identityId,
+                    $allowedInstitutions
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -1063,6 +1082,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $identityCommonName        = new CommonName($createCommand->commonName);
         $identityPreferredLocale   = new Locale($createCommand->preferredLocale);
 
+        $allowedInstitutions = new InstitutionCollection([new Institution($createCommand->institution)]);
+
+        $this->institutionAuthorizationServiceMock
+            ->shouldReceive('findSelectRaaInstitutionsFor')
+            ->andReturn($allowedInstitutions);
+
         $createdEvent = new IdentityCreatedEvent(
             $identityId,
             $identityInstitution,
@@ -1072,10 +1097,18 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $identityPreferredLocale
         );
 
+        $accreditedInstitutionsAddedToEdentityEvent = new AccreditedInstitutionsAddedToIdentityEvent(
+            $identityId,
+            $allowedInstitutions
+        );
+
         $this->scenario
             ->given([])
             ->when($createCommand)
-            ->then([$createdEvent]);
+            ->then([
+                $createdEvent,
+                $accreditedInstitutionsAddedToEdentityEvent,
+            ]);
     }
 
     /**

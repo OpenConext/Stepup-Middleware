@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
+use \Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 
 final class InstitutionCollection
 {
@@ -34,6 +35,16 @@ final class InstitutionCollection
     public function set(Institution $institution)
     {
         $this->institutions[(string)$institution] = $institution;
+    }
+
+    /**
+     * @param Institutions $institutions
+     */
+    public function update(Institutions $institutions)
+    {
+        foreach ($institutions as $institution) {
+            $this->institutions[(string)$institutions] = $institution;
+        }
     }
 
     /**

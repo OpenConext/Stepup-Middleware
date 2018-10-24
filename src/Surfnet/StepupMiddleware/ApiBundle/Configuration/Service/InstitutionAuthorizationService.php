@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Institution as ValueInstitution;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 
 class InstitutionAuthorizationService
@@ -66,4 +68,23 @@ class InstitutionAuthorizationService
 
         return InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations($institution, $authorizations);
     }
+
+
+    /**
+     * @param Institution $institution
+     * @return InstitutionCollection
+     */
+    public function findSelectRaaInstitutionsFor(Institution $institution)
+    {
+        $authorizations = $this->repository->findSelectRaasForInstitution($institution, InstitutionRole::selectRaa());
+
+        $institutions = new InstitutionCollection();
+        foreach ($authorizations as $authorization) {
+            $institutions[] = $institutions->add(new ValueInstitution($authorization->institution->getInstitution()));
+        }
+
+        return $institutions;
+    }
+
+
 }

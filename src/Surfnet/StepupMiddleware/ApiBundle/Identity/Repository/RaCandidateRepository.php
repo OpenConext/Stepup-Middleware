@@ -223,7 +223,7 @@ class RaCandidateRepository extends EntityRepository
     /**
      * @param string $identityId
      * @param Institution $raInstitution
-     * @return ArrayCollection|RaCandidate[]
+     * @return null|RaCandidate
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)

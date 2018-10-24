@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
@@ -51,11 +52,13 @@ class RaCandidateService extends AbstractSearchService
 
     /**
      * @param string $identityId
+     * @param Institution $institution
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findByIdentityId($identityId)
+    public function findByIdentityIdAndRaInstitution($identityId, Institution $institution)
     {
-        $raCandidate = $this->raCandidateRepository->findByIdentityId($identityId);
+        $raCandidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
 
         return $raCandidate;
     }

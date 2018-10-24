@@ -79,11 +79,12 @@ identity_ra_listing:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 identity_ra_listing_get:
-    path:      /ra-listing/{identityId}
+    path:      /ra-listing/{identityId}/{institution}
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaListing:get }
     methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        institution: '.+'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 identity_sraa_get:
@@ -123,11 +124,12 @@ ra_candidate_search:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_candidate:
-    path:      /ra-candidate/{identityId}
+    path:      /ra-candidate/{identityId}/{institution}
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:get }
     methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        institution: '.+'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_location_listing:

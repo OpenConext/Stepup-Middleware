@@ -46,6 +46,11 @@ class RaListingService extends AbstractSearchService
         return $this->raListingRepository->findByIdentityId($identityId);
     }
 
+    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $raInstitution)
+    {
+        return $this->raListingRepository->findByIdentityIdAndInstitution($identityId, $raInstitution);
+    }
+
     /**
      * @param RaListingQuery $query
      * @return \Pagerfanta\Pagerfanta

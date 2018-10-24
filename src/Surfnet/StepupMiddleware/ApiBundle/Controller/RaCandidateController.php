@@ -83,8 +83,9 @@ class RaCandidateController extends Controller
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $identityId = $request->get('identityId');
+        $institution = $request->get('institution');
 
-        $raCandidate = $this->raCandidateService->findByIdentityId($identityId);
+        $raCandidate = $this->raCandidateService->findByIdentityIdAndRaInstitution($identityId, new Institution($institution));
 
         if ($raCandidate === null) {
             throw new NotFoundHttpException(sprintf("RaCandidate with IdentityId '%s' does not exist", $identityId));

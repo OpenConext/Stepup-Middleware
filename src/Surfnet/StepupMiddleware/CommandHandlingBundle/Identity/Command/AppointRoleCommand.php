@@ -47,5 +47,4 @@ class AppointRoleCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $raInstitution;
-
 }

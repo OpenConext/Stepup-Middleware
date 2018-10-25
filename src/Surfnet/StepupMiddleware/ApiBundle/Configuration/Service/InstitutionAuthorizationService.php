@@ -85,6 +85,4 @@ class InstitutionAuthorizationService
 
         return $institutions;
     }
-
-
 }

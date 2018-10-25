@@ -19,40 +19,53 @@
 namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\NameId;
 
-class AccreditedInstitutionsAddedToIdentityEvent extends IdentityEvent
+class AppointedInstitutionAsRaEvent extends IdentityEvent
 {
     /**
-     * @var IdentityId
+     * @var NameId
      */
-    private $identityId;
+    public $nameId;
 
     /**
-     * @var InstitutionCollection
+     * @var Institution
      */
-    public $institutions;
+    public $raInstitution;
 
-    public function __construct(IdentityId $identityId, Institution $identityInstitution, InstitutionCollection $institutions)
-    {
+    public function __construct(
+        IdentityId $identityId,
+        Institution $identityInstitution,
+        NameId $nameId,
+        Institution $raInstitution
+    ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->institutions = $institutions;
-        $this->identityId = $identityId;
+        $this->nameId = $nameId;
+        $this->raInstitution = $raInstitution;
+    }
+
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
     }
 
     /**
-     * @param array $data
-     * @return AccreditedInstitutionsAddedToIdentityEvent
+     * @return mixed The object instance
      */
     public static function deserialize(array $data)
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            InstitutionCollection::deserialize($data['institutions'])
+            new NameId($data['name_id']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -64,19 +77,8 @@ class AccreditedInstitutionsAddedToIdentityEvent extends IdentityEvent
         return [
             'identity_id'    => (string) $this->identityId,
             'institution'    => (string) $this->identityInstitution,
-            'institutions' => $this->institutions->serialize()
+            'name_id'        => (string) $this->nameId,
+            'ra_institution' => (string) $this->raInstitution,
         ];
-    }
-
-    /**
-     * @return \Surfnet\Stepup\Identity\AuditLog\Metadata
-     */
-    public function getAuditLogMetadata()
-    {
-        $metadata = new Metadata();
-        $metadata->identityId = $this->identityId;
-        $metadata->identityInstitution = $this->identityInstitution;
-
-        return $metadata;
     }
 }

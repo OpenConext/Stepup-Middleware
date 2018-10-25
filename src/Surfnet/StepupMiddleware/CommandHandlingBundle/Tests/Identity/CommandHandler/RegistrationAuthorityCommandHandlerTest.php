@@ -22,13 +22,17 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
-use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
-use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Mockery as m;
+use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
+use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
-use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -51,6 +55,17 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
 {
+
+    /**
+     * @var InstitutionConfigurationRepository
+     */
+    private $institutionConfigurationRepositoryMock;
+
+    /**
+     * @var InstitutionConfiguration
+     */
+    private $institutionConfiguration;
+
     /**
      * Create a command handler for the given scenario test case.
      *
@@ -63,12 +78,20 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
+        $this->institutionConfigurationRepositoryMock = m::mock(InstitutionConfigurationRepository::class);
+        $this->institutionConfiguration = m::mock(InstitutionConfiguration::class);
+
+        $this->institutionConfigurationRepositoryMock
+            ->shouldReceive('load')
+            ->andReturn($this->institutionConfiguration);
+
         return new RegistrationAuthorityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory
-            )
+            ),
+            $this->institutionConfigurationRepositoryMock
         );
     }
 
@@ -95,6 +118,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(false);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -143,6 +170,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
 
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
+
         $this->scenario
             ->withAggregateId($command->identityId)
             ->given([
@@ -182,6 +213,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -292,6 +327,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
+
         $this->scenario
             ->withAggregateId($command->identityId)
             ->given(
@@ -318,7 +357,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             )
             ->when($command)
             ->then([
-                new IdentityAccreditedAsRaEvent(
+                new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
@@ -353,6 +392,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
+
         $this->scenario
             ->withAggregateId($command->identityId)
             ->given(
@@ -380,7 +423,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then(
                 [
-                    new IdentityAccreditedAsRaaEvent(
+                    new IdentityAccreditedAsRaaForInstitutionEvent(
                         $identityId,
                         $nameId,
                         $institution,
@@ -407,8 +450,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->raInstitution      = 'Ra institution';
 
         $identityId           = new IdentityId($command->identityId);
-        $raInstitution        = new Institution($command->raInstitution);
-        $institution          = new Institution('Blue Note');
+        $institution          = new Institution($command->raInstitution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -437,27 +479,27 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $secondFactorId,
                         $secondFactorPublicId
                     ),
-                    new IdentityAccreditedAsRaaEvent(
+                    new IdentityAccreditedAsRaaForInstitutionEvent(
                         $identityId,
                         $nameId,
                         $institution,
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location('Somewhere behind you'),
                         new ContactInformation('Call me Maybe'),
-                        $raInstitution
+                        $institution
                     ),
                 ]
             )
             ->when($command)
             ->then(
                 [
-                    new RegistrationAuthorityInformationAmendedEvent(
+                    new RegistrationAuthorityInformationAmendedForInstitutionEvent(
                         $identityId,
                         $institution,
                         $nameId,
                         new Location($command->location),
                         new ContactInformation($command->contactInformation),
-                        $raInstitution
+                        $institution
                     )
                 ]
             );
@@ -529,12 +571,15 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
 
-
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -548,57 +593,6 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new Locale('en_GB')
                 ),
             ])
-            ->when($command);
-    }
-
-    /**
-     * @test
-     * @group                    command-handler
-     * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity may only be accredited with configured institutions
-     */
-    public function an_identity_cannot_be_accredited_as_outside_of_its_institution()
-    {
-        $command                     = new AccreditIdentityCommand();
-        $command->identityId         = static::uuid();
-        $command->institution        = 'Babelfish Inc.';
-        $command->role               = 'ra';
-        $command->location           = 'somewhere';
-        $command->contactInformation = 'Call me maybe';
-
-        $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution('Blue Note');
-        $nameId               = new NameId(md5('someNameId'));
-        $email                = new Email('info@domain.invalid');
-        $commonName           = new CommonName('Henk Westbroek');
-        $secondFactorId       = new SecondFactorId(static::uuid());
-        $secondFactorPublicId = new YubikeyPublicId('8329283834');
-
-        $this->scenario
-            ->withAggregateId($command->identityId)
-            ->given(
-                [
-                    new IdentityCreatedEvent(
-                        $identityId,
-                        $institution,
-                        $nameId,
-                        $commonName,
-                        $email,
-                        new Locale('en_GB')
-                    ),
-                    new YubikeySecondFactorBootstrappedEvent(
-                        $identityId,
-                        $nameId,
-                        $institution,
-                        $commonName,
-                        $email,
-                        new Locale('en_GB'),
-                        $secondFactorId,
-                        $secondFactorPublicId
-                    ),
-                ]
-            )
             ->when($command);
     }
 
@@ -623,6 +617,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -650,7 +648,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             )
             ->when($command)
             ->then([
-                new IdentityAccreditedAsRaEvent(
+                new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
@@ -686,6 +684,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
+
         $this->scenario
             ->withAggregateId($command->identityId)
             ->given([
@@ -707,7 +709,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
-                new IdentityAccreditedAsRaEvent(
+                new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
@@ -778,16 +780,19 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command                     = new AppointRoleCommand();
         $command->identityId         = static::uuid();
         $command->role               = 'ra';
-        $command->raInstitution      = 'Ra institution';
+        $command->raInstitution      = 'Babelfish Inc.';
 
         $identityId           = new IdentityId($command->identityId);
-        $institution          = new Institution('Babelfish Inc.');
-        $raInstitution        = new Institution($command->raInstitution);
+        $institution          = new Institution($command->raInstitution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -810,23 +815,23 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
-                new IdentityAccreditedAsRaEvent(
+                new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('somewhere'),
                     new ContactInformation('Call me maybe'),
-                    $raInstitution
+                    $institution
                 )
             ])
             ->when($command)
             ->then([
-                new AppointedAsRaEvent(
+                new AppointedInstitutionAsRaEvent(
                     $identityId,
                     $institution,
                     $nameId,
-                    $raInstitution
+                    $institution
                 )
             ]);
     }
@@ -852,6 +857,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(true);
+
         $this->scenario
             ->withAggregateId($command->identityId)
             ->given([
@@ -873,7 +882,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
-                new IdentityAccreditedAsRaaEvent(
+                new IdentityAccreditedAsRaaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
@@ -885,7 +894,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new AppointedAsRaaEvent(
+                new AppointedInstitutionAsRaaEvent(
                     $identityId,
                     $institution,
                     $nameId,
@@ -1022,7 +1031,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorPublicId
                 ),
-                new IdentityAccreditedAsRaaEvent(
+                new IdentityAccreditedAsRaaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
@@ -1034,7 +1043,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new RegistrationAuthorityRetractedEvent(
+                new RegistrationAuthorityRetractedForInstitutionEvent(
                     $identityId,
                     $institution,
                     $nameId,

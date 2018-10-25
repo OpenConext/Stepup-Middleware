@@ -43,11 +43,6 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
     public $contactInformation;
 
     /**
-     * @var Institution
-     */
-    public $raInstitution;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $institution
      * @param NameId $nameId
@@ -60,15 +55,13 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
         Institution $institution,
         NameId $nameId,
         Location $location,
-        ContactInformation $contactInformation,
-        Institution $raInstitution
+        ContactInformation $contactInformation
     ) {
         parent::__construct($identityId, $institution);
 
         $this->nameId = $nameId;
         $this->location = $location;
         $this->contactInformation = $contactInformation;
-        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -87,8 +80,7 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
             new Institution($data['institution']),
             new NameId($data['name_id']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information']),
-            new Institution($data['ra_institution'])
+            new ContactInformation($data['contact_information'])
         );
     }
 
@@ -100,7 +92,6 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
             'name_id'             => (string) $this->nameId,
             'location'            => (string) $this->location,
             'contact_information' => (string) $this->contactInformation,
-            'ra_institution'      => (string) $this->raInstitution,
         ];
     }
 }

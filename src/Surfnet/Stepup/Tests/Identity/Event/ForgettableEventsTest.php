@@ -52,6 +52,7 @@ final class ForgettableEventsTest extends TestCase
             'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent',
             'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent',
             'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent',
+            'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent',
         ];
         $otherIdentityEventFqcns = array_diff($this->getConcreteIdentityEventFqcns(), $forgettableEventFqcns);
         $forgettableFqcn = 'Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable';

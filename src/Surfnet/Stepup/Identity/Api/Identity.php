@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
@@ -52,7 +53,6 @@ interface Identity extends AggregateRoot
      * @param CommonName $commonName
      * @param Email $email
      * @param Locale $preferredLocale
-     * @param InstitutionCollection $allowedAccreditInstitutions
      * @return Identity
      */
     public static function create(
@@ -61,8 +61,7 @@ interface Identity extends AggregateRoot
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale,
-        InstitutionCollection $allowedAccreditInstitutions
+        Locale $preferredLocale
     );
 
     /**
@@ -213,17 +212,19 @@ interface Identity extends AggregateRoot
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
 
     /**
-     * @param Institution               $institution
      * @param RegistrationAuthorityRole $role
-     * @param Location                  $location
-     * @param ContactInformation        $contactInformation
+     * @param Institution $institution
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
     public function accreditWith(
         RegistrationAuthorityRole $role,
         Institution $institution,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        InstitutionConfiguration $institutionConfiguration
     );
 
     /**

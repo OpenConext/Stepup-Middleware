@@ -19,7 +19,12 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
+use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\RepositoryInterface;
+use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -31,19 +36,30 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistr
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RegistrationAuthorityCommandHandler extends CommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
      */
     private $repository;
+    /**
+     * @var InstitutionConfigurationRepository
+     */
+    private $institutionConfigurationRepository;
 
     /**
-     * @param RepositoryInterface  $repository
+     * @param RepositoryInterface $repository
+     * @param InstitutionConfigurationRepository $institutionConfigurationRepository
      */
-    public function __construct(RepositoryInterface $repository)
-    {
+    public function __construct(
+        RepositoryInterface $repository,
+        InstitutionConfigurationRepository $institutionConfigurationRepository
+    ) {
         $this->repository = $repository;
+        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
     }
 
     public function handleAccreditIdentityCommand(AccreditIdentityCommand $command)
@@ -51,13 +67,16 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->institution));
+
         $role = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 
         $identity->accreditWith(
             $role,
             new Institution($command->institution),
             new Location($command->location),
-            new ContactInformation($command->contactInformation)
+            new ContactInformation($command->contactInformation),
+            $institutionConfiguration
         );
 
         $this->repository->save($identity);
@@ -117,5 +136,29 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
             $role,
             $commandId
         ));
+    }
+
+    /**
+     * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
+     *
+     * @param Institution $institution
+     * @return InstitutionConfiguration
+     */
+    private function loadInstitutionConfigurationFor(Institution $institution)
+    {
+        $institution = new ConfigurationInstitution($institution->getInstitution());
+        try {
+            $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
+            $institutionConfiguration = $this->institutionConfigurationRepository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        } catch (AggregateNotFoundException $exception) {
+            $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+            $institutionConfiguration = $this->institutionConfigurationRepository->load(
+                $institutionConfigurationId->getInstitutionConfigurationId()
+            );
+        }
+
+        return $institutionConfiguration;
     }
 }

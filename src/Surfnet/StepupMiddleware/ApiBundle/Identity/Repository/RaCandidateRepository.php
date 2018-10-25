@@ -58,7 +58,8 @@ class RaCandidateRepository extends EntityRepository
      */
     public function merge(RaCandidate $raCandidate)
     {
-        $this->getEntityManager()->merge($raCandidate);
+        $raCandidate = $this->getEntityManager()->merge($raCandidate);
+        $this->getEntityManager()->persist($raCandidate);
         $this->getEntityManager()->flush();
     }
 

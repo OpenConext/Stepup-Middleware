@@ -22,9 +22,10 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
-use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
-use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
@@ -44,6 +45,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RaCandidateProjector extends Projector
 {
@@ -85,11 +87,11 @@ class RaCandidateProjector extends Projector
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $institutionAuthorizations = $this->institutionAuthorizationRepository
-            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution));
+            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
         foreach ($institutionAuthorizations as $authorization) {
 
-            $institution = new Institution($authorization->institution);
+            $institution = new Institution($authorization->institution->getInstitution());
 
             if ($this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $institution)) {
                 continue;
@@ -115,11 +117,11 @@ class RaCandidateProjector extends Projector
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
         $institutionAuthorizations = $this->institutionAuthorizationRepository
-            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution));
+            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
         foreach ($institutionAuthorizations as $authorization) {
 
-            $institution = new Institution($authorization->institution);
+            $institution = new Institution($authorization->institution->getInstitution());
 
             $candidate = RaCandidate::nominate(
                 $event->identityId,
@@ -165,28 +167,28 @@ class RaCandidateProjector extends Projector
     }
 
     /**
-     * @param IdentityAccreditedAsRaEvent $event
+     * @param IdentityAccreditedAsRaForInstitutionEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
     {
         $this->raCandidateRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
     }
 
     /**
-     * @param IdentityAccreditedAsRaaEvent $event
+     * @param IdentityAccreditedAsRaaForInstitutionEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event)
     {
         $this->raCandidateRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
     }
 
     /**
-     * @param RegistrationAuthorityRetractedEvent $event
+     * @param RegistrationAuthorityRetractedForInstitutionEvent $event
      * @return void
      */
-    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
         $candidate = RaCandidate::nominate(
             $event->identityId,
@@ -214,6 +216,48 @@ class RaCandidateProjector extends Projector
     protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
         $this->raCandidateRepository->removeByRaInstitution(new Institution($event->institution->getInstitution()));
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param IdentityAccreditedAsRaEvent $event
+     * @return void
+     */
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    {
+        $this->raCandidateRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->identityInstitution);
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param IdentityAccreditedAsRaaEvent $event
+     * @return void
+     */
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    {
+        $this->raCandidateRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->identityInstitution);
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param RegistrationAuthorityRetractedEvent $event
+     * @return void
+     */
+    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $candidate = RaCandidate::nominate(
+            $event->identityId,
+            $event->identityInstitution,
+            $event->nameId,
+            $event->commonName,
+            $event->email,
+            $event->raInstitution
+        );
+
+        $this->raCandidateRepository->merge($candidate);
     }
 
     /**

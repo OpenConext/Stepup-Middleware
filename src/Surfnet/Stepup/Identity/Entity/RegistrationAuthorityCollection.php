@@ -77,5 +77,4 @@ final class RegistrationAuthorityCollection
     {
         return array_values($this->registrationAuthorities);
     }
-
 }

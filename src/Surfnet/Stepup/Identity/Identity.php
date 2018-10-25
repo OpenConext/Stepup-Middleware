@@ -19,21 +19,21 @@
 namespace Surfnet\Stepup\Identity;
 
 use Broadway\EventSourcing\EventSourcedAggregateRoot;
-use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
-use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
+use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
-use Surfnet\Stepup\Identity\Entity\InstitutionCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
-use Surfnet\Stepup\Identity\Event\AccreditedInstitutionsAddedToIdentityEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -41,7 +41,9 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
@@ -50,7 +52,9 @@ use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -82,13 +86,13 @@ use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class Identity extends EventSourcedAggregateRoot implements IdentityApi
 {
@@ -138,11 +142,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $registrationAuthorities;
 
     /**
-     * @var InstitutionCollection
-     */
-    private $allowedAccreditInstitutions;
-
-    /**
      * @var Locale
      */
     private $preferredLocale;
@@ -163,12 +162,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale,
-        Institutions $allowedAccreditInstitutions
+        Locale $preferredLocale
     ) {
         $identity = new self();
         $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
-        $identity->apply(new AccreditedInstitutionsAddedToIdentityEvent($id, $institution, $allowedAccreditInstitutions));
 
         return $identity;
     }
@@ -233,8 +230,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         YubikeyPublicId $yubikeyPublicId,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
-    )
-    {
+    ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
@@ -277,8 +273,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         PhoneNumber $phoneNumber,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
-    )
-    {
+    ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
@@ -322,8 +317,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         GssfId $gssfId,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
-    )
-    {
+    ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
@@ -368,8 +362,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         U2fKeyHandle $keyHandle,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow
-    )
-    {
+    ) {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor();
 
@@ -442,8 +435,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         DocumentNumber $documentNumber,
         $identityVerified,
         SecondFactorTypeService $secondFactorTypeService
-    )
-    {
+    ) {
         $this->assertNotForgotten();
 
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
@@ -492,8 +484,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber
-    )
-    {
+    ) {
         $this->assertNotForgotten();
 
         $secondFactorToVet = null;
@@ -579,22 +570,23 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     /**
-     * @param Institution $institution
      * @param RegistrationAuthorityRole $role
+     * @param Institution $institution
      * @param Location $location
      * @param ContactInformation $contactInformation
+     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
     public function accreditWith(
         RegistrationAuthorityRole $role,
         Institution $institution,
         Location $location,
-        ContactInformation $contactInformation
-    )
-    {
+        ContactInformation $contactInformation,
+        InstitutionConfiguration $institutionConfiguration
+    ) {
         $this->assertNotForgotten();
 
-        if (!$this->allowedAccreditInstitutions->exists($institution)) {
+        if (!$institutionConfiguration->isAllowed($role, new ConfigurationInstitution($institution->getInstitution()))) {
             throw new DomainException('An Identity may only be accredited with configured institutions');
         }
 
@@ -609,7 +601,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
-            $this->apply(new IdentityAccreditedAsRaEvent(
+            $this->apply(new IdentityAccreditedAsRaForInstitutionEvent(
                 $this->id,
                 $this->nameId,
                 $this->institution,
@@ -619,7 +611,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $institution
             ));
         } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
-            $this->apply(new IdentityAccreditedAsRaaEvent(
+            $this->apply(new IdentityAccreditedAsRaaForInstitutionEvent(
                 $this->id,
                 $this->nameId,
                 $this->institution,
@@ -644,7 +636,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $this->apply(
-            new RegistrationAuthorityInformationAmendedEvent(
+            new RegistrationAuthorityInformationAmendedForInstitutionEvent(
                 $this->id,
                 $this->institution,
                 $this->nameId,
@@ -678,9 +670,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
-            $this->apply(new AppointedAsRaEvent($this->id, $this->institution, $this->nameId, $institution));
+            $this->apply(new AppointedInstitutionAsRaEvent($this->id, $this->institution, $this->nameId, $institution));
         } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
-            $this->apply(new AppointedAsRaaEvent($this->id, $this->institution, $this->nameId, $institution));
+            $this->apply(new AppointedInstitutionAsRaaEvent($this->id, $this->institution, $this->nameId, $institution));
         } else {
             throw new DomainException('An Identity can only be appointed as either RA or RAA');
         }
@@ -696,7 +688,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        $this->apply(new RegistrationAuthorityRetractedEvent(
+        $this->apply(new RegistrationAuthorityRetractedForInstitutionEvent(
             $this->id,
             $this->institution,
             $this->nameId,
@@ -742,10 +734,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors = new SecondFactorCollection();
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
-        $this->allowedAccreditInstitutions = new InstitutionCollection();
-
-        // Old behaviour is to add the own institution as allowed ainstitution to become ra or raa
-        $this->allowedAccreditInstitutions->set($this->institution);
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -913,8 +901,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event
-    )
-    {
+    ) {
         $this->unverifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
@@ -925,8 +912,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event
-    )
-    {
+    ) {
         $this->verifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
@@ -937,12 +923,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event
-    )
-    {
+    ) {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
     }
 
-    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    protected function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
     {
         $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
@@ -952,7 +937,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ));
     }
 
-    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    protected function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event)
     {
         $this->registrationAuthorities->set($event->raInstitution, RegistrationAuthority::accreditWith(
             $event->registrationAuthorityRole,
@@ -962,24 +947,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ));
     }
 
-    protected function applyRegistrationAuthorityInformationAmendedEvent(
-        RegistrationAuthorityInformationAmendedEvent $event
-    )
-    {
+    protected function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
+        RegistrationAuthorityInformationAmendedForInstitutionEvent $event
+    ) {
         $this->registrationAuthorities->get($event->raInstitution)->amendInformation($event->location, $event->contactInformation);
     }
 
-    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
-    {
-        $this->registrationAuthorities->get($event->raInstitution)->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
-    }
-
-    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    protected function applyAppointedInstitutionAsRaaEvent(AppointedInstitutionAsRaaEvent $event)
     {
         $this->registrationAuthorities->get($event->raInstitution)->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
     }
 
-    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    protected function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
         $this->registrationAuthorities->remove($event->raInstitution);
     }
@@ -996,31 +975,91 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->forgotten = true;
     }
 
-    /*
-     * The apply methods below are used for fine grained authorization
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param AppointedAsRaEvent $event
      */
-    protected function applySAccreditedInstitutionsAddedToIdentityEvent(AccreditedInstitutionsAddedToIdentityEvent $event)
+    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
     {
-        $this->allowedAccreditInstitutions->update($event->institutions);
+        $this->registrationAuthorities->get($event->identityInstitution)
+            ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
     }
 
-    protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param AppointedAsRaaEvent $event
+     */
+    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
     {
-        $raInstitutions = $event->selectRaaOption->getInstitutions($event->institution);
-        $institution = new Institution($event->institution);
-        $this->allowedAccreditInstitutions->remove($institution);
-        foreach ($raInstitutions as $raInstitution) {
-            $valueRaInstitution = new Institution($raInstitution->getInstitution());
-            if ($this->institution->equals($valueRaInstitution)) {
-                $this->allowedAccreditInstitutions->set($institution);
-            }
-        }
+        $this->registrationAuthorities->get($event->identityInstitution)
+            ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
     }
 
-    protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param AppointedAsRaaEvent $event
+     */
+    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
     {
-        $this->allowedAccreditInstitutions->remove(new Institution($event->institution->getInstitution()));
+        $this->registrationAuthorities->set($event->identityInstitution, RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation,
+            $event->identityInstitution
+        ));
     }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param IdentityAccreditedAsRaaEvent $event
+     */
+    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    {
+        $this->registrationAuthorities->set($event->identityInstitution, RegistrationAuthority::accreditWith(
+            $event->registrationAuthorityRole,
+            $event->location,
+            $event->contactInformation,
+            $event->identityInstitution
+        ));
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param AppointedInstitutionAsRaEvent $event
+     */
+    protected function applyAppointedInstitutionAsRaEvent(AppointedInstitutionAsRaEvent $event)
+    {
+        $this->registrationAuthorities->get($event->identityInstitution)
+            ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param RegistrationAuthorityInformationAmendedEvent $event
+     */
+    protected function applyRegistrationAuthorityInformationAmendedEvent(
+        RegistrationAuthorityInformationAmendedEvent $event
+    ) {
+        $this->registrationAuthorities->get($event->identityInstitution)->amendInformation($event->location, $event->contactInformation);
+    }
+
+    /**
+     * This method is kept to be backwards compatible for changes before FGA
+     *
+     * @param RegistrationAuthorityRetractedEvent $event
+     */
+    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    {
+        $this->registrationAuthorities->remove($event->identityInstitution);
+    }
+
 
     public function getAggregateRootId()
     {

@@ -168,7 +168,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $identity = new self();
         $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
-        $identity->apply(new AccreditedInstitutionsAddedToIdentityEvent($id, $allowedAccreditInstitutions));
+        $identity->apply(new AccreditedInstitutionsAddedToIdentityEvent($id, $institution, $allowedAccreditInstitutions));
 
         return $identity;
     }
@@ -655,6 +655,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    /**
+     * This method will appoint an institution to become ra or raa for another institution
+     *
+     * @param Institution $institution
+     * @param RegistrationAuthorityRole $role
+     */
     public function appointAs(Institution $institution, RegistrationAuthorityRole $role)
     {
         $this->assertNotForgotten();

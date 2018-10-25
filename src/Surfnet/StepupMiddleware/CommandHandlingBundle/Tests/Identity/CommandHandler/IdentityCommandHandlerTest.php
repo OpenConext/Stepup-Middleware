@@ -186,6 +186,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 ),
                 new AccreditedInstitutionsAddedToIdentityEvent(
                     $identityId,
+                    new Institution('Institution'),
                     $allowedInstitutions
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
@@ -1099,6 +1100,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $accreditedInstitutionsAddedToEdentityEvent = new AccreditedInstitutionsAddedToIdentityEvent(
             $identityId,
+            $identityInstitution,
             $allowedInstitutions
         );
 

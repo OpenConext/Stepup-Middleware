@@ -18,10 +18,12 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
 
-class AccreditedInstitutionsAddedToIdentityEvent implements WhitelistEvent
+class AccreditedInstitutionsAddedToIdentityEvent extends IdentityEvent
 {
     /**
      * @var IdentityId
@@ -33,8 +35,10 @@ class AccreditedInstitutionsAddedToIdentityEvent implements WhitelistEvent
      */
     public $institutions;
 
-    public function __construct(IdentityId $identityId, InstitutionCollection $institutions)
+    public function __construct(IdentityId $identityId, Institution $identityInstitution, InstitutionCollection $institutions)
     {
+        parent::__construct($identityId, $identityInstitution);
+
         $this->institutions = $institutions;
         $this->identityId = $identityId;
     }
@@ -47,6 +51,7 @@ class AccreditedInstitutionsAddedToIdentityEvent implements WhitelistEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
+            new Institution($data['institution']),
             InstitutionCollection::deserialize($data['institutions'])
         );
     }
@@ -57,8 +62,21 @@ class AccreditedInstitutionsAddedToIdentityEvent implements WhitelistEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
+            'identity_id'    => (string) $this->identityId,
+            'institution'    => (string) $this->identityInstitution,
             'institutions' => $this->institutions->serialize()
         ];
+    }
+
+    /**
+     * @return \Surfnet\Stepup\Identity\AuditLog\Metadata
+     */
+    public function getAuditLogMetadata()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+
+        return $metadata;
     }
 }

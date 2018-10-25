@@ -462,6 +462,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
             'AccreditedInstitutionsAddedToIdentityEvent' => [
                 new AccreditedInstitutionsAddedToIdentityEvent(
                     new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
                     new InstitutionCollection([
                         new Institution('test1'),
                         new Institution('test2')

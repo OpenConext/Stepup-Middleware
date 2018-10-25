@@ -549,7 +549,7 @@ Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination
 - identityId: (required) UUIDv4 of the identity to search for
-- orderBy: (optional, default recordedOn) string, sorting column; possible values: secondFactorId, secondFactorType, event, recordedOn, actorId
+- orderBy: (optional, default recordedOn) string, sorting column; possible values: secondFactorId, secondFactorType, event, recordedOn, actorId, actorCommonName, actorInstitution
 - orderDirection: (optional, default asc) string, sorting direction; only asc or desc allowed.
 - p: (optional, default 1) integer, the requested result page
 

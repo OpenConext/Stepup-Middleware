@@ -66,7 +66,7 @@ class VerifiedSecondFactorController extends Controller
         return new JsonResponse($secondFactor);
     }
 
-    public function collectionAction(Request $request)
+    public function collectionAction(Request $request, Institution $actorInstitution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
@@ -83,7 +83,7 @@ class VerifiedSecondFactorController extends Controller
         $query->actorInstitution = new Institution($request->get('actorInstitution'));
         $query->registrationCode = $request->get('registrationCode');
         $query->pageNumber       = (int) $request->get('p', 1);
-        $query->authorizationContext = new InstitutionAuthorizationContext($query->actorInstitution, $this->roleRequirements);
+        $query->authorizationContext = new InstitutionAuthorizationContext($actorInstitution, $this->roleRequirements);
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
 

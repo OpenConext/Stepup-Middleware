@@ -63,4 +63,12 @@ class AccreditIdentityCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $contactInformation;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $raInstitution;
 }

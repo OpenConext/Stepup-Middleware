@@ -652,12 +652,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      *
      * @param Institution $institution
      * @param RegistrationAuthorityRole $role
+     * @param InstitutionConfiguration $institutionConfiguration
      */
-    public function appointAs(Institution $institution, RegistrationAuthorityRole $role)
-    {
+    public function appointAs(
+        Institution $institution,
+        RegistrationAuthorityRole $role,
+        InstitutionConfiguration $institutionConfiguration
+    ) {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthorities->exists($institution)) {
+        if (!$institutionConfiguration->isAllowed($role, new ConfigurationInstitution($institution->getInstitution()))) {
             throw new DomainException(
                 'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority for institution'
             );

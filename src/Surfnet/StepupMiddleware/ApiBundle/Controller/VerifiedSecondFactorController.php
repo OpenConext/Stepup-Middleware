@@ -80,7 +80,7 @@ class VerifiedSecondFactorController extends Controller
             $query->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
         }
 
-        $query->institution = new Institution($request->get('institution'));
+        //$query->institution = new Institution($request->get('institution'));
         $query->registrationCode = $request->get('registrationCode');
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);

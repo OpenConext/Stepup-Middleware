@@ -120,7 +120,7 @@ class RaListingRepository extends EntityRepository
     public function listRasFor(Institution $raInstitution)
     {
         $listings = $this->createQueryBuilder('rl')
-            ->where('rl.ra_institution = :institution')
+            ->where('rl.raInstitution = :institution')
             ->setParameter('institution', $raInstitution)
             ->getQuery()
             ->getResult();
@@ -137,7 +137,7 @@ class RaListingRepository extends EntityRepository
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
             ->where('ral.identityId = :identityId')
-            ->andWhere('rl.ra_institution = :institution')
+            ->andWhere('ral.raInstitution = :institution')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
@@ -153,7 +153,7 @@ class RaListingRepository extends EntityRepository
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
             ->where('ral.identityId = :identityId')
-            ->andWhere('rl.ra_institution = :institution')
+            ->andWhere('ral.raInstitution = :institution')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->setParameter('institution', $raInstitution)
             ->getQuery()

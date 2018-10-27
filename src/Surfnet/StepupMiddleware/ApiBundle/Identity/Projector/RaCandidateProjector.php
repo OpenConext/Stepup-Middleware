@@ -89,10 +89,12 @@ class RaCandidateProjector extends Projector
         $institutionAuthorizations = $this->institutionAuthorizationRepository
             ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
+        $institutions = [];
         foreach ($institutionAuthorizations as $authorization) {
+            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
+        }
 
-            $institution = new Institution($authorization->institution->getInstitution());
-
+        foreach ($institutions as $institution) {
             if ($this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $institution)) {
                 continue;
             }

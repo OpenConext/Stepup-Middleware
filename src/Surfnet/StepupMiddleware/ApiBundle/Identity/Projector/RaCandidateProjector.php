@@ -309,7 +309,7 @@ class RaCandidateProjector extends Projector
                         $identity->nameId,
                         $identity->commonName,
                         $identity->email,
-                        $institution
+                        $raInstitution
                     );
                 }
 

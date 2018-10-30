@@ -35,6 +35,8 @@ class Version20181023151546 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
+        $this->throwIrreversibleMigrationException('This migration is irreversible and cannot be reverted due to Fine Grained Authorization BC changes.');
+
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 

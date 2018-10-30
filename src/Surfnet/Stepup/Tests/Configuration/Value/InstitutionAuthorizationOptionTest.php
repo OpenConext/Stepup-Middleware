@@ -148,6 +148,33 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $this->assertEquals(null, InstitutionAuthorizationOption::blank());
     }
 
+    /**
+     * @test
+     * @group domain
+     * @dataProvider institutionHasInstitutionProvider
+     */
+    public function the_has_institution_method_should_check_for_institutions($expectation, $institutionList, $institution)
+    {
+        $institution = new Institution($institution);
+        $list = [];
+        foreach ($institutionList as $inst) {
+            $list[] = new Institution($inst);
+        }
+        $option = InstitutionAuthorizationOption::fromInstitutions(InstitutionRole::useRa(), $this->institution, $list);
+
+        $this->assertEquals($expectation, $option->hasInstitution($institution));
+    }
+
+
+    public function institutionHasInstitutionProvider()
+    {
+        return [
+            'array-with-institution' => [true, ['a', 'b'], 'a'],
+            'empty-array' => [false, [], 'inst'],
+            'array-without-institutions' => [false, [], 'a'],
+        ];
+    }
+
     public function institutionSetComparisonProvider()
     {
         return [

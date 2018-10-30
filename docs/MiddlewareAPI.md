@@ -198,10 +198,10 @@ Request parameters:
 ### Verified Second Factor - Search Verified Second Factors
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors?{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors?{actorInstitution}&{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
 Method: GET
 Request parameters:
-- institution: (required))
+- actorInstitution: (required) string, the institution as scope determination
 - IdentityId: (optional) UUIDv4 of the identity to search for
 - secondFactorId: (optional) UUIDv4 of the second factor to search for
 - registrationCode: (optional) string, registration code to search for
@@ -469,13 +469,16 @@ Request parameters:
 URL: `http://middleware.tld/ra-second-factors?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&p=}`
 Method: GET
 Request parameters:
-- institution: (required) string, the institution as scope determination
+- actorInstitution: (required) string, the institution as scope determination
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against
 - secondFactorId: (optional) string, the secondFactorId to match against
 - email: (optional) string, the email to match against
+- institution: (optional) string, the institution to match against
 - status: (optional) string, the status to match against
 - p: (optional, default 1) integer, the requested result page
+- orderBy: (optional) string, sorting column; possible values: name, type, secondFactorId, email, institution, status
+- orderDirection: (optional, default desc) string, sorting direction; only asc or desc allowed.
 
 #### Response
 `200 OK`
@@ -496,7 +499,8 @@ Request parameters:
             "name": "Yubi",
             "document_number": null,
             "email": "info@ibuildings.nl",
-            "institution": "Ibuildings",
+            "actorInstitution": "Ibuildings",
+            "institution": "SURFnet"
         }
     ]
 }
@@ -505,14 +509,15 @@ Request parameters:
 ### Registration Authority Candidate - Search second factors for export
 
 #### Request
-URL: `http://middleware.tld/ra-second-factors-export?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
+URL: `http://middleware.tld/ra-second-factors-export?actorInstitution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
 Method: GET
 Request parameters:
-- institution: (required) string, the institution as scope determination
+- actorInstitution: (required) string, the institution as scope determination
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against
 - secondFactorId: (optional) string, the secondFactorId to match against
 - email: (optional) string, the email to match against
+- institution: (optional) string, the institution to match against
 - status: (optional) string, the status to match against
 
 #### Response
@@ -528,7 +533,8 @@ Request parameters:
         "name": "Yubi",
         "document_number": null,
         "email": "info@ibuildings.nl",
-        "institution": "Ibuildings",
+        "actorInstitution": "Ibuildings",
+        "institution": "SURFnet"
     }
 ]
 ```
@@ -543,7 +549,7 @@ Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination
 - identityId: (required) UUIDv4 of the identity to search for
-- orderBy: (optional, default recordedOn) string, sorting column; possible values: secondFactorId, secondFactorType, event, recordedOn, actorId
+- orderBy: (optional, default recordedOn) string, sorting column; possible values: secondFactorId, secondFactorType, event, recordedOn, actorId, actorCommonName, actorInstitution
 - orderDirection: (optional, default asc) string, sorting direction; only asc or desc allowed.
 - p: (optional, default 1) integer, the requested result page
 

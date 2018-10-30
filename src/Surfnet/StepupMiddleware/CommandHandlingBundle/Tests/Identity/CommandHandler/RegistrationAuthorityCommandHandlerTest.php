@@ -110,6 +110,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('A Different Institution than the Command holds');
@@ -163,6 +164,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -205,6 +207,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'Babelfish Inc.';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -246,8 +249,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                         $institution,
                         new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                         new Location('Somewhere behind you'),
-                        new ContactInformation('Call me maybe'),
-                        $institution
+                        new ContactInformation('Call me maybe')
                     )
                 ]
             )
@@ -318,6 +320,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -326,6 +329,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+        $raInstitution        = new Institution($command->raInstitution);
 
         $this->institutionConfiguration
             ->shouldReceive('isAllowed')
@@ -364,7 +368,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
                     new ContactInformation($command->contactInformation),
-                    $institution
+                    $raInstitution
                 )
             ]);
     }
@@ -382,10 +386,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'raa';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution('Babelfish Inc.');
-        $raInstitution        = new Institution($command->institution);
+        $raInstitution        = new Institution($command->raInstitution);
         $nameId               = new NameId(md5('someNameId'));
         $email                = new Email('info@domain.invalid');
         $commonName           = new CommonName('Henk Westbroek');
@@ -570,6 +575,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -609,6 +615,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -617,6 +624,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+        $raInstitution        = new Institution($command->raInstitution);
 
         $this->institutionConfiguration
             ->shouldReceive('isAllowed')
@@ -655,7 +663,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location($command->location),
                     new ContactInformation($command->contactInformation),
-                    $institution
+                    $raInstitution
                 )
             ]);
     }
@@ -675,6 +683,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'ra';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
+        $command->raInstitution      = 'Babelfish Inc.';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -924,6 +933,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
         $secondFactorId       = new SecondFactorId(static::uuid());
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
+
+        $this->institutionConfiguration
+            ->shouldReceive('isAllowed')
+            ->andReturn(false);
 
         $this->scenario
             ->withAggregateId($command->identityId)

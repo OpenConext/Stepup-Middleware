@@ -99,14 +99,18 @@ class RaCandidateProjector extends Projector
                 continue;
             }
 
-            $candidate = RaCandidate::nominate(
-                $event->identityId,
-                $event->identityInstitution,
-                $event->nameId,
-                $event->commonName,
-                $event->email,
-                $institution
-            );
+            // create candidate if not exists
+            $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($event->identityId, $institution);
+            if (!$candidate) {
+                $candidate = RaCandidate::nominate(
+                    $event->identityId,
+                    $event->identityInstitution,
+                    $event->nameId,
+                    $event->commonName,
+                    $event->email,
+                    $institution
+                );
+            }
 
             $this->raCandidateRepository->merge($candidate);
         }
@@ -121,9 +125,14 @@ class RaCandidateProjector extends Projector
         $institutionAuthorizations = $this->institutionAuthorizationRepository
             ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
+        $institutions = [];
         foreach ($institutionAuthorizations as $authorization) {
+            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
+        }
 
-            $institution = new Institution($authorization->institution->getInstitution());
+        foreach ($institutions as $institution) {
+
+            $institution = new Institution($institution->getInstitution());
 
             $candidate = RaCandidate::nominate(
                 $event->identityId,
@@ -256,7 +265,7 @@ class RaCandidateProjector extends Projector
             $event->nameId,
             $event->commonName,
             $event->email,
-            $event->raInstitution
+            $event->identityInstitution
         );
 
         $this->raCandidateRepository->merge($candidate);

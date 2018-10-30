@@ -21,8 +21,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
@@ -123,7 +123,7 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedInstitutionAsRaEvent(AppointedInstitutionAsRaEvent $event)
+    public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event)
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
@@ -133,7 +133,7 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedInstitutionAsRaaEvent(AppointedInstitutionAsRaaEvent $event)
+    public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event)
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->raInstitution);

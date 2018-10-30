@@ -25,8 +25,8 @@ use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
@@ -827,7 +827,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new AppointedInstitutionAsRaEvent(
+                new AppointedAsRaForInstitutionEvent(
                     $identityId,
                     $institution,
                     $nameId,
@@ -894,7 +894,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new AppointedInstitutionAsRaaEvent(
+                new AppointedAsRaaForInstitutionEvent(
                     $identityId,
                     $institution,
                     $nameId,

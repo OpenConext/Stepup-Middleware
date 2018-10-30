@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
-class AppointedInstitutionAsRaEvent extends IdentityEvent
+class AppointedAsRaForInstitutionEvent extends IdentityEvent
 {
     /**
      * @var NameId

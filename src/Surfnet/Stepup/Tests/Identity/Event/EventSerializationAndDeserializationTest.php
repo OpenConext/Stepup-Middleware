@@ -25,8 +25,8 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -457,16 +457,16 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Locale('fi_FI')
                 )
             ],
-            'AppointedInstitutionAsRaaEvent' => [
-                new AppointedInstitutionAsRaaEvent(
+            'AppointedAsRaaForInstitutionEvent' => [
+                new AppointedAsRaaForInstitutionEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new NameId(md5('someNameId')),
                     new Institution('Babelfish BV.')
                 )
             ],
-            'AppointedInstitutionAsRaEvent' => [
-                new AppointedInstitutionAsRaEvent(
+            'AppointedAsRaForInstitutionEvent' => [
+                new AppointedAsRaForInstitutionEvent(
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new NameId(md5('someNameId')),

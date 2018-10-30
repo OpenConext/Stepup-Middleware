@@ -269,12 +269,13 @@ class RaCandidateProjector extends Projector
      */
     private function updateInstitutionCandidatesFromCollection(Institution $institution, array $authorizedInstitutions)
     {
-
+        // convert configuration to value institutions
         $raInstitutions = new InstitutionCollection();
         foreach ($authorizedInstitutions as $authorizedInstitution) {
             $raInstitutions->add(new Institution($authorizedInstitution->getInstitution()));
         }
 
+        // Remove candidates from removed institutions
         $this->raCandidateRepository->removeInstitutionsNotInList($institution, $raInstitutions);
 
         // loop through authorized institutions
@@ -286,12 +287,12 @@ class RaCandidateProjector extends Projector
                 $identityId = new IdentityId($identity->id);
 
                 // check if persistent in ra listing
-                if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $institution)) {
+                if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $raInstitution)) {
                     continue;
                 }
 
                 // create candidate if not exists
-                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
+                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
                 if (!$candidate) {
                     $candidate = RaCandidate::nominate(
                         $identityId,

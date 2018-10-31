@@ -43,11 +43,12 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
     public $contactInformation;
 
     /**
-     * @param IdentityId         $identityId
-     * @param Institution        $institution
-     * @param NameId             $nameId
-     * @param Location           $location
+     * @param IdentityId $identityId
+     * @param Institution $institution
+     * @param NameId $nameId
+     * @param Location $location
      * @param ContactInformation $contactInformation
+     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,
@@ -90,7 +91,7 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
             'institution'         => (string) $this->identityInstitution,
             'name_id'             => (string) $this->nameId,
             'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation
+            'contact_information' => (string) $this->contactInformation,
         ];
     }
 }

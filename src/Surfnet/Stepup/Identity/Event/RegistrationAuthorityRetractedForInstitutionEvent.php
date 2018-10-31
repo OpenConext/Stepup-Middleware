@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable
+class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements Forgettable
 {
     /**
      * @var NameId
@@ -44,18 +44,25 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
      */
     public $email;
 
+    /**
+     * @var Institution
+     */
+    public $raInstitution;
+
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
         NameId $nameId,
         CommonName $commonName,
-        Email $email
+        Email $email,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
         $this->nameId     = $nameId;
         $this->commonName = $commonName;
         $this->email      = $email;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -74,7 +81,8 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
             new Institution($data['identity_institution']),
             new NameId($data['name_id']),
             CommonName::unknown(),
-            Email::unknown()
+            Email::unknown(),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -84,6 +92,7 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
             'identity_id'          => (string) $this->identityId,
             'identity_institution' => (string) $this->identityInstitution,
             'name_id'              => (string) $this->nameId,
+            'ra_institution'       => (string) $this->raInstitution,
         ];
     }
 

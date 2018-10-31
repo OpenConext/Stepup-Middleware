@@ -24,6 +24,7 @@ use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
 use Mockery\MockInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -255,7 +256,8 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('0x0392ff832'),
-                    new ContactInformation('/dev/null')
+                    new ContactInformation('/dev/null'),
+                    $institution
                 ),
             ])
             ->when($command);
@@ -315,13 +317,14 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorId('SF-ID'),
                     new YubikeyPublicId('01900473')
                 ),
-                new IdentityAccreditedAsRaEvent(
+                new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
                     $nameId,
                     $institution,
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('0x0392ff832'),
-                    new ContactInformation('/dev/null')
+                    new ContactInformation('/dev/null'),
+                    $institution
                 ),
             ])
             ->when($command);

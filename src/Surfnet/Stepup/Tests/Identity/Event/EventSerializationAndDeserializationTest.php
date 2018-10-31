@@ -25,20 +25,26 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -449,6 +455,64 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new IdentityId(static::UUID()),
                     new Institution('Babelfish Inc.'),
                     new Locale('fi_FI')
+                )
+            ],
+            'AppointedAsRaaForInstitutionEvent' => [
+                new AppointedAsRaaForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish BV.')
+                )
+            ],
+            'AppointedAsRaForInstitutionEvent' => [
+                new AppointedAsRaForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish BV.')
+                )
+            ],
+            'IdentityAccreditedAsRaForInstitutionEvent' => [
+                new IdentityAccreditedAsRaForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish BV.')
+                )
+            ],
+            'IdentityAccreditedAsRaaForInstitutionEvent' => [
+                new IdentityAccreditedAsRaaForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish BV.')
+                )
+            ],
+            'RegistrationAuthorityInformationAmendedForInstitutionEvent' => [
+                new RegistrationAuthorityInformationAmendedForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Blue Note'),
+                    new NameId(md5('Coleman Hawkins')),
+                    new Location('New York'),
+                    new ContactInformation("131 West 3rd Street, NY"),
+                    new Institution('Babelfish Inc.')
+                )
+            ],
+            'RegistrationAuthorityRetractedForInstitutionEvent' => [
+                new RegistrationAuthorityRetractedForInstitutionEvent(
+                    new IdentityId(static::UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.invalid'),
+                    new Institution('Babelfish Inc.')
                 )
             ],
         ];

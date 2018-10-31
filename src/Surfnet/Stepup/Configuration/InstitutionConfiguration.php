@@ -51,6 +51,7 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
 /**
  * InstitutionConfiguration aggregate root
@@ -465,6 +466,26 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     public function getAggregateRootId()
     {
         return $this->institutionConfigurationId;
+    }
+
+    /**
+     * Check if role is allowed
+     *
+     * @param RegistrationAuthorityRole $role
+     * @param Institution $institution
+     * @return bool
+     */
+    public function isAllowed(RegistrationAuthorityRole $role, Institution $institution)
+    {
+        if ($role->isRa() && $this->useRaOption->hasInstitution($institution)) {
+            return true;
+        }
+
+        if ($role->isRaa() && $this->useRaaOption->hasInstitution($institution)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)

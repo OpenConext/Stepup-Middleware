@@ -67,9 +67,9 @@ class AppointedAsRaaEvent extends IdentityEvent
     public function serialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'name_id'     => (string) $this->nameId
+            'identity_id'    => (string) $this->identityId,
+            'institution'    => (string) $this->identityInstitution,
+            'name_id'        => (string) $this->nameId
         ];
     }
 }

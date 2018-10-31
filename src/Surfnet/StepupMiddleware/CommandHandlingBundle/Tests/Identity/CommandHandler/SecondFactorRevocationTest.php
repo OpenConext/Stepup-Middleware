@@ -22,6 +22,7 @@ use Broadway\EventHandling\EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use Mockery as m;
+use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
@@ -79,7 +80,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(AllowedSecondFactorListService::class),
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
-            1
+            m::mock(InstitutionConfigurationRepository::class)
         );
     }
 

@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -45,12 +47,12 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 interface Identity extends AggregateRoot
 {
     /**
-     * @param IdentityId  $id
+     * @param IdentityId $id
      * @param Institution $institution
-     * @param NameId      $nameId
-     * @param CommonName  $commonName
-     * @param Email       $email
-     * @param Locale      $preferredLocale
+     * @param NameId $nameId
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param Locale $preferredLocale
      * @return Identity
      */
     public static function create(
@@ -210,36 +212,42 @@ interface Identity extends AggregateRoot
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
 
     /**
-     * @param Institution               $institution
      * @param RegistrationAuthorityRole $role
-     * @param Location                  $location
-     * @param ContactInformation        $contactInformation
+     * @param Institution $institution
+     * @param Location $location
+     * @param ContactInformation $contactInformation
+     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
     public function accreditWith(
         RegistrationAuthorityRole $role,
         Institution $institution,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        InstitutionConfiguration $institutionConfiguration
     );
 
     /**
+     * @param Institution $institution
      * @param RegistrationAuthorityRole $role
+     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
-    public function appointAs(RegistrationAuthorityRole $role);
+    public function appointAs(Institution $institution, RegistrationAuthorityRole $role, InstitutionConfiguration $institutionConfiguration);
 
     /**
-     * @param Location           $location
+     * @param Institution $institution
+     * @param Location $location
      * @param ContactInformation $contactInformation
      * @return void
      */
-    public function amendRegistrationAuthorityInformation(Location $location, ContactInformation $contactInformation);
+    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation);
 
     /**
+     * @param Institution $institution
      * @return void
      */
-    public function retractRegistrationAuthority();
+    public function retractRegistrationAuthority(Institution $institution);
 
     /**
      * @param Locale $preferredLocale

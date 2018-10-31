@@ -23,6 +23,8 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
+use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
+use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -101,9 +103,22 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $configService;
 
+    /**
+     * @var InstitutionConfigurationRepository
+     */
+    private $institutionConfigurationRepositoryMock;
+
+    /**
+     * @var InstitutionConfiguration
+     */
+    private $institutionConfiguration;
+
     public function setUp()
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
+        $this->institutionConfigurationRepositoryMock = m::mock(InstitutionConfigurationRepository::class);
+        $this->institutionConfiguration = m::mock(InstitutionConfiguration::class);
+
         parent::setUp();
     }
 
@@ -117,6 +132,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
 
+        $this->institutionConfigurationRepositoryMock
+            ->shouldReceive('load')
+            ->andReturn($this->institutionConfiguration);
+
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
@@ -128,7 +147,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->allowedSecondFactorListServiceMock,
             $this->secondFactorTypeService,
             $this->configService,
-            1
+            $this->institutionConfigurationRepositoryMock
         );
     }
 
@@ -1075,7 +1094,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->scenario
             ->given([])
             ->when($createCommand)
-            ->then([$createdEvent]);
+            ->then([
+                $createdEvent,
+            ]);
     }
 
     /**

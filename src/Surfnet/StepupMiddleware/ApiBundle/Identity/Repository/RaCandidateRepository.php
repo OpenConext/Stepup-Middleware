@@ -18,22 +18,48 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RaCandidateRepository extends EntityRepository
 {
+    /**
+     * @var InstitutionAuthorizationRepositoryFilter
+     */
+    private $authorizationRepositoryFilter;
+
+    public function __construct(
+        EntityManager $em,
+        Mapping\ClassMetadata $class,
+        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+    ) {
+        parent::__construct($em, $class);
+        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
+    }
+
     /**
      * @param RaCandidate $raCandidate
      * @return void
      */
     public function merge(RaCandidate $raCandidate)
     {
-        $this->getEntityManager()->merge($raCandidate);
+        $raCandidate = $this->getEntityManager()->merge($raCandidate);
+        $this->getEntityManager()->persist($raCandidate);
         $this->getEntityManager()->flush();
     }
 
@@ -51,6 +77,66 @@ class RaCandidateRepository extends EntityRepository
 
         $this->getEntityManager()->remove($raCandidate);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param Institution $institution
+     * @param InstitutionCollection $raInstitutions
+     * @return void
+     */
+    public function removeInstitutionsNotInList(Institution $institution, InstitutionCollection $raInstitutions)
+    {
+        $raCandidates = $this->createQueryBuilder('rac')
+            ->where('rac.raInstitution = :raInstitution')
+            ->andWhere('rac.institution NOT IN (:institutions)')
+            ->setParameter('raInstitution', $institution)
+            ->setParameter('institutions', $raInstitutions->serialize())
+            ->getQuery()
+            ->getResult();
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * @param Institution $raInstitution
+     * @return void
+     */
+    public function removeByRaInstitution(Institution $raInstitution)
+    {
+        $raCandidates = $this->findByRaInstitution($raInstitution);
+
+        if (empty($raCandidates)) {
+            return;
+        }
+
+        $em = $this->getEntityManager();
+        foreach ($raCandidates as $raCandidate) {
+            $em->remove($raCandidate);
+        }
+
+        $em->flush();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @param Institution $raInstitution
+     * @return void
+     */
+    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    {
+        $raCandidate = $this->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
+
+        if (!$raCandidate) {
+            return;
+        }
+        $em = $this->getEntityManager();
+        $em->remove($raCandidate);
+        $em->flush();
     }
 
     /**
@@ -75,9 +161,22 @@ class RaCandidateRepository extends EntityRepository
      */
     public function createSearchQuery(RaCandidateQuery $query)
     {
-        $queryBuilder = $this->createQueryBuilder('rac')
-            ->where('rac.institution = :institution')
-            ->setParameter('institution', $query->institution);
+        $queryBuilder = $this->createQueryBuilder('rac');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'rac.identityId', 'rac.institution', 'iac');
+
+        if ($query->actorInstitution) {
+            $queryBuilder
+                ->andWhere('rac.raInstitution = :raInstitution')
+                ->setParameter('raInstitution', $query->institution);
+        }
+
+        if ($query->institution) {
+            $queryBuilder
+                ->andWhere('rac.institution = :institution')
+                ->setParameter('institution', $query->institution);
+        }
 
         if ($query->commonName) {
             $queryBuilder
@@ -126,5 +225,36 @@ class RaCandidateRepository extends EntityRepository
             ->setParameter('identityId', $identityId)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $identityId
+     * @param Institution $raInstitution
+     * @return null|RaCandidate
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)
+    {
+        return $this->createQueryBuilder('rac')
+            ->where('rac.identityId = :identityId')
+            ->andWhere('rac.raInstitution = :raInstitution')
+            ->setParameter('identityId', $identityId)
+            ->setParameter('raInstitution', $raInstitution)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Institution $raInstitution
+     * @return ArrayCollection|RaCandidate[]
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByRaInstitution(Institution $raInstitution)
+    {
+        return $this->createQueryBuilder('rac')
+            ->where('rac.raInstitution = :raInstitution')
+            ->setParameter('raInstitution', $raInstitution)
+            ->getQuery()
+            ->getResult();
     }
 }

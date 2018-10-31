@@ -30,21 +30,40 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository")
+ *
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_ra_listing_institution", columns={"institution"}),
- *      }
+ *      },
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="idx_ra_listing_unique_identity_institution", columns={"identity_id", "ra_institution"})
+ *     }
  * )
  */
 class RaListing implements JsonSerializable
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    public $id;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string
      */
     public $identityId;
+
+    /**
+     * @ORM\Column(type="institution")
+     *
+     * @var Institution
+     */
+    public $raInstitution;
 
     /**
      * @ORM\Column(type="institution")
@@ -95,7 +114,8 @@ class RaListing implements JsonSerializable
         Email $email,
         AuthorityRole $role,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $raInstitution
     ) {
         if (!is_string($identityId)) {
             throw InvalidArgumentException::invalidType('string', 'id', $identityId);
@@ -109,6 +129,7 @@ class RaListing implements JsonSerializable
         $entry->role               = $role;
         $entry->location           = $location;
         $entry->contactInformation = $contactInformation;
+        $entry->raInstitution      = $raInstitution;
 
         return $entry;
     }
@@ -118,11 +139,12 @@ class RaListing implements JsonSerializable
         return [
             'identity_id'         => $this->identityId,
             'institution'         => (string) $this->institution,
+            'ra_institution'      => (string) $this->raInstitution,
             'common_name'         => (string) $this->commonName,
             'email'               => (string) $this->email,
             'role'                => (string) $this->role,
             'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation
+            'contact_information' => (string) $this->contactInformation,
         ];
     }
 }

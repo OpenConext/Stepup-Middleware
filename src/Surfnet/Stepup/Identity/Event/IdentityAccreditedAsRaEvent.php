@@ -49,12 +49,12 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
     public $contactInformation;
 
     /**
-     * @param IdentityId                $identityId
-     * @param NameId                    $nameId
-     * @param Institution               $institution
+     * @param IdentityId $identityId
+     * @param NameId $nameId
+     * @param Institution $institution
      * @param RegistrationAuthorityRole $role
-     * @param Location                  $location
-     * @param ContactInformation        $contactInformation
+     * @param Location $location
+     * @param ContactInformation $contactInformation
      */
     public function __construct(
         IdentityId $identityId,
@@ -101,7 +101,7 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent
             'institution'                 => (string) $this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
             'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation
+            'contact_information'         => (string) $this->contactInformation,
         ];
     }
 }

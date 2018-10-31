@@ -4,6 +4,7 @@
 **New features**
 * New institution configuration options can be configured (useRa, useRaa and selectRaa) #232 #233
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
+* Update middleware to work with the new Fine Grained AuthorizationContext #246
 
 ## 2.9.1
 **Bugfix**

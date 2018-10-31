@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
-class IdentityAccreditedAsRaaEvent extends IdentityEvent
+class IdentityAccreditedAsRaForInstitutionEvent extends IdentityEvent
 {
     /**
      * @var NameId
@@ -49,12 +49,18 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
     public $contactInformation;
 
     /**
+     * @var Institution
+     */
+    public $raInstitution;
+
+    /**
      * @param IdentityId $identityId
      * @param NameId $nameId
      * @param Institution $institution
      * @param RegistrationAuthorityRole $role
      * @param Location $location
      * @param ContactInformation $contactInformation
+     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,
@@ -62,7 +68,8 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
         Institution $institution,
         RegistrationAuthorityRole $role,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
@@ -70,6 +77,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
         $this->registrationAuthorityRole = $role;
         $this->location                  = $location;
         $this->contactInformation        = $contactInformation;
+        $this->raInstitution             = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -89,7 +97,8 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
             new Institution($data['institution']),
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -102,6 +111,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
             'location'                    => (string) $this->location,
             'contact_information'         => (string) $this->contactInformation,
+            'ra_institution'              => (string) $this->raInstitution,
         ];
     }
 }

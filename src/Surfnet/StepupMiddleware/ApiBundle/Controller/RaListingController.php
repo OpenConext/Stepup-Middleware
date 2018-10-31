@@ -18,8 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -35,16 +38,26 @@ class RaListingController extends Controller
      */
     private $raListingService;
 
+    /**
+     * @var InstitutionRoleSet
+     */
+    private $roleRequirements;
+
     public function __construct(RaListingService $raListingService)
     {
         $this->raListingService = $raListingService;
+
+        $this->roleRequirements = new InstitutionRoleSet(
+            [new InstitutionRole(InstitutionRole::ROLE_SELECT_RAA)]
+        );
     }
 
-    public function getAction($identityId)
+    public function getAction(Request $request, $identityId)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $raListing = $this->raListingService->findByIdentityId(new IdentityId($identityId));
+        $institution = $request->get('institution');
+        $raListing = $this->raListingService->findByIdentityIdAndRaInstitution(new IdentityId($identityId), new Institution($institution));
 
         if ($raListing === null) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));
@@ -53,15 +66,17 @@ class RaListingController extends Controller
         return new JsonResponse($raListing);
     }
 
-    public function searchAction(Request $request, Institution $institution)
+    public function searchAction(Request $request, Institution $actorInstitution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query                 = new RaListingQuery();
-        $query->institution    = $institution;
-        $query->pageNumber     = (int) $request->get('p', 1);
-        $query->orderBy        = $request->get('orderBy');
-        $query->orderDirection = $request->get('orderDirection');
+        $query                   = new RaListingQuery();
+        $query->actorInstitution = $actorInstitution;
+        $query->institution       = $request->get('institution');
+        $query->pageNumber       = (int) $request->get('p', 1);
+        $query->orderBy          = $request->get('orderBy');
+        $query->orderDirection   = $request->get('orderDirection');
+        $query->authorizationContext = new InstitutionAuthorizationContext($query->actorInstitution, $this->roleRequirements);
 
         $searchResults = $this->raListingService->search($query);
 

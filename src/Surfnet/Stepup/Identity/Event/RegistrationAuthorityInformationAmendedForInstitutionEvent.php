@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,19 +24,13 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
-class IdentityAccreditedAsRaaEvent extends IdentityEvent
+class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent
 {
     /**
      * @var NameId
      */
     public $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public $registrationAuthorityRole;
 
     /**
      * @var Location
@@ -49,33 +43,38 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
     public $contactInformation;
 
     /**
+     * @var Institution
+     */
+    public $raInstitution;
+
+    /**
      * @param IdentityId $identityId
-     * @param NameId $nameId
      * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
+     * @param NameId $nameId
      * @param Location $location
      * @param ContactInformation $contactInformation
+     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
+        NameId $nameId,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId                    = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location                  = $location;
-        $this->contactInformation        = $contactInformation;
+        $this->nameId = $nameId;
+        $this->location = $location;
+        $this->contactInformation = $contactInformation;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
@@ -85,23 +84,23 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
     {
         return new self(
             new IdentityId($data['identity_id']),
-            new NameId($data['name_id']),
             new Institution($data['institution']),
-            RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
+            new NameId($data['name_id']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
+            new Institution($data['ra_institution'])
         );
     }
 
     public function serialize()
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'name_id'                     => (string) $this->nameId,
-            'institution'                 => (string) $this->identityInstitution,
-            'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
-            'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation,
+            'identity_id'         => (string) $this->identityId,
+            'institution'         => (string) $this->identityInstitution,
+            'name_id'             => (string) $this->nameId,
+            'location'            => (string) $this->location,
+            'contact_information' => (string) $this->contactInformation,
+            'ra_institution'      => (string) $this->raInstitution,
         ];
     }
 }

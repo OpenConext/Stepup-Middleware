@@ -34,18 +34,36 @@ use Surfnet\Stepup\Identity\Value\NameId;
  *          @ORM\Index(name="idx_ra_candidate_name_id", columns={"name_id"}),
  *          @ORM\Index(name="idxft_ra_candidate_email", columns={"email"}, flags={"FULLTEXT"}),
  *          @ORM\Index(name="idxft_ra_candidate_commonname", columns={"common_name"}, flags={"FULLTEXT"})
- *      }
+ *      },
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="idx_ra_candidate_unique_identity_institution", columns={"identity_id", "ra_institution"})
+ *     }
  * )
  */
 class RaCandidate implements JsonSerializable
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    public $id;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string
      */
     public $identityId;
+
+    /**
+     * @ORM\Column(type="institution")
+     *
+     * @var Institution
+     */
+    public $raInstitution;
 
     /**
      * @ORM\Column(type="institution")
@@ -80,14 +98,16 @@ class RaCandidate implements JsonSerializable
         Institution $institution,
         NameId $nameId,
         CommonName $commonName,
-        Email $email
+        Email $email,
+        Institution $raInstitution
     ) {
-        $candidate              = new self();
-        $candidate->identityId  = (string) $identityId;
-        $candidate->institution = $institution;
-        $candidate->nameId      = $nameId;
-        $candidate->commonName  = $commonName;
-        $candidate->email       = $email;
+        $candidate                = new self();
+        $candidate->identityId    = (string) $identityId;
+        $candidate->institution   = $institution;
+        $candidate->nameId        = $nameId;
+        $candidate->commonName    = $commonName;
+        $candidate->email         = $email;
+        $candidate->raInstitution = $raInstitution;
 
         return $candidate;
     }
@@ -95,11 +115,12 @@ class RaCandidate implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'identity_id' => $this->identityId,
-            'institution' => $this->institution,
-            'common_name' => $this->commonName,
-            'email'       => $this->email,
-            'name_id'     => $this->nameId
+            'identity_id'    => $this->identityId,
+            'institution'    => $this->institution,
+            'common_name'    => $this->commonName,
+            'email'          => $this->email,
+            'name_id'        => $this->nameId,
+            'ra_institution' => $this->raInstitution,
         ];
     }
 }

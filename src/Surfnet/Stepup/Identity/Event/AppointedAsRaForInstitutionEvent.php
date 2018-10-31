@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2018 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,28 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
-class AppointedAsRaEvent extends IdentityEvent
+class AppointedAsRaForInstitutionEvent extends IdentityEvent
 {
     /**
      * @var NameId
      */
     public $nameId;
 
+    /**
+     * @var Institution
+     */
+    public $raInstitution;
+
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId
+        NameId $nameId,
+        Institution $raInstitution
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->nameId = $nameId;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata()
@@ -57,7 +64,8 @@ class AppointedAsRaEvent extends IdentityEvent
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
+            new Institution($data['ra_institution'])
         );
     }
 
@@ -69,7 +77,8 @@ class AppointedAsRaEvent extends IdentityEvent
         return [
             'identity_id'    => (string) $this->identityId,
             'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId
+            'name_id'        => (string) $this->nameId,
+            'ra_institution' => (string) $this->raInstitution,
         ];
     }
 }

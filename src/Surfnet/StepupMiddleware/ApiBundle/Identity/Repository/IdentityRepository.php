@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
@@ -158,5 +159,18 @@ class IdentityRepository extends EntityRepository
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Institution $institution
+     * @return ArrayCollection|Identity[]
+     */
+    public function findByInstitution(Institution $institution)
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.institution = :institution')
+            ->setParameter('institution', $institution->getInstitution())
+            ->getQuery()
+            ->getResult();
     }
 }

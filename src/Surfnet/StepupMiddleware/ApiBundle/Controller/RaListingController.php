@@ -57,7 +57,7 @@ class RaListingController extends Controller
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $institution = $request->get('institution');
-        $raListing = $this->raListingService->findByIdentityIdAndInstitution(new IdentityId($identityId), new Institution($institution));
+        $raListing = $this->raListingService->findByIdentityIdAndRaInstitution(new IdentityId($identityId), new Institution($institution));
 
         if ($raListing === null) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));

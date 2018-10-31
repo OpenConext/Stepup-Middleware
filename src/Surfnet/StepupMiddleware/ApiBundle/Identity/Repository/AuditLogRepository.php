@@ -55,6 +55,8 @@ class AuditLogRepository extends EntityRepository
     ];
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) - The filtering switch triggers the CyclomaticComplexity, it does
+     *                                                 not actually make the class complex or hard to maintain.
      * @param SecondFactorAuditLogQuery $query
      * @return Query
      */
@@ -77,6 +79,7 @@ class AuditLogRepository extends EntityRepository
             case 'recordedOn':
             case 'actorId':
             case 'actorCommonName':
+            case 'actorInstitution':
                 $queryBuilder->orderBy(
                     sprintf('al.%s', $query->orderBy),
                     $query->orderDirection === 'desc' ? 'DESC' : 'ASC'

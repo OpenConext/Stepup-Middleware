@@ -89,22 +89,28 @@ class RaCandidateProjector extends Projector
         $institutionAuthorizations = $this->institutionAuthorizationRepository
             ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
+        $institutions = [];
         foreach ($institutionAuthorizations as $authorization) {
+            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
+        }
 
-            $institution = new Institution($authorization->institution->getInstitution());
-
+        foreach ($institutions as $institution) {
             if ($this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $institution)) {
                 continue;
             }
 
-            $candidate = RaCandidate::nominate(
-                $event->identityId,
-                $event->identityInstitution,
-                $event->nameId,
-                $event->commonName,
-                $event->email,
-                $institution
-            );
+            // create candidate if not exists
+            $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($event->identityId, $institution);
+            if (!$candidate) {
+                $candidate = RaCandidate::nominate(
+                    $event->identityId,
+                    $event->identityInstitution,
+                    $event->nameId,
+                    $event->commonName,
+                    $event->email,
+                    $institution
+                );
+            }
 
             $this->raCandidateRepository->merge($candidate);
         }
@@ -119,9 +125,14 @@ class RaCandidateProjector extends Projector
         $institutionAuthorizations = $this->institutionAuthorizationRepository
             ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
 
+        $institutions = [];
         foreach ($institutionAuthorizations as $authorization) {
+            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
+        }
 
-            $institution = new Institution($authorization->institution->getInstitution());
+        foreach ($institutions as $institution) {
+
+            $institution = new Institution($institution->getInstitution());
 
             $candidate = RaCandidate::nominate(
                 $event->identityId,
@@ -254,7 +265,7 @@ class RaCandidateProjector extends Projector
             $event->nameId,
             $event->commonName,
             $event->email,
-            $event->raInstitution
+            $event->identityInstitution
         );
 
         $this->raCandidateRepository->merge($candidate);
@@ -267,12 +278,13 @@ class RaCandidateProjector extends Projector
      */
     private function updateInstitutionCandidatesFromCollection(Institution $institution, array $authorizedInstitutions)
     {
-
+        // convert configuration to value institutions
         $raInstitutions = new InstitutionCollection();
         foreach ($authorizedInstitutions as $authorizedInstitution) {
             $raInstitutions->add(new Institution($authorizedInstitution->getInstitution()));
         }
 
+        // Remove candidates from removed institutions
         $this->raCandidateRepository->removeInstitutionsNotInList($institution, $raInstitutions);
 
         // loop through authorized institutions
@@ -284,12 +296,12 @@ class RaCandidateProjector extends Projector
                 $identityId = new IdentityId($identity->id);
 
                 // check if persistent in ra listing
-                if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $institution)) {
+                if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $raInstitution)) {
                     continue;
                 }
 
                 // create candidate if not exists
-                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
+                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
                 if (!$candidate) {
                     $candidate = RaCandidate::nominate(
                         $identityId,
@@ -297,7 +309,7 @@ class RaCandidateProjector extends Projector
                         $identity->nameId,
                         $identity->commonName,
                         $identity->email,
-                        $institution
+                        $raInstitution
                     );
                 }
 

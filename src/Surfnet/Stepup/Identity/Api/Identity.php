@@ -230,12 +230,14 @@ interface Identity extends AggregateRoot
     /**
      * @param Institution $institution
      * @param RegistrationAuthorityRole $role
+     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
-    public function appointAs(Institution $institution, RegistrationAuthorityRole $role);
+    public function appointAs(Institution $institution, RegistrationAuthorityRole $role, InstitutionConfiguration $institutionConfiguration);
 
     /**
-     * @param Location           $location
+     * @param Institution $institution
+     * @param Location $location
      * @param ContactInformation $contactInformation
      * @return void
      */

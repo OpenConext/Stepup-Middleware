@@ -32,8 +32,8 @@ use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedInstitutionAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -652,12 +652,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      *
      * @param Institution $institution
      * @param RegistrationAuthorityRole $role
+     * @param InstitutionConfiguration $institutionConfiguration
      */
-    public function appointAs(Institution $institution, RegistrationAuthorityRole $role)
-    {
+    public function appointAs(
+        Institution $institution,
+        RegistrationAuthorityRole $role,
+        InstitutionConfiguration $institutionConfiguration
+    ) {
         $this->assertNotForgotten();
 
-        if (!$this->registrationAuthorities->exists($institution)) {
+        if (!$institutionConfiguration->isAllowed($role, new ConfigurationInstitution($institution->getInstitution()))) {
             throw new DomainException(
                 'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority for institution'
             );
@@ -670,9 +674,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         if ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA))) {
-            $this->apply(new AppointedInstitutionAsRaEvent($this->id, $this->institution, $this->nameId, $institution));
+            $this->apply(new AppointedAsRaForInstitutionEvent($this->id, $this->institution, $this->nameId, $institution));
         } elseif ($role->equals(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA))) {
-            $this->apply(new AppointedInstitutionAsRaaEvent($this->id, $this->institution, $this->nameId, $institution));
+            $this->apply(new AppointedAsRaaForInstitutionEvent($this->id, $this->institution, $this->nameId, $institution));
         } else {
             throw new DomainException('An Identity can only be appointed as either RA or RAA');
         }
@@ -953,7 +957,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->registrationAuthorities->get($event->raInstitution)->amendInformation($event->location, $event->contactInformation);
     }
 
-    protected function applyAppointedInstitutionAsRaaEvent(AppointedInstitutionAsRaaEvent $event)
+    protected function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event)
     {
         $this->registrationAuthorities->get($event->raInstitution)->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
     }
@@ -1031,9 +1035,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      *
-     * @param AppointedInstitutionAsRaEvent $event
+     * @param AppointedAsRaForInstitutionEvent $event
      */
-    protected function applyAppointedInstitutionAsRaEvent(AppointedInstitutionAsRaEvent $event)
+    protected function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event)
     {
         $this->registrationAuthorities->get($event->identityInstitution)
             ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));

@@ -73,7 +73,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
 
         $identity->accreditWith(
             $role,
-            new Institution($command->institution),
+            new Institution($command->raInstitution),
             new Location($command->location),
             new ContactInformation($command->contactInformation),
             $institutionConfiguration
@@ -101,9 +101,11 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($identity->getInstitution()->getInstitution()));
+
         $newRole = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 
-        $identity->appointAs(new Institution($command->raInstitution), $newRole);
+        $identity->appointAs(new Institution($command->raInstitution), $newRole, $institutionConfiguration);
 
         $this->repository->save($identity);
     }

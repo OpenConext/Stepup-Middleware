@@ -202,6 +202,7 @@ URL: `http://middleware.tld/verified-second-factors?{actorInstitution}&{identity
 Method: GET
 Request parameters:
 - actorInstitution: (required) string, the institution as scope determination
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 - IdentityId: (optional) UUIDv4 of the identity to search for
 - secondFactorId: (optional) UUIDv4 of the second factor to search for
 - registrationCode: (optional) string, registration code to search for

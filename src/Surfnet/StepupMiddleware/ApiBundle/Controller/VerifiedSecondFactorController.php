@@ -22,7 +22,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
@@ -44,9 +44,17 @@ class VerifiedSecondFactorController extends Controller
      */
     private $roleRequirements;
 
-    public function __construct(SecondFactorService $secondFactorService)
-    {
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationService;
+
+    public function __construct(
+        SecondFactorService $secondFactorService,
+        InstitutionAuthorizationService $authorizationService
+    ) {
         $this->secondFactorService = $secondFactorService;
+        $this->institutionAuthorizationService = $authorizationService;
 
         $this->roleRequirements = new InstitutionRoleSet(
             [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
@@ -80,9 +88,16 @@ class VerifiedSecondFactorController extends Controller
             $query->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
         }
 
+        $actorId = new IdentityId($request->get('actorId'));
+
+        $query->actorInstitution = $actorInstitution;
         $query->registrationCode = $request->get('registrationCode');
         $query->pageNumber       = (int) $request->get('p', 1);
-        $query->authorizationContext = new InstitutionAuthorizationContext($actorInstitution, $this->roleRequirements);
+        $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
+            $actorInstitution,
+            $this->roleRequirements,
+            $actorId
+        );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
 

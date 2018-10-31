@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2018 SURFnet bv
+ * Copyright 2018 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
@@ -34,15 +33,24 @@ class InstitutionAuthorizationContext implements InstitutionAuthorizationContext
     private $roleRequirements;
 
     /**
-     * AuthorizationContext constructor.
-     * @param string $actorId
-     * @param string $actorInstitution
-     * @param InstitutionRoleSetInterface $roleRequirements
+     * @var bool
      */
-    public function __construct($actorInstitution, InstitutionRoleSetInterface $roleRequirements)
-    {
+    private $isSraa;
+
+    /**
+     * AuthorizationContext constructor.
+     * @param Institution $actorInstitution
+     * @param InstitutionRoleSetInterface $roleRequirements
+     * @param bool $isSraa describes if the actor is SRAA or not. Default: false
+     */
+    public function __construct(
+        Institution $actorInstitution,
+        InstitutionRoleSetInterface $roleRequirements,
+        $isSraa = false
+    ) {
         $this->actorInstitution = $actorInstitution;
         $this->roleRequirements = $roleRequirements;
+        $this->isSraa = $isSraa;
     }
 
     /**
@@ -59,5 +67,13 @@ class InstitutionAuthorizationContext implements InstitutionAuthorizationContext
     public function getRoleRequirements()
     {
         return $this->roleRequirements;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActorSraa()
+    {
+        return $this->isSraa;
     }
 }

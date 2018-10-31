@@ -76,8 +76,11 @@ class RaListingController extends Controller
             $query->identityId = new IdentityId($request->get('identityId'));
         }
 
+        if ($request->get('institution')) {
+            $query->institution = $request->get('institution');
+        }
+
         $query->actorInstitution = $actorInstitution;
-        $query->institution       = $request->get('institution');
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->orderBy          = $request->get('orderBy');
         $query->orderDirection   = $request->get('orderDirection');

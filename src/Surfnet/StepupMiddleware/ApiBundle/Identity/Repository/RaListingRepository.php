@@ -98,7 +98,7 @@ class RaListingRepository extends EntityRepository
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            ['r.identityId', 'r.institution'],
+            ['r.identityId', 'r.institution', 'r.raInstitution'],
             'r.institution',
             'iac'
         );

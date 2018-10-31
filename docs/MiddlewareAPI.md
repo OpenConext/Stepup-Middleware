@@ -383,6 +383,7 @@ URL: `http://middleware.tld/ra-listing?institution={&orderBy=commonName}{&orderD
 Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination
+- identityId: (optional) string, the identity to load the RA listing items for (from FGA and onwards there can be more than one entry per identity).
 - orderBy: (optional, default `commonName`) string, sorting column; only `commonName` is allowed
 - orderDirection: (optional, default `asc`) string, sorting direction; only `asc` or `desc` allowed.
 

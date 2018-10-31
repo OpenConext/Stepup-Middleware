@@ -109,6 +109,12 @@ class RaListingRepository extends EntityRepository
                 ->setParameter('institution', $query->institution);
         }
 
+        if ($query->identityId) {
+            $queryBuilder
+                ->andWhere('r.identityId = :identityId')
+                ->setParameter('identityId', (string) $query->identityId);
+        }
+
         if (!$query->orderBy) {
             return $queryBuilder->getQuery();
         }

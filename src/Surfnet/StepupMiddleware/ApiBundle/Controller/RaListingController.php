@@ -71,8 +71,16 @@ class RaListingController extends Controller
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $query                   = new RaListingQuery();
+
+        if ($request->get('identityId')) {
+            $query->identityId = new IdentityId($request->get('identityId'));
+        }
+
+        if ($request->get('institution')) {
+            $query->institution = $request->get('institution');
+        }
+
         $query->actorInstitution = $actorInstitution;
-        $query->institution       = $request->get('institution');
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->orderBy          = $request->get('orderBy');
         $query->orderDirection   = $request->get('orderDirection');

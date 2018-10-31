@@ -59,11 +59,24 @@ class RaListingRepository extends EntityRepository
      * @param Institution $raInstitution
      * @return null|RaListing
      */
-    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
     {
         return parent::findOneBy([
             'identityId' => (string) $identityId,
             'raInstitution' => (string) $raInstitution,
+        ]);
+    }
+
+    /**
+     * @param IdentityId $identityId The RA's identity id.
+     * @param Institution $institution
+     * @return RaListing[]
+     */
+    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    {
+        return parent::findBy([
+            'identityId' => (string) $identityId,
+            'institution' => (string) $institution,
         ]);
     }
 
@@ -148,7 +161,7 @@ class RaListingRepository extends EntityRepository
      * @param Institution $raInstitution
      * @return void
      */
-    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
@@ -156,6 +169,23 @@ class RaListingRepository extends EntityRepository
             ->andWhere('ral.raInstitution = :institution')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->setParameter('institution', $raInstitution)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param IdentityId $identityId
+     * @param Institution $institution
+     * @return void
+     */
+    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'ral')
+            ->where('ral.identityId = :identityId')
+            ->andWhere('ral.institution = :institution')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->setParameter('institution', $institution)
             ->getQuery()
             ->execute();
     }

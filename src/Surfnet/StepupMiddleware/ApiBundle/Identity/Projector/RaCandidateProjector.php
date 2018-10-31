@@ -26,6 +26,8 @@ use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
@@ -37,6 +39,7 @@ use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -86,34 +89,13 @@ class RaCandidateProjector extends Projector
      */
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
-        $institutionAuthorizations = $this->institutionAuthorizationRepository
-            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
-
-        $institutions = [];
-        foreach ($institutionAuthorizations as $authorization) {
-            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
-        }
-
-        foreach ($institutions as $institution) {
-            if ($this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $institution)) {
-                continue;
-            }
-
-            // create candidate if not exists
-            $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($event->identityId, $institution);
-            if (!$candidate) {
-                $candidate = RaCandidate::nominate(
-                    $event->identityId,
-                    $event->identityInstitution,
-                    $event->nameId,
-                    $event->commonName,
-                    $event->email,
-                    $institution
-                );
-            }
-
-            $this->raCandidateRepository->merge($candidate);
-        }
+        $this->addCandidateToProjection(
+            $event->identityInstitution,
+            $event->identityId,
+            $event->nameId,
+            $event->commonName,
+            $event->email
+        );
     }
 
     /**
@@ -122,29 +104,13 @@ class RaCandidateProjector extends Projector
      */
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
-        $institutionAuthorizations = $this->institutionAuthorizationRepository
-            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($event->identityInstitution->getInstitution()));
-
-        $institutions = [];
-        foreach ($institutionAuthorizations as $authorization) {
-            $institutions[$authorization->institution->getInstitution()] = new Institution($authorization->institution->getInstitution());
-        }
-
-        foreach ($institutions as $institution) {
-
-            $institution = new Institution($institution->getInstitution());
-
-            $candidate = RaCandidate::nominate(
-                $event->identityId,
-                $event->identityInstitution,
-                $event->nameId,
-                $event->commonName,
-                $event->email,
-                $institution
-            );
-
-            $this->raCandidateRepository->merge($candidate);
-        }
+        $this->addCandidateToProjection(
+            $event->identityInstitution,
+            $event->identityId,
+            $event->nameId,
+            $event->commonName,
+            $event->email
+        );
     }
 
     /**
@@ -201,16 +167,13 @@ class RaCandidateProjector extends Projector
      */
     public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
-        $candidate = RaCandidate::nominate(
-            $event->identityId,
+        $this->addCandidateToProjection(
             $event->identityInstitution,
+            $event->identityId,
             $event->nameId,
             $event->commonName,
-            $event->email,
-            $event->raInstitution
+            $event->email
         );
-
-        $this->raCandidateRepository->merge($candidate);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
@@ -316,6 +279,52 @@ class RaCandidateProjector extends Projector
                 // store
                 $this->raCandidateRepository->merge($candidate);
             }
+        }
+    }
+
+    /**
+     * @param Institution $identityInstitution
+     * @param IdentityId $identityId
+     * @param NameId $identityNameId
+     * @param CommonName $identityCommonName
+     * @param Email $identityEmail
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function addCandidateToProjection(
+        Institution $identityInstitution,
+        IdentityId $identityId,
+        NameId $identityNameId,
+        CommonName $identityCommonName,
+        Email $identityEmail
+    ) {
+        $institutionAuthorizations = $this->institutionAuthorizationRepository
+            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($identityInstitution->getInstitution()));
+
+        $institutions = [];
+        foreach ($institutionAuthorizations as $authorization) {
+            $raInstitutionName = $authorization->institutionRelation->getInstitution();
+            $institutions[$raInstitutionName] = new Institution($raInstitutionName);
+        }
+
+        foreach ($institutions as $institution) {
+            if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $institution)) {
+                continue;
+            }
+
+            // create candidate if not exists
+            $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
+            if (!$candidate) {
+                $candidate = RaCandidate::nominate(
+                    $identityId,
+                    $identityInstitution,
+                    $identityNameId,
+                    $identityCommonName,
+                    $identityEmail,
+                    $institution
+                );
+            }
+
+            $this->raCandidateRepository->merge($candidate);
         }
     }
 }

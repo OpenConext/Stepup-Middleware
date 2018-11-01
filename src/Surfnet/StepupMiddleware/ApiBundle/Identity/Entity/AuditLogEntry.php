@@ -104,6 +104,17 @@ class AuditLogEntry implements JsonSerializable
     public $actorInstitution;
 
     /**
+     * Only in certain situations will this field be filled, It represents the RA institution the
+     * event log entry is targeted at. For example. John Doe is accredited to become RA by Joe from
+     * institution-a. The actual institution John is appointed RA for is stored in this field.
+     *
+     * @ORM\Column(length=255, nullable=true)
+     *
+     * @var string|null
+     */
+    public $raInstitution;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string

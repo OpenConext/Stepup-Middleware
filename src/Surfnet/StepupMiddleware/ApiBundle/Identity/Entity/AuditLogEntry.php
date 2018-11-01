@@ -64,9 +64,14 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent'              => 'bootstrapped',
         'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent'                      => 'accredited_as_raa',
         'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent'                       => 'accredited_as_ra',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent'         => 'accredited_as_ra',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent'        => 'accredited_as_raa',
         'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent'                               => 'appointed_as_raa',
         'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent'                                => 'appointed_as_ra',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent'                 => 'appointed_as_raa',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent'                  => 'appointed_as_ra',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent'               => 'retracted_as_ra',
+        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent' => 'retracted_as_ra',
     ];
 
     /**

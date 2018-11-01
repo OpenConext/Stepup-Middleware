@@ -49,9 +49,14 @@ class AuditLogRepository extends EntityRepository
         'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent',
         'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent',
         'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent',
+        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent',
         'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent',
+        'Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent',
         'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',
+        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent',
     ];
 
     /**

@@ -45,3 +45,13 @@ parameters:
         - Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent
         - Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent
         - Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent
+        # New versions for the IdentityAccreditedAsRaEvent and IdentityAccreditedAsRaaEvent events
+        - Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent
+        - Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent
+        # New versions for the AppointedAsRaEvent and AppointedAsRaa events
+        - Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent
+        - Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent
+        # New versions for the RegistrationAuthorityInformationAmendedEvent
+        - Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent
+        # New versions for the RegistrationAuthorityRetractedEvent event
+        - Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent

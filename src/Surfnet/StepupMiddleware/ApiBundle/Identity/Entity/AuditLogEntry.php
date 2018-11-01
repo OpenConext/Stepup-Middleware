@@ -104,6 +104,17 @@ class AuditLogEntry implements JsonSerializable
     public $actorInstitution;
 
     /**
+     * Only in certain situations will this field be filled, It represents the RA institution the
+     * event log entry is targeted at. For example. John Doe is accredited to become RA by Joe from
+     * institution-a. The actual institution John is appointed RA for is stored in this field.
+     *
+     * @ORM\Column(length=255, nullable=true)
+     *
+     * @var string|null
+     */
+    public $raInstitution;
+
+    /**
      * @ORM\Column(length=36)
      *
      * @var string
@@ -160,6 +171,7 @@ class AuditLogEntry implements JsonSerializable
             'actor_common_name'        => $this->actorCommonName,
             'identity_id'              => $this->identityId,
             'identity_institution'     => (string) $this->identityInstitution,
+            'ra_institution'           => (string) $this->raInstitution,
             'second_factor_id'         => $this->secondFactorId,
             'second_factor_type'       => $this->secondFactorType ? (string) $this->secondFactorType : null,
             'second_factor_identifier' => $this->secondFactorIdentifier,

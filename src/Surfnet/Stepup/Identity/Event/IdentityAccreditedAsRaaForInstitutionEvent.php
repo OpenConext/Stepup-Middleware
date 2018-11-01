@@ -84,6 +84,7 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent
         $metadata                      = new Metadata();
         $metadata->identityId          = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->raInstitution       = $this->raInstitution;
 
         return $metadata;
     }

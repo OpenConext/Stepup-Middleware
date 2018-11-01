@@ -31,6 +31,11 @@ final class Metadata
     public $identityInstitution;
 
     /**
+     * @var \Surfnet\Stepup\Identity\Value\Institution
+     */
+    public $raInstitution;
+
+    /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId|null
      */
     public $secondFactorId;

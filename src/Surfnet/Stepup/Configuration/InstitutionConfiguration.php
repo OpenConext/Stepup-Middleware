@@ -469,19 +469,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     }
 
     /**
-     * Check if role is allowed
+     * Check if role from institution is allowed to accredit roles
      *
-     * @param RegistrationAuthorityRole $role
      * @param Institution $institution
      * @return bool
      */
-    public function isAllowed(RegistrationAuthorityRole $role, Institution $institution)
+    public function isInstitutionAllowedToAccreditRoles(Institution $institution)
     {
-        if ($role->isRa() && $this->useRaOption->hasInstitution($institution)) {
-            return true;
-        }
-
-        if ($role->isRaa() && $this->useRaaOption->hasInstitution($institution)) {
+        if ($this->selectRaaOption->hasInstitution($institution, $this->institution)) {
             return true;
         }
 

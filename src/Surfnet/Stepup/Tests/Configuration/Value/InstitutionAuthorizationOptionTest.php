@@ -162,7 +162,7 @@ class InstitutionAuthorizationOptionTest extends TestCase
         }
         $option = InstitutionAuthorizationOption::fromInstitutions(InstitutionRole::useRa(), $this->institution, $list);
 
-        $this->assertEquals($expectation, $option->hasInstitution($institution));
+        $this->assertEquals($expectation, $option->hasInstitution($institution, $this->institution));
     }
 
 

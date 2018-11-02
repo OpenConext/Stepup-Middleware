@@ -586,8 +586,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $this->assertNotForgotten();
 
-        if (!$institutionConfiguration->isAllowed($role, new ConfigurationInstitution($institution->getInstitution()))) {
-            throw new DomainException('An Identity may only be accredited with configured institutions');
+        if (!$institutionConfiguration->isInstitutionAllowedToAccreditRoles(new ConfigurationInstitution($institution->getInstitution()))) {
+            throw new DomainException('An Identity may only be accredited by configured institutions.');
         }
 
         if (!$this->vettedSecondFactors->count()) {
@@ -661,7 +661,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ) {
         $this->assertNotForgotten();
 
-        if (!$institutionConfiguration->isAllowed($role, new ConfigurationInstitution($institution->getInstitution()))) {
+        if (!$institutionConfiguration->isInstitutionAllowedToAccreditRoles(new ConfigurationInstitution($institution->getInstitution()))) {
             throw new DomainException(
                 'Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority for institution'
             );

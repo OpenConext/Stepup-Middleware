@@ -100,9 +100,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @group                    command-handler
      * @group                    ra-command-handler
      * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity may only be accredited with configured institutions
+     * @expectedExceptionMessage An Identity may only be accredited by configured institutions
      */
-    public function an_identity_cannot_be_accredited_for_another_institution_than_its_own()
+    public function an_identity_cannot_be_accredited_for_another_institution_than_configured()
     {
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
@@ -121,7 +121,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(false);
 
         $this->scenario
@@ -173,7 +173,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -218,7 +218,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -332,7 +332,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $raInstitution        = new Institution($command->raInstitution);
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -398,7 +398,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -584,7 +584,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $commonName           = new CommonName('Henk Westbroek');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -627,7 +627,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $raInstitution        = new Institution($command->raInstitution);
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -694,7 +694,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -800,7 +800,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -867,7 +867,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(true);
 
         $this->scenario
@@ -935,7 +935,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $secondFactorPublicId = new YubikeyPublicId('8329283834');
 
         $this->institutionConfiguration
-            ->shouldReceive('isAllowed')
+            ->shouldReceive('isInstitutionAllowedToAccreditRoles')
             ->andReturn(false);
 
         $this->scenario

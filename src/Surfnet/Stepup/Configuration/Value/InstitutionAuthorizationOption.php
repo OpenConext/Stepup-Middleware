@@ -182,11 +182,12 @@ final class InstitutionAuthorizationOption implements JsonSerializable
 
     /**
      * @param Institution $institution
+     * @param Institution $default
      * @return bool
      */
-    public function hasInstitution(Institution $institution)
+    public function hasInstitution(Institution $institution, Institution $default)
     {
-        $institutions = $this->getInstitutions($institution);
+        $institutions = $this->getInstitutions($default);
         $list = array_map(
             function (Institution $institution) {
                 return $institution->getInstitution();

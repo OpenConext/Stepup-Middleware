@@ -145,7 +145,7 @@ class RaListingProjector extends Projector
 
     public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
-        $this->raListingRepository->removeByIdentityIdAndInstitution($event->identityId, $event->raInstitution);
+        $this->raListingRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
     }
 
 
@@ -211,7 +211,7 @@ class RaListingProjector extends Projector
         RegistrationAuthorityInformationAmendedEvent $event
     ) {
         /** @var RaListing $raListing */
-        $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
+        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->identityInstitution);
 
         if (!$raListing) {
             throw new RuntimeException(

@@ -1,19 +1,22 @@
 # Changelog
 
-## Develop
-**New features**
-* The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
-
-## FGA (fine grained authorization)
+## 3.0.0 FGA (fine grained authorization)
 The new fine grained authorization logic will allow Ra's from other institutions to accredidate RA's on behalf of another organisation.
 This is determined based on the institution configuration.
 https://github.com/OpenConext/Stepup-Deploy/wiki/rfc-fine-grained-authorization/b6852587baee698cccae7ebc922f29552420a296
 
+**New features**
 * New institution configuration options can be configured (useRa, useRaa and selectRaa) #232 #233
 * Update the institution configuration projections with the new FGA settings #235 #236
 * Update middleware to work with the new Fine Grained AuthorizationContext #239 #240 #241 #242 #243 #244 #245 #248 #249 #250
 * Update identity aggregate root to enhance the bounded context with RA info for multiple institutions #246 #247 #251 #254
 * Update auditlog to enhance the logs with additional ra institution data #252 #253
+* The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
+
+**Backwards compatibility breaking changes**
+The introduction of the FGA changes resulted in new versions of serveral events. This complicates reverting to an onlder version of Stepup-Middleware after applying one of these new events. Also, existing projections have been updated (ra_listing and ra_candidates) introducing further complications when rolling back to a previous version.
+
+See individual stories and commits for more details.
 
 ## 2.9.1
 **Bugfix**

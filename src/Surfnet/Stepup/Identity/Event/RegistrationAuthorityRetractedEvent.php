@@ -27,6 +27,9 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
+/**
+ * @deprecated This event is superseded by the RegistrationAuthorityRetractedForInstitutionEvent because an RA institution was needed
+ */
 class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable
 {
     /**

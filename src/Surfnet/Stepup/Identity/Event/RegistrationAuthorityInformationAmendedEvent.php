@@ -25,6 +25,9 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 
+/**
+ * @deprecated This event is superseded by the RegistrationAuthorityInformationAmendedEvent because an RA institution was needed
+ */
 class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
 {
     /**
@@ -48,7 +51,6 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent
      * @param NameId $nameId
      * @param Location $location
      * @param ContactInformation $contactInformation
-     * @param Institution $raInstitution
      */
     public function __construct(
         IdentityId $identityId,

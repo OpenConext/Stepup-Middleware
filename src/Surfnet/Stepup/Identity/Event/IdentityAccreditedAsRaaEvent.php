@@ -26,6 +26,10 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
+
+/**
+ * @deprecated This event is superseded by the IdentityAccreditedAsRaaForInstitutionEvent because an RA institution was needed
+ */
 class IdentityAccreditedAsRaaEvent extends IdentityEvent
 {
     /**

@@ -23,6 +23,9 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
+/**
+ * @deprecated This event is superseded by the AppointedAsRaForInstitutionEvent because an RA institution was needed
+ */
 class AppointedAsRaEvent extends IdentityEvent
 {
     /**

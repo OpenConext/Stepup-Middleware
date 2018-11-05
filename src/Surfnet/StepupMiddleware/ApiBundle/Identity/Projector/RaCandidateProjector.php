@@ -259,12 +259,12 @@ class RaCandidateProjector extends Projector
                 $identityId = new IdentityId($identity->id);
 
                 // check if persistent in ra listing
-                if ($this->raListingRepository->findByIdentityIdAndInstitution($identityId, $raInstitution)) {
+                if ($this->raListingRepository->findByIdentityIdAndRaInstitution($identityId, $institution)) {
                     continue;
                 }
 
                 // create candidate if not exists
-                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
+                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
                 if (!$candidate) {
                     $candidate = RaCandidate::nominate(
                         $identityId,
@@ -272,7 +272,7 @@ class RaCandidateProjector extends Projector
                         $identity->nameId,
                         $identity->commonName,
                         $identity->email,
-                        $raInstitution
+                        $institution
                     );
                 }
 

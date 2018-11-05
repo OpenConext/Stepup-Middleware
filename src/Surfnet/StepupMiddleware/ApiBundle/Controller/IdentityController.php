@@ -66,17 +66,20 @@ class IdentityController extends Controller
         return new JsonResponse($identity);
     }
 
-    public function collectionAction(Request $request, Institution $institution)
+    public function collectionAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $query = new IdentityQuery();
-        $query->institution = $institution;
+        $query->institution = $request->get('institution');
         $query->nameId = $request->get('NameID');
         $query->commonName = $request->get('commonName');
         $query->email = $request->get('email');
         $query->pageNumber = (int)$request->get('p', 1);
-        $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
+
+        if ($query->institution) {
+            $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
+        }
 
         $paginator = $this->identityService->search($query);
 

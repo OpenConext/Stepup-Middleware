@@ -85,7 +85,7 @@ Request parameters:
 URL: `http://middleware.tld/identity/?insitution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
 Method: GET
 Request parameters:
-- Institution: (required) string, the institution as scope determination
+- Institution: (optional) string, the institution as scope determination
 - NameID: (optional) string, the NameID to search (equality check)
 - commonName: (optional) string, the commonName to match against
 - email: (optional) string, the email to match against

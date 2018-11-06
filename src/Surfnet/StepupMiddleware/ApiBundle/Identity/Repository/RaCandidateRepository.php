@@ -169,7 +169,7 @@ class RaCandidateRepository extends EntityRepository
         if ($query->actorInstitution) {
             $queryBuilder
                 ->andWhere('rac.raInstitution = :raInstitution')
-                ->setParameter('raInstitution', $query->institution);
+                ->setParameter('raInstitution', $query->actorInstitution);
         }
 
         if ($query->institution) {

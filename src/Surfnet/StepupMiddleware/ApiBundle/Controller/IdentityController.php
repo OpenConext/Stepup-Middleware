@@ -78,7 +78,7 @@ class IdentityController extends Controller
         $query->pageNumber = (int)$request->get('p', 1);
 
         if ($query->institution) {
-            $query->authorizationContext = new InstitutionAuthorizationContext($query->institution, $this->roleRequirements);
+            $query->authorizationContext = new InstitutionAuthorizationContext(new Institution($query->institution), $this->roleRequirements);
         }
 
         $paginator = $this->identityService->search($query);

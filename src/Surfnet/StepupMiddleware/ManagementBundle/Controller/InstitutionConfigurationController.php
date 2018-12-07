@@ -40,6 +40,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -84,7 +85,7 @@ final class InstitutionConfigurationController extends Controller
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         InstitutionAuthorizationService $institutionAuthorizationService,
-        DataCollectingValidator $dataCollectingValidator,
+        ValidatorInterface $dataCollectingValidator,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         LoggerInterface $logger,
         TransactionAwarePipeline $pipeline,

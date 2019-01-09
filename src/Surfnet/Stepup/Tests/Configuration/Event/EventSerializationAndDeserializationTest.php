@@ -47,11 +47,8 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -127,10 +124,7 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new UseRaLocationsOption(true),
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
-                    new NumberOfTokensPerIdentityOption(0),
-                    new UseRaOption(null),
-                    new UseRaaOption(null),
-                    new SelectRaaOption(null)
+                    new NumberOfTokensPerIdentityOption(0)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

@@ -9,9 +9,6 @@
 		{
 			"name": "/management/configuration",
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -285,21 +282,6 @@
 		{
 			"name": "/management/institution-configuration",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "secret",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "management",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [
 					{
@@ -340,21 +322,6 @@
 		{
 			"name": "/management/institution-configuration",
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "secret",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "management",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -372,10 +339,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"institution-a.example.com\": {\n    \"use_ra_locations\": true,\n    \"show_raa_contact_information\": true,\n    \"verify_email\": true,\n    \"allowed_second_factors\": [],\n    \"number_of_tokens_per_identity\": 2,\n    \"authorization_settings\": []\n  },\n  \"institution-b.example.com\": {\n    \"use_ra_locations\": false,\n    \"show_raa_contact_information\": false,\n    \"verify_email\": false,\n    \"allowed_second_factors\": [],\n    \"number_of_tokens_per_identity\": 1\n  },\n  \"institution-d.example.com\": {\n    \"use_ra_locations\": true,\n    \"show_raa_contact_information\": true,\n    \"verify_email\": true,\n    \"allowed_second_factors\": [\"yubikey\", \"tiqr\"],\n    \"number_of_tokens_per_identity\": 1\n  }\n}"
+					"raw": "{\n\t\"stepup.example.com\": {\n        \"use_ra_locations\": false,\n        \"show_raa_contact_information\": true,\n        \"verify_email\": true,\n        \"number_of_tokens_per_identity\": 3,\n        \"allowed_second_factors\": []\n    },\n    \"dev.organisation.example\": {\n        \"use_ra_locations\": true, \n        \"show_raa_contact_information\": false,\n        \"verify_email\": true,\n        \"number_of_tokens_per_identity\": 3,\n        \"allowed_second_factors\": []\n    },\n    \"institution-a.nl\": {\n        \"use_ra_locations\": true,\n        \"show_raa_contact_information\": true,\n        \"verify_email\": true,\n        \"number_of_tokens_per_identity\": 0,\n        \"allowed_second_factors\": []\n    },\n    \"institution-b.nl\": {\n        \"use_ra_locations\": true,\n        \"show_raa_contact_information\": true,\n        \"verify_email\": false,\n        \"number_of_tokens_per_identity\": 2,\n        \"allowed_second_factors\": []\n    },\n    \"institution-d.nl\": {\n        \"use_ra_locations\": true,\n        \"show_raa_contact_information\": false,\n        \"verify_email\":false,\n        \"number_of_tokens_per_identity\": 3,\n        \"allowed_second_factors\": [ \"yubikey\", \"tiqr\" ]\n    }\n}"
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/management/institution-configuration?XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/management/institution-configuration",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -386,12 +353,6 @@
 					"path": [
 						"management",
 						"institution-configuration"
-					],
-					"query": [
-						{
-							"key": "XDEBUG_SESSION_START",
-							"value": "PHPSTORM"
-						}
 					]
 				},
 				"description": "POST the institution configuration options to reconfigure\n"

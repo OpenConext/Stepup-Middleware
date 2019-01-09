@@ -1,8 +1,6 @@
 # Changelog
 
 ## Develop
-**New features**
-* New institution configuration options can be configured (useRa, useRaa and selectRaa) #232 #233
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
 
 ## 2.9.1

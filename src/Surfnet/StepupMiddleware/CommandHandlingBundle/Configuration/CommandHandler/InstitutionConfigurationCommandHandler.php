@@ -30,11 +30,8 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\UseRaOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
@@ -102,12 +99,6 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
         $institutionConfiguration->configureShowRaaContactInformationOption(
             new ShowRaaContactInformationOption($command->showRaaContactInformationOption)
         );
-
-        // Configure the authorization options on the aggregate
-        $institutionConfiguration->configureUseRaOption(new UseRaOption($command->useRaOption));
-        $institutionConfiguration->configureUseRaaOption(new UseRaaOption($command->useRaaOption));
-        $institutionConfiguration->configureSelectRaaOption(new SelectRaaOption($command->selectRaaOption));
-
         $institutionConfiguration->updateAllowedSecondFactorList(
             AllowedSecondFactorList::ofTypes($allowedSecondFactors)
         );

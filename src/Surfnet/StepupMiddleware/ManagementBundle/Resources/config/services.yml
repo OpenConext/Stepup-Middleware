@@ -36,7 +36,6 @@ services:
         arguments:
             - "@surfnet_stepup_middleware_api.service.configured_institutions"
             - "@surfnet_stepup.service.second_factor_type"
-            - "@surfnet_stepup_middleware_api.service.whitelist_entry"
         tags:
             - { name: validator.constraint_validator, alias: reconfigure_institution_configuration_structure_validator }
 

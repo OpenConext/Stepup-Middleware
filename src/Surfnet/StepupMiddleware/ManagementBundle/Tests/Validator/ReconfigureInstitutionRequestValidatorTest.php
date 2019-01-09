@@ -18,16 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\ValidReconfigureInstitutionsRequest;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ReconfigureInstitutionRequestValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -85,14 +81,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
 
-        $whitelistedInstitution = WhitelistEntry::createFrom(new IdentityInstitution('surfnet.nl'));
-        $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]));
-
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
-            $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $secondFactorTypeServiceMock
         );
         $validator->initialize($context);
         $validator->validate($reconfigureRequest, new ValidReconfigureInstitutionsRequest);
@@ -139,13 +130,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
-        $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([]));
 
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
-            $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $secondFactorTypeServiceMock
         );
         $validator->initialize($context);
 
@@ -185,13 +173,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             ->andReturn($existingInstitutions);
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
-        $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([]));
 
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
-            $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $secondFactorTypeServiceMock
         );
         $validator->initialize($context);
 
@@ -216,7 +201,6 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         ];
 
         $existingInstitution = ConfiguredInstitution::createFrom(new Institution($institution));
-        $whitelistedInstitution = WhitelistEntry::createFrom(new IdentityInstitution($institution));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock
@@ -228,12 +212,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
-        $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]));
+
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
-            $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $secondFactorTypeServiceMock
         );
         $validator->initialize($context);
         $validator->validate($validRequest, new ValidReconfigureInstitutionsRequest);

@@ -64,19 +64,4 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      * @Assert\NotNull()
      */
     public $allowedSecondFactors;
-
-    /**
-     * @var array|null
-     */
-    public $useRaOption;
-
-    /**
-     * @var array|null
-     */
-    public $useRaaOption;
-
-    /**
-     * @var array|null
-     */
-    public $selectRaaOption;
 }

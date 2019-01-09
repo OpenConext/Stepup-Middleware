@@ -47,7 +47,7 @@ class InstitutionAuthorizationRepositoryFilter
             $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements())
         );
 
-        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->andWhere("{$authorizationAlias}.institutionRelation = :{$this->getInstitutionParameterName($authorizationAlias)}");
         $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
         if (!is_array($groupBy)) {
             $queryBuilder->groupBy($groupBy);
@@ -83,7 +83,7 @@ class InstitutionAuthorizationRepositoryFilter
      */
     private function getInstitutionDql($authorizationAlias, $institutionField)
     {
-        return sprintf('%s.institutionRelation = %s', $authorizationAlias, $institutionField);
+        return sprintf('%s.institution = %s', $authorizationAlias, $institutionField);
     }
 
     /**

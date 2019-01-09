@@ -77,7 +77,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
         $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.id', 'i.institution', 'iacalias');
 
-        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE iacalias.institution = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institution = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE iacalias.institutionRelation = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
         $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
         $this->assertEquals('institution.example.com', $this->queryBuilder->getParameter('iacalias_institution')->getValue());
     }

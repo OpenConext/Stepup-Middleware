@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Exception;
-use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -58,7 +57,7 @@ final class InstitutionConfigurationController extends Controller
     private $institutionAuthorizationService;
 
     /**
-     * @return DataCollectingValidator
+     * @return ValidatorInterface
      */
     private $validator;
 

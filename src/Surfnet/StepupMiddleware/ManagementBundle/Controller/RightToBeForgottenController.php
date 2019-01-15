@@ -23,16 +23,37 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RightToBeForgottenController extends Controller
 {
+    /**
+     * @return TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    /**
+     * @var IdentityService
+     */
+    private $identityService;
+
+    public function __construct(TransactionAwarePipeline $pipeline, IdentityService $identityService)
+    {
+        $this->pipeline = $pipeline;
+        $this->identityService = $identityService;
+    }
+
     public function forgetIdentityAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
@@ -64,9 +85,7 @@ class RightToBeForgottenController extends Controller
      */
     private function handleCommand(Request $request, Command $command)
     {
-        /** @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline $pipeline */
-        $pipeline = $this->get('pipeline');
-        $pipeline->process($command);
+        $this->pipeline->process($command);
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
         $response   = new JsonResponse([
@@ -85,9 +104,8 @@ class RightToBeForgottenController extends Controller
      */
     private function assertMayForget(NameId $nameId, Institution $institution)
     {
-        $identityService = $this->get('surfnet_stepup_middleware_api.service.identity');
         $credentials =
-            $identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);
+            $this->identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);
 
         if ($credentials === null) {
             return;

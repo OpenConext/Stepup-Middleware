@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +27,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class InstitutionConfigurationOptionsController extends Controller
 {
+    /**
+     * @var InstitutionConfigurationOptionsService
+     */
+    private $institutionConfigurationOptionsService;
+
+    /**
+     * @var AllowedSecondFactorListService
+     */
+    private $allowedSecondFactorListService;
+
+    public function __construct(
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        AllowedSecondFactorListService $allowedSecondFactorListService
+    ) {
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
+    }
+
     public function getForInstitutionAction($institutionName)
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA']);
@@ -33,11 +52,11 @@ final class InstitutionConfigurationOptionsController extends Controller
         $institution = new Institution($institutionName);
 
         $institutionConfigurationOptions = $this
-            ->getInstitutionConfigurationOptionsService()
+            ->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
 
         $allowedSecondFactorList = $this
-            ->getAllowedSecondFactorListService()
+            ->allowedSecondFactorListService
             ->getAllowedSecondFactorListFor($institution);
 
         if ($institutionConfigurationOptions === null) {
@@ -47,7 +66,7 @@ final class InstitutionConfigurationOptionsController extends Controller
         }
 
         $numberOfTokensPerIdentity = $this
-            ->getInstitutionConfigurationOptionsService()
+            ->institutionConfigurationOptionsService
             ->getMaxNumberOfTokensFor($institution);
 
         return new JsonResponse([
@@ -58,21 +77,5 @@ final class InstitutionConfigurationOptionsController extends Controller
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
             'allowed_second_factors'       => $allowedSecondFactorList,
         ]);
-    }
-
-    /**
-     * @return InstitutionConfigurationOptionsService
-     */
-    private function getInstitutionConfigurationOptionsService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.institution_configuration_options');
-    }
-
-    /**
-     * @return object|\Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService
-     */
-    private function getAllowedSecondFactorListService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.allowed_second_factor_list');
     }
 }

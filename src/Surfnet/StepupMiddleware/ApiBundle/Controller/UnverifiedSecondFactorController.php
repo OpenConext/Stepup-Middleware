@@ -29,11 +29,21 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnverifiedSecondFactorController extends Controller
 {
+    /**
+     * @var SecondFactorService
+     */
+    private $secondFactorService;
+
+    public function __construct(SecondFactorService $secondFactorService)
+    {
+        $this->secondFactorService = $secondFactorService;
+    }
+
     public function getAction($id)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
-        $secondFactor = $this->getService()->findUnverified(new SecondFactorId($id));
+        $secondFactor = $this->secondFactorService->findUnverified(new SecondFactorId($id));
 
         if ($secondFactor === null) {
             throw new NotFoundHttpException(sprintf("Unverified second factor '%s' does not exist", $id));
@@ -51,16 +61,8 @@ class UnverifiedSecondFactorController extends Controller
         $query->verificationNonce = $request->get('verificationNonce');
         $query->pageNumber        = (int) $request->get('p', 1);
 
-        $paginator = $this->getService()->searchUnverifiedSecondFactors($query);
+        $paginator = $this->secondFactorService->searchUnverifiedSecondFactors($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
-    }
-
-    /**
-     * @return SecondFactorService
-     */
-    private function getService()
-    {
-        return $this->get('surfnet_stepup_middleware_api.service.second_factor');
     }
 }

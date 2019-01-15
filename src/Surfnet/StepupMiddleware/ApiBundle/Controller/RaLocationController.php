@@ -29,6 +29,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaLocationController extends Controller
 {
+    /**
+     * @return RaLocationService
+     */
+    private $raLocationService;
+
+    public function __construct(RaLocationService $raLocationService)
+    {
+        $this->raLocationService = $raLocationService;
+    }
+
     public function searchAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
@@ -38,7 +48,7 @@ final class RaLocationController extends Controller
         $query->orderBy        = $request->get('orderBy', $query->orderBy);
         $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
 
-        $raLocations = $this->getRaLocationService()->search($query);
+        $raLocations = $this->raLocationService->search($query);
         $count       = count($raLocations);
 
         return new JsonCollectionResponse($count, 1, $count, $raLocations);
@@ -49,16 +59,8 @@ final class RaLocationController extends Controller
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $raLocationId = new RaLocationId($request->get('raLocationId'));
-        $raLocation   = $this->getRaLocationService()->findByRaLocationId($raLocationId);
+        $raLocation   = $this->raLocationService->findByRaLocationId($raLocationId);
 
         return new JsonResponse($raLocation);
-    }
-
-    /**
-     * @return RaLocationService
-     */
-    private function getRaLocationService()
-    {
-        return $this->container->get('surfnet_stepup_middleware_api.service.ra_location');
     }
 }

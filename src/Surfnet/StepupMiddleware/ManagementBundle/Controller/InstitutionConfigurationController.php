@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Exception;
-use Liip\FunctionalTestBundle\Validator\DataCollectingValidator;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -38,6 +37,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -50,7 +50,7 @@ final class InstitutionConfigurationController extends Controller
     private $institutionConfigurationOptionsService;
 
     /**
-     * @return DataCollectingValidator
+     * @return ValidatorInterface
      */
     private $validator;
 
@@ -71,7 +71,7 @@ final class InstitutionConfigurationController extends Controller
 
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        DataCollectingValidator $dataCollectingValidator,
+        ValidatorInterface $dataCollectingValidator,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         LoggerInterface $logger,
         TransactionAwarePipeline $pipeline,

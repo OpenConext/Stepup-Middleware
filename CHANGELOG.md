@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.9.3
+**Bugfix**
+* Be less specific in which validator is used in InstitutionConfigurationController, this is correctly configured in the
+  application configuration. This to prevent cache warming issues in production.
+
 ## 2.9.2
 **Improvements**
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable

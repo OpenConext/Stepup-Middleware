@@ -36,4 +36,4 @@ branches:
   only:
     - master
     - develop
-    - feature/fine-grained-authorization
+    - feature/fga-develop-merge

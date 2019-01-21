@@ -47,7 +47,6 @@
         "phpmd/phpmd": "^2.6",
         "phpunit/phpunit": "^5.7",
         "sebastian/exporter": "~2.0",
-        "sensiolabs/security-checker": "^3.0",
         "sebastian/phpcpd": "^2.0",
         "squizlabs/php_codesniffer": "^1.0",
         "symfony/phpunit-bridge": "^3.0",

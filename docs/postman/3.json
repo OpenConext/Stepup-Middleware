@@ -119,6 +119,48 @@
 			"response": []
 		},
 		{
+			"name": "/profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/profile?identityId=c78240b1-612f-49b7-85b7-83eae5f63a85",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"profile"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "c78240b1-612f-49b7-85b7-83eae5f63a85"
+						}
+					]
+				},
+				"description": "Must include an `identityId` GET parameter"
+			},
+			"response": []
+		},
+		{
 			"name": "/unverified-second-factors",
 			"request": {
 				"method": "GET",

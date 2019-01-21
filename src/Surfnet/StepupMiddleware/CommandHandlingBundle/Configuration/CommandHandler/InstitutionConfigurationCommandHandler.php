@@ -70,7 +70,6 @@ class InstitutionConfigurationCommandHandler extends CommandHandler
             );
 
             $institutionConfiguration->rebuild();
-
         } catch (AggregateNotFoundException $exception) {
             $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
         }

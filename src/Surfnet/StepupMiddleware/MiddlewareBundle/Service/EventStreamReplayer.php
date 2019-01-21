@@ -166,7 +166,6 @@ class EventStreamReplayer
 
             throw $e;
         }
-
     }
 
     private function wipeReadTables(OutputInterface $output)

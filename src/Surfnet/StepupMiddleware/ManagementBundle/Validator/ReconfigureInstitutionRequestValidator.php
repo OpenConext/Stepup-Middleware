@@ -286,7 +286,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         foreach ($authorizationSettings as $optionName => $setting) {
             if (in_array($optionName, $acceptedOptions)) {
-
                 // 1. Value must be array
                 Assertion::isArray(
                     $authorizationSettings[$optionName],

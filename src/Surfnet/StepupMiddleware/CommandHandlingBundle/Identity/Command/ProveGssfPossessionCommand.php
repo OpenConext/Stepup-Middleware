@@ -45,8 +45,8 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
     public $secondFactorId;
 
     /**
-     * The SecondFactorType identifier. 
-     * 
+     * The SecondFactorType identifier.
+     *
      * For example in the case of a Tiqr GSSP it would be 'tiqr'.
      *
      * @Assert\NotBlank()

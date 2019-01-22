@@ -172,7 +172,7 @@ This allows the registration of various IdPs and SPs with their respective confi
 It must contain an object with the ```identity_providers``` and ```service_providers``` properties.
 Both must contain an array as value.
 
-#### Service Proveders
+#### Service Providers
 
 Each element in the ```service_providers``` array must be an object and contain the following properties:
 * `entity_id` has a string as value that identifies the IdP that is listed as Authenticating Authority in the SAML assertion.

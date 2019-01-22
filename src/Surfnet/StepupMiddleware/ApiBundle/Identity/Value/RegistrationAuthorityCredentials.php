@@ -57,6 +57,11 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     /**
      * @var bool
      */
+    private $isRa;
+
+    /**
+     * @var bool
+     */
     private $isRaa;
 
     /**
@@ -66,15 +71,18 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
 
     /**
      * @param string $identityId
+     * @param bool   $isRa
      * @param bool   $isRaa
      * @param bool   $isSraa
      */
     private function __construct(
         $identityId,
+        $isRa,
         $isRaa,
         $isSraa
     ) {
         $this->identityId = $identityId;
+        $this->isRa = $isRa;
         $this->isRaa = $isRaa;
         $this->isSraa = $isSraa;
     }
@@ -88,7 +96,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     {
         static::assertEquals($sraa->nameId, $identity->nameId);
 
-        $credentials = new self($identity->id, true, true);
+        $credentials = new self($identity->id, true, true, true);
         $credentials->commonName = $identity->commonName;
 
         return $credentials;
@@ -102,6 +110,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     {
         $credentials = new self(
             $raListing->identityId,
+            $raListing->role->equals(AuthorityRole::ra()),
             $raListing->role->equals(AuthorityRole::raa()),
             false
         );
@@ -153,6 +162,7 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
                 'common_name'         => $this->commonName,
                 'location'            => $this->location,
                 'contact_information' => $this->contactInformation,
+                'is_ra'               => ($this->isRa || $this->isSraa),
                 'is_raa'              => ($this->isRaa || $this->isSraa),
                 'is_sraa'             => $this->isSraa,
             ]
@@ -197,6 +207,14 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     public function getContactInformation()
     {
         return $this->contactInformation;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRa()
+    {
+        return $this->isRa;
     }
 
     /**

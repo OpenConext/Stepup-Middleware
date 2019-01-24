@@ -47,11 +47,11 @@ class RaListingRepository extends EntityRepository
 
     /**
      * @param IdentityId $identityId The RA's identity id.
-     * @return null|RaListing
+     * @return null|RaListing[]
      */
     public function findByIdentityId(IdentityId $identityId)
     {
-        return parent::findOneBy(['identityId' => (string) $identityId]);
+        return parent::findBy(['identityId' => (string) $identityId]);
     }
 
     /**

@@ -163,13 +163,9 @@ class RaCandidateRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('rac');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'rac.identityId', 'rac.institution', 'iac');
-
-        if ($query->actorInstitution) {
-            $queryBuilder
-                ->andWhere('rac.raInstitution = :raInstitution')
-                ->setParameter('raInstitution', $query->actorInstitution);
-        }
+        $queryBuilder
+            ->andWhere('rac.raInstitution = :raInstitution')
+            ->setParameter('raInstitution', $query->authorizationContext->getActorInstitution());
 
         if ($query->institution) {
             $queryBuilder

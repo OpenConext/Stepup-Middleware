@@ -39,7 +39,7 @@ class RaListingService extends AbstractSearchService
 
     /**
      * @param IdentityId $identityId
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
+     * @return null|RaListing[]
      */
     public function findByIdentityId(IdentityId $identityId)
     {

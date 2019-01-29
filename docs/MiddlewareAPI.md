@@ -121,6 +121,34 @@ Request parameters:
 }
 ```
 
+### Profile
+In order to inform RA(A) users about which institutions they are authorized to manage we need profile information.
+The profile endpoint aggregates the identity of the user with the FGA configuration of the institution he/she hails from.
+
+### Request 
+URL: `http://middleware.tld/profile/{identityId}`
+Method: GET
+Request parameters:
+- identityId: UUIDv4 of the identity
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
+
+#### Response
+`200 OK`
+```json
+{
+    "id": "c78240b1-612f-49b7-85b7-83eae5f63a85",
+    "name_id": "39ba648867aa14a873339bb2a3031791ef319894",
+    "institution": "Ibuildings",
+    "email": "info@ibuildings.nl",
+    "common_name": "SRAA Account",
+    "preferred_locale": "en_GB",
+    "is_sraa": false,
+    "authorizations": {
+        "ra": ["institution-a", "institution-b"],
+        "raa": ["institution-a"] 
+    }     
+}
+```
 
 ### Unverified Second Factors - Single Unverified Second Factor
 

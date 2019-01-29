@@ -18,6 +18,14 @@ identity_collection:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+profile:
+    path:     /profile/{identityId}
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Profile:get }
+    methods:  [GET]
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 unverified_second_factors:
     path:     /unverified-second-factors
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:UnverifiedSecondFactor:collection }

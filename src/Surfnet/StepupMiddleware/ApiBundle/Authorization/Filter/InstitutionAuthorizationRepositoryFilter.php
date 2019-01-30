@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
@@ -42,11 +43,9 @@ class InstitutionAuthorizationRepositoryFilter
         $authorizationAlias
     ) {
         $condition = sprintf(
-            '(%s AND (%s)) OR (%s AND (%s))',
-            $this->getInstitutionDql($authorizationAlias, $institutionField),
-            $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements()),
+            '(%s AND (%s))',
             $this->getInstitutionRelationDql($authorizationAlias, $institutionField),
-            $this->getRolesDql($authorizationAlias, new InstitutionRoleSet([InstitutionRole::selectRaa()]))
+            $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements())
         );
 
         $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
@@ -60,6 +59,72 @@ class InstitutionAuthorizationRepositoryFilter
         }
 
         $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$authorizationContext->getActorInstitution());
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Institution $institution
+     * @param $groupBy
+     * @param string $institutionField
+     * @param string $authorizationAlias
+     */
+    public function filterCandidate(
+        QueryBuilder $queryBuilder,
+        Institution $institution,
+        $groupBy,
+        $institutionField,
+        $authorizationAlias
+    ) {
+        $condition = sprintf(
+            '(%s AND (%s))',
+            $this->getInstitutionRelationDql($authorizationAlias, $institutionField),
+            $this->getRolesDql($authorizationAlias, new InstitutionRoleSet([InstitutionRole::selectRaa()]))
+        );
+
+        $queryBuilder->andWhere("{$authorizationAlias}.institutionRelation = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
+        if (!is_array($groupBy)) {
+            $queryBuilder->groupBy($groupBy);
+        } else {
+            foreach ($groupBy as $by) {
+                $queryBuilder->addGroupBy($by);
+            }
+        }
+
+        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$institution);
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param Institution $institution
+     * @param $groupBy
+     * @param string $institutionField
+     * @param string $authorizationAlias
+     */
+    public function filterCandidateReverse(
+        QueryBuilder $queryBuilder,
+        Institution $institution,
+        $groupBy,
+        $institutionField,
+        $authorizationAlias
+    ) {
+        $condition = sprintf(
+            '(%s AND (%s))',
+            $this->getInstitutionRelationDql($authorizationAlias, $institutionField),
+            $this->getRolesDql($authorizationAlias, new InstitutionRoleSet([InstitutionRole::selectRaa()]))
+        );
+
+        $queryBuilder->andWhere("{$authorizationAlias}.institutionRelation = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
+        if (!is_array($groupBy)) {
+            $queryBuilder->groupBy($groupBy);
+        } else {
+            foreach ($groupBy as $by) {
+                $queryBuilder->addGroupBy($by);
+            }
+        }
+
+        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$institution);
     }
 
     /**
@@ -83,20 +148,9 @@ class InstitutionAuthorizationRepositoryFilter
      * @param string $institutionField
      * @return string
      */
-    private function getInstitutionDql($authorizationAlias, $institutionField)
-    {
-        return sprintf('%s.institutionRelation = %s', $authorizationAlias, $institutionField);
-    }
-
-
-    /**
-     * @param string $authorizationAlias
-     * @param string $institutionField
-     * @return string
-     */
     private function getInstitutionRelationDql($authorizationAlias, $institutionField)
     {
-        return sprintf('%s.institution = %s', $authorizationAlias, $institutionField);
+        return sprintf('%s.institutionRelation = %s', $authorizationAlias, $institutionField);
     }
 
     /**

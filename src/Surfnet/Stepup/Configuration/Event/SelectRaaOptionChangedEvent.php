@@ -57,7 +57,7 @@ final class SelectRaaOptionChangedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             $institution,
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRaa(), $data['select_raa_option'])
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), $data['select_raa_option'])
         );
     }
 

@@ -63,6 +63,39 @@ class InstitutionAuthorizationRepositoryFilter
 
     /**
      * @param QueryBuilder $queryBuilder
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
+     * @param $groupBy
+     * @param string $institutionField
+     * @param string $authorizationAlias
+     */
+    public function filterListing(
+        QueryBuilder $queryBuilder,
+        InstitutionAuthorizationContextInterface $authorizationContext,
+        $groupBy,
+        $institutionField,
+        $authorizationAlias
+    ) {
+        $condition = sprintf(
+            '(%s AND (%s))',
+            $this->getInstitutionRelationDql($authorizationAlias, $institutionField),
+            $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements())
+        );
+
+        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
+        if (!is_array($groupBy)) {
+            $queryBuilder->groupBy($groupBy);
+        } else {
+            foreach ($groupBy as $by) {
+                $queryBuilder->addGroupBy($by);
+            }
+        }
+
+        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$authorizationContext->getActorInstitution());
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
      * @param Institution $institution
      * @param $groupBy
      * @param string $institutionField

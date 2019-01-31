@@ -22,6 +22,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Identity\Value\Institution as InstitutionValue;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -77,8 +78,52 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
         $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.id', 'i.institution', 'iacalias');
 
-        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) OR (iacalias.institution = i.institution AND (iacalias.institutionRole = \'select_raa\')) WHERE iacalias.institution = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE iacalias.institution = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
         $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
         $this->assertEquals('institution.example.com', $this->queryBuilder->getParameter('iacalias_institution')->getValue());
     }
+
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context_for_candidates()
+    {
+        $institution = new InstitutionValue('institution.example.com');
+
+        $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
+        $authorizationRepositoryFilter->filterCandidate($this->queryBuilder, $institution, 'i.id', 'i.institution', 'iacalias');
+
+        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'select_raa\')) WHERE iacalias.institutionRelation = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
+        $this->assertEquals('institution.example.com', $this->queryBuilder->getParameter('iacalias_institution')->getValue());
+    }
+
+
+    /**
+     * @test
+     * @group domain
+     */
+    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context_for_listing()
+    {
+        $roleSet = new InstitutionRoleSet([
+            InstitutionRole::useRa(),
+            InstitutionRole::useRaa(),
+        ]);
+
+        $this->mockedAuthorizationContext->method('getRoleRequirements')
+            ->willReturn($roleSet);
+
+        $this->mockedAuthorizationContext->method('getActorInstitution')
+            ->willReturn(new Institution('institution.example.com'));
+
+        $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
+        $authorizationRepositoryFilter->filterListing($this->queryBuilder, $this->mockedAuthorizationContext, 'i.id', 'i.institution', 'iacalias');
+
+        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias.institutionRelation = i.institution AND (iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\')) WHERE iacalias.institution = :iacalias_institution GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
+        $this->assertEquals('institution.example.com', $this->queryBuilder->getParameter('iacalias_institution')->getValue());
+    }
+
 }

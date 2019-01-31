@@ -257,7 +257,7 @@ class RaCandidateRepository extends EntityRepository
             ->orderBy('rac.raInstitution');
 
             // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filterCandidateReverse(
+        $this->authorizationRepositoryFilter->filterCandidate(
             $queryBuilder,
             $raInstitution,
             'rac.raInstitution',

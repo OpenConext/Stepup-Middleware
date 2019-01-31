@@ -67,7 +67,7 @@ class RegistrationAuthorityCommandHandler extends CommandHandler
         /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
-        $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->institution));
+        $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->raInstitution));
 
         $role = $this->assertValidRoleAndConvertIfValid($command->role, $command->UUID);
 

@@ -230,7 +230,7 @@ class RaCandidateProjector extends Projector
         // loop through authorized institutions
         foreach ($raInstitutions as $raInstitution) {
             // add new identities
-            $raSecondFactors = $this->raSecondFactorRepository->findByInstitution($raInstitution->getIstitution());
+            $raSecondFactors = $this->raSecondFactorRepository->findByInstitution($raInstitution->getInstitution());
             foreach ($raSecondFactors as $raSecondFactor) {
                 $identity = $this->identityRepository->find($raSecondFactor->identityId);
                 $identityId = new IdentityId($identity->id);

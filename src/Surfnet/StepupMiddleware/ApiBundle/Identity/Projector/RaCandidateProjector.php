@@ -91,6 +91,38 @@ class RaCandidateProjector extends Projector
     }
 
     /**
+     * @param SecondFactorVettedEvent $event
+     * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->addCandidateToProjection(
+            $event->identityInstitution,
+            $event->identityId,
+            $event->nameId,
+            $event->commonName,
+            $event->email
+        );
+    }
+
+    /**
+     * @param YubikeySecondFactorBootstrappedEvent $event
+     * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    {
+        $this->addCandidateToProjection(
+            $event->identityInstitution,
+            $event->identityId,
+            $event->nameId,
+            $event->commonName,
+            $event->email
+        );
+    }
+
+    /**
      * @param VettedSecondFactorRevokedEvent $event
      * @return void
      */

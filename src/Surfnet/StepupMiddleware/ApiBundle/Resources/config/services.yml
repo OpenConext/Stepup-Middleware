@@ -229,3 +229,4 @@ services:
         arguments:
             - '@surfnet_stepup_middleware_api.service.sraa'
             - '@surfnet_stepup_middleware_api.service.identity'
+            - '@surfnet_stepup_middleware_api.repository.institution_listing'

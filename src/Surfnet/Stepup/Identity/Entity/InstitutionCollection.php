@@ -80,4 +80,12 @@ final class InstitutionCollection
     {
         return count($this->institutions);
     }
+
+    /**
+     * @return InstitutionRole[]
+     */
+    public function institutions()
+    {
+        return $this->institutions;
+    }
 }

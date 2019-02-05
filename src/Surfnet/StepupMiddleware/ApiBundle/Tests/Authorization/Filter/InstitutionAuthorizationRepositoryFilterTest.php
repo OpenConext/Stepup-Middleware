@@ -22,6 +22,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution as InstitutionValue;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -72,17 +73,18 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         $this->mockedAuthorizationContext->method('getRoleRequirements')
             ->willReturn($roleSet);
 
-        $this->mockedAuthorizationContext->method('getIdentityId')
-            ->willReturn(new Institution('aaaaaa-1111-1111'));
+        $this->mockedAuthorizationContext->method('getInstitutions')
+            ->willReturn(new InstitutionCollection([
+                new InstitutionValue('institution-a'),
+                new InstitutionValue('institution-c'),
+            ]));
 
         $authorizationRepositoryFilter = new InstitutionAuthorizationRepositoryFilter();
-        $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.id', 'i.institution', 'iacalias');
+        $authorizationRepositoryFilter->filter($this->queryBuilder, $this->mockedAuthorizationContext, 'i.institution', 'iacalias');
 
-        $this->assertEquals('SELECT FROM institution i INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing iacalias_institution WITH (iacalias_institution.institution = i.institution) INNER JOIN Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing iacalias_listing WITH (iacalias_listing.raInstitution = iacalias_institution.institution) LEFT JOIN Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization iacalias WITH (iacalias_institution.institution = iacalias.institution AND iacalias.institutionRole = \'use_ra\' OR iacalias.institutionRole = \'use_raa\') WHERE 
-            (iacalias_listing.identityId = :iacalias_listing_identityId AND (iacalias_listing.role = \'ra\' OR iacalias_listing.role = \'raa\'))
-             GROUP BY i.id', $this->queryBuilder->getDQL());
+        $this->assertEquals('SELECT FROM institution i WHERE i.institution IN (:iacalias_institutions)', $this->queryBuilder->getDQL());
         $this->assertEquals(1, $this->queryBuilder->getParameters()->count());
-        $this->assertEquals('aaaaaa-1111-1111', $this->queryBuilder->getParameter('iacalias_listing_identityId')->getValue());
+        $this->assertEquals(['institution-a','institution-c'], $this->queryBuilder->getParameter('iacalias_institutions')->getValue());
     }
 
 

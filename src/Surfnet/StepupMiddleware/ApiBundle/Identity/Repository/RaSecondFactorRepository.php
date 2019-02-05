@@ -96,7 +96,12 @@ class RaSecondFactorRepository extends EntityRepository
         // Modify query to filter on authorization
         // The SRAA user does not adhere to the FGA filter rules when searching for tokens
         if (!$query->authorizationContext->isActorSraa()) {
-            $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'sf.id', 'sf.institution', 'iac');
+            $this->authorizationRepositoryFilter->filter(
+                $queryBuilder,
+                $query->authorizationContext,
+                'sf.institution',
+                'iac'
+            );
         }
 
         if ($query->name) {

@@ -25,6 +25,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 
 class InstitutionAuthorizationRepositoryFilter
 {
@@ -42,16 +44,41 @@ class InstitutionAuthorizationRepositoryFilter
         $institutionField,
         $authorizationAlias
     ) {
-        $condition = sprintf(
-            '(%s AND (%s)) OR (%s AND (%s))',
-            $this->getInstitutionDql($authorizationAlias, $institutionField),
-            $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements()),
-            $this->getInstitutionRelationDql($authorizationAlias, $institutionField),
-            $this->getRolesDql($authorizationAlias, new InstitutionRoleSet([InstitutionRole::selectRaa()]))
+
+        $authorizationAliasListing = $authorizationAlias.'_listing';
+        $authorizationAliasInstitution = $authorizationAlias.'_institution';
+
+        $institutionCondition = sprintf(
+            '(%s.institution = %s)',
+            $authorizationAliasInstitution,
+            $institutionField
+        );
+        $listingCondition = sprintf(
+            '(%s.raInstitution = %s.institution)',
+            $authorizationAliasListing,
+            $authorizationAliasInstitution
+        );
+        $authorizationCondition = sprintf(
+            '(%s.institution = %s.institution AND %s)',
+            $authorizationAliasInstitution,
+            $authorizationAlias,
+            $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements())
+
         );
 
-        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
-        $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
+        $whereCondition = sprintf("
+            (%s.identityId = :%s AND (%s))
+            ",
+            $authorizationAliasListing,
+            $this->getParameterName($authorizationAliasListing, 'identityId'),
+            $this->getListingRolesDql($authorizationAliasListing, $authorizationContext->getRoleRequirements())
+        );
+
+        $queryBuilder->innerJoin(InstitutionListing::class, $authorizationAliasInstitution, Join::WITH, $institutionCondition);
+        $queryBuilder->innerJoin(RaListing::class, $authorizationAliasListing, Join::WITH, $listingCondition);
+        $queryBuilder->leftJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $authorizationCondition);
+        $queryBuilder->andWhere($whereCondition);
+
         if (!is_array($groupBy)) {
             $queryBuilder->groupBy($groupBy);
         } else {
@@ -60,7 +87,7 @@ class InstitutionAuthorizationRepositoryFilter
             }
         }
 
-        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$authorizationContext->getActorInstitution());
+        $queryBuilder->setParameter($this->getParameterName($authorizationAliasListing, 'identityId'), (string)$authorizationContext->getIdentityId());
     }
 
     /**
@@ -83,7 +110,7 @@ class InstitutionAuthorizationRepositoryFilter
             $this->getRolesDql($authorizationAlias, $authorizationContext->getRoleRequirements())
         );
 
-        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getParameterName($authorizationAlias, 'institution')}");
         $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
         if (!is_array($groupBy)) {
             $queryBuilder->groupBy($groupBy);
@@ -93,7 +120,7 @@ class InstitutionAuthorizationRepositoryFilter
             }
         }
 
-        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$authorizationContext->getActorInstitution());
+        $queryBuilder->setParameter($this->getParameterName($authorizationAlias, 'institution'), (string)$authorizationContext->getActorInstitution());
     }
 
     /**
@@ -116,7 +143,7 @@ class InstitutionAuthorizationRepositoryFilter
             $this->getRolesDql($authorizationAlias, new InstitutionRoleSet([InstitutionRole::selectRaa()]))
         );
 
-        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getInstitutionParameterName($authorizationAlias)}");
+        $queryBuilder->andWhere("{$authorizationAlias}.institution = :{$this->getParameterName($authorizationAlias, 'institution')}");
         $queryBuilder->innerJoin(InstitutionAuthorization::class, $authorizationAlias, Join::WITH, $condition);
         if (!is_array($groupBy)) {
             $queryBuilder->groupBy($groupBy);
@@ -126,7 +153,7 @@ class InstitutionAuthorizationRepositoryFilter
             }
         }
 
-        $queryBuilder->setParameter($this->getInstitutionParameterName($authorizationAlias), (string)$institution);
+        $queryBuilder->setParameter($this->getParameterName($authorizationAlias, 'institution'), (string)$institution);
     }
 
     /**
@@ -139,6 +166,27 @@ class InstitutionAuthorizationRepositoryFilter
         $keys = array_map(
             function (InstitutionRole $role) use ($authorizationAlias) {
                 return $authorizationAlias.".institutionRole = '{$role->getType()}'";
+            },
+            $roleSet->getRoles()
+        );
+        return implode(' OR ', $keys);
+    }
+
+
+    /**
+     * @param string $authorizationAlias
+     * @param InstitutionRoleSet $roleSet
+     * @return string
+     */
+    private function getListingRolesDql($authorizationAlias, InstitutionRoleSet $roleSet)
+    {
+        $map = [
+            InstitutionRole::ROLE_USE_RA => 'ra',
+            InstitutionRole::ROLE_USE_RAA => 'raa',
+        ];
+        $keys = array_map(
+            function (InstitutionRole $role) use ($authorizationAlias, $map) {
+                return $authorizationAlias . ".role = '{$map[$role->getType()]}'";
             },
             $roleSet->getRoles()
         );
@@ -169,10 +217,11 @@ class InstitutionAuthorizationRepositoryFilter
 
     /**
      * @param $authorizationAlias
+     * @param $name
      * @return string
      */
-    private function getInstitutionParameterName($authorizationAlias)
+    private function getParameterName($authorizationAlias, $name)
     {
-        return "{$authorizationAlias}_institution";
+        return "{$authorizationAlias}_{$name}";
     }
 }

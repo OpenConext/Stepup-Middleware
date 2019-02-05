@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
@@ -42,4 +43,14 @@ interface InstitutionAuthorizationContextInterface
      * @return InstitutionRoleSet
      */
     public function getRoleRequirements();
+
+    /**
+     * @return IdentityId
+     */
+    public function getIdentityId();
+
+    /**
+     * @return bool
+     */
+    public function isActorSraa();
 }

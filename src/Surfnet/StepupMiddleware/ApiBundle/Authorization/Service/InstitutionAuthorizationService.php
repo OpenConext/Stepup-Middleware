@@ -71,6 +71,6 @@ class InstitutionAuthorizationService
         $sraa = $this->sraaService->findByNameId($identity->nameId);
         $isSraa = !is_null($sraa);
 
-        return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $isSraa);
+        return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $actorId, $isSraa);
     }
 }

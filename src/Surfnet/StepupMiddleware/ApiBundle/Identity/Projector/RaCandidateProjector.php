@@ -176,13 +176,16 @@ class RaCandidateProjector extends Projector
      */
     public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
-        $this->addCandidateToProjection(
-            $event->identityInstitution,
+        $candidate = RaCandidate::nominate(
             $event->identityId,
+            $event->identityInstitution,
             $event->nameId,
             $event->commonName,
-            $event->email
+            $event->email,
+            $event->raInstitution
         );
+
+        $this->raCandidateRepository->merge($candidate);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

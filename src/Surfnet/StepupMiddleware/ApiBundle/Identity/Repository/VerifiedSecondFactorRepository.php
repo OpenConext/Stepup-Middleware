@@ -125,7 +125,6 @@ class VerifiedSecondFactorRepository extends EntityRepository
             $this->authorizationRepositoryFilter->filter(
                 $queryBuilder,
                 $query->authorizationContext,
-                'sf.id',
                 'sf.institution',
                 'iac'
             );

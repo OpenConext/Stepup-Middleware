@@ -18,11 +18,17 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
+use Doctrine\ORM\Query\Expr\Join;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
@@ -43,11 +49,19 @@ class InstitutionAuthorizationService
      * @var IdentityService
      */
     private $identityService;
+    /**
+     * @var InstitutionListingRepository
+     */
+    private $institutionListingRepository;
 
-    public function __construct(SraaService $sraaService, IdentityService $identityService)
-    {
+    public function __construct(
+        SraaService $sraaService,
+        IdentityService $identityService,
+        InstitutionListingRepository $institutionListingRepository
+    ) {
         $this->sraaService = $sraaService;
         $this->identityService = $identityService;
+        $this->institutionListingRepository = $institutionListingRepository;
     }
 
     /**
@@ -71,6 +85,8 @@ class InstitutionAuthorizationService
         $sraa = $this->sraaService->findByNameId($identity->nameId);
         $isSraa = !is_null($sraa);
 
-        return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $isSraa);
+        $institutions = $this->institutionListingRepository->getInstitutions($roleRequirements, $actorId);
+
+        return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $institutions, $isSraa);
     }
 }

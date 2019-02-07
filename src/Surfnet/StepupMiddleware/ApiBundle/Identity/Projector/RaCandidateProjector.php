@@ -45,6 +45,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -70,22 +71,29 @@ class RaCandidateProjector extends Projector
      * @var IdentityRepository
      */
     private $identityRepository;
+    /**
+     * @var RaSecondFactorRepository
+     */
+    private $raSecondFactorRepository;
 
     public function __construct(
         RaCandidateRepository $raCandidateRepository,
         RaListingRepository $raListingRepository,
         InstitutionAuthorizationRepository $institutionAuthorizationRepository,
-        IdentityRepository $identityRepository
+        IdentityRepository $identityRepository,
+        RaSecondFactorRepository $raSecondFactorRepository
     ) {
         $this->raCandidateRepository = $raCandidateRepository;
         $this->raListingRepository = $raListingRepository;
         $this->institutionAuthorizationRepository = $institutionAuthorizationRepository;
         $this->identityRepository = $identityRepository;
+        $this->raSecondFactorRepository = $raSecondFactorRepository;
     }
 
     /**
      * @param SecondFactorVettedEvent $event
      * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
@@ -101,6 +109,7 @@ class RaCandidateProjector extends Projector
     /**
      * @param YubikeySecondFactorBootstrappedEvent $event
      * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
     {
@@ -167,13 +176,16 @@ class RaCandidateProjector extends Projector
      */
     public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
     {
-        $this->addCandidateToProjection(
-            $event->identityInstitution,
+        $candidate = RaCandidate::nominate(
             $event->identityId,
+            $event->identityInstitution,
             $event->nameId,
             $event->commonName,
-            $event->email
+            $event->email,
+            $event->raInstitution
         );
+
+        $this->raCandidateRepository->merge($candidate);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
@@ -253,8 +265,9 @@ class RaCandidateProjector extends Projector
         // loop through authorized institutions
         foreach ($raInstitutions as $raInstitution) {
             // add new identities
-            $identities = $this->identityRepository->findByInstitution($raInstitution);
-            foreach ($identities as $identity) {
+            $raSecondFactors = $this->raSecondFactorRepository->findByInstitution($raInstitution->getInstitution());
+            foreach ($raSecondFactors as $raSecondFactor) {
+                $identity = $this->identityRepository->find($raSecondFactor->identityId);
                 $identityId = new IdentityId($identity->id);
 
                 // check if persistent in ra listing

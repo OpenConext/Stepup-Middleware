@@ -163,13 +163,13 @@ class RaCandidateRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('rac');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'rac.identityId', 'rac.institution', 'iac');
-
-        if ($query->actorInstitution) {
-            $queryBuilder
-                ->andWhere('rac.raInstitution = :raInstitution')
-                ->setParameter('raInstitution', $query->actorInstitution);
-        }
+        $this->authorizationRepositoryFilter->filterCandidate(
+            $queryBuilder,
+            $query->authorizationContext->getActorInstitution(),
+            'rac.identityId',
+            'rac.raInstitution',
+            'iac'
+        );
 
         if ($query->institution) {
             $queryBuilder
@@ -241,6 +241,31 @@ class RaCandidateRepository extends EntityRepository
             ->setParameter('raInstitution', $raInstitution)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+
+    /**
+     * @param string $identityId
+     * @param Institution $raInstitution
+     * @return RaCandidate[]
+     */
+    public function findAllRaasByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)
+    {
+        $queryBuilder = $this->createQueryBuilder('rac')
+            ->where('rac.identityId = :identityId')
+            ->setParameter('identityId', $identityId)
+            ->orderBy('rac.raInstitution');
+
+            // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filterCandidate(
+            $queryBuilder,
+            $raInstitution,
+            'rac.raInstitution',
+            'rac.raInstitution',
+            'iac'
+        );
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**

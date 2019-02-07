@@ -69,6 +69,16 @@ class RaSecondFactorRepository extends EntityRepository
         return parent::findBy(['identityId' => $identityId]);
     }
 
+
+    /**
+     * @param string $institution
+     * @return RaSecondFactor[]
+     */
+    public function findByInstitution($institution)
+    {
+        return parent::findBy(['institution' => $institution]);
+    }
+
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
      *                                               below complex or hard to maintain.
@@ -84,7 +94,15 @@ class RaSecondFactorRepository extends EntityRepository
             ->createQueryBuilder('sf');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'sf.id', 'sf.institution', 'iac');
+        // The SRAA user does not adhere to the FGA filter rules when searching for tokens
+        if (!$query->authorizationContext->isActorSraa()) {
+            $this->authorizationRepositoryFilter->filter(
+                $queryBuilder,
+                $query->authorizationContext,
+                'sf.institution',
+                'iac'
+            );
+        }
 
         if ($query->name) {
             $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', sprintf('%%%s%%', $query->name));

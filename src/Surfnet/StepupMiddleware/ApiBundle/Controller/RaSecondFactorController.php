@@ -19,8 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
@@ -40,14 +41,21 @@ final class RaSecondFactorController extends Controller
      * @var InstitutionRoleSet
      */
     private $roleRequirements;
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $authorizationService;
 
-    public function __construct(RaSecondFactorService $raSecondFactorService)
-    {
+    public function __construct(
+        RaSecondFactorService $raSecondFactorService,
+        InstitutionAuthorizationService $authorizationService
+    ) {
         $this->raSecondFactorService = $raSecondFactorService;
 
         $this->roleRequirements = new InstitutionRoleSet(
             [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
         );
+        $this->authorizationService = $authorizationService;
     }
 
     public function collectionAction(Request $request, Institution $actorInstitution)
@@ -74,11 +82,13 @@ final class RaSecondFactorController extends Controller
 
     /**
      * @param Request $request
-     * @param Institution $institution
+     * @param Institution $actorInstitution
      * @return RaSecondFactorQuery
      */
     private function buildRaSecondFactorQuery(Request $request, Institution $actorInstitution)
     {
+        $actorId = new IdentityId($request->get('actorId'));
+
         $query = new RaSecondFactorQuery();
         $query->actorInstitution = $actorInstitution;
         $query->pageNumber = (int)$request->get('p', 1);
@@ -90,7 +100,11 @@ final class RaSecondFactorController extends Controller
         $query->status = $request->get('status');
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
-        $query->authorizationContext = new InstitutionAuthorizationContext($actorInstitution, $this->roleRequirements);
+        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorInstitution,
+            $this->roleRequirements,
+            $actorId
+        );
 
         return $query;
     }

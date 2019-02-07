@@ -53,13 +53,12 @@ class RaCandidateService extends AbstractSearchService
     /**
      * @param string $identityId
      * @param Institution $institution
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate[]
      */
     public function findByIdentityIdAndRaInstitution($identityId, Institution $institution)
     {
-        $raCandidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
+        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityIdAndRaInstitution($identityId, $institution);
 
-        return $raCandidate;
+        return $raCandidates;
     }
 }

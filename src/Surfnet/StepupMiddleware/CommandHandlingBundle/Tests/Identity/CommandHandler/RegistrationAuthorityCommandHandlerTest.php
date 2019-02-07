@@ -271,6 +271,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'A role that does not exist';
         $command->location           = 'Somewhere behind you';
         $command->contactInformation = 'Call me Maybe';
+        $command->raInstitution      = 'RA institution';
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);
@@ -745,6 +746,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
         $command->role               = 'sraa';
         $command->location           = 'somewhere';
         $command->contactInformation = 'Call me maybe';
+        $command->raInstitution      = 'Babelfish Inc.';
+
 
         $identityId           = new IdentityId($command->identityId);
         $institution          = new Institution($command->institution);

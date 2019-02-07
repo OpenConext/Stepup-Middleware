@@ -76,12 +76,6 @@ class IdentityRepository extends EntityRepository
     ) {
         $queryBuilder = $this->createQueryBuilder('i');
 
-        // If no institution context is provided, we are not able to query with authorization context
-        if ($query->authorizationContext) {
-            // Modify query to filter on authorization
-            $this->authorizationRepositoryFilter->filter($queryBuilder, $query->authorizationContext, 'i.id', 'i.institution', 'iac');
-        }
-
         if ($query->institution) {
             $queryBuilder
                 ->andWhere('i.institution = :institution')

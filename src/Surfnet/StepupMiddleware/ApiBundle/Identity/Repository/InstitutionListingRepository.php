@@ -19,8 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 
 class InstitutionListingRepository extends EntityRepository
 {
@@ -45,5 +52,47 @@ class InstitutionListingRepository extends EntityRepository
         $listing = InstitutionListing::createFrom($institution);
 
         $this->save($listing);
+    }
+
+    /**
+     * @param InstitutionRoleSet $roleRequirements
+     * @param IdentityId $actorId
+     * @return InstitutionCollection
+     */
+    public function getInstitutions(InstitutionRoleSet $roleRequirements, IdentityId $actorId) {
+        $qb = $this->createQueryBuilder('i')
+            ->select("a.institution")
+            ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
+            ->leftJoin(InstitutionAuthorization::class, 'a', Join::WITH, "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)")
+            ->where("r.identityId = :identityId AND r.role IN(:roles)")
+            ->groupBy("a.institution");
+
+
+        $qb->setParameter('identityId', (string)$actorId);
+        $qb->setParameter('authorizationRoles', $this->getAuthorizationRoles($roleRequirements, [InstitutionRole::ROLE_USE_RA => InstitutionRole::ROLE_USE_RA, InstitutionRole::ROLE_USE_RAA => InstitutionRole::ROLE_USE_RAA]));
+        $qb->setParameter('roles', $this->getAuthorizationRoles($roleRequirements, [InstitutionRole::ROLE_USE_RA => 'ra', InstitutionRole::ROLE_USE_RAA => 'raa']));
+
+        $institutions = $qb->getQuery()->getArrayResult();
+
+        $result = new InstitutionCollection();
+        foreach ($institutions as $institution) {
+            $result->add(new Institution((string)$institution['institution']));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param InstitutionRoleSet $roleRequirements
+     * @param array $map
+     * @return array
+     */
+    private function getAuthorizationRoles(InstitutionRoleSet $roleRequirements, array $map)
+    {
+        $result = [];
+        foreach ($roleRequirements->getRoles() as $role) {
+            $result[] = $map[(string)$role];
+        }
+        return $result;
     }
 }

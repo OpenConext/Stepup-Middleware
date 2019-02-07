@@ -89,5 +89,4 @@ class InstitutionAuthorizationService
 
         return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $institutions, $isSraa);
     }
-
 }

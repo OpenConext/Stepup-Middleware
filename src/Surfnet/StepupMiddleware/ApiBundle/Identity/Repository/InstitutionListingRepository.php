@@ -59,18 +59,36 @@ class InstitutionListingRepository extends EntityRepository
      * @param IdentityId $actorId
      * @return InstitutionCollection
      */
-    public function getInstitutions(InstitutionRoleSet $roleRequirements, IdentityId $actorId) {
+    public function getInstitutions(InstitutionRoleSet $roleRequirements, IdentityId $actorId)
+    {
         $qb = $this->createQueryBuilder('i')
             ->select("a.institution")
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
-            ->leftJoin(InstitutionAuthorization::class, 'a', Join::WITH, "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)")
+            ->leftJoin(
+                InstitutionAuthorization::class,
+                'a',
+                Join::WITH,
+                "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)"
+            )
             ->where("r.identityId = :identityId AND r.role IN(:roles)")
             ->groupBy("a.institution");
 
 
         $qb->setParameter('identityId', (string)$actorId);
-        $qb->setParameter('authorizationRoles', $this->getAuthorizationRoles($roleRequirements, [InstitutionRole::ROLE_USE_RA => InstitutionRole::ROLE_USE_RA, InstitutionRole::ROLE_USE_RAA => InstitutionRole::ROLE_USE_RAA]));
-        $qb->setParameter('roles', $this->getAuthorizationRoles($roleRequirements, [InstitutionRole::ROLE_USE_RA => 'ra', InstitutionRole::ROLE_USE_RAA => 'raa']));
+        $qb->setParameter(
+            'authorizationRoles',
+            $this->getAuthorizationRoles(
+                $roleRequirements,
+                [InstitutionRole::ROLE_USE_RA => InstitutionRole::ROLE_USE_RA, InstitutionRole::ROLE_USE_RAA => InstitutionRole::ROLE_USE_RAA]
+            )
+        );
+        $qb->setParameter(
+            'roles',
+            $this->getAuthorizationRoles(
+                $roleRequirements,
+                [InstitutionRole::ROLE_USE_RA => 'ra', InstitutionRole::ROLE_USE_RAA => 'raa']
+            )
+        );
 
         $institutions = $qb->getQuery()->getArrayResult();
 

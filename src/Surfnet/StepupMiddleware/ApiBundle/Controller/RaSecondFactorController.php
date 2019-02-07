@@ -100,7 +100,11 @@ final class RaSecondFactorController extends Controller
         $query->status = $request->get('status');
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
-        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext($actorInstitution, $this->roleRequirements, $actorId);
+        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorInstitution,
+            $this->roleRequirements,
+            $actorId
+        );
 
         return $query;
     }

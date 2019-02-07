@@ -87,7 +87,10 @@ class InstitutionAuthorizationRepositoryFilter
             }
         }
 
-        $queryBuilder->setParameter($this->getParameterName($authorizationAlias, 'institution'), (string)$authorizationContext->getActorInstitution());
+        $queryBuilder->setParameter(
+            $this->getParameterName($authorizationAlias, 'institution'),
+            (string)$authorizationContext->getActorInstitution()
+        );
     }
 
     /**

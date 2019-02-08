@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
-
 class IdentityQuery extends AbstractQuery
 {
     /**
@@ -41,9 +39,4 @@ class IdentityQuery extends AbstractQuery
      * @var string
      */
     public $email;
-
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
-    public $authorizationContext;
 }

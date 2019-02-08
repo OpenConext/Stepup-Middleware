@@ -95,11 +95,10 @@ class RaListingRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('r');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filterListing(
+        $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            ['r.identityId', 'r.institution', 'r.raInstitution'],
-            'r.institution',
+            'r.raInstitution',
             'iac'
         );
 

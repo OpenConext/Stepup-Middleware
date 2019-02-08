@@ -28,7 +28,6 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationContextFactory;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -87,6 +86,11 @@ class InstitutionAuthorizationServiceTest extends TestCase
 
         $arbitraryNameId = new NameId('urn:collab:person:stepup.example.com:joe-a1');
 
+        $institutions = new InstitutionCollection([
+            new Institution('institution-a.example.com'),
+            new Institution('institution-d.example.com'),
+        ]);
+
         $identity = Identity::create(
             $arbitraryId,
             $actorInstitution,
@@ -109,21 +113,16 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->andReturn(null);
 
         $this->institutionListingRepository
-            ->shouldReceive('getInstitutions')
+            ->shouldReceive('getInstitutionsForRaa')
             ->withArgs([$roleRequirements, $identityId])
-            ->andReturn(new InstitutionCollection([
-                new Institution('institution-a.example.com'),
-                new Institution('institution-d.example.com'),
-            ]));
+            ->andReturn($institutions);
 
         $context = $this->service->buildInstitutionAuthorizationContext(
-            $actorInstitution,
-            $roleRequirements,
-            $identityId
+            $identityId,
+            $roleRequirements
         );
 
-        $this->assertEquals($actorInstitution, $context->getActorInstitution());
-        $this->assertEquals($roleRequirements, $context->getRoleRequirements());
+        $this->assertEquals($institutions, $context->getInstitutions());
         $this->assertFalse($context->isActorSraa());
     }
 
@@ -134,13 +133,15 @@ class InstitutionAuthorizationServiceTest extends TestCase
     public function it_can_build_a_context_with_sraa_actor()
     {
         $actorInstitution = new Institution('institution-a');
-        $roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
 
         $sraaId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
         $adminNameId = new NameId('urn:collab:person:stepup.example.com:admin');
+
+        $institutions = new InstitutionCollection([
+            new Institution('institution-a.example.com'),
+            new Institution('institution-d.example.com'),
+        ]);
 
         $sraaIdentity = Identity::create(
             $sraaId,
@@ -164,22 +165,18 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($adminNameId)
             ->andReturn($sraa);
 
-        $this->institutionListingRepository
-            ->shouldReceive('getInstitutions')
-            ->withArgs([$roleRequirements, $identityId])
-            ->andReturn(new InstitutionCollection([
-                new Institution('institution-a.example.com'),
-                new Institution('institution-d.example.com'),
-            ]));
 
-        $context = $this->service->buildInstitutionAuthorizationContext(
-            $actorInstitution,
-            $roleRequirements,
-            $identityId
+        $this->institutionListingRepository
+            ->shouldReceive('getInstitutionsForSelectRaaAsSraa')
+            ->withArgs([$actorInstitution])
+            ->andReturn($institutions);
+
+        $context = $this->service->buildInstitutionAuthorizationContextForManagement(
+            $identityId,
+            $actorInstitution
         );
 
-        $this->assertEquals($actorInstitution, $context->getActorInstitution());
-        $this->assertEquals($roleRequirements, $context->getRoleRequirements());
+        $this->assertEquals($institutions, $context->getInstitutions());
         $this->assertTrue($context->isActorSraa());
     }
 
@@ -191,7 +188,6 @@ class InstitutionAuthorizationServiceTest extends TestCase
      */
     public function it_rejects_unknown_actor()
     {
-        $actorInstitution = new Institution('institution-a');
         $roleRequirements = new InstitutionRoleSet(
             [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
         );
@@ -204,9 +200,8 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->andReturn(null);
 
         $this->service->buildInstitutionAuthorizationContext(
-            $actorInstitution,
-            $roleRequirements,
-            new IdentityId($actorId)
+            new IdentityId($actorId),
+            $roleRequirements
         );
     }
 }

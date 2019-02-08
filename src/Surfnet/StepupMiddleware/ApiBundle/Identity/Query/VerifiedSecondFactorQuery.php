@@ -40,11 +40,6 @@ class VerifiedSecondFactorQuery extends AbstractQuery
     public $registrationCode;
 
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $actorInstitution;
-
-    /**
      * @var InstitutionAuthorizationContext
      */
     public $authorizationContext;

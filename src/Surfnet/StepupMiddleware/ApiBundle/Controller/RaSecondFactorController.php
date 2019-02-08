@@ -58,22 +58,22 @@ final class RaSecondFactorController extends Controller
         $this->authorizationService = $authorizationService;
     }
 
-    public function collectionAction(Request $request, Institution $actorInstitution)
+    public function collectionAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query = $this->buildRaSecondFactorQuery($request, $actorInstitution);
+        $query = $this->buildRaSecondFactorQuery($request);
 
         $paginator = $this->raSecondFactorService->search($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function exportAction(Request $request, Institution $actorInstitution)
+    public function exportAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $query = $this->buildRaSecondFactorQuery($request, $actorInstitution);
+        $query = $this->buildRaSecondFactorQuery($request);
 
         $results = $this->raSecondFactorService->searchUnpaginated($query);
 
@@ -82,15 +82,13 @@ final class RaSecondFactorController extends Controller
 
     /**
      * @param Request $request
-     * @param Institution $actorInstitution
      * @return RaSecondFactorQuery
      */
-    private function buildRaSecondFactorQuery(Request $request, Institution $actorInstitution)
+    private function buildRaSecondFactorQuery(Request $request)
     {
         $actorId = new IdentityId($request->get('actorId'));
 
         $query = new RaSecondFactorQuery();
-        $query->actorInstitution = $actorInstitution;
         $query->pageNumber = (int)$request->get('p', 1);
         $query->name = $request->get('name');
         $query->type = $request->get('type');
@@ -101,9 +99,8 @@ final class RaSecondFactorController extends Controller
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
-            $actorInstitution,
-            $this->roleRequirements,
-            $actorId
+            $actorId,
+            $this->roleRequirements
         );
 
         return $query;

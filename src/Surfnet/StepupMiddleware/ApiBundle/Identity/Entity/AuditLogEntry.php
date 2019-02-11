@@ -32,7 +32,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
  *          @ORM\Index(name="idx_auditlog_actorid", columns={"actor_id"}),
  *          @ORM\Index(name="idx_auditlog_identityid", columns={"identity_id"}),
  *          @ORM\Index(name="idx_auditlog_identityinstitution", columns={"identity_institution"}),
- *          @ORM\Index(name="idx_auditlog_secondfactorid", columns={"second_factor_id"})
+ *          @ORM\Index(name="idx_auditlog_secondfactorid", columns={"second_factor_id"}),
+ *          @ORM\Index(name="idx_auditlog_ra_institution", columns={"ra_institution"}),
  *      }
  * )
  */

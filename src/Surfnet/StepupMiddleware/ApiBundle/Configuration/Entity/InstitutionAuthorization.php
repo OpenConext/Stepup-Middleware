@@ -26,6 +26,11 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
  * @ORM\Entity(
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository"
  * )
+ * @ORM\Table(
+ *      indexes={
+ *          @ORM\Index(name="idx_authorization", columns={"institution","institution_relation","institution_role"})
+ *      }
+ * )
  */
 class InstitutionAuthorization
 {

@@ -34,6 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_ra_listing_institution", columns={"institution"}),
+ *          @ORM\Index(name="idx_ra_listing_ra_institution", columns={"ra_institution"}),
  *      },
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(name="idx_ra_listing_unique_identity_institution", columns={"identity_id", "ra_institution"})

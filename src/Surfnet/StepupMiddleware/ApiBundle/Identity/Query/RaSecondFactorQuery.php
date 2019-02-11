@@ -23,11 +23,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 final class RaSecondFactorQuery extends AbstractQuery
 {
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
-     */
-    public $actorInstitution;
-
-    /**
      * @var string|null
      */
     public $name;

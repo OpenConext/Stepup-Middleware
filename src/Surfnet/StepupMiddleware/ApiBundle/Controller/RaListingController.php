@@ -18,11 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -39,17 +37,16 @@ class RaListingController extends Controller
     private $raListingService;
 
     /**
-     * @var InstitutionRoleSet
+     * @var InstitutionAuthorizationService
      */
-    private $roleRequirements;
+    private $authorizationService;
 
-    public function __construct(RaListingService $raListingService)
-    {
+    public function __construct(
+        RaListingService $raListingService,
+        InstitutionAuthorizationService $authorizationService
+    ) {
         $this->raListingService = $raListingService;
-
-        $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_SELECT_RAA)]
-        );
+        $this->authorizationService = $authorizationService;
     }
 
     public function getAction(Request $request, $identityId)
@@ -66,9 +63,16 @@ class RaListingController extends Controller
         return new JsonResponse($raListing);
     }
 
+    /**
+     * @param Request $request
+     * @param Institution $actorInstitution
+     * @return JsonCollectionResponse
+     */
     public function searchAction(Request $request, Institution $actorInstitution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
+
+        $actorId = new IdentityId($request->get('actorId'));
 
         $query                   = new RaListingQuery();
 
@@ -80,11 +84,13 @@ class RaListingController extends Controller
             $query->institution = $request->get('institution');
         }
 
-        $query->actorInstitution = $actorInstitution;
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->orderBy          = $request->get('orderBy');
         $query->orderDirection   = $request->get('orderDirection');
-        $query->authorizationContext = new InstitutionAuthorizationContext($query->actorInstitution, $this->roleRequirements);
+        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
+            $actorId,
+            $actorInstitution
+        );
 
         $searchResults = $this->raListingService->search($query);
 

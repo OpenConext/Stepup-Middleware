@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
@@ -66,20 +65,16 @@ class IdentityController extends Controller
         return new JsonResponse($identity);
     }
 
-    public function collectionAction(Request $request)
+    public function collectionAction(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
 
         $query = new IdentityQuery();
-        $query->institution = $request->get('institution');
+        $query->institution = $institution;
         $query->nameId = $request->get('NameID');
         $query->commonName = $request->get('commonName');
         $query->email = $request->get('email');
         $query->pageNumber = (int)$request->get('p', 1);
-
-        if ($query->institution) {
-            $query->authorizationContext = new InstitutionAuthorizationContext(new Institution($query->institution), $this->roleRequirements);
-        }
 
         $paginator = $this->identityService->search($query);
 

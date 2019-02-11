@@ -19,20 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
-use Surfnet\Stepup\Identity\Value\Institution;
 
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
-    /**
-     * @var Institution
-     */
-    private $actorInstitution;
-
-    /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
-
     /**
      * @var InstitutionCollection|null
      */
@@ -45,37 +34,15 @@ class InstitutionAuthorizationContext implements InstitutionAuthorizationContext
 
     /**
      * AuthorizationContext constructor.
-     * @param Institution $actorInstitution
-     * @param InstitutionRoleSetInterface $roleRequirements
      * @param InstitutionCollection $institutions[]
      * @param bool $isSraa describes if the actor is SRAA or not. Default: false
      */
     public function __construct(
-        Institution $actorInstitution,
-        InstitutionRoleSetInterface $roleRequirements,
         InstitutionCollection $institutions = null,
         $isSraa = false
     ) {
-        $this->actorInstitution = $actorInstitution;
-        $this->roleRequirements = $roleRequirements;
         $this->institutions = $institutions;
         $this->isSraa = $isSraa;
-    }
-
-    /**
-     * @return Institution
-     */
-    public function getActorInstitution()
-    {
-        return $this->actorInstitution;
-    }
-
-    /**
-     * @return InstitutionRoleSet
-     */
-    public function getRoleRequirements()
-    {
-        return $this->roleRequirements;
     }
 
     /**

@@ -19,14 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
@@ -163,10 +164,9 @@ class RaCandidateRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('rac');
 
         // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filterCandidate(
+        $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
-            $query->authorizationContext->getActorInstitution(),
-            'rac.identityId',
+            $query->authorizationContext,
             'rac.raInstitution',
             'iac'
         );
@@ -195,6 +195,8 @@ class RaCandidateRepository extends EntityRepository
                 ->andWhere('vsf.type IN (:secondFactorTypes)')
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);
         }
+
+        $queryBuilder->groupBy('rac.identityId');
 
         return $queryBuilder->getQuery();
     }
@@ -246,21 +248,20 @@ class RaCandidateRepository extends EntityRepository
 
     /**
      * @param string $identityId
-     * @param Institution $raInstitution
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return RaCandidate[]
      */
-    public function findAllRaasByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)
+    public function findAllRaasByIdentityIdAndRaInstitution($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
     {
         $queryBuilder = $this->createQueryBuilder('rac')
             ->where('rac.identityId = :identityId')
             ->setParameter('identityId', $identityId)
             ->orderBy('rac.raInstitution');
 
-            // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filterCandidate(
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
-            $raInstitution,
-            'rac.raInstitution',
+            $authorizationContext,
             'rac.raInstitution',
             'iac'
         );

@@ -59,7 +59,7 @@ class InstitutionListingRepository extends EntityRepository
      * @param IdentityId $actorId
      * @return InstitutionCollection
      */
-    public function getInstitutions(InstitutionRoleSet $roleRequirements, IdentityId $actorId)
+    public function getInstitutionsForRaa(InstitutionRoleSet $roleRequirements, IdentityId $actorId)
     {
         $qb = $this->createQueryBuilder('i')
             ->select("a.institution")
@@ -72,7 +72,6 @@ class InstitutionListingRepository extends EntityRepository
             )
             ->where("r.identityId = :identityId AND r.role IN(:roles)")
             ->groupBy("a.institution");
-
 
         $qb->setParameter('identityId', (string)$actorId);
         $qb->setParameter(
@@ -88,6 +87,77 @@ class InstitutionListingRepository extends EntityRepository
                 $roleRequirements,
                 [InstitutionRole::ROLE_USE_RA => 'ra', InstitutionRole::ROLE_USE_RAA => 'raa']
             )
+        );
+
+        $institutions = $qb->getQuery()->getArrayResult();
+
+        $result = new InstitutionCollection();
+        foreach ($institutions as $institution) {
+            $result->add(new Institution((string)$institution['institution']));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param IdentityId $actorId
+     * @return InstitutionCollection
+     */
+    public function getInstitutionsForSelectRaa(IdentityId $actorId)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select("a.institutionRelation")
+            ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
+            ->leftJoin(
+                InstitutionAuthorization::class,
+                'a',
+                Join::WITH,
+                "i.institution = a.institution AND a.institutionRole IN (:authorizationRoles)"
+            )
+            ->where("r.identityId = :identityId AND r.role IN(:roles)")
+            ->groupBy("a.institutionRelation");
+
+        $qb->setParameter('identityId', (string)$actorId);
+        $qb->setParameter(
+            'authorizationRoles',
+            [InstitutionRole::ROLE_SELECT_RAA]
+        );
+        $qb->setParameter(
+            'roles',
+            ['raa']
+        );
+        $institutions = $qb->getQuery()->getArrayResult();
+
+        $result = new InstitutionCollection();
+        foreach ($institutions as $institution) {
+            $result->add(new Institution((string)$institution['institutionRelation']));
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * @param Institution $institution
+     * @return InstitutionCollection
+     */
+    public function getInstitutionsForSelectRaaAsSraa(Institution $institution)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select("a.institution")
+            ->innerJoin(
+                InstitutionAuthorization::class,
+                'a',
+                Join::WITH,
+                "i.institution = a.institution AND a.institutionRole IN (:authorizationRoles)"
+            )
+            ->where("a.institution = :institution")
+            ->groupBy("a.institution");
+
+        $qb->setParameter('institution', (string)$institution);
+        $qb->setParameter(
+            'authorizationRoles',
+            [InstitutionRole::ROLE_SELECT_RAA]
         );
 
         $institutions = $qb->getQuery()->getArrayResult();

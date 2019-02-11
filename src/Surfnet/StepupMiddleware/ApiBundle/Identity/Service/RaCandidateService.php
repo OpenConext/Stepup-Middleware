@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
@@ -52,12 +52,12 @@ class RaCandidateService extends AbstractSearchService
 
     /**
      * @param string $identityId
-     * @param Institution $institution
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate[]
      */
-    public function findByIdentityIdAndRaInstitution($identityId, Institution $institution)
+    public function findByIdentityIdAndRaInstitution($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
     {
-        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityIdAndRaInstitution($identityId, $institution);
+        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityIdAndRaInstitution($identityId, $authorizationContext);
 
         return $raCandidates;
     }

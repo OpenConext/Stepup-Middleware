@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
@@ -74,9 +73,11 @@ class VerifiedSecondFactorController extends Controller
         return new JsonResponse($secondFactor);
     }
 
-    public function collectionAction(Request $request, Institution $actorInstitution)
+    public function collectionAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+
+        $actorId = new IdentityId($request->get('actorId'));
 
         $query = new VerifiedSecondFactorQuery();
 
@@ -88,15 +89,11 @@ class VerifiedSecondFactorController extends Controller
             $query->secondFactorId = new SecondFactorId($request->get('secondFactorId'));
         }
 
-        $actorId = new IdentityId($request->get('actorId'));
-
-        $query->actorInstitution = $actorInstitution;
         $query->registrationCode = $request->get('registrationCode');
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
-            $actorInstitution,
-            $this->roleRequirements,
-            $actorId
+            $actorId,
+            $this->roleRequirements
         );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);

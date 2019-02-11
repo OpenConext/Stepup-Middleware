@@ -18,16 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
-use Doctrine\ORM\Query\Expr\Join;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
@@ -69,12 +64,11 @@ class InstitutionAuthorizationService
      *
      * The additional test is performed to indicate if the actor is SRAA.
      *
-     * @param Institution $actorInstitution
-     * @param InstitutionRoleSet $roleRequirements
      * @param IdentityId $actorId
+     * @param InstitutionRoleSet $roleRequirements
      * @return InstitutionAuthorizationContext
      */
-    public function buildInstitutionAuthorizationContext(Institution $actorInstitution, InstitutionRoleSet $roleRequirements, IdentityId $actorId)
+    public function buildInstitutionAuthorizationContext(IdentityId $actorId, InstitutionRoleSet $roleRequirements)
     {
         $identity = $this->identityService->find((string) $actorId);
 
@@ -85,8 +79,37 @@ class InstitutionAuthorizationService
         $sraa = $this->sraaService->findByNameId($identity->nameId);
         $isSraa = !is_null($sraa);
 
-        $institutions = $this->institutionListingRepository->getInstitutions($roleRequirements, $actorId);
+        $institutions = $this->institutionListingRepository->getInstitutionsForRaa($roleRequirements, $actorId);
 
-        return new InstitutionAuthorizationContext($actorInstitution, $roleRequirements, $institutions, $isSraa);
+        return new InstitutionAuthorizationContext($institutions, $isSraa);
+    }
+
+    /**
+     * Build the InstitutionAuthorizationContext for use in queries
+     *
+     * The additional test is performed to indicate if the actor is SRAA.
+     *
+     * @param IdentityId $actorId
+     * @param Institution $institution
+     * @return InstitutionAuthorizationContext
+     */
+    public function buildInstitutionAuthorizationContextForManagement(IdentityId $actorId, Institution $institution)
+    {
+        $identity = $this->identityService->find((string) $actorId);
+
+        if (!$identity) {
+            throw new InvalidArgumentException('The provided id is not associated with any known identity');
+        }
+
+        $sraa = $this->sraaService->findByNameId($identity->nameId);
+        $isSraa = !is_null($sraa);
+
+        if ($isSraa) {
+            $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaaAsSraa($institution);
+        } else {
+            $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaa($actorId);
+        }
+
+        return new InstitutionAuthorizationContext($institutions, $isSraa);
     }
 }

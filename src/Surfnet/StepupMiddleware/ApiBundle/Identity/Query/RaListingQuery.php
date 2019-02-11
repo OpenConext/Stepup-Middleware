@@ -26,11 +26,6 @@ class RaListingQuery extends AbstractQuery
     /**
      * @var string|\Surfnet\Stepup\Identity\Value\Institution
      */
-    public $actorInstitution;
-
-    /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
-     */
     public $institution;
 
     /**

@@ -410,6 +410,10 @@ Request parameters:
 URL: `http://middleware.tld/ra-listing?institution={&orderBy=commonName}{&orderDirection=asc}`
 Method: GET
 Request parameters:
+- name: (optional) string, the common name as a filter
+- email: (optional) string, the email address as a filter
+- role: (optional) string, the role (ra|raa) as a filter
+- raInstitution: (optional) string, the ra institution name as a filter
 - institution: (optional) string, the institution as scope determination
 - identityId: (optional) string, the identity to load the RA listing items for (from FGA and onwards there can be more than one entry per identity).
 - orderBy: (optional, default `commonName`) string, sorting column; only `commonName` is allowed

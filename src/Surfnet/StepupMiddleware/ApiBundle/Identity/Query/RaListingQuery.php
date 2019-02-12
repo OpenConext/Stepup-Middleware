@@ -34,6 +34,26 @@ class RaListingQuery extends AbstractQuery
     public $identityId;
 
     /**
+     * @var string|null
+     */
+    public $name;
+
+    /**
+     * @var string|null
+     */
+    public $email;
+
+    /**
+     * @var string|null
+     */
+    public $role;
+
+    /**
+     * @var string|null
+     */
+    public $raInstitution;
+
+    /**
      * @var string
      */
     public $orderBy;

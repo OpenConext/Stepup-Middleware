@@ -74,7 +74,7 @@ class RaListingController extends Controller
 
         $actorId = new IdentityId($request->get('actorId'));
 
-        $query                   = new RaListingQuery();
+        $query = new RaListingQuery();
 
         if ($request->get('identityId')) {
             $query->identityId = new IdentityId($request->get('identityId'));
@@ -84,9 +84,25 @@ class RaListingController extends Controller
             $query->institution = $request->get('institution');
         }
 
-        $query->pageNumber       = (int) $request->get('p', 1);
-        $query->orderBy          = $request->get('orderBy');
-        $query->orderDirection   = $request->get('orderDirection');
+        if ($request->get('name')) {
+            $query->name = $request->get('name');
+        }
+
+        if ($request->get('email')) {
+            $query->email = $request->get('email');
+        }
+
+        if ($request->get('role')) {
+            $query->role = $request->get('role');
+        }
+
+        if ($request->get('raInstitution')) {
+            $query->raInstitution = $request->get('raInstitution');
+        }
+
+        $query->pageNumber = (int)$request->get('p', 1);
+        $query->orderBy = $request->get('orderBy');
+        $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
             $actorId,
             $actorInstitution

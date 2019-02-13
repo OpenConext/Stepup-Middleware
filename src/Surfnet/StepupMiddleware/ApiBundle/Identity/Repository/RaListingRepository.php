@@ -87,6 +87,9 @@ class RaListingRepository extends EntityRepository
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
+     * @SuppressWarnings(PHPMD.NPathComplexity)      below complex or hard to maintain.
+     *
      * @param RaListingQuery $query
      * @return \Doctrine\ORM\Query
      */
@@ -112,6 +115,30 @@ class RaListingRepository extends EntityRepository
             $queryBuilder
                 ->andWhere('r.identityId = :identityId')
                 ->setParameter('identityId', (string) $query->identityId);
+        }
+
+        if ($query->name) {
+            $queryBuilder
+                ->andWhere('r.commonName LIKE :name')
+                ->setParameter('name', sprintf('%%%s%%', $query->name));
+        }
+
+        if ($query->email) {
+            $queryBuilder
+                ->andWhere('r.email LIKE :email')
+                ->setParameter('email', sprintf('%%%s%%', $query->email));
+        }
+
+        if ($query->role) {
+            $queryBuilder
+                ->andWhere('r.role = :role')
+                ->setParameter('role', (string) $query->role);
+        }
+
+        if ($query->raInstitution) {
+            $queryBuilder
+                ->andWhere('r.raInstitution = :raInstitution')
+                ->setParameter('raInstitution', (string) $query->raInstitution);
         }
 
         if (!$query->orderBy) {

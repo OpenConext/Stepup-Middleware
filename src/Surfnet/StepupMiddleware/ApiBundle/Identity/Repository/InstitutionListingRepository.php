@@ -128,8 +128,6 @@ class InstitutionListingRepository extends EntityRepository
         );
         $institutions = $qb->getQuery()->getArrayResult();
 
-file_put_contents('/src/Stepup-Middleware/test.txt', print_r(['q' => $qb->getQuery()->getSQL(),'p'=>$qb->getQuery()->getParameters(),'inst' => $institutions], true));
-
         $result = new InstitutionCollection();
         foreach ($institutions as $institution) {
             $result->add(new Institution((string)$institution['institutionRelation']));

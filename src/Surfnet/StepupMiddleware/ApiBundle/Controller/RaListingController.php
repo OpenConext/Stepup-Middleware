@@ -53,8 +53,20 @@ class RaListingController extends Controller
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $institution = $request->get('institution');
-        $raListing = $this->raListingService->findByIdentityIdAndRaInstitution(new IdentityId($identityId), new Institution($institution));
+        $actorId = new IdentityId($request->get('actorId'));
+        $actorInstitution = new Institution($request->get('actorInstitution'));
+        $institution = new Institution($request->get('institution'));
+
+        $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
+            $actorId,
+            $actorInstitution
+        );
+
+        $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
+            new IdentityId($identityId),
+            $institution,
+            $authorizationContext
+        );
 
         if ($raListing === null) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));

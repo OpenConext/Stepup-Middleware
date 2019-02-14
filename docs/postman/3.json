@@ -590,6 +590,9 @@
 		},
 		{
 			"name": "/ra-listing/{IdentityId}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -604,7 +607,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/ra-listing/c78240b1-612f-49b7-85b7-83eae5f63a85",
+					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-listing/62096060-8b60-4bb1-bcc1-e00158a4051b/stepup.example.com?actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&actorInstitution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -613,8 +616,24 @@
 						"com"
 					],
 					"path": [
+						"app_dev.php",
 						"ra-listing",
-						"c78240b1-612f-49b7-85b7-83eae5f63a85"
+						"62096060-8b60-4bb1-bcc1-e00158a4051b",
+						"stepup.example.com"
+					],
+					"query": [
+						{
+							"key": "actorId",
+							"value": "62096060-8b60-4bb1-bcc1-e00158a4051b"
+						},
+						{
+							"key": "actorInstitution",
+							"value": "institution-a.example.com"
+						},
+						{
+							"key": "XDEBUG_SESSION_START",
+							"value": "PHPSTORM"
+						}
 					]
 				},
 				"description": "Single param:\n\n- `identityId`: UUID of the identity to get"

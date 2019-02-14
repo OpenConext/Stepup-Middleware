@@ -25,10 +25,14 @@ use Doctrine\ORM\Mapping;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RaListingRepository extends EntityRepository
 {
     /**
@@ -65,6 +69,36 @@ class RaListingRepository extends EntityRepository
             'identityId' => (string) $identityId,
             'raInstitution' => (string) $raInstitution,
         ]);
+    }
+
+
+    /**
+     * @param IdentityId $identityId The RA's identity id.
+     * @param Institution $raInstitution
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
+     * @return null|RaListing
+     */
+    public function findByIdentityIdAndRaInstitutionWithContext(
+        IdentityId $identityId,
+        Institution $raInstitution,
+        InstitutionAuthorizationContextInterface $authorizationContext
+    ) {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->where('r.identityId = :identityId')
+            ->andWhere('r.raInstitution = :raInstitution')
+            ->setParameter('identityId', $identityId)
+            ->setParameter('raInstitution', (string)$raInstitution)
+            ->orderBy('r.raInstitution');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $authorizationContext,
+            'r.raInstitution',
+            'iac'
+        );
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     /**

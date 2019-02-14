@@ -226,10 +226,9 @@ Request parameters:
 ### Verified Second Factor - Search Verified Second Factors
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors?{actorInstitution}&{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors?{actorId=}&{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
 Method: GET
 Request parameters:
-- actorInstitution: (required) string, the institution as scope determination
 - actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 - IdentityId: (optional) UUIDv4 of the identity to search for
 - secondFactorId: (optional) UUIDv4 of the second factor to search for
@@ -388,6 +387,8 @@ URL: `http://middleware.tld/ra-listing/{identityId}`
 Method: GET
 Request parameters:
 - identityId: UUIDv4 of the Identity of which to retrieve the possible RaListing
+- actorId: (required) UUIDv4 of the identity
+- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -418,6 +419,8 @@ Request parameters:
 - identityId: (optional) string, the identity to load the RA listing items for (from FGA and onwards there can be more than one entry per identity).
 - orderBy: (optional, default `commonName`) string, sorting column; only `commonName` is allowed
 - orderDirection: (optional, default `asc`) string, sorting direction; only `asc` or `desc` allowed.
+- actorId: (required) UUIDv4 of the identity
+- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -451,6 +454,8 @@ URL: `http://middleware.tld/ra-candidate/{identityId}`
 Method: GET
 Request parameters:
 - identityId: (required) UUIDv4 of the Identity of which to retrieve the possible RaCandidate
+- actorId: (required) UUIDv4 of the identity
+- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -475,6 +480,8 @@ Request parameters:
 - commonName: (optional) string, the commonName to match against
 - email: (optional) string, the email to match against
 - p: (optional, default 1) integer, the requested result page
+- actorId: (required) UUIDv4 of the identity
+- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -503,7 +510,7 @@ Request parameters:
 URL: `http://middleware.tld/ra-second-factors?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&p=}`
 Method: GET
 Request parameters:
-- actorInstitution: (required) string, the institution as scope determination
+- actorId: (required) UUIDv4 of the identity
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against
 - secondFactorId: (optional) string, the secondFactorId to match against
@@ -533,7 +540,6 @@ Request parameters:
             "name": "Yubi",
             "document_number": null,
             "email": "info@ibuildings.nl",
-            "actorInstitution": "Ibuildings",
             "institution": "SURFnet"
         }
     ]
@@ -543,9 +549,10 @@ Request parameters:
 ### Registration Authority Candidate - Search second factors for export
 
 #### Request
-URL: `http://middleware.tld/ra-second-factors-export?actorInstitution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
+URL: `http://middleware.tld/ra-second-factors-export?actorId=&actorInstitution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
 Method: GET
 Request parameters:
+- actorId: (required) UUIDv4 of the identity
 - actorInstitution: (required) string, the institution as scope determination
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against

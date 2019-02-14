@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
@@ -40,11 +41,15 @@ class RaListingService extends AbstractSearchService
     /**
      * @param IdentityId $identityId
      * @param Institution $raInstitution
+     * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
      */
-    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
-    {
-        return $this->raListingRepository->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
+    public function findByIdentityIdAndRaInstitutionWithContext(
+        IdentityId $identityId,
+        Institution $raInstitution,
+        InstitutionAuthorizationContextInterface $authorizationContext
+    ) {
+        return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext($identityId, $raInstitution, $authorizationContext);
     }
 
     /**

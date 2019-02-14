@@ -103,22 +103,36 @@ final class RegistrationAuthorityCredentials implements \JsonSerializable
     }
 
     /**
-     * @param RaListing $raListing
+     * @param RaListing[] $raListings
      * @return RegistrationAuthorityCredentials
      */
-    public static function fromRaListing(RaListing $raListing)
+    public static function fromRaListings(array $raListings)
     {
+        $raListingCredentials = current($raListings);
+        $isRa = false;
+        $isRaa = false;
+
+        foreach ($raListings as $raListing) {
+            if ($raListing->role->equals(AuthorityRole::ra())) {
+                $isRa = true;
+            }
+
+            if ($raListing->role->equals(AuthorityRole::raa())) {
+                $isRaa = true;
+            }
+        }
+
         $credentials = new self(
-            $raListing->identityId,
-            $raListing->role->equals(AuthorityRole::ra()),
-            $raListing->role->equals(AuthorityRole::raa()),
+            $raListingCredentials->identityId,
+            $isRa,
+            $isRaa,
             false
         );
 
-        $credentials->institution        = $raListing->institution;
-        $credentials->commonName         = $raListing->commonName;
-        $credentials->location           = $raListing->location;
-        $credentials->contactInformation = $raListing->contactInformation;
+        $credentials->institution = $raListingCredentials->institution;
+        $credentials->commonName = $raListingCredentials->commonName;
+        $credentials->location = $raListingCredentials->location;
+        $credentials->contactInformation = $raListingCredentials->contactInformation;
 
         return $credentials;
     }

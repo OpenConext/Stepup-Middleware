@@ -27,11 +27,11 @@ Basic Command Structure
 ```json
 {
     "meta": {
-        "actor": "John Doe"
+        "actor": "John Doe",
         "actor_institution": "SURFnet"
     },
     "command": {
-        "name": "Identity:CreateIdentity"
+        "name": "Identity:CreateIdentity",
         "uuid":"d12cb994-5719-405a-9533-af1beef78ee3",
         "payload":{
             "id": "abb1b9f8-20c9-44a9-9694-176f00aaa618",
@@ -206,6 +206,7 @@ Request parameters:
 URL: `http://middleware.tld/verified-second-factor/{secondFactorId}`
 Method: GET
 Request parameters:
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 - secondFactorId: (required) UUIDv4 of the second factor to get
 
 #### Response
@@ -218,6 +219,7 @@ Request parameters:
     "registration_code": "WCYC6MQH",
     "identity_id": "8b5cdd14-74b1-43a2-a806-c171728b1bf1",
     "institution": "Ibuildings",
+    "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4",
     "common_name": "SMS Account"
 }
 ```
@@ -253,7 +255,8 @@ Request parameters:
             "registration_code": "WCYC6MQH",
             "identity_id": "8b5cdd14-74b1-43a2-a806-c171728b1bf1",
             "institution": "Ibuildings",
-            "common_name": "SMS Account"
+            "common_name": "SMS Account",
+            "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
         }
     ]
 }
@@ -388,6 +391,8 @@ URL: `http://middleware.tld/ra-listing/{identityId}`
 Method: GET
 Request parameters:
 - identityId: UUIDv4 of the Identity of which to retrieve the possible RaListing
+- institution: (optional) string, the institution as scope determination
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 
 #### Response
 `200 OK`
@@ -399,7 +404,8 @@ Request parameters:
     "email": "info@ibuildings.nl",
     "role": "ra",
     "location": "Goeman Borgesiuslaat 77, Utrecht",
-    "contact_information": "zie ibuildings.nl"
+    "contact_information": "zie ibuildings.nl",
+    "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
 }
 ```
 
@@ -451,6 +457,8 @@ URL: `http://middleware.tld/ra-candidate/{identityId}`
 Method: GET
 Request parameters:
 - identityId: (required) UUIDv4 of the Identity of which to retrieve the possible RaCandidate
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
+
 
 #### Response
 `200 OK`
@@ -460,7 +468,8 @@ Request parameters:
     "institution": "Ibuildings",
     "common_name": "SMS Account",
     "email": "info@ibuildings.nl",
-    "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5"
+    "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5",
+    "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
 }
 ```
 
@@ -475,6 +484,7 @@ Request parameters:
 - commonName: (optional) string, the commonName to match against
 - email: (optional) string, the email to match against
 - p: (optional, default 1) integer, the requested result page
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 
 #### Response
 `200 OK`
@@ -491,7 +501,8 @@ Request parameters:
             "institution": "Ibuildings",
             "common_name": "SMS Account",
             "email": "info@ibuildings.nl",
-            "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5"
+            "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5",
+            "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
         }
     ]
 }
@@ -503,7 +514,7 @@ Request parameters:
 URL: `http://middleware.tld/ra-second-factors?institution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&p=}`
 Method: GET
 Request parameters:
-- actorInstitution: (required) string, the institution as scope determination
+- actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against
 - secondFactorId: (optional) string, the secondFactorId to match against
@@ -533,7 +544,7 @@ Request parameters:
             "name": "Yubi",
             "document_number": null,
             "email": "info@ibuildings.nl",
-            "actorInstitution": "Ibuildings",
+            "actorId": "45b8220b-0ac2-43da-88ce-ecd0d1e9ce2f",
             "institution": "SURFnet"
         }
     ]

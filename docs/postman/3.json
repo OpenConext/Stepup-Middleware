@@ -664,7 +664,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-listing/62096060-8b60-4bb1-bcc1-e00158a4051b/stepup.example.com?XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-listing/62096060-8b60-4bb1-bcc1-e00158a4051b/stepup.example.com?actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&actorInstitution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -679,6 +679,14 @@
 						"stepup.example.com"
 					],
 					"query": [
+						{
+							"key": "actorId",
+							"value": "62096060-8b60-4bb1-bcc1-e00158a4051b"
+						},
+						{
+							"key": "actorInstitution",
+							"value": "institution-a.example.com"
+						},
 						{
 							"key": "XDEBUG_SESSION_START",
 							"value": "PHPSTORM"

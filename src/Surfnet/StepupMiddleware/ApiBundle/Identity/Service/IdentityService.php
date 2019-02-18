@@ -140,11 +140,11 @@ class IdentityService extends AbstractSearchService
      */
     private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
     {
-        $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(new IdentityId($identity->id), $identity->institution);
+        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);
 
-        if ($raListing) {
-            $credentials = RegistrationAuthorityCredentials::fromRaListing($raListing);
+        if (!empty($raListing)) {
+            $credentials = RegistrationAuthorityCredentials::fromRaListings($raListing);
 
             if ($sraa) {
                 $credentials = $credentials->grantSraa();

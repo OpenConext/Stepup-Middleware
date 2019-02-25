@@ -131,14 +131,6 @@ class RaListingRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('r');
 
-        // Modify query to filter on authorization
-        $this->authorizationRepositoryFilter->filter(
-            $queryBuilder,
-            $query->authorizationContext,
-            'r.raInstitution',
-            'iac'
-        );
-
         if ($query->institution) {
             $queryBuilder
                 ->andWhere('r.institution = :institution')
@@ -174,6 +166,14 @@ class RaListingRepository extends EntityRepository
                 ->andWhere('r.raInstitution = :raInstitution')
                 ->setParameter('raInstitution', (string) $query->raInstitution);
         }
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'r.raInstitution',
+            'iac'
+        );
 
         if (!$query->orderBy) {
             return $queryBuilder->getQuery();

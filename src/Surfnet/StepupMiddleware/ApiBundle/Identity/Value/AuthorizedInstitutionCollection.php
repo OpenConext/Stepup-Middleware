@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 
 class AuthorizedInstitutionCollection
 {
@@ -32,20 +32,32 @@ class AuthorizedInstitutionCollection
      *      'institution-3' => [select_raa],
      * ]
      *
-     * @var AuthorityRole[]
+     * @var string[]
      */
     private $authorizations = [];
 
     /**
-     * @param RaListing[] $authorizations
+     * @param InstitutionCollection $raInstitutions
+     * @param InstitutionCollection|null $raaInstitutions
      * @return AuthorizedInstitutionCollection
      */
-    public static function fromInstitutionAuthorization($authorizations)
+    public static function from(InstitutionCollection $raInstitutions, InstitutionCollection $raaInstitutions = null)
     {
         $collection = new self();
 
-        foreach ($authorizations as $authorization) {
-            $collection->authorizations[(string) $authorization->raInstitution][] = (string) $authorization->role;
+        foreach ($raInstitutions as $institution) {
+            $collection->authorizations[(string) $institution][] = (string) AuthorityRole::ROLE_RA;
+        }
+        if ($raaInstitutions) {
+            foreach ($raaInstitutions as $institution) {
+                // Override existing lower role
+                if (isset($collection->authorizations[(string) $institution])
+                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[(string) $institution])
+                ) {
+                    $collection->authorizations[(string) $institution] = [];
+                }
+                $collection->authorizations[(string) $institution][] = (string) AuthorityRole::ROLE_RAA;
+            }
         }
         return $collection;
     }

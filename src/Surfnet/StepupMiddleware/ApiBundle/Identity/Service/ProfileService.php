@@ -18,8 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
@@ -36,11 +37,18 @@ class ProfileService extends AbstractSearchService
      */
     private $identityService;
 
+    /**
+     * @var InstitutionListingRepository
+     */
+    private $institutionListingRepository;
+
     public function __construct(
         RaListingRepository $raListingRepository,
+        InstitutionListingRepository $institutionListingRepository,
         IdentityService $identityService
     ) {
         $this->raListingRepository = $raListingRepository;
+        $this->institutionListingRepository = $institutionListingRepository;
         $this->identityService = $identityService;
     }
 
@@ -85,13 +93,28 @@ class ProfileService extends AbstractSearchService
     }
 
     /**
-     * @param Institution $identity
+     * @param IdentityId $identity
      * @return AuthorizedInstitutionCollection
      */
     private function findAuthorizationsBy(IdentityId $identity)
     {
-        $authorizations = $this->raListingRepository->findByIdentityId($identity);
+        $ra = new InstitutionRole(InstitutionRole::ROLE_USE_RA);
+        $raa = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
-        return AuthorizedInstitutionCollection::fromInstitutionAuthorization($authorizations);
+        // Find implicit ra(a) institutions
+        $implicitRaInstitutions = $this->institutionListingRepository->getImplicitInstitutionsFor($identity, $ra);
+        $implicitRaaInstitutions = $this->institutionListingRepository->getImplicitInstitutionsFor($identity, $raa);
+
+        // Find explicit (appointed) ra(a) institutions
+        $raInstitutions = $this->raListingRepository->getExplicitInstitutionsFor($identity, 'ra');
+        $raaInstitutions = $this->raListingRepository->getExplicitInstitutionsFor($identity, 'raa');
+
+        // Merge the results (for now we do not want to distinguish between them)
+        $raInstitutions->merge($implicitRaInstitutions);
+        if (!$raaInstitutions->isEmpty()) {
+            $raaInstitutions->merge($implicitRaaInstitutions);
+            return AuthorizedInstitutionCollection::from($raInstitutions, $raaInstitutions);
+        }
+        return AuthorizedInstitutionCollection::from($raInstitutions);
     }
 }

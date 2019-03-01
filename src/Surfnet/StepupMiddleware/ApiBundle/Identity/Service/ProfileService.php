@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
@@ -41,15 +42,21 @@ class ProfileService extends AbstractSearchService
      * @var InstitutionListingRepository
      */
     private $institutionListingRepository;
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $authorizationService;
 
     public function __construct(
         RaListingRepository $raListingRepository,
         InstitutionListingRepository $institutionListingRepository,
-        IdentityService $identityService
+        IdentityService $identityService,
+        InstitutionAuthorizationService $institutionAuthorizationService
     ) {
         $this->raListingRepository = $raListingRepository;
         $this->institutionListingRepository = $institutionListingRepository;
         $this->identityService = $identityService;
+        $this->authorizationService = $institutionAuthorizationService;
     }
 
     /**
@@ -68,53 +75,26 @@ class ProfileService extends AbstractSearchService
      */
     public function createProfile($identityId)
     {
-        $raCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($identityId);
-        $isSraa = false;
-        if ($raCredentials) {
-            $isSraa = $raCredentials->isSraa();
-            if (!$isSraa && ($raCredentials->isRa() || $raCredentials->isRaa())) {
-                $authorizations = $this->findAuthorizationsBy(
-                    new IdentityId($raCredentials->getIdentityId())
-                );
-            }
-        }
-
         $identity = $this->identityService->find($identityId);
         if ($identity === null) {
             return null;
         }
 
-        // If the user is not authorized at all (non ra user), or when the user is SRAA, then build an empty collection.
-        if (!isset($authorizations)) {
-            $authorizations = new AuthorizedInstitutionCollection($identity->institution);
-        }
+        $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
+            new IdentityId($identityId),
+            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
+        );
 
-        return new Profile($identity, $authorizations, $isSraa);
-    }
+        $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
+            new IdentityId($identityId),
+            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
+        );
 
-    /**
-     * @param IdentityId $identity
-     * @return AuthorizedInstitutionCollection
-     */
-    private function findAuthorizationsBy(IdentityId $identity)
-    {
-        $ra = new InstitutionRole(InstitutionRole::ROLE_USE_RA);
-        $raa = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
+        $authorizations = AuthorizedInstitutionCollection::from(
+            $authorizationContextRa->getInstitutions(),
+            $authorizationContextRaa->getInstitutions()
+        );
 
-        // Find implicit ra(a) institutions
-        $implicitRaInstitutions = $this->institutionListingRepository->getImplicitInstitutionsFor($identity, $ra);
-        $implicitRaaInstitutions = $this->institutionListingRepository->getImplicitInstitutionsFor($identity, $raa);
-
-        // Find explicit (appointed) ra(a) institutions
-        $raInstitutions = $this->raListingRepository->getExplicitInstitutionsFor($identity, 'ra');
-        $raaInstitutions = $this->raListingRepository->getExplicitInstitutionsFor($identity, 'raa');
-
-        // Merge the results (for now we do not want to distinguish between them)
-        $raInstitutions->merge($implicitRaInstitutions);
-        if (!$raaInstitutions->isEmpty()) {
-            $raaInstitutions->merge($implicitRaaInstitutions);
-            return AuthorizedInstitutionCollection::from($raInstitutions, $raaInstitutions);
-        }
-        return AuthorizedInstitutionCollection::from($raInstitutions);
+        return new Profile($identity, $authorizations, $authorizationContextRa->isActorSraa());
     }
 }

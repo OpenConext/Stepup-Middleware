@@ -24,7 +24,6 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
@@ -55,11 +54,11 @@ class InstitutionListingRepository extends EntityRepository
     }
 
     /**
-     * @param InstitutionRoleSet $roleRequirements
+     * @param InstitutionRole $role
      * @param IdentityId $actorId
      * @return InstitutionCollection
      */
-    public function getInstitutionsForRaa(InstitutionRoleSet $roleRequirements, IdentityId $actorId)
+    public function getInstitutionsForRole(InstitutionRole $role, IdentityId $actorId)
     {
         $qb = $this->createQueryBuilder('i')
             ->select("a.institution")
@@ -76,17 +75,11 @@ class InstitutionListingRepository extends EntityRepository
         $qb->setParameter('identityId', (string)$actorId);
         $qb->setParameter(
             'authorizationRoles',
-            $this->getAuthorizationRoles(
-                $roleRequirements,
-                [InstitutionRole::ROLE_USE_RA => InstitutionRole::ROLE_USE_RA, InstitutionRole::ROLE_USE_RAA => InstitutionRole::ROLE_USE_RAA]
-            )
+            $this->getAuthorizationRolesForAuthorization($role)
         );
         $qb->setParameter(
             'roles',
-            $this->getAuthorizationRoles(
-                $roleRequirements,
-                [InstitutionRole::ROLE_USE_RA => 'ra', InstitutionRole::ROLE_USE_RAA => 'raa']
-            )
+            $this->getAuthorizationRolesForRa($role)
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
@@ -171,16 +164,34 @@ class InstitutionListingRepository extends EntityRepository
     }
 
     /**
-     * @param InstitutionRoleSet $roleRequirements
-     * @param array $map
+     * @param InstitutionRole $role
      * @return array
      */
-    private function getAuthorizationRoles(InstitutionRoleSet $roleRequirements, array $map)
+    private function getAuthorizationRolesForAuthorization(InstitutionRole $role)
     {
-        $result = [];
-        foreach ($roleRequirements->getRoles() as $role) {
-            $result[] = $map[(string)$role];
+        switch (true) {
+            case $role->equals(InstitutionRole::useRa()):
+                return ['use_ra'];
+            case $role->equals(InstitutionRole::useRaa()):
+                return ['use_raa'];
+            default:
+                return [];
         }
-        return $result;
+    }
+
+    /**
+     * @param InstitutionRole $role
+     * @return array
+     */
+    private function getAuthorizationRolesForRa(InstitutionRole $role)
+    {
+        switch (true) {
+            case $role->equals(InstitutionRole::useRa()):
+                return ['ra', 'raa'];
+            case $role->equals(InstitutionRole::useRaa()):
+                return ['raa'];
+            default:
+                return [];
+        }
     }
 }

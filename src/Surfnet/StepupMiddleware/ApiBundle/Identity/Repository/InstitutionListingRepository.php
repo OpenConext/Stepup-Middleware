@@ -142,7 +142,7 @@ class InstitutionListingRepository extends EntityRepository
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
-                "r.institution = a.institution AND a.institutionRole IN (:authorizationRoles)"
+                "i.institution = a.institution AND a.institutionRole IN (:authorizationRoles)"
             )
             ->where("a.institution = :institution")
             ->groupBy("a.institution");

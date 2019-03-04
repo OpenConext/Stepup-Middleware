@@ -51,6 +51,26 @@ class RaCandidateService extends AbstractSearchService
     }
 
     /**
+     * @param RaCandidateQuery $query
+     * @return array
+     */
+    public function getFilterOptions(RaCandidateQuery $query)
+    {
+        $doctrineQuery = $this->raCandidateRepository->createOptionsQuery($query);
+
+        $filters = [];
+        $results = $doctrineQuery->getArrayResult();
+        foreach ($results as $options) {
+            foreach ($options as $key => $value) {
+                $val = (string)$value;
+                $filters[$key][$val] = (string)$val;
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
      * @param string $identityId
      * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate[]

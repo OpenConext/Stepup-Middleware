@@ -167,6 +167,30 @@ class RaSecondFactorRepository extends EntityRepository
     }
 
     /**
+     * @param RaSecondFactorQuery $query
+     * @return \Doctrine\ORM\Query
+     */
+    public function createOptionsQuery(RaSecondFactorQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('sf')
+            ->select('sf.institution')
+            ->groupBy('sf.institution');
+
+        // Modify query to filter on authorization
+        // The SRAA user does not adhere to the FGA filter rules when searching for tokens
+        if (!$query->authorizationContext->isActorSraa()) {
+            $this->authorizationRepositoryFilter->filter(
+                $queryBuilder,
+                $query->authorizationContext,
+                'sf.institution',
+                'iac'
+            );
+        }
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
      * @param IdentityId $identityId
      * @return void
      */

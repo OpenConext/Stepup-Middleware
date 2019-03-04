@@ -122,6 +122,8 @@ class RaListingController extends Controller
 
         $searchResults = $this->raListingService->search($query);
 
-        return JsonCollectionResponse::fromPaginator($searchResults);
+        $filters = $this->raListingService->getFilterOptions($query);
+
+        return JsonCollectionResponse::fromPaginator($searchResults, $filters);
     }
 }

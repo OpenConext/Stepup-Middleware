@@ -78,9 +78,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
     public function it_can_build_a_context()
     {
         $actorInstitution = new Institution('institution-a');
-        $roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
+        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $arbitraryId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -113,13 +111,13 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->andReturn(null);
 
         $this->institutionListingRepository
-            ->shouldReceive('getInstitutionsForRaa')
-            ->withArgs([$roleRequirements, $identityId])
+            ->shouldReceive('getInstitutionsForRole')
+            ->withArgs([$role, $identityId])
             ->andReturn($institutions);
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
-            $roleRequirements
+            $role
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -188,9 +186,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
      */
     public function it_rejects_unknown_actor()
     {
-        $roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
+        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $actorId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -201,7 +197,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
 
         $this->service->buildInstitutionAuthorizationContext(
             new IdentityId($actorId),
-            $roleRequirements
+            $role
         );
     }
 }

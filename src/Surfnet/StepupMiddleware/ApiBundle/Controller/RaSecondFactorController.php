@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -37,10 +36,6 @@ final class RaSecondFactorController extends Controller
     private $raSecondFactorService;
 
     /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
-    /**
      * @var InstitutionAuthorizationService
      */
     private $authorizationService;
@@ -50,10 +45,6 @@ final class RaSecondFactorController extends Controller
         InstitutionAuthorizationService $authorizationService
     ) {
         $this->raSecondFactorService = $raSecondFactorService;
-
-        $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
         $this->authorizationService = $authorizationService;
     }
 
@@ -99,7 +90,7 @@ final class RaSecondFactorController extends Controller
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            $this->roleRequirements
+            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
         );
 
         return $query;

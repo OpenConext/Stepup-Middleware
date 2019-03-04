@@ -22,7 +22,6 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -39,11 +38,6 @@ class VerifiedSecondFactorController extends Controller
     private $secondFactorService;
 
     /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
-
-    /**
      * @var InstitutionAuthorizationService
      */
     private $institutionAuthorizationService;
@@ -54,10 +48,6 @@ class VerifiedSecondFactorController extends Controller
     ) {
         $this->secondFactorService = $secondFactorService;
         $this->institutionAuthorizationService = $authorizationService;
-
-        $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
     }
 
     public function getAction($id)
@@ -93,7 +83,7 @@ class VerifiedSecondFactorController extends Controller
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            $this->roleRequirements
+            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
         );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);

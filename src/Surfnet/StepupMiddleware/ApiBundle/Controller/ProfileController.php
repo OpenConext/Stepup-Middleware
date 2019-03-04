@@ -18,8 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\ProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,17 +32,10 @@ class ProfileController extends Controller
      */
     private $profileService;
 
-    /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
-
-    public function __construct(ProfileService $profileService)
-    {
+    public function __construct(
+        ProfileService $profileService
+    ) {
         $this->profileService = $profileService;
-        $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
-        );
     }
 
     public function getAction(Request $request, $identityId)

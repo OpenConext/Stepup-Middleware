@@ -18,8 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
@@ -36,12 +38,25 @@ class ProfileService extends AbstractSearchService
      */
     private $identityService;
 
+    /**
+     * @var InstitutionListingRepository
+     */
+    private $institutionListingRepository;
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $authorizationService;
+
     public function __construct(
         RaListingRepository $raListingRepository,
-        IdentityService $identityService
+        InstitutionListingRepository $institutionListingRepository,
+        IdentityService $identityService,
+        InstitutionAuthorizationService $institutionAuthorizationService
     ) {
         $this->raListingRepository = $raListingRepository;
+        $this->institutionListingRepository = $institutionListingRepository;
         $this->identityService = $identityService;
+        $this->authorizationService = $institutionAuthorizationService;
     }
 
     /**
@@ -60,38 +75,26 @@ class ProfileService extends AbstractSearchService
      */
     public function createProfile($identityId)
     {
-        $raCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($identityId);
-        $isSraa = false;
-        if ($raCredentials) {
-            $isSraa = $raCredentials->isSraa();
-            if (!$isSraa && ($raCredentials->isRa() || $raCredentials->isRaa())) {
-                $authorizations = $this->findAuthorizationsBy(
-                    new IdentityId($raCredentials->getIdentityId())
-                );
-            }
-        }
-
         $identity = $this->identityService->find($identityId);
         if ($identity === null) {
             return null;
         }
 
-        // If the user is not authorized at all (non ra user), or when the user is SRAA, then build an empty collection.
-        if (!isset($authorizations)) {
-            $authorizations = new AuthorizedInstitutionCollection($identity->institution);
-        }
+        $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
+            new IdentityId($identityId),
+            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
+        );
 
-        return new Profile($identity, $authorizations, $isSraa);
-    }
+        $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
+            new IdentityId($identityId),
+            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
+        );
 
-    /**
-     * @param Institution $identity
-     * @return AuthorizedInstitutionCollection
-     */
-    private function findAuthorizationsBy(IdentityId $identity)
-    {
-        $authorizations = $this->raListingRepository->findByIdentityId($identity);
+        $authorizations = AuthorizedInstitutionCollection::from(
+            $authorizationContextRa->getInstitutions(),
+            $authorizationContextRaa->getInstitutions()
+        );
 
-        return AuthorizedInstitutionCollection::fromInstitutionAuthorization($authorizations);
+        return new Profile($identity, $authorizations, $authorizationContextRa->isActorSraa());
     }
 }

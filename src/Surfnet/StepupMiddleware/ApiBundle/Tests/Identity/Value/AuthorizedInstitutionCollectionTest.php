@@ -19,13 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Value;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\ContactInformation;
-use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\Location;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 
 final class AuthorizedInstitutionCollectionTest extends TestCase
@@ -35,7 +30,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
      */
     public function empty_collection()
     {
-        $collection = AuthorizedInstitutionCollection::fromInstitutionAuthorization([]);
+        $collection = AuthorizedInstitutionCollection::from($this->buildInstitutionCollection([]), null);
         $this->assertEmpty($collection->getAuthorizations());
     }
 
@@ -44,30 +39,42 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
      */
     public function retrieve_institutions()
     {
-        $homeInstitution = $this->buildInstitution('institution');
-
-        $auth1 = $this->buildAuthorization((string)$homeInstitution, 'institution-x', AuthorityRole::ROLE_RA);
-        $auth2 = $this->buildAuthorization((string)$homeInstitution, 'institution-x', AuthorityRole::ROLE_RAA);
-        $auth3 = $this->buildAuthorization((string)$homeInstitution, 'institution-y', AuthorityRole::ROLE_RA);
-        $collection = AuthorizedInstitutionCollection::fromInstitutionAuthorization(
-            [$auth1, $auth2, $auth3]
+        $collection = AuthorizedInstitutionCollection::from(
+            $this->buildInstitutionCollection(['a', 'b']),
+            $this->buildInstitutionCollection(['a', 'b'])
         );
 
         $this->assertCount(2, $collection->getAuthorizations());
+
+        // Raa roles took precedence over the ra roles.
+        $this->assertEquals('raa', $collection->getAuthorizations()['a'][0]);
+        $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
     }
 
-    private function buildAuthorization($institutionName, $relationName, $role)
+    /**
+     * @test
+     */
+    public function retrieve_institutions_only_raa()
     {
-        return RaListing::create(
-            'identityId',
-            new Institution($institutionName),
-            new CommonName('commonName'),
-            new Email('email@example.com'),
-            new AuthorityRole($role),
-            new Location('location'),
-            new ContactInformation('contactinfo'),
-            new Institution($relationName)
+        $collection = AuthorizedInstitutionCollection::from(
+            $this->buildInstitutionCollection([]),
+            $this->buildInstitutionCollection(['a', 'b'])
         );
+
+        $this->assertCount(2, $collection->getAuthorizations());
+
+        // Raa roles took precedence over the ra roles.
+        $this->assertEquals('raa', $collection->getAuthorizations()['a'][0]);
+        $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
+    }
+
+    private function buildInstitutionCollection(array $institutions)
+    {
+        $institutionList = [];
+        foreach ($institutions as $institution) {
+            $institutionList[] = $this->buildInstitution($institution);
+        }
+        return new InstitutionCollection($institutionList);
     }
 
     private function buildInstitution($name)

@@ -92,7 +92,7 @@ final class RaSecondFactorController extends Controller
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
+            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
         );
 
         return $query;

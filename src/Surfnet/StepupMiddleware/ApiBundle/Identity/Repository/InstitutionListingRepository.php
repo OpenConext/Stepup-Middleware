@@ -63,7 +63,7 @@ class InstitutionListingRepository extends EntityRepository
         $qb = $this->createQueryBuilder('i')
             ->select("a.institution")
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
-            ->leftJoin(
+            ->innerJoin(
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
@@ -101,7 +101,7 @@ class InstitutionListingRepository extends EntityRepository
         $qb = $this->createQueryBuilder('i')
             ->select("a.institutionRelation")
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
-            ->leftJoin(
+            ->innerJoin(
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,

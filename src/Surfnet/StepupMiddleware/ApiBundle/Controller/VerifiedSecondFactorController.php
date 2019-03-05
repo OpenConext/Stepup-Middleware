@@ -83,7 +83,7 @@ class VerifiedSecondFactorController extends Controller
         $query->pageNumber       = (int) $request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
+            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
         );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);

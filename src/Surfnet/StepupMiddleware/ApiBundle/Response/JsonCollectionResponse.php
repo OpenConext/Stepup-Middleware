@@ -49,14 +49,11 @@ class JsonCollectionResponse extends JsonResponse
             'collection' => array(
                 'total_items' => $totalItems,
                 'page'        => $page,
-                'page_size'   => $pageSize
+                'page_size'   => $pageSize,
             ),
-            'items'      => $collection
+            'items'      => $collection,
+            'filters'    => $filters,
         );
-
-        if (!empty($filters)) {
-            $data['filters'] = $filters;
-        }
 
         parent::__construct($data, 200, $headers);
     }

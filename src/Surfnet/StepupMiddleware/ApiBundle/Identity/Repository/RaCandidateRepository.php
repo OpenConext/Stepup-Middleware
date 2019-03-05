@@ -202,6 +202,27 @@ class RaCandidateRepository extends EntityRepository
     }
 
     /**
+     * @param RaCandidateQuery $query
+     * @return \Doctrine\ORM\Query
+     */
+    public function createOptionsQuery(RaCandidateQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('rac')
+            ->select('rac.institution')
+            ->groupBy('rac.institution');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'rac.raInstitution',
+            'iac'
+        );
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
      * @param string[] $sraaList
      * @return RaCandidate[]
      */

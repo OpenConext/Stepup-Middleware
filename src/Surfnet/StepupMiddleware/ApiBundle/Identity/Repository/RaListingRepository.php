@@ -193,6 +193,27 @@ class RaListingRepository extends EntityRepository
     }
 
     /**
+     * @param RaListingQuery $query
+     * @return \Doctrine\ORM\Query
+     */
+    public function createOptionsQuery(RaListingQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->select('r.institution, r.raInstitution')
+            ->groupBy('r.institution, r.raInstitution');
+
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'r.raInstitution',
+            'iac'
+        );
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
      * @param Institution $raInstitution
      * @return ArrayCollection
      */

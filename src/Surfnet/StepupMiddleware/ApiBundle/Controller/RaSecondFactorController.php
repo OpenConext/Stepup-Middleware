@@ -56,7 +56,9 @@ final class RaSecondFactorController extends Controller
 
         $paginator = $this->raSecondFactorService->search($query);
 
-        return JsonCollectionResponse::fromPaginator($paginator);
+        $filters = $this->raSecondFactorService->getFilterOptions($query);
+
+        return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 
     public function exportAction(Request $request)

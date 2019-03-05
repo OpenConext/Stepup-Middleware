@@ -76,7 +76,9 @@ class RaCandidateController extends Controller
 
         $paginator = $this->raCandidateService->search($query);
 
-        return JsonCollectionResponse::fromPaginator($paginator);
+        $filters = $this->raCandidateService->getFilterOptions($query);
+
+        return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 
     /**

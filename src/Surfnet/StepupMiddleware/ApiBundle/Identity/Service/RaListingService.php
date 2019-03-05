@@ -66,6 +66,26 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
+     * @param RaListingQuery $query
+     * @return array
+     */
+    public function getFilterOptions(RaListingQuery $query)
+    {
+        $doctrineQuery = $this->raListingRepository->createOptionsQuery($query);
+
+        $filters = [];
+        $results = $doctrineQuery->getArrayResult();
+        foreach ($results as $options) {
+            foreach ($options as $key => $value) {
+                $val = (string)$value;
+                $filters[$key][$val] = (string)$val;
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
      * @param Institution $institution
      * @return RegistrationAuthorityCredentials[]
      */

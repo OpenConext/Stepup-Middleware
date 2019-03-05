@@ -53,6 +53,26 @@ class RaSecondFactorService extends AbstractSearchService
      * @param RaSecondFactorQuery $query
      * @return array
      */
+    public function getFilterOptions(RaSecondFactorQuery $query)
+    {
+        $doctrineQuery = $this->repository->createOptionsQuery($query);
+
+        $filters = [];
+        $results = $doctrineQuery->getArrayResult();
+        foreach ($results as $options) {
+            foreach ($options as $key => $value) {
+                $val = (string)$value;
+                $filters[$key][$val] = (string)$val;
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * @param RaSecondFactorQuery $query
+     * @return array
+     */
     public function searchUnpaginated(RaSecondFactorQuery $query)
     {
         return $this->repository->createSearchQuery($query)->getResult();

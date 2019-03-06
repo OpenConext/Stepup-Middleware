@@ -146,7 +146,8 @@ Request parameters:
     "authorizations": {
         "ra": ["institution-a", "institution-b"],
         "raa": ["institution-a"] 
-    }     
+    },
+    "implicit_raa_at": ["institution-a", "institution-b"]
 }
 ```
 

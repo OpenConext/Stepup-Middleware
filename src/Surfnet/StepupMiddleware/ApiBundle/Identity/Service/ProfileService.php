@@ -62,8 +62,10 @@ class ProfileService extends AbstractSearchService
     /**
      * Uses the identityId to first load the ra credentials (if present)
      * These credentials are then used to test what type of administrator we are dealing with ((S)RA(A)). Next the
-     * authorizations are retrieved from the InstitutionAuthorizationRepository. Finally identity is retrieved for the
-     * provided identityId. This data is then merged in a Profile value object.
+     * authorizations are retrieved from the InstitutionAuthorizationRepository. Not that we distinguish between
+     * implicit and explicitly appointed roles. The implicit roles are based on the institution configuration
+     * (SELECT_RAA). Finally identity is retrieved for the provided identityId. This data is then merged in a Profile
+     * value object.
      *
      * When the profile is incorrect, for example because no identity can be found, null is returned instead of a
      * Profile. Its possible to retrieve profile data for a non RA user, in that case no authorization data is set
@@ -90,11 +92,22 @@ class ProfileService extends AbstractSearchService
             new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
         );
 
+        // Read the implicit management (RAA) roles based on the SELECT_RAA configuration option.
+        $authorizationContextSelect = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
+            new IdentityId($identityId),
+            $identity->institution
+        );
+
         $authorizations = AuthorizedInstitutionCollection::from(
             $authorizationContextRa->getInstitutions(),
             $authorizationContextRaa->getInstitutions()
         );
 
-        return new Profile($identity, $authorizations, $authorizationContextRa->isActorSraa());
+        return new Profile(
+            $identity,
+            $authorizations,
+            $authorizationContextSelect->getInstitutions(),
+            $authorizationContextRa->isActorSraa()
+        );
     }
 }

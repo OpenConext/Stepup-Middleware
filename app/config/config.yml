@@ -45,6 +45,14 @@ services:
             - [ if, else, elseif, for ] # Allowed tags
             - [ escape, localizeddate ] # Allowed filters
             - # Allowed methods
+                Surfnet\Stepup\Configuration\Value\ContactInformation:
+                    - __toString
+                Surfnet\Stepup\Configuration\Value\Location:
+                    - __toString
+                Surfnet\Stepup\Configuration\Value\RaLocationName:
+                    - __toString
+                Surfnet\Stepup\DateTime\DateTime:
+                    - __toString
                 Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
                     - getCommonName
                     - getLocation

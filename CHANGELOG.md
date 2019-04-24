@@ -13,6 +13,9 @@ https://github.com/OpenConext/Stepup-Deploy/wiki/rfc-fine-grained-authorization/
 * Update auditlog to enhance the logs with additional ra institution data #252 #253
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
 
+**Improvements**
+* Install security upgrades
+
 **Backwards compatibility breaking changes**
 The introduction of the FGA changes resulted in new versions of serveral events. This complicates reverting to an onlder version of Stepup-Middleware after applying one of these new events. Also, existing projections have been updated (ra_listing and ra_candidates) introducing further complications when rolling back to a previous version.
 

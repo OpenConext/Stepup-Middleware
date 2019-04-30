@@ -64,12 +64,6 @@ class RaListingQuery extends AbstractQuery
     public $orderDirection;
 
     /**
-     * {@inheritdoc} RaListing should not be paginated, expectation is that amount of entries remains well under 100,
-     * if there are issue they will be tackled later as requested by SURFnet.
-     */
-    public $itemsPerPage = 1000;
-
-    /**
      * @var InstitutionAuthorizationContextInterface
      */
     public $authorizationContext;

@@ -1,5 +1,31 @@
 # Middleware APIs
 
+## Required headers
+
+Each POST request must include the following headers:
+
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+Each GET request must include the header:
+
+```
+Accept: application/json
+```
+
+## Authentication
+
+The enpoints are protected using HTTP Basic authentication for the 'ss', 'ra' and 'management' users.
+
+## CURL Examples
+
+### Example GET request
+```
+curl -u ss:password -H 'Accept: application/json' 'http://middleware.dev.surfconext.nl/vetted-second-factors?identityId=f9913e4b-8f50-4729-97b9-87ca9b33f0b8'
+```
+
 ## Standard Error Responses
 
 | Response Code | Definition            | Used When | Response Format |
@@ -237,6 +263,15 @@ Request parameters:
 - secondFactorId: (optional) UUIDv4 of the second factor to search for
 - registrationCode: (optional) string, registration code to search for
 - p: (optional, default 1) integer, the requested result page
+
+#### Request
+URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}(&p=}`
+Method: GET
+Request parameters:
+- IdentityId: (optional) UUIDv4 of the identity to search for
+- p: (optional, default 1) integer, the requested result page
+
+Note that the `verified-second-factors-of-identity` (used by self service) endpoint does not apply the authorization context.
 
 #### Response
 `200 OK`

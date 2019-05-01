@@ -1,5 +1,31 @@
 # Middleware APIs
 
+## Required headers
+
+Each POST request must include the following headers:
+
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+Each GET request must include the header:
+
+```
+Accept: application/json
+```
+
+## Authentication
+
+The enpoints are protected using HTTP Basic authentication for the 'ss', 'ra' and 'management' users.
+
+## CURL Examples
+
+### Example GET request
+```
+curl -u ss:password -H 'Accept: application/json' 'http://middleware.dev.surfconext.nl/vetted-second-factors?identityId=f9913e4b-8f50-4729-97b9-87ca9b33f0b8'
+```
+
 ## Standard Error Responses
 
 | Response Code | Definition            | Used When | Response Format |

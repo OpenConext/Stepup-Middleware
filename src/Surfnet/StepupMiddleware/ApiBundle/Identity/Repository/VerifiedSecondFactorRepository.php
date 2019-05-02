@@ -98,7 +98,8 @@ class VerifiedSecondFactorRepository extends EntityRepository
 
         // The SRAA user does not adhere to the FGA filter rules when searching for a registration code.
         // This way the SRAA does not have to switch to a certain institution to start the vetting process.
-        if ($query->authorizationContext->isActorSraa() && is_string($query->registrationCode)) {
+        // And if the authzcontext is explicitly not set, that also signals that the fga filter should not be applied!
+        if (is_null($query->authorizationContext) || ($query->authorizationContext->isActorSraa() && is_string($query->registrationCode))) {
             $applyFgaFilter = false;
         }
 

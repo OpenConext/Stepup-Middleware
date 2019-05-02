@@ -65,7 +65,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -80,11 +80,26 @@ class VerifiedSecondFactorController extends Controller
         }
 
         $query->registrationCode = $request->get('registrationCode');
-        $query->pageNumber       = (int) $request->get('p', 1);
+        $query->pageNumber = (int) $request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
             $actorId,
             new InstitutionRole(InstitutionRole::ROLE_USE_RA)
         );
+
+        $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
+
+        return JsonCollectionResponse::fromPaginator($paginator);
+    }
+
+    public function collectionOfIdentityAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_SS']);
+        $query = new VerifiedSecondFactorQuery();
+
+        if ($request->get('identityId')) {
+            $query->identityId = new IdentityId($request->get('identityId'));
+        }
+        $query->pageNumber = (int) $request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
 

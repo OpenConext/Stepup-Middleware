@@ -22,6 +22,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -94,14 +95,12 @@ class VerifiedSecondFactorController extends Controller
     public function collectionOfIdentityAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_SS']);
-        $query = new VerifiedSecondFactorQuery();
+        $query = new VerifiedSecondFactorOfIdentityQuery();
 
-        if ($request->get('identityId')) {
-            $query->identityId = new IdentityId($request->get('identityId'));
-        }
+        $query->identityId = new IdentityId($request->get('identityId'));
         $query->pageNumber = (int) $request->get('p', 1);
 
-        $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
+        $paginator = $this->secondFactorService->searchVerifiedSecondFactorsOfIdentity($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
     }

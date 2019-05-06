@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
 class VerifiedSecondFactorRepository extends EntityRepository
@@ -98,8 +99,7 @@ class VerifiedSecondFactorRepository extends EntityRepository
 
         // The SRAA user does not adhere to the FGA filter rules when searching for a registration code.
         // This way the SRAA does not have to switch to a certain institution to start the vetting process.
-        // And if the authzcontext is explicitly not set, that also signals that the fga filter should not be applied!
-        if (is_null($query->authorizationContext) || ($query->authorizationContext->isActorSraa() && is_string($query->registrationCode))) {
+        if ($query->authorizationContext->isActorSraa() && is_string($query->registrationCode)) {
             $applyFgaFilter = false;
         }
 
@@ -130,6 +130,21 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 'iac'
             );
         }
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param VerifiedSecondFactorOfIdentityQuery $query
+     * @return Query
+     */
+    public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('sf');
+
+        $queryBuilder
+            ->andWhere('sf.identityId = :identityId')
+            ->setParameter('identityId', (string) $query->identityId);
 
         return $queryBuilder->getQuery();
     }

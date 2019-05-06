@@ -23,6 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
@@ -81,6 +82,20 @@ class SecondFactorService extends AbstractSearchService
     public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
     {
         $doctrineQuery = $this->verifiedRepository->createSearchQuery($query);
+
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
+
+        return $paginator;
+    }
+
+
+    /**
+     * @param VerifiedSecondFactorOfIdentityQuery $query
+     * @return \Pagerfanta\Pagerfanta
+     */
+    public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query)
+    {
+        $doctrineQuery = $this->verifiedRepository->createSearchForIdentityQuery($query);
 
         $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
 

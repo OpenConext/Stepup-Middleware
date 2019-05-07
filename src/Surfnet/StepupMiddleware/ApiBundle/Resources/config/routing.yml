@@ -38,6 +38,12 @@ verified_second_factors:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+verified_second_factors_of_identity:
+    path:     /verified-second-factors-of-identity
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:collectionOfIdentity }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 vetted_second_factors:
     path:     /vetted-second-factors
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:collection }

@@ -264,6 +264,15 @@ Request parameters:
 - registrationCode: (optional) string, registration code to search for
 - p: (optional, default 1) integer, the requested result page
 
+#### Request
+URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}(&p=}`
+Method: GET
+Request parameters:
+- IdentityId: (optional) UUIDv4 of the identity to search for
+- p: (optional, default 1) integer, the requested result page
+
+Note that the `verified-second-factors-of-identity` (used by self service) endpoint does not apply the authorization context.
+
 #### Response
 `200 OK`
 ```json

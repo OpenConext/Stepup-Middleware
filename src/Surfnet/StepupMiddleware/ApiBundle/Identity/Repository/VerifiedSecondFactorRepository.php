@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
 class VerifiedSecondFactorRepository extends EntityRepository
@@ -129,6 +130,21 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 'iac'
             );
         }
+
+        return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param VerifiedSecondFactorOfIdentityQuery $query
+     * @return Query
+     */
+    public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('sf');
+
+        $queryBuilder
+            ->andWhere('sf.identityId = :identityId')
+            ->setParameter('identityId', (string) $query->identityId);
 
         return $queryBuilder->getQuery();
     }

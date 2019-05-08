@@ -131,10 +131,9 @@ class InstitutionListingRepository extends EntityRepository
 
 
     /**
-     * @param Institution $institution
      * @return InstitutionCollection
      */
-    public function getInstitutionsForSelectRaaAsSraa(Institution $institution)
+    public function getInstitutionsForSelectRaaAsSraa()
     {
         $qb = $this->createQueryBuilder('i')
             ->select("a.institution")
@@ -144,10 +143,8 @@ class InstitutionListingRepository extends EntityRepository
                 Join::WITH,
                 "i.institution = a.institution AND a.institutionRole IN (:authorizationRoles)"
             )
-            ->where("a.institution = :institution")
             ->groupBy("a.institution");
 
-        $qb->setParameter('institution', (string)$institution);
         $qb->setParameter(
             'authorizationRoles',
             [InstitutionRole::ROLE_SELECT_RAA]

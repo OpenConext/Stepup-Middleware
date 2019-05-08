@@ -196,6 +196,12 @@ class RaCandidateRepository extends EntityRepository
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);
         }
 
+        if (!empty($query->raInstitution)) {
+            $queryBuilder
+                ->andWhere('rac.raInstitution = :raInstitution')
+                ->setParameter('raInstitution', $query->raInstitution);
+        }
+
         $queryBuilder->groupBy('rac.identityId');
 
         return $queryBuilder->getQuery();
@@ -272,7 +278,7 @@ class RaCandidateRepository extends EntityRepository
      * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return RaCandidate[]
      */
-    public function findAllRaasByIdentityIdAndRaInstitution($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
+    public function findAllRaasByIdentityId($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
     {
         $queryBuilder = $this->createQueryBuilder('rac')
             ->where('rac.identityId = :identityId')

@@ -138,12 +138,11 @@ ra_candidate_search:
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_candidate:
-    path:      /ra-candidate/{identityId}/{institution}
+    path:      /ra-candidate/{identityId}
     defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:get }
     methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-        institution: '.+'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_location_listing:

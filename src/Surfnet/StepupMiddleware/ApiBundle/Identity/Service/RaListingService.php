@@ -71,18 +71,7 @@ class RaListingService extends AbstractSearchService
      */
     public function getFilterOptions(RaListingQuery $query)
     {
-        $doctrineQuery = $this->raListingRepository->createOptionsQuery($query);
-
-        $filters = [];
-        $results = $doctrineQuery->getArrayResult();
-        foreach ($results as $options) {
-            foreach ($options as $key => $value) {
-                $val = (string)$value;
-                $filters[$key][$val] = (string)$val;
-            }
-        }
-
-        return $filters;
+        return $this->getFilteredQueryOptions($this->raListingRepository->createOptionsQuery($query));
     }
 
     /**

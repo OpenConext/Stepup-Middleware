@@ -55,18 +55,7 @@ class RaSecondFactorService extends AbstractSearchService
      */
     public function getFilterOptions(RaSecondFactorQuery $query)
     {
-        $doctrineQuery = $this->repository->createOptionsQuery($query);
-
-        $filters = [];
-        $results = $doctrineQuery->getArrayResult();
-        foreach ($results as $options) {
-            foreach ($options as $key => $value) {
-                $val = (string)$value;
-                $filters[$key][$val] = (string)$val;
-            }
-        }
-
-        return $filters;
+        return $this->getFilteredQueryOptions($this->repository->createOptionsQuery($query));
     }
 
     /**

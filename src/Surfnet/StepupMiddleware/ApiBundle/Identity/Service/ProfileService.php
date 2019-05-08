@@ -94,8 +94,7 @@ class ProfileService extends AbstractSearchService
 
         // Read the implicit management (RAA) roles based on the SELECT_RAA configuration option.
         $authorizationContextSelect = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            new IdentityId($identityId),
-            $identity->institution
+            new IdentityId($identityId)
         );
 
         $authorizations = AuthorizedInstitutionCollection::from(

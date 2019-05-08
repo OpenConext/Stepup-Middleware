@@ -18,11 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -53,10 +50,9 @@ class RaCandidateController extends Controller
 
     /**
      * @param Request $request
-     * @param Institution $actorInstitution
      * @return JsonCollectionResponse
      */
-    public function searchAction(Request $request, Institution $actorInstitution)
+    public function searchAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
@@ -67,11 +63,11 @@ class RaCandidateController extends Controller
         $query->commonName        = $request->get('commonName');
         $query->email             = $request->get('email');
         $query->secondFactorTypes = $request->get('secondFactorTypes');
+        $query->raInstitution     = $request->get('raInstitution');
         $query->pageNumber        = (int) $request->get('p', 1);
 
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId,
-            $actorInstitution
+            $actorId
         );
 
         $paginator = $this->raCandidateService->search($query);
@@ -92,19 +88,17 @@ class RaCandidateController extends Controller
         $actorId = new IdentityId($request->get('actorId'));
 
         $identityId = $request->get('identityId');
-        $institution = $request->get('institution');
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId,
-            new Institution($institution)
+            $actorId
         );
 
-        $raCandidate = $this->raCandidateService->findByIdentityIdAndRaInstitution($identityId, $authorizationContext);
+        $raCandidates = $this->raCandidateService->findAllByIdentityId($identityId, $authorizationContext);
 
-        if ($raCandidate === null) {
+        if ($raCandidates === null) {
             throw new NotFoundHttpException(sprintf("RaCandidate with IdentityId '%s' does not exist", $identityId));
         }
 
-        return new JsonResponse($raCandidate);
+        return new JsonResponse($raCandidates);
     }
 }

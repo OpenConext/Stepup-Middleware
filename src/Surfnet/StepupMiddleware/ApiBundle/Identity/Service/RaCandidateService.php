@@ -56,17 +56,9 @@ class RaCandidateService extends AbstractSearchService
      */
     public function getFilterOptions(RaCandidateQuery $query)
     {
-        $doctrineQuery = $this->raCandidateRepository->createOptionsQuery($query);
-
-        $filters = [];
-        $results = $doctrineQuery->getArrayResult();
-        foreach ($results as $options) {
-            foreach ($options as $key => $value) {
-                $val = (string)$value;
-                $filters[$key][$val] = (string)$val;
-            }
-        }
-
+        $institutions = $query->authorizationContext->getInstitutions()->serialize();
+        $filters = $this->getFilteredQueryOptions($this->raCandidateRepository->createOptionsQuery($query));
+        $filters['raInstitution'] = array_combine($institutions, $institutions);
         return $filters;
     }
 
@@ -75,9 +67,9 @@ class RaCandidateService extends AbstractSearchService
      * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate[]
      */
-    public function findByIdentityIdAndRaInstitution($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
+    public function findAllByIdentityId($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
     {
-        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityIdAndRaInstitution($identityId, $authorizationContext);
+        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityId($identityId, $authorizationContext);
 
         return $raCandidates;
     }

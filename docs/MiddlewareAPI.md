@@ -427,8 +427,6 @@ Method: GET
 Request parameters:
 - identityId: UUIDv4 of the Identity of which to retrieve the possible RaListing
 - actorId: (required) UUIDv4 of the identity
-- actorInstitution: (required) string, the institution as scope determination
-- institution: (optional) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -436,12 +434,12 @@ Request parameters:
 {
     "identity_id": "c78240b1-612f-49b7-85b7-83eae5f63a85",
     "institution": "Ibuildings",
+    "ra_institution": "Ibuildings",
     "common_name": "SRAA Account",
     "email": "info@ibuildings.nl",
     "role": "ra",
     "location": "Goeman Borgesiuslaat 77, Utrecht",
-    "contact_information": "zie ibuildings.nl",
-    "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
+    "contact_information": "zie ibuildings.nl"
 }
 ```
 
@@ -461,7 +459,6 @@ Request parameters:
 - orderBy: (optional, default `commonName`) string, sorting column; only `commonName` is allowed
 - orderDirection: (optional, default `asc`) string, sorting direction; only `asc` or `desc` allowed.
 - actorId: (required) UUIDv4 of the identity
-- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -476,6 +473,7 @@ Request parameters:
         {
             "identity_id": "c78240b1-612f-49b7-85b7-83eae5f63a85",
             "institution": "Ibuildings",
+            "ra_institution": "Ibuildings",
             "common_name": "SRAA Account",
             "email": "info@ibuildings.nl",
             "role": "ra",
@@ -488,7 +486,7 @@ Request parameters:
 
 
 
-### Registration Authority Candidate - Single RaCandidate
+### Registration Authority Candidate - List with RaCandidate for Single Identity
 
 #### Request
 URL: `http://middleware.tld/ra-candidate/{identityId}`
@@ -496,18 +494,35 @@ Method: GET
 Request parameters:
 - identityId: (required) UUIDv4 of the Identity of which to retrieve the possible RaCandidate
 - actorId: (required) UUIDv4 of the identity
-- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
 ```json
 {
-    "identity_id": "8b5cdd14-74b1-43a2-a806-c171728b1bf1",
-    "institution": "Ibuildings",
-    "common_name": "SMS Account",
-    "email": "info@ibuildings.nl",
-    "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5",
-    "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
+    "collection": {
+        "total_items": 1,
+        "page": 1,
+        "page_size": 25
+    },
+    "items": [{
+        "identity_id": "8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+        "institution": "Ibuildings",
+        "ra_institution": "Ibuildings",
+        "common_name": "SMS Account",
+        "email": "info@ibuildings.nl",
+        "role": "raa",
+        "location": "Vlissingen",
+        "contact_information": "Contact information",
+        "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5"
+    }],
+    "filters": {
+        "institution": {
+            "Ibuildings": "Ibuildings"
+        },
+        "raInstitution": {
+            "Ibuildings": "Ibuildings"
+        }
+    }
 }
 ```
 
@@ -515,15 +530,16 @@ Request parameters:
 ### Registration Authority Candidate - Search RaCandidate
 
 #### Request
-URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}(&p=}`
+URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}{&secondFactorTypes=}{&raInstitution}(&p=}`
 Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination
 - commonName: (optional) string, the commonName to match against
 - email: (optional) string, the email to match against
+- secondFactorTypes: (optional) list with second factors
+- raInstitution: (optional) string, institution were candidates could be made ra for
 - p: (optional, default 1) integer, the requested result page
 - actorId: (required) UUIDv4 of the identity
-- actorInstitution: (required) string, the institution as scope determination
 
 #### Response
 `200 OK`
@@ -541,7 +557,7 @@ Request parameters:
             "common_name": "SMS Account",
             "email": "info@ibuildings.nl",
             "name_id": "2592ab2afb52eea9a61f5db90febd631966d49f5",
-            "actorId": "4984057f-5952-4a82-a77f-44bc9cd62ce4"
+            "ra_institution": "Ibuildings"
         }
     ]
 }
@@ -593,11 +609,10 @@ Request parameters:
 ### Registration Authority Candidate - Search second factors for export
 
 #### Request
-URL: `http://middleware.tld/ra-second-factors-export?actorId=&actorInstitution={&name=}{&type=}{&secondFactorId=}{&email=}{&status=}
+URL: `http://middleware.tld/ra-second-factors-export?actorId=&{&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&raInstitution=}
 Method: GET
 Request parameters:
 - actorId: (required) UUIDv4 of the identity
-- actorInstitution: (required) string, the institution as scope determination
 - name: (optional) string, the second factor name to match against
 - type: (optional) string, the type to match against
 - secondFactorId: (optional) string, the secondFactorId to match against
@@ -618,7 +633,6 @@ Request parameters:
         "name": "Yubi",
         "document_number": null,
         "email": "info@ibuildings.nl",
-        "actorInstitution": "Ibuildings",
         "institution": "SURFnet"
     }
 ]

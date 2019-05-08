@@ -54,4 +54,26 @@ class AbstractSearchService
 
         return $paginator;
     }
+
+    /**
+     * @param Query $doctrineQuery
+     * @return array
+     */
+    protected function getFilteredQueryOptions(Query $doctrineQuery)
+    {
+        $filters = [];
+        $results = $doctrineQuery->getArrayResult();
+        foreach ($results as $options) {
+            foreach ($options as $key => $value) {
+                $val = (string)$value;
+                $filters[$key][$val] = (string)$val;
+            }
+        }
+
+        foreach (array_keys($filters) as $key) {
+            asort($filters[$key]);
+        }
+
+        return $filters;
+    }
 }

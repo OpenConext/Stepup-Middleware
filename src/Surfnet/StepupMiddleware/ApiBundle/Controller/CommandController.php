@@ -164,6 +164,14 @@ class CommandController extends Controller
 
         $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId);
 
+        if (!$registrationAuthorityCredentials) {
+            throw new AccessDeniedHttpException(sprintf(
+                'Institution "%s" is not on the whitelist and no RA credentials found for actor "%s", processing of command denied',
+                $institution,
+                $actorId
+            ));
+        }
+
         if ($registrationAuthorityCredentials->isSraa()) {
             return;
         }

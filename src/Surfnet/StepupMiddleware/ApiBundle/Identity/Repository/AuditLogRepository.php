@@ -77,12 +77,9 @@ class AuditLogRepository extends EntityRepository
             ->setParameter('secondFactorEvents', self::$secondFactorEvents);
 
         switch ($query->orderBy) {
-            case 'secondFactorId':
             case 'secondFactorType':
             case 'secondFactorIdentifier':
-            case 'event':
             case 'recordedOn':
-            case 'actorId':
             case 'actorCommonName':
             case 'actorInstitution':
                 $queryBuilder->orderBy(

@@ -54,12 +54,10 @@ class RaListingController extends Controller
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
         $actorId = new IdentityId($request->get('actorId'));
-        $actorInstitution = new Institution($request->get('actorInstitution'));
         $institution = new Institution($request->get('institution'));
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId,
-            $actorInstitution
+            $actorId
         );
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
@@ -77,10 +75,9 @@ class RaListingController extends Controller
 
     /**
      * @param Request $request
-     * @param Institution $actorInstitution
      * @return JsonCollectionResponse
      */
-    public function searchAction(Request $request, Institution $actorInstitution)
+    public function searchAction(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
@@ -116,8 +113,7 @@ class RaListingController extends Controller
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId,
-            $actorInstitution
+            $actorId
         );
 
         $searchResults = $this->raListingService->search($query);

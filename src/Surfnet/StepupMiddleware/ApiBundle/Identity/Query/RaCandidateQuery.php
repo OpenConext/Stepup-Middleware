@@ -43,6 +43,11 @@ class RaCandidateQuery extends AbstractQuery
     public $secondFactorTypes;
 
     /**
+     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     */
+    public $raInstitution;
+
+    /**
      * @var InstitutionAuthorizationContextInterface
      */
     public $authorizationContext;

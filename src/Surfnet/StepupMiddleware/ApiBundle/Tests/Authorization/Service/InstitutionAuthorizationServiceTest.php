@@ -166,12 +166,10 @@ class InstitutionAuthorizationServiceTest extends TestCase
 
         $this->institutionListingRepository
             ->shouldReceive('getInstitutionsForSelectRaaAsSraa')
-            ->withArgs([$actorInstitution])
             ->andReturn($institutions);
 
         $context = $this->service->buildInstitutionAuthorizationContextForManagement(
-            $identityId,
-            $actorInstitution
+            $identityId
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());

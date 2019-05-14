@@ -94,15 +94,6 @@ class VerifiedSecondFactorRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        // In certain situations, the FGA filtering is not applied.
-        $applyFgaFilter = true;
-
-        // The SRAA user does not adhere to the FGA filter rules when searching for a registration code.
-        // This way the SRAA does not have to switch to a certain institution to start the vetting process.
-        if ($query->authorizationContext->isActorSraa() && is_string($query->registrationCode)) {
-            $applyFgaFilter = false;
-        }
-
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
@@ -121,7 +112,7 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('registrationCode', $query->registrationCode);
         }
 
-        if ($applyFgaFilter) {
+        if (!$query->authorizationContext->isActorSraa()) {
             // Modify query to filter on authorization
             $this->authorizationRepositoryFilter->filter(
                 $queryBuilder,

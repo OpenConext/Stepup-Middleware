@@ -59,6 +59,10 @@ services:
                     - getCommonName
                     - getLocation
                     - getContactInformation
+                Surfnet\Stepup\Identity\Value\Location:
+                    - __toString
+                Surfnet\Stepup\Identity\Value\ContactInformation:
+                    - __toString
             - # Allowed properties
                 Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation:
                     - name

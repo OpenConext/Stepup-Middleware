@@ -69,13 +69,15 @@ class RaCandidateRepository extends EntityRepository
      */
     public function removeByIdentityId(IdentityId $identityId)
     {
-        $raCandidate = $this->findByIdentityId($identityId);
+        $raCandidates = $this->findByIdentityId($identityId);
 
-        if (!$raCandidate) {
+        if (empty($raCandidates)) {
             return;
         }
 
-        $this->getEntityManager()->remove($raCandidate);
+        foreach ($raCandidates as $candidate) {
+            $this->getEntityManager()->remove($candidate);
+        }
         $this->getEntityManager()->flush();
     }
 
@@ -243,7 +245,7 @@ class RaCandidateRepository extends EntityRepository
 
     /**
      * @param string $identityId
-     * @return null|RaCandidate
+     * @return RaCandidate[]
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findByIdentityId($identityId)
@@ -252,7 +254,7 @@ class RaCandidateRepository extends EntityRepository
             ->where('rac.identityId = :identityId')
             ->setParameter('identityId', $identityId)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 
     /**
@@ -271,7 +273,6 @@ class RaCandidateRepository extends EntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
 
     /**
      * @param string $identityId

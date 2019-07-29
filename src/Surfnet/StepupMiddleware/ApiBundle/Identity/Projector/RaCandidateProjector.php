@@ -23,21 +23,22 @@ use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
-use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
-use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
@@ -46,6 +47,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -123,20 +125,12 @@ class RaCandidateProjector extends Projector
     }
 
     /**
-     * @param VettedSecondFactorRevokedEvent $event
-     * @return void
+     * If all vetted tokens are removed we should prevent the identity from becoming an RA candidate
+     *
+     * @param VettedSecondFactorsAllRevokedEvent $event
      */
-    public function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
-    {
-        $this->raCandidateRepository->removeByIdentityId($event->identityId);
-    }
-
-    /**
-     * @param CompliedWithVettedSecondFactorRevocationEvent $event
-     * @return void
-     */
-    public function applyCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
+    public function applyVettedSecondFactorsAllRevokedEvent(
+        VettedSecondFactorsAllRevokedEvent $event
     ) {
         $this->raCandidateRepository->removeByIdentityId($event->identityId);
     }
@@ -266,30 +260,37 @@ class RaCandidateProjector extends Projector
         foreach ($raInstitutions as $raInstitution) {
             // add new identities
             $raSecondFactors = $this->raSecondFactorRepository->findByInstitution($raInstitution->getInstitution());
-            foreach ($raSecondFactors as $raSecondFactor) {
-                $identity = $this->identityRepository->find($raSecondFactor->identityId);
-                $identityId = new IdentityId($identity->id);
 
-                // check if persistent in ra listing
-                if ($this->raListingRepository->findByIdentityIdAndRaInstitution($identityId, $institution)) {
+            foreach ($raSecondFactors as $raSecondFactor) {
+                if (!$raSecondFactor->status->equals(SecondFactorStatus::vetted())) {
                     continue;
                 }
 
-                // create candidate if not exists
-                $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
-                if (!$candidate) {
-                    $candidate = RaCandidate::nominate(
-                        $identityId,
-                        $identity->institution,
-                        $identity->nameId,
-                        $identity->commonName,
-                        $identity->email,
-                        $institution
-                    );
-                }
+                $identity = $this->identityRepository->find($raSecondFactor->identityId);
+                if ($identity) {
+                    $identityId = new IdentityId($identity->id);
 
-                // store
-                $this->raCandidateRepository->merge($candidate);
+                    // check if persistent in ra listing
+                    if ($this->raListingRepository->findByIdentityIdAndRaInstitution($identityId, $institution)) {
+                        continue;
+                    }
+
+                    // create candidate if not exists
+                    $candidate = $this->raCandidateRepository->findByIdentityIdAndRaInstitution($identityId, $institution);
+                    if (!$candidate) {
+                        $candidate = RaCandidate::nominate(
+                            $identityId,
+                            $identity->institution,
+                            $identity->nameId,
+                            $identity->commonName,
+                            $identity->email,
+                            $institution
+                        );
+                    }
+
+                    // store
+                    $this->raCandidateRepository->merge($candidate);
+                }
             }
         }
     }

@@ -23,6 +23,13 @@ cache:
   directories:
     - ~/.composer
 
+# The hook below makes sure ant is anstalled
+before_install:
+  - echo $(ant -version)
+  - sudo apt-get -qq update
+  - sudo apt-get install ant
+  - echo $(ant -version)
+
 before_script:
   - phpenv config-add travis.php.ini
   - composer self-update

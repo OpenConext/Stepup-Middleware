@@ -61,6 +61,7 @@ use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -537,6 +538,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $vettedSecondFactor->revoke();
+
+        if ($this->vettedSecondFactors->isEmpty()) {
+            $this->allVettedSecondFactorsRemoved();
+        }
     }
 
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId)
@@ -567,6 +572,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $vettedSecondFactor->complyWithRevocation($authorityId);
+
+        if ($this->vettedSecondFactors->isEmpty()) {
+            $this->allVettedSecondFactorsRemoved();
+        }
     }
 
     /**
@@ -722,6 +731,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
+    }
+
+    public function allVettedSecondFactorsRemoved()
+    {
+        $this->apply(
+            new VettedSecondFactorsAllRevokedEvent(
+                $this->id,
+                $this->institution
+            )
+        );
     }
 
     protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
@@ -978,7 +997,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->email = Email::unknown();
         $this->forgotten = true;
     }
-
 
     /**
      * This method is kept to be backwards compatible for changes before FGA

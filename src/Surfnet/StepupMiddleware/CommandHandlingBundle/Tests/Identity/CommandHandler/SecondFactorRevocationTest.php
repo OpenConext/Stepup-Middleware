@@ -31,9 +31,11 @@ use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
@@ -47,6 +49,7 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -286,7 +289,11 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorType,
                     $secondFactorIdentifier
-                )
+                ),
+                new VettedSecondFactorsAllRevokedEvent(
+                    $identityId,
+                    $institution
+                ),
             ]);
     }
 
@@ -572,6 +579,170 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantEmail,
                     new Locale('en_GB')
                 )
+            ])
+            ->when($command)
+            ->then([
+                new CompliedWithVettedSecondFactorRevocationEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecondFactorIdentifier,
+                    $authorityId
+                ),
+                new VettedSecondFactorsAllRevokedEvent(
+                    $registrantId,
+                    $registrantInstitution
+                ),
+            ]);
+    }
+
+
+
+    /**
+     * Test if the VettedSecondFactorsAllRevokedEvent is not triggered with multiple 2fa's
+     * @test
+     * @group command-handler
+     */
+    public function a_registration_authority_can_revoke_one_of_multiple_vetted_second_factors()
+    {
+        $command                  = new RevokeRegistrantsSecondFactorCommand();
+        $command->authorityId     = static::uuid();
+        $command->identityId      = static::uuid();
+        $command->secondFactorId  = static::uuid();
+        $secondFactorId2 = static::uuid();
+
+        $authorityId                = new IdentityId($command->authorityId);
+        $authorityNameId            = new NameId(static::uuid());
+        $authorityInstitution       = new Institution('Wazoo');
+        $authorityEmail             = new Email('info@domain.invalid');
+        $authorityCommonName        = new CommonName('Henk Westbroek');
+
+        $registrantId                     = new IdentityId($command->identityId);
+        $registrantInstitution            = new Institution('A Corp.');
+        $registrantNameId                 = new NameId('3');
+        $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
+        $registrantSecondFactorType       = new SecondFactorType('yubikey');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('00890782');
+        $registrantEmail                  = new Email('matti@domain.invalid');
+        $registrantCommonName             = new CommonName('Matti Vanhanen');
+
+        $registrantSecondFactorId2         = new SecondFactorId($secondFactorId2);
+        $registrantSecondFactorType2       = new SecondFactorType('u2f');
+        $registrantSecondFactorIdentifier2 = new U2fKeyHandle('00890783');
+
+        $this->scenario
+            ->withAggregateId($authorityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityNameId,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB'),
+                    new SecondFactorId(static::uuid()),
+                    new YubikeyPublicId('12345678')
+                )
+            ])
+            ->withAggregateId($registrantId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                // First second factor
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorIdentifier,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorType,
+                    $registrantSecondFactorIdentifier,
+                    DateTime::now(),
+                    'REGISTRATION_CODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorType,
+                    $registrantSecondFactorIdentifier,
+                    new DocumentNumber('DOCUMENT_NUMBER'),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                // Second second factor
+                new U2fDevicePossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId2,
+                    $registrantSecondFactorIdentifier2,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId2,
+                    $registrantSecondFactorType2,
+                    $registrantSecondFactorIdentifier2,
+                    DateTime::now(),
+                    'REGISTRATION_CODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId2,
+                    $registrantSecondFactorType2,
+                    $registrantSecondFactorIdentifier2,
+                    new DocumentNumber('DOCUMENT_NUMBER'),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
             ])
             ->when($command)
             ->then([

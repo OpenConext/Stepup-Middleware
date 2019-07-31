@@ -8,7 +8,7 @@ https://github.com/OpenConext/Stepup-Deploy/wiki/rfc-fine-grained-authorization/
 **New features**
 * New institution configuration options can be configured (useRa, useRaa and selectRaa) #232 #233
 * Update the institution configuration projections with the new FGA settings #235 #236
-* Update middleware to work with the new Fine Grained AuthorizationContext #239 #240 #241 #242 #243 #244 #245 #248 #249 #250
+* Update middleware to work with the new Fine Grained AuthorizationContext #239 #240 #241 #242 #243 #244 #245 #248 #249 #250 #280 #281 #279 #278 #274 #272 #270 #271 #269 #268 #267 #266 #265 #264 #263 #260 #259 #257 #255
 * Update identity aggregate root to enhance the bounded context with RA info for multiple institutions #246 #247 #251 #254
 * Update auditlog to enhance the logs with additional ra institution data #252 #253
 * The previously hardcoded "server_version" config option (Doctrine DBAL) is now configurable
@@ -20,6 +20,10 @@ https://github.com/OpenConext/Stepup-Deploy/wiki/rfc-fine-grained-authorization/
 The introduction of the FGA changes resulted in new versions of serveral events. This complicates reverting to an onlder version of Stepup-Middleware after applying one of these new events. Also, existing projections have been updated (ra_listing and ra_candidates) introducing further complications when rolling back to a previous version.
 
 See individual stories and commits for more details.
+
+** Bugfix**
+* Fix RA removal when token gets removed #284
+* Whitelist missing toString methods #282
 
 ## 2.9.3
 **Bugfix**

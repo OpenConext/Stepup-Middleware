@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 final class ForgettableEventsTest extends TestCase
 {

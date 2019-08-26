@@ -200,6 +200,9 @@ class RaSecondFactorProjector extends Projector
         );
     }
 
+    /**
+     * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
+     */
     public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
         $this->saveRaSecondFactor(
@@ -212,6 +215,9 @@ class RaSecondFactorProjector extends Projector
         );
     }
 
+    /**
+     * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
+     */
     public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
     {
         $this->saveRaSecondFactor(

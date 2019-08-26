@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerificationMailService;
 
@@ -62,18 +61,6 @@ final class EmailVerificationEmailProcessor extends Processor
     }
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
-    {
-        if ($event->emailVerificationRequired !== false) {
-            $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
-            );
-        }
-    }
-
-    public function handleU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(

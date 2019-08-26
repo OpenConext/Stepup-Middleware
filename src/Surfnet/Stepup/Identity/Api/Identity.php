@@ -152,6 +152,7 @@ interface Identity extends AggregateRoot
      * @param EmailVerificationWindow $emailVerificationWindow
      * @parame int $maxNumberOfTokens
      * @return void
+     * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
      */
     public function provePossessionOfU2fDevice(
         SecondFactorId $secondFactorId,

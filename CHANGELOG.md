@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.9.4
+This is a security release that will harden the application against CVE 2019-346
+ * Upgrade xmlseclibs to version 3.0.4 #287
+
 ## 2.9.3
 **Bugfix**
 * Be less specific in which validator is used in InstitutionConfigurationController, this is correctly configured in the

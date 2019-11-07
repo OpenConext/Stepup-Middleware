@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1
+This is a security release that will harden the application against CVE 2019-346
+ * Upgrade Stepup-saml-bundle to version 4.1.8 #286
+
 ## 3.0.0 FGA (fine grained authorization)
 The new fine grained authorization logic will allow Ra's from other institutions to accredidate RA's on behalf of another organisation.
 This is determined based on the institution configuration.
@@ -24,6 +28,10 @@ See individual stories and commits for more details.
 ** Bugfix**
 * Fix RA removal when token gets removed #284
 * Whitelist missing toString methods #282
+
+## 2.9.4
+This is a security release that will harden the application against CVE 2019-346
+ * Upgrade Stepup-saml-bundle to version 4.1.8 #286
 
 ## 2.9.3
 **Bugfix**

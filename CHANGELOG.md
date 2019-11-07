@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.2
+**Bugfix**
+The composer lockfile was not in sync with the changes in composer.json.
+
 ## 3.0.1
 This is a security release that will harden the application against CVE 2019-346
  * Upgrade Stepup-saml-bundle to version 4.1.8 #286
@@ -25,7 +29,7 @@ The introduction of the FGA changes resulted in new versions of serveral events.
 
 See individual stories and commits for more details.
 
-** Bugfix**
+**Bugfix**
 * Fix RA removal when token gets removed #284
 * Whitelist missing toString methods #282
 

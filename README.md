@@ -23,7 +23,7 @@ Make sure to run database migrations using `app/console middleware:migrations:mi
 
 Some of the configuratio of the components is static (i.e. stored in parameteres.yml). The configuration that is expected to change during the operation of a Stepup system is managed through an API on the middleware. This provides  one place and action to change the configuration and allows changing of this configuration without having to modify the configuration of several components on several servers.
 
-- The API calls are documented in the [middleware API documentation](./docs/MiddlewareManagementAPI.ml).
+- The API calls are documented in the [middleware API documentation](./docs/MiddlewareManagementAPI.md).
 - The configuration itself is elaborate and is described in detail in the [Middlware configuration](./docs/MiddlewareConfiguration.md).
 - The andible Stepup-Middleware role write scripts in /opt/stepup/  for pushing the configuration to the middleware component
 

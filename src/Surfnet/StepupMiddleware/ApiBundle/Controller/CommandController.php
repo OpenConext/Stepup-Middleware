@@ -19,10 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -68,6 +73,10 @@ class CommandController extends Controller
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var InstitutionAuthorizationService
+     */
+    private $institutionAuthorizationService;
 
     public function __construct(
         TransactionAwarePipeline $pipeline,
@@ -75,7 +84,8 @@ class CommandController extends Controller
         IdentityService $identityService,
         MetadataEnricher $enricher,
         AuthorizationChecker $authorizationChecker,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        InstitutionAuthorizationService $institutionAuthorizationService
     ) {
         $this->pipeline = $pipeline;
         $this->whitelistService = $whitelistService;
@@ -83,6 +93,7 @@ class CommandController extends Controller
         $this->authorizationChecker = $authorizationChecker;
         $this->metadataEnricher = $enricher;
         $this->logger = $logger;
+        $this->institutionAuthorizationService = $institutionAuthorizationService;
     }
 
     public function handleAction(Command $command, Metadata $metadata, Request $request)
@@ -101,6 +112,7 @@ class CommandController extends Controller
 
             $institution = $this->resolveInstitution($command, $metadata);
             $this->assertCommandMayBeProcessedOnBehalfOf($institution, $metadata->actorId);
+            $this->assertRaaCommandMayBeExecuted($metadata->actorId, $metadata->actorInstitution, $command);
         }
 
         try {
@@ -162,17 +174,7 @@ class CommandController extends Controller
             ));
         }
 
-        $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId);
-
-        if (!$registrationAuthorityCredentials) {
-            throw new AccessDeniedHttpException(sprintf(
-                'Institution "%s" is not on the whitelist and no RA credentials found for actor "%s", processing of command denied',
-                $institution,
-                $actorId
-            ));
-        }
-
-        if ($registrationAuthorityCredentials->isSraa()) {
+        if ($this->isSraa($actorId)) {
             return;
         }
 
@@ -181,5 +183,50 @@ class CommandController extends Controller
             $institution,
             $actorId
         ));
+    }
+
+    private function assertRaaCommandMayBeExecuted($actorId, $actorInstitution, Command $command)
+    {
+        // Assert RAA specific authorizations
+        if ($command instanceof RaExecutable) {
+            if (!$actorId) {
+                return;
+            }
+
+            if ($this->isSraa($actorId)) {
+                return;
+            }
+
+            $raInstitution = $command->getRaInstitution();
+            if (is_null($raInstitution)) {
+                $raInstitution = $actorInstitution;
+            }
+
+            $authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
+                new IdentityId($actorId),
+                InstitutionRole::useRaa()
+            );
+            if (!$authorizationContext->getInstitutions()->contains(new Institution($raInstitution))) {
+                throw new AccessDeniedHttpException(sprintf(
+                    'The actor "%s" is not allowed to act on behalf of institution  "%s" processing of command denied',
+                    $actorId,
+                    $raInstitution
+                ));
+            }
+        }
+    }
+
+    private function isSraa($actorId)
+    {
+        $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId);
+        if (!$registrationAuthorityCredentials) {
+            return false;
+        }
+
+        if (!$registrationAuthorityCredentials->isSraa()) {
+            return false;
+        }
+
+        return true;
     }
 }

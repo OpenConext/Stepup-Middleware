@@ -16,6 +16,7 @@ services:
         arguments:
             - "@surfnet_stepup.repository.identity"
             - "@surfnet_stepup.repository.institution_configuration"
+            - "@surfnet_stepup_middleware_api.repository.sraa"
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.configuration:

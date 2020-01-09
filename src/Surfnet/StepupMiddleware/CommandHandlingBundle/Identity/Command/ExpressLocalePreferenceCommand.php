@@ -40,4 +40,12 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
      * @var string
      */
     public $preferredLocale;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return null;
+    }
 }

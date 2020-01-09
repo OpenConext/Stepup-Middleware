@@ -23,4 +23,9 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
  */
 interface RaExecutable
 {
+    /**
+     * Returns ra institution for authorization purposes
+     * @return string|null
+     */
+    public function getRaInstitution();
 }

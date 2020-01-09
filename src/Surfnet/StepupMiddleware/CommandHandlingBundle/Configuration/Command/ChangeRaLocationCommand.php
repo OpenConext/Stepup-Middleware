@@ -62,4 +62,12 @@ class ChangeRaLocationCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $contactInformation;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return $this->institution;
+    }
 }

@@ -131,6 +131,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
     public function it_can_build_a_context_with_sraa_actor()
     {
         $actorInstitution = new Institution('institution-a');
+        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $sraaId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -163,13 +164,14 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($adminNameId)
             ->andReturn($sraa);
 
-
         $this->institutionListingRepository
-            ->shouldReceive('getInstitutionsForSelectRaaAsSraa')
+            ->shouldReceive('getInstitutionsForRole')
+            ->withArgs([$role, $identityId])
             ->andReturn($institutions);
 
-        $context = $this->service->buildInstitutionAuthorizationContextForManagement(
-            $identityId
+        $context = $this->service->buildInstitutionAuthorizationContext(
+            $identityId,
+            $role
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());

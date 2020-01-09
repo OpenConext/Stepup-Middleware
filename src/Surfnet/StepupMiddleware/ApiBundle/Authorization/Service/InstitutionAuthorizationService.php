@@ -105,7 +105,16 @@ class InstitutionAuthorizationService
         if ($isSraa) {
             $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaaAsSraa();
         } else {
+            // get select_raa institutions
             $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaa($actorId);
+
+            // remove institutions if not explicitly set in use_raa configuration
+            $institutions2 = $this->buildInstitutionAuthorizationContext($actorId, InstitutionRole::useRaa());
+            foreach ($institutions as $institution) {
+                if (!$institutions2->getInstitutions()->contains($institution)) {
+                    $institutions->remove($institution);
+                }
+            }
         }
 
         return new InstitutionAuthorizationContext($institutions, $isSraa);

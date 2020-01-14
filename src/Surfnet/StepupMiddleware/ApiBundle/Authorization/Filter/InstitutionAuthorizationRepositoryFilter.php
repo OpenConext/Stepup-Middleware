@@ -35,6 +35,12 @@ class InstitutionAuthorizationRepositoryFilter
         $institutionField,
         $authorizationAlias
     ) {
+        // If actor is SRAA we don't need filtering
+        if ($authorizationContext->isActorSraa()) {
+            return;
+        }
+
+        // Else filter on institutions we are allowed to manage
         $values = [];
         foreach ($authorizationContext->getInstitutions() as $institution) {
             $values[] = (string)$institution;

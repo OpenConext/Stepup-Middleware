@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
@@ -66,8 +67,9 @@ class RaCandidateController extends Controller
         $query->raInstitution     = $request->get('raInstitution');
         $query->pageNumber        = (int) $request->get('p', 1);
 
-        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId
+        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorId,
+            InstitutionRole::useRaa()
         );
 
         $paginator = $this->raCandidateService->search($query);
@@ -89,8 +91,9 @@ class RaCandidateController extends Controller
 
         $identityId = $request->get('identityId');
 
-        $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId
+        $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorId,
+            InstitutionRole::useRaa()
         );
 
         $raCandidates = $this->raCandidateService->findAllByIdentityId($identityId, $authorizationContext);

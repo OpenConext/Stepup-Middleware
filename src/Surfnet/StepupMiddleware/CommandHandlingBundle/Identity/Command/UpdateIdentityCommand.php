@@ -47,4 +47,12 @@ class UpdateIdentityCommand extends AbstractCommand implements SelfServiceExecut
      * @var string
      */
     public $commonName;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->id;
+    }
 }

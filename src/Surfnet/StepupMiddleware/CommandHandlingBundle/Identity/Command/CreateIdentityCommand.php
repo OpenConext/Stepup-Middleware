@@ -71,4 +71,13 @@ class CreateIdentityCommand extends AbstractCommand implements SelfServiceExecut
      * @var string
      */
     public $preferredLocale;
+
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->id;
+    }
 }

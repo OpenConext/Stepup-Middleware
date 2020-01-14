@@ -59,7 +59,7 @@ class InstitutionAuthorizationService
     }
 
     /**
-     * Build the InstitutionAuthorizationContext for use in queries
+     * Build the InstitutionAuthorizationContext to be used for authorization filtering on institutions  in queries
      *
      * The additional test is performed to indicate if the actor is SRAA.
      *
@@ -79,43 +79,6 @@ class InstitutionAuthorizationService
         $isSraa = !is_null($sraa);
 
         $institutions = $this->institutionListingRepository->getInstitutionsForRole($role, $actorId);
-
-        return new InstitutionAuthorizationContext($institutions, $isSraa);
-    }
-
-    /**
-     * Build the InstitutionAuthorizationContext for use in queries
-     *
-     * The additional test is performed to indicate if the actor is SRAA.
-     *
-     * @param IdentityId $actorId
-     * @return InstitutionAuthorizationContext
-     */
-    public function buildInstitutionAuthorizationContextForManagement(IdentityId $actorId)
-    {
-        $identity = $this->identityService->find((string) $actorId);
-
-        if (!$identity) {
-            throw new InvalidArgumentException('The provided id is not associated with any known identity');
-        }
-
-        $sraa = $this->sraaService->findByNameId($identity->nameId);
-        $isSraa = !is_null($sraa);
-
-        if ($isSraa) {
-            $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaaAsSraa();
-        } else {
-            // get select_raa institutions
-            $institutions = $this->institutionListingRepository->getInstitutionsForSelectRaa($actorId);
-
-            // remove institutions if not explicitly set in use_raa configuration
-            $institutions2 = $this->buildInstitutionAuthorizationContext($actorId, InstitutionRole::useRaa());
-            foreach ($institutions as $institution) {
-                if (!$institutions2->getInstitutions()->contains($institution)) {
-                    $institutions->remove($institution);
-                }
-            }
-        }
 
         return new InstitutionAuthorizationContext($institutions, $isSraa);
     }

@@ -84,17 +84,12 @@ class ProfileService extends AbstractSearchService
 
         $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
+            InstitutionRole::useRa()
         );
 
         $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            new InstitutionRole(InstitutionRole::ROLE_USE_RAA)
-        );
-
-        // Read the implicit management (RAA) roles based on the SELECT_RAA configuration option.
-        $authorizationContextSelect = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            new IdentityId($identityId)
+            InstitutionRole::useRaa()
         );
 
         $authorizations = AuthorizedInstitutionCollection::from(
@@ -105,7 +100,6 @@ class ProfileService extends AbstractSearchService
         return new Profile(
             $identity,
             $authorizations,
-            $authorizationContextSelect->getInstitutions(),
             $authorizationContextRa->isActorSraa()
         );
     }

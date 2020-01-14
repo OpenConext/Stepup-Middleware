@@ -112,15 +112,13 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('registrationCode', $query->registrationCode);
         }
 
-        if (!$query->authorizationContext->isActorSraa()) {
-            // Modify query to filter on authorization
-            $this->authorizationRepositoryFilter->filter(
-                $queryBuilder,
-                $query->authorizationContext,
-                'sf.institution',
-                'iac'
-            );
-        }
+        // Modify query to filter on authorization
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'sf.institution',
+            'iac'
+        );
 
         return $queryBuilder->getQuery();
     }

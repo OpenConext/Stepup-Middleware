@@ -53,4 +53,12 @@ class ProveYubikeyPossessionCommand extends AbstractCommand implements SelfServi
      * @var string
      */
     public $yubikeyPublicId;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

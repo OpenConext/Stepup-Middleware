@@ -48,4 +48,12 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
     {
         return null;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

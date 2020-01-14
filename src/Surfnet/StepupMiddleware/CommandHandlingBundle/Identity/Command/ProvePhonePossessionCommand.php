@@ -54,4 +54,12 @@ class ProvePhonePossessionCommand extends AbstractCommand implements SelfService
      * @var string
      */
     public $phoneNumber;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

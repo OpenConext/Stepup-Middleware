@@ -93,16 +93,13 @@ class RaSecondFactorRepository extends EntityRepository
         $queryBuilder = $this
             ->createQueryBuilder('sf');
 
-        // Modify query to filter on authorization
-        // The SRAA user does not adhere to the FGA filter rules when searching for tokens
-        if (!$query->authorizationContext->isActorSraa()) {
-            $this->authorizationRepositoryFilter->filter(
-                $queryBuilder,
-                $query->authorizationContext,
-                'sf.institution',
-                'iac'
-            );
-        }
+        // Modify query to filter on authorization context
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'sf.institution',
+            'iac'
+        );
 
         if ($query->name) {
             $queryBuilder->andWhere('sf.name LIKE :name')->setParameter('name', sprintf('%%%s%%', $query->name));
@@ -176,16 +173,13 @@ class RaSecondFactorRepository extends EntityRepository
             ->select('sf.institution')
             ->groupBy('sf.institution');
 
-        // Modify query to filter on authorization
-        // The SRAA user does not adhere to the FGA filter rules when searching for tokens
-        if (!$query->authorizationContext->isActorSraa()) {
-            $this->authorizationRepositoryFilter->filter(
-                $queryBuilder,
-                $query->authorizationContext,
-                'sf.institution',
-                'iac'
-            );
-        }
+        // Modify query to filter on authorization context
+        $this->authorizationRepositoryFilter->filter(
+            $queryBuilder,
+            $query->authorizationContext,
+            'sf.institution',
+            'iac'
+        );
 
         return $queryBuilder->getQuery();
     }

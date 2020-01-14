@@ -28,6 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -111,8 +112,15 @@ class CommandController extends Controller
             $logger->notice('Ensuring that the actor institution is on the whitelist, or the actor is SRAA');
 
             $institution = $this->resolveInstitution($command, $metadata);
-            $this->assertCommandMayBeProcessedOnBehalfOf($institution, $metadata->actorId);
-            $this->assertRaaCommandMayBeExecuted($metadata->actorId, $metadata->actorInstitution, $command);
+            $this->assertInstitutionIsWhitelisted($institution, $metadata->actorId);
+
+
+            $logger->notice('Ensuring that the actor is allowed to execute a command based on the fine grained authorization configuration');
+
+            $this->assertSelfServiceCommandMayBeExecutedOnBehalfOf($metadata->actorId, $command);
+            $this->assertRaCommandMayBeExecutedOnBehalfOf($metadata->actorId, $metadata->actorInstitution, $command);
+
+            $logger->notice('Command authorization succeeded');
         }
 
         try {
@@ -161,7 +169,7 @@ class CommandController extends Controller
      * @param string      $institution
      * @param string|null $actorId
      */
-    private function assertCommandMayBeProcessedOnBehalfOf($institution, $actorId)
+    private function assertInstitutionIsWhitelisted($institution, $actorId)
     {
         if ($this->whitelistService->isWhitelisted($institution)) {
             return;
@@ -185,14 +193,54 @@ class CommandController extends Controller
         ));
     }
 
-    private function assertRaaCommandMayBeExecuted($actorId, $actorInstitution, Command $command)
+    /**
+     * @param string $actorId
+     * @param Command $command
+     */
+    private function assertSelfServiceCommandMayBeExecutedOnBehalfOf($actorId, Command $command)
     {
-        // Assert RAA specific authorizations
-        if ($command instanceof RaExecutable) {
-            if (!$actorId) {
+        // Assert self service command could be executed
+        if ($command instanceof SelfServiceExecutable) {
+            $this->logger->notice('Asserting a SelfService command');
+
+            // the createIdentityCommand is used to create an Identity for a new user,
+            // the updateIdentityCommand is used to update name or email of an identity
+            // Both are only sent by the SS when the Identity is not logged in yet,
+            // thus there is not Metadata::actorInstitution,
+            if ($command instanceof CreateIdentityCommand || $command instanceof UpdateIdentityCommand) {
                 return;
             }
 
+            // If the actor is SRAA all actions should be allowed
+            if ($this->isSraa($actorId)) {
+                return;
+            }
+
+            // Validate if the actor is the user
+            if ($command->getIdentityId() !== $actorId) {
+                throw new AccessDeniedHttpException(sprintf(
+                    'The actor "%s" is not allowed to act on behalf of identity "%s" processing of command denied',
+                    $actorId,
+                    $command->getIdentityId()
+                ));
+            }
+
+            return;
+        }
+    }
+
+    /**
+     * @param string $actorId
+     * @param string $actorInstitution
+     * @param Command $command
+     */
+    private function assertRaCommandMayBeExecutedOnBehalfOf($actorId, $actorInstitution, Command $command)
+    {
+        // Assert RAA specific authorizations
+        if ($command instanceof RaExecutable) {
+            $this->logger->notice('Asserting a RA command');
+
+            // If the actor is SRAA all actions should be allowed
             if ($this->isSraa($actorId)) {
                 return;
             }
@@ -206,6 +254,7 @@ class CommandController extends Controller
                 new IdentityId($actorId),
                 InstitutionRole::useRaa()
             );
+
             if (!$authorizationContext->getInstitutions()->contains(new Institution($raInstitution))) {
                 throw new AccessDeniedHttpException(sprintf(
                     'The actor "%s" is not allowed to act on behalf of institution  "%s" processing of command denied',
@@ -216,6 +265,10 @@ class CommandController extends Controller
         }
     }
 
+    /**
+     * @param string $actorId
+     * @return bool
+     */
     private function isSraa($actorId)
     {
         $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId);

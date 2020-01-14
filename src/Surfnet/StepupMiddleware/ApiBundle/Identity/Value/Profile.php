@@ -35,11 +35,6 @@ class Profile implements JsonSerializable
     private $authorizedInstitutionCollection;
 
     /**
-     * @var InstitutionCollection
-     */
-    private $implicitManagementRolesAt;
-
-    /**
      * @var bool
      */
     private $isSraa;
@@ -47,21 +42,17 @@ class Profile implements JsonSerializable
     /**
      * @param Identity $identity
      * @param AuthorizedInstitutionCollection $authorizedInstitutionCollection
-     * @param InstitutionCollection $selectRaaInstitutions The institutions where this identity is performing implicit
-     *                                                     RAA management duties
      *
      * @param bool $isSraa
      */
     public function __construct(
         Identity $identity,
         AuthorizedInstitutionCollection $authorizedInstitutionCollection,
-        InstitutionCollection $selectRaaInstitutions,
         $isSraa
     ) {
         $this->identity = $identity;
         $this->authorizedInstitutionCollection = $authorizedInstitutionCollection;
         $this->isSraa = $isSraa;
-        $this->implicitManagementRolesAt = $selectRaaInstitutions;
     }
 
     public function jsonSerialize()
@@ -69,7 +60,6 @@ class Profile implements JsonSerializable
         $profile = $this->identity->jsonSerialize();
         $profile["is_sraa"] = $this->isSraa;
         $profile["authorizations"] = $this->authorizedInstitutionCollection->getAuthorizations();
-        $profile['implicit_raa_at'] = $this->implicitManagementRolesAt->serialize();
 
         return $profile;
     }

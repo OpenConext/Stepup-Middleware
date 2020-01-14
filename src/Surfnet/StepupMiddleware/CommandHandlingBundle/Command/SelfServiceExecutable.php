@@ -24,4 +24,5 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
  */
 interface SelfServiceExecutable
 {
+    public function getIdentityId();
 }

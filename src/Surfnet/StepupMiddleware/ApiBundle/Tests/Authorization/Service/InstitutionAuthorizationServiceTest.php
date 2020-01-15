@@ -29,10 +29,9 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
@@ -54,21 +53,21 @@ class InstitutionAuthorizationServiceTest extends TestCase
     private $sraaService;
 
     /**
-     * @var InstitutionListingRepository|m\Mock
+     * @var AuthorizationRepository|m\Mock
      */
-    private $institutionListingRepository;
+    private $authorizationRepository;
 
     public function setUp()
     {
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
-        $institutionListingRepository = m::mock(InstitutionListingRepository::class);
-        $service = new InstitutionAuthorizationService($sraaService, $identityService, $institutionListingRepository);
+        $authorizationRepository = m::mock(AuthorizationRepository::class);
+        $service = new InstitutionAuthorizationService($sraaService, $identityService, $authorizationRepository);
 
         $this->identityService = $identityService;
         $this->sraaService = $sraaService;
         $this->service = $service;
-        $this->institutionListingRepository = $institutionListingRepository;
+        $this->authorizationRepository = $authorizationRepository;
     }
 
     /**
@@ -110,7 +109,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($arbitraryNameId)
             ->andReturn(null);
 
-        $this->institutionListingRepository
+        $this->authorizationRepository
             ->shouldReceive('getInstitutionsForRole')
             ->withArgs([$role, $identityId])
             ->andReturn($institutions);
@@ -164,7 +163,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($adminNameId)
             ->andReturn($sraa);
 
-        $this->institutionListingRepository
+        $this->authorizationRepository
             ->shouldReceive('getInstitutionsForRole')
             ->withArgs([$role, $identityId])
             ->andReturn($institutions);

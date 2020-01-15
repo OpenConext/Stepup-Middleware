@@ -22,7 +22,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
@@ -44,18 +44,18 @@ class InstitutionAuthorizationService
      */
     private $identityService;
     /**
-     * @var InstitutionListingRepository
+     * @var AuthorizationRepository
      */
-    private $institutionListingRepository;
+    private $authorizationRepository;
 
     public function __construct(
         SraaService $sraaService,
         IdentityService $identityService,
-        InstitutionListingRepository $institutionListingRepository
+        AuthorizationRepository $authorizationRepository
     ) {
         $this->sraaService = $sraaService;
         $this->identityService = $identityService;
-        $this->institutionListingRepository = $institutionListingRepository;
+        $this->authorizationRepository = $authorizationRepository;
     }
 
     /**
@@ -78,7 +78,7 @@ class InstitutionAuthorizationService
         $sraa = $this->sraaService->findByNameId($identity->nameId);
         $isSraa = !is_null($sraa);
 
-        $institutions = $this->institutionListingRepository->getInstitutionsForRole($role, $actorId);
+        $institutions = $this->authorizationRepository->getInstitutionsForRole($role, $actorId);
 
         return new InstitutionAuthorizationContext($institutions, $isSraa);
     }

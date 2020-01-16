@@ -100,7 +100,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_not_the_same()
+    public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_the_same()
     {
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
 
@@ -109,11 +109,7 @@ class InstitutionConfigurationIdTest extends TestCase
 
         $isSameId = $unnormalizedInstitutionConfigurationId->equals($normalizedInstitutionConfigurationId);
 
-        $this->assertFalse(
-            $isSameId,
-            'An normalized InstitutionConfigurationId based on an institution with mixed casing'
-            . 'should not match an unnormalized InstitutionConfigurationId based on the same institution'
-        );
+        $this->assertTrue($isSameId);
     }
 
     /**

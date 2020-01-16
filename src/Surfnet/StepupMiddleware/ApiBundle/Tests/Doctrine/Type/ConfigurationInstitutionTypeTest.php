@@ -83,8 +83,9 @@ class ConfigurationInstitutionTypeTest extends UnitTest
     {
         $configurationInstitution = Type::getType(ConfigurationInstitutionType::NAME);
 
-        $expected = 'An institution';
-        $input    = new Institution($expected);
+        $input = 'An institution';
+        $expected = 'an institution';
+        $input    = new Institution($input);
         $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));

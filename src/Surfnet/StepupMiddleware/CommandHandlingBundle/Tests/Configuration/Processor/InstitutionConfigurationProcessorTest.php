@@ -57,7 +57,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution()
     {
-        $expectedInstitution  = 'Institution';
+        $expectedInstitution  = 'institution';
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
             new Institution($expectedInstitution),
@@ -123,8 +123,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions()
     {
-        $firstInstitution  = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitution  = 'first institution';
+        $secondInstitution = 'second institution';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(
             new InstitutionCollection(
@@ -162,8 +162,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_created()
     {
-        $alreadyPresentInstitution = 'Already present';
-        $newInstitution            = 'New';
+        $alreadyPresentInstitution = 'already present';
+        $newInstitution            = 'new';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(
             new InstitutionCollection(
@@ -205,8 +205,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function create_institution_configuration_commands_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions()
     {
-        $firstInstitution  = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitution  = 'first institution';
+        $secondInstitution = 'second institution';
 
         $whitelistReplacedEvent = new WhitelistReplacedEvent(
             new InstitutionCollection(
@@ -246,8 +246,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced()
     {
-        $alreadyPresentInstitution = 'Already present';
-        $newInstitution            = 'New';
+        $alreadyPresentInstitution = 'already present';
+        $newInstitution            = 'new';
 
         $whitelistCreatedEvent = new WhitelistReplacedEvent(
             new InstitutionCollection(
@@ -289,8 +289,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function create_institution_configuration_commands_are_created_when_non_configured_institutions_are_added_to_the_whitelist()
     {
-        $firstInstitution  = 'First institution';
-        $secondInstitution = 'Second institution';
+        $firstInstitution  = 'first institution';
+        $secondInstitution = 'second institution';
 
         $institutionsAddedToWhitelistEvent = new InstitutionsAddedToWhitelistEvent(
             new InstitutionCollection(
@@ -330,8 +330,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
      */
     public function no_create_institution_configuration_command_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist()
     {
-        $alreadyPresentInstitution = 'Already present';
-        $newInstitution            = 'New';
+        $alreadyPresentInstitution = 'already present';
+        $newInstitution            = 'new';
 
         $whitelistCreatedEvent = new InstitutionsAddedToWhitelistEvent(
             new InstitutionCollection(

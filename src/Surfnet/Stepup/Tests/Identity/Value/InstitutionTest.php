@@ -49,7 +49,7 @@ class InstitutionTest extends UnitTest
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertTrue($institution->equals($theSameWithSpaces));
-        $this->assertFalse($institution->equals($different));
+        $this->assertTrue($institution->equals($different));
     }
 
     /**

@@ -121,7 +121,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group whitelist
      *
      * @expectedException \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot add institution "Already Exists" as it is already whitelisted
+     * @expectedExceptionMessage Cannot add institution "already exists" as it is already whitelisted
      */
     public function an_institution_on_the_whitelist_may_not_be_added_again()
     {

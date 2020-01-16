@@ -43,4 +43,7 @@ branches:
   only:
     - master
     - develop
-    - feature/fga-develop-merge
+    - /^feature\/(.*)$/
+    - /^hotfix\/(.*)$/
+    - /^bugfix\/(.*)$/
+

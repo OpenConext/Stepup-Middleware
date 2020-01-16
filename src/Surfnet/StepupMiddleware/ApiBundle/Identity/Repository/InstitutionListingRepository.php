@@ -22,6 +22,10 @@ use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
+/**
+ * @deprecated This could probably be removed and is only used in migrations
+ * @see app/DoctrineMigrations/Version20160719090052.php#L51
+ */
 class InstitutionListingRepository extends EntityRepository
 {
     public function save(InstitutionListing $institution)

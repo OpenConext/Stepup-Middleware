@@ -18,27 +18,27 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\InstitutionListingService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class InstitutionListingController extends Controller
+class ConfiguredInstitutionController extends Controller
 {
     /**
-     * @var InstitutionListingService
+     * @var ConfiguredInstitutionService
      */
-    private $listingService;
+    private $configuredInstitutionService;
 
-    public function __construct(InstitutionListingService $allListings)
+    public function __construct(ConfiguredInstitutionService $allListings)
     {
-        $this->listingService = $allListings;
+        $this->configuredInstitutionService = $allListings;
     }
 
     public function collectionAction()
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 
-        $allListings = $this->listingService->getAll();
+        $allListings = $this->configuredInstitutionService->getAllAsInstitution();
 
         return new JsonResponse($allListings);
     }

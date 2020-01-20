@@ -28,17 +28,17 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
-class InstitutionAuthorizationServiceTest extends TestCase
+class AuthorizationContextServiceTest extends TestCase
 {
     /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $service;
 
@@ -62,7 +62,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
         $authorizationRepository = m::mock(AuthorizationRepository::class);
-        $service = new InstitutionAuthorizationService($sraaService, $identityService, $authorizationRepository);
+        $service = new AuthorizationContextService($sraaService, $identityService, $authorizationRepository);
 
         $this->identityService = $identityService;
         $this->sraaService = $sraaService;

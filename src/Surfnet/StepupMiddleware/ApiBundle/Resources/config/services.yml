@@ -224,7 +224,7 @@ services:
 
     # Security Services
     surfnet_stepup_middleware_api.security.institution_authorization:
-        class: Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService
+        class: Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService
         arguments:
             - '@surfnet_stepup_middleware_api.service.sraa'
             - '@surfnet_stepup_middleware_api.service.identity'

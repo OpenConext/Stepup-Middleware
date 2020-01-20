@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
  * The Context is enriched with the 'isSraa' setting. It verifies if the
  * actor id matches that of one of the SRAA's.
  */
-class InstitutionAuthorizationService
+class AuthorizationContextService
 {
     /**
      * @var SraaService

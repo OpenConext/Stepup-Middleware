@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -37,13 +37,13 @@ class RaCandidateController extends Controller
     private $raCandidateService;
 
     /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $authorizationService;
 
     public function __construct(
         RaCandidateService $raCandidateService,
-        InstitutionAuthorizationService $authorizationService
+        AuthorizationContextService $authorizationService
     ) {
         $this->raCandidateService = $raCandidateService;
         $this->authorizationService = $authorizationService;

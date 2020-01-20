@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
@@ -39,22 +39,16 @@ class ProfileService extends AbstractSearchService
     private $identityService;
 
     /**
-     * @var InstitutionListingRepository
-     */
-    private $institutionListingRepository;
-    /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $authorizationService;
 
     public function __construct(
         RaListingRepository $raListingRepository,
-        InstitutionListingRepository $institutionListingRepository,
         IdentityService $identityService,
-        InstitutionAuthorizationService $institutionAuthorizationService
+        AuthorizationContextService $institutionAuthorizationService
     ) {
         $this->raListingRepository = $raListingRepository;
-        $this->institutionListingRepository = $institutionListingRepository;
         $this->identityService = $identityService;
         $this->authorizationService = $institutionAuthorizationService;
     }

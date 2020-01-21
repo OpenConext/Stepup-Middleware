@@ -71,4 +71,12 @@ class AccreditIdentityCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $raInstitution;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return $this->raInstitution;
+    }
 }

@@ -24,4 +24,10 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
  */
 interface SelfServiceExecutable
 {
+    /**
+     * Returns the identity id of the actor. This is done to be able to validate if we may execute certain commands for authorization purposes
+     *
+     * @return string
+     */
+    public function getIdentityId();
 }

@@ -65,4 +65,12 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
      * @var string
      */
     public $gssfId;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

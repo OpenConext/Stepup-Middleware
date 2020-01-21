@@ -46,4 +46,12 @@ class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServic
      * @var string
      */
     public $secondFactorId;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

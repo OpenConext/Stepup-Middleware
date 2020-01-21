@@ -28,18 +28,17 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 
-class InstitutionAuthorizationServiceTest extends TestCase
+class AuthorizationContextServiceTest extends TestCase
 {
     /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $service;
 
@@ -54,21 +53,21 @@ class InstitutionAuthorizationServiceTest extends TestCase
     private $sraaService;
 
     /**
-     * @var InstitutionListingRepository|m\Mock
+     * @var AuthorizationRepository|m\Mock
      */
-    private $institutionListingRepository;
+    private $authorizationRepository;
 
     public function setUp()
     {
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
-        $institutionListingRepository = m::mock(InstitutionListingRepository::class);
-        $service = new InstitutionAuthorizationService($sraaService, $identityService, $institutionListingRepository);
+        $authorizationRepository = m::mock(AuthorizationRepository::class);
+        $service = new AuthorizationContextService($sraaService, $identityService, $authorizationRepository);
 
         $this->identityService = $identityService;
         $this->sraaService = $sraaService;
         $this->service = $service;
-        $this->institutionListingRepository = $institutionListingRepository;
+        $this->authorizationRepository = $authorizationRepository;
     }
 
     /**
@@ -110,7 +109,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($arbitraryNameId)
             ->andReturn(null);
 
-        $this->institutionListingRepository
+        $this->authorizationRepository
             ->shouldReceive('getInstitutionsForRole')
             ->withArgs([$role, $identityId])
             ->andReturn($institutions);
@@ -131,6 +130,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
     public function it_can_build_a_context_with_sraa_actor()
     {
         $actorInstitution = new Institution('institution-a');
+        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $sraaId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -163,13 +163,14 @@ class InstitutionAuthorizationServiceTest extends TestCase
             ->with($adminNameId)
             ->andReturn($sraa);
 
-
-        $this->institutionListingRepository
-            ->shouldReceive('getInstitutionsForSelectRaaAsSraa')
+        $this->authorizationRepository
+            ->shouldReceive('getInstitutionsForRole')
+            ->withArgs([$role, $identityId])
             ->andReturn($institutions);
 
-        $context = $this->service->buildInstitutionAuthorizationContextForManagement(
-            $identityId
+        $context = $this->service->buildInstitutionAuthorizationContext(
+            $identityId,
+            $role
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());

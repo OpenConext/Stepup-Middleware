@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaSecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -36,13 +36,13 @@ final class RaSecondFactorController extends Controller
     private $raSecondFactorService;
 
     /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $authorizationService;
 
     public function __construct(
         RaSecondFactorService $raSecondFactorService,
-        InstitutionAuthorizationService $authorizationService
+        AuthorizationContextService $authorizationService
     ) {
         $this->raSecondFactorService = $raSecondFactorService;
         $this->authorizationService = $authorizationService;

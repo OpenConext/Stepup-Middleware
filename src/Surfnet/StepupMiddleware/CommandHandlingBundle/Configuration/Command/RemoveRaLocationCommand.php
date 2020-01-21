@@ -39,4 +39,12 @@ class RemoveRaLocationCommand extends AbstractCommand implements RaExecutable
      * @var string
      */
     public $institution;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return $this->institution;
+    }
 }

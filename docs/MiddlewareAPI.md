@@ -53,7 +53,7 @@ Basic Command Structure
 ```json
 {
     "meta": {
-        "actor": "John Doe",
+        "actor_id": "John Doe",
         "actor_institution": "SURFnet"
     },
     "command": {

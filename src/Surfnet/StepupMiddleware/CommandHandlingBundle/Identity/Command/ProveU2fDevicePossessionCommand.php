@@ -53,4 +53,12 @@ class ProveU2fDevicePossessionCommand extends AbstractCommand implements SelfSer
      * @var string
      */
     public $keyHandle;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

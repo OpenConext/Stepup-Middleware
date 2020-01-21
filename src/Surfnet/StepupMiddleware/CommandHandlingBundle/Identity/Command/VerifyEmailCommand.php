@@ -41,4 +41,12 @@ class VerifyEmailCommand extends AbstractCommand implements SelfServiceExecutabl
      * @var string
      */
     public $verificationNonce;
+
+    /**
+     * @return string
+     */
+    public function getIdentityId()
+    {
+        return $this->identityId;
+    }
 }

@@ -22,7 +22,6 @@ use Mockery as m;
 use PHPUnit_Framework_TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;

@@ -56,4 +56,12 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
      * @var string
      */
     public $secondFactorId;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return null;
+    }
 }

@@ -56,10 +56,7 @@ class RaCandidateService extends AbstractSearchService
      */
     public function getFilterOptions(RaCandidateQuery $query)
     {
-        $institutions = $query->authorizationContext->getInstitutions()->serialize();
-        $filters = $this->getFilteredQueryOptions($this->raCandidateRepository->createOptionsQuery($query));
-        $filters['raInstitution'] = array_combine($institutions, $institutions);
-        return $filters;
+        return $this->getFilteredQueryOptions($this->raCandidateRepository->createOptionsQuery($query));
     }
 
     /**

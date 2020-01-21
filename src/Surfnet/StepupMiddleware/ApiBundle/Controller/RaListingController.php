@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\InstitutionAuthorizationService;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -37,13 +38,13 @@ class RaListingController extends Controller
     private $raListingService;
 
     /**
-     * @var InstitutionAuthorizationService
+     * @var AuthorizationContextService
      */
     private $authorizationService;
 
     public function __construct(
         RaListingService $raListingService,
-        InstitutionAuthorizationService $authorizationService
+        AuthorizationContextService $authorizationService
     ) {
         $this->raListingService = $raListingService;
         $this->authorizationService = $authorizationService;
@@ -56,8 +57,9 @@ class RaListingController extends Controller
         $actorId = new IdentityId($request->get('actorId'));
         $institution = new Institution($request->get('institution'));
 
-        $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId
+        $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorId,
+            InstitutionRole::useRaa()
         );
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
@@ -112,8 +114,9 @@ class RaListingController extends Controller
         $query->pageNumber = (int)$request->get('p', 1);
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
-        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContextForManagement(
-            $actorId
+        $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
+            $actorId,
+            InstitutionRole::useRaa()
         );
 
         $searchResults = $this->raListingService->search($query);

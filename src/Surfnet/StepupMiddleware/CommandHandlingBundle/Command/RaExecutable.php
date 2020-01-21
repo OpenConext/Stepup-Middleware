@@ -20,7 +20,14 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
 /**
  * Marker interface used to indicate that the command may only be invoked by the RA.
+ * -
  */
 interface RaExecutable
 {
+    /**
+     * Returns the actor institution. This is done to be able to validate if we may execute certain commands for authorization purposes
+     *
+     * @return string|null
+     */
+    public function getRaInstitution();
 }

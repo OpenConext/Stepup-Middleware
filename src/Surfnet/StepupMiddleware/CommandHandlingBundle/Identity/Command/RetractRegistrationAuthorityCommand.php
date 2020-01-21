@@ -39,4 +39,12 @@ class RetractRegistrationAuthorityCommand extends AbstractCommand implements RaE
      * @var string
      */
     public $raInstitution;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return $this->raInstitution;
+    }
 }

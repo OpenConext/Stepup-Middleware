@@ -55,4 +55,12 @@ class AmendRegistrationAuthorityInformationCommand extends AbstractCommand imple
      * @var string
      */
     public $raInstitution;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return $this->raInstitution;
+    }
 }

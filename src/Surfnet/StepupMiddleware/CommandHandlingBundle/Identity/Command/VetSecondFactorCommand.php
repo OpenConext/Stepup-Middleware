@@ -88,4 +88,12 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      * @var boolean
      */
     public $identityVerified;
+
+    /**
+     * @inheritDoc
+     */
+    public function getRaInstitution()
+    {
+        return null;
+    }
 }

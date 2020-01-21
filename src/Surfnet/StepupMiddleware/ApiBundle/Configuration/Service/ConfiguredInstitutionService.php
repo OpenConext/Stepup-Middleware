@@ -18,8 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Service;
 
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
 class ConfiguredInstitutionService
 {
@@ -39,5 +41,21 @@ class ConfiguredInstitutionService
     public function getAll()
     {
         return $this->repository->findAll();
+    }
+
+
+    /**
+     * @return InstitutionListing[]
+     */
+    public function getAllAsInstitution()
+    {
+        $configuredInstitutions = $this->repository->findAll();
+
+        $result = [];
+        foreach ($configuredInstitutions as $institution) {
+            $result[] = InstitutionListing::createFrom(new Institution($institution->institution->getInstitution()));
+        }
+
+        return $result;
     }
 }

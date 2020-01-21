@@ -22,6 +22,10 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 
+/**
+ * @deprecated This could probably be removed and is only used in migrations
+ * @see app/DoctrineMigrations/Version20160719090052.php#L51
+ */
 class InstitutionListingProjector extends Projector
 {
     private $institutionListingRepository;

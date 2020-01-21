@@ -24,6 +24,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
@@ -52,7 +53,7 @@ class AuthorizationRepository
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->select("a.institution")
-            ->from(RaListing::class, 'i')
+            ->from(ConfiguredInstitution::class, 'i')
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
             ->innerJoin(
                 InstitutionAuthorization::class,

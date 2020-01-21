@@ -127,7 +127,7 @@ identity_registration_authority_credentials:
 
 institution_listing:
     path:      /institution-listing
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionListing:collection }
+    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:ConfiguredInstitution:collection }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 

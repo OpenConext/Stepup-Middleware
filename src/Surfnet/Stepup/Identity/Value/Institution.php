@@ -37,7 +37,7 @@ final class Institution implements JsonSerializable
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 
-        $this->institution = trim($institution);
+        $this->institution = strtolower(trim($institution));
     }
 
     /**

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.1.0
+A release with bugfixes after initial FGA tests
+ * Fix sho mixed casing once and for all #291
+ * Use configured institutions for institution lists #292
+ * Enforce use_raa even if user is raa through select_raa #290
+ * Security upgrades #289
+
 ## 3.0.2
 **Bugfix**
 The composer lockfile was not in sync with the changes in composer.json.

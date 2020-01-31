@@ -30,6 +30,7 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         // Convert all available institutions occurrences to lower case (type="institution")
         $this->addSql('UPDATE audit_log SET actor_institution=LOWER(actor_institution)');
         $this->addSql('UPDATE audit_log SET identity_institution=LOWER(identity_institution)');
+        $this->addSql('UPDATE audit_log SET ra_institution=LOWER(ra_institution)');
         $this->addSql('UPDATE identity SET institution=LOWER(institution)');
         $this->addSql('UPDATE institution_listing SET institution=LOWER(institution)');
         $this->addSql('UPDATE ra_candidate SET institution=LOWER(institution)');
@@ -39,6 +40,7 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         $this->addSql('UPDATE ra_second_factor SET institution=LOWER(institution)');
         $this->addSql('UPDATE second_factor_revocation SET institution=LOWER(institution)');
         $this->addSql('UPDATE whitelist_entry SET institution=LOWER(institution)');
+        $this->addSql('UPDATE verified_second_factor SET institution=LOWER(institution)');
 
         // Convert all available configuration institutions occurrences to lower case (type="stepup_configuration_institution")
         $this->addSql('UPDATE allowed_second_factor SET institution=LOWER(institution)');
@@ -48,9 +50,10 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         $this->addSql('UPDATE institution_configuration_options SET institution=LOWER(institution)');
         $this->addSql('UPDATE ra_location SET institution=LOWER(institution)');
 
-
+        // Convert all GW institutions to lowercase
         $gatewaySchema  = $this->getGatewaySchema();
         $this->addSql(sprintf('UPDATE %s.whitelist_entry SET institution=LOWER(institution)', $gatewaySchema));
+        $this->addSql(sprintf('UPDATE %s.second_factor SET institution=LOWER(institution)', $gatewaySchema));
     }
 
     /**

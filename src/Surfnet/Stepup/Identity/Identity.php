@@ -479,6 +479,25 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    public function remoteVetSecondFactor(
+        SecondFactorId $secondFactorId
+    ) {
+        $this->assertNotForgotten();
+
+        // TODO: Do we need configuration to whitelist remote vetting?
+
+        /** @var UnverifiedSecondFactor|null $secondFactorWithHighestLoa */
+        $secondFactor = $this->getVerifiedSecondFactor($secondFactorId);
+
+        if ($secondFactor === null) {
+            throw new DomainException(
+                sprintf('Registrant second factor with ID %s does not exist', $secondFactorId)
+            );
+        }
+
+        $secondFactor->vet(DocumentNumber::unknown());
+    }
+
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,

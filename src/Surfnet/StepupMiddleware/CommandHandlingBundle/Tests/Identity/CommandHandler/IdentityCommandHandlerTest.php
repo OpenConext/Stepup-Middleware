@@ -68,6 +68,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPos
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoteVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -1515,6 +1516,83 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
+            ]);
+    }
+
+
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_second_fdactor_can_be_remote_vetted()
+    {
+        $command                  = new RemoteVetSecondFactorCommand();
+        $command->identityId      = $this->uuid();
+        $command->secondFactorId  = $this->uuid();
+
+        $registrantId                = new IdentityId($command->identityId);
+        $registrantInstitution       = new Institution('Institution');
+        $registrantSecFacId         =  NEW SecondFactorId($command->secondFactorId);
+        $registrantSecPubId             = new YubikeyPublicId('00028278');
+        $registrantNameId            = new NameId('name id');
+        $registrantEmail             = new Email('henk@westbroek.tld');
+        $registrantCommonName        = new CommonName('Henk Westbroek');
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecPubId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    DocumentNumber::unknown(),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
             ]);
     }
 }

@@ -56,6 +56,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPos
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoteVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
@@ -346,6 +347,18 @@ class IdentityCommandHandler extends CommandHandler
 
         $this->eventSourcedRepository->save($authority);
         $this->eventSourcedRepository->save($registrant);
+    }
+
+    public function handleRemoteVetSecondFactorCommand(RemoteVetSecondFactorCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $identity->remoteVetSecondFactor(
+            new SecondFactorId($command->secondFactorId)
+        );
+
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.1
+**Bugfix**
+ * Add some missing institution fields to migration #293
+
 ## 3.1.0
 A release with bugfixes after initial FGA tests
  * Fix sho mixed casing once and for all #291

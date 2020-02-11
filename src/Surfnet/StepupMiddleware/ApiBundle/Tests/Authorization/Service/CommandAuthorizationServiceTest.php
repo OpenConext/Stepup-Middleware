@@ -35,7 +35,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
 class CommandAuthorizationServiceTest extends TestCase
 {
@@ -180,9 +182,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role){
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 
@@ -234,9 +241,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role){
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 
@@ -325,9 +337,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role) {
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 

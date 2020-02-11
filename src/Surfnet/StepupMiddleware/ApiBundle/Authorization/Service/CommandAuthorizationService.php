@@ -27,8 +27,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class CommandAuthorizationService
 {
 
@@ -96,8 +101,8 @@ class CommandAuthorizationService
                 return true;
             }
 
-            // the createIdentityCommand is used to create an Identity for a new user,
-            // the updateIdentityCommand is used to update name or email of an identity
+            // the CreateIdentityCommand is used to create an Identity for a new user,
+            // the UpdateIdentityCommand is used to update name or email of an identity
             // Both are only sent by the SS when the Identity is not logged in yet,
             // thus there is not Metadata::actorInstitution,
             if ($command instanceof CreateIdentityCommand || $command instanceof UpdateIdentityCommand) {
@@ -140,9 +145,19 @@ class CommandAuthorizationService
                 $raInstitution = $actorInstitution->getInstitution();
             }
 
+            $role = InstitutionRole::useRaa();
+
+            // the VetSecondFactorCommand is used to vet a second factor for a user
+            // the RevokeRegistrantsSecondFactorCommand is used to revoke a user's secondfactor
+            // Both are only sent by the RA where the minimal role requirement is RA
+            // all the other actions require RAA rights
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $authorizationContext = $this->authorizationContextService->buildInstitutionAuthorizationContext(
                 $actorId,
-                InstitutionRole::useRaa()
+                $role
             );
 
             if (!$authorizationContext->getInstitutions()->contains(new Institution($raInstitution))) {

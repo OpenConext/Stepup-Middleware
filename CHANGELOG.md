@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.2
+**Bugfix**
+ *  Allow RA commands in RA environment #295
+ 
 ## 3.1.1
 **Bugfix**
  * Add some missing institution fields to migration #293

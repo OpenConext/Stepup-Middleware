@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -119,6 +120,7 @@ class CommandAuthorizationService
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) - To keep the method readable, increased CC is allowed
      * @param Command $command
      * @param IdentityId|null $actorId
      * @param Institution|null $actorInstitution
@@ -129,6 +131,11 @@ class CommandAuthorizationService
         // Assert RAA specific authorizations
         if ($command instanceof RaExecutable) {
             $this->logger->notice('Asserting a RA command');
+
+            // No additional FGA authorization is required for this shared (SS/RA) command
+            if ($command instanceof ExpressLocalePreferenceCommand) {
+                return true;
+            }
 
             // The actor metadata should be set
             if (is_null($actorId) || is_null($actorInstitution)) {

@@ -1,8 +1,12 @@
 # Changelog
 
+# 3.1.3
+**Bugfix**
+ * Allow language switching from SelfService #296
+ 
 # 3.1.2
 **Bugfix**
- *  Allow RA commands in RA environment #295
+ * Allow RA commands in RA environment #295
  
 ## 3.1.1
 **Bugfix**

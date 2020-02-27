@@ -216,8 +216,7 @@ class RaCandidateRepository extends EntityRepository
     public function createOptionsQuery(RaCandidateQuery $query)
     {
         $queryBuilder = $this->createQueryBuilder('rac')
-            ->select('rac.raInstitution')
-            ->groupBy('rac.raInstitution');
+            ->select('rac.institution');
 
         // Modify query to filter on authorization
         $this->authorizationRepositoryFilter->filter(

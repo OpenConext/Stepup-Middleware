@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.4
+**Bugfix**
+ * Add missing institution to the filter options #297
+
 # 3.1.3
 **Bugfix**
  * Allow language switching from SelfService #296

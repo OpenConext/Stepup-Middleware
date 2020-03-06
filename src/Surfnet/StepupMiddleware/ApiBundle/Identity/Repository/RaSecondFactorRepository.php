@@ -94,6 +94,7 @@ class RaSecondFactorRepository extends EntityRepository
             ->createQueryBuilder('sf');
 
         // Modify query to filter on authorization context
+        // We want to list all second factors of the institution we are RA for.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
@@ -174,6 +175,7 @@ class RaSecondFactorRepository extends EntityRepository
             ->groupBy('sf.institution');
 
         // Modify query to filter on authorization context
+        // We want to list all second factors of the institution we are RA for.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,

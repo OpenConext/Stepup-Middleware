@@ -165,11 +165,14 @@ class RaCandidateRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('rac');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
+        // select_raa's we have to look at the institution of the candidate because that's the institution we could
+        // select RA's from. Hence the 'rac.institution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            'rac.raInstitution',
+            'rac.institution',
             'iac'
         );
 
@@ -218,11 +221,14 @@ class RaCandidateRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('rac')
             ->select('rac.institution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
+        // select_raa's we have to look at the institution of the candidate because that's the institution we could
+        // select RA's from. Hence the 'rac.institution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            'rac.raInstitution',
+            'rac.institution',
             'iac'
         );
 
@@ -285,11 +291,14 @@ class RaCandidateRepository extends EntityRepository
             ->setParameter('identityId', $identityId)
             ->orderBy('rac.raInstitution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
+        // select_raa's we have to look at the institution of the candidate because that's the institution we could
+        // select RA's from. Hence the 'rac.institution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $authorizationContext,
-            'rac.raInstitution',
+            'rac.institution',
             'iac'
         );
 

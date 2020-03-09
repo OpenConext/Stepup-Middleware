@@ -112,7 +112,8 @@ class VerifiedSecondFactorRepository extends EntityRepository
                 ->setParameter('registrationCode', $query->registrationCode);
         }
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // We want to list all second factors of the institution we are RA for.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,

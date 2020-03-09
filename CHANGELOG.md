@@ -1,5 +1,9 @@
 # Changelog
 
+# 3.1.5
+**Bugfix**
+ * Fix invalid RA candidate authorization #298
+
 # 3.1.4
 **Bugfix**
  * Add missing institution to the filter options #297

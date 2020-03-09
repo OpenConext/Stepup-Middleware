@@ -90,7 +90,10 @@ class RaListingRepository extends EntityRepository
             ->setParameter('raInstitution', (string)$raInstitution)
             ->orderBy('r.raInstitution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $authorizationContext,
@@ -167,7 +170,10 @@ class RaListingRepository extends EntityRepository
                 ->setParameter('raInstitution', (string) $query->raInstitution);
         }
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
@@ -202,7 +208,10 @@ class RaListingRepository extends EntityRepository
             ->select('r.institution, r.raInstitution')
             ->groupBy('r.institution, r.raInstitution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,

@@ -90,14 +90,14 @@ class IdentityRepository extends EntityRepository
 
         if ($query->email) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
-                ->setParameter('email', $query->email);
+                ->andWhere('i.email LIKE :email')
+                ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
         if ($query->commonName) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
-                ->setParameter('commonName', $query->commonName);
+                ->andWhere('i.commonName LIKE :commonName')
+                ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
         }
 
         return $queryBuilder->getQuery();

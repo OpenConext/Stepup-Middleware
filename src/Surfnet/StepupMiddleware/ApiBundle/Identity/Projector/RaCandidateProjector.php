@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
+use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
@@ -308,13 +309,13 @@ class RaCandidateProjector extends Projector
         CommonName $identityCommonName,
         Email $identityEmail
     ) {
-        $institutionAuthorizations = $this->institutionAuthorizationRepository
-            ->findAuthorizationOptionsForInstitution(new ConfigurationInstitution($identityInstitution->getInstitution()));
+        $selectRaaInstitutions = $this->institutionAuthorizationRepository->findSelectRaasForInstitution(
+            new ConfigurationInstitution($identityInstitution->getInstitution())
+        );
 
         $institutions = [];
-        foreach ($institutionAuthorizations as $authorization) {
-            $raInstitutionName = $authorization->institutionRelation->getInstitution();
-            $institutions[$raInstitutionName] = new Institution($raInstitutionName);
+        foreach ($selectRaaInstitutions as $institution) {
+            $institutions[$institution->institution->getInstitution()] = new Institution($institution->institution->getInstitution());
         }
 
         foreach ($institutions as $institution) {

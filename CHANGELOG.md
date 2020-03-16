@@ -1,5 +1,10 @@
 # Changelog
 
+# 3.1.6
+**Bugfix**
+ * Disable ra-candidate fulltext search #300
+ * Show the correct RA candidates for the virtual institution use case #299
+
 # 3.1.5
 **Bugfix**
  * Fix invalid RA candidate authorization #298

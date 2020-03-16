@@ -59,16 +59,15 @@ class InstitutionAuthorizationRepository extends EntityRepository
 
     /**
      * @param Institution $institution
-     * @param InstitutionRole $role
      * @return InstitutionAuthorization[]
      */
-    public function findSelectRaasForInstitution(Institution $institution, InstitutionRole $role)
+    public function findSelectRaasForInstitution(Institution $institution)
     {
         return $this->createQueryBuilder('ia')
             ->where('ia.institutionRelation = :institution')
             ->andWhere('ia.institutionRole = :role')
             ->setParameter('institution', $institution->getInstitution())
-            ->setParameter('role', $role->getType())
+            ->setParameter('role', InstitutionRole::selectRaa()->getType())
             ->getQuery()
             ->getResult();
     }

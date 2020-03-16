@@ -154,9 +154,6 @@ doctrine:
                         dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
-                dql:
-                    string_functions:
-                        MATCH_AGAINST: \Surfnet\StepupMiddleware\ApiBundle\Doctrine\Query\MatchAgainst
             gateway:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore

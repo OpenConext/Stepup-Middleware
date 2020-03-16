@@ -184,14 +184,14 @@ class RaCandidateRepository extends EntityRepository
 
         if ($query->commonName) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(rac.commonName, :commonName) > 0')
-                ->setParameter('commonName', $query->commonName);
+                ->andWhere('rac.commonName LIKE :commonName')
+                ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
         }
 
         if ($query->email) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(rac.email, :email) > 0')
-                ->setParameter('email', $query->email);
+                ->andWhere('rac.email LIKE :email')
+                ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
         if (!empty($query->secondFactorTypes)) {

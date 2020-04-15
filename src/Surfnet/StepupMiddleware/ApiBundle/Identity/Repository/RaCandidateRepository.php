@@ -53,111 +53,6 @@ class RaCandidateRepository extends EntityRepository
     }
 
     /**
-     * @param RaCandidate $raCandidate
-     * @return void
-     */
-    public function merge(RaCandidate $raCandidate)
-    {
-        $raCandidate = $this->getEntityManager()->merge($raCandidate);
-        $this->getEntityManager()->persist($raCandidate);
-        $this->getEntityManager()->flush();
-    }
-
-    /**
-     * @param IdentityId $identityId
-     * @return void
-     */
-    public function removeByIdentityId(IdentityId $identityId)
-    {
-        $raCandidates = $this->findByIdentityId($identityId);
-
-        if (empty($raCandidates)) {
-            return;
-        }
-
-        foreach ($raCandidates as $candidate) {
-            $this->getEntityManager()->remove($candidate);
-        }
-        $this->getEntityManager()->flush();
-    }
-
-    /**
-     * @param Institution $institution
-     * @param InstitutionCollection $raInstitutions
-     * @return void
-     */
-    public function removeInstitutionsNotInList(Institution $institution, InstitutionCollection $raInstitutions)
-    {
-        $raCandidates = $this->createQueryBuilder('rac')
-            ->where('rac.raInstitution = :raInstitution')
-            ->andWhere('rac.institution NOT IN (:institutions)')
-            ->setParameter('raInstitution', $institution)
-            ->setParameter('institutions', $raInstitutions->serialize())
-            ->getQuery()
-            ->getResult();
-
-        $em = $this->getEntityManager();
-        foreach ($raCandidates as $raCandidate) {
-            $em->remove($raCandidate);
-        }
-
-        $em->flush();
-    }
-
-    /**
-     * @param Institution $raInstitution
-     * @return void
-     */
-    public function removeByRaInstitution(Institution $raInstitution)
-    {
-        $raCandidates = $this->findByRaInstitution($raInstitution);
-
-        if (empty($raCandidates)) {
-            return;
-        }
-
-        $em = $this->getEntityManager();
-        foreach ($raCandidates as $raCandidate) {
-            $em->remove($raCandidate);
-        }
-
-        $em->flush();
-    }
-
-    /**
-     * @param IdentityId $identityId
-     * @param Institution $raInstitution
-     * @return void
-     */
-    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
-    {
-        $raCandidate = $this->findByIdentityIdAndRaInstitution($identityId, $raInstitution);
-
-        if (!$raCandidate) {
-            return;
-        }
-        $em = $this->getEntityManager();
-        $em->remove($raCandidate);
-        $em->flush();
-    }
-
-    /**
-     * @param string[] $nameIds
-     * @return void
-     */
-    public function removeByNameIds($nameIds)
-    {
-        $raCandidates = $this->findByNameIds($nameIds);
-
-        $em = $this->getEntityManager();
-        foreach ($raCandidates as $raCandidate) {
-            $em->remove($raCandidate);
-        }
-
-        $em->flush();
-    }
-
-    /**
      * @param RaCandidateQuery $query
      * @return \Doctrine\ORM\Query
      */
@@ -236,50 +131,6 @@ class RaCandidateRepository extends EntityRepository
     }
 
     /**
-     * @param string[] $sraaList
-     * @return RaCandidate[]
-     */
-    public function findByNameIds(array $sraaList)
-    {
-        return $this->createQueryBuilder('rac')
-            ->where('rac.nameId IN (:sraaList)')
-            ->setParameter('sraaList', $sraaList)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param string $identityId
-     * @return RaCandidate[]
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findByIdentityId($identityId)
-    {
-        return $this->createQueryBuilder('rac')
-            ->where('rac.identityId = :identityId')
-            ->setParameter('identityId', $identityId)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @param string $identityId
-     * @param Institution $raInstitution
-     * @return null|RaCandidate
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findByIdentityIdAndRaInstitution($identityId, Institution $raInstitution)
-    {
-        return $this->createQueryBuilder('rac')
-            ->where('rac.identityId = :identityId')
-            ->andWhere('rac.raInstitution = :raInstitution')
-            ->setParameter('identityId', $identityId)
-            ->setParameter('raInstitution', $raInstitution)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    /**
      * @param string $identityId
      * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return RaCandidate[]
@@ -303,19 +154,5 @@ class RaCandidateRepository extends EntityRepository
         );
 
         return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
-     * @param Institution $raInstitution
-     * @return ArrayCollection|RaCandidate[]
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
-    public function findByRaInstitution(Institution $raInstitution)
-    {
-        return $this->createQueryBuilder('rac')
-            ->where('rac.raInstitution = :raInstitution')
-            ->setParameter('raInstitution', $raInstitution)
-            ->getQuery()
-            ->getResult();
     }
 }

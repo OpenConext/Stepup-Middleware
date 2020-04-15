@@ -74,6 +74,10 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags: [{ name: twig.extension }]
 
+    ignore_tables_listener:
+        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\IgnoreTablesListener
+        tags: [{ name: doctrine.event_subscriber }]
+
 # Doctrine Configuration
 doctrine:
     dbal:

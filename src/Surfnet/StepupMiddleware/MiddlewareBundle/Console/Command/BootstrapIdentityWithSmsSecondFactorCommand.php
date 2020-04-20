@@ -128,11 +128,11 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
             switch ($registrationStatus) {
                 case "unverified":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePosession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
                     break;
                 case "verified":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePosession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
                     $unverifiedSecondFactor = $unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
@@ -142,7 +142,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
                     break;
                 case "vetted":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePosession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
                     $unverifiedSecondFactor = $unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
@@ -184,7 +184,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
         );
     }
 
-    private function provePosession($pipeline, $secondFactorId, $identity, $phoneNumber)
+    private function provePossession($pipeline, $secondFactorId, $identity, $phoneNumber)
     {
         $command = new ProvePhonePossessionCommand();
         $command->UUID = (string) Uuid::uuid4();

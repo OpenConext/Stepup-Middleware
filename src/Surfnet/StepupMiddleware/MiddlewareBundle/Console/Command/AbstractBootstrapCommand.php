@@ -19,26 +19,16 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Broadway\EventHandling\EventBusInterface;
-use Exception;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class AbstractBootstrapCommand extends Command
@@ -55,6 +45,8 @@ abstract class AbstractBootstrapCommand extends Command
     protected $unverifiedSecondFactorRepository;
     /** @var VerifiedSecondFactorRepository */
     protected $verifiedSecondFactorRepository;
+    /** @var InstitutionConfigurationOptionsRepository */
+    private $institutionConfigurationRepository;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
@@ -65,6 +57,7 @@ abstract class AbstractBootstrapCommand extends Command
         IdentityRepository $identityRepository,
         UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
         VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
+        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
         TokenStorageInterface $tokenStorage
     ) {
         $this->pipeline = $pipeline;
@@ -73,7 +66,17 @@ abstract class AbstractBootstrapCommand extends Command
         $this->identityRepository = $identityRepository;
         $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
         $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
+        $this->institutionConfigurationRepository = $institutionConfigurationOptionsRepository;
         $this->tokenStorage = $tokenStorage;
+    }
+
+    protected function requiresMailVerification(Institution $institution)
+    {
+        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor($institution);
+        if ($configuration) {
+            return $configuration->verifyEmailOption->isEnabled();
+        }
+        return true;
     }
 
     protected function vetSecondFactor($tokenType, $actorId, $identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber)

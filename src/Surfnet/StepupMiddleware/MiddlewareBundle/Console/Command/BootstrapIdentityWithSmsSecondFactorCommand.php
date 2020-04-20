@@ -64,6 +64,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
 
         $nameId = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));
+        $mailVerificationRequired = $this->requiresMailVerification($institution);
         $commonName = $input->getArgument('common-name');
         $email = $input->getArgument('email');
         $preferredLocale = $input->getArgument('preferred-locale');
@@ -112,8 +113,12 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
-                    $output->writeln('<notice>Creating a verified SMS token</notice>');
-                    $this->verifyEmail($identity, $unverifiedSecondFactor);
+
+                    if ($mailVerificationRequired) {
+                        $output->writeln('<notice>Creating a verified SMS token</notice>');
+                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                    }
+
                     break;
                 case "vetted":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
@@ -122,8 +127,11 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
-                    $output->writeln('<notice>Creating a verified SMS token</notice>');
-                    $this->verifyEmail($identity, $unverifiedSecondFactor);
+
+                    if ($mailVerificationRequired) {
+                        $output->writeln('<notice>Creating a verified SMS token</notice>');
+                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                    }
                     /** @var VerifiedSecondFactor $verifiedSecondFactor */
                     $verifiedSecondFactor = $this->verifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']

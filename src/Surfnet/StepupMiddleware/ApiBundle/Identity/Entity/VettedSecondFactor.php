@@ -24,6 +24,11 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(
  *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository"
  * )
+ * @ORM\Table(
+ *      indexes={
+ *          @ORM\Index(name="idx_vetted_second_factor_type", columns={"type"}),
+ *     }
+ * )
  */
 class VettedSecondFactor implements \JsonSerializable
 {

@@ -27,10 +27,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 /**
- * Be aware that this entity is used for the RA Candidate view. This entity shouldn't be used to store any RA candidates.
- * The IgnoreTablesListener is used to prevent schema changes when the Doctrine Schema tool is used.
+ * Be aware that this entity is used for the RA Candidate presentation only. This entity shouldn't be used to store any RA candidates.
  *
- * @ORM\Table(name="view_ra_candidate")
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository", readOnly=true)
  */
 class RaCandidate implements JsonSerializable

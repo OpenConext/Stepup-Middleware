@@ -18,17 +18,16 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query\Expr\Join;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 
@@ -58,7 +57,7 @@ class RaCandidateRepository extends EntityRepository
      */
     public function createSearchQuery(RaCandidateQuery $query)
     {
-        $queryBuilder = $this->createQueryBuilder('rac');
+        $queryBuilder = $this->getBaseQuery();
 
         // Modify query to filter on authorization:
         // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
@@ -67,42 +66,41 @@ class RaCandidateRepository extends EntityRepository
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            'rac.institution',
+            'i.institution',
             'iac'
         );
 
         if ($query->institution) {
             $queryBuilder
-                ->andWhere('rac.institution = :institution')
+                ->andWhere('i.institution = :institution')
                 ->setParameter('institution', $query->institution);
         }
 
         if ($query->commonName) {
             $queryBuilder
-                ->andWhere('rac.commonName LIKE :commonName')
+                ->andWhere('i.commonName LIKE :commonName')
                 ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
         }
 
         if ($query->email) {
             $queryBuilder
-                ->andWhere('rac.email LIKE :email')
+                ->andWhere('i.email LIKE :email')
                 ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
         if (!empty($query->secondFactorTypes)) {
             $queryBuilder
-                ->innerJoin(VettedSecondFactor::class, 'vsf', Join::WITH, 'rac.identityId = vsf.identityId')
                 ->andWhere('vsf.type IN (:secondFactorTypes)')
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);
         }
 
         if (!empty($query->raInstitution)) {
             $queryBuilder
-                ->andWhere('rac.raInstitution = :raInstitution')
+                ->andWhere('a.raInstitution = :raInstitution')
                 ->setParameter('raInstitution', $query->raInstitution);
         }
 
-        $queryBuilder->groupBy('rac.identityId');
+        $queryBuilder->groupBy('i.id');
 
         return $queryBuilder->getQuery();
     }
@@ -113,8 +111,10 @@ class RaCandidateRepository extends EntityRepository
      */
     public function createOptionsQuery(RaCandidateQuery $query)
     {
-        $queryBuilder = $this->createQueryBuilder('rac')
-            ->select('rac.institution');
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select('a.institution')
+            ->from(InstitutionAuthorization::class, 'a')
+            ->where("a.institutionRole = 'select_raa'");
 
         // Modify query to filter on authorization:
         // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
@@ -123,7 +123,7 @@ class RaCandidateRepository extends EntityRepository
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
-            'rac.institution',
+            'a.institution',
             'iac'
         );
 
@@ -137,10 +137,10 @@ class RaCandidateRepository extends EntityRepository
      */
     public function findAllRaasByIdentityId($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
     {
-        $queryBuilder = $this->createQueryBuilder('rac')
-            ->where('rac.identityId = :identityId')
+        $queryBuilder = $this->getBaseQuery()
+            ->andWhere('i.id = :identityId')
             ->setParameter('identityId', $identityId)
-            ->orderBy('rac.raInstitution');
+            ->orderBy('a.institution');
 
         // Modify query to filter on authorization:
         // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
@@ -149,10 +149,39 @@ class RaCandidateRepository extends EntityRepository
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $authorizationContext,
-            'rac.institution',
+            'i.institution',
             'iac'
         );
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    private function getBaseQuery()
+    {
+        // Base query to get all allowed ra candidates
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select('i.id as identity_id, i.institution, i.commonName as common_name, i.email, i.nameId AS name_id, a.institution AS ra_institution')
+            ->from(VettedSecondFactor::class, 'vsf')
+            ->innerJoin(Identity::class, 'i', Join::WITH, "vsf.identityId = i.id")
+            ->innerJoin(
+                InstitutionAuthorization::class,
+                'a',
+                Join::WITH,
+                "a.institutionRole = 'select_raa' AND a.institutionRelation = i.institution"
+            );
+
+        // Filter out candidates who are already ra
+        // Todo: filter out SRAA's ?
+        $subQuery = $this->getEntityManager()->createQueryBuilder()
+            ->select('l')
+            ->from(RaListing::class, "l")
+            ->where("l.identityId = i.id AND l.raInstitution = a.institution");
+
+        $queryBuilder->andWhere($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQuery->getDQL())));
+
+        return $queryBuilder;
     }
 }

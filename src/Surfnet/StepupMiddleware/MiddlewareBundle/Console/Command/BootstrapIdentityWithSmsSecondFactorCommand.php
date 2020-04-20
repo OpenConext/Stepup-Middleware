@@ -55,7 +55,8 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                 'registration-status',
                 InputArgument::REQUIRED,
                 'Valid arguments: unverified, verified, vetted'
-            );
+            )
+            ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -72,9 +73,10 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
         $preferredLocale = $input->getArgument('preferred-locale');
         $registrationStatus = $input->getArgument('registration-status');
         $phoneNumber = $input->getArgument('phone-number');
+        $actorId = $input->getArgument('actor-id');
+        $this->enrichEventMetadata($actorId);
         $identity = false;
         $output->writeln(sprintf('<notice>Adding a %s SMS token for %s</notice>', $registrationStatus, $commonName));
-
         if ($this->identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
                 sprintf(
@@ -85,14 +87,12 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
             );
             $identity = $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
         }
-
         $this->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
         if (!$identity) {
             $output->writeln('<notice>Creating a new identity</notice>');
             $identity = $this->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
         }
-
         try {
             switch ($registrationStatus) {
                 case "unverified":
@@ -129,7 +129,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $output->writeln('<notice>Vetting the verified SMS token</notice>');
                     $this->vetSecondFactor(
                         'sms',
-                        'db9b8bdf-720c-44ba-a4c4-154953e45f14',
+                        $actorId,
                         $identity,
                         $secondFactorId,
                         $verifiedSecondFactor,

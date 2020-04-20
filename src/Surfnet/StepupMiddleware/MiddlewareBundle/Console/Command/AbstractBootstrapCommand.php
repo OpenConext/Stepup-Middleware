@@ -26,6 +26,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
@@ -50,11 +52,14 @@ abstract class AbstractBootstrapCommand extends Command
     private $institutionConfigurationRepository;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
+    /** @var MetadataEnricher */
+    private $enricher;
 
     public function __construct(
         Pipeline $pipeline,
         EventBusInterface $eventBus,
         DBALConnectionHelper $connection,
+        MetadataEnricher $enricher,
         IdentityRepository $identityRepository,
         UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
         VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
@@ -64,6 +69,7 @@ abstract class AbstractBootstrapCommand extends Command
         $this->pipeline = $pipeline;
         $this->eventBus = $eventBus;
         $this->connection = $connection;
+        $this->enricher = $enricher;
         $this->identityRepository = $identityRepository;
         $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
         $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
@@ -115,5 +121,14 @@ abstract class AbstractBootstrapCommand extends Command
         $command->documentNumber = '123987';
         $command->identityVerified = true;
         $this->pipeline->process($command);
+    }
+
+    protected function enrichEventMetadata($actorId)
+    {
+        $actor = $this->identityRepository->findOneBy(['id' => $actorId]);
+        $metadata = new Metadata();
+        $metadata->actorId = $actor->id;
+        $metadata->actorInstitution = $actor->institution;
+        $this->enricher->setMetadata($metadata);
     }
 }

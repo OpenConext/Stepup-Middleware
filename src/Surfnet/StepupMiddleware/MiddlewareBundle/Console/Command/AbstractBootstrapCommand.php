@@ -25,6 +25,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
@@ -34,11 +35,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 abstract class AbstractBootstrapCommand extends Command
 {
     /** @var Pipeline  */
-    protected $pipeline;
+    private $pipeline;
     /** @var EventBusInterface  */
-    protected $eventBus;
+    private $eventBus;
     /** @var DBALConnectionHelper  */
-    protected $connection;
+    private $connection;
     /** @var IdentityRepository  */
     protected $identityRepository;
     /** @var UnverifiedSecondFactorRepository  */
@@ -68,11 +69,33 @@ abstract class AbstractBootstrapCommand extends Command
         $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
         $this->institutionConfigurationRepository = $institutionConfigurationOptionsRepository;
         $this->tokenStorage = $tokenStorage;
+        parent::__construct();
     }
 
-    protected function requiresMailVerification(Institution $institution)
+    protected function beginTransaction()
     {
-        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor($institution);
+        $this->connection->beginTransaction();
+    }
+
+    protected function finishTransaction()
+    {
+        $this->eventBus->flush();
+        $this->connection->commit();
+    }
+
+    protected function rollback()
+    {
+        $this->connection->rollBack();
+    }
+
+    protected function process(MiddlewareCommand $command)
+    {
+        $this->pipeline->process($command);
+    }
+
+    protected function requiresMailVerification($institution)
+    {
+        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(new Institution($institution));
         if ($configuration) {
             return $configuration->verifyEmailOption->isEnabled();
         }

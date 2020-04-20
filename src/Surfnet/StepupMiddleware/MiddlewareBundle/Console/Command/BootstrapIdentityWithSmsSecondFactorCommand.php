@@ -32,12 +32,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ */
 final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstrapCommand
 {
     protected function configure()
     {
         $this
-            ->setName('middleware:bootstrap:identity-with-sms')
             ->setDescription('Creates an identity with a SMS second factor')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
@@ -61,24 +63,17 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
         $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
-
         $nameId = new NameId($input->getArgument('name-id'));
-        $institution = new Institution($input->getArgument('institution'));
-        $mailVerificationRequired = $this->requiresMailVerification($institution);
+        $institutionText = $input->getArgument('institution');
+        $institution = new Institution($institutionText);
+        $mailVerificationRequired = $this->requiresMailVerification($institutionText);
         $commonName = $input->getArgument('common-name');
         $email = $input->getArgument('email');
         $preferredLocale = $input->getArgument('preferred-locale');
         $registrationStatus = $input->getArgument('registration-status');
         $phoneNumber = $input->getArgument('phone-number');
         $identity = false;
-
-        $output->writeln(
-            sprintf(
-                '<notice>Adding a %s SMS token for %s</notice>',
-                $registrationStatus,
-                $commonName
-            )
-        );
+        $output->writeln(sprintf('<notice>Adding a %s SMS token for %s</notice>', $registrationStatus, $commonName));
 
         if ($this->identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
@@ -91,10 +86,8 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
             $identity = $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
         }
 
-        $this->connection->beginTransaction();
-
+        $this->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
-
         if (!$identity) {
             $output->writeln('<notice>Creating a new identity</notice>');
             $identity = $this->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
@@ -113,12 +106,10 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
-
                     if ($mailVerificationRequired) {
                         $output->writeln('<notice>Creating a verified SMS token</notice>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
-
                     break;
                 case "vetted":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
@@ -127,7 +118,6 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
-
                     if ($mailVerificationRequired) {
                         $output->writeln('<notice>Creating a verified SMS token</notice>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
@@ -147,10 +137,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     );
                     break;
             }
-
-            $this->eventBus->flush();
-            $this->connection->commit();
-
+            $this->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
@@ -158,12 +145,9 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $e->getMessage()
                 )
             );
-
-            $this->connection->rollBack();
-
+            $this->rollback();
             throw $e;
         }
-
         $output->writeln(
             sprintf(
                 '<info>Successfully created identity with UUID %s and %s second factor with UUID %s</info>',
@@ -177,20 +161,20 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
     private function provePossession($secondFactorId, $identity, $phoneNumber)
     {
         $command = new ProvePhonePossessionCommand();
-        $command->UUID = (string) Uuid::uuid4();
+        $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
         $command->identityId = $identity->id;
         $command->phoneNumber = $phoneNumber;
-        $this->pipeline->process($command);
+        $this->process($command);
     }
 
     private function verifyEmail($identity, $unverifiedSecondFactor)
     {
         $command = new VerifyEmailCommand();
-        $command->UUID = (string) Uuid::uuid4();
+        $command->UUID = (string)Uuid::uuid4();
         $command->identityId = $identity->id;
         $command->verificationNonce = $unverifiedSecondFactor->verificationNonce;
-        $this->pipeline->process($command);
+        $this->process($command);
     }
 
     protected function createIdentity(
@@ -200,7 +184,6 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
         $email,
         $preferredLocale
     ) {
-
         $identity = new CreateIdentityCommand();
         $identity->UUID = (string)Uuid::uuid4();
         $identity->id = (string)Uuid::uuid4();
@@ -209,7 +192,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
         $identity->commonName = $commonName;
         $identity->email = $email;
         $identity->preferredLocale = $preferredLocale;
-        $this->pipeline->process($identity);
+        $this->process($identity);
 
         return $identity;
     }

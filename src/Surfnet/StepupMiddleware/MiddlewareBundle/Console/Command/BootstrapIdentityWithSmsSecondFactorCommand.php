@@ -18,64 +18,22 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Broadway\EventHandling\EventBusInterface;
 use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
+final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstrapCommand
 {
-    /** @var Pipeline  */
-    private $pipeline;
-    /** @var EventBusInterface  */
-    private $eventBus;
-    /** @var DBALConnectionHelper  */
-    private $connection;
-    /** @var IdentityRepository  */
-    private $identityRepository;
-    /** @var UnverifiedSecondFactorRepository  */
-    private $unverifiedSecondFactorRepository;
-    /** @var VerifiedSecondFactorRepository */
-    private $verifiedSecondFactorRepository;
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    public function __construct(
-        Pipeline $pipeline,
-        EventBusInterface $eventBus,
-        DBALConnectionHelper $connection,
-        IdentityRepository $identityRepository,
-        UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
-        VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
-        TokenStorageInterface $tokenStorage
-    ) {
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
-        $this->identityRepository = $identityRepository;
-        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
-        $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
-        $this->tokenStorage = $tokenStorage;
-    }
-
     protected function configure()
     {
         $this
@@ -100,7 +58,6 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
@@ -139,15 +96,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
 
         if (!$identity) {
             $output->writeln('<notice>Creating a new identity</notice>');
-            $identity = new CreateIdentityCommand();
-            $identity->UUID = (string) Uuid::uuid4();
-            $identity->id = (string) Uuid::uuid4();
-            $identity->institution = $institution->getInstitution();
-            $identity->nameId = $nameId->getNameId();
-            $identity->commonName = $commonName;
-            $identity->email = $email;
-            $identity->preferredLocale = $preferredLocale;
-            $this->pipeline->process($identity);
+            $identity = $this->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
         }
 
         try {
@@ -180,7 +129,14 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
                     $output->writeln('<notice>Vetting the verified SMS token</notice>');
-                    $this->vetSecondFactor($identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber);
+                    $this->vetSecondFactor(
+                        'sms',
+                        'db9b8bdf-720c-44ba-a4c4-154953e45f14',
+                        $identity,
+                        $secondFactorId,
+                        $verifiedSecondFactor,
+                        $phoneNumber
+                    );
                     break;
             }
 
@@ -229,18 +185,24 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
         $this->pipeline->process($command);
     }
 
-    private function vetSecondFactor($identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber)
-    {
-        $command = new VetSecondFactorCommand();
-        $command->UUID = (string) Uuid::uuid4();
-        $command->authorityId = 'db9b8bdf-720c-44ba-a4c4-154953e45f14';
-        $command->identityId = $identity->id;
-        $command->secondFactorId = $secondFactorId;
-        $command->registrationCode = $verifiedSecondFactor->registrationCode;
-        $command->secondFactorType = 'sms';
-        $command->secondFactorIdentifier = $phoneNumber;
-        $command->documentNumber = '123987';
-        $command->identityVerified = true;
-        $this->pipeline->process($command);
+    protected function createIdentity(
+        Institution $institution,
+        NameId $nameId,
+        $commonName,
+        $email,
+        $preferredLocale
+    ) {
+
+        $identity = new CreateIdentityCommand();
+        $identity->UUID = (string)Uuid::uuid4();
+        $identity->id = (string)Uuid::uuid4();
+        $identity->institution = $institution->getInstitution();
+        $identity->nameId = $nameId->getNameId();
+        $identity->commonName = $commonName;
+        $identity->email = $email;
+        $identity->preferredLocale = $preferredLocale;
+        $this->pipeline->process($identity);
+
+        return $identity;
     }
 }

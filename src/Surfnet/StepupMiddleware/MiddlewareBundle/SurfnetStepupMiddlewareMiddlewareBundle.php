@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle;
 
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithSmsSecondFactorCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\EmailVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrateInstitutionConfigurationsCommand;
@@ -45,7 +44,6 @@ class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
         $application->add(new MigrationsDiffDoctrineCommand());
         $application->add(new MigrationsMigrateDoctrineCommand());
         $application->add(new BootstrapIdentityWithYubikeySecondFactorCommand());
-        $application->add(new BootstrapIdentityWithSmsSecondFactorCommand());
         $application->add(new ReplayEventsCommand());
         $application->add(new MigrateInstitutionConfigurationsCommand());
         $application->add(new ReplaySpecificEventsCommand());

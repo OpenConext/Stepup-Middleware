@@ -18,25 +18,64 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Broadway\EventHandling\EventBusInterface;
 use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
 {
+    /** @var Pipeline  */
+    private $pipeline;
+    /** @var EventBusInterface  */
+    private $eventBus;
+    /** @var DBALConnectionHelper  */
+    private $connection;
+    /** @var IdentityRepository  */
+    private $identityRepository;
+    /** @var UnverifiedSecondFactorRepository  */
+    private $unverifiedSecondFactorRepository;
+    /** @var VerifiedSecondFactorRepository */
+    private $verifiedSecondFactorRepository;
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+
+    public function __construct(
+        Pipeline $pipeline,
+        EventBusInterface $eventBus,
+        DBALConnectionHelper $connection,
+        IdentityRepository $identityRepository,
+        UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
+        VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
+        TokenStorageInterface $tokenStorage
+    ) {
+        $this->pipeline = $pipeline;
+        $this->eventBus = $eventBus;
+        $this->connection = $connection;
+        $this->identityRepository = $identityRepository;
+        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
+        $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
+        $this->tokenStorage = $tokenStorage;
+    }
+
     protected function configure()
     {
         $this
@@ -61,21 +100,8 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Container $container */
-        $container = $this->getApplication()->getKernel()->getContainer();
-        $tokenStorage = $container->get('security.token_storage');
-        $identityRepository = $container->get('surfnet_stepup_middleware_api.repository.identity');
-        $unverifiedSecondFactorRepository = $container->get(
-            'surfnet_stepup_middleware_api.repository.unverified_second_factor'
-        );
-        $verifiedSecondFactorRepository = $container->get(
-            'surfnet_stepup_middleware_api.repository.verified_second_factor'
-        );
-        $pipeline = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
-        $eventBus = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
-        $connection = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
 
-        $tokenStorage->setToken(
+        $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
 
@@ -96,7 +122,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
             )
         );
 
-        if ($identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        if ($this->identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<notice>An identity with name ID "%s" from institution "%s" already exists, using that identity</notice>',
@@ -104,10 +130,10 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
                     $institution->getInstitution()
                 )
             );
-            $identity = $identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
+            $identity = $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
         }
 
-        $connection->beginTransaction();
+        $this->connection->beginTransaction();
 
         $secondFactorId = Uuid::uuid4()->toString();
 
@@ -121,45 +147,45 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
             $identity->commonName = $commonName;
             $identity->email = $email;
             $identity->preferredLocale = $preferredLocale;
-            $pipeline->process($identity);
+            $this->pipeline->process($identity);
         }
 
         try {
             switch ($registrationStatus) {
                 case "unverified":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
                     break;
                 case "verified":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $unverifiedSecondFactorRepository->findOneBy(
+                    $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
                     $output->writeln('<notice>Creating a verified SMS token</notice>');
-                    $this->verifyEmail($pipeline, $identity, $unverifiedSecondFactor);
+                    $this->verifyEmail($identity, $unverifiedSecondFactor);
                     break;
                 case "vetted":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
-                    $this->provePossession($pipeline, $secondFactorId, $identity, $phoneNumber);
+                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $unverifiedSecondFactorRepository->findOneBy(
+                    $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
                     $output->writeln('<notice>Creating a verified SMS token</notice>');
-                    $this->verifyEmail($pipeline, $identity, $unverifiedSecondFactor);
+                    $this->verifyEmail($identity, $unverifiedSecondFactor);
                     /** @var VerifiedSecondFactor $verifiedSecondFactor */
-                    $verifiedSecondFactor = $verifiedSecondFactorRepository->findOneBy(
+                    $verifiedSecondFactor = $this->verifiedSecondFactorRepository->findOneBy(
                         ['identityId' => $identity->id, 'type' => 'sms']
                     );
                     $output->writeln('<notice>Vetting the verified SMS token</notice>');
-                    $this->vetSecondFactor($pipeline, $identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber);
+                    $this->vetSecondFactor($identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber);
                     break;
             }
 
-            $eventBus->flush();
-            $connection->commit();
+            $this->eventBus->flush();
+            $this->connection->commit();
 
         } catch (Exception $e) {
             $output->writeln(
@@ -169,7 +195,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
                 )
             );
 
-            $connection->rollBack();
+            $this->connection->rollBack();
 
             throw $e;
         }
@@ -184,26 +210,26 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
         );
     }
 
-    private function provePossession($pipeline, $secondFactorId, $identity, $phoneNumber)
+    private function provePossession($secondFactorId, $identity, $phoneNumber)
     {
         $command = new ProvePhonePossessionCommand();
         $command->UUID = (string) Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
         $command->identityId = $identity->id;
         $command->phoneNumber = $phoneNumber;
-        $pipeline->process($command);
+        $this->pipeline->process($command);
     }
 
-    private function verifyEmail($pipeline, $identity, $unverifiedSecondFactor)
+    private function verifyEmail($identity, $unverifiedSecondFactor)
     {
         $command = new VerifyEmailCommand();
         $command->UUID = (string) Uuid::uuid4();
         $command->identityId = $identity->id;
         $command->verificationNonce = $unverifiedSecondFactor->verificationNonce;
-        $pipeline->process($command);
+        $this->pipeline->process($command);
     }
 
-    private function vetSecondFactor($pipeline, $identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber)
+    private function vetSecondFactor($identity, $secondFactorId, $verifiedSecondFactor, $phoneNumber)
     {
         $command = new VetSecondFactorCommand();
         $command->UUID = (string) Uuid::uuid4();
@@ -215,6 +241,6 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends Command
         $command->secondFactorIdentifier = $phoneNumber;
         $command->documentNumber = '123987';
         $command->identityVerified = true;
-        $pipeline->process($command);
+        $this->pipeline->process($command);
     }
 }

@@ -23,24 +23,29 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
+final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
 {
     protected function configure()
     {
         $this
-            ->setDescription('Creates a Yubikey second factor for a specified user')
+            ->setDescription('Creates a Generic SAML Second Factor (GSSF) second factor for a specified user')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument(
-                'yubikey',
+                'gssp-token-type',
                 InputArgument::REQUIRED,
-                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.'
+                'The GSSP token type as defined in the GSSP config, for example tiqr or webauthn'
+            )
+            ->addArgument(
+                'gssp-token-identifier',
+                InputArgument::REQUIRED,
+                'The identifier of the token as registered at the GSSP'
             )
             ->addArgument(
                 'registration-status',
@@ -53,14 +58,15 @@ final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->tokenStorage->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
+            new AnonymousToken('cli.bootstrap-gssp-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->requiresMailVerification($institutionText);
         $registrationStatus = $input->getArgument('registration-status');
-        $yubikey = $input->getArgument('yubikey');
+        $tokenType = $input->getArgument('gssp-token-type');
+        $tokenIdentifier = $input->getArgument('gssp-token-identifier');
         $actorId = $input->getArgument('actor-id');
         $this->enrichEventMetadata($actorId);
         if (!$this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
@@ -75,43 +81,43 @@ final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
             return;
         }
         $identity = $this->tokenBootstrapService->findOneByNameIdAndInstitution($nameId, $institution);
-        $output->writeln(sprintf('<comment>Adding a %s Yubikey token for %s</comment>', $registrationStatus, $identity->commonName));
+        $output->writeln(sprintf('<comment>Adding a %s %s GSSP token for %s</comment>', $registrationStatus, $tokenType, $identity->commonName));
         $this->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
         try {
             switch ($registrationStatus) {
                 case "unverified":
-                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $yubikey);
+                    $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
+                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
                     break;
                 case "verified":
-                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $yubikey);
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'yubikey');
+                    $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
+                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, $tokenType);
                     if ($mailVerificationRequired) {
-                        $output->writeln('<comment>Creating a verified Yubikey token</comment>');
+                        $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
                     break;
                 case "vetted":
-                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $yubikey);
+                    $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
+                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'yubikey');
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, $tokenType);
                     if ($mailVerificationRequired) {
-                        $output->writeln('<comment>Creating a verified Yubikey token</comment>');
+                        $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
-                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, 'yubikey');
-                    $output->writeln('<comment>Vetting the verified Yubikey token</comment>');
+                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, $tokenType);
+                    $output->writeln(sprintf('<comment>Vetting the verified %s token</comment>', $tokenType));
                     $this->vetSecondFactor(
-                        'yubikey',
+                        $tokenType,
                         $actorId,
                         $identity,
                         $secondFactorId,
                         $verifiedSecondFactor,
-                        $yubikey
+                        $tokenIdentifier
                     );
                     break;
             }
@@ -119,7 +125,8 @@ final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
-                    '<error>An Error occurred when trying to bootstrap the Yubikey token: "%s"</error>',
+                    '<error>An Error occurred when trying to bootstrap the %s token: "%s"</error>',
+                    $tokenType,
                     $e->getMessage()
                 )
             );
@@ -128,21 +135,22 @@ final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
         }
         $output->writeln(
             sprintf(
-                '<info>Successfully created identity with UUID %s and %s second factor with UUID %s</info>',
-                $identity->id,
+                '<info>Successfully %s %s second factor with UUID %s</info>',
                 $registrationStatus,
+                $tokenType,
                 $secondFactorId
             )
         );
     }
 
-    private function provePossession($secondFactorId, $identity, $phoneNumber)
+    private function provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier)
     {
-        $command = new ProveYubikeyPossessionCommand();
+        $command = new ProveGssfPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
         $command->identityId = $identity->id;
-        $command->yubikeyPublicId = $phoneNumber;
+        $command->stepupProvider = $tokenType;
+        $command->gssfId = $tokenIdentifier;
         $this->process($command);
     }
 }

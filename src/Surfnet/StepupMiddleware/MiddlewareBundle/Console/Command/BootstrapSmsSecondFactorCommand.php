@@ -120,7 +120,7 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
-                    '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
+                    '<error>An Error occurred when trying to bootstrap the SMS token: "%s"</error>',
                     $e->getMessage()
                 )
             );

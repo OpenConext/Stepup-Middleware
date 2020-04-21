@@ -30,3 +30,8 @@ services:
         parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
         tags:
             - { name: 'console.command', command: 'middleware:bootstrap:yubikey' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapGsspSecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:gssp' }

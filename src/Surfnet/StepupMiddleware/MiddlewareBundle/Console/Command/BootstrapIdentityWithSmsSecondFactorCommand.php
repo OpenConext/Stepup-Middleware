@@ -23,7 +23,6 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
@@ -77,7 +76,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
         $this->enrichEventMetadata($actorId);
         $identity = false;
         $output->writeln(sprintf('<notice>Adding a %s SMS token for %s</notice>', $registrationStatus, $commonName));
-        if ($this->identityRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        if ($this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<notice>An identity with name ID "%s" from institution "%s" already exists, using that identity</notice>',
@@ -85,7 +84,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $institution->getInstitution()
                 )
             );
-            $identity = $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
+            $identity = $this->tokenBootstrapService->findOneByNameIdAndInstitution($nameId, $institution);
         }
         $this->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
@@ -102,10 +101,7 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                 case "verified":
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
                     $this->provePossession($secondFactorId, $identity, $phoneNumber);
-                    /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
-                        ['identityId' => $identity->id, 'type' => 'sms']
-                    );
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
                     if ($mailVerificationRequired) {
                         $output->writeln('<notice>Creating a verified SMS token</notice>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
@@ -115,17 +111,12 @@ final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstra
                     $output->writeln('<notice>Creating an unverified SMS token</notice>');
                     $this->provePossession($secondFactorId, $identity, $phoneNumber);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
-                        ['identityId' => $identity->id, 'type' => 'sms']
-                    );
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
                     if ($mailVerificationRequired) {
                         $output->writeln('<notice>Creating a verified SMS token</notice>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
-                    /** @var VerifiedSecondFactor $verifiedSecondFactor */
-                    $verifiedSecondFactor = $this->verifiedSecondFactorRepository->findOneBy(
-                        ['identityId' => $identity->id, 'type' => 'sms']
-                    );
+                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, 'sms');
                     $output->writeln('<notice>Vetting the verified SMS token</notice>');
                     $this->vetSecondFactor(
                         'sms',

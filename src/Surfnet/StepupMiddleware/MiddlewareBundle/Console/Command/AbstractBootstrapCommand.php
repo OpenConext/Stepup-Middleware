@@ -20,17 +20,13 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Broadway\EventHandling\EventBusInterface;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -42,39 +38,27 @@ abstract class AbstractBootstrapCommand extends Command
     private $eventBus;
     /** @var DBALConnectionHelper  */
     private $connection;
-    /** @var IdentityRepository  */
-    protected $identityRepository;
-    /** @var UnverifiedSecondFactorRepository  */
-    protected $unverifiedSecondFactorRepository;
-    /** @var VerifiedSecondFactorRepository */
-    protected $verifiedSecondFactorRepository;
-    /** @var InstitutionConfigurationOptionsRepository */
-    private $institutionConfigurationRepository;
     /** @var TokenStorageInterface */
     protected $tokenStorage;
     /** @var MetadataEnricher */
     private $enricher;
+    /** @var TokenBootstrapService */
+    protected $tokenBootstrapService;
 
     public function __construct(
         Pipeline $pipeline,
         EventBusInterface $eventBus,
         DBALConnectionHelper $connection,
         MetadataEnricher $enricher,
-        IdentityRepository $identityRepository,
-        UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
-        VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
-        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        TokenBootstrapService $tokenBootstrapService
     ) {
         $this->pipeline = $pipeline;
         $this->eventBus = $eventBus;
         $this->connection = $connection;
         $this->enricher = $enricher;
-        $this->identityRepository = $identityRepository;
-        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
-        $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
-        $this->institutionConfigurationRepository = $institutionConfigurationOptionsRepository;
         $this->tokenStorage = $tokenStorage;
+        $this->tokenBootstrapService = $tokenBootstrapService;
         parent::__construct();
     }
 
@@ -101,7 +85,7 @@ abstract class AbstractBootstrapCommand extends Command
 
     protected function requiresMailVerification($institution)
     {
-        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(new Institution($institution));
+        $configuration = $this->tokenBootstrapService->findConfigurationOptionsFor($institution);
         if ($configuration) {
             return $configuration->verifyEmailOption->isEnabled();
         }
@@ -125,7 +109,7 @@ abstract class AbstractBootstrapCommand extends Command
 
     protected function enrichEventMetadata($actorId)
     {
-        $actor = $this->identityRepository->findOneBy(['id' => $actorId]);
+        $actor = $this->tokenBootstrapService->findIdentityById($actorId);
         $metadata = new Metadata();
         $metadata->actorId = $actor->id;
         $metadata->actorInstitution = $actor->institution;

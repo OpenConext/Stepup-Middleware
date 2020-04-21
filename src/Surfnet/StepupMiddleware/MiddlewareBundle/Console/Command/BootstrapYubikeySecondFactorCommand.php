@@ -52,6 +52,9 @@ final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $registrationStatus = $input->getArgument('registration-status');
+        $this->validRegistrationStatus($registrationStatus);
+
         $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );

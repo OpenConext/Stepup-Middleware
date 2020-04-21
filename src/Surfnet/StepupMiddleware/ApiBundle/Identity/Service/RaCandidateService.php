@@ -45,7 +45,7 @@ class RaCandidateService extends AbstractSearchService
     {
         $doctrineQuery = $this->raCandidateRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query, false);
 
         return $paginator;
     }

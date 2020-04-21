@@ -23,6 +23,7 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
@@ -114,5 +115,14 @@ abstract class AbstractBootstrapCommand extends Command
         $metadata->actorId = $actor->id;
         $metadata->actorInstitution = $actor->institution;
         $this->enricher->setMetadata($metadata);
+    }
+
+    protected function verifyEmail($identity, $unverifiedSecondFactor)
+    {
+        $command = new VerifyEmailCommand();
+        $command->UUID = (string)Uuid::uuid4();
+        $command->identityId = $identity->id;
+        $command->verificationNonce = $unverifiedSecondFactor->verificationNonce;
+        $this->process($command);
     }
 }

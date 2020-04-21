@@ -25,3 +25,8 @@ services:
         parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
         tags:
             - { name: 'console.command', command: 'middleware:bootstrap:sms' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapYubikeySecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:yubikey' }

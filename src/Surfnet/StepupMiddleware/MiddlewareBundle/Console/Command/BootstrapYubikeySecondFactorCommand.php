@@ -23,25 +23,24 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
+final class BootstrapYubikeySecondFactorCommand extends AbstractBootstrapCommand
 {
     protected function configure()
     {
         $this
-            ->setDescription('Creates a SMS second factor for a specified user')
+            ->setDescription('Creates a Yubikey second factor for a specified user')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument(
-                'phone-number',
+                'yubikey',
                 InputArgument::REQUIRED,
-                'The phone number of the user should be formatted like "+31 (0) 612345678"'
+                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.'
             )
             ->addArgument(
                 'registration-status',
@@ -54,14 +53,14 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->tokenStorage->setToken(
-            new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
+            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->requiresMailVerification($institutionText);
         $registrationStatus = $input->getArgument('registration-status');
-        $phoneNumber = $input->getArgument('phone-number');
+        $yubikey = $input->getArgument('yubikey');
         $actorId = $input->getArgument('actor-id');
         $this->enrichEventMetadata($actorId);
         if (!$this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
@@ -76,43 +75,43 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
             return;
         }
         $identity = $this->tokenBootstrapService->findOneByNameIdAndInstitution($nameId, $institution);
-        $output->writeln(sprintf('<comment>Adding a %s SMS token for %s</comment>', $registrationStatus, $identity->commonName));
+        $output->writeln(sprintf('<comment>Adding a %s Yubikey token for %s</comment>', $registrationStatus, $identity->commonName));
         $this->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
         try {
             switch ($registrationStatus) {
                 case "unverified":
-                    $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
+                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
+                    $this->provePossession($secondFactorId, $identity, $yubikey);
                     break;
                 case "verified":
-                    $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
+                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
+                    $this->provePossession($secondFactorId, $identity, $yubikey);
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'yubikey');
                     if ($mailVerificationRequired) {
-                        $output->writeln('<comment>Creating a verified SMS token</comment>');
+                        $output->writeln('<comment>Creating a verified Yubikey token</comment>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
                     break;
                 case "vetted":
-                    $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
+                    $output->writeln('<comment>Creating an unverified Yubikey token</comment>');
+                    $this->provePossession($secondFactorId, $identity, $yubikey);
                     /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
+                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'yubikey');
                     if ($mailVerificationRequired) {
-                        $output->writeln('<comment>Creating a verified SMS token</comment>');
+                        $output->writeln('<comment>Creating a verified Yubikey token</comment>');
                         $this->verifyEmail($identity, $unverifiedSecondFactor);
                     }
-                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, 'sms');
-                    $output->writeln('<comment>Vetting the verified SMS token</comment>');
+                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, 'yubikey');
+                    $output->writeln('<comment>Vetting the verified Yubikey token</comment>');
                     $this->vetSecondFactor(
-                        'sms',
+                        'yubikey',
                         $actorId,
                         $identity,
                         $secondFactorId,
                         $verifiedSecondFactor,
-                        $phoneNumber
+                        $yubikey
                     );
                     break;
             }
@@ -120,7 +119,7 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
-                    '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
+                    '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
                     $e->getMessage()
                 )
             );
@@ -129,7 +128,7 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
         }
         $output->writeln(
             sprintf(
-                '<info>Successfully registered a SMS token with UUID %s</info>',
+                '<info>Successfully created identity with UUID %s and %s second factor with UUID %s</info>',
                 $identity->id,
                 $registrationStatus,
                 $secondFactorId
@@ -139,11 +138,11 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
 
     private function provePossession($secondFactorId, $identity, $phoneNumber)
     {
-        $command = new ProvePhonePossessionCommand();
+        $command = new ProveYubikeyPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
         $command->identityId = $identity->id;
-        $command->phoneNumber = $phoneNumber;
+        $command->yubikeyPublicId = $phoneNumber;
         $this->process($command);
     }
 }

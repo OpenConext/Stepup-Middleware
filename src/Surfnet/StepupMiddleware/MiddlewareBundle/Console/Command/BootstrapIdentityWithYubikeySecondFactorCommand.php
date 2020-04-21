@@ -93,7 +93,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
             $connection->commit();
         } catch (Exception $e) {
             $output->writeln(sprintf(
-                '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
+                '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
                 $e->getMessage()
             ));
 
@@ -103,7 +103,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         }
 
         $output->writeln(sprintf(
-            '<info>Successfully created identity with UUID %s and second factor with UUID %s</info>',
+            '<info>Successfully registered a Yubikey token with UUID %s</info>',
             $command->identityId,
             $command->secondFactorId
         ));

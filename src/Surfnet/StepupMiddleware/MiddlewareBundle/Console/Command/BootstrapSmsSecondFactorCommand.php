@@ -30,12 +30,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapIdentityWithSmsSecondFactorCommand extends AbstractBootstrapCommand
+final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
 {
     protected function configure()
     {
         $this
-            ->setDescription('Creates an identity with a SMS second factor')
+            ->setDescription('Creates a SMS second factor for a specified user')
             ->addArgument('name-id', InputArgument::REQUIRED, 'The NameID of the identity to create')
             ->addArgument('institution', InputArgument::REQUIRED, 'The institution of the identity to create')
             ->addArgument(

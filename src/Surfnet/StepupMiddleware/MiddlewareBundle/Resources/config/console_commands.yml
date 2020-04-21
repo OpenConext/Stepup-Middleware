@@ -21,7 +21,7 @@ services:
         tags:
             - { name: 'console.command', command: 'middleware:bootstrap:identity' }
 
-    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithSmsSecondFactorCommand:
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapSmsSecondFactorCommand:
         parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
         tags:
-            - { name: 'console.command', command: 'middleware:bootstrap:identity-with-sms' }
+            - { name: 'console.command', command: 'middleware:bootstrap:sms' }

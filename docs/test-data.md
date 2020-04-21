@@ -69,3 +69,26 @@ Creating a verified Yubikey token
 Vetting the verified Yubikey token
 Successfully registered a Yubikey token with UUID 7d3bf0c5-58e9-4393-afbc-4877a8ae001f
 ```
+
+## Bootstrap a GSSP token
+
+**Required arguments**
+
+In order of appearance:
+1. NameID: Example: `urn:collab:person:institution-b.example.com:joe-b1`
+2. Institution: the institution identifier, should be a whitelisted institution known in your StepUp installation. Example: `institution-b.example.com`
+3. Token type: The GSSP token type, for example `tiqr`, `webauthn` or `azure-mfa` 
+4. Token identifier: The identifier for the token. This should probably be filled with bogus data. Example format for a tiqr token: `q8d8pp-5n3d` as the actual registration at the remote GSSP IdP does not take place, this identifier is kind of obsolete.
+5. Token state: allowed states: `unverified`, `verified` or `vetted` 
+6. Actor ID: The identity id of the actor that is adding the user (Uuid found in identity projection). Example: `112e8d3e-b748-416f-9501-eda1eac0daad` 
+
+**Example usage**
+
+```bash
+$ app/console middleware:bootstrap:gssp urn:collab:person:institution-b:joe-beone institution-b.example.com tiqr t39dk-aas vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
+Adding a vetted tiqr GSSP token for Joe Beone
+Creating an unverified tiqr token
+Creating an verified tiqr token
+Vetting the verified tiqr token
+Successfully vetted tiqr second factor with UUID 4ed78266-00db-46c8-80f8-98baf08a8a29
+```

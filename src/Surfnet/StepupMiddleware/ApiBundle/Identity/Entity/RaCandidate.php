@@ -27,32 +27,14 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 
 /**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_ra_candidate_institution", columns={"institution"}),
- *          @ORM\Index(name="idx_ra_candidate_name_id", columns={"name_id"}),
- *          @ORM\Index(name="idxft_ra_candidate_email", columns={"email"}, flags={"FULLTEXT"}),
- *          @ORM\Index(name="idxft_ra_candidate_commonname", columns={"common_name"}, flags={"FULLTEXT"}),
- *          @ORM\Index(name="idx_ra_institution", columns={"ra_institution"})
- *      },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="idx_ra_candidate_unique_identity_institution", columns={"identity_id", "ra_institution"})
- *     }
- * )
+ * Be aware that this entity is used for the RA Candidate presentation only. This entity shouldn't be used to store any RA candidates.
+ *
+ * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository", readOnly=true)
  */
 class RaCandidate implements JsonSerializable
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     *
-     * @var integer
-     */
-    public $id;
-
-    /**
      * @ORM\Column(length=36)
      *
      * @var string
@@ -60,6 +42,7 @@ class RaCandidate implements JsonSerializable
     public $identityId;
 
     /**
+     * @ORM\Id
      * @ORM\Column(type="institution")
      *
      * @var Institution
@@ -93,6 +76,10 @@ class RaCandidate implements JsonSerializable
      * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
+
+    private function __construct()
+    {
+    }
 
     public static function nominate(
         IdentityId $identityId,

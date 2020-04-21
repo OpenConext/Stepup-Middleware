@@ -16,6 +16,11 @@ services:
             - "@security.token_storage"
             - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService'
 
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:identity' }
+
     Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithSmsSecondFactorCommand:
         parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
         tags:

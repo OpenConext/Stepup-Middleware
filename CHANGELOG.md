@@ -1,5 +1,13 @@
 # Changelog
 
+# 3.1.8
+**Feature**
+* Added identity & token bootstrap console commands (for test) #302 #303 #304 #305 
+
+# 3.1.7
+Drop RaCandidate projection in favour of dedicated query.
+This is done in order to be able to push large institution configuration changes because the projection doesn't have to get updated for all possible candidates. Before this change this resulted in an OOM exception.
+
 # 3.1.6
 **Bugfix**
  * Disable ra-candidate fulltext search #300

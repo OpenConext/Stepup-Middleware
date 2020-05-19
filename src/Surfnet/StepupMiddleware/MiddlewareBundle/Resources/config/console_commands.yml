@@ -1,0 +1,37 @@
+services:
+    Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService:
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.identity"
+            - "@surfnet_stepup_middleware_api.repository.unverified_second_factor"
+            - "@surfnet_stepup_middleware_api.repository.verified_second_factor"
+            - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand:
+        abstract: true
+        arguments:
+            - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+            - "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"
+            - "@security.token_storage"
+            - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService'
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:identity' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapSmsSecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:sms' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapYubikeySecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:yubikey' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapGsspSecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:gssp' }

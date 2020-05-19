@@ -29,7 +29,6 @@ class InstitutionConfigurationOptionsRepository extends EntityRepository
     /**
      * @param Institution $institution
      * @return InstitutionConfigurationOptions
-     * @throws NoResultException
      * @throws NonUniqueResultException
      */
     public function findConfigurationOptionsFor(Institution $institution)

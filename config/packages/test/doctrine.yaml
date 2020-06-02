@@ -1,0 +1,13 @@
+doctrine:
+  dbal:
+    default_connection: middleware
+    connections:
+      middleware:
+        driver: pdo_sqlite
+        path: "/tmp/middleware.db"
+      gateway:
+        driver: pdo_sqlite
+        path: "/tmp/gateway.db"
+      deploy:
+        driver: pdo_sqlite
+        path: "/tmp/deploy.db"

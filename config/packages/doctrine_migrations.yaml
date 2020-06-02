@@ -1,0 +1,7 @@
+doctrine_migrations:
+    dir_name: '%kernel.project_dir%/src/Surfnet/Migrations'
+    # namespace is arbitrary but should be different from App\Migrations
+    # as migrations classes should NOT be autoloaded
+    namespace: Surfnet\Migrations
+    name: Step-up Middleware Migrations
+    table_name: migration_versions

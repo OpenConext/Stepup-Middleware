@@ -1,0 +1,24 @@
+surfnet_stepup:
+  logging:
+    application_name: middleware
+  loa_definition:
+    loa1: "%stepup_loa_loa1%"
+    loa2: "%stepup_loa_loa2%"
+    loa3: "%stepup_loa_loa3%"
+  sms:
+    enabled: false
+
+surfnet_stepup_middleware_command_handling:
+  self_service_email_verification_url_template: "%self_service_email_verification_url_template%"
+  self_service_url: "%self_service_url%"
+  email_fallback_locale: "%default_locale%"
+  email_sender:
+    name: "%email_sender_name%"
+    email: "%email_sender_email%"
+
+surfnet_stepup_middleware_middleware:
+  email_verification_window: "%email_verification_window%"
+  enabled_generic_second_factors: "%enabled_generic_second_factors%"
+
+surfnet_stepup_middleware_management:
+  email_required_locale: "%default_locale%"

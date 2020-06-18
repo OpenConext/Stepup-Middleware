@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -118,5 +118,7 @@ class SensitiveDataTest extends TestCase
                 "get$data() returned an unexpected value"
             );
         }
+
+        $this->assertInstanceOf(SensitiveData::class, $sensitiveData);
     }
 }

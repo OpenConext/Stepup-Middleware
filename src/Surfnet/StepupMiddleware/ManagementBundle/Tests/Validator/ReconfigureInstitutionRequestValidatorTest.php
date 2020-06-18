@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -103,7 +103,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             $actualPropertyPath,
             sprintf('Actual path to erroneous property does not match expected path (%s)', $actualErrorMessage)
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             $expectErrorMessageToContain,
             $actualErrorMessage,
             sprintf(
@@ -151,7 +151,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
 
-        $this->assertContains($expectedErrorMessage, $errorMessage);
+        $this->assertStringContainsString($expectedErrorMessage, $errorMessage);
     }
 
     /**
@@ -196,6 +196,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $validator->initialize($context);
 
         $validator->validate($invalidRequest, new ValidReconfigureInstitutionsRequest);
+
+        $this->assertInstanceOf(ConfiguredInstitution::class, $existingInstitutions[0]);
     }
 
     /**
@@ -237,6 +239,9 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         );
         $validator->initialize($context);
         $validator->validate($validRequest, new ValidReconfigureInstitutionsRequest);
+
+
+        $this->assertInstanceOf(ConfiguredInstitution::class, $existingInstitution);
     }
 
     /**

@@ -18,10 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ConfigurationControllerTest extends WebTestCase
 {
+    use FixturesTrait;
+
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Client
      */
@@ -32,7 +35,7 @@ class ConfigurationControllerTest extends WebTestCase
      */
     private $password;
 
-    public function setUp()
+    public function setUp(): void
     {
         // Initialises schema.
         $this->loadFixtures([]);
@@ -56,7 +59,7 @@ class ConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT'   => 'application/json',
                 'CONTENT_TYPE'  => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password,
+                'PHP_AUTH_PW'   => $this->password
             ],
             json_encode([])
         );
@@ -77,7 +80,7 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [
                 'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'CONTENT_TYPE'  => 'application/json'
             ],
             json_encode([])
         );
@@ -100,7 +103,7 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [
                 'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_TYPE' => 'application/json'
             ],
             json_encode([])
         );

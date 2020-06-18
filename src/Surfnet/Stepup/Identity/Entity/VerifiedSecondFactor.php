@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use DateInterval;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
@@ -29,7 +30,6 @@ use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
-use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -133,7 +133,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     {
         return !DateTime::now()->comesAfter(
             $this->registrationRequestedAt
-                ->add(new \DateInterval('P14D'))
+                ->add(new DateInterval('P14D'))
                 ->endOfDay()
         );
     }

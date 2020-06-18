@@ -44,7 +44,7 @@ class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
     /**
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return ['removed_institutions' => $this->removedInstitutions->serialize()];
     }

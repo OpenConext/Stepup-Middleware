@@ -47,7 +47,7 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
     /**
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return ['id' => $this->id, 'service_providers' => $this->serviceProviders];
     }

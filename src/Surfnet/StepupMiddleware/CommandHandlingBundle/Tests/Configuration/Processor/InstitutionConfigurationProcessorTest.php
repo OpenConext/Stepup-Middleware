@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\Processor;
 
 use Mockery;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -45,7 +45,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
     /**
      * @return Mockery\MockInterface
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->pipelineMock = Mockery::mock(Pipeline::class);
     }
@@ -82,6 +82,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -114,6 +116,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -153,6 +157,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -196,6 +202,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -237,6 +245,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistReplacedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -280,6 +290,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -321,6 +333,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**
@@ -364,6 +378,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
             $this->getContainerMock()
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);
+
+        $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
     }
 
     /**

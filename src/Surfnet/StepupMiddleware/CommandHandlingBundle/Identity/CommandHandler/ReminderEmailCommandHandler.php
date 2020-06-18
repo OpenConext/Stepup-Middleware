@@ -18,11 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderService;
 
-class ReminderEmailCommandHandler extends CommandHandler
+class ReminderEmailCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var VerifiedSecondFactorReminderService

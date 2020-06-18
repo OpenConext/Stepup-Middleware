@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
@@ -130,7 +131,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
             ->then($this->createConfigurationUpdatedEvents($configuration2, $configuration1));
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 

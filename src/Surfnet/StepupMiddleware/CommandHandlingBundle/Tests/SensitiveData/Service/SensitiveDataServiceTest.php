@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
@@ -41,5 +41,7 @@ final class SensitiveDataServiceTest extends TestCase
 
         $service = new SensitiveDataService($sensitiveDataMessageRepository);
         $service->forgetSensitiveData($identityId);
+
+        $this->assertInstanceOf(SensitiveDataService::class, $service);
     }
 }

@@ -18,9 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
@@ -35,19 +34,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RaCandidateRepository extends EntityRepository
+class RaCandidateRepository extends ServiceEntityRepository
 {
     /**
      * @var InstitutionAuthorizationRepositoryFilter
      */
     private $authorizationRepositoryFilter;
 
-    public function __construct(
-        EntityManager $em,
-        Mapping\ClassMetadata $class,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-    ) {
-        parent::__construct($em, $class);
+    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
+    {
+        parent::__construct($registry, RaCandidate::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 

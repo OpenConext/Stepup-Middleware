@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -65,7 +65,7 @@ class CommandAuthorizationServiceTest extends TestCase
      */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $whitelistService = m::mock(WhitelistService::class);
         $identityService = m::mock(IdentityService::class);

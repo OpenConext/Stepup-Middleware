@@ -18,13 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
-class SraaRepository extends EntityRepository
+class SraaRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Sraa::class);
+    }
+
     /**
      * Removes all SRAA's from the database
      */

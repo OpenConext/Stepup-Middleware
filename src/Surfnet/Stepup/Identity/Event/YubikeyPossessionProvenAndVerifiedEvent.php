@@ -135,7 +135,7 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'                 => (string) $this->identityId,

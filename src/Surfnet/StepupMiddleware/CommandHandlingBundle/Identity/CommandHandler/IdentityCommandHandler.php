@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Repository\RepositoryInterface;
+use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
@@ -68,7 +68,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Excep
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class IdentityCommandHandler extends CommandHandler
+class IdentityCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository

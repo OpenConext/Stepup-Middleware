@@ -92,7 +92,7 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'         => (string) $this->identityId,

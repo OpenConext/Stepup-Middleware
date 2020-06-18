@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 
 class TimeFrameTest extends UnitTest
@@ -27,11 +27,11 @@ class TimeFrameTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     *
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      */
     public function it_cannot_be_given_an_non_positive_amount_of_seconds($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         TimeFrame::ofSeconds($invalidValue);
     }
 

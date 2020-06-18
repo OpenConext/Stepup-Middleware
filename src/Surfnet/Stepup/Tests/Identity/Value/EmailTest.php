@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Email;
 
 class EmailTest extends UnitTest
@@ -27,12 +27,12 @@ class EmailTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidArgumentProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function the_email_address_must_be_a_non_empty_string($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
         new Email($invalidValue);
     }
 
@@ -40,11 +40,12 @@ class EmailTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidEmailProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      * @param $invalidValue
      */
     public function the_email_address_given_must_be_rfc_822_compliant($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new Email($invalidValue);
     }
 

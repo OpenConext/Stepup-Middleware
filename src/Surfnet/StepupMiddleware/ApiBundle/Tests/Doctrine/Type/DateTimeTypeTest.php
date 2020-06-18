@@ -22,7 +22,7 @@ use DateTime as CoreDateTime;
 use DateTimeZone;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
 
@@ -36,12 +36,12 @@ class DateTimeTypeTest extends UnitTest
     /**
      * Register the type, since we're forced to use the factory method.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Type::addType(DateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->platform = new MySqlPlatform();
     }
@@ -108,10 +108,12 @@ class DateTimeTypeTest extends UnitTest
     /**
      * @test
      * @group doctrine
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
+     *
      */
     public function an_invalid_database_value_causes_an_exception_upon_conversion()
     {
+        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+
         $dateTime = Type::getType(DateTimeType::NAME);
 
         $input = 'This is an invalid formatted datetime';

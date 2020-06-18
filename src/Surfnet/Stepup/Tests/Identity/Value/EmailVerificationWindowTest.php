@@ -20,12 +20,13 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
-class EmailVerificationWindowTest extends \PHPUnit_Framework_TestCase
+class EmailVerificationWindowTest extends TestCase
 {
     /**
      * @test

@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -30,7 +30,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 
-final class RightToBeForgottenCommandHandler extends CommandHandler
+final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository

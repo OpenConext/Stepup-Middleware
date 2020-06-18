@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
 use ArrayIterator;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\EventHandling\EventListener as ProjectorInterface;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 

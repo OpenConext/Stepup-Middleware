@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
 use Mockery\Exception\RuntimeException;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionAccessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionProperty;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithoutInstitutionPropertyAndAccessor;
@@ -35,7 +35,7 @@ class HasInstitutionMatcherTest extends TestCase
      */
     public function has_institution_matcher_only_matches_against_strings($nonString)
     {
-        $this->setExpectedException(RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $hasInstitutionMatcher = new HasInstitutionMatcher($nonString);
     }

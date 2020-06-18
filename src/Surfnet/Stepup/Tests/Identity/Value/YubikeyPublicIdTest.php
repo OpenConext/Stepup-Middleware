@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 class YubikeyPublicIdTest extends UnitTest
@@ -57,12 +57,13 @@ class YubikeyPublicIdTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidFormatProvider
-     * @expectedException Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidFormat
      */
     public function it_cannot_be_constructed_with_an_invalid_format($invalidFormat)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new YubikeyPublicId($invalidFormat);
     }
 

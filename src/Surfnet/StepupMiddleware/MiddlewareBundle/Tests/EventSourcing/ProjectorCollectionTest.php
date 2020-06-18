@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\EventSourcing;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\WhitelistProjector;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
@@ -106,7 +106,8 @@ class ProjectorCollectionTest extends TestCase
      */
     public function a_subset_containing_projectors_not_present_in_a_projector_collection_cannot_be_selected()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'not present in the collection');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('not present in the collection');
 
         $sraaProjector                = new SraaProjector( m::mock(SraaRepository::class));
         $nonPresentWhitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));

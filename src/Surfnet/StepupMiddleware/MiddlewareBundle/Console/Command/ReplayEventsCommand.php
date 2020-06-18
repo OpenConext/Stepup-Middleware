@@ -47,7 +47,7 @@ class ReplayEventsCommand extends Command
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var KernelInterface $kernel */
         $kernel = $this->getApplication()->getKernel();
@@ -124,9 +124,6 @@ QUESTION;
         $output->writeln(
             $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
         );
-
-        // ensures the progressbar doesn't overwrite the messages above
-        $output->writeln(['', '', ''], 'info');
 
         /** @var Container $container */
         $container = $kernel->getContainer();

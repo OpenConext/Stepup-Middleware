@@ -463,7 +463,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->apply(new InstitutionConfigurationRemovedEvent($this->institutionConfigurationId, $this->institution));
     }
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
         return $this->institutionConfigurationId;
     }

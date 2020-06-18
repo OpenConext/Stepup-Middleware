@@ -32,7 +32,7 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
      */
     private $institution;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->institution = new Institution('inst');
     }

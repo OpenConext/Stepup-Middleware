@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 
 class AbstractCommandTest extends UnitTest
 {

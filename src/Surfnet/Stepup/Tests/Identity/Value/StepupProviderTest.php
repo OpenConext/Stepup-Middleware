@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 
 class StepupProviderTest extends UnitTest
@@ -27,12 +27,13 @@ class StepupProviderTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new StepupProvider($invalidValue);
     }
 

@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class RaLocationNameTest extends TestCase
@@ -27,12 +27,13 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group        domain
      * @dataProvider nonStringOrEmptyStringProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $nonStringOrEmptyString
      */
     public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new RaLocationName($nonStringOrEmptyString);
     }
 

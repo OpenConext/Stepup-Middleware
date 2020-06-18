@@ -1083,12 +1083,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
-        return $this->id;
+        return $this->id->getIdentityId();
     }
 
-    protected function getChildEntities()
+    protected function getChildEntities(): array
     {
         return array_merge(
             $this->unverifiedSecondFactors->getValues(),

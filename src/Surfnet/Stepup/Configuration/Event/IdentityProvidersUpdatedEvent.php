@@ -41,7 +41,7 @@ class IdentityProvidersUpdatedEvent extends ConfigurationEvent
         return new self($data['id'], $data['identity_providers']);
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return ['id' => $this->id, 'identity_providers' => $this->identityProviders];
     }

@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use DateTime;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
@@ -26,38 +28,29 @@ use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
-class VerifiedSecondFactorRepository extends EntityRepository
+class VerifiedSecondFactorRepository extends ServiceEntityRepository
 {
     /**
      * @var InstitutionAuthorizationRepositoryFilter
      */
     private $authorizationRepositoryFilter;
 
-    /**
-     * VerifiedSecondFactorRepository constructor.
-     * @param EntityManager $em
-     * @param Mapping\ClassMetadata $class
-     * @param InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-     */
-    public function __construct(
-        EntityManager $em,
-        Mapping\ClassMetadata $class,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-    ) {
-        parent::__construct($em, $class);
+    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
+    {
+        parent::__construct($registry, VerifiedSecondFactor::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
-
 
     /**
      * @param string $id
      * @return VerifiedSecondFactor|null
      */
-    public function find($id)
+    public function find($id, $lockMode = null, $lockVersion = null)
     {
         /** @var VerifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);

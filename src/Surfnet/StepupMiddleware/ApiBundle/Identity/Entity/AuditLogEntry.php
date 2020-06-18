@@ -44,7 +44,7 @@ class AuditLogEntry implements JsonSerializable
      *
      * @var string[]
      */
-    private static $eventActionMap = [
+    private $eventActionMap = [
         'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
@@ -189,10 +189,10 @@ class AuditLogEntry implements JsonSerializable
      */
     private function mapEventToAction($event)
     {
-        if (!isset(self::$eventActionMap[$event])) {
+        if (!isset($this->eventActionMap[$event])) {
             throw new LogicException(sprintf("Action name for event '%s' not registered", $event));
         }
 
-        return self::$eventActionMap[$event];
+        return $this->eventActionMap[$event];
     }
 }

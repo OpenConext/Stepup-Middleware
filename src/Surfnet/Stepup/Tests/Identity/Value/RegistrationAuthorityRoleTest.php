@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
 class RegistrationAuthorityRoleTest extends UnitTest
@@ -27,12 +27,13 @@ class RegistrationAuthorityRoleTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function it_cannot_be_created_with_anything_but_a_valid_role($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new RegistrationAuthorityRole($invalidValue);
     }
 

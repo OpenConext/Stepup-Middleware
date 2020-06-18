@@ -41,7 +41,7 @@ class SraaUpdatedEvent extends ConfigurationEvent
         return new self($data['id'], $data['sraa_list']);
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return ['id' => $this->id, 'sraa_list' => $this->sraaList];
     }

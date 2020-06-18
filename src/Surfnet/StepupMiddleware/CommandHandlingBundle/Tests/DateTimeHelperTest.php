@@ -19,12 +19,13 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use DateTime as CoreDateTime;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 
 /**
  * @runTestsInSeparateProcesses
  */
-class DateTimeHelperTest extends \PHPUnit_Framework_TestCase
+class DateTimeHelperTest extends TestCase
 {
     /**
      * @test

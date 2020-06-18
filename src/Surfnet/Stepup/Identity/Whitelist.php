@@ -43,7 +43,7 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
     {
     }
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
         return self::WHITELIST_AGGREGATE_ID;
     }

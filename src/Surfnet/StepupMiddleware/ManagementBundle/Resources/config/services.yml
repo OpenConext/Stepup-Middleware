@@ -1,10 +1,19 @@
 services:
 
-    # The ManagementBundle controllers are available as a service
     Surfnet\StepupMiddleware\ManagementBundle\Controller\:
         resource: '../../Controller'
         autowire: true
         tags: ['controller.service_arguments']
+
+    Surfnet\StepupMiddleware\ManagementBundle\:
+        resource: '../../*'
+        autowire: true
+        exclude: '../../{DependencyInjection,Entity,Repository,Migrations,Tests,Exception,Controller}'
+
+    # BC aliases
+    Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper: "@surfnet_stepup_middleware_management.dbal_connection_helper"
+    Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator: "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
+
 
     Liip\FunctionalTestBundle\Validator\DataCollectingValidator: '@validator'
 
@@ -48,10 +57,7 @@ services:
             - "@surfnet_stepup_middleware_management.repository.email_template"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
-    surfnet_stepup_middleware_management.repository.email_template:
-        class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate ]
+    surfnet_stepup_middleware_management.repository.email_template: '@Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository'
 
     surfnet_stepup_middleware_management.service.email_template:
         class: Surfnet\StepupMiddleware\ManagementBundle\Configuration\Service\EmailTemplateService

@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -68,7 +69,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 {
     private static $window = 3600;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 

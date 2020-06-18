@@ -26,7 +26,7 @@ use Surfnet\Stepup\Configuration\Value\Institution;
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository"
  * )
  */
-final class ConfiguredInstitution
+class ConfiguredInstitution
 {
     /**
      * @ORM\Id

@@ -19,9 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
 
-class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
+class CommandParamConverterTest extends TestCase
 {
     /**
      * @test
@@ -31,7 +32,7 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
      */
     public function it_validates_the_command_structure($commandJson)
     {
-        $this->setExpectedException('Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException');
+        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException::class);
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
@@ -63,6 +64,8 @@ class CommandParamConverterTest extends \PHPUnit_Framework_TestCase
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
+
+        $this->assertInstanceOf(CommandParamConverter::class, $converter);
     }
 
     /**

@@ -133,7 +133,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'               => (string) $this->identityId,

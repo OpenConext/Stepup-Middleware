@@ -44,13 +44,13 @@ class SensitiveDataMessage
      * @param int $playhead The associated broadway domain message's playhead.
      * @param SensitiveData $sensitiveData
      */
-    public function __construct(IdentityId $identityId, $playhead, SensitiveData $sensitiveData)
+    public function __construct(string $identityId, $playhead, SensitiveData $sensitiveData)
     {
         if (!is_int($playhead)) {
             throw InvalidArgumentException::invalidType('int', 'playhead', $playhead);
         }
 
-        $this->identityId = $identityId;
+        $this->identityId = new IdentityId($identityId);
         $this->playhead = $playhead;
         $this->sensitiveData = $sensitiveData;
     }

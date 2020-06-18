@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Location;
 
 class LocationTest extends UnitTest
@@ -27,12 +27,13 @@ class LocationTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider nonStringProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $nonString
      */
     public function it_cannot_be_created_with_anything_but_a_string($nonString)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new Location($nonString);
     }
 

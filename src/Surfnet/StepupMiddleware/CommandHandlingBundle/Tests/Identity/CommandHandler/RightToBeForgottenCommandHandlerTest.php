@@ -18,9 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
+use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\MockInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
@@ -43,7 +45,6 @@ use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
-
 /**
  * @runTestsInSeparateProcesses
  */
@@ -58,7 +59,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
     /** @var MockInterface */
     private $sraaRepository;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
@@ -95,15 +96,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(m::anyOf($nameId), m::anyOf($institution))
+            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
             ->andReturn((object) ['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(m::anyOf($identityId));
+            ->with(Matchers::equalTo($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(m::anyOf($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -141,11 +142,12 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group sensitive-data
-     * @expectedException Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Operation on this Identity is not allowed: it has been forgotten
      */
     public function an_identity_may_not_be_forgotten_twice()
     {
+        $this->expectExceptionMessage("Operation on this Identity is not allowed: it has been forgotten");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
         $nameId      = new NameId('urn:eeva-kuopio');
@@ -156,15 +158,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(m::anyOf($nameId), m::anyOf($institution))
+            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
             ->andReturn((object) ['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(m::anyOf($identityId));
+            ->with(Matchers::equalTo($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(m::anyOf($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -200,11 +202,12 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group sensitive-data
-     * @expectedException Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot forget an identity that is currently accredited as an RA(A)
      */
     public function an_ra_cannot_be_forgotten()
     {
+        $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
         $nameId      = new NameId('urn:eeva-kuopio');
@@ -215,15 +218,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(m::anyOf($nameId), m::anyOf($institution))
+            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
             ->andReturn((object) ['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(m::anyOf($identityId));
+            ->with(Matchers::equalTo($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(m::anyOf($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -267,11 +270,12 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group sensitive-data
-     * @expectedException Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot forget an identity that is currently accredited as an RA(A)
      */
     public function an_raa_cannot_be_forgotten()
     {
+        $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
         $nameId      = new NameId('urn:eeva-kuopio');
@@ -282,15 +286,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(m::anyOf($nameId), m::anyOf($institution))
+            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
             ->andReturn((object) ['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(m::anyOf($identityId));
+            ->with(Matchers::equalTo($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(m::anyOf($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -334,11 +338,12 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group sensitive-data
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException
-     * @expectedExceptionMessage Cannot forget an identity that is currently accredited as an SRAA
      */
     public function an_sraa_cannae_be_forgotten()
     {
+        $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an SRAA");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException::class);
+
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
         $nameId      = new NameId('urn:eeva-kuopio');
@@ -349,15 +354,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(m::anyOf($nameId), m::anyOf($institution))
+            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
             ->andReturn((object) ['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(m::anyOf($identityId));
+            ->with(Matchers::equalTo($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(m::anyOf($nameId))->andReturn(true);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(true);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();

@@ -61,7 +61,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'id'          => (string) $this->identityId,

@@ -26,24 +26,5 @@ nelmio_security:
     xss_protection:
         enabled: true
         mode_block: true
-    forced_ssl:
-        enabled: true
-        hsts_max_age: 31536000 # 365 days
-        hsts_subdomains: true
 
 
-        # Send a full URL in the `Referer` header when performing a same-origin request,
-    # only send the origin of the document to secure destination (HTTPS->HTTPS),
-    # and send no header to a less secure destination (HTTPS->HTTP).
-    # If `strict-origin-when-cross-origin` is not supported, use `no-referrer` policy,
-    # no referrer information is sent along with requests.
-    referrer_policy:
-        enabled: true
-        policies:
-            - 'no-referrer'
-            - 'strict-origin-when-cross-origin'
-
-    signed_cookie:
-        names: ['*']
-    encrypted_cookie:
-        names: ['*']

@@ -80,6 +80,23 @@
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@auto-scripts"
+        ],
+        "frontend-install": [
+            "echo 'Skipping task: no frontend assets available'"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "*",
+            ".*",
+            "*/Tests/*",
+            "!/bin",
+            "!/config",
+            "!/public",
+            "!/src",
+            "!/templates",
+            "!/var/cache/prod",
+            "!/vendor"
         ]
     },
     "config": {

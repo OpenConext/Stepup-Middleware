@@ -95,6 +95,7 @@
             "!/public",
             "!/src",
             "!/templates",
+            "!/translations",
             "!/var/cache/prod",
             "!/vendor"
         ]

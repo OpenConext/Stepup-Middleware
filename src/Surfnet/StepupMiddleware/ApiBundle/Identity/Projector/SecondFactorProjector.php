@@ -28,6 +28,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -222,6 +223,20 @@ class SecondFactorProjector extends Projector
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
+
+        $vetted = new VettedSecondFactor();
+        $vetted->id = $event->secondFactorId->getSecondFactorId();
+        $vetted->identityId = $event->identityId->getIdentityId();
+        $vetted->type = $event->secondFactorType->getSecondFactorType();
+        $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+
+        $this->vettedRepository->save($vetted);
+        $this->verifiedRepository->remove($verified);
+    }
+
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
     {
         $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
 

@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
@@ -31,6 +33,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class VerifiedSecondFactorController extends Controller
 {
     /**
@@ -43,12 +48,20 @@ class VerifiedSecondFactorController extends Controller
      */
     private $institutionAuthorizationService;
 
+    /**
+     * @var SecondFactorProvePossessionHelper
+     */
+    private $secondFactorProvePossessionHelper;
+
+
     public function __construct(
         SecondFactorService $secondFactorService,
-        AuthorizationContextService $authorizationService
+        AuthorizationContextService $authorizationService,
+        SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper
     ) {
         $this->secondFactorService = $secondFactorService;
         $this->institutionAuthorizationService = $authorizationService;
+        $this->secondFactorProvePossessionHelper = $secondFactorProvePossessionHelper;
     }
 
     public function getAction($id)
@@ -103,5 +116,22 @@ class VerifiedSecondFactorController extends Controller
         $paginator = $this->secondFactorService->searchVerifiedSecondFactorsOfIdentity($query);
 
         return JsonCollectionResponse::fromPaginator($paginator);
+    }
+
+    public function getCanSkipProvePossession($id)
+    {
+        $this->denyAccessUnlessGranted(['ROLE_RA']);
+
+        $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
+
+        if ($secondFactor === null) {
+            throw new NotFoundHttpException(sprintf("Verified second factor '%s' does not exist", $id));
+        }
+
+        $secondFactorType = new SecondFactorType($secondFactor->type);
+
+        $skipVetting = $this->secondFactorProvePossessionHelper->canSkipProvePossession($secondFactorType);
+
+        return new JsonResponse($skipVetting);
     }
 }

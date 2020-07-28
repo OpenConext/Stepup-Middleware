@@ -18,12 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 
-class ConfiguredInstitutionRepository extends EntityRepository
+class ConfiguredInstitutionRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, ConfiguredInstitution::class);
+    }
+
     /**
      * @param ConfiguredInstitution $configuredInstitution
      */

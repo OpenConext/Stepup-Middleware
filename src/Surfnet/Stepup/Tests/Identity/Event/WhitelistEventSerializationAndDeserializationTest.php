@@ -18,8 +18,8 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
-use Broadway\Serializer\SerializableInterface;
-use PHPUnit_Framework_TestCase as UnitTest;
+use Broadway\Serializer\Serializable as SerializableInterface;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;

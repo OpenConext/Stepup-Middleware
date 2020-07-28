@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Configuration\Configuration;
 use Symfony\Component\Form\Exception\LogicException;
 

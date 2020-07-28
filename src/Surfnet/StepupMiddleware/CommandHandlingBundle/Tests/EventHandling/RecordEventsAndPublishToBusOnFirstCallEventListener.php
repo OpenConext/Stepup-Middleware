@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
-use Broadway\EventHandling\EventListenerInterface;
+use Broadway\EventHandling\EventListener as EventListenerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
 class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
@@ -58,7 +58,7 @@ class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListen
     /**
      * @param DomainMessage $domainMessage
      */
-    public function handle(DomainMessage $domainMessage)
+    public function handle(DomainMessage $domainMessage): void
     {
         $this->recordedEvents[] = $domainMessage;
 

@@ -44,7 +44,7 @@ class WhitelistReplacedEvent implements WhitelistEvent
     /**
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return ['whitelisted_institutions' => $this->whitelistedInstitutions->serialize()];
     }

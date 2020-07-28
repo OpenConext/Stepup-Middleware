@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -26,19 +28,15 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
-class AuthorizationRepository
+class AuthorizationRepository extends ServiceEntityRepository
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    public function __construct(EntityManager $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->entityManager = $entityManager;
+        parent::__construct($registry, AuditLogEntry::class);
     }
 
     /**
@@ -51,7 +49,7 @@ class AuthorizationRepository
      */
     public function getInstitutionsForRole(InstitutionRole $role, IdentityId $actorId)
     {
-        $qb = $this->entityManager->createQueryBuilder()
+        $qb = $this->_em->createQueryBuilder()
             ->select("a.institution")
             ->from(ConfiguredInstitution::class, 'i')
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")

@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;

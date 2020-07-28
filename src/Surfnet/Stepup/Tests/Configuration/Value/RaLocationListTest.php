@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
@@ -35,7 +35,8 @@ class RaLocationListTest extends TestCase
      */
     public function an_ra_location_list_does_not_allow_ra_locations_with_the_same_ra_location_id_upon_creation()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\LogicException', 'Cannot add');
+        $this->expectException(\Surfnet\Stepup\Exception\LogicException::class);
+        $this->expectExceptionMessage('Cannot add');
 
         $raLocations = $this->getRaLocationsArray();
         $existingRaLocation = $raLocations[0];
@@ -50,7 +51,8 @@ class RaLocationListTest extends TestCase
      */
     public function an_ra_location_list_does_not_allow_adding_ra_locations_with_an_ra_location_id_that_is_already_present()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\LogicException', 'Cannot add');
+        $this->expectException(\Surfnet\Stepup\Exception\LogicException::class);
+        $this->expectExceptionMessage('Cannot add');
 
         $raLocations = $this->getRaLocationsArray();
         $existingRaLocation = $raLocations[0];

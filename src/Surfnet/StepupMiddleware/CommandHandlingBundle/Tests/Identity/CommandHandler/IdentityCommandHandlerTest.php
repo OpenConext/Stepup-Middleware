@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Mockery as m;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
@@ -113,7 +114,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     private $institutionConfiguration;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
         $this->institutionConfigurationRepositoryMock = m::mock(InstitutionConfigurationRepository::class);
@@ -122,7 +123,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         parent::setUp();
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
@@ -221,7 +222,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
-        $this->setExpectedException(DuplicateIdentityException::class);
+        $this->expectException(DuplicateIdentityException::class);
 
         $this->scenario
             ->withAggregateId($command->identityId)
@@ -327,7 +328,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]));
 
-        $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
+        $this->expectException(SecondFactorNotAllowedException::class);
+        $this->expectExceptionMessage('does not support second factor');
 
         $this->scenario
             ->withAggregateId($id)
@@ -348,7 +350,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function yubikey_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -491,7 +494,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('yubikey')]));
 
-        $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
+        $this->expectException(SecondFactorNotAllowedException::class);
+        $this->expectExceptionMessage('does not support second factor');
 
         $command                 = new ProvePhonePossessionCommand();
         $command->identityId     = (string) $id;
@@ -620,7 +624,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]));
 
-        $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
+        $this->expectException(SecondFactorNotAllowedException::class);
+        $this->expectExceptionMessage('does not support second factor');
 
         $command                 = new ProveGssfPossessionCommand();
         $command->identityId     = (string) $identityId;
@@ -733,7 +738,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('getAllowedSecondFactorListFor')
             ->andReturn(AllowedSecondFactorList::ofTypes([new SecondFactorType('yubikey')]));
 
-        $this->setExpectedException(SecondFactorNotAllowedException::class, 'does not support second factor');
+        $this->expectException(SecondFactorNotAllowedException::class);
+        $this->expectExceptionMessage('does not support second factor');
 
         $command                 = new ProveU2fDevicePossessionCommand();
         $command->identityId     = (string) $id;
@@ -760,7 +766,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function phone_possession_cannot_be_proven_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -818,7 +825,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_prove_possession_of_arbitrary_second_factor_type_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'more than 1 token(s)');
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
         $institution       = new Institution('A Corp.');
@@ -946,10 +954,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_verified_second_factors_email_cannot_be_verified()
     {
-        $this->setExpectedException(
-            'Surfnet\Stepup\Exception\DomainException',
-            'Cannot verify second factor, no unverified second factor can be verified using the given nonce'
-        );
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('Cannot verify second factor, no unverified second factor can be verified using the given nonce');
 
         $id                     = new IdentityId(self::uuid());
         $institution            = new Institution('A Corp.');
@@ -1012,10 +1018,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function cannot_verify_an_email_after_the_verification_window_has_closed()
     {
-        $this->setExpectedException(
-            'Surfnet\Stepup\Exception\DomainException',
-            'Cannot verify second factor, the verification window is closed.'
-        );
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('Cannot verify second factor, the verification window is closed.');
 
         $id = new IdentityId(self::uuid());
         $secondFactorId = new SecondFactorId(self::uuid());
@@ -1282,11 +1286,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     /**
      * @test
      * @group command-handler
-     * @expectedException \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Authority does not have the required LoA
      */
     public function a_second_factor_cannot_be_vetted_without_a_secure_enough_vetted_second_factor()
     {
+        $this->expectExceptionMessage("Authority does not have the required LoA");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
         $command->identityId             = 'IID';
@@ -1457,11 +1462,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @runInSeparateProcess
-     * @expectedException \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException
-     * @expectedExceptionMessage Given locale "fi_FI" is not a supported locale
      */
     public function an_identity_cannot_express_a_preference_for_an_unsupported_locale()
     {
+        $this->expectExceptionMessage("Given locale \"fi_FI\" is not a supported locale");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException::class);
+
         $command                  = new ExpressLocalePreferenceCommand();
         $command->identityId      = $this->uuid();
         $command->preferredLocale = 'fi_FI';

@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -178,7 +178,7 @@ class SensitiveData implements SerializableInterface
         return $self;
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return array_filter([
             'common_name'              => $this->commonName,

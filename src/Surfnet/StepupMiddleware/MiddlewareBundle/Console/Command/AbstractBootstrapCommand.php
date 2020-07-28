@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;

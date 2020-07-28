@@ -24,9 +24,10 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
-class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
+class BufferedEventBusTest extends TestCase
 {
     /**
      * @test
@@ -35,7 +36,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     public function it_buffers_events()
     {
         $event = $this->createDummyDomainMessage(null);
-        $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
+        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
             ->shouldReceive('handle')->never()
             ->getMock();
 
@@ -44,6 +45,8 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
 
         // Currently buses typehint against the concrete DomainEventStream.
         $bus->publish(new DomainEventStream([$event]));
+
+        $this->assertInstanceOf(BufferedEventBus::class, $bus);
     }
 
     /**
@@ -53,7 +56,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     public function it_flushes_events()
     {
         $event = $this->createDummyDomainMessage(null);
-        $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
+        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
@@ -63,6 +66,8 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         // Currently buses typehint against the concrete DomainEventStream.
         $bus->publish(new DomainEventStream([$event]));
         $bus->flush();
+
+        $this->assertInstanceOf(BufferedEventBus::class, $bus);
     }
 
     /**
@@ -73,7 +78,7 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
     {
         $event    = $this->createDummyDomainMessage(null);
-        $listener = m::mock('Broadway\EventHandling\EventListenerInterface')
+        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
@@ -83,6 +88,8 @@ class BufferedEventBusTest extends \PHPUnit_Framework_TestCase
         $bus->publish(new DomainEventStream([$event]));
         $bus->flush();
         $bus->flush();
+
+        $this->assertInstanceOf(BufferedEventBus::class, $bus);
     }
 
     /**

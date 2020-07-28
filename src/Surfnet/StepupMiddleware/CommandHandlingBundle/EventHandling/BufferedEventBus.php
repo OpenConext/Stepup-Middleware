@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling;
 
-use Broadway\Domain\DomainEventStreamInterface;
+use Broadway\Domain\DomainEventStream as DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
-use Broadway\EventHandling\EventBusInterface;
-use Broadway\EventHandling\EventListenerInterface;
+use Broadway\EventHandling\EventBus as EventBusInterface;
+use Broadway\EventHandling\EventListener as EventListenerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
@@ -54,12 +54,12 @@ class BufferedEventBus implements EventBusInterface
         $this->entityManager = $entityManager;
     }
 
-    public function subscribe(EventListenerInterface $eventListener)
+    public function subscribe(EventListenerInterface $eventListener): void
     {
         $this->eventListeners[] = $eventListener;
     }
 
-    public function publish(DomainEventStreamInterface $domainMessages)
+    public function publish(DomainEventStreamInterface $domainMessages): void
     {
         foreach ($domainMessages as $domainMessage) {
             $this->buffer[] = $domainMessage;

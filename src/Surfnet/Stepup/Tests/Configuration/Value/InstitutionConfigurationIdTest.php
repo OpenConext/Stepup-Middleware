@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 
@@ -45,7 +45,7 @@ class InstitutionConfigurationIdTest extends TestCase
      */
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string($nonStringOrEmptyString)
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         new InstitutionConfigurationId($nonStringOrEmptyString);
     }
@@ -56,7 +56,7 @@ class InstitutionConfigurationIdTest extends TestCase
      */
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_uuid()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         $nonUuid = 'this-is-not-a-uuid';
 

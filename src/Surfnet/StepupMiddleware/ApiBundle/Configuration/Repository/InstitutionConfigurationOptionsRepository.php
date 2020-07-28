@@ -18,14 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 
-class InstitutionConfigurationOptionsRepository extends EntityRepository
+class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, InstitutionConfigurationOptions::class);
+    }
+
     /**
      * @param Institution $institution
      * @return InstitutionConfigurationOptions

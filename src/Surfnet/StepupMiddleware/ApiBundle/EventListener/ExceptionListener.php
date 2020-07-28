@@ -19,15 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\EventListener;
 
 use Broadway\Repository\AggregateNotFoundException;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 /**
  * Converts all exceptions into JSON responses.
@@ -44,56 +44,56 @@ class ExceptionListener
         $this->logger = $logger;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
-        $exception = $event->getException();
+        $throwable = $event->getThrowable();
 
-        $this->logException($exception);
+        $this->logException($throwable);
 
-        if ($exception instanceof HttpExceptionInterface && $exception instanceof Exception) {
-            $statusCode = $exception->getStatusCode();
-            $headers = $exception->getHeaders();
+        if ($throwable instanceof HttpExceptionInterface && $throwable instanceof Throwable) {
+            $statusCode = $throwable->getStatusCode();
+            $headers = $throwable->getHeaders();
         } else {
-            $statusCode = $exception instanceof BadApiRequestException
-                    || $exception instanceof BadCommandRequestException
-                    || $exception instanceof DomainException
-                    || $exception instanceof AggregateNotFoundException
+            $statusCode = $throwable instanceof BadApiRequestException
+                    || $throwable instanceof BadCommandRequestException
+                    || $throwable instanceof DomainException
+                    || $throwable instanceof AggregateNotFoundException
                 ? 400
                 : 500;
 
             $headers = [];
         }
 
-        $event->setResponse($this->createJsonErrorResponse($exception, $statusCode, $headers));
+        $event->setResponse($this->createJsonErrorResponse($throwable, $statusCode, $headers));
     }
 
-    private function logException(Exception $exception)
+    private function logException(Throwable $throwable)
     {
         # As per \Symfony\Component\HttpKernel\EventListener\ExceptionListener#logException().
-        $isCritical = !$exception instanceof HttpExceptionInterface || $exception->getStatusCode() >= 500;
+        $isCritical = !$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() >= 500;
 
         if ($isCritical) {
-            $this->logger->critical($exception->getMessage(), ['exception' => $exception]);
+            $this->logger->critical($throwable->getMessage(), ['exception' => $throwable]);
         } else {
-            $this->logger->error($exception->getMessage(), ['exception' => $exception]);
+            $this->logger->error($throwable->getMessage(), ['exception' => $throwable]);
         }
     }
 
     /**
-     * @param Exception $exception
+     * @param Throwable $exception
      * @param int $statusCode
      * @param array $headers OPTIONAL
      * @return JsonResponse
      */
-    private function createJsonErrorResponse(Exception $exception, $statusCode, $headers = [])
+    private function createJsonErrorResponse(Throwable $throwable, $statusCode, $headers = [])
     {
-        if ($exception instanceof BadApiRequestException
-            || $exception instanceof BadCommandRequestException
-            || $exception instanceof InvalidCommandException
+        if ($throwable instanceof BadApiRequestException
+            || $throwable instanceof BadCommandRequestException
+            || $throwable instanceof InvalidCommandException
         ) {
-            $errors = $exception->getErrors();
+            $errors = $throwable->getErrors();
         } else {
-            $errors = [sprintf('%s: %s', get_class($exception), $exception->getMessage())];
+            $errors = [sprintf('%s: %s', get_class($throwable), $throwable->getMessage())];
         }
 
         return new JsonResponse(['errors' => $errors], $statusCode, $headers);

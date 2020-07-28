@@ -20,9 +20,6 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle;
 
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\EmailVerifiedSecondFactorRemindersCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrateInstitutionConfigurationsCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrationsDiffDoctrineCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrationsMigrateDoctrineCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplaySpecificEventsCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\DependencyInjection\CompilerPass\CollectProjectorsForEventReplayCompilerPass;
@@ -41,11 +38,8 @@ class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
 
     public function registerCommands(Application $application)
     {
-        $application->add(new MigrationsDiffDoctrineCommand());
-        $application->add(new MigrationsMigrateDoctrineCommand());
         $application->add(new BootstrapIdentityWithYubikeySecondFactorCommand());
         $application->add(new ReplayEventsCommand());
-        $application->add(new MigrateInstitutionConfigurationsCommand());
         $application->add(new ReplaySpecificEventsCommand());
         $application->add(new EmailVerifiedSecondFactorRemindersCommand());
     }

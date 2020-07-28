@@ -49,7 +49,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
         $eventCollection     = $container->get('middleware.event_replay.event_collection');

@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\CommonName;
 
 class CommonNameTest extends UnitTest
@@ -27,12 +27,13 @@ class CommonNameTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidArgumentProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function the_common_name_address_must_be_a_non_empty_string($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         new CommonName($invalidValue);
     }
 

@@ -31,7 +31,7 @@ class NewConfigurationCreatedEvent extends ConfigurationEvent
     /**
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return ['id' => $this->id];
     }

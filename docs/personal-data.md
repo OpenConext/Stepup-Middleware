@@ -13,7 +13,7 @@ As part of the effort to implement the [Right to be Forgotton](https://github.co
 
 The data in the `event_stream` and `event_steam_sensitive_data` is replicated in the projection tables. These tables reflect the current state of the system, whereas the event_stream can be used to reconstruct all previous states. When a user is deleted, the projections need to be updated as well. The current implementation uses the [IdentityForgottenEvent](../src/Surfnet/Stepup/Identity/Event/IdentityForgottenEvent.php) to accomplish this. Because no new information is added to the projection tables compared to what is stored in the event_stream, we do not further describe the data that the projections contain. Instead we describe the data that is stored in the events.
 
-All the event types that can be present in the `event_steam` are defined in [events](../app/config/events.yml). Two different namespaces are used for Events:
+All the event types that can be present in the `event_steam` are defined in [events](../config/packages/events.yaml). Two different namespaces are used for Events:
 - [Surfnet\\Stepup\\Configuration\\Event\\](../src/Surfnet/Stepup/Configuration/Event/)
 - [Surfnet\\Stepup\\Identity\\Event](../src/Surfnet/Stepup/Identity/Event/)
 

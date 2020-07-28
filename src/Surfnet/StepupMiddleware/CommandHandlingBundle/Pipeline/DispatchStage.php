@@ -18,14 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Broadway\CommandHandling\CommandBusInterface;
+use Broadway\CommandHandling\CommandBus;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class DispatchStage implements Stage
 {
     /**
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     private $commandBus;
 
@@ -36,9 +36,9 @@ class DispatchStage implements Stage
 
     /**
      * @param LoggerInterface     $logger
-     * @param CommandBusInterface $commandBus
+     * @param CommandBus $commandBus
      */
-    public function __construct(LoggerInterface $logger, CommandBusInterface $commandBus)
+    public function __construct(LoggerInterface $logger, CommandBus $commandBus)
     {
         $this->logger = $logger;
         $this->commandBus = $commandBus;

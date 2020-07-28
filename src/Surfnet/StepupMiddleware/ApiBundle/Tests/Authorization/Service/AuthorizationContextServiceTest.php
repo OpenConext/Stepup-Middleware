@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -57,7 +57,7 @@ class AuthorizationContextServiceTest extends TestCase
      */
     private $authorizationRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
@@ -180,11 +180,12 @@ class AuthorizationContextServiceTest extends TestCase
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The provided id is not associated with any known identity
      */
     public function it_rejects_unknown_actor()
     {
+        $this->expectExceptionMessage("The provided id is not associated with any known identity");
+        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException::class);
+
         $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $actorId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';

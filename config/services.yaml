@@ -1,0 +1,4 @@
+# import legacy parameters.yaml so this could later on be refactored to utilize dotenv support
+imports:
+  - { resource: 'legacy/bundles.yaml' }
+  - { resource: 'legacy/parameters.yaml' }

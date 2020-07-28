@@ -62,18 +62,24 @@ class EmailTemplate
      */
     private $htmlContent;
 
-    /**
-     * @param string $name
-     * @param string $locale
-     * @param string $htmlContent
-     */
-    public function __construct($name, $locale, $htmlContent)
+    public static function create($name, $locale, $htmlContent)
     {
-        $this->id = (string) Uuid::uuid4();
+        $self = new self();
+        $self->id = (string) Uuid::uuid4();
 
-        $this->name = $name;
-        $this->locale = $locale;
-        $this->htmlContent = $htmlContent;
+        $self->name = $name;
+        $self->locale = $locale;
+        $self->htmlContent = $htmlContent;
+
+        return $self;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     /**

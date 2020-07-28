@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 use Broadway\Domain\DateTime;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
-use Broadway\Serializer\SerializerInterface;
+use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
@@ -35,12 +35,12 @@ class DBALEventHydrator
     private $connection;
 
     /**
-     * @var \Broadway\Serializer\SerializerInterface
+     * @var SimpleInterfaceSerializer
      */
     private $payloadSerializer;
 
     /**
-     * @var \Broadway\Serializer\SerializerInterface
+     * @var SimpleInterfaceSerializer
      */
     private $metadataSerializer;
 
@@ -61,15 +61,15 @@ class DBALEventHydrator
 
     /**
      * @param Connection          $connection
-     * @param SerializerInterface $payloadSerializer
-     * @param SerializerInterface $metadataSerializer
+     * @param SimpleInterfaceSerializer $payloadSerializer
+     * @param SimpleInterfaceSerializer $metadataSerializer
      * @param string              $eventStreamTable
      * @param string              $sensitiveDataTable
      */
     public function __construct(
         Connection $connection,
-        SerializerInterface $payloadSerializer,
-        SerializerInterface $metadataSerializer,
+        SimpleInterfaceSerializer $payloadSerializer,
+        SimpleInterfaceSerializer $metadataSerializer,
         $eventStreamTable,
         $sensitiveDataTable
     ) {

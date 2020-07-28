@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage;
 
@@ -35,7 +35,7 @@ class AuthorizingStageTest extends UnitTest
      */
     private $logger;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->logger = new NullLogger();
         $this->authorizationChecker = m::mock(
@@ -55,6 +55,8 @@ class AuthorizingStageTest extends UnitTest
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 
         $authorizingStage->process($command);
+
+        $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
     /**
@@ -77,6 +79,8 @@ class AuthorizingStageTest extends UnitTest
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 
         $authorizingStage->process($command);
+
+        $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
     /**
@@ -110,15 +114,18 @@ class AuthorizingStageTest extends UnitTest
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 
         $authorizingStage->process($command);
+
+        $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
     /**
      * @test
      * @group pipeline
-     * @expectedException \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException
      */
     public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown()
     {
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException::class);
+
         $command = m::mock(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
             . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable'
@@ -133,6 +140,8 @@ class AuthorizingStageTest extends UnitTest
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 
         $authorizingStage->process($command);
+
+        $this->assertInstanceOf($authorizingStage, AuthorizingStage::class);
     }
 
     public function interfaceToRoleMappingProvider()

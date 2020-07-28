@@ -18,10 +18,10 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
-class UseRaLocationsTest extends TestCase
+class UseRaLocationsOptionTest extends TestCase
 {
     /**
      * @test
@@ -33,7 +33,7 @@ class UseRaLocationsTest extends TestCase
      */
     public function use_ra_locations_option_can_only_be_boolean($nonBooleanProvider)
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         new UseRaLocationsOption($nonBooleanProvider);
     }

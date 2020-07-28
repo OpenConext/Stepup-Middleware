@@ -300,7 +300,7 @@ interface Identity extends AggregateRoot
      * @return IdentityId We're deviating from Broadway's official API, as they accept toString-able VOs as IDs, and we
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
-    public function getAggregateRootId();
+    public function getAggregateRootId(): string;
 
     /**
      * @param int $numberOfTokens

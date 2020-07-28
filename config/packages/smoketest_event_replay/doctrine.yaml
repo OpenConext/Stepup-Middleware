@@ -1,0 +1,10 @@
+doctrine:
+    dbal:
+        default_connection: middleware
+        connections:
+            middleware:
+                dbname: "%database_middleware_name%_test"
+            gateway:
+                dbname: "%database_gateway_name%_test"
+            deploy:
+                dbname: "%database_middleware_name%_test"

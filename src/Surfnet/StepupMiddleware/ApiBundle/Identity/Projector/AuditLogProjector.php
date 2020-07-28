@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\Domain\DomainMessage;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\EventHandling\EventListener;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
-class AuditLogProjector implements ProjectorInterface
+class AuditLogProjector implements EventListener
 {
     /**
      * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
@@ -54,7 +54,7 @@ class AuditLogProjector implements ProjectorInterface
     /**
      * @param DomainMessage $domainMessage
      */
-    public function handle(DomainMessage $domainMessage)
+    public function handle(DomainMessage $domainMessage): void
     {
         $event = $domainMessage->getPayload();
 

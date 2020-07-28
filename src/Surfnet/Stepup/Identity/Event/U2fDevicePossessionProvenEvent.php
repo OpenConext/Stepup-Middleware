@@ -143,7 +143,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'                 => (string) $this->identityId,

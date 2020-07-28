@@ -142,7 +142,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'               => (string) $this->identityId,

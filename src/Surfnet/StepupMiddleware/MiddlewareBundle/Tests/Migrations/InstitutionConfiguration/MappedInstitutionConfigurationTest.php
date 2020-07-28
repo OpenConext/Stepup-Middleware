@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\InstitutionConfiguration\InstitutionConfiguration;
+namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\InstitutionConfiguration;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;

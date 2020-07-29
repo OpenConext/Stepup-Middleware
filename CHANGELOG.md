@@ -1,5 +1,17 @@
 # Changelog
 
+# 4.0.0
+From this version PHP 7.2 is supported and support for PHP 5.6 is dropped.
+
+Be aware that the new Symfony directory structure is now used. So if you are overwriting for example config files it is recommended 
+to verify the location on forehand. Also the file extensions of Yaml files are changed and some Symfony specific special characters    
+need to be escaped. 
+
+See:  https://github.com/symfony/symfony/blob/4.4/UPGRADE-4.0.md
+
+**Improvements** 
+* Upgrade to Symfony4.4 LTS with PHP7.2 support #307
+
 # 3.1.8
 **Feature**
 * Added identity & token bootstrap console commands (for test) #302 #303 #304 #305 

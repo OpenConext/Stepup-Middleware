@@ -40,7 +40,7 @@ In order of appearance:
 **Example usage**
 
 ```bash
-$ app/console middleware:bootstrap:sms urn:collab:person:institution-b:joe-beone institution-b.example.com "+31 (0) 612345678" vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
+$ bin/console middleware:bootstrap:sms urn:collab:person:institution-b:joe-beone institution-b.example.com "+31 (0) 612345678" vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
 Adding a vetted SMS token for Joe Beone
 Creating an unverified SMS token
 Creating a verified SMS token
@@ -62,7 +62,7 @@ In order of appearance:
 **Example usage**
 
 ```bash
-$ app/console middleware:bootstrap:yubikey urn:collab:person:institution-b:joe-beone institution-b.example.com 01622612 vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
+$ bin/console middleware:bootstrap:yubikey urn:collab:person:institution-b:joe-beone institution-b.example.com 01622612 vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
 Adding a vetted Yubikey token for Joe Beone
 Creating an unverified Yubikey token
 Creating a verified Yubikey token
@@ -85,7 +85,7 @@ In order of appearance:
 **Example usage**
 
 ```bash
-$ app/console middleware:bootstrap:gssp urn:collab:person:institution-b:joe-beone institution-b.example.com tiqr t39dk-aas vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
+$ bin/console middleware:bootstrap:gssp urn:collab:person:institution-b:joe-beone institution-b.example.com tiqr t39dk-aas vetted 'db9b8bdf-720c-44ba-a4c4-154953e45f14'
 Adding a vetted tiqr GSSP token for Joe Beone
 Creating an unverified tiqr token
 Creating an verified tiqr token

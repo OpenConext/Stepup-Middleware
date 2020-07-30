@@ -118,7 +118,7 @@ class VerifiedSecondFactorController extends Controller
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function getCanSkipProvePossession($id)
+    public function getCanSkipProvePossessionAction($id)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA']);
 

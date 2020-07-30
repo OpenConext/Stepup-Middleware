@@ -57,6 +57,7 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent'                        => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent'             => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
+        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession' => 'vetted_possession_unknown',
         'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
         'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',

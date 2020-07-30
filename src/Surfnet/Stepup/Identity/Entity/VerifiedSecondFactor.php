@@ -24,6 +24,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -138,8 +139,26 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function vet(DocumentNumber $documentNumber)
+    public function vet(DocumentNumber $documentNumber, $provePossessionSkipped)
     {
+        if ($provePossessionSkipped) {
+            $this->apply(
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->identity->getId(),
+                    $this->identity->getNameId(),
+                    $this->identity->getInstitution(),
+                    $this->id,
+                    $this->type,
+                    $this->secondFactorIdentifier,
+                    $documentNumber,
+                    $this->identity->getCommonName(),
+                    $this->identity->getEmail(),
+                    $this->identity->getPreferredLocale()
+                )
+            );
+            return;
+        }
+
         $this->apply(
             new SecondFactorVettedEvent(
                 $this->identity->getId(),

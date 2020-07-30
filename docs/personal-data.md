@@ -215,6 +215,18 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - Forgettable: secondFactorIdentifier
 - Forgettable: documentNumber
 
+[SecondFactorVettedWithoutTokenProofOfPossession](../src/Surfnet/Stepup/Identity/Event/SecondFactorVettedEvent.php)
+- identity_id
+- name_id
+- identity_institution
+- second_factor_id
+- second_factor_type
+- preferred_locale
+- Forgettable: email
+- Forgettable: commonName
+- Forgettable: secondFactorIdentifier
+- Forgettable: documentNumber
+
 [U2fDevicePossessionProvenAndVerifiedEvent](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenAndVerifiedEvent.php)
 - identity_id
 - identity_institution

@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.1.0
+**Feature**
+ * Make prove possession step optional #309
+ 
 # 4.0.0
 From this version PHP 7.2 is supported and support for PHP 5.6 is dropped.
 

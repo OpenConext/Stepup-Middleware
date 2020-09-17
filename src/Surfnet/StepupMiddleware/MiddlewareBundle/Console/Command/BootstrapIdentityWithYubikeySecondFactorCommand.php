@@ -18,12 +18,16 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
+use Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,6 +36,26 @@ use Symfony\Component\DependencyInjection\Container;
 
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
+    /**
+     * @var DBALConnectionHelper
+     */
+    private $connection;
+
+    /**
+     * @var BufferedEventBus
+     */
+    private $eventBus;
+
+    /**
+     * @var TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    /**
+     * @var ServiceEntityRepository
+     */
+    private $projectionRepository;
+
     protected function configure()
     {
         $this
@@ -49,19 +73,27 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
             );
     }
 
+    public function __construct(
+        ServiceEntityRepository $projectionRepository,
+        TransactionAwarePipeline $pipeline,
+        BufferedEventBus $eventBus,
+        DBALConnectionHelper $connection
+    ) {
+        parent::__construct();
+        $this->projectionRepository = $projectionRepository;
+        $this->pipeline = $pipeline;
+        $this->eventBus = $eventBus;
+        $this->connection = $connection;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var Container $container */
-        $container            = $this->getApplication()->getKernel()->getContainer();
-        $projectionRepository = $container->get('surfnet_stepup_middleware_api.repository.identity');
-        $pipeline             = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
-        $eventBus             = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
-        $connection           = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
 
         $nameId      = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));
 
-        if ($projectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        if ($this->projectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" already exists</error>',
@@ -84,27 +116,26 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->secondFactorId  = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 
-        $connection->beginTransaction();
+        $this->connection->beginTransaction();
 
         try {
-            $command = $pipeline->process($command);
-            $eventBus->flush();
+            $command = $this->pipeline->process($command);
+            $this->eventBus->flush();
 
-            $connection->commit();
+            $this->connection->commit();
         } catch (Exception $e) {
             $output->writeln(sprintf(
                 '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
                 $e->getMessage()
             ));
 
-            $connection->rollBack();
+            $this->connection->rollBack();
 
             throw $e;
         }
 
         $output->writeln(sprintf(
             '<info>Successfully registered a Yubikey token with UUID %s</info>',
-            $command->identityId,
             $command->secondFactorId
         ));
     }

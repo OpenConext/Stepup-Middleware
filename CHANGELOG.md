@@ -1,5 +1,10 @@
 # Changelog
 
+# 4.1.1
+**Chores**
+ * Add the component info file #312
+ * Implement depencency injection on console commands #313 
+ 
 # 4.1.0
 **Feature**
  * Make prove possession step optional #309

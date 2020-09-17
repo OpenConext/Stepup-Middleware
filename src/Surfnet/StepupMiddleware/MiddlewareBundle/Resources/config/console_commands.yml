@@ -40,6 +40,15 @@ services:
             - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
             - "@surfnet_stepup_middleware_management.dbal_connection_helper"
 
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\EmailVerifiedSecondFactorRemindersCommand:
+        tags:
+            - { name: 'console.command', command: 'middleware:cron:email-reminder' }
+        arguments:
+            - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+            - "@logger"
+
     Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityCommand:
         parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
         tags:

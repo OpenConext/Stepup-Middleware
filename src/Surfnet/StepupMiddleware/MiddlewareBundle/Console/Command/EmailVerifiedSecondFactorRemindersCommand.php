@@ -21,23 +21,49 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 use Assert\Assertion;
 use DateInterval;
 use DateTime;
+use Exception;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * The EmailVerifiedSecondFactorRemindersCommand can be run to send reminders to token registrants.
  *
  * The command utilizes a specific service for this task (VerifiedSecondFactorReminderService). Input validation is
  * performed on the incoming request parameters.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
+    /**
+     * @var TransactionAwarePipeline
+     */
+    private $pipeline;
+
+    /**
+     * @var BufferedEventBus
+     */
+    private $eventBus;
+
+    /**
+     * @var DBALConnectionHelper
+     */
+    private $connection;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     protected function configure()
     {
         $this
@@ -57,21 +83,26 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             );
     }
 
+    public function __construct(
+        TransactionAwarePipeline $pipeline,
+        BufferedEventBus $eventBus,
+        DBALConnectionHelper $connection,
+        LoggerInterface $logger
+    ) {
+        $this->pipeline = $pipeline;
+        $this->eventBus = $eventBus;
+        $this->connection = $connection;
+        $this->logger = $logger;
+        parent::__construct();
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Container $container */
-        $container = $this->getApplication()->getKernel()->getContainer();
-
-        $pipeline = $container->get('surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline');
-        $eventBus = $container->get('surfnet_stepup_middleware_command_handling.event_bus.buffered');
-        $connection = $container->get('surfnet_stepup_middleware_middleware.dbal_connection_helper');
-        $logger = $container->get('logger');
-
         try {
             $this->validateInput($input);
         } catch (InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
-            $logger->error(sprintf('Invalid arguments passed to the %s', $this->getName()), [$e->getMessage()]);
+            $this->logger->error(sprintf('Invalid arguments passed to the %s', $this->getName()), [$e->getMessage()]);
             return 1;
         }
 
@@ -91,18 +122,15 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
         $command->dryRun = $dryRun;
         $command->UUID = Uuid::uuid4()->toString();
 
-        $connection->beginTransaction();
+        $this->connection->beginTransaction();
         try {
-            $pipeline->process($command);
-            $eventBus->flush();
+            $this->pipeline->process($command);
+            $this->eventBus->flush();
 
-            $connection->commit();
+            $this->connection->commit();
         } catch (Exception $e) {
-            $output->writeln(sprintf(
-                '<error>An Error occurred while sending reminder email messages.</error>',
-                $e->getMessage()
-            ));
-            $connection->rollBack();
+            $output->writeln('<error>An Error occurred while sending reminder email messages.</error>');
+            $this->connection->rollBack();
             throw $e;
         }
     }

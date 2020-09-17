@@ -35,12 +35,4 @@ class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
 
         $container->addCompilerPass(new CollectProjectorsForEventReplayCompilerPass());
     }
-
-    public function registerCommands(Application $application)
-    {
-        $application->add(new BootstrapIdentityWithYubikeySecondFactorCommand());
-        $application->add(new ReplayEventsCommand());
-        $application->add(new ReplaySpecificEventsCommand());
-        $application->add(new EmailVerifiedSecondFactorRemindersCommand());
-    }
 }

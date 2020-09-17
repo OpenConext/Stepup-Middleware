@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -25,11 +26,21 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class ReplayEventsCommand extends Command
 {
+    /**
+     * @var EventStreamReplayer
+     */
+    private $replayer;
+
+    public function __construct(EventStreamReplayer $eventStreamReplayer)
+    {
+        parent::__construct();
+        $this->replayer = $eventStreamReplayer;
+    }
+
     protected function configure()
     {
         $this
@@ -125,9 +136,6 @@ QUESTION;
             $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
         );
 
-        /** @var Container $container */
-        $container = $kernel->getContainer();
-        $replayer = $container->get('middleware.event_replay.event_stream_replayer');
-        $replayer->replayEvents($output, $increments);
+        $this->replayer->replayEvents($output, $increments);
     }
 }

@@ -18,17 +18,40 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
+use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\PastEventsService;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionAwareEventDispatcher;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class ReplaySpecificEventsCommand extends ContainerAwareCommand
+class ReplaySpecificEventsCommand extends Command
 {
     const OPTION_LIST_EVENTS = 'list-events';
     const OPTION_LIST_PROJECTORS = 'list-projectors';
+
+    /**
+     * @var EventCollection
+     */
+    private $collection;
+
+    /**
+     * @var PastEventsService
+     */
+    private $pastEventsService;
+
+    /**
+     * @var TransactionAwareEventDispatcher
+     */
+    private $eventDispatcher;
+    /**
+     * @var ProjectorCollection
+     */
+    private $projectorCollection;
 
     protected function configure()
     {
@@ -49,14 +72,23 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
             );
     }
 
+    public function __construct(
+        EventCollection $collection,
+        ProjectorCollection $projectorCollection,
+        PastEventsService $pastEventsService,
+        TransactionAwareEventDispatcher $eventDispatcher
+    ) {
+        $this->collection = $collection;
+        $this->projectorCollection = $projectorCollection;
+        $this->pastEventsService = $pastEventsService;
+        $this->eventDispatcher = $eventDispatcher;
+        parent::__construct();
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $container = $this->getContainer();
-        $eventCollection     = $container->get('middleware.event_replay.event_collection');
-        $projectorCollection = $container->get('middleware.event_replay.projector_collection');
-
-        $availableEvents     = $eventCollection->getEventNames();
-        $availableProjectors = $projectorCollection->getProjectorNames();
+        $availableEvents     = $this->collection->getEventNames();
+        $availableProjectors = $this->projectorCollection->getProjectorNames();
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');
@@ -88,7 +120,7 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $selectEventsQuestion->setMultiselect(true);
 
         $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
-        $eventSelection = $eventCollection->select($chosenEvents);
+        $eventSelection = $this->collection->select($chosenEvents);
 
         $selectProjectorsQuestion = new ChoiceQuestion(
             'For which projectors would you like to replay the selected events? '
@@ -98,19 +130,16 @@ class ReplaySpecificEventsCommand extends ContainerAwareCommand
         $selectProjectorsQuestion->setMultiselect(true);
 
         $chosenProjectors   = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
-        $projectorSelection = $projectorCollection->selectByNames($chosenProjectors);
+        $projectorSelection = $this->projectorCollection->selectByNames($chosenProjectors);
 
-        $pastEventsService = $container->get('middleware.event_replay.past_events_service');
-        $events = $pastEventsService->findEventsBy($eventSelection);
-
-        $eventReplayer = $container->get('middleware.event_replay.transaction_aware_event_dispatcher');
+        $events = $this->pastEventsService->findEventsBy($eventSelection);
 
         $output->writeln('<info>Registering projectors</info>');
         foreach ($projectorSelection as $projector) {
-            $eventReplayer->registerProjector($projector);
+            $this->eventDispatcher->registerProjector($projector);
         }
 
         $output->writeln('<info>Dispatching events</info>');
-        $eventReplayer->dispatch($events);
+        $this->eventDispatcher->dispatch($events);
     }
 }

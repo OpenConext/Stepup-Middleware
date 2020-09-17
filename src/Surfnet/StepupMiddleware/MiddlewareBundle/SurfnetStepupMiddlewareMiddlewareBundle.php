@@ -38,7 +38,6 @@ class SurfnetStepupMiddlewareMiddlewareBundle extends Bundle
 
     public function registerCommands(Application $application)
     {
-        $application->add(new ReplaySpecificEventsCommand());
         $application->add(new EmailVerifiedSecondFactorRemindersCommand());
     }
 }

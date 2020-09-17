@@ -16,6 +16,15 @@ services:
             - "@security.token_storage"
             - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService'
 
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplaySpecificEventsCommand:
+        tags:
+            - { name: 'console.command', command: 'stepup:event:replay' }
+        arguments:
+            - "@middleware.event_replay.event_collection"
+            - "@middleware.event_replay.projector_collection"
+            - "@middleware.event_replay.past_events_service"
+            - "@middleware.event_replay.transaction_aware_event_dispatcher"
+
     Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand:
         tags:
             - { name: 'console.command', command: 'middleware:event:replay' }

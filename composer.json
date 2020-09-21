@@ -87,7 +87,6 @@
     },
     "archive": {
         "exclude": [
-            "*",
             ".*",
             "*/Tests/*",
             "!/bin",

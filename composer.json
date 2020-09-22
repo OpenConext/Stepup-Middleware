@@ -87,8 +87,10 @@
     },
     "archive": {
         "exclude": [
+            "*",
             ".*",
             "*/Tests/*",
+            "!/component_info",
             "!/bin",
             "!/config",
             "!/public",

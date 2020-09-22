@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.1.2
+**Bugfix**
+* Component_info was not added in archive
+
 # 4.1.1
 **Chores**
  * Add the component info file #312

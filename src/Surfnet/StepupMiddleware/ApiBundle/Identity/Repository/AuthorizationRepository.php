@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -29,6 +28,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
@@ -70,6 +70,43 @@ class AuthorizationRepository extends ServiceEntityRepository
         $qb->setParameter(
             'roles',
             $this->getAllowedIdentityRoles($role)
+        );
+
+        $institutions = $qb->getQuery()->getArrayResult();
+
+        $result = new InstitutionCollection();
+        foreach ($institutions as $institution) {
+            $result->add(new Institution((string)$institution['institution']));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Finds the institutions that have the Select RAA authorization based on
+     * the institution of the specified identity.
+     */
+    public function getInstitutionsForSelectRaaRole(IdentityId $actorId)
+    {
+        $qb = $this->_em->createQueryBuilder()
+            ->select("ci.institution")
+            ->from(InstitutionAuthorization::class, 'ia')
+            ->innerJoin(ConfiguredInstitution::class, 'ci', Join::WITH, 'ia.institutionRelation = ci.institution')
+            ->innerJoin(Identity::class, 'i', Join::WITH, 'ia.institution = i.institution AND i.id = :identityId')
+            ->innerJoin(RaListing::class, 'ra', Join::WITH, 'i.id = ra.identityId AND ra.role = :authorizationRole')
+            ->where('ia.institutionRole = :institutionRole AND ra.role = :authorizationRole')
+            ->groupBy("ci.institution");
+
+        $qb->setParameter('identityId', (string)$actorId);
+        // The identity requires RAA role to perform this search
+        $qb->setParameter(
+            'authorizationRole',
+            AuthorityRole::ROLE_RAA
+        );
+        // Filter on the SELECT_RAA authorization in the institution authorization projection
+        $qb->setParameter(
+            'institutionRole',
+            InstitutionRole::ROLE_SELECT_RAA
         );
 
         $institutions = $qb->getQuery()->getArrayResult();

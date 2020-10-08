@@ -78,7 +78,13 @@ class AuthorizationContextService
         $sraa = $this->sraaService->findByNameId($identity->nameId);
         $isSraa = !is_null($sraa);
 
-        $institutions = $this->authorizationRepository->getInstitutionsForRole($role, $actorId);
+        // When building an auth context based on the select raa role, we use another query to retrieve the correct
+        // institutions.
+        if ($role->getType() === InstitutionRole::ROLE_SELECT_RAA) {
+            $institutions = $this->authorizationRepository->getInstitutionsForSelectRaaRole($actorId);
+        } else {
+            $institutions = $this->authorizationRepository->getInstitutionsForRole($role, $actorId);
+        }
 
         return new InstitutionAuthorizationContext($institutions, $isSraa);
     }

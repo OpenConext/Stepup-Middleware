@@ -69,7 +69,7 @@ class RaCandidateController extends Controller
 
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            InstitutionRole::useRaa()
+            InstitutionRole::selectRaa()
         );
 
         $paginator = $this->raCandidateService->search($query);
@@ -93,7 +93,7 @@ class RaCandidateController extends Controller
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            InstitutionRole::useRaa()
+            InstitutionRole::selectRaa()
         );
 
         $raCandidates = $this->raCandidateService->findAllByIdentityId($identityId, $authorizationContext);

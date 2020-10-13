@@ -28,6 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function sprintf;
 
 class RaCandidateController extends Controller
 {
@@ -93,15 +94,19 @@ class RaCandidateController extends Controller
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            InstitutionRole::selectRaa()
+            InstitutionRole::useRa()
         );
 
-        $raCandidates = $this->raCandidateService->findAllByIdentityId($identityId, $authorizationContext);
-
-        if ($raCandidates === null) {
+        $raCandidate = $this->raCandidateService->findOneByIdentityId($identityId);
+        if ($raCandidate === null) {
             throw new NotFoundHttpException(sprintf("RaCandidate with IdentityId '%s' does not exist", $identityId));
         }
 
-        return new JsonResponse($raCandidates);
+        // In order to display the correct RA institutions for this ra candidate. We need to display the RA instituions
+        // of the actor. But the identity data of the identity. This way we only show the institutions the actor is
+        // allowed to make the identity RA(A) for.
+        $merged = $this->raCandidateService->setUseRaInstitutionsOnRaCandidate($authorizationContext, $raCandidate);
+
+        return new JsonResponse($merged);
     }
 }

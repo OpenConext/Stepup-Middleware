@@ -29,6 +29,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
@@ -56,13 +58,23 @@ class AuthorizationContextServiceTest extends TestCase
      * @var AuthorizationRepository|m\Mock
      */
     private $authorizationRepository;
+    /**
+     * @var m\Mock&ConfiguredInstitutionRepository
+     */
+    private $institutionRepo;
 
     public function setUp(): void
     {
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
         $authorizationRepository = m::mock(AuthorizationRepository::class);
-        $service = new AuthorizationContextService($sraaService, $identityService, $authorizationRepository);
+        $this->institutionRepo = m::mock(ConfiguredInstitutionRepository::class);
+        $service = new AuthorizationContextService(
+            $sraaService,
+            $identityService,
+            $this->institutionRepo,
+            $authorizationRepository
+        );
 
         $this->identityService = $identityService;
         $this->sraaService = $sraaService;
@@ -167,6 +179,14 @@ class AuthorizationContextServiceTest extends TestCase
             ->shouldReceive('getInstitutionsForRole')
             ->withArgs([$role, $identityId])
             ->andReturn($institutions);
+
+        $configuredInstitutions = [];
+        foreach ($institutions as $institution) {
+            $ci = new ConfiguredInstitution();
+            $ci->institution = $institution->getInstitution();
+            $configuredInstitutions[] = $ci;
+        }
+        $this->institutionRepo->shouldReceive('findAll')->andReturn($configuredInstitutions);
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,

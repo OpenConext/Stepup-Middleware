@@ -22,7 +22,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
@@ -127,29 +126,18 @@ class RaCandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $identityId
-     * @param InstitutionAuthorizationContextInterface $authorizationContext
-     * @return RaCandidate[]
+     * @return array|null
      */
-    public function findAllRaasByIdentityId($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
+    public function findOneByIdentityId(string $identityId)
     {
+        // Finds a single identity by its identity id. Returns the identity as an array
         $queryBuilder = $this->getBaseQuery()
             ->andWhere('i.id = :identityId')
             ->setParameter('identityId', $identityId)
+            ->groupBy('i.id')
             ->orderBy('a.institution');
 
-        // Modify query to filter on authorization:
-        // For the RA candidates we want the identities that we could make RA. Because we then need to look at the
-        // select_raa's we have to look at the institution of the candidate because that's the institution we could
-        // select RA's from. Hence the 'rac.institution'.
-        $this->authorizationRepositoryFilter->filter(
-            $queryBuilder,
-            $authorizationContext,
-            'i.institution',
-            'iac'
-        );
-
-        return $queryBuilder->getQuery()->getResult();
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     /**

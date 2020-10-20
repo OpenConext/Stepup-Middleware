@@ -1,5 +1,13 @@
 # Changelog
 
+# 4.1.3
+**Bugfix**
+* Allow authorization filtering on Select RAA #315
+
+# 4.1.2
+**Bugfix**
+* Component_info was not added in archive
+
 # 4.1.1
 **Chores**
  * Add the component info file #312

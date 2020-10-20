@@ -155,4 +155,5 @@ services:
         arguments:
             - '@surfnet_stepup_middleware_api.service.sraa'
             - '@surfnet_stepup_middleware_api.service.identity'
+            - '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository'
             - '@surfnet_stepup_middleware_api.repository.authorization'

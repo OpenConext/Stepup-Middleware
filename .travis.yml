@@ -32,7 +32,7 @@ before_install:
 
 before_script:
   - phpenv config-add travis.php.ini
-  - composer self-update
+  - composer self-update 1.10.16
   - composer install --prefer-dist
 
 script:

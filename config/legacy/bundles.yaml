@@ -19,6 +19,7 @@ surfnet_stepup_middleware_command_handling:
 surfnet_stepup_middleware_middleware:
   email_verification_window: "%email_verification_window%"
   enabled_generic_second_factors: "%enabled_generic_second_factors%"
+  second_factors_display_name: "%second_factors_display_name%"
 
 surfnet_stepup_middleware_management:
   email_required_locale: "%default_locale%"

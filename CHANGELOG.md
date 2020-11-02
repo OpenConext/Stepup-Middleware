@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.1.4
+**Feature**
+* Make token name in emails configurable
+
 # 4.1.3
 **Bugfix**
 * Allow authorization filtering on Select RAA #315

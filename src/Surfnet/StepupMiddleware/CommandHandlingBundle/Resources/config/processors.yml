@@ -63,6 +63,7 @@ services:
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
+            - "@surfnet_stepup_middleware_middleware.second_factor_display_name_resolver"
 
     surfnet_stepup_middleware_command_handling.service.second_factor_vetted_mail:
         public: false

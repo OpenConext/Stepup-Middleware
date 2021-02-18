@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 
 class ShowRaaContactInformationOptionTest extends TestCase
@@ -33,7 +33,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
      */
     public function show_raa_contact_information_option_can_only_be_boolean($nonBooleanProvider)
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         new ShowRaaContactInformationOption($nonBooleanProvider);
     }

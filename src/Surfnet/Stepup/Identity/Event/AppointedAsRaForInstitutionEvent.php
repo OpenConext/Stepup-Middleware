@@ -73,7 +73,7 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent
     /**
      * @return array
      */
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'    => (string) $this->identityId,

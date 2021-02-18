@@ -19,10 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
 
-class ValidationStageTest extends \PHPUnit_Framework_TestCase
+class ValidationStageTest extends TestCase
 {
     /**
      * @test
@@ -49,9 +50,7 @@ class ValidationStageTest extends \PHPUnit_Framework_TestCase
      */
     public function it_throws_an_exception_when_validation_fails()
     {
-        $this->setExpectedException(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException'
-        );
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException::class);
 
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')

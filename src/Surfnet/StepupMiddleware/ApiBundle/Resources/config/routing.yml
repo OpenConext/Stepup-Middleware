@@ -62,6 +62,12 @@ verified_second_factor:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+verified_second_factor_can_skip_prove_posession:
+    path:     /verified-second-factor/{id}/skip-prove-possession
+    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:getCanSkipProvePossession }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 vetted_second_factor:
     path:     /vetted-second-factor/{id}
     defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:get }

@@ -18,10 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -33,19 +32,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RaListingRepository extends EntityRepository
+class RaListingRepository extends ServiceEntityRepository
 {
     /**
      * @var InstitutionAuthorizationRepositoryFilter
      */
     private $authorizationRepositoryFilter;
 
-    public function __construct(
-        EntityManager $em,
-        Mapping\ClassMetadata $class,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-    ) {
-        parent::__construct($em, $class);
+    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
+    {
+        parent::__construct($registry, RaListing::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
@@ -90,7 +86,10 @@ class RaListingRepository extends EntityRepository
             ->setParameter('raInstitution', (string)$raInstitution)
             ->orderBy('r.raInstitution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $authorizationContext,
@@ -167,7 +166,10 @@ class RaListingRepository extends EntityRepository
                 ->setParameter('raInstitution', (string) $query->raInstitution);
         }
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
@@ -202,7 +204,10 @@ class RaListingRepository extends EntityRepository
             ->select('r.institution, r.raInstitution')
             ->groupBy('r.institution, r.raInstitution');
 
-        // Modify query to filter on authorization
+        // Modify query to filter on authorization:
+        // For the RA listing we want identities that are already RA. Because we then need to look at the use_raa's
+        // we have to look at the RA-institutions because that's the institution the user is RA for and we should use
+        // those RA's. Hence the 'r.raInstitution'.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,

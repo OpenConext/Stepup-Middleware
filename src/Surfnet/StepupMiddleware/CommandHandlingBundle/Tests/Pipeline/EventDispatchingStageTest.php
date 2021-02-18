@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand;
@@ -39,6 +39,8 @@ class EventDispatchingStageTest extends UnitTest
 
         $stage = new EventDispatchingStage(new NullLogger(), $eventBus);
         $stage->process($command);
+
+        $this->assertInstanceOf(EventDispatchingStage::class, $stage);
     }
 
     /**
@@ -59,5 +61,7 @@ class EventDispatchingStageTest extends UnitTest
 
         $this->assertSame($command, $returnedCommand);
         $this->assertEquals($uuid, $returnedCommand->UUID);
+
+        $this->assertInstanceOf(EventDispatchingStage::class, $stage);
     }
 }

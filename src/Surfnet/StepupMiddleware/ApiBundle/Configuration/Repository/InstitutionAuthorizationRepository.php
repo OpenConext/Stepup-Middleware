@@ -18,15 +18,20 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 
-class InstitutionAuthorizationRepository extends EntityRepository
+class InstitutionAuthorizationRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, InstitutionAuthorization::class);
+    }
 
     /**
      * @param Institution $institution
@@ -59,16 +64,15 @@ class InstitutionAuthorizationRepository extends EntityRepository
 
     /**
      * @param Institution $institution
-     * @param InstitutionRole $role
      * @return InstitutionAuthorization[]
      */
-    public function findSelectRaasForInstitution(Institution $institution, InstitutionRole $role)
+    public function findSelectRaasForInstitution(Institution $institution)
     {
         return $this->createQueryBuilder('ia')
             ->where('ia.institutionRelation = :institution')
             ->andWhere('ia.institutionRole = :role')
             ->setParameter('institution', $institution->getInstitution())
-            ->setParameter('role', $role->getType())
+            ->setParameter('role', InstitutionRole::selectRaa()->getType())
             ->getQuery()
             ->getResult();
     }

@@ -463,7 +463,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->apply(new InstitutionConfigurationRemovedEvent($this->institutionConfigurationId, $this->institution));
     }
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
         return $this->institutionConfigurationId;
     }
@@ -476,6 +476,13 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      */
     public function isInstitutionAllowedToAccreditRoles(Institution $institution)
     {
+        // This method is needed to support the situation pre FGA. In that situation the SelectRaaOptionChanged wasn't
+        // fired and that would result in a situation were $this->selectRaaOption is null. If that occurs we should check
+        // if the institution of the identity is the institution to validate.
+        if ($this->selectRaaOption == null) {
+            return $this->institution->equals($institution);
+        }
+
         if ($this->selectRaaOption->hasInstitution($institution, $this->institution)) {
             return true;
         }

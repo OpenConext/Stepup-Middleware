@@ -44,7 +44,7 @@ class AuditLogEntry implements JsonSerializable
      *
      * @var string[]
      */
-    private static $eventActionMap = [
+    private $eventActionMap = [
         'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
@@ -57,6 +57,7 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent'                        => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent'             => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
+        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession' => 'vetted_possession_unknown',
         'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
         'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
@@ -189,10 +190,10 @@ class AuditLogEntry implements JsonSerializable
      */
     private function mapEventToAction($event)
     {
-        if (!isset(self::$eventActionMap[$event])) {
+        if (!isset($this->eventActionMap[$event])) {
             throw new LogicException(sprintf("Action name for event '%s' not registered", $event));
         }
 
-        return self::$eventActionMap[$event];
+        return $this->eventActionMap[$event];
     }
 }

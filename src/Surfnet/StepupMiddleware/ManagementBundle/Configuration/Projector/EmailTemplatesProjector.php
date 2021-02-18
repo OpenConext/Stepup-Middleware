@@ -41,7 +41,7 @@ final class EmailTemplatesProjector extends Projector
 
         foreach ($event->emailTemplates as $name => $templates) {
             foreach ($templates as $locale => $htmlContent) {
-                $this->repository->save(new EmailTemplate($name, $locale, $htmlContent));
+                $this->repository->save(EmailTemplate::create($name, $locale, $htmlContent));
             }
         }
     }

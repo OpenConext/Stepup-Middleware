@@ -101,7 +101,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         return $metadata;
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'          => (string) $this->identityId,

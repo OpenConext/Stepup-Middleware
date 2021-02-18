@@ -18,8 +18,8 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Event;
 
-use Broadway\Serializer\SerializableInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use Broadway\Serializer\Serializable as SerializableInterface;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
@@ -43,16 +43,12 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
-use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
-use Surfnet\Stepup\Configuration\Value\UseRaaOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -80,7 +76,7 @@ class EventSerializationAndDeserializationTest extends TestCase
     {
         $institution = new Institution('A test institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-        $uuid = (string) Uuid::uuid4();
+        $uuid = (string)Uuid::uuid4();
 
         return [
             // Configuration
@@ -200,7 +196,7 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ContactInformation('Test contact information')
                 )
             ],
-            'RaLocationRemovedEvent'   => [
+            'RaLocationRemovedEvent' => [
                 new RaLocationRemovedEvent(
                     $institutionConfigurationId,
                     new RaLocationId($uuid)

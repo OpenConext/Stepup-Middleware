@@ -1,0 +1,11 @@
+# import legacy parameters.yaml so this could later on be refactored to utilize dotenv support
+imports:
+  - { resource: 'legacy/bundles.yaml' }
+  - { resource: 'legacy/parameters.yaml' }
+
+services:
+
+  Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper:
+    arguments:
+      - "@surfnet_stepup.service.second_factor_type"
+      - '%skip_prove_possession_second_factors%'

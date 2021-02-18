@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 
@@ -33,7 +33,7 @@ class RaLocationIdTest extends TestCase
      */
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         new RaLocationId($nonStringOrEmptyString);
     }
@@ -43,7 +43,7 @@ class RaLocationIdTest extends TestCase
      */
     public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\InvalidArgumentException');
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
 
         $nonUuid = 'this-is-not-a-uuid';
 

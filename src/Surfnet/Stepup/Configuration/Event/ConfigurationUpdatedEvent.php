@@ -52,7 +52,7 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'id'                => $this->id,

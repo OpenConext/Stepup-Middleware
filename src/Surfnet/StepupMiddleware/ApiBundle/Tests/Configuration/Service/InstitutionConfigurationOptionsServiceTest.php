@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -45,7 +45,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
      */
     private $numberOfTokensPerIdentityDefault = 13;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = m::mock(InstitutionConfigurationOptionsRepository::class);
 

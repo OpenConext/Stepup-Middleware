@@ -29,10 +29,11 @@ class AbstractSearchService
 {
     /**
      * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $doctrineQuery
-     * @param AbstractQuery                          $query
+     * @param AbstractQuery $query
+     * @param bool $fetchCollection
      * @return Pagerfanta
      */
-    protected function createPaginatorFrom($doctrineQuery, AbstractQuery $query)
+    protected function createPaginatorFrom($doctrineQuery, AbstractQuery $query, $fetchCollection = true)
     {
         $queryObject = $doctrineQuery;
         if ($doctrineQuery instanceof QueryBuilder) {
@@ -47,10 +48,11 @@ class AbstractSearchService
             );
         }
 
-        $adapter   = new DoctrineORMAdapter($doctrineQuery);
+        $adapter   = new DoctrineORMAdapter($doctrineQuery, $fetchCollection);
         $paginator = new Pagerfanta($adapter);
         $paginator->setMaxPerPage($query->itemsPerPage);
         $paginator->setCurrentPage($query->pageNumber);
+
 
         return $paginator;
     }

@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventStore;
 
-use Broadway\Domain\DomainEventStreamInterface;
+use Broadway\Domain\DomainEventStream as DomainEventStreamInterface;
 use Broadway\Domain\DomainMessage;
-use Broadway\EventStore\EventStoreInterface;
-use Surfnet\Stepup\Identity\Value\IdentityId;
+use Broadway\EventStore\EventStore as EventStoreInterface;
+use Surfnet\Stepup\Identity\Event\IdentityEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessageStream;
@@ -55,15 +55,11 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
         $this->sensitiveDataMessageRepository = $sensitiveDataMessageRepository;
     }
 
-    public function load($id)
+    public function load($id): DomainEventStreamInterface
     {
-        if (!$id instanceof IdentityId) {
-            throw new InvalidArgumentException(
-                'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
-            );
-        }
-
         $domainEventStream = $this->decoratedEventStore->load($id);
+
+        $this->assertIdentityAggregate($domainEventStream);
 
         $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($id);
         $sensitiveDataStream->applyToDomainEventStream($domainEventStream);
@@ -71,13 +67,9 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
         return $domainEventStream;
     }
 
-    public function append($id, DomainEventStreamInterface $eventStream)
+    public function append($id, DomainEventStreamInterface $eventStream): void
     {
-        if (!$id instanceof IdentityId) {
-            throw new InvalidArgumentException(
-                'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
-            );
-        }
+        $this->assertIdentityAggregate($eventStream);
 
         $this->decoratedEventStore->append($id, $eventStream);
 
@@ -98,5 +90,36 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
         }
 
         $this->sensitiveDataMessageRepository->append(new SensitiveDataMessageStream($sensitiveDataMessages));
+    }
+
+    /**
+     * @param $id
+     * @param int $playhead
+     * @return DomainEventStreamInterface
+     */
+    public function loadFromPlayhead($id, int $playhead): DomainEventStreamInterface
+    {
+        $domainEventStream = $this->decoratedEventStore->loadFromPlayhead($id, $playhead);
+
+        $this->assertIdentityAggregate($domainEventStream);
+
+        $sensitiveDataStream = $this->sensitiveDataMessageRepository->findByIdentityId($id);
+        $sensitiveDataStream->applyToDomainEventStream($domainEventStream);
+
+        return $domainEventStream;
+    }
+
+    /**
+     * @param DomainEventStreamInterface $stream
+     */
+    public function assertIdentityAggregate(DomainEventStreamInterface $stream)
+    {
+        foreach ($stream as $message) {
+            if (!$message->getPayload() instanceof IdentityEvent) {
+                throw new InvalidArgumentException(
+                    'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
+                );
+            }
+        }
     }
 }

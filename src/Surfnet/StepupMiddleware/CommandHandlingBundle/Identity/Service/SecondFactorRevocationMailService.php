@@ -26,6 +26,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
 use Symfony\Component\Templating\EngineInterface;
@@ -72,6 +73,11 @@ final class SecondFactorRevocationMailService
     private $selfServiceUrl;
 
     /**
+     * @var \Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService
+     */
+    private $displayNameResolver;
+
+    /**
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
@@ -79,6 +85,7 @@ final class SecondFactorRevocationMailService
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
      * @param string $selfServiceUrl
+     * @param SecondFactorDisplayNameResolverService $displayNameResolver
      *
      * @throws \Assert\AssertionFailedException
      */
@@ -89,7 +96,8 @@ final class SecondFactorRevocationMailService
         EngineInterface $templateEngine,
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
-        $selfServiceUrl
+        $selfServiceUrl,
+        SecondFactorDisplayNameResolverService $displayNameResolver
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         Assertion::string($selfServiceUrl, 'Self Service URL "%s" expected to be string, type %s given');
@@ -101,6 +109,7 @@ final class SecondFactorRevocationMailService
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
+        $this->displayNameResolver = $displayNameResolver;
     }
 
     /**
@@ -120,7 +129,7 @@ final class SecondFactorRevocationMailService
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $secondFactorType
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
             ],
             'messages',
             $locale->getLocale()
@@ -135,7 +144,7 @@ final class SecondFactorRevocationMailService
             'isRevokedByRa'   => true,
             'templateString'  => $emailTemplate->htmlContent,
             'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $secondFactorType->getSecondFactorType(),
+            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
             'selfServiceUrl'  => $this->selfServiceUrl,
             'locale'          => $locale->getLocale(),
@@ -176,7 +185,7 @@ final class SecondFactorRevocationMailService
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $secondFactorType
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
             ],
             'messages',
             $locale->getLocale()
@@ -191,7 +200,7 @@ final class SecondFactorRevocationMailService
             'isRevokedByRa'   => false,
             'templateString'  => $emailTemplate->htmlContent,
             'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $secondFactorType->getSecondFactorType(),
+            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
             'selfServiceUrl'  => $this->selfServiceUrl,
             'locale'          => $locale->getLocale(),

@@ -49,7 +49,7 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent
         );
     }
 
-    final public function serialize()
+    final public function serialize(): array
     {
         return [
             'identity_id'              => (string) $this->identityId,

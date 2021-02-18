@@ -18,19 +18,27 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 
-class UnverifiedSecondFactorRepository extends EntityRepository
+class UnverifiedSecondFactorRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UnverifiedSecondFactor::class);
+    }
+
     /**
      * @param string $id
+     * @param null $lockMode
+     * @param null $lockVersion
      * @return UnverifiedSecondFactor|null
      */
-    public function find($id)
+    public function find($id, $lockMode = null, $lockVersion = null)
     {
         /** @var UnverifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);

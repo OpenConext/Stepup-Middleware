@@ -18,15 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
-class AuditLogRepository extends EntityRepository
+class AuditLogRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AuditLogEntry::class);
+    }
+
     /**
      * An array of event FQCNs that pertain to second factors (verification, vetting, revocation etc.).
      *
@@ -41,6 +47,7 @@ class AuditLogRepository extends EntityRepository
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent',
         'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent',
+        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession',
         'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent',
         'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent',
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent',

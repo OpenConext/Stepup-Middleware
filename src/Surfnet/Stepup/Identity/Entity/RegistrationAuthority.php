@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
+use Broadway\EventSourcing\SimpleEventSourcedEntity;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
@@ -27,7 +27,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 /**
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
  */
-final class RegistrationAuthority extends EventSourcedEntity
+final class RegistrationAuthority extends SimpleEventSourcedEntity
 {
     /**
      * @var \Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole

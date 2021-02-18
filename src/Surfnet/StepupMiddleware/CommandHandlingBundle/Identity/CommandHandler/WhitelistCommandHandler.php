@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Repository\RepositoryInterface;
+use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Whitelist;
@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhiteli
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
 
-class WhitelistCommandHandler extends CommandHandler
+class WhitelistCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository

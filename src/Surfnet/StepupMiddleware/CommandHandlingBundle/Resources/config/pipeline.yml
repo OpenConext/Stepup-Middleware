@@ -3,6 +3,16 @@ services:
         alias: surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline
         public: true
 
+    # BC aliases
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline: "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline: "@surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.validation"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching"
+    Broadway\CommandHandling\SimpleCommandBus: "@surfnet_stepup_middleware_command_handling.command_bus"
+    Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener: "@surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener"
+
     surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline
         public: true
@@ -51,4 +61,4 @@ services:
     surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener
         tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }
+            - { name: kernel.event_listener, event: kernel.exception, priority: 10 }

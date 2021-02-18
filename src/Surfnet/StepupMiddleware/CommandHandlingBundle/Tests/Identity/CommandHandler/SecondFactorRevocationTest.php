@@ -18,18 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -68,7 +71,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
 {
     private static $window = 3600;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
@@ -82,6 +85,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             ConfigurableSettings::create(self::$window, []),
             m::mock(AllowedSecondFactorListService::class),
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
+            m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationRepository::class)
         );
@@ -568,6 +572,123 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     new Locale('en_GB')
                 ),
                 new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorType,
+                    $registrantSecondFactorIdentifier,
+                    new DocumentNumber('DOCUMENT_NUMBER'),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                )
+            ])
+            ->when($command)
+            ->then([
+                new CompliedWithVettedSecondFactorRevocationEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecondFactorIdentifier,
+                    $authorityId
+                ),
+                new VettedSecondFactorsAllRevokedEvent(
+                    $registrantId,
+                    $registrantInstitution
+                ),
+            ]);
+    }
+
+
+
+    /**
+     * @test
+     * @group command-handler
+     */
+    public function a_registration_authority_can_revoke_a_possession_proved_skipped_vetted_second_factor()
+    {
+        $command                 = new RevokeRegistrantsSecondFactorCommand();
+        $command->authorityId    = static::uuid();
+        $command->identityId     = static::uuid();
+        $command->secondFactorId = static::uuid();
+
+        $authorityId                = new IdentityId($command->authorityId);
+        $authorityNameId            = new NameId(static::uuid());
+        $authorityInstitution       = new Institution('Wazoo');
+        $authorityEmail             = new Email('info@domain.invalid');
+        $authorityCommonName        = new CommonName('Henk Westbroek');
+
+        $registrantId                     = new IdentityId($command->identityId);
+        $registrantInstitution            = new Institution('A Corp.');
+        $registrantNameId                 = new NameId('3');
+        $registrantSecondFactorId         = new SecondFactorId($command->secondFactorId);
+        $registrantSecondFactorType       = new SecondFactorType('yubikey');
+        $registrantSecondFactorIdentifier = new YubikeyPublicId('00890782');
+        $registrantEmail                  = new Email('matti@domain.invalid');
+        $registrantCommonName             = new CommonName('Matti Vanhanen');
+
+        $this->scenario
+            ->withAggregateId($authorityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityNameId,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB'),
+                    new SecondFactorId(static::uuid()),
+                    new YubikeyPublicId('12345678')
+                )
+            ])
+            ->withAggregateId($registrantId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorIdentifier,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecondFactorId,
+                    $registrantSecondFactorType,
+                    $registrantSecondFactorIdentifier,
+                    DateTime::now(),
+                    'REGISTRATION_CODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedWithoutTokenProofOfPossession(
                     $registrantId,
                     $registrantNameId,
                     $registrantInstitution,

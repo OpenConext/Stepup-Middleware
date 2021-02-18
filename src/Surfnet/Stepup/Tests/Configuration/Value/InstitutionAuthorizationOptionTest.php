@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
@@ -35,7 +35,7 @@ class InstitutionAuthorizationOptionTest extends TestCase
      */
     private $institutionRole;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->institution = new Institution('inst');
         $this->institutionRole = InstitutionRole::useRa();
@@ -98,11 +98,12 @@ class InstitutionAuthorizationOptionTest extends TestCase
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      * @dataProvider invalidConstructorArgumentsProvider
      */
     public function invalid_types_are_rejected_during_construction($arguments)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $arguments);
     }
     /**

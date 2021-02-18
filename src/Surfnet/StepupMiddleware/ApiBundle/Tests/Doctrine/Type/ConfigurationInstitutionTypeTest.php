@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType;
 
@@ -34,7 +34,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
     /**
      * Register the type, since we're forced to use the factory method.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Type::addType(
             ConfigurationInstitutionType::NAME,
@@ -42,7 +42,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
         );
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->platform = new MySqlPlatform();
     }
@@ -69,7 +69,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
      */
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_institution_or_null($incorrectValue)
     {
-        $this->setExpectedException('Doctrine\DBAL\Types\ConversionException');
+        $this->expectException('Doctrine\DBAL\Types\ConversionException');
 
         $configurationContactInformation = Type::getType(ConfigurationInstitutionType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -124,10 +124,11 @@ class ConfigurationInstitutionTypeTest extends UnitTest
     /**
      * @test
      * @group doctrine
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
      */
     public function an_invalid_database_value_causes_an_exception_upon_conversion()
     {
+        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+
         $configurationInstitution = Type::getType(ConfigurationInstitutionType::NAME);
 
         $configurationInstitution->convertToPHPValue(false, $this->platform);

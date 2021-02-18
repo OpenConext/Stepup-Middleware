@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 
 final class ForgettableEventsTest extends TestCase
 {
@@ -44,6 +44,7 @@ final class ForgettableEventsTest extends TestCase
             'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',
             'Surfnet\Stepup\Identity\Event\SecondFactorRevokedEvent',
             'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent',
+            'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession',
             'Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent',
             'Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent',
             'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent',

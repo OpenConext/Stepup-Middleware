@@ -18,11 +18,11 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Broadway\EventSourcing\EventSourcedEntity;
+use Broadway\EventSourcing\SimpleEventSourcedEntity;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
-abstract class AbstractSecondFactor extends EventSourcedEntity implements SecondFactor
+abstract class AbstractSecondFactor extends SimpleEventSourcedEntity implements SecondFactor
 {
     public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service)
     {

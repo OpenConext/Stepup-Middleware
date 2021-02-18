@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
@@ -104,7 +104,7 @@ final class EmailVerificationWindow implements SerializableInterface
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return ['start' => (string) $this->start, 'end' => (string) $this->end];
     }

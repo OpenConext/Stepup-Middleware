@@ -70,7 +70,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         $this->apply(new EmailTemplatesUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['email_templates']));
     }
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
         return self::CONFIGURATION_ID;
     }

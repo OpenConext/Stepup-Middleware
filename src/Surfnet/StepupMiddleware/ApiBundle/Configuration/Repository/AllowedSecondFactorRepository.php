@@ -18,12 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 
-final class AllowedSecondFactorRepository extends EntityRepository
+final class AllowedSecondFactorRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, AllowedSecondFactor::class);
+    }
+
     public function save(AllowedSecondFactor $allowedSecondFactor)
     {
         $entityManager = $this->getEntityManager();

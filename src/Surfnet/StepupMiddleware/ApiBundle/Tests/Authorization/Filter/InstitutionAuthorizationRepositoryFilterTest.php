@@ -44,7 +44,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
      */
     private $mockedAuthorizationContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mockedAuthorizationContext = $this->createMock(InstitutionAuthorizationContextInterface::class);
 

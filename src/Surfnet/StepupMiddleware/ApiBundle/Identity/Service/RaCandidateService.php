@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
@@ -45,7 +46,7 @@ class RaCandidateService extends AbstractSearchService
     {
         $doctrineQuery = $this->raCandidateRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
+        $paginator = $this->createPaginatorFrom($doctrineQuery, $query, false);
 
         return $paginator;
     }
@@ -61,13 +62,23 @@ class RaCandidateService extends AbstractSearchService
 
     /**
      * @param string $identityId
-     * @param InstitutionAuthorizationContextInterface $authorizationContext
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate[]
+     * @return null|array
      */
-    public function findAllByIdentityId($identityId, InstitutionAuthorizationContextInterface $authorizationContext)
+    public function findOneByIdentityId($identityId)
     {
-        $raCandidates = $this->raCandidateRepository->findAllRaasByIdentityId($identityId, $authorizationContext);
+        return $this->raCandidateRepository->findOneByIdentityId($identityId);
+    }
 
-        return $raCandidates;
+    /**
+     * Set the RA candidates USE RA(A) institutions on the Identity he is going to promote.
+     */
+    public function setUseRaInstitutionsOnRaCandidate(InstitutionAuthorizationContext $actor, array $raCandidate)
+    {
+        $result = [];
+        foreach ($actor->getInstitutions() as $raInstitution) {
+            $raCandidate['ra_institution'] = new Institution($raInstitution->getInstitution());
+            $result[] = $raCandidate;
+        }
+        return $result;
     }
 }

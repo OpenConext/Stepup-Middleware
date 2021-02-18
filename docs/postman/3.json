@@ -30,7 +30,7 @@
 					"raw": "{\n    \"command\": {\n        \"name\": \"Identity:CreateIdentity\",\n        \"uuid\": \"4783486c-5f9d-4d5e-8ad1-721272280595\",\n        \"payload\": {\n            \"id\": \"dd98c118-0f48-401b-9013-69be3a19e571\",\n            \"name_id\": \"urn:collab:person:institution-b.example.com:joe-b1\",\n            \"institution\": \"institution-b.example.com\",\n            \"email\": \"joe+joe-b1@stepup.example.com\",\n            \"common_name\": \"joe-b1 institution-b.example.com\",\n            \"preferred_locale \": \"nl_NL\"\n        }\n    },\n    \"meta\": {\n        \"actor_id\": null,\n        \"actor_institution\": null\n    }\n}"
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/command?XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/command?XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -39,7 +39,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"command"
 					],
 					"query": [
@@ -75,7 +74,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/identity?institution=stepup.example.com&NameId=urn:collab:person:stepup.example.com:admin&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/identity?institution=stepup.example.com&NameId=urn:collab:person:stepup.example.com:admin&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -84,7 +83,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"identity"
 					],
 					"query": [
@@ -125,7 +123,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/identity/db9b8bdf-720c-44ba-a4c4-154953e45f14",
+					"raw": "http://middleware.stepup.example.com/identity/db9b8bdf-720c-44ba-a4c4-154953e45f14",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -134,7 +132,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"identity",
 						"db9b8bdf-720c-44ba-a4c4-154953e45f14"
 					]
@@ -166,7 +163,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/unverified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"raw": "http://middleware.stepup.example.com/unverified-second-factors?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
 					"protocol": "http",
 					"host": [
 						"mw-dev",
@@ -176,7 +173,6 @@
 						"net"
 					],
 					"path": [
-						"app_dev.php",
 						"unverified-second-factors"
 					],
 					"query": [
@@ -213,7 +209,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/unverified-second-factors/4984057f-5952-4a82-a77f-44bc9cd62ce4",
+					"raw": "http://middleware.stepup.example.com/unverified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
 					"protocol": "http",
 					"host": [
 						"mw-dev",
@@ -223,9 +219,50 @@
 						"net"
 					],
 					"path": [
-						"app_dev.php",
-						"unverified-second-factors",
+						"unverified-second-factor",
 						"4984057f-5952-4a82-a77f-44bc9cd62ce4"
+					]
+				},
+				"description": "- `secondFactorId` UUIDv4 of the second factor"
+			},
+			"response": []
+		},
+		{
+			"name": "/unverified-second-factor/{secondFactorId}/skip-prove-possession",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic c3M6YmFy"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://middleware.stepup.example.com/unverified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
+					"protocol": "http",
+					"host": [
+						"mw-dev",
+						"stepup",
+						"coin",
+						"surf",
+						"net"
+					],
+					"path": [
+						"unverified-second-factors",
+						"4984057f-5952-4a82-a77f-44bc9cd62ce4",
+						"skip-prove-possession"
 					]
 				},
 				"description": "- `secondFactorId` UUIDv4 of the second factor"
@@ -255,7 +292,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "https://middleware.stepup.example.com/app_dev.php/verified-second-factors?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "https://middleware.stepup.example.com/verified-second-factors?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "https",
 					"host": [
 						"middleware",
@@ -264,7 +301,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"verified-second-factors"
 					],
 					"query": [
@@ -309,7 +345,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/verified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
+					"raw": "http://middleware.stepup.example.com/verified-second-factor/4984057f-5952-4a82-a77f-44bc9cd62ce4",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -318,7 +354,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"verified-second-factor",
 						"4984057f-5952-4a82-a77f-44bc9cd62ce4"
 					]
@@ -350,7 +385,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/vetted-second-factors?registrationCode=TEST&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/vetted-second-factors?registrationCode=TEST&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -359,7 +394,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"vetted-second-factors"
 					],
 					"query": [
@@ -400,7 +434,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
+					"raw": "http://middleware.stepup.example.com/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -409,7 +443,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"vetted-second-factor",
 						"c732d0ac-9f61-4ae1-924e-40d5172fca86"
 					]
@@ -441,7 +474,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
+					"raw": "http://middleware.stepup.example.com/vetted-second-factor/c732d0ac-9f61-4ae1-924e-40d5172fca86",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -450,7 +483,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"vetted-second-factor",
 						"c732d0ac-9f61-4ae1-924e-40d5172fca86"
 					]
@@ -478,7 +510,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/sraa/3858f62230ac3c915f300c664312c63f",
+					"raw": "http://middleware.stepup.example.com/sraa/3858f62230ac3c915f300c664312c63f",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -487,7 +519,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"sraa",
 						"3858f62230ac3c915f300c664312c63f"
 					]
@@ -515,7 +546,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/registration-authority?institution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/registration-authority?institution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -524,7 +555,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"registration-authority"
 					],
 					"query": [
@@ -561,7 +591,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/registration-authority/41f8aded-e21f-43f1-a4e3-e5aa84c1f82e",
+					"raw": "http://middleware.stepup.example.com/registration-authority/41f8aded-e21f-43f1-a4e3-e5aa84c1f82e",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -570,7 +600,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"registration-authority",
 						"41f8aded-e21f-43f1-a4e3-e5aa84c1f82e"
 					]
@@ -602,7 +631,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-listing?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&actorInstitution=institution-a.example.com&institution=institution-a.example.com&orderBy=commonName&p=1&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-listing?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&actorInstitution=institution-a.example.com&institution=institution-a.example.com&orderBy=commonName&p=1&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -611,7 +640,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-listing"
 					],
 					"query": [
@@ -664,7 +692,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-listing/62096060-8b60-4bb1-bcc1-e00158a4051b/stepup.example.com?actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&actorInstitution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-listing/62096060-8b60-4bb1-bcc1-e00158a4051b/stepup.example.com?actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&actorInstitution=institution-a.example.com&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -673,7 +701,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-listing",
 						"62096060-8b60-4bb1-bcc1-e00158a4051b",
 						"stepup.example.com"
@@ -720,7 +747,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-candidate?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&actorInstitution=institution-a.example.com&secondFactorTypes%5B2%5D=yubikey&secondFactorTypes%5B3%5D=u2f&p=1&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-candidate?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&actorInstitution=institution-a.example.com&secondFactorTypes%5B2%5D=yubikey&secondFactorTypes%5B3%5D=u2f&p=1&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -729,7 +756,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-candidate"
 					],
 					"query": [
@@ -782,7 +808,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-candidate/11db6fa9-33a7-413a-8b16-6d27ffe94486/Institution-f.example.com?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-candidate/11db6fa9-33a7-413a-8b16-6d27ffe94486/Institution-f.example.com?actorId=b954e4a3-1ed4-489b-9996-f22512d31eef&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -791,7 +817,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-candidate",
 						"11db6fa9-33a7-413a-8b16-6d27ffe94486",
 						"Institution-f.example.com"
@@ -830,7 +855,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/institution-listing",
+					"raw": "http://middleware.stepup.example.com/institution-listing",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -839,7 +864,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"institution-listing"
 					]
 				},
@@ -866,7 +890,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/audit-log/second-factors?institution=Ibuildings&identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1&orderBy=recordedOn&orderDirection=asc",
+					"raw": "http://middleware.stepup.example.com/audit-log/second-factors?institution=Ibuildings&identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1&orderBy=recordedOn&orderDirection=asc",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -875,7 +899,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"audit-log",
 						"second-factors"
 					],
@@ -925,7 +948,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-location?institution=Ibuildings",
+					"raw": "http://middleware.stepup.example.com/ra-location?institution=Ibuildings",
 					"protocol": "http",
 					"host": [
 						"mw-dev",
@@ -935,7 +958,6 @@
 						"net"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-location"
 					],
 					"query": [
@@ -972,7 +994,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://mw-dev.stepup.coin.surf.net/app_dev.php/ra-location/123e4567-e89b-12d3-a456-426655440000",
+					"raw": "http://middleware.stepup.example.com/ra-location/123e4567-e89b-12d3-a456-426655440000",
 					"protocol": "http",
 					"host": [
 						"mw-dev",
@@ -982,7 +1004,6 @@
 						"net"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-location",
 						"123e4567-e89b-12d3-a456-426655440000"
 					]
@@ -1014,7 +1035,7 @@
 				],
 				"body": {},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/institution-configuration-options/stepup.example.com",
+					"raw": "http://middleware.stepup.example.com/institution-configuration-options/stepup.example.com",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -1023,7 +1044,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"institution-configuration-options",
 						"stepup.example.com"
 					]
@@ -1051,7 +1071,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-second-factors?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&p=1&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-second-factors?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&p=1&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -1060,7 +1080,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-second-factors"
 					],
 					"query": [
@@ -1105,7 +1124,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://middleware.stepup.example.com/app_dev.php/ra-second-factors-export?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&p=1&XDEBUG_SESSION_START=PHPSTORM",
+					"raw": "http://middleware.stepup.example.com/ra-second-factors-export?actorInstitution=institution-a.example.com&actorId=62096060-8b60-4bb1-bcc1-e00158a4051b&p=1&XDEBUG_SESSION_START=PHPSTORM",
 					"protocol": "http",
 					"host": [
 						"middleware",
@@ -1114,7 +1133,6 @@
 						"com"
 					],
 					"path": [
-						"app_dev.php",
 						"ra-second-factors-export"
 					],
 					"query": [

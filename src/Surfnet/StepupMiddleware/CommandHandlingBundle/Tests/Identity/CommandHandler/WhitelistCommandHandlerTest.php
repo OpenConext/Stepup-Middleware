@@ -18,9 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\CommandHandling\CommandHandler;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
@@ -42,7 +43,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      */
     const WID = Whitelist::WHITELIST_AGGREGATE_ID;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
@@ -119,12 +120,12 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group whitelist
-     *
-     * @expectedException \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot add institution "already exists" as it is already whitelisted
      */
     public function an_institution_on_the_whitelist_may_not_be_added_again()
     {
+        $this->expectExceptionMessage("Cannot add institution \"already exists\" as it is already whitelisted");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Already Exists']);
 
         $command                        = new AddToWhitelistCommand();
@@ -163,12 +164,11 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      * @group whitelist
-     *
-     * @expectedException \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot remove institution "not on the whitelist" as it is not whitelisted
      */
     public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed()
     {
+        $this->expectExceptionMessage("Cannot remove institution \"not on the whitelist\" as it is not whitelisted");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
         $command = new RemoveFromWhitelistCommand();

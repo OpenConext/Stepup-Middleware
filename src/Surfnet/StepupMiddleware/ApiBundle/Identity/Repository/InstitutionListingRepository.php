@@ -18,7 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
@@ -26,8 +27,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
  * @deprecated This could probably be removed and is only used in migrations
  * @see app/DoctrineMigrations/Version20160719090052.php#L51
  */
-class InstitutionListingRepository extends EntityRepository
+class InstitutionListingRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, InstitutionListing::class);
+    }
+
     public function save(InstitutionListing $institution)
     {
         $this->getEntityManager()->persist($institution);

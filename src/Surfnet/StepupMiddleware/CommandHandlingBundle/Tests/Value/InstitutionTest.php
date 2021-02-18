@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
 class InstitutionTest extends UnitTest
@@ -26,12 +26,13 @@ class InstitutionTest extends UnitTest
     /**
      * @test
      * @dataProvider nonStringOrNonEmptyStringProvider
-     * @expectedException \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException::class);
+
         new Institution($invalidValue);
     }
 

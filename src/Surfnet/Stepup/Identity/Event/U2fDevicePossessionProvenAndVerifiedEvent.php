@@ -133,7 +133,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'                 => (string) $this->identityId,

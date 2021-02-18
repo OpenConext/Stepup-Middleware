@@ -27,7 +27,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository"
  * )
  */
-final class AllowedSecondFactor
+class AllowedSecondFactor
 {
     /**
      * @ORM\Id

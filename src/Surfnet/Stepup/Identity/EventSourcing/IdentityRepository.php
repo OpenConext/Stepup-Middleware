@@ -18,30 +18,30 @@
 
 namespace Surfnet\Stepup\Identity\EventSourcing;
 
-use Broadway\EventHandling\EventBusInterface;
-use Broadway\EventSourcing\AggregateFactory\AggregateFactoryInterface;
+use Broadway\EventHandling\EventBus as EventBusInterface;
+use Broadway\EventSourcing\AggregateFactory\AggregateFactory;
 use Broadway\EventSourcing\EventSourcingRepository;
-use Broadway\EventSourcing\EventStreamDecoratorInterface;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventSourcing\EventStreamDecorator;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 
 class IdentityRepository extends EventSourcingRepository
 {
     /**
      * @param EventStoreInterface             $eventStore
      * @param EventBusInterface               $eventBus
-     * @param AggregateFactoryInterface       $aggregateFactory
-     * @param EventStreamDecoratorInterface[] $eventStreamDecorators
+     * @param AggregateFactory       $aggregateFactory
+     * @param EventStreamDecorator[] $eventStreamDecorators
      */
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
-        AggregateFactoryInterface $aggregateFactory,
+        AggregateFactory $aggregateFactory,
         array $eventStreamDecorators = []
     ) {
         parent::__construct(
             $eventStore,
             $eventBus,
-            'Surfnet\Stepup\Identity\Identity',
+            \Surfnet\Stepup\Identity\Identity::class,
             $aggregateFactory,
             $eventStreamDecorators
         );

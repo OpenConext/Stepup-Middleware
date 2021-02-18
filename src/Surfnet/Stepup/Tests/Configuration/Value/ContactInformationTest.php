@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 
 class ContactInformationTest extends UnitTest
@@ -27,12 +27,12 @@ class ContactInformationTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
      *
      * @param mixed $invalidValue
      */
     public function it_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
         new ContactInformation($invalidValue);
     }
 

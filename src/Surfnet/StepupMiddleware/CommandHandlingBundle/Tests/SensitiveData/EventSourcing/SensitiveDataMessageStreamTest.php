@@ -23,7 +23,7 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -43,6 +43,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
     public function it_can_work_with_zero_sensitive_data_messages_and_zero_events()
     {
         $this->apply([], []);
+
+        $this->assertTrue(true);
     }
 
     /**
@@ -149,11 +151,12 @@ final class SensitiveDataMessageStreamTest extends TestCase
     /**
      * @test
      * @group sensitive-data
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
-     * @expectedExceptionMessage Sensitive data is missing for event with UUID A, playhead 0
      */
     public function it_fails_when_sensitive_data_is_missing_for_an_event()
     {
+        $this->expectExceptionMessage("Sensitive data is missing for event with UUID A, playhead 0");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException::class);
+
         $sensitiveDataMessages = [];
         $domainMessages = [
             new DomainMessage(
@@ -171,11 +174,11 @@ final class SensitiveDataMessageStreamTest extends TestCase
     /**
      * @test
      * @group sensitive-data
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
-     * @expectedExceptionMessage 1 sensitive data messages are still to be matched to events
      */
     public function it_fails_when_not_all_sensitive_data_could_be_matched_to_an_event()
     {
+        $this->expectExceptionMessage("1 sensitive data messages are still to be matched to events");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException::class);
         $sensitiveDataMessages = [
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
@@ -199,11 +202,12 @@ final class SensitiveDataMessageStreamTest extends TestCase
     /**
      * @test
      * @group sensitive-data
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
-     * @expectedExceptionMessage Encountered sensitive data for event which does not support sensitive data, UUID A, playhead 0
      */
     public function it_fails_when_sensitive_data_matches_a_regular_event()
     {
+        $this->expectExceptionMessage("Encountered sensitive data for event which does not support sensitive data, UUID A, playhead 0");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException::class);
+
         $sensitiveDataMessages = [
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
@@ -227,11 +231,12 @@ final class SensitiveDataMessageStreamTest extends TestCase
     /**
      * @test
      * @group sensitive-data
-     * @expectedException Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException
-     * @expectedExceptionMessage Encountered sensitive data from stream A for event from stream B
      */
     public function it_fails_when_stream_ids_dont_match()
     {
+        $this->expectExceptionMessage("Encountered sensitive data from stream A for event from stream B");
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException::class);
+
         $sensitiveDataMessages = [
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
@@ -264,6 +269,8 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 ->getMock(),
         ]);
         $sensitiveDataMessageStream->forget();
+
+        $this->assertInstanceOf(SensitiveDataMessageStream::class, $sensitiveDataMessageStream);
     }
 
     private function apply(array $sensitiveDataMessages, array $domainMessages)

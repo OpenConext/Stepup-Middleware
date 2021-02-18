@@ -19,12 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing;
 
 use Broadway\Domain\DomainEventStream;
-use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\Domain\Metadata as BroadwayMetadata;
-use Broadway\EventSourcing\EventStreamDecoratorInterface;
+use Broadway\EventSourcing\EventStreamDecorator;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 
-final class MetadataEnrichingEventStreamDecorator implements EventStreamDecoratorInterface, MetadataEnricher
+final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorator, MetadataEnricher
 {
     /**
      * @var Metadata|null
@@ -39,8 +38,8 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
     public function decorateForWrite(
         $aggregateType,
         $aggregateIdentifier,
-        DomainEventStreamInterface $eventStream
-    ) {
+        DomainEventStream $eventStream
+    ): DomainEventStream {
         if (!$this->metadata) {
             return $eventStream;
         }

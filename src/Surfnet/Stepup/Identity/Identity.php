@@ -511,7 +511,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        $secondFactor->vet(DocumentNumber::unknown());
+        $secondFactor->vet(DocumentNumber::unknown(), false);
     }
 
     public function complyWithVettingOfSecondFactor(

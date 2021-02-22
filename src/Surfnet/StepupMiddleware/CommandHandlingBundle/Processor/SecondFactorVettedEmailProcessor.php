@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorVettedMailService;
 
@@ -35,6 +36,11 @@ final class SecondFactorVettedEmailProcessor extends Processor
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+    }
+
+    public function handleSecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
     {
         $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
     }

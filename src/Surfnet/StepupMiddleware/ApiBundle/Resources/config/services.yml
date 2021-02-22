@@ -1,106 +1,38 @@
 services:
+    _defaults:
+        bind:
+            $numberOfTokensPerIdentity: '%number_of_tokens_per_identity%'
+
+    Surfnet\StepupMiddleware\ApiBundle\:
+        resource: '../../*'
+        autowire: true
+        exclude: '../../{DependencyInjection,Entity,Repository,Migrations,Tests,Controller}'
+
     # The ManagementBundle controllers are available as a service
     Surfnet\StepupMiddleware\ApiBundle\Controller\:
         resource: '../../Controller'
         autowire: true
         tags: ['controller.service_arguments']
 
-    # Authorization repository factory
-    surfnet_stepup_middleware_api.repository_factory.authorization:
-        class: Surfnet\StepupMiddleware\ApiBundle\Authorization\Repository\AuthorizationRepositoryFactory
-        arguments:
-            - "@doctrine.orm.middleware_entity_manager"
-            - "@surfnet_stepup_middleware_api.repository_filter.authorization"
-
     # Repositories
-    surfnet_stepup_middleware_api.repository.configured_institution:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution ]
-
-    surfnet_stepup_middleware_api.repository.institution_configuration_options:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions ]
-
-    surfnet_stepup_middleware_api.repository.allowed_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.institution_authorization:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization ]
-
-    surfnet_stepup_middleware_api.repository.ra_location:
-        class: Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation ]
-
-    surfnet_stepup_middleware_api.repository.identity:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
-        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity ]
-
-    surfnet_stepup_middleware_api.repository.institution_listing:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing ]
-
-    surfnet_stepup_middleware_api.repository.ra_candidate:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
-        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate ]
-
-    surfnet_stepup_middleware_api.repository.ra_listing:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository
-        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing ]
-
-    surfnet_stepup_middleware_api.repository.sraa:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa ]
-
-    surfnet_stepup_middleware_api.repository.unverified_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.verified_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository
-        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.vetted_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.ra_second_factor:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository
-        factory: ["@surfnet_stepup_middleware_api.repository_factory.authorization", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor ]
-
-    surfnet_stepup_middleware_api.repository.audit_log:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry ]
-
-    surfnet_stepup_middleware_api.repository.second_factor_revocation:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactorRevocation]
-
-    surfnet_stepup_middleware_api.repository.whitelist_entry:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository
-        factory: ["@doctrine.orm.middleware_entity_manager", getRepository]
-        arguments: [ Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry ]
-
-    surfnet_stepup_middleware_api.repository.authorization:
-        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository
-        arguments: [ '@doctrine.orm.middleware_entity_manager' ]
+    surfnet_stepup_middleware_api.repository.configured_institution: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository'
+    surfnet_stepup_middleware_api.repository.institution_configuration_options: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository'
+    surfnet_stepup_middleware_api.repository.allowed_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.institution_authorization: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository'
+    surfnet_stepup_middleware_api.repository.ra_location: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository'
+    surfnet_stepup_middleware_api.repository.identity: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository'
+    surfnet_stepup_middleware_api.repository.institution_listing: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository'
+    surfnet_stepup_middleware_api.repository.ra_candidate: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository'
+    surfnet_stepup_middleware_api.repository.ra_listing: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository'
+    surfnet_stepup_middleware_api.repository.sraa: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository'
+    surfnet_stepup_middleware_api.repository.unverified_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.verified_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.vetted_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.ra_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.audit_log: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository'
+    surfnet_stepup_middleware_api.repository.second_factor_revocation: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository'
+    surfnet_stepup_middleware_api.repository.whitelist_entry: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository'
+    surfnet_stepup_middleware_api.repository.authorization: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository'
 
     # Repository filter
     surfnet_stepup_middleware_api.repository_filter.authorization:
@@ -205,11 +137,11 @@ services:
 
     # Exception Listeners
     surfnet_stepup_middleware_api.listener.exception_listener:
-            class: Surfnet\StepupMiddleware\ApiBundle\EventListener\ExceptionListener
-            arguments:
-                - "@logger"
-            tags:
-                - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+        class: Surfnet\StepupMiddleware\ApiBundle\EventListener\ExceptionListener
+        arguments:
+            - "@logger"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception}
 
     # Security Entry Point
     surfnet_stepup_middleware_api.security.json_basic_auth_entry_point:
@@ -223,4 +155,5 @@ services:
         arguments:
             - '@surfnet_stepup_middleware_api.service.sraa'
             - '@surfnet_stepup_middleware_api.service.identity'
+            - '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository'
             - '@surfnet_stepup_middleware_api.repository.authorization'

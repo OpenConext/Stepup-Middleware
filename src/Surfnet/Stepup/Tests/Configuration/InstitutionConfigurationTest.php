@@ -367,7 +367,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
             );
     }
 
-    protected function getAggregateRootClass()
+    protected function getAggregateRootClass(): string
     {
         return InstitutionConfiguration::class;
     }

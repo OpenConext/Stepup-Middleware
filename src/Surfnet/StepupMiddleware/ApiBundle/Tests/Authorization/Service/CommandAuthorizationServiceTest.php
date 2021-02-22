@@ -19,8 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Psr\Log\LoggerInterface;
+use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -35,7 +36,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
 class CommandAuthorizationServiceTest extends TestCase
 {
@@ -61,7 +65,7 @@ class CommandAuthorizationServiceTest extends TestCase
      */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $whitelistService = m::mock(WhitelistService::class);
         $identityService = m::mock(IdentityService::class);
@@ -76,6 +80,29 @@ class CommandAuthorizationServiceTest extends TestCase
         $this->authorizationContextService = $authorizationContextService;
 
         $this->service = $service;
+    }
+
+    public function test_shared_ra_and_ss_commands_are_correctly_authorized()
+    {
+        $actorId = new IdentityId('123');
+        $actorInstitution = new Institution('institution');
+
+        $this->logger->shouldReceive('notice');
+
+        $raCredentials = m::mock(RegistrationAuthorityCredentials::class);
+        $raCredentials->shouldReceive('isSraa')
+            ->andReturn(false);
+
+        $this->identityService->shouldReceive('findRegistrationAuthorityCredentialsOf')
+            ->with($actorId->getIdentityId())
+            ->andReturn($raCredentials);
+
+        $command = new ExpressLocalePreferenceCommand();
+        $command->identityId = $actorId->getIdentityId();
+        $command->UUID = Uuid::uuid4();
+
+        $this->assertTrue($this->service->maySelfServiceCommandBeExecutedOnBehalfOf($command, $actorId));
+        $this->assertTrue($this->service->mayRaCommandBeExecutedOnBehalfOf($command, $actorId, $actorInstitution));
     }
 
     /**
@@ -180,9 +207,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role){
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 
@@ -234,9 +266,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role){
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 
@@ -325,9 +362,14 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
+            $role = InstitutionRole::useRaa();
+            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $role = InstitutionRole::useRa();
+            }
+
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) {
-                    return $arg == InstitutionRole::useRaa();
+                ->with($actorId, m::on(function($arg) use ($role) {
+                    return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
 
@@ -345,35 +387,36 @@ class CommandAuthorizationServiceTest extends TestCase
     public function all_available_commands_should_be_tested()
     {
         $tested = array (
-            0 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\AddRaLocationCommand',
-            1 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ChangeRaLocationCommand',
-            2 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\CreateInstitutionConfigurationCommand',
-            3 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ReconfigureInstitutionConfigurationOptionsCommand',
-            4 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveInstitutionConfigurationByUnnormalizedIdCommand',
-            5 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveRaLocationCommand',
-            6 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\UpdateConfigurationCommand',
-            7 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AccreditIdentityCommand',
-            8 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AddToWhitelistCommand',
-            9 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AmendRegistrationAuthorityInformationCommand',
-            10 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AppointRoleCommand',
-            11 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\BootstrapIdentityWithYubikeySecondFactorCommand',
-            12 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\CreateIdentityCommand',
-            13 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ExpressLocalePreferenceCommand',
-            14 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ForgetIdentityCommand',
-            15 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveGssfPossessionCommand',
-            16 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhonePossessionCommand',
-            17 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',
-            18 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveYubikeyPossessionCommand',
-            19 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoveFromWhitelistCommand',
-            20 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ReplaceWhitelistCommand',
-            21 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',
-            22 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
-            23 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
-            24 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
-            25 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
-            26 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',
-            27 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VetSecondFactorCommand',
-            28 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Command\\FixedUuidStubCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\AddRaLocationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ChangeRaLocationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\CreateInstitutionConfigurationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ReconfigureInstitutionConfigurationOptionsCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveInstitutionConfigurationByUnnormalizedIdCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveRaLocationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\UpdateConfigurationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AccreditIdentityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AddToWhitelistCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AmendRegistrationAuthorityInformationCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AppointRoleCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\BootstrapIdentityWithYubikeySecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\CreateIdentityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ExpressLocalePreferenceCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ForgetIdentityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveGssfPossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhonePossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveYubikeyPossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoteVetSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoveFromWhitelistCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ReplaceWhitelistCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VetSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Command\\FixedUuidStubCommand',
         );
 
         $available = $this->availableCommands();

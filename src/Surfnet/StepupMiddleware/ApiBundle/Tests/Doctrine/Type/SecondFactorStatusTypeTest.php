@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Types\Type;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
@@ -34,12 +34,12 @@ class SecondFactorStatusTypeTest extends UnitTest
     /**
      * Register the type, since we're forced to use the factory method.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         Type::addType(SecondFactorStatusType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->platform = new MySqlPlatform();
     }
@@ -61,12 +61,13 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidPhpValues
      * @group doctrine
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
      *
      * @param mixed $value
      */
     public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion($value)
     {
+        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+
         $type = Type::getType(SecondFactorStatusType::NAME);
         $type->convertToDatabaseValue($value, $this->platform);
     }
@@ -112,12 +113,13 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidDatabaseValues
      * @group doctrine
-     * @expectedException \Doctrine\DBAL\Types\ConversionException
      *
      * @param mixed $input
      */
     public function an_invalid_database_value_causes_an_exception_upon_conversion($input)
     {
+        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+
         $type = Type::getType(SecondFactorStatusType::NAME);
         $type->convertToPHPValue($input, $this->platform);
     }

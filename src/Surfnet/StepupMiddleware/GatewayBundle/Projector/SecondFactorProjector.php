@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -60,6 +61,21 @@ class SecondFactorProjector extends Projector
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->repository->save(
+            new SecondFactor(
+                (string) $event->identityId,
+                (string) $event->nameId,
+                (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
+                (string) $event->secondFactorId,
+                $event->secondFactorIdentifier,
+                $event->secondFactorType
+            )
+        );
+    }
+
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
     {
         $this->repository->save(
             new SecondFactor(

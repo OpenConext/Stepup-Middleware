@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder
             ->root('surfnet_stepup_middleware_middleware')
                 ->children()
+                    ->arrayNode('second_factors_display_name')->isRequired()->scalarPrototype()->end()->end()
                     ->scalarNode('email_verification_window')
                         ->info('The amount of seconds after which the email verification url/code expires')
                         ->defaultValue(3600)
@@ -47,8 +48,9 @@ class Configuration implements ConfigurationInterface
                         ->prototype('array')
                         ->children()
                             ->scalarNode('loa')
-                            ->isRequired()
-                            ->info('The lao level of the Gssf')
+                                ->isRequired()
+                                ->info('The lao level of the Gssf')
+                            ->end()
                         ->end()
                     ->end()
                 ->end();

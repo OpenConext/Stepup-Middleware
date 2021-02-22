@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Configuration\Event;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
@@ -59,7 +59,7 @@ class RaLocationRenamedEvent implements SerializableInterface
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),

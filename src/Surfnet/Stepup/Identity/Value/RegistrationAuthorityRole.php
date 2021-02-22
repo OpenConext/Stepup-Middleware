@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class RegistrationAuthorityRole implements SerializableInterface
@@ -86,7 +86,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
         return new self($data['role']);
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return ['role' => $this->role];
     }

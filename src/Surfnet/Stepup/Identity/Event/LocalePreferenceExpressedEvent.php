@@ -64,7 +64,7 @@ class LocalePreferenceExpressedEvent extends IdentityEvent
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'id'          => (string) $this->identityId,

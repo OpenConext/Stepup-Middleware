@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Repository\RepositoryInterface;
+use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -39,7 +39,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegis
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RegistrationAuthorityCommandHandler extends CommandHandler
+class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository

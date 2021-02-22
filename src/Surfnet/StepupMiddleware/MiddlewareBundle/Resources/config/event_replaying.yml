@@ -32,6 +32,7 @@ services:
             - 'event_stream_sensitive_data'
 
     middleware.event_replay.event_stream_replayer:
+        public: true
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer
         arguments:
             - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"

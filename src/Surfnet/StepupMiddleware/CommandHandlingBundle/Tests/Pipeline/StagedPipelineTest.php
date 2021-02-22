@@ -19,10 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline;
 
-class StagedPipelineTest extends \PHPUnit_Framework_TestCase
+class StagedPipelineTest extends TestCase
 {
     /**
      * @test

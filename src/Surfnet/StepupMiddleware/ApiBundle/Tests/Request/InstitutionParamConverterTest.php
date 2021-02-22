@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -36,7 +36,7 @@ class InstitutionParamConverterTest extends UnitTest
      */
     private $paramConverterConfig;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->request = m::mock('Symfony\Component\HttpFoundation\Request');
         $this->paramConverterConfig = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
@@ -45,11 +45,11 @@ class InstitutionParamConverterTest extends UnitTest
     /**
      * @test
      * @group api-bundle
-     *
-     * @expectedException \Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException
      */
     public function an_exception_is_thrown_when_the_parameter_is_missing()
     {
+        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException::class);
+
         $this->request->query = $this->mockQuery(false);
 
         $converter = new InstitutionParamConverter();

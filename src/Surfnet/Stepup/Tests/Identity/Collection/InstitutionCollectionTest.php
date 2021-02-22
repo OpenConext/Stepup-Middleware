@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Collection;
 
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution;
 
@@ -31,8 +31,11 @@ class InstitutionCollectionTest extends UnitTest
      */
     public function it_can_be_constructed_with_or_without_institutions()
     {
-        new InstitutionCollection($this->getInstitutions());
-        new InstitutionCollection();
+        $collection1 = new InstitutionCollection($this->getInstitutions());
+        $collection2 = new InstitutionCollection();
+
+        $this->assertInstanceOf(InstitutionCollection::class, $collection1);
+        $this->assertInstanceOf(InstitutionCollection::class, $collection2);
     }
 
     /**
@@ -72,10 +75,10 @@ class InstitutionCollectionTest extends UnitTest
      * @test
      * @group        domain
      * @group        whitelist
-     * @expectedException \Surfnet\Stepup\Exception\RuntimeException
      */
     public function an_institution_already_in_the_collection_cannot_be_added()
     {
+        $this->expectException(\Surfnet\Stepup\Exception\RuntimeException::class);
         $institutions = $this->getInstitutions();
         $alreadyExists = $institutions[0];
 
@@ -106,10 +109,12 @@ class InstitutionCollectionTest extends UnitTest
      * @test
      * @group        domain
      * @group        whitelist
-     * @expectedException \Surfnet\Stepup\Exception\RuntimeException
+     *
      */
     public function an_institution_not_in_the_collection_cannot_be_removed()
     {
+        $this->expectException(\Surfnet\Stepup\Exception\RuntimeException::class);
+
         $institutions = $this->getInstitutions();
         $notInCollection = new Institution('not in the collection');
 

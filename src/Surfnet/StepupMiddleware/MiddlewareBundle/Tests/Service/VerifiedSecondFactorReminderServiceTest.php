@@ -56,7 +56,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     private $identityRepository;
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mailService = m::mock(VerifiedSecondFactorReminderMailService::class);
         $this->logger = m::mock(LoggerInterface::class);
@@ -91,6 +91,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('0 reminders have been sent');
 
         $this->service->sendReminders($date, false);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_one_token_reminders_sent()
@@ -144,6 +146,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('1 reminders have been sent');
 
         $this->service->sendReminders($date, false);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_one_token_reminders_sent_failing_mailer()
@@ -192,6 +196,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('0 reminders have been sent');
 
         $this->service->sendReminders($date, false);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_multiple_tokens_reminders_sent()
@@ -233,7 +239,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/')
+            ->with(\Mockery::pattern('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
             ->times(9);
 
         $this->logger
@@ -242,6 +248,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('9 reminders have been sent');
 
         $this->service->sendReminders($date, false);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_missing_identity()
@@ -278,6 +286,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('0 reminders have been sent');
 
         $this->service->sendReminders($date, false);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_one_token_reminders_sent_dry_run()
@@ -320,6 +330,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('1 reminders would have been sent');
 
         $this->service->sendReminders($date, true);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_multiple_tokens_reminders_sent_dry_run()
@@ -355,7 +367,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/')
+            ->with(\Mockery::pattern('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
             ->times(9);
 
         $this->logger
@@ -364,6 +376,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('9 reminders would have been sent');
 
         $this->service->sendReminders($date, true);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     public function test_no_token_reminders_sent_dry_run()
@@ -386,6 +400,8 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             ->with('0 reminders would have been sent');
 
         $this->service->sendReminders($date, true);
+
+        $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
     /**

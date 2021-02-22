@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use IteratorAggregate;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -43,11 +43,12 @@ class InstitutionSetTest extends UnitTest
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Duplicate entries are not allowed in the InstitutionSet
      */
     public function duplicate_entries_are_not_allowed()
     {
+        $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('b');
 
@@ -57,11 +58,12 @@ class InstitutionSetTest extends UnitTest
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Duplicate entries are not allowed in the InstitutionSet
      */
     public function duplicate_entries_are_not_allowed_case_insensitive()
     {
+        $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('B');
 
@@ -71,11 +73,12 @@ class InstitutionSetTest extends UnitTest
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid argument type: "Surfnet\Stepup\Configuration\Value\Institution" expected, "Surfnet\Stepup\Configuration\Value\Location" given for "institutions"
      */
     public function only_institutions_can_be_present_in_set()
     {
+        $this->expectExceptionMessage("Invalid argument type: \"Surfnet\Stepup\Configuration\Value\Institution\" expected, \"Surfnet\Stepup\Configuration\Value\Location\" given for \"institutions\"");
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         $institution = new Institution('b');
         $location = new Location('Foobar');
 
@@ -118,12 +121,14 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider dirtyInstitutionListProvider
-     * @expectedException \Surfnet\Stepup\Exception\InvalidArgumentException
+     *
      *
      * @param array $invalid
      */
     public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid)
     {
+        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+
         InstitutionSet::create($invalid);
     }
 

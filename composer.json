@@ -4,83 +4,122 @@
     "description": "The SURFnet Step-up Middleware exposes an API for managing Step-up Identities and Tokens.",
     "autoload": {
         "psr-4": {
-            "Surfnet\\": "src\\Surfnet"
+            "Surfnet\\Stepup\\": "src\\Surfnet\\Stepup",
+            "Surfnet\\StepupMiddleware\\": "src\\Surfnet\\StepupMiddleware"
         },
         "classmap": [
-          "app/AppKernel.php",
-          "app/AppCache.php"
+            "src/Kernel.php"
         ]
     },
     "autoload-dev": {
-        "classmap": ["src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"]
+        "classmap": [
+            "src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/commands.php"
+        ]
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^5.6|^7.0",
+        "php": "^7.1",
         "ext-gmp": "*",
-        "symfony/symfony": "3.4.*",
-        "symfony/swiftmailer-bundle": "~2.3",
-        "symfony/monolog-bundle": "~2.4",
-        "twig/twig": "^1.35",
-        "twig/extensions": "~1.5",
-        "doctrine/cache": "~1.4",
-        "doctrine/common": "~2.5",
-        "doctrine/dbal": "~2.5",
-        "doctrine/doctrine-bundle": "~1.4",
-        "doctrine/doctrine-migrations-bundle": "^1.1",
-        "doctrine/migrations": "~1.4",
-        "doctrine/orm": "~2.5",
-        "sensio/distribution-bundle": "~5.0",
-        "sensio/framework-extra-bundle": "~3.0",
+        "ext-json": "*",
+        "broadway/broadway": "^2.3",
+        "broadway/event-store-dbal": "^0.5.0",
+        "doctrine/doctrine-bundle": "^1.12",
+        "doctrine/doctrine-migrations-bundle": "^1.2",
+        "doctrine/orm": "^2.5",
         "incenteev/composer-parameter-handler": "~2.0",
-        "nelmio/security-bundle": "~1.4",
-        "broadway/broadway": "~0.5.0",
-        "pagerfanta/pagerfanta": "~1.0",
         "jms/translation-bundle": "~1.3",
+        "nelmio/security-bundle": "2.9.*",
+        "openconext/monitor-bundle": "^2.0",
+        "pagerfanta/pagerfanta": "~1.0",
         "ramsey/uuid": "^2.9",
+        "sensiolabs/security-checker": "^6.0",
         "surfnet/stepup-bundle": "^4.0",
-        "openconext/monitor-bundle": "^1.0"
+        "symfony/asset": "4.4.*",
+        "symfony/expression-language": "4.4.*",
+        "symfony/flex": "^1.7",
+        "symfony/form": "4.4.*",
+        "symfony/intl": "^4.4",
+        "symfony/mailer": "4.4.*",
+        "symfony/monolog-bundle": "^3.5",
+        "symfony/profiler-pack": "^1.0",
+        "symfony/security-bundle": "4.4.*",
+        "symfony/swiftmailer-bundle": "^3.4",
+        "symfony/translation": "4.4.*",
+        "symfony/twig-pack": "^1.0",
+        "symfony/validator": "4.4.*",
+        "twig/extensions": "^1.5"
     },
     "require-dev": {
+        "doctrine/data-fixtures": "~1.1",
+        "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "liip/test-fixtures-bundle": "^1.0.0",
+        "mockery/mockery": "^1.3",
         "moontoast/math": "~1.1",
-        "mockery/mockery": "~0.9",
         "phpmd/phpmd": "^2.6",
-        "phpunit/phpunit": "^5.7",
-        "sebastian/exporter": "~2.0",
-        "sebastian/phpcpd": "^2.0",
+        "phpunit/phpunit": "8.5.*",
+        "sebastian/exporter": "3.1.*",
+        "sebastian/phpcpd": "^4.0",
         "squizlabs/php_codesniffer": "^3.4",
-        "symfony/phpunit-bridge": "^3.0",
-        "liip/functional-test-bundle": "~1.2",
-        "doctrine/data-fixtures": "~1.1"
+        "symfony/browser-kit": "4.4.*",
+        "symfony/dotenv": "4.4.*",
+        "symfony/maker-bundle": "^1.19",
+        "symfony/phpunit-bridge": "^3.0"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
     },
     "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+            "@auto-scripts"
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+            "@auto-scripts"
+        ],
+        "frontend-install": [
+            "echo 'Skipping task: no frontend assets available'"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "*",
+            ".*",
+            "*/Tests/*",
+            "!/component_info",
+            "!/bin",
+            "!/config",
+            "!/public",
+            "!/src",
+            "!/templates",
+            "!/translations",
+            "!/var/cache/prod",
+            "!/vendor"
         ]
     },
     "config": {
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "7.2"
+        },
+        "sort-packages": true
     },
     "extra": {
         "symfony-app-dir": "app",
-        "symfony-var-dir": "app",
-        "symfony-bin-dir": "app",
+        "symfony-var-dir": "var",
+        "symfony-bin-dir": "bin",
         "symfony-web-dir": "web",
         "incenteev-parameters": {
-            "file": "app/config/parameters.yml"
-        }
+            "file": "config/legacy/parameters.yaml"
+        },
+        "symfony": {
+            "allow-contrib": false,
+            "require": "4.4.*"
+        },
+        "src-dir": "src/Surfnet"
     }
 }

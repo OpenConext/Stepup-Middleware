@@ -18,7 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 
 interface WhitelistEvent extends SerializableInterface
 {

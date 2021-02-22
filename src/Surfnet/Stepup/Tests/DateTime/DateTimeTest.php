@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Tests\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
-use PHPUnit_Framework_TestCase as UnitTest;
+use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 
 class DateTimeTest extends UnitTest

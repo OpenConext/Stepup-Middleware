@@ -1,0 +1,70 @@
+services:
+    Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService:
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.identity"
+            - "@surfnet_stepup_middleware_api.repository.unverified_second_factor"
+            - "@surfnet_stepup_middleware_api.repository.verified_second_factor"
+            - "@surfnet_stepup_middleware_api.repository.institution_configuration_options"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand:
+        abstract: true
+        arguments:
+            - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+            - "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"
+            - "@security.token_storage"
+            - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService'
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplaySpecificEventsCommand:
+        tags:
+            - { name: 'console.command', command: 'stepup:event:replay' }
+        arguments:
+            - "@middleware.event_replay.event_collection"
+            - "@middleware.event_replay.projector_collection"
+            - "@middleware.event_replay.past_events_service"
+            - "@middleware.event_replay.transaction_aware_event_dispatcher"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\ReplayEventsCommand:
+        tags:
+            - { name: 'console.command', command: 'middleware:event:replay' }
+        arguments:
+            - "@middleware.event_replay.event_stream_replayer"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand:
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:identity-with-yubikey' }
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.identity"
+            - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@surfnet_stepup_middleware_management.dbal_connection_helper"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\EmailVerifiedSecondFactorRemindersCommand:
+        tags:
+            - { name: 'console.command', command: 'middleware:cron:email-reminder' }
+        arguments:
+            - "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+            - "@surfnet_stepup_middleware_middleware.dbal_connection_helper"
+            - "@logger"
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:identity' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapSmsSecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:sms' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapYubikeySecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:yubikey' }
+
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapGsspSecondFactorCommand:
+        parent: Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\AbstractBootstrapCommand
+        tags:
+            - { name: 'console.command', command: 'middleware:bootstrap:gssp' }

@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Repository\RepositoryInterface;
+use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -46,7 +46,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveR
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Value objects
  */
-class InstitutionConfigurationCommandHandler extends CommandHandler
+class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var RepositoryInterface

@@ -18,15 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
-class RaLocationRepository extends EntityRepository
+class RaLocationRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, RaLocation::class);
+    }
+
     /**
      * @param RaLocationQuery $query
      * @return null|RaLocation[]

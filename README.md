@@ -17,7 +17,7 @@ This component is part of "Step-up Authentication as-a Service". See [Stepup-Dep
 
 Clone the repository or download the archive to a directory. Install the dependencies by running `composer install` and fill out the database credentials et cetera.
 
-Make sure to run database migrations using `app/console middleware:migrations:migrate`. 
+Make sure to run database migrations using `bin/console middleware:migrations:migrate`. 
 
 ## Management API
 
@@ -31,7 +31,7 @@ Some of the configuratio of the components is static (i.e. stored in parameteres
 
 ### Adding new events
 
-Whenever adding a new event, be sure to update `app/config/events.yml`.
+Whenever adding a new event, be sure to update `bin/config/events.yml`.
 This is a list of events that is shown when replaying events.
 Also be sure to create or update the event serialization/deserialization tests,
 for example see [EventSerializationAndDeserializationTest for Configuration events][event-serialization-example]
@@ -73,4 +73,4 @@ gssp_allowed_sps:
 ## Release strategy
 Please read: https://github.com/OpenConext/Stepup-Deploy/wiki/Release-Management fro more information on the release strategy used in Stepup projects.
 
-[event-serialization-example]: ./src/Surfnet/Stepup/Tests/Configuration/Event/EventSerializationAndDeserializationTest.php
+[event-serialization-example]: src/Surfnet/Stepup/Tests/Configuration/Event/EventSerializationAndDeserializationTest.php

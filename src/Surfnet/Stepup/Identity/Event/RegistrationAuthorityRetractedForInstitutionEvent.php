@@ -86,7 +86,7 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         );
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return [
             'identity_id'          => (string) $this->identityId,

@@ -18,10 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InstitutionConfigurationControllerTest extends WebTestCase
 {
+    use FixturesTrait;
+
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Client
      */
@@ -32,13 +35,18 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      */
     private $password;
 
-    public function setUp()
+    public function setUp(): void
     {
         // Initialises schema.
         $this->loadFixtures([]);
 
         $this->client = static::createClient();
         $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
+    }
+
+    public function tearDown(): void
+    {
+        static::ensureKernelShutdown();
     }
 
     /**
@@ -54,7 +62,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [
                 'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'CONTENT_TYPE'  => 'application/json'
             ],
             json_encode([])
         );
@@ -75,7 +83,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [
                 'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'CONTENT_TYPE'  => 'application/json'
             ],
             json_encode([])
         );
@@ -98,7 +106,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT'   => 'application/json',
                 'CONTENT_TYPE'  => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password,
+                'PHP_AUTH_PW'   => $this->password
             ],
             json_encode(['non-existing.organisation.test' => []])
         );
@@ -122,7 +130,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [
                 'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json',
+                'CONTENT_TYPE' => 'application/json'
             ],
             json_encode([])
         );
@@ -145,7 +153,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT'  => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password,
+                'PHP_AUTH_PW'   => $this->password
             ],
             json_encode([])
         );
@@ -168,7 +176,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT'   => 'application/json',
                 'CONTENT_TYPE'  => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password,
+                'PHP_AUTH_PW'   => $this->password
             ],
             json_encode([])
         );

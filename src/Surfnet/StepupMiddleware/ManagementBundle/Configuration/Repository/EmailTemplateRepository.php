@@ -18,16 +18,22 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 
-final class EmailTemplateRepository extends EntityRepository
+final class EmailTemplateRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, EmailTemplate::class);
+    }
+
     /**
      * @param string $name
      * @param string $preferredLocale
      * @param string $fallbackLocale
-     * @return \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate|null
+     * @return EmailTemplate|null
      */
     public function findOneByName($name, $preferredLocale, $fallbackLocale)
     {

@@ -30,6 +30,7 @@ use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -258,6 +259,16 @@ class RaSecondFactorProjector extends Projector
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+
+        $secondFactor->documentNumber = $event->documentNumber;
+        $secondFactor->status = SecondFactorStatus::vetted();
+
+        $this->raSecondFactorRepository->save($secondFactor);
+    }
+
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
     {
         $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
 

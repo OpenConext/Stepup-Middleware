@@ -83,7 +83,7 @@ class VerifiedSecondFactor implements \JsonSerializable
     public $registrationCode;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="stepup_datetime")
      *
      * @var \DateTime
      */

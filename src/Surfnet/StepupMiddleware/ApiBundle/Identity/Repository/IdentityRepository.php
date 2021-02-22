@@ -18,10 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -29,27 +28,26 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthoriza
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
-class IdentityRepository extends EntityRepository
+class IdentityRepository extends ServiceEntityRepository
 {
     /**
      * @var InstitutionAuthorizationRepositoryFilter
      */
     private $authorizationRepositoryFilter;
 
-    public function __construct(
-        EntityManager $em,
-        Mapping\ClassMetadata $class,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-    ) {
-        parent::__construct($em, $class);
+    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
+    {
+        parent::__construct($registry, Identity::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
      * @param string $id
+     * @param null $lockMode
+     * @param null $lockVersion
      * @return Identity|null
      */
-    public function find($id)
+    public function find($id, $lockMode = null, $lockVersion = null)
     {
         /** @var Identity|null $identity */
         $identity = parent::find($id);
@@ -90,14 +88,14 @@ class IdentityRepository extends EntityRepository
 
         if ($query->email) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(i.email, :email) > 0')
-                ->setParameter('email', $query->email);
+                ->andWhere('i.email LIKE :email')
+                ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
         if ($query->commonName) {
             $queryBuilder
-                ->andWhere('MATCH_AGAINST(i.commonName, :commonName) > 0')
-                ->setParameter('commonName', $query->commonName);
+                ->andWhere('i.commonName LIKE :commonName')
+                ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
         }
 
         return $queryBuilder->getQuery();

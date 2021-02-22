@@ -1,4 +1,8 @@
 services:
+
+    # BC aliases
+    Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher: "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"
+
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:
@@ -41,12 +45,13 @@ services:
 
     surfnet_stepup.event_store.dbal:
         public: false
-        class: Broadway\EventStore\DBALEventStore
+        class: Broadway\EventStore\Dbal\DBALEventStore
         arguments:
             - "@doctrine.dbal.middleware_connection"
             - "@surfnet_stepup.event_store.simple_serializer"
             - "@surfnet_stepup.event_store.simple_serializer"
             - 'event_stream'
+            - false
 
     surfnet_stepup.event_store.simple_serializer:
         public: false

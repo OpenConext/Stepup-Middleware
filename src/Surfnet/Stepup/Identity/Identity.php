@@ -23,6 +23,7 @@ use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
@@ -55,6 +56,7 @@ use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
@@ -427,6 +429,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactorToVerify->verifyEmail();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function vetSecondFactor(
         IdentityApi $registrant,
         SecondFactorId $registrantsSecondFactorId,
@@ -435,7 +440,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $registrationCode,
         DocumentNumber $documentNumber,
         $identityVerified,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
+        $provePossessionSkipped
     ) {
         $this->assertNotForgotten();
 
@@ -470,12 +477,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Will not vet second factor when physical identity has not been verified.');
         }
 
+        if ($provePossessionSkipped && !$secondFactorProvePossessionHelper->canSkipProvePossession($registrantsSecondFactorType)) {
+            throw new DomainException(sprintf(
+                "The possession of registrants second factor with ID '%s' of type '%s' has to be physically proven",
+                $registrantsSecondFactorId,
+                $registrantsSecondFactorType->getSecondFactorType()
+            ));
+        }
+
         $registrant->complyWithVettingOfSecondFactor(
             $registrantsSecondFactorId,
             $registrantsSecondFactorType,
             $registrantsSecondFactorIdentifier,
             $registrationCode,
-            $documentNumber
+            $documentNumber,
+            $provePossessionSkipped
         );
     }
 
@@ -495,7 +511,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
-        $secondFactor->vet(DocumentNumber::unknown());
+        $secondFactor->vet(DocumentNumber::unknown(), false);
     }
 
     public function complyWithVettingOfSecondFactor(
@@ -503,7 +519,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
-        DocumentNumber $documentNumber
+        DocumentNumber $documentNumber,
+        $provePossessionSkipped
     ) {
         $this->assertNotForgotten();
 
@@ -526,7 +543,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Cannot vet second factor, the registration window is closed.');
         }
 
-        $secondFactorToVet->vet($documentNumber);
+        $secondFactorToVet->vet($documentNumber, $provePossessionSkipped);
     }
 
     public function revokeSecondFactor(SecondFactorId $secondFactorId)
@@ -936,6 +953,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
 
+    protected function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    {
+        $secondFactorId = (string)$event->secondFactorId;
+
+        /** @var VerifiedSecondFactor $verified */
+        $verified = $this->verifiedSecondFactors->get($secondFactorId);
+        $vetted = $verified->asVetted();
+
+        $this->verifiedSecondFactors->remove($secondFactorId);
+        $this->vettedSecondFactors->set($secondFactorId, $vetted);
+    }
+
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
     {
         $this->unverifiedSecondFactors->remove((string)$event->secondFactorId);
@@ -1102,12 +1131,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
 
-    public function getAggregateRootId()
+    public function getAggregateRootId(): string
     {
-        return $this->id;
+        return $this->id->getIdentityId();
     }
 
-    protected function getChildEntities()
+    protected function getChildEntities(): array
     {
         return array_merge(
             $this->unverifiedSecondFactors->getValues(),

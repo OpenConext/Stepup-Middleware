@@ -18,13 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
-use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Repository\RepositoryInterface;
+use Broadway\CommandHandling\SimpleCommandHandler;
+use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
-use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Identity;
@@ -69,7 +67,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Excep
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class IdentityCommandHandler extends CommandHandler
+class IdentityCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
@@ -103,6 +101,10 @@ class IdentityCommandHandler extends CommandHandler
      * @var InstitutionConfigurationRepository
      */
     private $institutionConfigurationRepository;
+    /**
+     * @var SecondFactorProvePossessionHelper
+     */
+    private $provePossessionHelper;
 
     /**
      * @param RepositoryInterface $eventSourcedRepository
@@ -110,6 +112,7 @@ class IdentityCommandHandler extends CommandHandler
      * @param ConfigurableSettings $configurableSettings
      * @param AllowedSecondFactorListService $allowedSecondFactorListService
      * @param SecondFactorTypeService $secondFactorTypeService
+     * @param SecondFactorProvePossessionHelper $provePossessionHelper
      * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
      * @param InstitutionConfigurationRepository $institutionConfigurationRepository
      */
@@ -119,6 +122,7 @@ class IdentityCommandHandler extends CommandHandler
         ConfigurableSettings $configurableSettings,
         AllowedSecondFactorListService $allowedSecondFactorListService,
         SecondFactorTypeService $secondFactorTypeService,
+        SecondFactorProvePossessionHelper $provePossessionHelper,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         InstitutionConfigurationRepository $institutionConfigurationRepository
     ) {
@@ -127,6 +131,7 @@ class IdentityCommandHandler extends CommandHandler
         $this->configurableSettings = $configurableSettings;
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
         $this->secondFactorTypeService = $secondFactorTypeService;
+        $this->provePossessionHelper = $provePossessionHelper;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->institutionConfigurationRepository = $institutionConfigurationRepository;
     }
@@ -136,18 +141,13 @@ class IdentityCommandHandler extends CommandHandler
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
-        $institution = new Institution($command->institution);
-
-        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
-
         $identity = Identity::create(
             new IdentityId($command->id),
             new Institution($command->institution),
             new NameId($command->nameId),
             new CommonName($command->commonName),
             new Email($command->email),
-            $preferredLocale,
-            $institutionConfiguration
+            $preferredLocale
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -177,16 +177,13 @@ class IdentityCommandHandler extends CommandHandler
             throw DuplicateIdentityException::forBootstrappingWithYubikeySecondFactor($nameId, $institution);
         }
 
-        $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
-
         $identity = Identity::create(
             new IdentityId($command->identityId),
             $institution,
             $nameId,
             new CommonName($command->commonName),
             new Email($command->email),
-            $preferredLocale,
-            $institutionConfiguration
+            $preferredLocale
         );
 
         $configurationInstitution = new ConfigurationInstitution(
@@ -342,7 +339,9 @@ class IdentityCommandHandler extends CommandHandler
             $command->registrationCode,
             new DocumentNumber($command->documentNumber),
             $command->identityVerified,
-            $this->secondFactorTypeService
+            $this->secondFactorTypeService,
+            $this->provePossessionHelper,
+            $command->provePossessionSkipped
         );
 
         $this->eventSourcedRepository->save($authority);
@@ -439,29 +438,5 @@ class IdentityCommandHandler extends CommandHandler
         }
 
         return $configuration->verifyEmailOption->isEnabled();
-    }
-
-    /**
-     * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
-     *
-     * @param Institution $institution
-     * @return InstitutionConfiguration
-     */
-    private function loadInstitutionConfigurationFor(Institution $institution)
-    {
-        $institution = new ConfigurationInstitution($institution->getInstitution());
-        try {
-            $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
-            $institutionConfiguration = $this->institutionConfigurationRepository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
-            );
-        } catch (AggregateNotFoundException $exception) {
-            $institutionConfigurationId = InstitutionConfigurationId::from($institution);
-            $institutionConfiguration = $this->institutionConfigurationRepository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
-            );
-        }
-
-        return $institutionConfiguration;
     }
 }

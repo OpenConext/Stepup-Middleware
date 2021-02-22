@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -29,6 +29,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
@@ -56,13 +58,23 @@ class AuthorizationContextServiceTest extends TestCase
      * @var AuthorizationRepository|m\Mock
      */
     private $authorizationRepository;
+    /**
+     * @var m\Mock&ConfiguredInstitutionRepository
+     */
+    private $institutionRepo;
 
-    public function setUp()
+    public function setUp(): void
     {
         $identityService = m::mock(IdentityService::class);
         $sraaService = m::mock(SraaService::class);
         $authorizationRepository = m::mock(AuthorizationRepository::class);
-        $service = new AuthorizationContextService($sraaService, $identityService, $authorizationRepository);
+        $this->institutionRepo = m::mock(ConfiguredInstitutionRepository::class);
+        $service = new AuthorizationContextService(
+            $sraaService,
+            $identityService,
+            $this->institutionRepo,
+            $authorizationRepository
+        );
 
         $this->identityService = $identityService;
         $this->sraaService = $sraaService;
@@ -168,6 +180,14 @@ class AuthorizationContextServiceTest extends TestCase
             ->withArgs([$role, $identityId])
             ->andReturn($institutions);
 
+        $configuredInstitutions = [];
+        foreach ($institutions as $institution) {
+            $ci = new ConfiguredInstitution();
+            $ci->institution = $institution->getInstitution();
+            $configuredInstitutions[] = $ci;
+        }
+        $this->institutionRepo->shouldReceive('findAll')->andReturn($configuredInstitutions);
+
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
             $role
@@ -177,14 +197,64 @@ class AuthorizationContextServiceTest extends TestCase
         $this->assertTrue($context->isActorSraa());
     }
 
+    public function test_it_can_retrieve_select_raa_institutions()
+    {
+        $actorInstitution = new Institution('institution-a');
+        $role = new InstitutionRole(InstitutionRole::ROLE_SELECT_RAA);
+
+        $arbitraryId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
+
+        $arbitraryNameId = new NameId('urn:collab:person:stepup.example.com:joe-a1');
+
+        $institutions = new InstitutionCollection([
+            new Institution('institution-a.example.com'),
+            new Institution('institution-d.example.com'),
+        ]);
+
+        $identity = Identity::create(
+            $arbitraryId,
+            $actorInstitution,
+            $arbitraryNameId,
+            new Email('foo@bar.com'),
+            new CommonName('Foobar'),
+            new Locale('en_GB')
+        );
+
+        $identityId = new IdentityId($arbitraryId);
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->with($arbitraryId)
+            ->andReturn($identity);
+
+        $this->sraaService
+            ->shouldReceive('findByNameId')
+            ->with($arbitraryNameId)
+            ->andReturn(null);
+
+        $this->authorizationRepository
+            ->shouldReceive('getInstitutionsForSelectRaaRole')
+            ->withArgs([$identityId])
+            ->andReturn($institutions);
+
+        $context = $this->service->buildInstitutionAuthorizationContext(
+            $identityId,
+            $role
+        );
+
+        $this->assertEquals($institutions, $context->getInstitutions());
+        $this->assertFalse($context->isActorSraa());
+    }
+
     /**
      * @test
      * @group domain
-     * @expectedException \Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The provided id is not associated with any known identity
      */
     public function it_rejects_unknown_actor()
     {
+        $this->expectExceptionMessage("The provided id is not associated with any known identity");
+        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException::class);
+
         $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
 
         $actorId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';

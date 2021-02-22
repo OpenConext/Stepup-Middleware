@@ -18,10 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\CommandHandler;
 
+use Broadway\CommandHandling\CommandHandler;
 use Broadway\CommandHandling\CommandHandlerInterface;
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
@@ -122,10 +123,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution()
     {
-        $this->setExpectedException(
-            'Surfnet\Stepup\Exception\DomainException',
-            'Cannot rebuild InstitutionConfiguration as it has not been destroyed'
-        );
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('Cannot rebuild InstitutionConfiguration as it has not been destroyed');
 
         $command                     = new CreateInstitutionConfigurationCommand();
         $command->institution        = 'An institution';
@@ -573,7 +572,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function the_same_ra_location_cannot_be_added_twice()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'already present');
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('already present');
 
         $command                     = new AddRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -676,7 +676,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_changed_if_it_is_not_present_within_an_institution_configuration()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
+        $this->expectException('Surfnet\Stepup\Exception\DomainException');
+        $this->expectExceptionMessage('not present');
 
         $command                     = new ChangeRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -716,7 +717,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_changed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
+        $this->expectException(\Broadway\Repository\AggregateNotFoundException::class);
+        $this->expectExceptionMessage('not found');
 
         $command                     = new ChangeRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -869,7 +871,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
     {
-        $this->setExpectedException('Broadway\Repository\AggregateNotFoundException', 'not found');
+        $this->expectException(\Broadway\Repository\AggregateNotFoundException::class);
+        $this->expectExceptionMessage('not found');
 
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -907,7 +910,8 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      */
     public function an_ra_location_cannot_be_removed_if_it_is_not_present_within_an_institution_configuration()
     {
-        $this->setExpectedException('Surfnet\Stepup\Exception\DomainException', 'not present');
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectExceptionMessage('not present');
 
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -1039,9 +1043,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @param EventStoreInterface $eventStore
      * @param EventBusInterface $eventBus
      *
-     * @return CommandHandlerInterface
+     * @return CommandHandler
      */
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 

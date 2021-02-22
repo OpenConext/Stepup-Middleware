@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\EventSourcing;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -36,10 +36,8 @@ class EventCollectionTest extends TestCase
      */
     public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings($emptyOrNonString)
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Invalid argument type: "non-empty string" expected'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid argument type: "non-empty string" expected');
 
         new EventCollection([$emptyOrNonString]);
     }
@@ -50,7 +48,8 @@ class EventCollectionTest extends TestCase
      */
     public function an_event_collection_must_contain_event_names_that_are_existing_class_names()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'does not exist');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not exist');
 
         $nonExistantClass = 'This\Class\Does\Not\Exist';
 
@@ -125,10 +124,8 @@ class EventCollectionTest extends TestCase
      */
     public function a_subset_containing_events_not_present_in_the_event_collection_cannot_be_selected()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Subset of event names contains event names not present in collection'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Subset of event names contains event names not present in collection');
 
         $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class]);
         $eventCollection->select([SecondFactorVettedEvent::class]);

@@ -92,7 +92,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         );
     }
 
-    final public function serialize()
+    final public function serialize(): array
     {
         return [
             'identity_id'              => (string) $this->identityId,

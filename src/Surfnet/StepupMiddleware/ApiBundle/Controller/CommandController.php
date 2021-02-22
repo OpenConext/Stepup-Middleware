@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -76,7 +77,7 @@ class CommandController extends Controller
         TransactionAwarePipeline $pipeline,
         WhitelistService $whitelistService,
         MetadataEnricher $enricher,
-        AuthorizationChecker $authorizationChecker,
+        AuthorizationCheckerInterface $authorizationChecker,
         LoggerInterface $logger,
         CommandAuthorizationService $commandAuthorizationService
     ) {

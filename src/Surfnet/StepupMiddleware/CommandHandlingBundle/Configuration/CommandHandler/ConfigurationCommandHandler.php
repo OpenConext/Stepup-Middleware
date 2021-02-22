@@ -18,13 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler;
 
-use Broadway\CommandHandling\CommandHandler;
+use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 
-class ConfigurationCommandHandler extends CommandHandler
+class ConfigurationCommandHandler extends SimpleCommandHandler
 {
     /**
      * @var \Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository

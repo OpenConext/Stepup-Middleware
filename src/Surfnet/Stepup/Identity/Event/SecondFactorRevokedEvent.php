@@ -84,7 +84,7 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
         );
     }
 
-    final public function serialize()
+    final public function serialize(): array
     {
         return [
             'identity_id'              => (string) $this->identityId,

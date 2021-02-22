@@ -59,7 +59,6 @@ class EventStreamReplayer
         'sraa',
         'audit_log',
         'ra_listing',
-        'ra_candidate',
         'second_factor_revocation',
         'whitelist_entry',
     ];

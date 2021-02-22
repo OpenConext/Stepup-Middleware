@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery as m;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
@@ -38,7 +38,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
      */
     private $repository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->repository = m::mock(InstitutionAuthorizationRepository::class);
 

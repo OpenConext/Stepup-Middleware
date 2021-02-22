@@ -1,0 +1,12 @@
+monolog:
+    handlers:
+        # Handlers are merged in from config.yml and config_dev.yml. They cannot be disabled or removed. The practical
+        # solution is to assign them the `null` handler, which discards the records.
+        prod-signaler:
+            type: "null"
+        main_syslog:
+            type: "null"
+        main_logfile:
+            type: "null"
+        console:
+            type: "null"

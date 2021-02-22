@@ -1,16 +1,41 @@
+.idea
 /web/bundles/
 /web/app_dev.php
 /web/app_test.php
 /web/app_dev.php.dist
-/app/bootstrap.php.cache
-/app/cache/*
-/app/config/parameters.yml
-/app/logs/*
-!app/cache/.gitkeep
-!app/logs/.gitkeep
+/config/legacy/parameters.yaml
+/var/cache/*
+/var/logs/*
+!var/cache/.gitkeep
+!var/log/.gitkeep
 /build/
 /vendor/
-/composer.phar
 /cache.properties
-/app/SymfonyRequirements.php
-/app/check.php
+config/services.yml
+
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###

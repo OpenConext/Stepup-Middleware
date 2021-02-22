@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Api;
 use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
@@ -166,7 +166,11 @@ interface Identity extends AggregateRoot
      * @param DocumentNumber $documentNumber
      * @param bool $identityVerified
      * @param SecondFactorTypeService $secondFactorTypeService
+     * @param SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper
+     * @param bool $provePossessionSkipped
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function vetSecondFactor(
         Identity $registrant,
@@ -176,7 +180,9 @@ interface Identity extends AggregateRoot
         $registrationCode,
         DocumentNumber $documentNumber,
         $identityVerified,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
+        SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
+        $provePossessionSkipped
     );
 
     /**
@@ -187,6 +193,7 @@ interface Identity extends AggregateRoot
      * @param SecondFactorIdentifier $secondFactorIdentifier
      * @param string                 $registrationCode
      * @param DocumentNumber         $documentNumber
+     * @param bool                   $provePossessionSkipped
      * @throws DomainException
      * @return void
      */
@@ -195,7 +202,8 @@ interface Identity extends AggregateRoot
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
-        DocumentNumber $documentNumber
+        DocumentNumber $documentNumber,
+        $provePossessionSkipped
     );
 
     /**
@@ -300,7 +308,7 @@ interface Identity extends AggregateRoot
      * @return IdentityId We're deviating from Broadway's official API, as they accept toString-able VOs as IDs, and we
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
-    public function getAggregateRootId();
+    public function getAggregateRootId(): string;
 
     /**
      * @param int $numberOfTokens

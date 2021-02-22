@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Identity\Collection;
 
 use ArrayIterator;
-use Broadway\Serializer\SerializableInterface;
+use Broadway\Serializer\Serializable as SerializableInterface;
 use IteratorAggregate;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\RuntimeException;
@@ -118,7 +118,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
         return new self($institutions);
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return array_map(function (Institution $institution) {
             return (string) $institution;

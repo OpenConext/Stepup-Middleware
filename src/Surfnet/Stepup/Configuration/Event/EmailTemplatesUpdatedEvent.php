@@ -41,7 +41,7 @@ class EmailTemplatesUpdatedEvent extends ConfigurationEvent
         return new self($data['id'], $data['email_templates']);
     }
 
-    public function serialize()
+    public function serialize(): array
     {
         return ['id' => $this->id, 'email_templates' => $this->emailTemplates];
     }

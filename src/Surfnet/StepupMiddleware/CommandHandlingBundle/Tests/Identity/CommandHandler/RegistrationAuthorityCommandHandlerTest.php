@@ -18,10 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandHandler;
 
+use Broadway\CommandHandling\CommandHandler;
 use Broadway\CommandHandling\CommandHandlerInterface;
-use Broadway\EventHandling\EventBusInterface;
+use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
-use Broadway\EventStore\EventStoreInterface;
+use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
@@ -72,9 +73,9 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @param EventStoreInterface $eventStore
      * @param EventBusInterface   $eventBus
      *
-     * @return CommandHandlerInterface
+     * @return CommandHandler
      */
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus)
+    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
@@ -99,11 +100,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity may only be accredited by configured institutions
      */
     public function an_identity_cannot_be_accredited_for_another_institution_than_configured()
     {
+        $this->expectExceptionMessage("An Identity may only be accredited by configured institutions");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -153,11 +155,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity must have at least one vetted second factor before it can be accredited
      */
     public function an_identity_cannot_be_accredited_when_it_does_not_have_a_vetted_second_factor()
     {
+        $this->expectExceptionMessage("An Identity must have at least one vetted second factor before it can be accredited");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -196,11 +198,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited for institution
      */
     public function an_identity_cannot_be_accredited_when_it_already_has_been_accredited()
     {
+        $this->expectExceptionMessage("Cannot accredit Identity as it has already been accredited for institution");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -260,10 +262,10 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException
      */
     public function an_identity_cannot_be_accredited_with_an_invalid_role()
     {
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException::class);
 
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
@@ -515,11 +517,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot amend registration authority information: identity is not a registration authority
      */
     public function an_identitys_registration_authority_information_cannot_be_amended()
     {
+        $this->expectExceptionMessage("Cannot amend registration authority information: identity is not a registration authority");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                     = new AmendRegistrationAuthorityInformationCommand();
         $command->identityId         = static::uuid();
         $command->location           = 'New York';
@@ -565,11 +568,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage An Identity must have at least one vetted second factor before it can be accredited
      */
     public function an_identity_without_vetted_second_factor_may_not_be_accredited_as_ra()
     {
+        $this->expectExceptionMessage("An Identity must have at least one vetted second factor before it can be accredited");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -673,11 +677,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot accredit Identity as it has already been accredited for institution
      */
     public function an_identity_cannot_be_accredited_twice()
     {
+        $this->expectExceptionMessage("Cannot accredit Identity as it has already been accredited for institution");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -736,10 +741,11 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException
      */
     public function an_identity_cannot_be_accredited_as_sraa()
     {
+        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException::class);
+
         $command                     = new AccreditIdentityCommand();
         $command->identityId         = static::uuid();
         $command->institution        = 'Babelfish Inc.';
@@ -919,11 +925,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority
      */
     public function an_unaccredited_identity_cannot_be_appointed_a_registration_authority_role()
     {
+        $this->expectExceptionMessage("Cannot appoint as different RegistrationAuthorityRole: identity is not a registration authority");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                     = new AppointRoleCommand();
         $command->identityId         = static::uuid();
         $command->role               = 'raa';
@@ -970,11 +977,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group                    command-handler
      * @group                    ra-command-handler
-     * @expectedException        \Surfnet\Stepup\Exception\DomainException
-     * @expectedExceptionMessage Cannot Retract Registration Authority as the Identity is not a registration authority
      */
     public function an_unaccredited_identity_cannot_have_its_registration_authority_retracted()
     {
+        $this->expectExceptionMessage("Cannot Retract Registration Authority as the Identity is not a registration authority");
+        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+
         $command                = new RetractRegistrationAuthorityCommand();
         $command->identityId    = static::uuid();
         $command->raInstitution = 'RA institution';

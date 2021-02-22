@@ -18,10 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -31,19 +30,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
-class RaSecondFactorRepository extends EntityRepository
+class RaSecondFactorRepository extends ServiceEntityRepository
 {
     /**
      * @var InstitutionAuthorizationRepositoryFilter
      */
     private $authorizationRepositoryFilter;
 
-    public function __construct(
-        EntityManager $em,
-        Mapping\ClassMetadata $class,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
-    ) {
-        parent::__construct($em, $class);
+    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
+    {
+        parent::__construct($registry, RaSecondFactor::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
@@ -52,7 +48,7 @@ class RaSecondFactorRepository extends EntityRepository
      * @param string $id
      * @return RaSecondFactor|null
      */
-    public function find($id)
+    public function find($id, $lockMode = null, $lockVersion = null)
     {
         /** @var RaSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -94,6 +90,7 @@ class RaSecondFactorRepository extends EntityRepository
             ->createQueryBuilder('sf');
 
         // Modify query to filter on authorization context
+        // We want to list all second factors of the institution we are RA for.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,
@@ -174,6 +171,7 @@ class RaSecondFactorRepository extends EntityRepository
             ->groupBy('sf.institution');
 
         // Modify query to filter on authorization context
+        // We want to list all second factors of the institution we are RA for.
         $this->authorizationRepositoryFilter->filter(
             $queryBuilder,
             $query->authorizationContext,

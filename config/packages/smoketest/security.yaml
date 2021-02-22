@@ -1,0 +1,12 @@
+# In test, it makes sense we use a hard-coded password for the api users. This, to aid the behat tests in Stepup-Deploy.
+security:
+  providers:
+    in_memory:
+      memory:
+        users:
+          management:
+            password: "secret"
+          ss:
+            password: "secret"
+          ra:
+            password: "secret"

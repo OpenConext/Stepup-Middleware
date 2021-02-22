@@ -1,5 +1,71 @@
 # Changelog
 
+# 4.1.4
+**Feature**
+* Make token name in emails configurable
+
+# 4.1.3
+**Bugfix**
+* Allow authorization filtering on Select RAA #315
+
+# 4.1.2
+**Bugfix**
+* Component_info was not added in archive
+
+# 4.1.1
+**Chores**
+ * Add the component info file #312
+ * Implement depencency injection on console commands #313 
+ 
+# 4.1.0
+**Feature**
+ * Make prove possession step optional #309
+ 
+# 4.0.0
+From this version PHP 7.2 is supported and support for PHP 5.6 is dropped.
+
+Be aware that the new Symfony directory structure is now used. So if you are overwriting for example config files it is recommended 
+to verify the location on forehand. Also the file extensions of Yaml files are changed and some Symfony specific special characters    
+need to be escaped. 
+
+See:  https://github.com/symfony/symfony/blob/4.4/UPGRADE-4.0.md
+
+**Improvements** 
+* Upgrade to Symfony4.4 LTS with PHP7.2 support #307
+
+# 3.1.8
+**Feature**
+* Added identity & token bootstrap console commands (for test) #302 #303 #304 #305 
+
+# 3.1.7
+Drop RaCandidate projection in favour of dedicated query.
+This is done in order to be able to push large institution configuration changes because the projection doesn't have to get updated for all possible candidates. Before this change this resulted in an OOM exception.
+
+# 3.1.6
+**Bugfix**
+ * Disable ra-candidate fulltext search #300
+ * Show the correct RA candidates for the virtual institution use case #299
+
+# 3.1.5
+**Bugfix**
+ * Fix invalid RA candidate authorization #298
+
+# 3.1.4
+**Bugfix**
+ * Add missing institution to the filter options #297
+
+# 3.1.3
+**Bugfix**
+ * Allow language switching from SelfService #296
+ 
+# 3.1.2
+**Bugfix**
+ * Allow RA commands in RA environment #295
+ 
+## 3.1.1
+**Bugfix**
+ * Add some missing institution fields to migration #293
+
 ## 3.1.0
 A release with bugfixes after initial FGA tests
  * Fix sho mixed casing once and for all #291

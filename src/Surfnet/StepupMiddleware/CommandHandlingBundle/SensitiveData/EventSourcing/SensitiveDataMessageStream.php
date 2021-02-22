@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing;
 
 use ArrayIterator;
-use Broadway\Domain\DomainEventStreamInterface;
+use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
@@ -40,7 +40,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
         $this->messages = $messages;
     }
 
-    public function applyToDomainEventStream(DomainEventStreamInterface $domainEventStream)
+    public function applyToDomainEventStream(DomainEventStream $domainEventStream)
     {
         $sensitiveDataMap = $this->createSensitiveDataMap($this->messages);
 

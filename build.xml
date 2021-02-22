@@ -51,7 +51,7 @@
             <arg value="text"/>
             <arg value="phpmd.xml"/>
             <arg value="--exclude"/>
-            <arg value="*/Tests/*"/>
+            <arg value="*/Tests/*,*Migrations/*"/>
         </exec>
     </target>
 
@@ -77,7 +77,7 @@
 
     <target name="phpunit-ci" description="Run unit tests with PHPUnit">
         <exec executable="vendor/bin/phpunit" failonerror="true">
-            <arg line="--configuration=${basedir}/app/phpunit.xml.dist"/>
+            <arg line="--configuration=phpunit.xml.dist"/>
             <arg line="--coverage-text"/>
         </exec>
     </target>

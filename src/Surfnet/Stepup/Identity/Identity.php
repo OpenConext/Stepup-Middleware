@@ -511,6 +511,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             );
         }
 
+        if (!$secondFactor->canBeVettedNow()) {
+            throw new DomainException('Cannot vet second factor, the registration window is closed.');
+        }
+
         $secondFactor->vet(DocumentNumber::unknown(), false);
     }
 

@@ -82,9 +82,15 @@
         </exec>
     </target>
 
-    <target name="security-tests">
-        <exec executable="vendor/bin/security-checker" failonerror="true">
-            <arg line="security:check" />
+    <target name="setup-security-checker">
+        <exec executable="composer" failonerror="true">
+            <arg line="download-security-checker"/>
+        </exec>
+    </target>
+
+    <target name="security-tests" depends="setup-security-checker">
+        <exec executable="composer" failonerror="true">
+            <arg line="security-tests"/>
         </exec>
     </target>
 </project>

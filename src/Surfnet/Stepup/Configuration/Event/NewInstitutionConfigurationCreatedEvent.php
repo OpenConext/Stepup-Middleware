@@ -22,6 +22,7 @@ use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -57,13 +58,19 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
      */
     public $numberOfTokensPerIdentityOption;
 
+    /**
+     * @var SelfVetOption
+     */
+    public $selfVetOption;
+
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        SelfVetOption $selfVetOption
     ) {
         $this->institutionConfigurationId      = $institutionConfigurationId;
         $this->institution                     = $institution;
@@ -71,6 +78,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->verifyEmailOption               = $verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
+        $this->selfVetOption = $selfVetOption;
     }
 
     public static function deserialize(array $data)
@@ -81,14 +89,18 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         if (!isset($data['number_of_tokens_per_identity_option'])) {
             $data['number_of_tokens_per_identity_option'] = NumberOfTokensPerIdentityOption::DISABLED;
         }
-
+        // If self vet option is not yet present, default to false
+        if (!isset($data['self_vet_option'])) {
+            $data['self_vet_option'] = false;
+        }
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
             new UseRaLocationsOption($data['use_ra_locations_option']),
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
             new VerifyEmailOption($data['verify_email_option']),
-            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option'])
+            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
+            new SelfVetOption($data['self_vet_option'])
         );
     }
 
@@ -101,6 +113,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
+            'self_vet_option' => $this->selfVetOption->isEnabled(),
         ];
     }
 }

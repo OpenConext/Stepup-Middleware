@@ -31,6 +31,7 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
@@ -93,6 +94,9 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         );
         $institutionConfiguration->configureVerifyEmailOption(
             new VerifyEmailOption($command->verifyEmailOption)
+        );
+        $institutionConfiguration->configureSelfVetOption(
+            new SelfVetOption((bool)$command->selfVetOption)
         );
         $institutionConfiguration->configureNumberOfTokensPerIdentityOption(
             new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption)

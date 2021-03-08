@@ -24,6 +24,7 @@ return [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
             'verify_email' => false,
+            'self_vet' => false,
             'number_of_tokens_per_identity' => 2,
             'allowed_second_factors' => [],
             'extra_option' => 'cannot be handled',

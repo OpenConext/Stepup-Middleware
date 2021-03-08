@@ -128,6 +128,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'use_ra_locations',
             'show_raa_contact_information',
             'verify_email',
+            'self_vet',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];
@@ -161,6 +162,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         Assertion::boolean(
             $options['verify_email'],
             sprintf('Option "verify_email" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::boolean(
+            $options['self_vet'],
+            sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
 

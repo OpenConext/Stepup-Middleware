@@ -72,6 +72,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPos
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -1803,6 +1804,131 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_second_fdactor_can_be_self_vetted()
+    {
+        $command = new SelfVetSecondFactorCommand();
+        $command->secondFactorId = '+31 (0) 612345678';
+        $command->registrationCode = 'REGCODE';
+        $command->identityId = $this->uuid();
+        $command->authoringSecondFactorIdentifier = "4fa592af-dded-4fae-9bc6-7f83f3636da4";
+        $command->secondFactorType = 'sms';
+
+        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
+        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('Institution');
+        $registrantSecFacId = new SecondFactorId($command->authoringSecondFactorIdentifier);
+        $registrantSecPubId = new YubikeyPublicId('00028278');
+        $registrantNameId = new NameId('name id');
+        $registrantEmail = new Email('jack@zweiblumen.tld');
+        $registrantCommonName = new CommonName('Jack Zweiblumen');
+
+        $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                // First the existing token is vetted
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecPubId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    DateTime::now(),
+                    $command->registrationCode,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    new DocumentNumber('123456'),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                // The next token is vetted using the other token
+                new PhonePossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    $authorityPhoneNo,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                // When self vetting, proof of possession is skipped, no RA verification is performed.
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    DocumentNumber::unknown(),
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
             ]);
     }
 }

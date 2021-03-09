@@ -411,11 +411,13 @@ class CommandAuthorizationServiceTest extends TestCase
             21 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',
             22 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
             23 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
-            24 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
-            25 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
-            26 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',
-            27 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VetSecondFactorCommand',
-            28 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Command\\FixedUuidStubCommand',
+            24 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SelfVetSecondFactorCommand',
+            25 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
+            26 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
+            27 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',
+            28 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VetSecondFactorCommand',
+            29 => 'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Command\\FixedUuidStubCommand',
+
         );
 
         $available = $this->availableCommands();

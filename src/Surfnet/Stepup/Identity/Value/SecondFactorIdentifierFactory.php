@@ -22,12 +22,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorIdentifierFactory
 {
-    /**
-     * @param SecondFactorType $type
-     * @param string           $secondFactorIdentifier
-     * @return SecondFactorIdentifier
-     */
-    public static function forType(SecondFactorType $type, $secondFactorIdentifier)
+    public static function forType(SecondFactorType $type, string $secondFactorIdentifier): SecondFactorIdentifier
     {
         if ($type->isSms()) {
             return new PhoneNumber($secondFactorIdentifier);
@@ -44,11 +39,7 @@ final class SecondFactorIdentifierFactory
         return new GssfId($secondFactorIdentifier);
     }
 
-    /**
-     * @param SecondFactorType $type
-     * @return SecondFactorIdentifier
-     */
-    public static function unknownForType(SecondFactorType $type)
+    public static function unknownForType(SecondFactorType $type): SecondFactorIdentifier
     {
         if ($type->isSms()) {
             return PhoneNumber::unknown();

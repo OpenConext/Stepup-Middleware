@@ -56,6 +56,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevi
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -345,6 +346,23 @@ class IdentityCommandHandler extends SimpleCommandHandler
 
         $this->eventSourcedRepository->save($authority);
         $this->eventSourcedRepository->save($registrant);
+    }
+
+    public function handleSelfVetSecondFactorCommand(SelfVetSecondFactorCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
+            new SecondFactorType($command->secondFactorType),
+            $command->secondFactorId
+        );
+        $identity->selfVetSecondFactor(
+            new SecondFactorId($command->authoringSecondFactorIdentifier),
+            $command->registrationCode,
+            $secondFactorIdentifier,
+            $this->secondFactorTypeService
+        );
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

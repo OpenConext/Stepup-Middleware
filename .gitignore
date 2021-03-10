@@ -9,7 +9,6 @@
 !var/cache/.gitkeep
 !var/log/.gitkeep
 /build/
-/vendor/
 /cache.properties
 config/services.yml
 /local-php-security-checker

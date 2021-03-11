@@ -34,7 +34,6 @@
         "openconext/monitor-bundle": "^2.0",
         "pagerfanta/pagerfanta": "~1.0",
         "ramsey/uuid": "^2.9",
-        "sensiolabs/security-checker": "^6.0",
         "surfnet/stepup-bundle": "^4.0",
         "symfony/asset": "4.4.*",
         "symfony/expression-language": "4.4.*",
@@ -86,7 +85,9 @@
         ],
         "frontend-install": [
             "echo 'Skipping task: no frontend assets available'"
-        ]
+        ],
+        "download-security-checker": "if [ ! -f local-php-security-checker ]; then curl -s https://api.github.com/repos/fabpot/local-php-security-checker/releases/latest | grep -E \"browser_download_url(.+)linux_386\" | cut -d : -f 2,3 | tr -d \\\" | xargs -I{} curl -L --output local-php-security-checker {} && chmod +x local-php-security-checker; fi",
+        "security-tests": "./local-php-security-checker"
     },
     "archive": {
         "exclude": [

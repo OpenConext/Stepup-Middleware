@@ -12,6 +12,11 @@ if ($_SERVER['APP_DEBUG']) {
     Debug::enable();
 }
 
+if (isset($_COOKIE['testcookie']) && strpos($_SERVER['HTTP_USER_AGENT'], 'GuzzleHttp') !== false) {
+    $_SERVER['APP_ENV'] = 'smoketest';
+    $_SERVER['APP_DEBUG'] = true;
+}
+
 if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
     Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST);
 }

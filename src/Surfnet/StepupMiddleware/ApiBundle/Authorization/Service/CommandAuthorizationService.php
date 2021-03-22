@@ -29,6 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
@@ -99,6 +100,10 @@ class CommandAuthorizationService
 
             // If the actor is SRAA all actions should be allowed
             if ($this->isSraa($actorId)) {
+                return true;
+            }
+
+            if ($command instanceof SelfVetSecondFactorCommand) {
                 return true;
             }
 

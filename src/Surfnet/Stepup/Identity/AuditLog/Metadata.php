@@ -18,6 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\AuditLog;
 
+use Surfnet\Stepup\Identity\Value\VettingType;
+
 final class Metadata
 {
     /**
@@ -49,4 +51,7 @@ final class Metadata
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier|null
      */
     public $secondFactorIdentifier;
+
+    /** @var VettingType */
+    public $vettingType;
 }

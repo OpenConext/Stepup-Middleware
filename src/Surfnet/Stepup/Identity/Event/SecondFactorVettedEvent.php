@@ -26,9 +26,13 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -59,11 +63,6 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\DocumentNumber
-     */
-    public $documentNumber;
-
-    /**
      * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
     public $commonName;
@@ -78,18 +77,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
      */
     public $preferredLocale;
 
+    /** @var VettingType */
+    public $vettingType;
+
     /**
-     * @param IdentityId        $identityId
-     * @param NameId            $nameId
-     * @param Institution       $institution
-     * @param SecondFactorId    $secondFactorId
-     * @param SecondFactorType  $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DocumentNumber    $documentNumber
-     * @param CommonName        $commonName
-     * @param Email             $email
-     * @param Locale            $preferredLocale
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -99,10 +90,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
-        DocumentNumber $documentNumber,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
+        VettingType $vettingType
     ) {
         parent::__construct($identityId, $institution);
 
@@ -110,10 +101,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorType       = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->documentNumber         = $documentNumber;
         $this->commonName             = $commonName;
         $this->email                  = $email;
         $this->preferredLocale        = $preferredLocale;
+        $this->vettingType = $vettingType;
     }
 
     public function getAuditLogMetadata()
@@ -124,6 +115,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         $metadata->secondFactorId         = $this->secondFactorId;
         $metadata->secondFactorType       = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
+        $metadata->vettingType = $this->vettingType;
 
         return $metadata;
     }
@@ -131,7 +123,24 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public static function deserialize(array $data)
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
-
+        $vettingType = new UnknownVettingType();
+        if (isset($data['vetting_type'])) {
+            switch ($data['vetting_type']['type']) {
+                case VettingType::TYPE_SELF_VET:
+                    $vettingType = SelfVetVettingType::deserialize($data['vetting_type']);
+                    break;
+                case VettingType::TYPE_ON_PREMISE:
+                    $vettingType = OnPremiseVettingType::deserialize($data['vetting_type']);
+                    break;
+            }
+        }
+        // BC fix for older events without a vetting type, they default back to ON_PREMISE.
+        if ($vettingType instanceof UnknownVettingType &&
+            isset($data['document_number']) &&
+            $data['document_number'] !== null
+        ) {
+            $vettingType = new OnPremiseVettingType(new DocumentNumber($data['document_number']));
+        }
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
@@ -139,10 +148,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
             new SecondFactorId($data['second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
-            DocumentNumber::unknown(),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
+            $vettingType
         );
     }
 
@@ -155,6 +164,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
             'second_factor_id'         => (string) $this->secondFactorId,
             'second_factor_type'       => (string) $this->secondFactorType,
             'preferred_locale'         => (string) $this->preferredLocale,
+            'vetting_type' => $this->vettingType->jsonSerialize(),
         ];
     }
 
@@ -164,7 +174,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
             ->withCommonName($this->commonName)
             ->withEmail($this->email)
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType)
-            ->withDocumentNumber($this->documentNumber);
+            ->withVettingType($this->vettingType);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
@@ -172,6 +182,6 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         $this->email          = $sensitiveData->getEmail();
         $this->commonName     = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
-        $this->documentNumber = $sensitiveData->getDocumentNumber();
+        $this->vettingType = $sensitiveData->getVettingType();
     }
 }

@@ -25,12 +25,19 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use function property_exists;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AuditLogProjector implements EventListener
 {
     /**
@@ -69,6 +76,8 @@ class AuditLogProjector implements EventListener
     /**
      * @param AuditableEvent $event
      * @param DomainMessage  $domainMessage
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
     {
@@ -90,6 +99,9 @@ class AuditLogProjector implements EventListener
 
             $entry->actorId         = $metadata['actorId'];
             $entry->actorCommonName = $actor->commonName;
+        }
+        if (property_exists($auditLogMetadata, 'vettingType') && !is_null($auditLogMetadata->vettingType)) {
+            $entry->actorCommonName .= $auditLogMetadata->vettingType->auditLog();
         }
 
         if (isset($metadata['actorInstitution'])) {

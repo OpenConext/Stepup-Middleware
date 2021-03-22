@@ -20,9 +20,10 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SelfVetSecondFactorCommand extends AbstractCommand implements RaExecutable
+class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
      * The ID of an existing identity.
@@ -66,11 +67,8 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements RaExecutable
      */
     public $authoringSecondFactorIdentifier;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getIdentityId()
     {
-        return null;
+        $this->identityId;
     }
 }

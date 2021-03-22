@@ -1914,7 +1914,7 @@
                 "static"
             ],
             "abandoned": "roave/better-reflection",
-            "time": "2020-10-27T21:46:55+00:00"
+            "time": "2020-03-27T11:06:43+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3331,16 +3331,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.1.4",
+            "version": "4.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "4d9e832e17cbdf6c334064021eec86a2cfe32cc7"
+                "reference": "9e1705d82b912f17fd497cfd8139a9f904d76ff8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/4d9e832e17cbdf6c334064021eec86a2cfe32cc7",
-                "reference": "4d9e832e17cbdf6c334064021eec86a2cfe32cc7",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/9e1705d82b912f17fd497cfd8139a9f904d76ff8",
+                "reference": "9e1705d82b912f17fd497cfd8139a9f904d76ff8",
                 "shasum": ""
             },
             "require": {
@@ -3385,7 +3385,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2020-07-03T09:45:43+00:00"
+            "time": "2021-03-18T12:55:54+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",

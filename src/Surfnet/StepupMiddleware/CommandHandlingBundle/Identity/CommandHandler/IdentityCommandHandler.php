@@ -22,6 +22,7 @@ use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -40,6 +41,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
@@ -100,22 +102,12 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @var InstitutionConfigurationRepository
      */
-    private $institutionConfigurationRepository;
+    private $loaResolutionService;
     /**
      * @var SecondFactorProvePossessionHelper
      */
     private $provePossessionHelper;
 
-    /**
-     * @param RepositoryInterface $eventSourcedRepository
-     * @param IdentityRepository $identityProjectionRepository
-     * @param ConfigurableSettings $configurableSettings
-     * @param AllowedSecondFactorListService $allowedSecondFactorListService
-     * @param SecondFactorTypeService $secondFactorTypeService
-     * @param SecondFactorProvePossessionHelper $provePossessionHelper
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param InstitutionConfigurationRepository $institutionConfigurationRepository
-     */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
         IdentityRepository $identityProjectionRepository,
@@ -124,7 +116,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         SecondFactorTypeService $secondFactorTypeService,
         SecondFactorProvePossessionHelper $provePossessionHelper,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        InstitutionConfigurationRepository $institutionConfigurationRepository
+        LoaResolutionService $loaResolutionService
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -133,7 +125,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->secondFactorTypeService = $secondFactorTypeService;
         $this->provePossessionHelper = $provePossessionHelper;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->institutionConfigurationRepository = $institutionConfigurationRepository;
+        $this->loaResolutionService = $loaResolutionService;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -356,8 +348,18 @@ class IdentityCommandHandler extends SimpleCommandHandler
             new SecondFactorType($command->secondFactorType),
             $command->secondFactorId
         );
+        $loa = $this->loaResolutionService->getLoa($command->authoringSecondFactorIdentifier);
+        if ($loa === null) {
+            throw new DomainException(
+                sprintf(
+                    'Authorizing second factor with LoA %s can not be resolved',
+                    $command->authoringSecondFactorIdentifier
+                )
+            );
+        }
+
         $identity->selfVetSecondFactor(
-            new SecondFactorId($command->authoringSecondFactorIdentifier),
+            $loa,
             $command->registrationCode,
             $secondFactorIdentifier,
             $this->secondFactorTypeService

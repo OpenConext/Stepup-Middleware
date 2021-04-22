@@ -8,13 +8,7 @@ require dirname(__DIR__).'/config/bootstrap.php';
 
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
-
     Debug::enable();
-}
-
-if (isset($_COOKIE['testcookie']) && strpos($_SERVER['HTTP_USER_AGENT'], 'GuzzleHttp') !== false) {
-    $_SERVER['APP_ENV'] = 'smoketest';
-    $_SERVER['APP_DEBUG'] = true;
 }
 
 if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {

@@ -74,4 +74,9 @@ class SelfVetVettingType implements VettingType
     {
         return $this->type();
     }
+
+    public function getDocumentNumber(): ?DocumentNumber
+    {
+        return null;
+    }
 }

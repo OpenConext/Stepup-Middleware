@@ -41,7 +41,6 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -263,12 +262,7 @@ class RaSecondFactorProjector extends Projector
     {
         $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
 
-        $documentNumber = null;
-        if ($event->vettingType instanceof OnPremiseVettingType) {
-            $documentNumber = $event->vettingType->documentNumber();
-        }
-
-        $secondFactor->documentNumber = $documentNumber;
+        $secondFactor->documentNumber = $event->vettingType->getDocumentNumber();
         $secondFactor->status = SecondFactorStatus::vetted();
 
         $this->raSecondFactorRepository->save($secondFactor);
@@ -280,7 +274,7 @@ class RaSecondFactorProjector extends Projector
 
         $documentNumber = null;
         if ($event->vettingType instanceof OnPremiseVettingType) {
-            $documentNumber = $event->vettingType->documentNumber();
+            $documentNumber = $event->vettingType->getDocumentNumber();
         }
         $secondFactor->documentNumber = $documentNumber;
         $secondFactor->status = SecondFactorStatus::vetted();

@@ -49,4 +49,9 @@ class UnknownVettingType implements VettingType
     {
         return $this->type();
     }
+
+    public function getDocumentNumber(): ?DocumentNumber
+    {
+        return null;
+    }
 }

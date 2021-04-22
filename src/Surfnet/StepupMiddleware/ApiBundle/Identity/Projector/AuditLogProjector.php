@@ -23,6 +23,7 @@ use Broadway\EventHandling\EventListener;
 use DateTime as CoreDateTime;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -33,6 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use function is_null;
 use function property_exists;
 
 /**
@@ -100,9 +102,8 @@ class AuditLogProjector implements EventListener
             $entry->actorId         = $metadata['actorId'];
             $entry->actorCommonName = $actor->commonName;
         }
-        if (property_exists($auditLogMetadata, 'vettingType') && !is_null($auditLogMetadata->vettingType)) {
-            $entry->actorCommonName .= $auditLogMetadata->vettingType->auditLog();
-        }
+
+        $this->augmentActorCommonName($entry, $auditLogMetadata);
 
         if (isset($metadata['actorInstitution'])) {
             $entry->actorInstitution = $metadata['actorInstitution'];
@@ -141,5 +142,12 @@ class AuditLogProjector implements EventListener
 
         $this->auditLogRepository->saveAll($entriesWhereActor);
         $this->auditLogRepository->removeByIdentityId($event->identityId);
+    }
+
+    private function augmentActorCommonName(AuditLogEntry $entry, Metadata $auditLogMetadata): void
+    {
+        if (property_exists($auditLogMetadata, 'vettingType') && !is_null($auditLogMetadata->vettingType)) {
+            $entry->actorCommonName .= $auditLogMetadata->vettingType->auditLog();
+        }
     }
 }

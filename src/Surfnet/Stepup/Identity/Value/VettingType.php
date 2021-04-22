@@ -30,4 +30,6 @@ interface VettingType extends JsonSerializable
     public function type(): string;
 
     public function __toString(): string;
+
+    public function getDocumentNumber(): ?DocumentNumber;
 }

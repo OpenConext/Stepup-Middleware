@@ -47,7 +47,7 @@ class OnPremiseVettingType implements VettingType
         return '';
     }
 
-    public function documentNumber(): DocumentNumber
+    public function getDocumentNumber(): ?DocumentNumber
     {
         return $this->documentNumber;
     }
@@ -56,7 +56,7 @@ class OnPremiseVettingType implements VettingType
     {
         return [
             'type' => $this->type(),
-            'document_number' => (string) $this->documentNumber()
+            'document_number' => (string) $this->getDocumentNumber()
         ];
     }
 

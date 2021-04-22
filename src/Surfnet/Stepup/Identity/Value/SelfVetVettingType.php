@@ -20,8 +20,13 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\StepupBundle\Value\Loa;
 
-class SelfVetVettingType extends VettingType
+class SelfVetVettingType implements VettingType
 {
+    /**
+     * @var string
+     */
+    protected $type;
+
     /**
      * @var Loa
      */
@@ -58,5 +63,15 @@ class SelfVetVettingType extends VettingType
                 'identifier' => (string) $this->authoringLoa,
             ]
         ];
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
+    public function __toString(): string
+    {
+        return $this->type();
     }
 }

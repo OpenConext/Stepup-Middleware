@@ -20,31 +20,14 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
 
-abstract class VettingType implements JsonSerializable
+interface VettingType extends JsonSerializable
 {
     public const TYPE_ON_PREMISE = 'on-premise';
     public const TYPE_SELF_VET = 'self-vet';
 
-    /**
-     * @var string
-     */
-    protected $type;
+    public function auditLog(): string;
 
+    public function type(): string;
 
-    abstract public function auditLog(): string;
-
-    public function jsonSerialize(): array
-    {
-        return ['type' => $this->type()];
-    }
-
-    public function type(): string
-    {
-        return $this->type;
-    }
-
-    public function __toString(): string
-    {
-        return $this->type();
-    }
+    public function __toString(): string;
 }

@@ -18,8 +18,13 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-class OnPremiseVettingType extends VettingType
+class OnPremiseVettingType implements VettingType
 {
+    /**
+     * @var string
+     */
+    protected $type;
+
     /**
      * @var DocumentNumber
      */
@@ -53,5 +58,15 @@ class OnPremiseVettingType extends VettingType
             'type' => $this->type(),
             'document_number' => (string) $this->documentNumber()
         ];
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
+    public function __toString(): string
+    {
+        return $this->type();
     }
 }

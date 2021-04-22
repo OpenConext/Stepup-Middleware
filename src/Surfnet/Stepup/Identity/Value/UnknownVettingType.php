@@ -18,8 +18,13 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
-class UnknownVettingType extends VettingType
+class UnknownVettingType implements VettingType
 {
+    /**
+     * @var string
+     */
+    protected $type;
+
     public function __construct()
     {
         $this->type = 'unknown';
@@ -28,5 +33,20 @@ class UnknownVettingType extends VettingType
     public function auditLog(): string
     {
         return '';
+    }
+
+    public function jsonSerialize(): array
+    {
+        return ['type' => $this->type()];
+    }
+
+    public function type(): string
+    {
+        return $this->type;
+    }
+
+    public function __toString(): string
+    {
+        return $this->type();
     }
 }

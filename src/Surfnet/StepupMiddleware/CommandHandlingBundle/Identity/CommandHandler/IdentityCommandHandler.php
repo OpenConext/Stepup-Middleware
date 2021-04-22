@@ -22,7 +22,6 @@ use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
-use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -48,6 +47,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnknownLoaException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -350,7 +350,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
         $loa = $this->loaResolutionService->getLoa($command->authoringSecondFactorIdentifier);
         if ($loa === null) {
-            throw new DomainException(
+            throw new UnknownLoaException(
                 sprintf(
                     'Authorizing second factor with LoA %s can not be resolved',
                     $command->authoringSecondFactorIdentifier

@@ -30,8 +30,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class VerifiedSecondFactorReminderMailService
 {
@@ -51,9 +51,9 @@ class VerifiedSecondFactorReminderMailService
     private $translator;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templateEngine;
+    private $twig;
 
     /**
      * @var EmailTemplateService
@@ -84,7 +84,7 @@ class VerifiedSecondFactorReminderMailService
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
-     * @param EngineInterface $templateEngine
+     * @param Environment $twig
      * @param EmailTemplateService $emailTemplateService
      * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
      * @param RaListingService $raListingService
@@ -95,7 +95,7 @@ class VerifiedSecondFactorReminderMailService
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        EngineInterface $templateEngine,
+        Environment $twig,
         EmailTemplateService $emailTemplateService,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaListingService $raListingService,
@@ -106,7 +106,7 @@ class VerifiedSecondFactorReminderMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->templateEngine = $templateEngine;
+        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->raListingService = $raListingService;
@@ -201,7 +201,7 @@ class VerifiedSecondFactorReminderMailService
 
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
+        $body = $this->twig->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
         );
@@ -249,7 +249,7 @@ class VerifiedSecondFactorReminderMailService
 
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
+        $body = $this->twig->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
         );

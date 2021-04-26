@@ -26,8 +26,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 final class SecondFactorVettedMailService
 {
@@ -47,9 +47,9 @@ final class SecondFactorVettedMailService
     private $translator;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templateEngine;
+    private $twig;
 
     /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
@@ -70,7 +70,7 @@ final class SecondFactorVettedMailService
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
-     * @param EngineInterface $templateEngine
+     * @param Environment $twig
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
      * @param string $selfServiceUrl
@@ -80,7 +80,7 @@ final class SecondFactorVettedMailService
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        EngineInterface $templateEngine,
+        Environment $twig,
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
         $selfServiceUrl
@@ -90,7 +90,7 @@ final class SecondFactorVettedMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->templateEngine = $templateEngine;
+        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
@@ -124,7 +124,7 @@ final class SecondFactorVettedMailService
 
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
+        $body = $this->twig->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
         );

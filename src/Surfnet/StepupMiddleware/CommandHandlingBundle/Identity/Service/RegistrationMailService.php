@@ -26,8 +26,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Swift_Mailer as Mailer;
 use Swift_Message as Message;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Environment;
 
 final class RegistrationMailService
 {
@@ -47,9 +47,9 @@ final class RegistrationMailService
     private $translator;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templateEngine;
+    private $twig;
 
     /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
@@ -70,7 +70,7 @@ final class RegistrationMailService
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
-     * @param EngineInterface $templateEngine
+     * @param Environment $twig
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
      * @param $selfServiceUrl
@@ -81,7 +81,7 @@ final class RegistrationMailService
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        EngineInterface $templateEngine,
+        Environment $twig,
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
         $selfServiceUrl
@@ -91,7 +91,7 @@ final class RegistrationMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->templateEngine = $templateEngine;
+        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
@@ -139,7 +139,7 @@ final class RegistrationMailService
 
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
+        $body = $this->twig->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
         );
@@ -197,7 +197,7 @@ final class RegistrationMailService
 
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->templateEngine->render(
+        $body = $this->twig->render(
             'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
             $parameters
         );

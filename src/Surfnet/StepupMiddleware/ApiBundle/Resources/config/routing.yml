@@ -1,12 +1,12 @@
 command_handle:
     path: /command
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Command:handle }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\CommandController::handleAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 identity:
     path:     /identity/{id}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\IdentityController::getAction }
     methods:  [GET]
     requirements:
         id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -14,13 +14,13 @@ identity:
 
 identity_collection:
     path:     /identity
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:collection }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\IdentityController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 profile:
     path:     /profile/{identityId}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Profile:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\ProfileController::getAction }
     methods:  [GET]
     requirements:
         id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -28,55 +28,55 @@ profile:
 
 unverified_second_factors:
     path:     /unverified-second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:UnverifiedSecondFactor:collection }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\UnverifiedSecondFactorController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 verified_second_factors:
     path:     /verified-second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:collection }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VerifiedSecondFactorController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 verified_second_factors_of_identity:
     path:     /verified-second-factors-of-identity
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:collectionOfIdentity }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VerifiedSecondFactorController::collectionOfIdentityAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 vetted_second_factors:
     path:     /vetted-second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:collection }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettedSecondFactorController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 unverified_second_factor:
     path:     /unverified-second-factor/{id}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:UnverifiedSecondFactor:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\UnverifiedSecondFactorController::getAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 verified_second_factor:
     path:     /verified-second-factor/{id}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VerifiedSecondFactorController::getAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 verified_second_factor_can_skip_prove_posession:
     path:     /verified-second-factor/{id}/skip-prove-possession
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VerifiedSecondFactor:getCanSkipProvePossession }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VerifiedSecondFactorController::getCanSkipProvePossessionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 vetted_second_factor:
     path:     /vetted-second-factor/{id}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:VettedSecondFactor:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettedSecondFactorController::getAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_second_factors:
     path:     /ra-second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaSecondFactor:collection }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaSecondFactorController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
@@ -100,7 +100,7 @@ identity_ra_listing:
 
 identity_ra_listing_get:
     path:      /ra-listing/{identityId}/{institution}
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaListing:get }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaListingController::getAction }
     methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -109,7 +109,7 @@ identity_ra_listing_get:
 
 identity_sraa_get:
     path:      /sraa/{nameId}
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:Sraa:get }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\SraaController::getAction }
     methods:   [GET]
     requirements:
         nameId: ".+"
@@ -117,7 +117,7 @@ identity_sraa_get:
 
 audit_log:
     path:     /audit-log/second-factors
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:AuditLog:secondFactorAuditLog }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuditLogController::secondFactorAuditLogAction }
     methods:  [GET]
     requirements:
         identityId: ".+"
@@ -125,7 +125,7 @@ audit_log:
 
 identity_registration_authority_credentials:
     path:      /registration-authority/{identityId}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:Identity:getRegistrationAuthorityCredentials }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\IdentityController::getRegistrationAuthorityCredentialsAction }
     methods:  [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -133,19 +133,19 @@ identity_registration_authority_credentials:
 
 institution_listing:
     path:      /institution-listing
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:ConfiguredInstitution:collection }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\ConfiguredInstitutionController::collectionAction }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_candidate_search:
     path:      /ra-candidate
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:search }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaCandidateController::searchAction }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_candidate:
     path:      /ra-candidate/{identityId}
-    defaults:  { _controller: SurfnetStepupMiddlewareApiBundle:RaCandidate:get }
+    defaults:  { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaCandidateController::getAction }
     methods:   [GET]
     requirements:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -153,13 +153,13 @@ ra_candidate:
 
 ra_location_listing:
     path:     /ra-location
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:search }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaLocationController::searchAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 ra_location:
     path:     /ra-location/{raLocationId}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:RaLocation:get }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaLocationController::getAction }
     methods:  [GET]
     requirements:
         raLocationId: ".+"
@@ -167,7 +167,7 @@ ra_location:
 
 institution_configuration_options_for_institution:
     path:     /institution-configuration-options/{institutionName}
-    defaults: { _controller: SurfnetStepupMiddlewareApiBundle:InstitutionConfigurationOptions:getForInstitution }
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\InstitutionConfigurationOptionsController::getForInstitutionAction }
     methods:  [GET]
     requirements:
         institution: ".+"

@@ -143,7 +143,7 @@ final class EmailVerificationMailService
         // Rendering file template instead of string
         // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
         $body = $this->twig->render(
-            'SurfnetStepupMiddlewareCommandHandlingBundle:SecondFactorMailService:email.html.twig',
+            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
             $parameters
         );
 

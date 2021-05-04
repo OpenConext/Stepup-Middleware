@@ -26,6 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnriche
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\DBALConnectionHelper;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TokenBootstrapService;
 use Symfony\Component\Console\Command\Command;
@@ -45,6 +46,8 @@ abstract class AbstractBootstrapCommand extends Command
     private $enricher;
     /** @var TokenBootstrapService */
     protected $tokenBootstrapService;
+
+    private $validRegistrationStatuses = ['unverified', 'verified', 'vetted'];
 
     public function __construct(
         Pipeline $pipeline,
@@ -82,6 +85,23 @@ abstract class AbstractBootstrapCommand extends Command
     protected function process(MiddlewareCommand $command)
     {
         $this->pipeline->process($command);
+    }
+
+    /**
+     * @param string $registrationStatus
+     * @return bool
+     */
+    protected function validRegistrationStatus($registrationStatus)
+    {
+        if (!in_array($registrationStatus, $this->validRegistrationStatuses)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid argument provided for the "registration-status" argument. One of: %s is expected. Received: "%s"',
+                    implode(', ', $this->validRegistrationStatuses),
+                    $registrationStatus
+                )
+            );
+        }
     }
 
     protected function requiresMailVerification($institution)

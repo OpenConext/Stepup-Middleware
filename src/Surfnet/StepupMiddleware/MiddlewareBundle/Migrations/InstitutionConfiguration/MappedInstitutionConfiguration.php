@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfig
 
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
@@ -52,6 +53,9 @@ final class MappedInstitutionConfiguration
      */
     private $verifyEmailOption;
 
+    /** @var SelfVetOption */
+    private $selfVetOption;
+
     /**
      * @var NumberOfTokensPerIdentityOption
      */
@@ -75,6 +79,7 @@ final class MappedInstitutionConfiguration
         UseRaLocationsOption $useRaLocationsOption,
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
+        SelfVetOption $selfVetOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         array $raLocations
     ) {
@@ -82,6 +87,7 @@ final class MappedInstitutionConfiguration
         $this->useRaLocationsOption            = $useRaLocationsOption;
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->verifyEmailOption               = $verifyEmailOption;
+        $this->selfVetOption = $selfVetOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $this->raLocations                     = $raLocations;
     }
@@ -121,6 +127,7 @@ final class MappedInstitutionConfiguration
         $command->useRaLocationsOption            = $this->useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $this->showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $this->verifyEmailOption->isEnabled();
+        $command->selfVetOption= $this->selfVetOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
 
         return $command;

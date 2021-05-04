@@ -1,3 +1,4 @@
+.idea
 /web/bundles/
 /web/app_dev.php
 /web/app_test.php
@@ -8,10 +9,9 @@
 !var/cache/.gitkeep
 !var/log/.gitkeep
 /build/
-/vendor/
 /cache.properties
 config/services.yml
-
+/local-php-security-checker
 
 ###> symfony/framework-bundle ###
 /.env.local

@@ -57,6 +57,9 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $registrationStatus = $input->getArgument('registration-status');
+        $this->validRegistrationStatus($registrationStatus);
+
         $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-gssp-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
@@ -64,7 +67,6 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->requiresMailVerification($institutionText);
-        $registrationStatus = $input->getArgument('registration-status');
         $tokenType = $input->getArgument('gssp-token-type');
         $tokenIdentifier = $input->getArgument('gssp-token-identifier');
         $actorId = $input->getArgument('actor-id');

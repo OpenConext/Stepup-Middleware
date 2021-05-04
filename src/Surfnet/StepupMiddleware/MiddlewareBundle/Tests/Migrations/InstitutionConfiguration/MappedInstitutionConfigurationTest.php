@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -48,6 +49,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
         $verifyEmailOption = VerifyEmailOption::getDefault();
         $numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
+        $selfVetOption = SelfVetOption::getDefault();
         $raLocations = [];
 
         $mapped = new MappedInstitutionConfiguration(
@@ -55,6 +57,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );
@@ -75,6 +78,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
         $showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
         $verifyEmailOption = VerifyEmailOption::getDefault();
+        $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
         $raLocations = [];
 
@@ -83,6 +87,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );
@@ -103,6 +108,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption = new VerifyEmailOption(true);
+        $selfVetOption = new SelfVetOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(2);
         $raLocations = [];
 
@@ -111,6 +117,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );
@@ -122,6 +129,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals($useRaLocationsOption->isEnabled(), $command->useRaLocationsOption);
         $this->assertEquals($showRaaContactInformationOption->isEnabled(), $command->showRaaContactInformationOption);
         $this->assertEquals($verifyEmailOption->isEnabled(), $command->verifyEmailOption);
+        $this->assertEquals($selfVetOption->isEnabled(), $command->selfVetOption);
     }
 
     /**
@@ -134,6 +142,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(1);
         $raLocations                     = [];
 
@@ -142,6 +151,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );
@@ -161,6 +171,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $raLocation                      = RaLocation::create(
             (string) Uuid::uuid4(),
@@ -176,6 +187,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );
@@ -198,6 +210,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $useRaLocationsOption            = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(false);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $selfVetOption = SelfVetOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(2);
 
         $firstRaLocation                 = RaLocation::create(
@@ -221,6 +234,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
             $useRaLocationsOption,
             $showRaaContactInformationOption,
             $verifyEmailOption,
+            $selfVetOption,
             $numberOfTokensPerIdentityOption,
             $raLocations
         );

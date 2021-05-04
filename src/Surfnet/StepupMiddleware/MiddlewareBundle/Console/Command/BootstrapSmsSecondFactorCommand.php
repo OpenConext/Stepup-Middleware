@@ -53,6 +53,9 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $registrationStatus = $input->getArgument('registration-status');
+        $this->validRegistrationStatus($registrationStatus);
+
         $this->tokenStorage->setToken(
             new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
@@ -60,7 +63,6 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
         $mailVerificationRequired = $this->requiresMailVerification($institutionText);
-        $registrationStatus = $input->getArgument('registration-status');
         $phoneNumber = $input->getArgument('phone-number');
         $actorId = $input->getArgument('actor-id');
         $this->enrichEventMetadata($actorId);

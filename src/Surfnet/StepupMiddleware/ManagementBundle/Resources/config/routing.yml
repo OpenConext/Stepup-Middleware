@@ -1,48 +1,48 @@
 management_configuration_update:
     path:     /configuration
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Configuration:update }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\ConfigurationController::updateAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_institution_configuration_show:
     path:      /institution-configuration
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:InstitutionConfiguration:show }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\InstitutionConfigurationController::showAction }
     methods:   [GET]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_institution_configuration_reconfigure:
     path:     /institution-configuration
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:InstitutionConfiguration:reconfigure }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\InstitutionConfigurationController::reconfigureAction }
     methods:  [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_whitelist_add:
     path:     /whitelist/add
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:addToWhitelist }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\WhitelistController::addToWhitelistAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_whitelist_replace:
     path:     /whitelist/replace
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:replaceWhitelist }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\WhitelistController::replaceWhitelistAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_whitelist_remove:
     path:     /whitelist/remove
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:removeFromWhitelist }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\WhitelistController::removeFromWhitelistAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_whitelist_show:
     path:     /whitelist
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:Whitelist:showWhitelist }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\WhitelistController::showWhitelistAction }
     methods:   [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
 management_forget_identity:
     path:     /forget-identity
-    defaults: { _controller: SurfnetStepupMiddlewareManagementBundle:RightToBeForgotten:forgetIdentity }
+    defaults: { _controller: Surfnet\StepupMiddleware\ManagementBundle\Controller\RightToBeForgottenController::forgetIdentityAction }
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 

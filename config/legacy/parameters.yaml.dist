@@ -59,6 +59,14 @@ parameters:
         tiqr:
             loa: 3
 
+    second_factors_display_name:
+      yubikey: Yubikey
+      azuremfa: AzureMFA
+      webauthn: WebAuthn
+      tiqr: Tiqr
+      demo_gssp: GSSP Demo
+      demo_gssp_2: GSSP Demo 2
+
     # Sets the number of tokens allowed for each identity.
     #
     # This is the global, application wide default. This configuration should be specified for each institution in the

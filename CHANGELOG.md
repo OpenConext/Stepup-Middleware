@@ -1,4 +1,11 @@
 # Changelog
+# 4.2.0
+**Feature**
+* Self Vetting (allow token registration from SelfService)
+
+# 4.1.4
+**Feature**
+* Make token name in emails configurable
 
 # 4.1.3
 **Bugfix**

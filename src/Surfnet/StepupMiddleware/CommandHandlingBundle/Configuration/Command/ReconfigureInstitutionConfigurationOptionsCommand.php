@@ -54,6 +54,13 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $verifyEmailOption;
 
     /**
+     * @Assert\Type(type="boolean")
+     *
+     * @var bool
+     */
+    public $selfVetOption;
+
+    /**
      * @Assert\Type(type="integer")
      *
      * @var int

@@ -61,17 +61,6 @@ class SensitiveDataTest extends TestCase
                     ->forget(),
                 ['CommonName' => CommonName::unknown(), 'Email' => Email::unknown()],
             ],
-            'DocumentNumber' => [
-                (new SensitiveData())
-                    ->withDocumentNumber(new DocumentNumber('OVER-9000')),
-                ['DocumentNumber' => new DocumentNumber('OVER-9000')],
-            ],
-            'DocumentNumber, forgotten' => [
-                (new SensitiveData())
-                    ->withDocumentNumber(new DocumentNumber('OVER-9000'))
-                    ->forget(),
-                ['DocumentNumber' => DocumentNumber::unknown()],
-            ],
             'GssfId' => [
                 (new SensitiveData())
                     ->withSecondFactorIdentifier(new GssfId('1234'), new SecondFactorType('tiqr')),

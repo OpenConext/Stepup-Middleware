@@ -50,10 +50,12 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
@@ -87,7 +89,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
             m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
-            m::mock(InstitutionConfigurationRepository::class)
+            m::mock(LoaResolutionService::class)
         );
     }
 
@@ -279,10 +281,10 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorId,
                     $secondFactorType,
                     $secondFactorIdentifier,
-                    new DocumentNumber('DOCUMENT_42'),
                     $commonName,
                     $email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_42'))
                 )
             ])
             ->when($command)
@@ -578,10 +580,10 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    new DocumentNumber('DOCUMENT_NUMBER'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
                 )
             ])
             ->when($command)
@@ -695,10 +697,10 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    new DocumentNumber('DOCUMENT_NUMBER'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
                 )
             ])
             ->when($command)
@@ -717,8 +719,6 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 ),
             ]);
     }
-
-
 
     /**
      * Test if the VettedSecondFactorsAllRevokedEvent is not triggered with multiple 2fa's
@@ -819,10 +819,10 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId,
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
-                    new DocumentNumber('DOCUMENT_NUMBER'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
                 ),
                 // Second second factor
                 new U2fDevicePossessionProvenEvent(
@@ -859,10 +859,10 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorId2,
                     $registrantSecondFactorType2,
                     $registrantSecondFactorIdentifier2,
-                    new DocumentNumber('DOCUMENT_NUMBER'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
                 ),
             ])
             ->when($command)

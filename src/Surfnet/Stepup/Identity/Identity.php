@@ -78,17 +78,24 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -495,6 +502,53 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    /**
+     * Self vetting, is when the user uses it's own token to vet another.
+     *
+     * Here the new token should have a lower or equal LoA to that of the one in posession of the user
+     */
+    public function selfVetSecondFactor(
+        Loa $authoringSecondFactorLoa,
+        string $registrationCode,
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService
+    ): void {
+        $this->assertNotForgotten();
+        $registeringSecondFactor = null;
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            /** @var VerifiedSecondFactor $secondFactor */
+            if ($secondFactor->hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)) {
+                $registeringSecondFactor = $secondFactor;
+            }
+        }
+
+        if ($registeringSecondFactor === null) {
+            throw new DomainException(
+                sprintf(
+                    'Registrant second factor of type %s with ID %s does not exist',
+                    get_class($secondFactorIdentifier),
+                    $secondFactorIdentifier->getValue()
+                )
+            );
+        }
+
+        if (!$registeringSecondFactor->hasRegistrationCodeAndIdentifier($registrationCode, $secondFactorIdentifier)) {
+            throw new DomainException('The verified second factors registration code or identifier do not match.');
+        }
+
+        $selfVettingIsAllowed = $authoringSecondFactorLoa->levelIsHigherOrEqualTo(
+            $registeringSecondFactor->getLoaLevel($secondFactorTypeService)
+        );
+
+        if (!$selfVettingIsAllowed) {
+            throw new DomainException(
+                "The second factor to be vetted has a higher LoA then the Token used for proving possession"
+            );
+        }
+
+        $registeringSecondFactor->vet(true, new SelfVetVettingType($authoringSecondFactorLoa));
+    }
+
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
@@ -524,7 +578,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException('Cannot vet second factor, the registration window is closed.');
         }
 
-        $secondFactorToVet->vet($documentNumber, $provePossessionSkipped);
+        $secondFactorToVet->vet($provePossessionSkipped, new OnPremiseVettingType($documentNumber));
     }
 
     public function revokeSecondFactor(SecondFactorId $secondFactorId)

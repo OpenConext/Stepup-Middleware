@@ -31,6 +31,9 @@ use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -139,7 +142,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function vet(DocumentNumber $documentNumber, $provePossessionSkipped)
+    public function vet($provePossessionSkipped, VettingType $type)
     {
         if ($provePossessionSkipped) {
             $this->apply(
@@ -150,10 +153,10 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                     $this->id,
                     $this->type,
                     $this->secondFactorIdentifier,
-                    $documentNumber,
                     $this->identity->getCommonName(),
                     $this->identity->getEmail(),
-                    $this->identity->getPreferredLocale()
+                    $this->identity->getPreferredLocale(),
+                    $type
                 )
             );
             return;
@@ -167,10 +170,10 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $documentNumber,
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
-                $this->identity->getPreferredLocale()
+                $this->identity->getPreferredLocale(),
+                $type
             )
         );
     }
@@ -213,6 +216,11 @@ class VerifiedSecondFactor extends AbstractSecondFactor
             $this->type,
             $this->secondFactorIdentifier
         );
+    }
+
+    public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): int
+    {
+        return $secondFactorTypeService->getLevel($this->type);
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

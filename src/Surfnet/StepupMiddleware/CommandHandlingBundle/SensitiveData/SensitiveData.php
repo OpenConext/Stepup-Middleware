@@ -24,6 +24,8 @@ use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements SerializableInterface
@@ -49,9 +51,9 @@ class SensitiveData implements SerializableInterface
     private $secondFactorType;
 
     /**
-     * @var DocumentNumber|null
+     * @var VettingType
      */
-    private $documentNumber;
+    private $vettingType;
 
     /**
      * @param CommonName $commonName
@@ -93,14 +95,10 @@ class SensitiveData implements SerializableInterface
         return $clone;
     }
 
-    /**
-     * @param DocumentNumber $documentNumber
-     * @return SensitiveData
-     */
-    public function withDocumentNumber(DocumentNumber $documentNumber)
+    public function withVettingType(VettingType $vettingType): self
     {
         $clone = clone $this;
-        $clone->documentNumber = $documentNumber;
+        $clone->vettingType = $vettingType;
 
         return $clone;
     }
@@ -143,11 +141,11 @@ class SensitiveData implements SerializableInterface
     }
 
     /**
-     * @return DocumentNumber
+     * @return VettingType
      */
-    public function getDocumentNumber()
+    public function getVettingType()
     {
-        return $this->documentNumber ?: DocumentNumber::unknown();
+        return $this->vettingType ?: new UnknownVettingType();
     }
 
     public static function deserialize(array $data)
@@ -180,12 +178,13 @@ class SensitiveData implements SerializableInterface
 
     public function serialize(): array
     {
+        $vettingType = (!is_null($this->vettingType)) ? $this->vettingType->jsonSerialize() : null;
         return array_filter([
             'common_name'              => $this->commonName,
             'email'                    => $this->email,
             'second_factor_type'       => $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'document_number'          => $this->documentNumber,
+            'vetting_type' => $vettingType
         ]);
     }
 }

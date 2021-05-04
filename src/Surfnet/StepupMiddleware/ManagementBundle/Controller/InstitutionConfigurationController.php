@@ -122,6 +122,7 @@ final class InstitutionConfigurationController extends AbstractController
                 'use_ra_locations' => $options->useRaLocationsOption,
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
                 'verify_email' => $options->verifyEmailOption,
+                'self_vet' => $options->selfVetOption,
                 'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
                     $options->institution
@@ -166,6 +167,7 @@ final class InstitutionConfigurationController extends AbstractController
             $command->verifyEmailOption               = $options['verify_email'];
             $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
+            $command->selfVetOption = $options['self_vet'];
 
             // The useRa, useRaa and selectRaa options are optional
             $command->useRaOption = isset($options['use_ra']) ? $options['use_ra'] : null;

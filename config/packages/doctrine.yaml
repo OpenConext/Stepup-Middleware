@@ -92,6 +92,9 @@ doctrine:
             stepup_number_of_tokens_per_identity_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType
                 commented: false
+            stepup_self_vet_option:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType
+                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
                 commented: false

@@ -31,6 +31,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
 use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
@@ -39,6 +40,7 @@ use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -46,12 +48,11 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
-use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 
 /**
  * InstitutionConfiguration aggregate root
@@ -106,6 +107,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $numberOfTokensPerIdentityOption;
 
     /**
+     * @var SelfVetOption
+     */
+    private $selfVetOption;
+
+    /**
      * @var InstitutionAuthorizationOption
      */
     private $useRaOption;
@@ -146,7 +152,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                SelfVetOption::getDefault()
             )
         );
         $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -196,7 +203,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 UseRaLocationsOption::getDefault(),
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
-                NumberOfTokensPerIdentityOption::getDefault()
+                NumberOfTokensPerIdentityOption::getDefault(),
+                SelfVetOption::getDefault()
             )
         );
         $this->apply(new AllowedSecondFactorListUpdatedEvent(
@@ -290,6 +298,21 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $numberOfTokensPerIdentityOption
+            )
+        );
+    }
+
+    public function configureSelfVetOption(SelfVetOption $selfVetOption)
+    {
+        if ($this->selfVetOption->equals($selfVetOption)) {
+            return;
+        }
+
+        $this->apply(
+            new SelfVetOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $selfVetOption
             )
         );
     }
@@ -497,6 +520,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->useRaLocationsOption            = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->verifyEmailOption               = $event->verifyEmailOption;
+        $this->selfVetOption = $event->selfVetOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
         $this->raLocations                     = new RaLocationList([]);
         $this->isMarkedAsDestroyed             = false;
@@ -544,6 +568,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         VerifyEmailOptionChangedEvent $event
     ) {
         $this->verifyEmailOption = $event->verifyEmailOption;
+    }
+
+    protected function applySelfVetOptionChangedEvent(
+        SelfVetOptionChangedEvent $event
+    ) {
+        $this->selfVetOption = $event->selfVetOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(

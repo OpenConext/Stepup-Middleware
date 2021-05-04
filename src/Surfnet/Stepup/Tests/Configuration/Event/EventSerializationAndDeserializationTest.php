@@ -34,6 +34,7 @@ use Surfnet\Stepup\Configuration\Event\RaLocationContactInformationChangedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent;
+use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent;
@@ -47,6 +48,7 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -124,7 +126,8 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new UseRaLocationsOption(true),
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
-                    new NumberOfTokensPerIdentityOption(0)
+                    new NumberOfTokensPerIdentityOption(0),
+                    new SelfVetOption(true)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [
@@ -146,6 +149,13 @@ class EventSerializationAndDeserializationTest extends TestCase
                     $institutionConfigurationId,
                     $institution,
                     new VerifyEmailOption(true)
+                )
+            ],
+            'SelfVetOptionChangedEvent' => [
+                new SelfVetOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    new SelfVetOption(false)
                 )
             ],
             'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [

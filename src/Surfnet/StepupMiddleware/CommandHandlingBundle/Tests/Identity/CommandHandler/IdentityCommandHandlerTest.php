@@ -25,8 +25,6 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Hamcrest\Matchers;
 use Mockery as m;
-use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
-use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
@@ -53,13 +51,18 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
@@ -72,6 +75,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPos
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -113,20 +117,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     private $configService;
 
     /**
-     * @var InstitutionConfigurationRepository
+     * @var LoaResolutionService
      */
-    private $institutionConfigurationRepositoryMock;
+    private $loaResolutionService;
 
-    /**
-     * @var InstitutionConfiguration
-     */
-    private $institutionConfiguration;
 
     public function setUp(): void
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
-        $this->institutionConfigurationRepositoryMock = m::mock(InstitutionConfigurationRepository::class);
-        $this->institutionConfiguration = m::mock(InstitutionConfiguration::class);
+        $this->loaResolutionService = m::mock(LoaResolutionService::class);
 
         parent::setUp();
     }
@@ -137,15 +136,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
         $this->secondFactorTypeService = m::mock(SecondFactorTypeService::class);
-        $this->secondFactorTypeService->shouldIgnoreMissing();
+        $this->secondFactorTypeService->shouldReceive('hasEqualOrHigherLoaComparedTo')->andReturn(true);
         $this->secondFactorProvePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
-        $this->secondFactorTypeService->shouldIgnoreMissing();
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
-
-        $this->institutionConfigurationRepositoryMock
-            ->shouldReceive('load')
-            ->andReturn($this->institutionConfiguration);
 
         return new IdentityCommandHandler(
             new IdentityRepository(
@@ -159,7 +153,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->secondFactorTypeService,
             $this->secondFactorProvePossessionHelper,
             $this->configService,
-            $this->institutionConfigurationRepositoryMock
+            $this->loaResolutionService
         );
     }
 
@@ -1292,10 +1286,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('00028278'),
-                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
                 ),
             ]);
     }
@@ -1382,10 +1376,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
-                    new DocumentNumber('NG-RB-81'),
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
                 )
             ])
             ->withAggregateId($registrantId)
@@ -1435,10 +1429,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('00028278'),
-                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
                 ),
             ]);
     }
@@ -1551,10 +1545,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('00028278'),
-                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
                 ),
             ]);
     }
@@ -1647,10 +1641,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneSfId,
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
-                    new DocumentNumber('NG-RB-81'),
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
                 )
             ])
             ->withAggregateId($registrantId)
@@ -1703,7 +1697,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
+                    VettingType::onPremise()
                 ),
             ]);
     }
@@ -1803,6 +1798,133 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
+            ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function a_second_factor_can_be_self_vetted()
+    {
+        $command = new SelfVetSecondFactorCommand();
+        $command->secondFactorId = '+31 (0) 612345678';
+        $command->registrationCode = 'REGCODE';
+        $command->identityId = $this->uuid();
+        $command->authoringSecondFactorIdentifier = "4fa592af-dded-4fae-9bc6-7f83f3636da4";
+        $command->secondFactorType = 'sms';
+
+        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
+        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('Institution');
+        $registrantSecFacId = new SecondFactorId($command->authoringSecondFactorIdentifier);
+        $registrantSecPubId = new YubikeyPublicId('00028278');
+        $registrantNameId = new NameId('name id');
+        $registrantEmail = new Email('jack@zweiblumen.tld');
+        $registrantCommonName = new CommonName('Jack Zweiblumen');
+
+        $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
+        $loa = new Loa(1, 'identifier_loa1');
+        $this->loaResolutionService->shouldReceive('getLoa')->andReturn($loa);
+        $this->secondFactorTypeService->shouldReceive('getLevel')->andReturn(1);
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                // First the existing token is vetted
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecPubId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    DateTime::now(),
+                    $command->registrationCode,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('123456'))
+                ),
+                // The next token is vetted using the other token
+                new PhonePossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    $authorityPhoneNo,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                // When self vetting, proof of possession is skipped, no RA verification is performed.
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB'),
+                    new SelfVetVettingType($loa)
+                ),
             ]);
     }
 }

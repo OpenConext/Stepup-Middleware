@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016 SURFnet B.V.
+ * Copyright 2021 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,20 @@
  * limitations under the License.
  */
 
-return [
-    'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'Expected only options',
-    'reconfigureInstitutionRequest' => [
-        'surfnet.nl' => [
-            'show_raa_contact_information' => true,
-            'verify_email' => false,
-            'self_vet' => false,
-            'number_of_tokens_per_identity' => 1,
-            'allowed_second_factors' => [],
-        ]
-    ]
-];
+namespace Surfnet\Stepup\Identity\Value;
+
+use JsonSerializable;
+
+interface VettingType extends JsonSerializable
+{
+    public const TYPE_ON_PREMISE = 'on-premise';
+    public const TYPE_SELF_VET = 'self-vet';
+
+    public function auditLog(): string;
+
+    public function type(): string;
+
+    public function __toString(): string;
+
+    public function getDocumentNumber(): ?DocumentNumber;
+}

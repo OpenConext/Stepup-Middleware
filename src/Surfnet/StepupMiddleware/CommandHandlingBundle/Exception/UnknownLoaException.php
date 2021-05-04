@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016 SURFnet B.V.
+ * Copyright 2014 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,8 @@
  * limitations under the License.
  */
 
-return [
-    'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'Expected only options',
-    'reconfigureInstitutionRequest' => [
-        'surfnet.nl' => [
-            'show_raa_contact_information' => true,
-            'verify_email' => false,
-            'self_vet' => false,
-            'number_of_tokens_per_identity' => 1,
-            'allowed_second_factors' => [],
-        ]
-    ]
-];
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
+
+class UnknownLoaException extends RuntimeException
+{
+}

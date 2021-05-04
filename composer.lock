@@ -3331,16 +3331,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.1.4",
+            "version": "4.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "4d9e832e17cbdf6c334064021eec86a2cfe32cc7"
+                "reference": "9e1705d82b912f17fd497cfd8139a9f904d76ff8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/4d9e832e17cbdf6c334064021eec86a2cfe32cc7",
-                "reference": "4d9e832e17cbdf6c334064021eec86a2cfe32cc7",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/9e1705d82b912f17fd497cfd8139a9f904d76ff8",
+                "reference": "9e1705d82b912f17fd497cfd8139a9f904d76ff8",
                 "shasum": ""
             },
             "require": {
@@ -3385,7 +3385,7 @@
                 "suaas",
                 "surfnet"
             ],
-            "time": "2020-07-03T09:45:43+00:00"
+            "time": "2021-03-18T12:55:54+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",
@@ -9318,16 +9318,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.4",
+            "version": "3.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "845a2275e886ba9fb386c8f59cb383dd9c8963e9"
+                "reference": "d9615a6fb970d9933866ca8b4036ec3407b020b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/845a2275e886ba9fb386c8f59cb383dd9c8963e9",
-                "reference": "845a2275e886ba9fb386c8f59cb383dd9c8963e9",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d9615a6fb970d9933866ca8b4036ec3407b020b6",
+                "reference": "d9615a6fb970d9933866ca8b4036ec3407b020b6",
                 "shasum": ""
             },
             "require": {
@@ -9421,7 +9421,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-25T19:02:05+00:00"
+            "time": "2021-04-19T03:20:48+00:00"
         },
         {
             "name": "phpspec/prophecy",

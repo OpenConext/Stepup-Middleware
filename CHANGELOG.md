@@ -1,4 +1,7 @@
 # Changelog
+# 4.2.0
+**Feature**
+* Self Vetting (allow token registration from SelfService)
 
 # 4.1.4
 **Feature**

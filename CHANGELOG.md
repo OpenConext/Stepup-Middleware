@@ -1,4 +1,9 @@
 # Changelog
+
+# 4.2.1
+**Improvements**
+* Install Symfony dependencies security upgrades
+
 # 4.2.0
 **Feature**
 * Self Vetting (allow token registration from SelfService)

@@ -22,15 +22,32 @@ use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
+final class BootstrapGsspSecondFactorCommand extends Command
 {
+    /**
+     * @var BootstrapCommandService
+     */
+    private $bootstrapService;
+    /**
+     * @var TransactionHelper
+     */
+    private $transactionHelper;
+
+    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
+    {
+        $this->bootstrapService = $bootstrapService;
+        $this->transactionHelper = $transactionHelper;
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -58,20 +75,20 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $registrationStatus = $input->getArgument('registration-status');
-        $this->validRegistrationStatus($registrationStatus);
+        $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $this->tokenStorage->setToken(
+        $this->bootstrapService->setToken(
             new AnonymousToken('cli.bootstrap-gssp-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
-        $mailVerificationRequired = $this->requiresMailVerification($institutionText);
+        $mailVerificationRequired = $this->bootstrapService->requiresMailVerification($institutionText);
         $tokenType = $input->getArgument('gssp-token-type');
         $tokenIdentifier = $input->getArgument('gssp-token-identifier');
         $actorId = $input->getArgument('actor-id');
-        $this->enrichEventMetadata($actorId);
-        if (!$this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        $this->bootstrapService->enrichEventMetadata($actorId);
+        if (!$this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" does not exist, create it first.</error>',
@@ -82,48 +99,43 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
 
             return;
         }
-        $identity = $this->tokenBootstrapService->findOneByNameIdAndInstitution($nameId, $institution);
+        $identity = $this->bootstrapService->getIdentity($nameId, $institution);
         $output->writeln(sprintf('<comment>Adding a %s %s GSSP token for %s</comment>', $registrationStatus, $tokenType, $identity->commonName));
-        $this->beginTransaction();
+        $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
         try {
             switch ($registrationStatus) {
                 case "unverified":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
+                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
                     break;
                 case "verified":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, $tokenType);
+                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
                     if ($mailVerificationRequired) {
                         $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
-                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                        $this->bootstrapService->verifyEmail($identity, $tokenType);
                     }
                     break;
                 case "vetted":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
-                    /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, $tokenType);
+                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
                     if ($mailVerificationRequired) {
                         $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
-                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                        $this->bootstrapService->verifyEmail($identity, $tokenType);
                     }
-                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, $tokenType);
                     $output->writeln(sprintf('<comment>Vetting the verified %s token</comment>', $tokenType));
-                    $this->vetSecondFactor(
+                    $this->bootstrapService->vetSecondFactor(
                         $tokenType,
                         $actorId,
                         $identity,
                         $secondFactorId,
-                        $verifiedSecondFactor,
                         $tokenIdentifier
                     );
                     break;
             }
-            $this->finishTransaction();
+            $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
@@ -132,7 +144,7 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
                     $e->getMessage()
                 )
             );
-            $this->rollback();
+            $this->transactionHelper->rollback();
             throw $e;
         }
         $output->writeln(
@@ -143,16 +155,5 @@ final class BootstrapGsspSecondFactorCommand extends AbstractBootstrapCommand
                 $secondFactorId
             )
         );
-    }
-
-    private function provePossession($secondFactorId, $identity, $tokenType, $tokenIdentifier)
-    {
-        $command = new ProveGssfPossessionCommand();
-        $command->UUID = (string)Uuid::uuid4();
-        $command->secondFactorId = $secondFactorId;
-        $command->identityId = $identity->id;
-        $command->stepupProvider = $tokenType;
-        $command->gssfId = $tokenIdentifier;
-        $this->process($command);
     }
 }

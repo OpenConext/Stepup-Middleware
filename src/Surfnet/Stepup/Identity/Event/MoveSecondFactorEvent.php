@@ -53,6 +53,11 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
     public $secondFactorId;
 
     /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $newSecondFactorId;
+
+    /**
      * @var \Surfnet\StepupBundle\Value\SecondFactorType
      */
     public $secondFactorType;
@@ -86,6 +91,7 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
         NameId $targetNameId,
         Institution $targetInstitution,
         SecondFactorId $secondFactorId,
+        SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
         CommonName $commonName,
@@ -97,6 +103,7 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
         $this->sourceNameId = $sourceNameId;
         $this->targetNameId = $targetNameId;
         $this->secondFactorId = $secondFactorId;
+        $this->newSecondFactorId = $newSecondFactorId;
         $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
         $this->commonName = $commonName;
@@ -124,6 +131,7 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
             new NameId($data['target_name_id']),
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
+            new SecondFactorId($data['new_second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
             CommonName::unknown(),
@@ -143,6 +151,7 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
             'target_name_id' => (string)$this->targetNameId,
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
+            'new_second_factor_id' => (string)$this->newSecondFactorId,
             'second_factor_type' => (string) $this->secondFactorType,
             'preferred_locale' => (string) $this->preferredLocale,
         ];
@@ -158,8 +167,8 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
+        $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();
         $this->email = $sensitiveData->getEmail();
-        $this->vettingType = $sensitiveData->getVettingType();
     }
 }

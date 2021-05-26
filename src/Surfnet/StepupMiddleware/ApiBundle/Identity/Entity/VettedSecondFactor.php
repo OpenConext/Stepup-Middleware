@@ -63,6 +63,15 @@ class VettedSecondFactor implements \JsonSerializable
      */
     public $secondFactorIdentifier;
 
+    /**
+     * @param VettedSecondFactor $vettedSecondFactor
+     * @return bool
+     */
+    public function isEqual(VettedSecondFactor $vettedSecondFactor): bool
+    {
+        return $vettedSecondFactor->type == $this->type && $vettedSecondFactor->secondFactorIdentifier == $this->secondFactorIdentifier;
+    }
+
     public function jsonSerialize()
     {
         return [

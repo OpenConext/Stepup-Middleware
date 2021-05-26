@@ -69,11 +69,6 @@ class SecondFactorProjector extends Projector
      */
     private $vettedRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
-     */
-    private $identityRepository;
-
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
         VerifiedSecondFactorRepository $verifiedRepository,
@@ -83,7 +78,6 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
         $this->vettedRepository = $vettedRepository;
-        $this->identityRepository = $identityRepository;
     }
 
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
@@ -245,11 +239,10 @@ class SecondFactorProjector extends Projector
     public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
     {
         $vetted = new VettedSecondFactor();
-        $vetted->id = $event->secondFactorId->getSecondFactorId();
+        $vetted->id = $event->newSecondFactorId->getSecondFactorId();
         $vetted->identityId = $event->identityId->getIdentityId();
         $vetted->type = $event->secondFactorType->getSecondFactorType();
         $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
-
         $this->vettedRepository->save($vetted);
     }
 

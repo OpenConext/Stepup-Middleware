@@ -23,6 +23,7 @@ use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
+use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -42,6 +43,7 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
@@ -84,11 +86,13 @@ interface Identity extends AggregateRoot
     /**
      * @param SecondFactorId  $secondFactorId
      * @param YubikeyPublicId $yubikeyPublicId
+     * @param int $maxNumberOfTokens
      * @return void
      */
     public function bootstrapYubikeySecondFactor(
         SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId
+        YubikeyPublicId $yubikeyPublicId,
+        $maxNumberOfTokens
     );
 
     /**
@@ -96,13 +100,15 @@ interface Identity extends AggregateRoot
      * @param YubikeyPublicId         $yubikeyPublicId
      * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @param int $maxNumberOfTokens
      * @return void
      */
     public function provePossessionOfYubikey(
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     );
 
     /**
@@ -110,13 +116,15 @@ interface Identity extends AggregateRoot
      * @param PhoneNumber             $phoneNumber
      * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @param int $maxNumberOfTokens
      * @return void
      */
     public function provePossessionOfPhone(
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     );
 
     /**
@@ -125,6 +133,7 @@ interface Identity extends AggregateRoot
      * @param GssfId                  $gssfId
      * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @parame int $maxNumberOfTokens
      * @return void
      */
     public function provePossessionOfGssf(
@@ -132,7 +141,8 @@ interface Identity extends AggregateRoot
         StepupProvider $provider,
         GssfId $gssfId,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     );
 
     /**
@@ -140,13 +150,15 @@ interface Identity extends AggregateRoot
      * @param U2fKeyHandle            $keyHandle
      * @param bool                    $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
+     * @parame int $maxNumberOfTokens
      * @return void
      */
     public function provePossessionOfU2fDevice(
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     );
 
     /**
@@ -184,6 +196,28 @@ interface Identity extends AggregateRoot
         SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
         $provePossessionSkipped
     );
+
+    /**
+     * Self vetting, is when the user uses it's own token to vet another.
+     *
+     * Here the new token should have a lower or equal LoA to that of the one in possession of the identity
+     */
+    public function selfVetSecondFactor(
+        Loa $authoringSecondFactorLoa,
+        string $registrationCode,
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService
+    ): void;
+
+    /**
+     * Move a token from the source identity to the target identity
+     */
+    public function moveVettedSecondFactor(
+        Identity $sourceIdentity,
+        SecondFactorId $secondFactorId,
+        string $targetSecondFactorId,
+        int $maxNumberOfTokens
+    ): void;
 
     /**
      * Makes the identity comply with an authority's vetting of a verified second factor.
@@ -305,13 +339,14 @@ interface Identity extends AggregateRoot
     public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
 
     /**
+     * @param SecondFactorId $secondFactorId
+     * @return VettedSecondFactor|null
+     */
+    public function getVettedSecondFactorById(SecondFactorId $secondFactorId): ?VettedSecondFactor;
+
+    /**
      * @return IdentityId We're deviating from Broadway's official API, as they accept toString-able VOs as IDs, and we
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
     public function getAggregateRootId(): string;
-
-    /**
-     * @param int $numberOfTokens
-     */
-    public function setMaxNumberOfTokens($numberOfTokens);
 }

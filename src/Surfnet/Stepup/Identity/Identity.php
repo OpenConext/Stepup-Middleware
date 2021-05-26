@@ -160,11 +160,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private $forgotten;
 
-    /**
-     * @var int
-     */
-    private $maxNumberOfTokens = 1;
-
     public static function create(
         IdentityId $id,
         Institution $institution,
@@ -207,18 +202,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $email));
     }
 
-    /**
-     * @param int $numberOfTokens
-     */
-    public function setMaxNumberOfTokens($numberOfTokens)
-    {
-        $this->maxNumberOfTokens = $numberOfTokens;
-    }
-
-    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId)
+    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId, $maxNumberOfTokens)
     {
         $this->assertNotForgotten();
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
         $this->apply(
             new YubikeySecondFactorBootstrappedEvent(
@@ -238,10 +225,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     ) {
         $this->assertNotForgotten();
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -281,10 +269,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     ) {
         $this->assertNotForgotten();
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -325,10 +314,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         StepupProvider $provider,
         GssfId $gssfId,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     ) {
         $this->assertNotForgotten();
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -370,10 +360,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
         $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow
+        EmailVerificationWindow $emailVerificationWindow,
+        $maxNumberOfTokens
     ) {
         $this->assertNotForgotten();
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
         if ($emailVerificationRequired) {
             $emailVerificationNonce = TokenGenerator::generateNonce();
@@ -501,11 +492,6 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    /**
-     * Self vetting, is when the user uses it's own token to vet another.
-     *
-     * Here the new token should have a lower or equal LoA to that of the one in posession of the user
-     */
     public function selfVetSecondFactor(
         Loa $authoringSecondFactorLoa,
         string $registrationCode,
@@ -551,16 +537,38 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * Move a token from the source identity to the target identity
      */
-    public function moveVettedSecondFactor(Identity $sourceIdentity, SecondFactorId $secondFactorId): void
-    {
+    public function moveVettedSecondFactor(
+        IdentityApi $sourceIdentity,
+        SecondFactorId $secondFactorId,
+        string $targetSecondFactorId,
+        int $maxNumberOfTokens
+    ): void {
         $this->assertNotForgotten();
-        $this->assertTokenNotAlreadyRegistered($secondFactorId);
-        $this->assertUserMayAddSecondFactor();
+        $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
         $secondFactor = $sourceIdentity->getVettedSecondFactorById($secondFactorId);
         if (!$secondFactor) {
             throw new DomainException("The second factor on the original identity can not be found");
         }
-        $secondFactor->move($this, $sourceIdentity->getNameId());
+        $this->assertTokenNotAlreadyRegistered($secondFactor->getType(), $secondFactor->getIdentifier());
+        if ($sourceIdentity->getInstitution()->equals($this->getInstitution())) {
+            throw new DomainException("Cannot move the second factor to the same institution");
+        }
+
+        $this->apply(
+            new MoveSecondFactorEvent(
+                $this->getId(),
+                $sourceIdentity->getNameId(),
+                $this->getNameId(),
+                $this->getInstitution(),
+                $secondFactorId,
+                new SecondFactorId($targetSecondFactorId),
+                $secondFactor->getType(),
+                $secondFactor->getIdentifier(),
+                $this->getCommonName(),
+                $this->getEmail(),
+                $this->getPreferredLocale()
+            )
+        );
     }
 
     public function complyWithVettingOfSecondFactor(
@@ -997,9 +1005,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
     {
-        $secondFactorId = (string)$event->secondFactorId;
+        $secondFactorId = (string)$event->newSecondFactorId;
         $vetted = VettedSecondFactor::create(
-            $event->secondFactorId,
+            $event->newSecondFactorId,
             $this,
             $event->secondFactorType,
             $event->secondFactorIdentifier
@@ -1222,14 +1230,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @throws DomainException
      */
-    private function assertUserMayAddSecondFactor()
+    private function assertUserMayAddSecondFactor($maxNumberOfTokens)
     {
         if (count($this->unverifiedSecondFactors) +
             count($this->verifiedSecondFactors) +
-            count($this->vettedSecondFactors) >= $this->maxNumberOfTokens
+            count($this->vettedSecondFactors) >= $maxNumberOfTokens
         ) {
             throw new DomainException(
-                sprintf('User may not have more than %d token(s)', $this->maxNumberOfTokens)
+                sprintf('User may not have more than %d token(s)', $maxNumberOfTokens)
             );
         }
     }
@@ -1280,21 +1288,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return $this->vettedSecondFactors->get((string)$secondFactorId);
     }
 
-    private function assertTokenNotAlreadyRegistered(SecondFactorId $secondFactorId)
+    private function assertTokenNotAlreadyRegistered(SecondFactorType $type, SecondFactorIdentifier $identifier)
     {
         foreach ($this->unverifiedSecondFactors as $unverified) {
-            if ($unverified->getId()->equals($secondFactorId)) {
-                throw new DomainException("The second factor is already registered as a unverified second factor");
+            if ($unverified->typeAndIdentifierAreEqual($type, $identifier)) {
+                throw new DomainException("The second factor was already registered as a unverified second factor");
             }
         }
         foreach ($this->verifiedSecondFactors as $verified) {
-            if ($verified->getId()->equals($secondFactorId)) {
-                throw new DomainException("The second factor is already registered as a verified second factor");
+            if ($verified->typeAndIdentifierAreEqual($type, $identifier)) {
+                throw new DomainException("The second factor was already registered as a verified second factor");
             }
         }
         foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
-            if ($vettedSecondFactor->getId()->equals($secondFactorId)) {
-                throw new DomainException("The second factor has already moved to the new identity");
+            if ($vettedSecondFactor->typeAndIdentifierAreEqual($type, $identifier)) {
+                throw new DomainException("The second factor was registered as a vetted second factor");
             }
         }
     }

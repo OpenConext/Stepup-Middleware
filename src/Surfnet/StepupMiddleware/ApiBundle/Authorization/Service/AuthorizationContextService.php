@@ -95,7 +95,7 @@ class AuthorizationContextService
             foreach ($configuredInstitutions as $institution) {
                 $institutions->add(new Institution((string)$institution->institution));
             }
-        } else if ($role->getType() === InstitutionRole::ROLE_SELECT_RAA) {
+        } elseif ($role->getType() === InstitutionRole::ROLE_SELECT_RAA) {
             // When building an auth context based on the select raa role, we use another query to retrieve the correct
             // institutions.
             $institutions = $this->authorizationRepository->getInstitutionsForSelectRaaRole($actorId);

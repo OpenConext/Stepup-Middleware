@@ -52,7 +52,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleEx
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
@@ -185,11 +185,11 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
 
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
-        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->bootstrapYubikeySecondFactor(
             new SecondFactorId($command->secondFactorId),
-            new YubikeyPublicId($command->yubikeyPublicId)
+            new YubikeyPublicId($command->yubikeyPublicId),
+            $tokenCount
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -206,13 +206,13 @@ class IdentityCommandHandler extends SimpleCommandHandler
             (string) $identity->getInstitution()
         );
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
-        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfYubikey(
             new SecondFactorId($command->secondFactorId),
             new YubikeyPublicId($command->yubikeyPublicId),
             $this->emailVerificationIsRequired($identity),
-            $this->configurableSettings->createNewEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow(),
+            $tokenCount
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -233,13 +233,13 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
 
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
-        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfPhone(
             new SecondFactorId($command->secondFactorId),
             new PhoneNumber($command->phoneNumber),
             $this->emailVerificationIsRequired($identity),
-            $this->configurableSettings->createNewEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow(),
+            $tokenCount
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -262,14 +262,14 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
 
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
-        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfGssf(
             new SecondFactorId($command->secondFactorId),
             new StepupProvider($secondFactorType),
             new GssfId($command->gssfId),
             $this->emailVerificationIsRequired($identity),
-            $this->configurableSettings->createNewEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow(),
+            $tokenCount
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -287,13 +287,13 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
 
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
-        $identity->setMaxNumberOfTokens($tokenCount);
 
         $identity->provePossessionOfU2fDevice(
             new SecondFactorId($command->secondFactorId),
             new U2fKeyHandle($command->keyHandle),
             $this->emailVerificationIsRequired($identity),
-            $this->configurableSettings->createNewEmailVerificationWindow()
+            $this->configurableSettings->createNewEmailVerificationWindow(),
+            $tokenCount
         );
 
         $this->eventSourcedRepository->save($identity);
@@ -369,36 +369,31 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleMoveSecondFactorCommand(MoveSecondFactorCommand $command)
+    public function handleMoveVettedSecondFactorCommand(MoveVettedSecondFactorCommand $command)
     {
-        $sourceIdentity = $this->loadIdentityByNameId($command->sourceNameId);
-        $targetIdentity = $this->loadIdentityByNameId($command->nameId);
-        if (!$targetIdentity) {
-            // If the new (target) identity does not exist yet, create a new one based on the old identity.
-            // The common name and preferred locale can be reused. The rest of the data comes from the command.
-            $targetIdentity = Identity::create(
-                new IdentityId($command->getTargetIdentityId()),
-                new Institution($command->targetInstitution),
-                new NameId($command->nameId),
-                $sourceIdentity->getCommonName(),
-                new Email($command->email),
-                $sourceIdentity->getPreferredLocale()
-            );
-            $this->eventSourcedRepository->save($targetIdentity);
-        }
+        /** @var IdentityApi $sourceIdentity */
+        /** @var IdentityApi $targetIdentity */
+        $sourceIdentity = $this->eventSourcedRepository->load(new IdentityId($command->sourceIdentityId));
+        $targetIdentity = $this->eventSourcedRepository->load(new IdentityId($command->targetIdentityId));
 
-        $targetIdentity->moveVettedSecondFactor($sourceIdentity, new SecondFactorId($command->oldSecondFactorId));
-        $this->eventSourcedRepository->save($sourceIdentity);
+        // Check if second factor type is allowed by destination institution
+        $secondFactor = $sourceIdentity->getVettedSecondFactorById(new SecondFactorId($command->sourceSecondFactorId));
+        $this->assertSecondFactorIsAllowedFor($secondFactor->getType(), $targetIdentity->getInstitution());
+
+        // Determine the maximum number of allowed tokens for the institution
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $targetIdentity->getInstitution()
+        );
+        $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
+
+        // move second factor
+        $targetIdentity->moveVettedSecondFactor(
+            $sourceIdentity,
+            new SecondFactorId($command->sourceSecondFactorId),
+            $command->targetSecondFactorId,
+            $tokenCount
+        );
         $this->eventSourcedRepository->save($targetIdentity);
-    }
-
-    private function loadIdentityByNameId(string $nameId): ?Identity
-    {
-        $entity = $this->identityProjectionRepository->findOneByNameId($nameId);
-        if ($entity) {
-            return $this->eventSourcedRepository->load(new IdentityId($entity->id));
-        }
-        return null;
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

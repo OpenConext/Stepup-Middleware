@@ -69,7 +69,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->targetNameId,
                 (string) $event->identityInstitution,
                 (string) $event->preferredLocale,
-                (string) $event->secondFactorId,
+                (string) $event->newSecondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType
             )

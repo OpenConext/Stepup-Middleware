@@ -21,70 +21,47 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class MoveSecondFactorCommand extends AbstractCommand
+class MoveVettedSecondFactorCommand extends AbstractCommand
 {
+
     /**
-     * The nameId of the target identity
+     * The UUID of the source identity
      *
      * @Assert\NotBlank()
      * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $nameId;
+    public $sourceIdentityId;
 
     /**
-     * The new institution of the target identity
+     * The UUID of the target identity
      *
      * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $targetInstitution;
-
-    /**
-     * The new email of the target identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $email;
-
-    /**
-     * The NameId of the source identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $sourceNameId;
-
-    /**
-     * The second factor that is to be moved
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $secondFactorId;
-
-    /**
-     * The identityId of the new user, should be a uuid version 4 string.
-     * This is only used when creating a new Identity.
-     *
      * @Assert\Type(type="string")
      *
      * @var string
      */
     public $targetIdentityId;
 
-    public function getTargetIdentityId(): string
-    {
-        return $this->targetIdentityId;
-    }
+    /**
+     * The source second factor UUID that is to be moved
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $sourceSecondFactorId;
+
+
+    /**
+     * The new destination second factor UUID
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $targetSecondFactorId;
 }

@@ -21,10 +21,8 @@ namespace Surfnet\Stepup\Identity\Entity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -90,24 +88,6 @@ class VettedSecondFactor extends AbstractSecondFactor
         return $this->id;
     }
 
-    public function move(Identity $targetIdentity, NameId $sourceNameId)
-    {
-        $this->apply(
-            new MoveSecondFactorEvent(
-                $targetIdentity->getId(),
-                $sourceNameId,
-                $targetIdentity->getNameId(),
-                $targetIdentity->getInstitution(),
-                $this->id,
-                $this->type,
-                $this->secondFactorIdentifier,
-                $targetIdentity->getCommonName(),
-                $targetIdentity->getEmail(),
-                $targetIdentity->getPreferredLocale()
-            )
-        );
-    }
-
     public function revoke()
     {
         $this->apply(
@@ -142,8 +122,13 @@ class VettedSecondFactor extends AbstractSecondFactor
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
-    public function getType()
+    public function getType(): SecondFactorType
     {
         return $this->type;
+    }
+
+    public function getIdentifier(): SecondFactorIdentifier
+    {
+        return $this->secondFactorIdentifier;
     }
 }

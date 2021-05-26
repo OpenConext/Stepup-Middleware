@@ -52,6 +52,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleEx
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
@@ -63,6 +64,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -365,6 +367,38 @@ class IdentityCommandHandler extends SimpleCommandHandler
             $this->secondFactorTypeService
         );
         $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handleMoveSecondFactorCommand(MoveSecondFactorCommand $command)
+    {
+        $sourceIdentity = $this->loadIdentityByNameId($command->sourceNameId);
+        $targetIdentity = $this->loadIdentityByNameId($command->nameId);
+        if (!$targetIdentity) {
+            // If the new (target) identity does not exist yet, create a new one based on the old identity.
+            // The common name and preferred locale can be reused. The rest of the data comes from the command.
+            $targetIdentity = Identity::create(
+                new IdentityId($command->getTargetIdentityId()),
+                new Institution($command->targetInstitution),
+                new NameId($command->nameId),
+                $sourceIdentity->getCommonName(),
+                new Email($command->email),
+                $sourceIdentity->getPreferredLocale()
+            );
+            $this->eventSourcedRepository->save($targetIdentity);
+        }
+
+        $targetIdentity->moveVettedSecondFactor($sourceIdentity, new SecondFactorId($command->oldSecondFactorId));
+        $this->eventSourcedRepository->save($sourceIdentity);
+        $this->eventSourcedRepository->save($targetIdentity);
+    }
+
+    private function loadIdentityByNameId(string $nameId): ?Identity
+    {
+        $entity = $this->identityProjectionRepository->findOneByNameId($nameId);
+        if ($entity) {
+            return $this->eventSourcedRepository->load(new IdentityId($entity->id));
+        }
+        return null;
     }
 
     public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)

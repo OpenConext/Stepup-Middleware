@@ -26,6 +26,7 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
@@ -234,6 +235,22 @@ class SecondFactorProjector extends Projector
 
         $this->vettedRepository->save($vetted);
         $this->verifiedRepository->remove($verified);
+    }
+
+    /**
+     * A new vetted second factor is projected. A copy of the 'source' second factor.
+     * The original 'source' second factor is not yet removed. This is handled when the
+     * old identity is cleaned up.
+     */
+    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    {
+        $vetted = new VettedSecondFactor();
+        $vetted->id = $event->secondFactorId->getSecondFactorId();
+        $vetted->identityId = $event->identityId->getIdentityId();
+        $vetted->type = $event->secondFactorType->getSecondFactorType();
+        $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+
+        $this->vettedRepository->save($vetted);
     }
 
     public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)

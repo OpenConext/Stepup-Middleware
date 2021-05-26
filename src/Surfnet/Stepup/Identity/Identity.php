@@ -32,8 +32,8 @@ use Surfnet\Stepup\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -50,14 +50,15 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
+use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -83,18 +84,16 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
-use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
-use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
+use function get_class;
 use function sprintf;
 
 /**
@@ -549,6 +548,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $registeringSecondFactor->vet(true, new SelfVetVettingType($authoringSecondFactorLoa));
     }
 
+    /**
+     * Move a token from the source identity to the target identity
+     */
+    public function moveVettedSecondFactor(Identity $sourceIdentity, SecondFactorId $secondFactorId): void
+    {
+        $this->assertNotForgotten();
+        $this->assertTokenNotAlreadyRegistered($secondFactorId);
+        $this->assertUserMayAddSecondFactor();
+        $secondFactor = $sourceIdentity->getVettedSecondFactorById($secondFactorId);
+        if (!$secondFactor) {
+            throw new DomainException("The second factor on the original identity can not be found");
+        }
+        $secondFactor->move($this, $sourceIdentity->getNameId());
+    }
+
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
@@ -976,14 +990,28 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set($secondFactorId, $verified);
     }
 
+    /**
+     * The MoveSecondFactorEvent is applied by creating a new
+     * vetted second factor on the target identity. The source
+     * second factor is not yet forgotten.
+     */
+    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    {
+        $secondFactorId = (string)$event->secondFactorId;
+        $vetted = VettedSecondFactor::create(
+            $event->secondFactorId,
+            $this,
+            $event->secondFactorType,
+            $event->secondFactorIdentifier
+        );
+        $this->vettedSecondFactors->set($secondFactorId, $vetted);
+    }
+
     protected function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $secondFactorId = (string)$event->secondFactorId;
-
-        /** @var VerifiedSecondFactor $verified */
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
         $vetted = $verified->asVetted();
-
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
@@ -1242,12 +1270,32 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return $this->preferredLocale;
     }
 
-    /**
-     * @param SecondFactorId $secondFactorId
-     * @return VerifiedSecondFactor|null
-     */
-    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId)
+    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId): ?VerifiedSecondFactor
     {
         return $this->verifiedSecondFactors->get((string)$secondFactorId);
+    }
+
+    public function getVettedSecondFactorById(SecondFactorId $secondFactorId): ?VettedSecondFactor
+    {
+        return $this->vettedSecondFactors->get((string)$secondFactorId);
+    }
+
+    private function assertTokenNotAlreadyRegistered(SecondFactorId $secondFactorId)
+    {
+        foreach ($this->unverifiedSecondFactors as $unverified) {
+            if ($unverified->getId()->equals($secondFactorId)) {
+                throw new DomainException("The second factor is already registered as a unverified second factor");
+            }
+        }
+        foreach ($this->verifiedSecondFactors as $verified) {
+            if ($verified->getId()->equals($secondFactorId)) {
+                throw new DomainException("The second factor is already registered as a verified second factor");
+            }
+        }
+        foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
+            if ($vettedSecondFactor->getId()->equals($secondFactorId)) {
+                throw new DomainException("The second factor has already moved to the new identity");
+            }
+        }
     }
 }

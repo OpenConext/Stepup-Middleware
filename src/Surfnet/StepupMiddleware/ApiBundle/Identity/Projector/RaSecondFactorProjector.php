@@ -28,6 +28,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
@@ -256,6 +257,20 @@ class RaSecondFactorProjector extends Projector
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::verified());
+    }
+
+    /**
+     * The RA second factor projection is updated with a new Second factor based on the 'source' second factor
+     * from the original identity.
+     */
+    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    {
+        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+
+        $secondFactor->documentNumber = null;
+        $secondFactor->status = SecondFactorStatus::vetted();
+
+        $this->raSecondFactorRepository->save($secondFactor);
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)

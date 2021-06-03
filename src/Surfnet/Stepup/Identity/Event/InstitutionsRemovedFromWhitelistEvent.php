@@ -41,8 +41,9 @@ class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
         return new self(InstitutionCollection::deserialize($data['removed_institutions']));
     }
 
+
     /**
-     * @return array
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
      */
     public function serialize(): array
     {

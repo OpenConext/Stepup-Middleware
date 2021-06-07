@@ -143,6 +143,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         );
     }
 
+    /**
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
+     */
     public function serialize(): array
     {
         return [

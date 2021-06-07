@@ -92,6 +92,9 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         );
     }
 
+    /**
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
+     */
     final public function serialize(): array
     {
         return [

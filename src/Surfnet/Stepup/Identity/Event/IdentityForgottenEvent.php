@@ -41,6 +41,9 @@ class IdentityForgottenEvent extends IdentityEvent
         return new IdentityForgottenEvent(new IdentityId($data['identity_id']), new Institution($data['institution']));
     }
 
+    /**
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
+     */
     public function serialize(): array
     {
         return ['identity_id' => $this->identityId, 'institution' => $this->identityInstitution];

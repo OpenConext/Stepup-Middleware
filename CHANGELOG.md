@@ -1,5 +1,9 @@
 # Changelog
 
+# 4.2.2
+**Bugfix**
+* Document-numbers were not removed from the event-stream (introduced in 4.2.0)
+
 # 4.2.1
 **Improvements**
 * Install Symfony dependencies security upgrades

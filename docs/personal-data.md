@@ -213,7 +213,7 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - Forgettable: email
 - Forgettable: commonName
 - Forgettable: secondFactorIdentifier
-- Forgettable: documentNumber
+- Forgettable: vettingType (each vetting type has different data)
 
 [SecondFactorVettedWithoutTokenProofOfPossession](../src/Surfnet/Stepup/Identity/Event/SecondFactorVettedEvent.php)
 - identity_id
@@ -225,7 +225,7 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - Forgettable: email
 - Forgettable: commonName
 - Forgettable: secondFactorIdentifier
-- Forgettable: documentNumber
+- Forgettable: vettingType (each vetting type has different data)
 
 [U2fDevicePossessionProvenAndVerifiedEvent](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenAndVerifiedEvent.php)
 - identity_id

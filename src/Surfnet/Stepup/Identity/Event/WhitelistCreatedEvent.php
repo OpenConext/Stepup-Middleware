@@ -41,6 +41,9 @@ class WhitelistCreatedEvent implements WhitelistEvent
         return new self(InstitutionCollection::deserialize($data['whitelisted_institutions']));
     }
 
+    /**
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
+     */
     public function serialize(): array
     {
         return ['whitelisted_institutions' => $this->whitelistedInstitutions->serialize()];

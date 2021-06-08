@@ -158,6 +158,9 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
         );
     }
 
+    /**
+     * The data ending up in the event_stream, be careful not to include sensitive data here!
+     */
     public function serialize(): array
     {
         return [
@@ -167,7 +170,6 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
             'second_factor_id'         => (string) $this->secondFactorId,
             'second_factor_type'       => (string) $this->secondFactorType,
             'preferred_locale'         => (string) $this->preferredLocale,
-            'vetting_type' => $this->vettingType->jsonSerialize(),
         ];
     }
 

@@ -152,6 +152,15 @@ class IdentityRepository extends ServiceEntityRepository
                 ->getSingleResult();
     }
 
+    public function findOneByNameId(string $nameId) :? Identity
+    {
+        return $this->createQueryBuilder('i')
+                ->where('i.nameId = :nameId')
+                ->setParameter('nameId', $nameId)
+                ->getQuery()
+                ->getSingleResult();
+    }
+
     public function removeByIdentityId(IdentityId $identityId)
     {
         $this->getEntityManager()->createQueryBuilder()

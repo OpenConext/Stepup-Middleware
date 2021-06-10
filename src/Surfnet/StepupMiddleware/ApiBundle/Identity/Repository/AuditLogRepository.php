@@ -48,6 +48,7 @@ class AuditLogRepository extends ServiceEntityRepository
         'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession',
+        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent',
         'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent',
         'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent',
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent',

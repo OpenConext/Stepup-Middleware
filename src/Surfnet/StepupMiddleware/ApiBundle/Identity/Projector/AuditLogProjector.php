@@ -25,17 +25,17 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
+use Surfnet\Stepup\Identity\Event\AuditableSourceAndTargetEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use function get_class;
 use function is_null;
 use function property_exists;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -67,25 +67,33 @@ class AuditLogProjector implements EventListener
     {
         $event = $domainMessage->getPayload();
 
-        if ($event instanceof IdentityForgottenEvent) {
-            // Don't insert the IdentityForgottenEvent into the audit log, as we'd remove it immediately afterwards.
-            $this->applyIdentityForgottenEvent($event);
-        } elseif ($event instanceof AuditableEvent) {
-            $this->applyAuditableEvent($event, $domainMessage);
+        switch (true) {
+            case $event instanceof IdentityForgottenEvent:
+                // Don't insert the IdentityForgottenEvent into the audit log, as we'd remove it immediately afterwards.
+                $this->applyIdentityForgottenEvent($event);
+                break;
+            case $event instanceof AuditableSourceAndTargetEvent:
+                // This event is projected twice, one for the source identity, one for the target identity.
+                $this->applyAuditableEvent($event, $domainMessage, $event->getAuditLogMetadata());
+                $this->applyAuditableEvent($event, $domainMessage, $event->getAuditLogMetadataSource());
+                break;
+            // Finally apply the auditable event, most events are auditable this so first handle the unique variants
+            case $event instanceof AuditableEvent:
+                $this->applyAuditableEvent($event, $domainMessage, $event->getAuditLogMetadata());
+                break;
         }
     }
 
     /**
      * @param AuditableEvent $event
-     * @param DomainMessage  $domainMessage
+     * @param DomainMessage $domainMessage
+     * @param Metadata $auditLogMetadata
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
+    private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage, Metadata $auditLogMetadata)
     {
-        $auditLogMetadata = $event->getAuditLogMetadata();
         $metadata = $domainMessage->getMetadata()->serialize();
-
         $entry = new AuditLogEntry();
         $entry->id = (string) Uuid::uuid4();
 

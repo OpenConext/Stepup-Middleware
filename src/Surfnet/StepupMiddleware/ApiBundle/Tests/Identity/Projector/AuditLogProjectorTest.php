@@ -23,17 +23,21 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata as MessageMetadata;
 use DateTime as CoreDateTime;
 use Mockery as m;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\AuditLogProjector;
 use Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub;
+use Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\SourceAndTargetEventStub;
 
 final class AuditLogProjectorTest extends TestCase
 {
@@ -51,7 +55,8 @@ final class AuditLogProjectorTest extends TestCase
                         new IdentityId('abcd'),
                         new Institution('efgh'),
                         new SecondFactorId('ijkl'),
-                        new SecondFactorType('sms')
+                        new SecondFactorType('yubikey'),
+                        new YubikeyPublicId('99992222')
                     )),
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
                 ),
@@ -61,7 +66,8 @@ final class AuditLogProjectorTest extends TestCase
                     new IdentityId('abcd'),
                     new Institution('efgh'),
                     new SecondFactorId('ijkl'),
-                    new SecondFactorType('sms'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('99992222'),
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
                     new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
                 )
@@ -86,6 +92,7 @@ final class AuditLogProjectorTest extends TestCase
                     new Institution('efgh'),
                     null,
                     null,
+                    null,
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
                     new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
                 )
@@ -102,7 +109,8 @@ final class AuditLogProjectorTest extends TestCase
                         new IdentityId('abcd'),
                         new Institution('efgh'),
                         new SecondFactorId('ijkl'),
-                        new SecondFactorType('sms')
+                        new SecondFactorType('yubikey'),
+                        new YubikeyPublicId('99992222')
                     )),
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
                 ),
@@ -112,8 +120,60 @@ final class AuditLogProjectorTest extends TestCase
                     new IdentityId('abcd'),
                     new Institution('efgh'),
                     new SecondFactorId('ijkl'),
-                    new SecondFactorType('sms'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('99992222'),
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
+                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    self::$actorCommonName
+                )
+            ],
+            'move second factor audit entry logs' => [
+                new DomainMessage(
+                    'id',
+                    0,
+                    new MessageMetadata([
+                        'actorId' => '0123',
+                        'actorInstitution' => '4567',
+                    ]),
+                    new SourceAndTargetEventStub(
+                        $this->createAuditLogMetadata(
+                            new IdentityId('abcd'),
+                            new Institution('efgh'),
+                            new SecondFactorId('ijkl'),
+                            new SecondFactorType('sms'),
+                            SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 6436879')
+                        ),
+                        $this->createAuditLogMetadata(
+                            new IdentityId('abcd'),
+                            new Institution('efgh'),
+                            new SecondFactorId('ijkl'),
+                            new SecondFactorType('sms'),
+                            SecondFactorIdentifierFactory::forType( new SecondFactorType('sms'), '+31 (0) 6436879')
+                        )
+                ),
+                    BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
+                ),
+                $this->createExpectedAuditLogEntry(
+                    new IdentityId('0123'),
+                    new Institution('4567'),
+                    new IdentityId('abcd'),
+                    new Institution('efgh'),
+                    new SecondFactorId('ijkl'),
+                    new SecondFactorType('sms'),
+                    SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 6436879'),
+                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\SourceAndTargetEventStub',
+                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    self::$actorCommonName
+                ),
+                $this->createExpectedAuditLogEntry(
+                    new IdentityId('0123'),
+                    new Institution('4567'),
+                    new IdentityId('abcd'),
+                    new Institution('efgh'),
+                    new SecondFactorId('ijkl'),
+                    new SecondFactorType('sms'),
+                    SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 6436879'),
+                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\SourceAndTargetEventStub',
                     new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
                     self::$actorCommonName
                 )
@@ -154,13 +214,15 @@ final class AuditLogProjectorTest extends TestCase
         IdentityId $identityId,
         Institution $institution,
         SecondFactorId $secondFactorId = null,
-        SecondFactorType $secondFactorType = null
+        SecondFactorType $secondFactorType = null,
+        SecondFactorIdentifier $secondFactorIdentifier = null
     ) {
         $metadata = new Metadata();
         $metadata->identityId = $identityId;
         $metadata->identityInstitution = $institution;
         $metadata->secondFactorId = $secondFactorId;
         $metadata->secondFactorType = $secondFactorType;
+        $metadata->secondFactorIdentifier = $secondFactorIdentifier;
 
         return $metadata;
     }
@@ -172,6 +234,7 @@ final class AuditLogProjectorTest extends TestCase
         Institution $identityInstitution,
         SecondFactorId $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
+        SecondFactorIdentifier $secondFactorIdentifier = null,
         $event,
         StepupDateTime $recordedOn,
         $actorCommonName = null
@@ -183,6 +246,7 @@ final class AuditLogProjectorTest extends TestCase
         $entry->identityInstitution = $identityInstitution;
         $entry->secondFactorId = $secondFactorId ? (string) $secondFactorId : null;
         $entry->secondFactorType = $secondFactorType ? (string) $secondFactorType : null;
+        $entry->secondFactorIdentifier = $secondFactorIdentifier ? (string) $secondFactorIdentifier : null;
         $entry->event = $event;
         $entry->recordedOn = $recordedOn;
         $entry->actorCommonName = $actorCommonName;

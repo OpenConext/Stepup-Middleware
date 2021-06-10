@@ -52,7 +52,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleEx
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
@@ -369,7 +369,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleMoveVettedSecondFactorCommand(MoveVettedSecondFactorCommand $command)
+    public function handleMigrateVettedSecondFactorCommand(MigrateVettedSecondFactorCommand $command)
     {
         /** @var IdentityApi $sourceIdentity */
         /** @var IdentityApi $targetIdentity */
@@ -387,7 +387,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $tokenCount = $this->institutionConfigurationOptionsService->getMaxNumberOfTokensFor($configurationInstitution);
 
         // move second factor
-        $targetIdentity->moveVettedSecondFactor(
+        $targetIdentity->migrateVettedSecondFactor(
             $sourceIdentity,
             new SecondFactorId($command->sourceSecondFactorId),
             $command->targetSecondFactorId,

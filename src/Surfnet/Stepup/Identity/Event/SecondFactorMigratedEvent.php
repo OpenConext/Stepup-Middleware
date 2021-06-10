@@ -35,12 +35,17 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
+class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, AuditableSourceAndTargetEvent
 {
     /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var IdentityId
      */
-    public $sourceNameId;
+    public $sourceIdentityId;
+
+    /**
+     * @var Institution
+     */
+    private $sourceInstitution;
 
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
@@ -76,7 +81,6 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
      * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
-
     /**
      * @var \Surfnet\Stepup\Identity\Value\Locale
      */
@@ -87,9 +91,10 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $sourceNameId,
+        IdentityId $sourceIdentityId,
         NameId $targetNameId,
         Institution $targetInstitution,
+        Institution $sourceInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
@@ -100,7 +105,8 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
     ) {
         parent::__construct($identityId, $targetInstitution);
 
-        $this->sourceNameId = $sourceNameId;
+        $this->sourceIdentityId = $sourceIdentityId;
+        $this->sourceInstitution = $sourceInstitution;
         $this->targetNameId = $targetNameId;
         $this->secondFactorId = $secondFactorId;
         $this->newSecondFactorId = $newSecondFactorId;
@@ -122,14 +128,26 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
         return $metadata;
     }
 
+    public function getAuditLogMetadataSource()
+    {
+        $metadata = new Metadata();
+        $metadata->identityId = $this->sourceIdentityId;
+        $metadata->identityInstitution = $this->sourceInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
+        $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
+        return $metadata;
+    }
+
     public static function deserialize(array $data)
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(
             new IdentityId($data['identity_id']),
-            new NameId($data['source_name_id']),
+            new IdentityId($data['source_identity_id']),
             new NameId($data['target_name_id']),
             new Institution($data['identity_institution']),
+            new Institution($data['source_institution']),
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorId($data['new_second_factor_id']),
             $secondFactorType,
@@ -147,7 +165,8 @@ class MoveSecondFactorEvent extends IdentityEvent implements Forgettable
     {
         return [
             'identity_id' => (string)$this->identityId,
-            'source_name_id' => (string)$this->sourceNameId,
+            'source_identity_id' => (string)$this->sourceIdentityId,
+            'source_institution' => (string)$this->sourceInstitution,
             'target_name_id' => (string)$this->targetNameId,
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,

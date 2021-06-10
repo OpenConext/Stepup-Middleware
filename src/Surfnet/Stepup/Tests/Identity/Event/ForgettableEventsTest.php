@@ -39,7 +39,7 @@ final class ForgettableEventsTest extends TestCase
             'Surfnet\Stepup\Identity\Event\IdentityCreatedEvent',
             'Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent',
             'Surfnet\Stepup\Identity\Event\IdentityRenamedEvent',
-            'Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent',
+            'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent',
             'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent',
             'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent',
             'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',

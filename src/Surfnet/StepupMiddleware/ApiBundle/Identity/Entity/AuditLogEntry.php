@@ -58,6 +58,8 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent'             => 'possession_proven',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
         'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession' => 'vetted_possession_unknown',
+        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent' => 'migrated_to',
+        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent' => 'migrated_from',
         'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
         'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
         'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
@@ -168,17 +170,17 @@ class AuditLogEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'actor_id'                 => $this->actorId,
-            'actor_institution'        => $this->actorInstitution ? (string) $this->actorInstitution : null,
-            'actor_common_name'        => $this->actorCommonName,
-            'identity_id'              => $this->identityId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'ra_institution'           => (string) $this->raInstitution,
-            'second_factor_id'         => $this->secondFactorId,
-            'second_factor_type'       => $this->secondFactorType ? (string) $this->secondFactorType : null,
+            'actor_id' => $this->actorId,
+            'actor_institution' => $this->actorInstitution ? (string)$this->actorInstitution : null,
+            'actor_common_name' => $this->actorCommonName,
+            'identity_id' => $this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'ra_institution' => (string)$this->raInstitution,
+            'second_factor_id' => $this->secondFactorId,
+            'second_factor_type' => $this->secondFactorType ? (string)$this->secondFactorType : null,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'action'                   => $this->mapEventToAction($this->event),
-            'recorded_on'              => (string) $this->recordedOn,
+            'action' => $this->mapEventToAction($this->event),
+            'recorded_on' => (string) $this->recordedOn,
         ];
     }
 

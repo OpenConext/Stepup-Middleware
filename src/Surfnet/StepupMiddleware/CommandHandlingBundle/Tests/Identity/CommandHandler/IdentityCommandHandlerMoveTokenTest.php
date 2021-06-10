@@ -30,7 +30,8 @@ use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
-use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -54,7 +55,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
@@ -122,7 +123,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
     {
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -181,11 +182,11 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new MoveSecondFactorEvent(
+                new SecondFactorMigratedEvent(
                     $targetRegistrantId,
-                    $sourceRegistrantNameId,
                     $targetRegistrantNameId,
                     $targetRegistrantInstitution,
+                    $sourceRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
@@ -193,6 +194,15 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')
+                ),
+                new SecondFactorMigratedToEvent(
+                    $sourceRegistrantId,
+                    $sourceRegistrantInstitution,
+                    $targetRegistrantInstitution,
+                    $sourceRegistrantSecFacId,
+                    $targetRegistrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $sourceYubikeySecFacId
                 ),
             ]);
     }
@@ -204,7 +214,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -239,11 +249,11 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantEmail,
                     new Locale('en_GB')
                 ),
-                new MoveSecondFactorEvent(
+                new SecondFactorMigratedEvent(
                     $targetRegistrantId,
-                    $sourceRegistrantNameId,
                     $targetRegistrantNameId,
                     $targetRegistrantInstitution,
+                    $sourceRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
@@ -251,6 +261,15 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')
+                ),
+                new SecondFactorMigratedToEvent(
+                    $sourceRegistrantId,
+                    $sourceRegistrantInstitution,
+                    $targetRegistrantInstitution,
+                    $sourceRegistrantSecFacId,
+                    $targetRegistrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $sourceYubikeySecFacId
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -285,7 +304,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -365,7 +384,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -473,7 +492,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -569,7 +588,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -653,7 +672,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -720,7 +739,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(2, ['sms']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();
@@ -779,7 +798,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new MoveSecondFactorEvent(
+                new SecondFactorMigratedToEvent(
                     $targetRegistrantId,
                     $sourceRegistrantNameId,
                     $targetRegistrantNameId,
@@ -802,7 +821,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 
         $this->setUpInstitutionConfiguration(1, ['yubikey']);
 
-        $command = new MoveVettedSecondFactorCommand();
+        $command = new MigrateVettedSecondFactorCommand();
         $command->sourceIdentityId = $this->uuid();
         $command->targetIdentityId = $this->uuid();
         $command->sourceSecondFactorId = $this->uuid();

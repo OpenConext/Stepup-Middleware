@@ -75,9 +75,9 @@ services:
         tags:
             - { name: 'console.command', command: 'middleware:bootstrap:gssp' }
 
-    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MoveSecondFactorCommand:
+    Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\MigrateSecondFactorCommand:
         arguments:
             - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService'
             - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper'
         tags:
-            - { name: 'console.command', command: 'middleware:move:vetted-tokens' }
+            - { name: 'console.command', command: 'middleware:migrate:vetted-tokens' }

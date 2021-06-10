@@ -210,9 +210,9 @@ interface Identity extends AggregateRoot
     ): void;
 
     /**
-     * Move a token from the source identity to the target identity
+     * Migrate a token from the source identity to the target identity
      */
-    public function moveVettedSecondFactor(
+    public function migrateVettedSecondFactor(
         Identity $sourceIdentity,
         SecondFactorId $secondFactorId,
         string $targetSecondFactorId,

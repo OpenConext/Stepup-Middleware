@@ -33,7 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use function sprintf;
 
-final class MoveSecondFactorCommand extends Command
+final class MigrateSecondFactorCommand extends Command
 {
     /**
      * @var BootstrapCommandService
@@ -54,7 +54,7 @@ final class MoveSecondFactorCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Moves/migrates the tokens of an identity to a new institution')
+            ->setDescription('Migrates the tokens of an identity to a new institution while preserving the old tokens')
             ->addArgument(
                 'old-name-id',
                 InputArgument::REQUIRED,
@@ -106,7 +106,7 @@ final class MoveSecondFactorCommand extends Command
             $targetVettedSecondFactors = $this->bootstrapService->getVettedSecondFactorsFromIdentity($targetIdentity);
             foreach ($sourceVettedSecondFactors as $secondFactor) {
                 if (!$this->tokenExists($targetVettedSecondFactors, $secondFactor)) {
-                    $this->bootstrapService->moveVettedSecondFactor($sourceIdentity, $targetIdentity, $secondFactor);
+                    $this->bootstrapService->migrateVettedSecondFactor($sourceIdentity, $targetIdentity, $secondFactor);
                     $output->writeln(sprintf('<comment>Moved token %s</comment>', $secondFactor->id));
                 } else {
                     $output->writeln(sprintf('<info>Skipped moving token %s, already present"</info>', $secondFactor->id));

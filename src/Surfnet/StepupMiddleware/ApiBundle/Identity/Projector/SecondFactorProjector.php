@@ -26,11 +26,11 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -236,7 +236,7 @@ class SecondFactorProjector extends Projector
      * The original 'source' second factor is not yet removed. This is handled when the
      * old identity is cleaned up.
      */
-    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
     {
         $vetted = new VettedSecondFactor();
         $vetted->id = $event->newSecondFactorId->getSecondFactorId();

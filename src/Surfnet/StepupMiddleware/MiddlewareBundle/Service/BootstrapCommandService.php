@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MoveVettedSecondFactorCommand as CommandHandlingMoveSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand as CommandHandlingMigrateSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
@@ -220,9 +220,9 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function moveVettedSecondFactor(Identity $sourceIdentity, Identity $targetIdentity, VettedSecondFactor $vettedSecondFactor)
+    public function migrateVettedSecondFactor(Identity $sourceIdentity, Identity $targetIdentity, VettedSecondFactor $vettedSecondFactor)
     {
-        $command = new CommandHandlingMoveSecondFactorCommand();
+        $command = new CommandHandlingMigrateSecondFactorCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->sourceIdentityId = $sourceIdentity->id;
         $command->targetIdentityId = $targetIdentity->id;

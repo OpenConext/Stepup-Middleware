@@ -50,13 +50,14 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
-use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
@@ -535,9 +536,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     /**
-     * Move a token from the source identity to the target identity
+     * Copy a token from the source identity to the target identity
      */
-    public function moveVettedSecondFactor(
+    public function migrateVettedSecondFactor(
         IdentityApi $sourceIdentity,
         SecondFactorId $secondFactorId,
         string $targetSecondFactorId,
@@ -555,11 +556,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
 
         $this->apply(
-            new MoveSecondFactorEvent(
+            new SecondFactorMigratedEvent(
                 $this->getId(),
-                $sourceIdentity->getNameId(),
                 $this->getNameId(),
                 $this->getInstitution(),
+                $sourceIdentity->getInstitution(),
                 $secondFactorId,
                 new SecondFactorId($targetSecondFactorId),
                 $secondFactor->getType(),
@@ -567,6 +568,18 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->getCommonName(),
                 $this->getEmail(),
                 $this->getPreferredLocale()
+            )
+        );
+
+        $this->apply(
+            new SecondFactorMigratedToEvent(
+                $sourceIdentity->getId(),
+                $sourceIdentity->getInstitution(),
+                $this->getInstitution(),
+                $secondFactor->getId(),
+                new SecondFactorId($targetSecondFactorId),
+                $secondFactor->getType(),
+                $secondFactor->getIdentifier()
             )
         );
     }
@@ -999,11 +1012,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     /**
-     * The MoveSecondFactorEvent is applied by creating a new
+     * The SecondFactorMigratedToEvent is applied by creating a new
      * vetted second factor on the target identity. The source
      * second factor is not yet forgotten.
      */
-    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
     {
         $secondFactorId = (string)$event->newSecondFactorId;
         $vetted = VettedSecondFactor::create(

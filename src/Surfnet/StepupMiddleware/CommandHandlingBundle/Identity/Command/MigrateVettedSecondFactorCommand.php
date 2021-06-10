@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class MoveVettedSecondFactorCommand extends AbstractCommand
+class MigrateVettedSecondFactorCommand extends AbstractCommand
 {
 
     /**

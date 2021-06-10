@@ -24,8 +24,8 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
-use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -45,12 +45,15 @@ use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\GssfId;
@@ -59,6 +62,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -67,6 +71,7 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class EventSerializationAndDeserializationTest extends UnitTest
 {
@@ -100,6 +105,29 @@ class EventSerializationAndDeserializationTest extends UnitTest
         }
 
         $this->assertTrue($event == $deserializedEvent);
+    }
+
+    /**
+     * @test
+     * @group domain
+     * @dataProvider serializedDataProvider
+     * @param string $serializedData
+     * @param string $serializedSensitiveData
+     * @param SerializableInterface $event
+     */
+    public function an_serialized_event_should_be_the_same(string $serializedData, string $serializedSensitiveData, SerializableInterface $event)
+    {
+        $isForgettableEvent = $event instanceof Forgettable;
+
+        $serializedDataArray = json_decode($serializedData, true);
+        $serializedSensitiveDataArray = json_decode($serializedSensitiveData, true);
+
+        $deserializedEvent = $event::deserialize($serializedDataArray);
+        if ($isForgettableEvent) {
+            $deserializedEvent->setSensitiveData(SensitiveData::deserialize($serializedSensitiveDataArray));
+        }
+
+        $this->assertEquals($event, $deserializedEvent);
     }
 
     /**
@@ -514,6 +542,76 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new Email('info@example.invalid'),
                     new Institution('Babelfish Inc.')
                 )
+            ],
+        ];
+    }
+
+    public function serializedDataProvider(){
+        return [
+            // Tests for changes in BC support for adding the VettingType in the SecondFactorVettedEvents in favour of the 'DocumentNumber'
+            'SecondFactorVettedEvent:support-new-event-with-vetting-type' => [
+                '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"012345678"}}',
+                new SecondFactorVettedEvent(
+                    new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
+                    new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
+                    new Institution('institution-d.example.com'),
+                    new SecondFactorId('512de1ff-0ae0-41b7-bb21-b71d77e570b8'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('123465293846985'),
+                    new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
+                    new Email('jane+jane-d1@stepup.example.com'),
+                    new Locale('nl_NL'),
+                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                ),
+            ],
+            'SecondFactorVettedEvent:support-old-event-with-document-number' => [
+                '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"012345678"}',
+                new SecondFactorVettedEvent(
+                    new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
+                    new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
+                    new Institution('institution-d.example.com'),
+                    new SecondFactorId('512de1ff-0ae0-41b7-bb21-b71d77e570b8'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('123465293846985'),
+                    new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
+                    new Email('jane+jane-d1@stepup.example.com'),
+                    new Locale('nl_NL'),
+                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                ),
+            ],
+            'SecondFactorVettedWithoutTokenProofOfPossession:support-new-event-with-vetting-type' => [
+                '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"012345678"}}',
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
+                    new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
+                    new Institution('institution-d.example.com'),
+                    new SecondFactorId('512de1ff-0ae0-41b7-bb21-b71d77e570b8'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('123465293846985'),
+                    new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
+                    new Email('jane+jane-d1@stepup.example.com'),
+                    new Locale('nl_NL'),
+                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                ),
+            ],
+            'SecondFactorVettedWithoutTokenProofOfPossession:support-old-event-with-document-number' => [
+                '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"012345678"}',
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
+                    new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
+                    new Institution('institution-d.example.com'),
+                    new SecondFactorId('512de1ff-0ae0-41b7-bb21-b71d77e570b8'),
+                    new SecondFactorType('yubikey'),
+                    new YubikeyPublicId('123465293846985'),
+                    new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
+                    new Email('jane+jane-d1@stepup.example.com'),
+                    new Locale('nl_NL'),
+                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                ),
             ],
         ];
     }

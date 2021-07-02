@@ -406,7 +406,7 @@ class CommandAuthorizationServiceTest extends TestCase
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\CreateIdentityCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ExpressLocalePreferenceCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ForgetIdentityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\MoveSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\MigrateVettedSecondFactorCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveGssfPossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhonePossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',

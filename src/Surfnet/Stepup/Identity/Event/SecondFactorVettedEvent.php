@@ -141,6 +141,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         ) {
             $vettingType = new OnPremiseVettingType(new DocumentNumber($data['document_number']));
         }
+
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),

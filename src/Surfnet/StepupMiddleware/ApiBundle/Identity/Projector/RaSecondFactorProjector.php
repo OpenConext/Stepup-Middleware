@@ -28,11 +28,11 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
-use Surfnet\Stepup\Identity\Event\MoveSecondFactorEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -42,6 +42,7 @@ use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -230,6 +231,8 @@ class RaSecondFactorProjector extends Projector
      * @param string $secondFactorIdentifier
      * @param CommonName $commonName
      * @param Email $email
+     * @param SecondFactorStatus|null $status
+     * @param DocumentNumber|null $documentNumber
      */
     private function saveRaSecondFactor(
         $identityId,
@@ -237,21 +240,28 @@ class RaSecondFactorProjector extends Projector
         $secondFactorType,
         $secondFactorIdentifier,
         CommonName $commonName,
-        Email $email
+        Email $email,
+        SecondFactorStatus $status = null,
+        DocumentNumber $documentNumber = null
     ) {
         $identity = $this->identityRepository->find($identityId);
 
-        $this->raSecondFactorRepository->save(
-            new RaSecondFactor(
-                (string) $secondFactorId,
-                $secondFactorType,
-                $secondFactorIdentifier,
-                $identity->id,
-                $identity->institution,
-                $commonName,
-                $email
-            )
+        $secondFactor = new RaSecondFactor(
+            (string) $secondFactorId,
+            $secondFactorType,
+            $secondFactorIdentifier,
+            $identity->id,
+            $identity->institution,
+            $commonName,
+            $email,
+            $documentNumber
         );
+
+        if ($status !== null) {
+            $secondFactor->status = $status;
+        }
+
+        $this->raSecondFactorRepository->save($secondFactor);
     }
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
@@ -263,20 +273,25 @@ class RaSecondFactorProjector extends Projector
      * The RA second factor projection is updated with a new Second factor based on the 'source' second factor
      * from the original identity.
      */
-    public function applyMoveSecondFactorEvent(MoveSecondFactorEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
     {
-        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+        $oldSecondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
 
-        $secondFactor->documentNumber = null;
-        $secondFactor->status = SecondFactorStatus::vetted();
-
-        $this->raSecondFactorRepository->save($secondFactor);
+        $this->saveRaSecondFactor(
+            (string) $event->identityId,
+            (string) $event->newSecondFactorId,
+            (string) $event->secondFactorType,
+            (string) $event->secondFactorIdentifier,
+            $event->commonName,
+            $event->email,
+            $oldSecondFactor->status,
+            $oldSecondFactor->documentNumber
+        );
     }
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
     {
         $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
-
         $secondFactor->documentNumber = $event->vettingType->getDocumentNumber();
         $secondFactor->status = SecondFactorStatus::vetted();
 

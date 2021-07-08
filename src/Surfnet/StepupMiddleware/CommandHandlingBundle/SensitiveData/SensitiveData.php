@@ -20,12 +20,12 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\Stepup\Identity\Value\VettingTypeFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements SerializableInterface
@@ -169,9 +169,10 @@ class SensitiveData implements SerializableInterface
                 SecondFactorIdentifierFactory::forType($self->secondFactorType, $data['second_factor_identifier']);
         }
 
-        if (isset($data['document_number'])) {
-            $self->documentNumber = new DocumentNumber($data['document_number']);
+        if (isset($data['document_number']) || isset($data['vetting_type'])) {
+            $self->vettingType = VettingTypeFactory::fromData($data);
         }
+
 
         return $self;
     }

@@ -20,17 +20,14 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
-use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -123,25 +120,6 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public static function deserialize(array $data)
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
-        $vettingType = new UnknownVettingType();
-        if (isset($data['vetting_type'])) {
-            switch ($data['vetting_type']['type']) {
-                case VettingType::TYPE_SELF_VET:
-                    $vettingType = SelfVetVettingType::deserialize($data['vetting_type']);
-                    break;
-                case VettingType::TYPE_ON_PREMISE:
-                    $vettingType = OnPremiseVettingType::deserialize($data['vetting_type']);
-                    break;
-            }
-        }
-        // BC fix for older events without a vetting type, they default back to ON_PREMISE.
-        if ($vettingType instanceof UnknownVettingType &&
-            isset($data['document_number']) &&
-            $data['document_number'] !== null
-        ) {
-            $vettingType = new OnPremiseVettingType(new DocumentNumber($data['document_number']));
-        }
-
         return new self(
             new IdentityId($data['identity_id']),
             new NameId($data['name_id']),
@@ -152,7 +130,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale']),
-            $vettingType
+            new UnknownVettingType()
         );
     }
 

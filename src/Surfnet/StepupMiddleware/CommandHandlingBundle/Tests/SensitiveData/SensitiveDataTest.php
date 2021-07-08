@@ -23,6 +23,8 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\GssfId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -82,6 +84,17 @@ class SensitiveDataTest extends TestCase
                     ->withSecondFactorIdentifier(new YubikeyPublicId('00177273'), new SecondFactorType('yubikey'))
                     ->forget(),
                 ['SecondFactorIdentifier' => YubikeyPublicId::unknown()],
+            ],
+            'VettingType' => [
+                (new SensitiveData())
+                    ->withVettingType(new OnPremiseVettingType(new DocumentNumber("012345678"))),
+                ['VettingType' => new OnPremiseVettingType(new DocumentNumber("012345678"))],
+            ],
+            'VettingType, forgotten' => [
+                (new SensitiveData())
+                    ->withSecondFactorIdentifier(new YubikeyPublicId('00177273'), new SecondFactorType('yubikey'))
+                    ->forget(),
+                ['VettingType' => new UnknownVettingType()],
             ],
         ];
     }

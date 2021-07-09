@@ -1,5 +1,10 @@
 # Changelog
 
+# 4.3.0
+**Feature**
+* Add console command for migrating tokens to a new user/institution
+* Clean documents numbers from eventstream
+
 # 4.2.2
 **Bugfix**
 * Document-numbers were not removed from the event-stream (introduced in 4.2.0)

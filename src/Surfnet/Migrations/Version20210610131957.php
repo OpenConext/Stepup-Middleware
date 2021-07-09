@@ -25,9 +25,9 @@ SQL;
 
     private static $update = <<<SQL
         UPDATE event_stream
-        SET payload = '%s'
-        WHERE uuid = '%s'
-        AND playhead = %s;
+        SET payload = :payload
+        WHERE uuid = :uuid
+        AND playhead = :playhead;
 SQL;
 
     public function up(Schema $schema) : void
@@ -36,23 +36,28 @@ SQL;
         $this->addSql('# Updating entities.');
 
         $affectedEventStreamRows = $this->connection->executeQuery(self::$select);
+
+        $this->write("<info>Affected records: {$affectedEventStreamRows->rowCount()}</info>");
+
         if ($affectedEventStreamRows->rowCount() === 0) {
             return;
         }
+
         foreach ($affectedEventStreamRows as $eventStream) {
             $rawPayload = $eventStream['payload'];
             $uuid = $eventStream['uuid'];
             $playhead = $eventStream['playhead'];
 
-            $payload = $this->stripSensitiveData($rawPayload);
+            $this->write("<info>Migating: {$uuid}#{$playhead}</info>");
 
+            $payload = $this->stripSensitiveData($rawPayload);
             $this->connection->executeUpdate(
-                sprintf(
-                    self::$update,
-                    $payload,
-                    $uuid,
-                    $playhead
-                )
+                self::$update,
+                [
+                    'payload' => $payload,
+                    'uuid' => $uuid,
+                    'playhead' => $playhead,
+                ]
             );
         }
     }

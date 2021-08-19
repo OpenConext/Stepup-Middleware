@@ -1,5 +1,10 @@
 # Changelog
 
+# 4.3.1
+**Bugfix**
+* The migration that removes document numbers from the event_stream does not escape 
+  the backslash characters in the payload (introduced in 4.3.0) #331
+
 # 4.3.0
 **Feature**
 * Add console command for migrating tokens to a new user/institution

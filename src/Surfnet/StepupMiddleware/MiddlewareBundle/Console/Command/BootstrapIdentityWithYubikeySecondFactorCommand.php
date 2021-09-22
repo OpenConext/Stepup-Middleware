@@ -26,15 +26,22 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
+    /** @var BootstrapCommandService */
+    private $bootstrapService;
+
     /**
      * @var TransactionHelper
      */
@@ -63,17 +70,21 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
     }
 
     public function __construct(
+        BootstrapCommandService $bootstrapService,
         ServiceEntityRepository $projectionRepository,
         TransactionHelper $transactionHelper
     ) {
         parent::__construct();
+        $this->bootstrapService = $bootstrapService;
         $this->projectionRepository = $projectionRepository;
         $this->transactionHelper = $transactionHelper;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Container $container */
+        $this->bootstrapService->setToken(
+            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT'])
+        );
 
         $nameId      = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));

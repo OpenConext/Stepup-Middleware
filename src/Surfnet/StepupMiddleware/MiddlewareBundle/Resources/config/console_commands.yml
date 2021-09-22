@@ -35,6 +35,7 @@ services:
         tags:
             - { name: 'console.command', command: 'middleware:bootstrap:identity-with-yubikey' }
         arguments:
+            - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService'
             - "@surfnet_stepup_middleware_api.repository.identity"
             - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper'
 

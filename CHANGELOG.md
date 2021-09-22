@@ -1,5 +1,11 @@
 # Changelog
 
+# 4.3.2
+**Bugfix**
+* Running the bootstrap yubikey with identity (create a SRAA) was not yet 
+  creating an anonymous token, this caused the command to crash, as permissions
+  are now checked more strictly (as of SF4). #332
+
 # 4.3.1
 **Bugfix**
 * The migration that removes document numbers from the event_stream does not escape 

@@ -22,16 +22,32 @@ use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
+final class BootstrapSmsSecondFactorCommand extends Command
 {
+    /**
+     * @var BootstrapCommandService
+     */
+    private $bootstrapService;
+    /**
+     * @var TransactionHelper
+     */
+    private $transactionHelper;
+
+    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
+    {
+        $this->bootstrapService = $bootstrapService;
+        $this->transactionHelper = $transactionHelper;
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -54,19 +70,19 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $registrationStatus = $input->getArgument('registration-status');
-        $this->validRegistrationStatus($registrationStatus);
+        $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $this->tokenStorage->setToken(
+        $this->bootstrapService->setToken(
             new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
-        $mailVerificationRequired = $this->requiresMailVerification($institutionText);
+        $mailVerificationRequired = $this->bootstrapService->requiresMailVerification($institutionText);
         $phoneNumber = $input->getArgument('phone-number');
         $actorId = $input->getArgument('actor-id');
-        $this->enrichEventMetadata($actorId);
-        if (!$this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        $this->bootstrapService->enrichEventMetadata($actorId);
+        if (!$this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" does not exist, create it first.</error>',
@@ -77,48 +93,43 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
 
             return;
         }
-        $identity = $this->tokenBootstrapService->findOneByNameIdAndInstitution($nameId, $institution);
+        $identity = $this->bootstrapService->getIdentity($nameId, $institution);
         $output->writeln(sprintf('<comment>Adding a %s SMS token for %s</comment>', $registrationStatus, $identity->commonName));
-        $this->beginTransaction();
+        $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
         try {
             switch ($registrationStatus) {
                 case "unverified":
                     $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
+                    $this->bootstrapService->provePhonePossession($secondFactorId, $identity, $phoneNumber);
                     break;
                 case "verified":
                     $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
+                    $this->bootstrapService->provePhonePossession($secondFactorId, $identity, $phoneNumber);
                     if ($mailVerificationRequired) {
                         $output->writeln('<comment>Creating a verified SMS token</comment>');
-                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                        $this->bootstrapService->verifyEmail($identity, 'sms');
                     }
                     break;
                 case "vetted":
                     $output->writeln('<comment>Creating an unverified SMS token</comment>');
-                    $this->provePossession($secondFactorId, $identity, $phoneNumber);
-                    /** @var UnverifiedSecondFactor $unverifiedSecondFactor */
-                    $unverifiedSecondFactor = $this->tokenBootstrapService->findUnverifiedToken($identity->id, 'sms');
+                    $this->bootstrapService->provePhonePossession($secondFactorId, $identity, $phoneNumber);
                     if ($mailVerificationRequired) {
                         $output->writeln('<comment>Creating a verified SMS token</comment>');
-                        $this->verifyEmail($identity, $unverifiedSecondFactor);
+                        $this->bootstrapService->verifyEmail($identity, 'sms');
                     }
-                    $verifiedSecondFactor = $this->tokenBootstrapService->findVerifiedToken($identity->id, 'sms');
                     $output->writeln('<comment>Vetting the verified SMS token</comment>');
-                    $this->vetSecondFactor(
+                    $this->bootstrapService->vetSecondFactor(
                         'sms',
                         $actorId,
                         $identity,
                         $secondFactorId,
-                        $verifiedSecondFactor,
                         $phoneNumber
                     );
                     break;
             }
-            $this->finishTransaction();
+            $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
@@ -126,26 +137,14 @@ final class BootstrapSmsSecondFactorCommand extends AbstractBootstrapCommand
                     $e->getMessage()
                 )
             );
-            $this->rollback();
+            $this->transactionHelper->rollback();
             throw $e;
         }
         $output->writeln(
             sprintf(
                 '<info>Successfully registered a SMS token with UUID %s</info>',
-                $identity->id,
-                $registrationStatus,
                 $secondFactorId
             )
         );
-    }
-
-    private function provePossession($secondFactorId, $identity, $phoneNumber)
-    {
-        $command = new ProvePhonePossessionCommand();
-        $command->UUID = (string)Uuid::uuid4();
-        $command->secondFactorId = $secondFactorId;
-        $command->identityId = $identity->id;
-        $command->phoneNumber = $phoneNumber;
-        $this->process($command);
     }
 }

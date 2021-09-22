@@ -119,7 +119,7 @@ class RaSecondFactor implements JsonSerializable
      * @param Institution $institution
      * @param CommonName $name
      * @param Email $email
-     * @param DocumentNumber $documentNumber
+     * @param DocumentNumber|null $documentNumber
      */
     public function __construct(
         $id,

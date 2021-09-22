@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2021 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
-use Surfnet\Stepup\Identity\Value\UnknownVettingType;
-use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -37,17 +35,27 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
+class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable
 {
+    /**
+     * @var Institution
+     */
+    private $sourceInstitution;
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
      */
-    public $nameId;
+    public $targetNameId;
 
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
     public $secondFactorId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     */
+    public $newSecondFactorId;
 
     /**
      * @var \Surfnet\StepupBundle\Value\SecondFactorType
@@ -68,52 +76,49 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
      * @var \Surfnet\Stepup\Identity\Value\Email
      */
     public $email;
-
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var \Surfnet\Stepup\Identity\Value\Locale
      */
     public $preferredLocale;
-
-    /** @var VettingType */
-    public $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
-        Institution $institution,
+        NameId $targetNameId,
+        Institution $targetInstitution,
+        Institution $sourceInstitution,
         SecondFactorId $secondFactorId,
+        SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale,
-        VettingType $vettingType
+        Locale $preferredLocale
     ) {
-        parent::__construct($identityId, $institution);
+        parent::__construct($identityId, $targetInstitution);
 
-        $this->nameId                 = $nameId;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorType       = $secondFactorType;
+        $this->sourceInstitution = $sourceInstitution;
+        $this->targetNameId = $targetNameId;
+        $this->secondFactorId = $secondFactorId;
+        $this->newSecondFactorId = $newSecondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->commonName             = $commonName;
-        $this->email                  = $email;
-        $this->preferredLocale        = $preferredLocale;
-        $this->vettingType = $vettingType;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata()
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
-        $metadata->vettingType = $this->vettingType;
-
+        $metadata->raInstitution = $this->sourceInstitution;
         return $metadata;
     }
 
@@ -122,15 +127,16 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(
             new IdentityId($data['identity_id']),
-            new NameId($data['name_id']),
+            new NameId($data['target_name_id']),
             new Institution($data['identity_institution']),
+            new Institution($data['source_institution']),
             new SecondFactorId($data['second_factor_id']),
+            new SecondFactorId($data['new_second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale']),
-            new UnknownVettingType()
+            new Locale($data['preferred_locale'])
         );
     }
 
@@ -140,12 +146,14 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
     public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'name_id'                  => (string) $this->nameId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'second_factor_id'         => (string) $this->secondFactorId,
-            'second_factor_type'       => (string) $this->secondFactorType,
-            'preferred_locale'         => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'source_institution' => (string)$this->sourceInstitution,
+            'target_name_id' => (string)$this->targetNameId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'new_second_factor_id' => (string)$this->newSecondFactorId,
+            'second_factor_type' => (string) $this->secondFactorType,
+            'preferred_locale' => (string) $this->preferredLocale,
         ];
     }
 
@@ -154,15 +162,13 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         return (new SensitiveData)
             ->withCommonName($this->commonName)
             ->withEmail($this->email)
-            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType)
-            ->withVettingType($this->vettingType);
+            ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
-        $this->email          = $sensitiveData->getEmail();
-        $this->commonName     = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
-        $this->vettingType = $sensitiveData->getVettingType();
+        $this->commonName = $sensitiveData->getCommonName();
+        $this->email = $sensitiveData->getEmail();
     }
 }

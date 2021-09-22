@@ -19,18 +19,26 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 abstract class AbstractSecondFactor extends SimpleEventSourcedEntity implements SecondFactor
 {
-    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service)
+    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service): bool
     {
         return $comparable->hasTypeWithEqualOrLowerLoaComparedTo($this->getType(), $service);
     }
 
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service)
+    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service): bool
     {
         return $service->hasEqualOrLowerLoaComparedTo($this->getType(), $type);
+    }
+
+    public function typeAndIdentifierAreEqual(SecondFactorType $type, SecondFactorIdentifier $identifier): bool
+    {
+        $typeIsEqual = $this->getType()->equals($type);
+        $identifierIsEqual = $this->getIdentifier()->equals($identifier);
+        return $typeIsEqual && $identifierIsEqual;
     }
 }

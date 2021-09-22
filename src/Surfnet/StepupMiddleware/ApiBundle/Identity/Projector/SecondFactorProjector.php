@@ -28,8 +28,9 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -68,11 +69,6 @@ class SecondFactorProjector extends Projector
      */
     private $vettedRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
-     */
-    private $identityRepository;
-
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
         VerifiedSecondFactorRepository $verifiedRepository,
@@ -82,7 +78,6 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
         $this->vettedRepository = $vettedRepository;
-        $this->identityRepository = $identityRepository;
     }
 
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
@@ -234,6 +229,21 @@ class SecondFactorProjector extends Projector
 
         $this->vettedRepository->save($vetted);
         $this->verifiedRepository->remove($verified);
+    }
+
+    /**
+     * A new vetted second factor is projected. A copy of the 'source' second factor.
+     * The original 'source' second factor is not yet removed. This is handled when the
+     * old identity is cleaned up.
+     */
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    {
+        $vetted = new VettedSecondFactor();
+        $vetted->id = $event->newSecondFactorId->getSecondFactorId();
+        $vetted->identityId = $event->identityId->getIdentityId();
+        $vetted->type = $event->secondFactorType->getSecondFactorType();
+        $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+        $this->vettedRepository->save($vetted);
     }
 
     public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)

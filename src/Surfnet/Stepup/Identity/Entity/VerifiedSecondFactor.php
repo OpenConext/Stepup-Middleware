@@ -24,16 +24,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
-use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -230,8 +228,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
-    public function getType()
+    public function getType(): SecondFactorType
     {
         return $this->type;
+    }
+
+    public function getIdentifier(): SecondFactorIdentifier
+    {
+        return $this->secondFactorIdentifier;
     }
 }

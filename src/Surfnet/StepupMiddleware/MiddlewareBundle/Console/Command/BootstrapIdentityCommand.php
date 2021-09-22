@@ -19,17 +19,34 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Exception;
-use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
-final class BootstrapIdentityCommand extends AbstractBootstrapCommand
+final class BootstrapIdentityCommand extends Command
 {
+    /**
+     * @var BootstrapCommandService
+     */
+    private $bootstrapService;
+    /**
+     * @var TransactionHelper
+     */
+    private $transactionHelper;
+
+    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
+    {
+        $this->bootstrapService = $bootstrapService;
+        $this->transactionHelper = $transactionHelper;
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -44,7 +61,7 @@ final class BootstrapIdentityCommand extends AbstractBootstrapCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->tokenStorage->setToken(
+        $this->bootstrapService->setToken(
             new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS'])
         );
 
@@ -56,10 +73,10 @@ final class BootstrapIdentityCommand extends AbstractBootstrapCommand
         $preferredLocale = $input->getArgument('preferred-locale');
         $actorId = $input->getArgument('actor-id');
 
-        $this->enrichEventMetadata($actorId);
+        $this->bootstrapService->enrichEventMetadata($actorId);
 
         $output->writeln(sprintf('<comment>Adding an identity named: %s</comment>', $commonName));
-        if ($this->tokenBootstrapService->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
+        if ($this->bootstrapService->identityExists($nameId, $institution)) {
             $output->writeln(
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" already exists</error>',
@@ -70,10 +87,10 @@ final class BootstrapIdentityCommand extends AbstractBootstrapCommand
             return;
         }
         try {
-            $this->beginTransaction();
+            $this->transactionHelper->beginTransaction();
             $output->writeln('<info>Creating a new identity</info>');
-            $identity = $this->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
-            $this->finishTransaction();
+            $identity = $this->bootstrapService->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
+            $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
@@ -81,31 +98,11 @@ final class BootstrapIdentityCommand extends AbstractBootstrapCommand
                     $e->getMessage()
                 )
             );
-            $this->rollback();
+            $this->transactionHelper->rollback();
             throw $e;
         }
         $output->writeln(
             sprintf('<info>Successfully created identity with UUID %s</info>', $identity->id)
         );
-    }
-
-    protected function createIdentity(
-        Institution $institution,
-        NameId $nameId,
-        $commonName,
-        $email,
-        $preferredLocale
-    ) {
-        $identity = new CreateIdentityCommand();
-        $identity->UUID = (string)Uuid::uuid4();
-        $identity->id = (string)Uuid::uuid4();
-        $identity->institution = $institution->getInstitution();
-        $identity->nameId = $nameId->getNameId();
-        $identity->commonName = $commonName;
-        $identity->email = $email;
-        $identity->preferredLocale = $preferredLocale;
-        $this->process($identity);
-
-        return $identity;
     }
 }

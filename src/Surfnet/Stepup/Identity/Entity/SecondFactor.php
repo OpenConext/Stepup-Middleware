@@ -18,27 +18,19 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface SecondFactor
 {
-    /**
-     * @param SecondFactor $comparable
-     * @param SecondFactorTypeService $service
-     * @return bool
-     */
-    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service);
+    public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service): bool;
 
-    /**
-     * @param SecondFactorType $type
-     * @param SecondFactorTypeService $service
-     * @return bool
-     */
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service);
+    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service): bool;
 
-    /**
-     * @return SecondFactorType
-     */
-    public function getType();
+    public function typeAndIdentifierAreEqual(SecondFactorType $type, SecondFactorIdentifier $identifier): bool;
+
+    public function getType(): SecondFactorType;
+
+    public function getIdentifier(): SecondFactorIdentifier;
 }

@@ -21,7 +21,6 @@ namespace Surfnet\Stepup\Identity\Entity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
-use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -123,8 +122,13 @@ class VettedSecondFactor extends AbstractSecondFactor
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }
 
-    public function getType()
+    public function getType(): SecondFactorType
     {
         return $this->type;
+    }
+
+    public function getIdentifier(): SecondFactorIdentifier
+    {
+        return $this->secondFactorIdentifier;
     }
 }

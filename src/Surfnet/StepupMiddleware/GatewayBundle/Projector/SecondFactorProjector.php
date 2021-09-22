@@ -22,8 +22,9 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
@@ -56,6 +57,21 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
                 'yubikey'
+            )
+        );
+    }
+
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    {
+        $this->repository->save(
+            new SecondFactor(
+                (string) $event->identityId,
+                (string) $event->targetNameId,
+                (string) $event->identityInstitution,
+                (string) $event->preferredLocale,
+                (string) $event->newSecondFactorId,
+                $event->secondFactorIdentifier,
+                $event->secondFactorType
             )
         );
     }

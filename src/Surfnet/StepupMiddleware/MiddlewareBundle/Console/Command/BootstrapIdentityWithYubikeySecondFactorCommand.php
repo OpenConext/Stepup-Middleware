@@ -23,36 +23,32 @@ use Exception;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
     as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
+use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connection;
+    /** @var BootstrapCommandService */
+    private $bootstrapService;
 
     /**
-     * @var BufferedEventBus
+     * @var TransactionHelper
      */
-    private $eventBus;
+    private $transactionHelper;
 
     /**
-     * @var TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var ServiceEntityRepository
+     * @var IdentityRepository
      */
     private $projectionRepository;
 
@@ -74,21 +70,21 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
     }
 
     public function __construct(
+        BootstrapCommandService $bootstrapService,
         ServiceEntityRepository $projectionRepository,
-        TransactionAwarePipeline $pipeline,
-        BufferedEventBus $eventBus,
-        DBALConnectionHelper $connection
+        TransactionHelper $transactionHelper
     ) {
         parent::__construct();
+        $this->bootstrapService = $bootstrapService;
         $this->projectionRepository = $projectionRepository;
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
+        $this->transactionHelper = $transactionHelper;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var Container $container */
+        $this->bootstrapService->setToken(
+            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT'])
+        );
 
         $nameId      = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));
@@ -116,20 +112,18 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->secondFactorId  = (string) Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 
-        $this->connection->beginTransaction();
+        $this->transactionHelper->beginTransaction();
 
         try {
-            $command = $this->pipeline->process($command);
-            $this->eventBus->flush();
-
-            $this->connection->commit();
+            $command = $this->transactionHelper->process($command);
+            $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(sprintf(
                 '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
                 $e->getMessage()
             ));
 
-            $this->connection->rollBack();
+            $this->transactionHelper->rollBack();
 
             throw $e;
         }

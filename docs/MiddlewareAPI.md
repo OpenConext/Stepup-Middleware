@@ -609,7 +609,7 @@ Request parameters:
 ### Registration Authority Candidate - Search second factors for export
 
 #### Request
-URL: `http://middleware.tld/ra-second-factors-export?actorId=&{&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&raInstitution=}
+URL: `http://middleware.tld/ra-second-factors-export?actorId=&{&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&raInstitution=}`
 Method: GET
 Request parameters:
 - actorId: (required) UUIDv4 of the identity

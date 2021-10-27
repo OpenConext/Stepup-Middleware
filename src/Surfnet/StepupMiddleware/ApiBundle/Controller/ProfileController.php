@@ -40,7 +40,7 @@ class ProfileController extends Controller
 
     public function getAction(Request $request, $identityId)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         // Is the actor allowed to view the profile page?
         $actorId = $request->get('actorId');

@@ -36,7 +36,7 @@ class ConfiguredInstitutionController extends Controller
 
     public function collectionAction()
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $allListings = $this->configuredInstitutionService->getAllAsInstitution();
 

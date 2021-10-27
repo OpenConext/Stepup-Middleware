@@ -50,7 +50,7 @@ final class RaSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $query = $this->buildRaSecondFactorQuery($request);
 
@@ -63,7 +63,7 @@ final class RaSecondFactorController extends Controller
 
     public function exportAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $query = $this->buildRaSecondFactorQuery($request);
 

@@ -54,7 +54,7 @@ class IdentityController extends Controller
 
     public function getAction($id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $identity = $this->identityService->find($id);
 
@@ -67,7 +67,7 @@ class IdentityController extends Controller
 
     public function collectionAction(Request $request, Institution $institution)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new IdentityQuery();
         $query->institution = $institution;
@@ -87,7 +87,7 @@ class IdentityController extends Controller
      */
     public function getRegistrationAuthorityCredentialsAction($identityId)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $identityService = $this->identityService;
 

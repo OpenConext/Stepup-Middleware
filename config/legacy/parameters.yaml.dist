@@ -33,12 +33,14 @@ parameters:
     # Passwords for authentication to the api exposed by this (i.e. the middleware) component
     # API: https://middleware.tld/
     # Command API: https://middleware.tld/command
-    # Usernames for the three accounts below are:
+    # Usernames for the accounts below are:
     # - selfservice - user "ss"
     # - registration - user "ra"
+    # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
     selfservice_api_password: OI7Wr63wxx2-Pel
     registration_authority_api_password: BAeBxn813SB4_QX
+    readonly_api_password: wkpTzg.CJzc5sWU
     management_password: UktsgjiFJOSP87d
 
     self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}

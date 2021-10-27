@@ -35,12 +35,18 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      */
     private $password;
 
+    /**
+     * @var string
+     */
+    private $passwordRo;
+
     public function setUp(): void
     {
         // Initialises schema.
         $this->loadFixtures([]);
         $this->client = static::createClient();
         $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
+        $this->passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');
     }
 
     public function tearDown(): void
@@ -67,6 +73,29 @@ class InstitutionConfigurationControllerTest extends WebTestCase
         );
 
         $this->assertEquals('401', $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @test
+     * @group management
+     */
+    public function readonly_user_cannot_reconfigure_institution_configuration_options()
+    {
+        $this->client->request(
+            'POST',
+            '/management/institution-configuration',
+            [],
+            [],
+            [
+                'HTTP_ACCEPT'   => 'application/json',
+                'CONTENT_TYPE'  => 'application/json',
+                'PHP_AUTH_USER' => 'apireader',
+                'PHP_AUTH_PW'   => $this->passwordRo,
+            ],
+            json_encode([])
+        );
+
+        $this->assertEquals('403', $this->client->getResponse()->getStatusCode());
     }
 
     /**

@@ -1,5 +1,9 @@
 # Changelog
 
+# Next
+**Feature**
+* Add readonly API user
+
 # 4.3.2
 **Bugfix**
 * Running the bootstrap yubikey with identity (create a SRAA) was not yet 

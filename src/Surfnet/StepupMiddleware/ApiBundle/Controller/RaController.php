@@ -37,7 +37,7 @@ class RaController extends Controller
 
     public function listAction(Institution $institution)
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
 
         $registrationAuthorityCredentials = $this->raListingService->listRegistrationAuthoritiesFor($institution);
         $count = count($registrationAuthorityCredentials);

@@ -41,7 +41,7 @@ final class RaLocationController extends Controller
 
     public function searchAction(Request $request, Institution $institution)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query                 = new RaLocationQuery();
         $query->institution    = $institution;
@@ -56,7 +56,7 @@ final class RaLocationController extends Controller
 
     public function getAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $raLocationId = new RaLocationId($request->get('raLocationId'));
         $raLocation   = $this->raLocationService->findByRaLocationId($raLocationId);

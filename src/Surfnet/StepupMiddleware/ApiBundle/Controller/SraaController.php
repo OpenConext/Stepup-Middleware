@@ -43,7 +43,7 @@ class SraaController extends Controller
      */
     public function getAction($nameId)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $sraa = $this->sraaService->findByNameId(new NameId($nameId));
 

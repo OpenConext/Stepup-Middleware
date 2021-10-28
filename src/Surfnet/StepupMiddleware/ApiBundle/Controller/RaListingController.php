@@ -52,7 +52,7 @@ class RaListingController extends Controller
 
     public function getAction(Request $request, $identityId)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
         $institution = new Institution($request->get('institution'));
@@ -81,7 +81,7 @@ class RaListingController extends Controller
      */
     public function searchAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 

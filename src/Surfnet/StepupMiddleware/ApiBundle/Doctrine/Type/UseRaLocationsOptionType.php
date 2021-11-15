@@ -52,7 +52,7 @@ class UseRaLocationsOptionType extends Type
             );
         }
 
-        return $value->isEnabled();
+        return (int) $value->isEnabled();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)

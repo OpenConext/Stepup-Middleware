@@ -23,6 +23,7 @@ use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType;
+use function is_numeric;
 
 class ShowRaaContactInformationOptionTypeTest extends UnitTest
 {
@@ -87,7 +88,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
         $input    = new ShowRaaContactInformationOption($expected);
         $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
-        $this->assertTrue(is_bool($output));
+        $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
     }
 

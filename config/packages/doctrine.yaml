@@ -13,6 +13,12 @@ doctrine:
                 password: "%database_middleware_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    # Enabling the STRICT_ALL_TABLES SQL mode. To prevent 'magic' truncation problems where string
+                    # values like the identity name id would be truncated after 255 characters without notice. Enabling
+                    # STRICT_ALL_TABLES changes this behaviour, and raises SQLSTATE[22001] 'Bad response' when this
+                    # occurs.
+                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -22,6 +28,8 @@ doctrine:
                 password: "%database_gateway_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -31,6 +39,8 @@ doctrine:
                 password: "%database_deploy_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType

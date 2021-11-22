@@ -1,8 +1,10 @@
 # Changelog
 
-# Next
+# 4.3.3
 **Feature**
 * Add readonly API user
+* Set strict sql_mode
+* Improve NameId input validation
 
 # 4.3.2
 **Bugfix**

@@ -114,4 +114,18 @@ class NameIdTypeTest extends UnitTest
 
         $nameId->convertToPHPValue(false, $this->platform);
     }
+
+    /**
+     * @test
+     * @group doctrine
+     */
+    public function a_excessive_long_database_value_causes_an_exception_upon_conversion()
+    {
+        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+
+        $nameId = Type::getType(NameIdType::NAME);
+        // the bin2hex openssle random bytes combination creates a string of 256 characters long.
+        // Exceeding the limit of 255 characters by one
+        $nameId->convertToPHPValue(bin2hex(openssl_random_pseudo_bytes(128)), $this->platform);
+    }
 }

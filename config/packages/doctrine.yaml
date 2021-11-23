@@ -14,11 +14,8 @@ doctrine:
                 server_version: "%database_server_version%"
                 charset: utf8
                 options:
-                    # Enabling the STRICT_ALL_TABLES SQL mode. To prevent 'magic' truncation problems where string
-                    # values like the identity name id would be truncated after 255 characters without notice. Enabling
-                    # STRICT_ALL_TABLES changes this behaviour, and raises SQLSTATE[22001] 'Bad response' when this
-                    # occurs.
-                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
+                    # The 1002 constant sets the PDO MYSQL_ATTR_INIT_COMMAND for when the connection is (re)connected.
+                    1002: "%database_driver_options_1002%"
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -29,7 +26,7 @@ doctrine:
                 server_version: "%database_server_version%"
                 charset: utf8
                 options:
-                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
+                    1002: "%database_driver_options_1002%"
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -40,7 +37,7 @@ doctrine:
                 server_version: "%database_server_version%"
                 charset: utf8
                 options:
-                    1002: 'SET sql_mode="STRICT_ALL_TABLES"'
+                    1002: "%database_driver_options_1002%"
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType

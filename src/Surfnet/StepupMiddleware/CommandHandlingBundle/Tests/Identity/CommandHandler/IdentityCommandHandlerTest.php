@@ -83,6 +83,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Excep
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
+use function md5;
 
 /**
  * @runTestsInSeparateProcesses

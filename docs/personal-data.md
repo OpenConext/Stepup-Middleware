@@ -8,7 +8,7 @@ As part of the effort to implement the [Right to be Forgotton](https://github.co
 - *commonName* - The common name attribute as received from the remote IdP. This is the full name of the user
 - *email* - The email attribute as received from the remote IdP. This is the email address of the user
 - *secondFactorIdentifier* - The identifier of the second factor. For SMS this is the mobile phone number, for Yubikey this is the Yubikey ID, for GSSPs (like e.g. Tiqr) this is the Subject NameID that the GSSP returns during registration. For Tiqr this is the Tiqr account name.
-- secondFactorType - The type of second factor (sms, yubikey, tiqr, u2f)
+- secondFactorType - The type of second factor (sms, yubikey, tiqr)
 - *documentNumber* - What the RA entered in the document number field during registration. The RA is instructed to enter the last 6 digits of the document number of the ID (i.e. passport or drivers license) of the user.
 
 The data in the `event_stream` and `event_steam_sensitive_data` is replicated in the projection tables. These tables reflect the current state of the system, whereas the event_stream can be used to reconstruct all previous states. When a user is deleted, the projections need to be updated as well. The current implementation uses the [IdentityForgottenEvent](../src/Surfnet/Stepup/Identity/Event/IdentityForgottenEvent.php) to accomplish this. Because no new information is added to the projection tables compared to what is stored in the event_stream, we do not further describe the data that the projections contain. Instead we describe the data that is stored in the events.
@@ -51,7 +51,7 @@ These are all the datatypes that are used in the events (i.e. the `payload`). Da
 | *registration_code* | the registration code |
 | registration_requested_at | timestamp at which registration was requested |
 | *second_factor_id* | GUID. Unique identifier of the second factor |
-| *second_factor_type* | The type of second factor (e.g. tiqr, yubikey, sms, u2f) |
+| *second_factor_type* | The type of second factor (e.g. tiqr, yubikey, sms) |
 
 ## Identity Events
 
@@ -226,28 +226,6 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - Forgettable: commonName
 - Forgettable: secondFactorIdentifier
 - Forgettable: vettingType (each vetting type has different data)
-
-[U2fDevicePossessionProvenAndVerifiedEvent](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenAndVerifiedEvent.php)
-- identity_id
-- identity_institution
-- second_factor_id
-- registration_requested_at
-- registration_code
-- Forgettable: keyHandle (is secondFactorIdentifier)
-- Forgettable: email
-- Forgettable: commonName
-
-[U2fDevicePossessionProvenEvent](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenEvent.php)
-- identity_id
-- identity_institution
-- second_factor_id
-- email_verification_required
-- email_verification_window
-- email_verification_nonce
-- preferred_locale
-- Forgettable: keyHandle
-- Forgettable: email
-- Forgettable: commonName
 
 [WhitelistCreatedEvent](../src/Surfnet/Stepup/Identity/Event/WhitelistCreatedEvent.php)
 - whitelisted_institutions

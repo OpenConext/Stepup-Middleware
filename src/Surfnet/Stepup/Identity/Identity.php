@@ -94,8 +94,6 @@ use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
-use function get_class;
-use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -357,6 +355,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
+    /**
+     * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
+     */
     public function provePossessionOfU2fDevice(
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,

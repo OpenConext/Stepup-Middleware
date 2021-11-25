@@ -56,7 +56,7 @@ final class InstitutionConfigurationOptionsController extends Controller
 
     public function getForInstitutionAction($institutionName)
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 
         $institution = new Institution($institutionName);
 

@@ -13,6 +13,9 @@ doctrine:
                 password: "%database_middleware_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    # The 1002 constant sets the PDO MYSQL_ATTR_INIT_COMMAND for when the connection is (re)connected.
+                    1002: "%database_driver_options_1002%"
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -22,6 +25,8 @@ doctrine:
                 password: "%database_gateway_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    1002: "%database_driver_options_1002%"
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -31,6 +36,8 @@ doctrine:
                 password: "%database_deploy_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
+                options:
+                    1002: "%database_driver_options_1002%"
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType

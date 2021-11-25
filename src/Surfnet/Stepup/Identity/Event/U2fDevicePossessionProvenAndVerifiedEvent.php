@@ -31,6 +31,9 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
+/**
+ * @deprecated Built in U2F support is dropped from StepUp, this Event was not removed to support event replay
+ */
 class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified
 {
     /**

@@ -41,7 +41,7 @@ final class AuditLogController extends Controller
 
     public function secondFactorAuditLogAction(Request $request, Institution $institution)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $identityId = $request->get('identityId');
         if (empty($identityId)) {

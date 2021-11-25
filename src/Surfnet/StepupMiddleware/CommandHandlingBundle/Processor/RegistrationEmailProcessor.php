@@ -26,7 +26,6 @@ use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PossessionProvenAndVerified;
-use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
@@ -65,10 +64,10 @@ final class RegistrationEmailProcessor extends Processor
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaLocationService $raLocationsService
     ) {
-        $this->registrationMailService                = $registrationMailService;
-        $this->raListingService                       = $raListingService;
+        $this->registrationMailService = $registrationMailService;
+        $this->raListingService = $raListingService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->raLocationsService                     = $raLocationsService;
+        $this->raLocationsService = $raLocationsService;
     }
 
     public function handlePhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
@@ -77,11 +76,6 @@ final class RegistrationEmailProcessor extends Processor
     }
 
     public function handleYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
-    {
-        $this->handlePossessionProvenAndVerifiedEvent($event);
-    }
-
-    public function handleU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
     {
         $this->handlePossessionProvenAndVerifiedEvent($event);
     }

@@ -66,7 +66,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function getAction($id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 
@@ -79,7 +79,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -107,7 +107,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function collectionOfIdentityAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
         $query = new VerifiedSecondFactorOfIdentityQuery();
 
         $query->identityId = new IdentityId($request->get('identityId'));
@@ -120,7 +120,7 @@ class VerifiedSecondFactorController extends Controller
 
     public function getCanSkipProvePossessionAction($id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 

@@ -1,5 +1,15 @@
 # Changelog
 
+# 4.3.3
+**Feature**
+* Add readonly API user #334
+* Set strict sql_mode #335 #336
+* Improve NameId input validation #335 #336
+
+**Chore**
+* Deprecate and remove u2f support #285
+* Improve identity endpoint documentation #333
+
 # 4.3.2
 **Bugfix**
 * Running the bootstrap yubikey with identity (create a SRAA) was not yet 

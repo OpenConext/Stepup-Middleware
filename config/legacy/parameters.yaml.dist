@@ -6,6 +6,11 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     10.10.0.100
     database_port:     ~
+    # Enabling the STRICT_ALL_TABLES SQL mode. To prevent 'magic' truncation problems where string
+    # values like the identity name id would be truncated after 255 characters without notice. Enabling
+    # STRICT_ALL_TABLES changes this behaviour, and raises SQLSTATE[22001] 'Bad response' when this
+    # occurs.
+    database_driver_options_1002: 'SET @@SQL_MODE = CONCAT(@@SQL_MODE, ",STRICT_ALL_TABLES")'
     # The database server version is used in the dbal configuration and is required to prevent issues when the database
     # connection is booted. See https://github.com/doctrine/DoctrineBundle/issues/351 for more details on this.
     # Also see: https://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration
@@ -33,12 +38,14 @@ parameters:
     # Passwords for authentication to the api exposed by this (i.e. the middleware) component
     # API: https://middleware.tld/
     # Command API: https://middleware.tld/command
-    # Usernames for the three accounts below are:
+    # Usernames for the accounts below are:
     # - selfservice - user "ss"
     # - registration - user "ra"
+    # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
     selfservice_api_password: OI7Wr63wxx2-Pel
     registration_authority_api_password: BAeBxn813SB4_QX
+    readonly_api_password: wkpTzg.CJzc5sWU
     management_password: UktsgjiFJOSP87d
 
     self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}

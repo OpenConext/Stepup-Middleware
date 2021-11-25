@@ -41,7 +41,7 @@ class UnverifiedSecondFactorController extends Controller
 
     public function getAction($id)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findUnverified(new SecondFactorId($id));
 
@@ -54,7 +54,7 @@ class UnverifiedSecondFactorController extends Controller
 
     public function collectionAction(Request $request)
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query                    = new UnverifiedSecondFactorQuery();
         $query->identityId        = $request->get('identityId');

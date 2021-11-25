@@ -27,6 +27,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 final class NameId implements JsonSerializable
 {
     /**
+     * This length reflects the maximum length supported by the data store for the
+     * name id field.
+     *
+     * Not to be confused by the soft limit described in the SAML2 specification.
+     */
+    private const MAX_LENGTH = 255;
+
+    /**
      * @var string
      */
     private $value;
@@ -35,6 +43,12 @@ final class NameId implements JsonSerializable
     {
         if (!is_string($value)) {
             throw InvalidArgumentException::invalidType('string', 'value', $value);
+        }
+
+        if (strlen($value) > self::MAX_LENGTH) {
+            throw new InvalidArgumentException(
+                'Invalid argument type: maximum length for nameId exceeds configured length of ' . self::MAX_LENGTH
+            );
         }
 
         $this->value = $value;

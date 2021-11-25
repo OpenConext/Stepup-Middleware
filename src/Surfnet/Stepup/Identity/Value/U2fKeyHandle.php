@@ -20,6 +20,9 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
+/**
+ * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
+ */
 final class U2fKeyHandle implements SecondFactorIdentifier
 {
     const UNKNOWN = '—';

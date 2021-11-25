@@ -87,7 +87,7 @@ class SelfVetOptionTypeTest extends UnitTest
         $input    = new SelfVetOption($expected);
         $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
-        $this->assertTrue(is_bool($output));
+        $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
     }
 

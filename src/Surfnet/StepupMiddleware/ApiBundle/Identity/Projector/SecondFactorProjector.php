@@ -28,11 +28,8 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
-use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenAndVerifiedEvent;
-use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
@@ -165,33 +162,6 @@ class SecondFactorProjector extends Projector
         $secondFactor->institution = $event->identityInstitution->getInstitution();
         $secondFactor->type = $event->stepupProvider->getStepupProvider();
         $secondFactor->secondFactorIdentifier = $event->gssfId->getValue();
-        $secondFactor->commonName = $event->commonName;
-        $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
-        $secondFactor->registrationCode = $event->registrationCode;
-
-        $this->verifiedRepository->save($secondFactor);
-    }
-
-    public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
-    {
-        $secondFactor = new UnverifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->type = 'u2f';
-        $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
-        $secondFactor->verificationNonce = $event->emailVerificationNonce;
-
-        $this->unverifiedRepository->save($secondFactor);
-    }
-
-    public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
-    {
-        $secondFactor = new VerifiedSecondFactor();
-        $secondFactor->id = $event->secondFactorId->getSecondFactorId();
-        $secondFactor->identityId = $event->identityId->getIdentityId();
-        $secondFactor->institution = $event->identityInstitution->getInstitution();
-        $secondFactor->type = 'u2f';
-        $secondFactor->secondFactorIdentifier = $event->keyHandle->getValue();
         $secondFactor->commonName = $event->commonName;
         $secondFactor->registrationRequestedAt = $event->registrationRequestedAt;
         $secondFactor->registrationCode = $event->registrationCode;

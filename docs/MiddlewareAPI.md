@@ -111,7 +111,7 @@ Request parameters:
 URL: `http://middleware.tld/identity/?insitution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
 Method: GET
 Request parameters:
-- Institution: (optional) string, the institution as scope determination
+- Institution: (required) string, the institution as scope determination
 - NameID: (optional) string, the NameID to search (equality check)
 - commonName: (optional) string, the commonName to match against
 - email: (optional) string, the email to match against
@@ -609,7 +609,7 @@ Request parameters:
 ### Registration Authority Candidate - Search second factors for export
 
 #### Request
-URL: `http://middleware.tld/ra-second-factors-export?actorId=&{&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&raInstitution=}
+URL: `http://middleware.tld/ra-second-factors-export?actorId=&{&name=}{&type=}{&secondFactorId=}{&email=}{&status=}{&raInstitution=}`
 Method: GET
 Request parameters:
 - actorId: (required) UUIDv4 of the identity

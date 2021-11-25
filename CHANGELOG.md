@@ -1,6 +1,6 @@
 # Changelog
 
-# 4.3.3
+# 4.4.0
 **Feature**
 * Add readonly API user #334
 * Set strict sql_mode #335 #336

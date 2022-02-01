@@ -169,6 +169,10 @@ class CommandAuthorizationService
             // Both are only sent by the RA where the minimal role requirement is RA
             // all the other actions require RAA rights
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                // The role should be context aware, in other words: when the user only has the RAA role, this should
+                // also resolve. It currently does not. The buildInstitutionAuthorizationContext will search for the
+                // institutions that have the role defined here. When the institution only has useRaa, it will not find
+                // the institution because we 'downgraded' it to useRa (which is not configured)
                 $this->logger->notice('VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role');
                 $role = InstitutionRole::useRa();
                 // Use the institution of the identity (the user vetting or having his token revoked).

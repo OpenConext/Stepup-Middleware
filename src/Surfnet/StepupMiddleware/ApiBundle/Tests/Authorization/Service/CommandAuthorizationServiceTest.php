@@ -172,7 +172,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -234,7 +234,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -395,6 +395,51 @@ class CommandAuthorizationServiceTest extends TestCase
             $this->assertFalse($this->service->mayRaCommandBeExecutedOnBehalfOf($command, $actorId, $actorInstitution));
         }
     }
+
+    public function test_an_raa_should_be_able_to_perform_ra_tasks()
+    {
+        $command = new VetSecondFactorCommand();
+        $this->assertInstanceOf(Command::class, $command);
+
+        $actorId = new IdentityId('123');
+        $actorInstitution = new Institution('institution');
+
+        $command = m::mock($command);
+        $command->shouldReceive('getRaInstitution')
+            ->andReturn($actorInstitution->getInstitution());
+
+        $this->logger->shouldReceive('notice');
+
+        $raCredentials = m::mock(RegistrationAuthorityCredentials::class);
+        $raCredentials->shouldReceive('isSraa')
+            ->andReturn(false);
+
+        $this->identityService->shouldReceive('findRegistrationAuthorityCredentialsOf')
+            ->with($actorId->getIdentityId())
+            ->andReturn($raCredentials);
+
+        $institutionCollection = new InstitutionCollection([
+            new Institution('institution'),
+        ]);
+
+        $authorizationContext = new InstitutionAuthorizationContext(
+            $institutionCollection,
+            false
+        );
+
+        // At this point, in code the role is downplayed to useRa. Making it impossible for an insittution with only
+        // useRaa to vet tokens.
+        $role = InstitutionRole::useRaa();
+
+        $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
+            ->with($actorId, m::on(function($arg) use ($role) {
+                return $arg == $role;
+            }))
+            ->andReturn($authorizationContext);
+
+        $this->assertTrue($this->service->mayRaCommandBeExecutedOnBehalfOf($command, $actorId, $actorInstitution));
+    }
+
 
 
     /**

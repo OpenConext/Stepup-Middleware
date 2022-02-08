@@ -1,4 +1,6 @@
 # Changelog
+# 4.4.1
+- Add Github Actions tag automation workflow
 
 # 4.4.0
 **Feature**

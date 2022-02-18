@@ -108,7 +108,7 @@ Request parameters:
 ### Identities - Identity Collection
 
 #### Request
-URL: `http://middleware.tld/identity/?insitution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
+URL: `http://middleware.tld/identity?institution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
 Method: GET
 Request parameters:
 - Institution: (required) string, the institution as scope determination

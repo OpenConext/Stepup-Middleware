@@ -4,6 +4,24 @@ command_handle:
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+deprovision:
+    path: /deprovision/{collabPersonId}
+    requirements:
+        collabPersonId: .+
+    defaults:
+        _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\DeprovisionController::deprovisionAction
+        _format: json
+    methods:   [DELETE]
+
+deprovision_dry_run:
+    path: /deprovision/{collabPersonId}/dry-run
+    requirements:
+        collabPersonId: .+
+    defaults:
+        _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\DeprovisionController::dryRunAction
+        _format: json
+    methods:   [GET]
+
 identity:
     path:     /identity/{id}
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\IdentityController::getAction }

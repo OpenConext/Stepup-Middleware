@@ -14,6 +14,7 @@ security:
 
     access_control:
         - { path: ^/management, roles: [ROLE_MANAGEMENT] } # can be expanded with hosts: or ip:
+        - { path: ^/deprovision, roles: [ROLE_DEPROVISION] }
         - { roles: [ROLE_SS,ROLE_RA,ROLE_READ] }
 
     providers:
@@ -32,6 +33,9 @@ security:
                     management:
                         password: "%management_password%"
                         roles: 'ROLE_MANAGEMENT'
+                    lifecycle:
+                        password: "%lifecycle_password%"
+                        roles: 'ROLE_DEPROVISION'
 
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext

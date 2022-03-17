@@ -20,7 +20,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Service;
 
 interface DeprovisionServiceInterface
 {
+    /**
+     * Returns all data we know for the specified user. The
+     * Identity events for the user are loaded and returned in
+     * a portable format (JSON encodable arrays)
+     */
     public function readUserData(string $collabPersonId): array;
 
-    public function deprovision(string $collabPersonId);
+    /**
+     * The deprovision method applies the right to be forgotten
+     * command on the pipeline. As this is a command, it does not
+     * return any data. And as such, this method does not return
+     * any user data either.
+     */
+    public function deprovision(string $collabPersonId): void;
 }

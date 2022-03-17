@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\DeprovisionExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
@@ -63,6 +64,10 @@ class AuthorizingStage implements Stage
 
         if ($command instanceof ManagementExecutable) {
             $allowedRoles[] = 'ROLE_MANAGEMENT';
+        }
+
+        if ($command instanceof DeprovisionExecutable) {
+            $allowedRoles[] = 'ROLE_DEPROVISION';
         }
 
         if (empty($allowedRoles)) {

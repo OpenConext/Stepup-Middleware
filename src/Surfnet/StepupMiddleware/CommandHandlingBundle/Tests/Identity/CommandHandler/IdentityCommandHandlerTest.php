@@ -25,6 +25,7 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Hamcrest\Matchers;
 use Mockery as m;
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
@@ -141,12 +142,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->secondFactorProvePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
-
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldIgnoreMissing();
         return new IdentityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
-                $aggregateFactory
+                $aggregateFactory,
+                $logger
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),

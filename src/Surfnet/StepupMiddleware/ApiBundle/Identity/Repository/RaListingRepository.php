@@ -237,13 +237,14 @@ class RaListingRepository extends ServiceEntityRepository
      * @param IdentityId $identityId
      * @return void
      */
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId, Institution $institution)
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
             ->where('ral.identityId = :identityId')
             ->andWhere('ral.raInstitution = :institution')
             ->setParameter('identityId', $identityId->getIdentityId())
+            ->setParameter('institution', $institution->getInstitution())
             ->getQuery()
             ->execute();
     }

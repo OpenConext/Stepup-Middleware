@@ -138,13 +138,18 @@ class AuditLogProjector implements EventListener
 
     private function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
+        $entries = $this->auditLogRepository->findByIdentityId($event->identityId);
+        foreach ($entries as $auditLogEntry) {
+            $auditLogEntry->actorCommonName = CommonName::unknown();
+        }
+
         $entriesWhereActor = $this->auditLogRepository->findEntriesWhereIdentityIsActorOnly($event->identityId);
         foreach ($entriesWhereActor as $auditLogEntry) {
             $auditLogEntry->actorCommonName = CommonName::unknown();
         }
 
+        $this->auditLogRepository->saveAll($entries);
         $this->auditLogRepository->saveAll($entriesWhereActor);
-        $this->auditLogRepository->removeByIdentityId($event->identityId);
     }
 
     private function augmentActorCommonName(AuditLogEntry $entry, Metadata $auditLogMetadata): void

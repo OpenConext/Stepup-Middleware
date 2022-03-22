@@ -67,6 +67,8 @@ class SecondFactorStatusType extends Type
             return 20;
         } elseif (SecondFactorStatus::revoked()->equals($value)) {
             return 30;
+        } elseif (SecondFactorStatus::forgotten()->equals($value)) {
+            return 40;
         }
 
         throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
@@ -88,11 +90,13 @@ class SecondFactorStatusType extends Type
             return SecondFactorStatus::vetted();
         } elseif ($value === '30') {
             return SecondFactorStatus::revoked();
+        } elseif ($value === '40') {
+            return SecondFactorStatus::forgotten();
         }
 
         throw new ConversionException(
             sprintf(
-                "Encountered illegal second factor status of type %s '%s', expected it to be one of [0,10,20,30]",
+                "Encountered illegal second factor status of type %s '%s', expected it to be one of [0,10,20,30,40]",
                 is_object($value) ? get_class($value) : gettype($value),
                 is_scalar($value) ? (string) $value : ''
             )

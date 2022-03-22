@@ -118,17 +118,16 @@ class AuditLogRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $identityId
-     * @return void
+     * @param IdentityId $actorId
+     * @return AuditLogEntry[]
      */
-    public function removeByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId)
     {
-        $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'al')
+        return $this->createQueryBuilder('al')
             ->where('al.identityId = :identityId')
-            ->setParameter('identityId', $identityId->getIdentityId())
+            ->setParameter('identityId', $identityId)
             ->getQuery()
-            ->execute();
+            ->getResult();
     }
 
     /**

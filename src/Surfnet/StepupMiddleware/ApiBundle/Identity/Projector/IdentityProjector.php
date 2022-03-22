@@ -74,9 +74,4 @@ class IdentityProjector extends Projector
 
         $this->identityRepository->save($identity);
     }
-
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
-    {
-        $this->identityRepository->removeByIdentityId($event->identityId);
-    }
 }

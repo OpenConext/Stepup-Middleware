@@ -24,6 +24,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
@@ -86,11 +87,15 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
             ->shouldReceive('load')
             ->andReturn($this->institutionConfiguration);
 
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldIgnoreMissing();
+
         return new RegistrationAuthorityCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
-                $aggregateFactory
+                $aggregateFactory,
+                $logger
             ),
             $this->institutionConfigurationRepositoryMock
         );

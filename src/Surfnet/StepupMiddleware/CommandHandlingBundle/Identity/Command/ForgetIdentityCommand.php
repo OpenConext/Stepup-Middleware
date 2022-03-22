@@ -19,10 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\DeprovisionExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ForgetIdentityCommand extends AbstractCommand implements ManagementExecutable
+final class ForgetIdentityCommand extends AbstractCommand implements ManagementExecutable, DeprovisionExecutable
 {
     /**
      * @Assert\NotBlank

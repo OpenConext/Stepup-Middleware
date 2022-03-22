@@ -9,6 +9,7 @@ services:
             - "@surfnet_stepup_middleware_command_handling.event_store.sensitive_data"
             - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
             - "@surfnet_stepup.aggregate_factory.public_constructor"
+            - "@logger"
             - ["@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"]
 
     surfnet_stepup_middleware_command_handling.metadata_enricher.actor:

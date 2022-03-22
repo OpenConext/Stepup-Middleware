@@ -18,20 +18,46 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
 {
-    public function deprovisionAction()
+    private $deprovisionService;
+
+    private $applicationName;
+
+    public function __construct(DeprovisionServiceInterface $deprovisionService, string $applicationName)
     {
-        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
-        return new JsonResponse();
+        $this->deprovisionService = $deprovisionService;
+        $this->applicationName = $applicationName;
     }
 
-    public function dryRunAction()
+    public function deprovisionAction(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
-        return new JsonResponse();
+
+        $userData = $this->deprovisionService->readUserData($collabPersonId);
+        if (!empty($userData)) {
+            $this->deprovisionService->deprovision($collabPersonId);
+        }
+        return new JsonResponse($this->formatResponse('OK', $userData));
+    }
+
+    public function dryRunAction(string $collabPersonId): JsonResponse
+    {
+        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
+        $userData = $this->deprovisionService->readUserData($collabPersonId);
+        return new JsonResponse($this->formatResponse('OK', $userData));
+    }
+
+    private function formatResponse(string $status, array $userData): array
+    {
+        return [
+            'status'  => $status,
+            'name'    => $this->applicationName,
+            'data'    => $userData,
+        ];
     }
 }

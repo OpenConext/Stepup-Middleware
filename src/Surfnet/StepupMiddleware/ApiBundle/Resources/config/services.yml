@@ -14,6 +14,12 @@ services:
         autowire: true
         tags: ['controller.service_arguments']
 
+    Surfnet\StepupMiddleware\ApiBundle\Controller\DeprovisionController:
+        arguments:
+            $deprovisionService: '@Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService'
+            $applicationName: '%application_name%'
+        tags: [ 'controller.service_arguments' ]
+
     # Repositories
     surfnet_stepup_middleware_api.repository.configured_institution: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository'
     surfnet_stepup_middleware_api.repository.institution_configuration_options: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository'
@@ -157,3 +163,10 @@ services:
             - '@surfnet_stepup_middleware_api.service.identity'
             - '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository'
             - '@surfnet_stepup_middleware_api.repository.authorization'
+
+    Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService:
+        arguments:
+            $pipeline: '@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline'
+            $eventSourcingRepository: '@surfnet_stepup.repository.identity'
+            $apiRepository: '@surfnet_stepup_middleware_api.repository.identity'
+            $logger: '@logger'

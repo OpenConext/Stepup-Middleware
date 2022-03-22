@@ -21,9 +21,14 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class VettedSecondFactorsAllRevokedEvent extends IdentityEvent
+class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'identity_id',
+        'identity_institution',
+    ];
 
     final public function __construct(
         IdentityId $identityId,
@@ -58,5 +63,12 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent
             'identity_id'              => (string) $this->identityId,
             'identity_institution'     => (string) $this->identityInstitution,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedUserData = $this->serialize();
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedUserData, $whitelist);
     }
 }

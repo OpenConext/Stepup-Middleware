@@ -25,12 +25,22 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
 /**
  * @deprecated This event is superseded by the IdentityAccreditedAsRaaForInstitutionEvent because an RA institution was needed
  */
-class IdentityAccreditedAsRaaEvent extends IdentityEvent
+class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'identity_id',
+        'name_id',
+        'institution',
+        'registration_authority_role',
+        'location',
+        'contact_information',
+    ];
+
     /**
      * @var NameId
      */
@@ -106,5 +116,12 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent
             'location'                    => (string) $this->location,
             'contact_information'         => (string) $this->contactInformation,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedUserData = $this->serialize();
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedUserData, $whitelist);
     }
 }

@@ -22,9 +22,16 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class LocalePreferenceExpressedEvent extends IdentityEvent
+class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'id',
+        'institution',
+        'preferred_locale',
+    ];
+
     /**
      * @var Locale
      */
@@ -74,5 +81,12 @@ class LocalePreferenceExpressedEvent extends IdentityEvent
             'institution' => (string) $this->identityInstitution,
             'preferred_locale' => (string) $this->preferredLocale,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedUserData = $this->serialize();
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedUserData, $whitelist);
     }
 }

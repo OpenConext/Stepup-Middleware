@@ -45,13 +45,18 @@ final class SecondFactorStatus
         return new self('revoked');
     }
 
+    public static function forgotten()
+    {
+        return new self('forgotten');
+    }
+
     /**
      * @param string $status
      * @return bool
      */
     public static function isValidStatus($status)
     {
-        return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', true]);
+        return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', 'forgotten', true]);
     }
 
     /**

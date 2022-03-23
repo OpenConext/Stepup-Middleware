@@ -79,6 +79,7 @@ class SecondFactorStatusTypeTest extends UnitTest
             'verified' => [SecondFactorStatus::verified(), 10],
             'vetted' => [SecondFactorStatus::vetted(), 20],
             'revoked' => [SecondFactorStatus::revoked(), 30],
+            'forgotten' => [SecondFactorStatus::forgotten(), 40],
         ];
     }
 
@@ -131,6 +132,7 @@ class SecondFactorStatusTypeTest extends UnitTest
             'verified' => ['10', SecondFactorStatus::verified()],
             'vetted' => ['20', SecondFactorStatus::vetted()],
             'revoked' => ['30', SecondFactorStatus::revoked()],
+            'forgotten' => ['40', SecondFactorStatus::forgotten()],
         ];
     }
 

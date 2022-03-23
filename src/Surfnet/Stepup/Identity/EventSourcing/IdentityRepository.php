@@ -26,17 +26,19 @@ use Broadway\EventSourcing\EventStreamDecorator;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Broadway\EventStore\EventStreamNotFoundException;
 use Broadway\Repository\AggregateNotFoundException;
-use Broadway\Serializer\Serializable;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Identity;
 use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
 class IdentityRepository extends EventSourcingRepository
 {
     protected $events;
 
     protected $logger;
+
+    private $userDataFilter;
 
     /**
      * @param EventStreamDecorator[] $eventStreamDecorators
@@ -45,11 +47,13 @@ class IdentityRepository extends EventSourcingRepository
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
         AggregateFactory $aggregateFactory,
+        UserDataFilterInterface $userDataFilter,
         LoggerInterface $logger,
         array $eventStreamDecorators = []
     ) {
         $this->events = $eventStore;
         $this->logger = $logger;
+        $this->userDataFilter = $userDataFilter;
         parent::__construct(
             $eventStore,
             $eventBus,
@@ -66,24 +70,10 @@ class IdentityRepository extends EventSourcingRepository
             $data = [];
             /** @var DomainMessage $domainMessage */
             foreach ($domainEventStream as $domainMessage) {
-                $event = $domainMessage->getPayload();
-                if (!$event instanceof Serializable) {
-                    $this->logger->warning(
-                        sprintf(
-                            'Unable to serialize event type %s, unable to return user information for that event',
-                            $domainMessage->getType()
-                        )
-                    );
+                if ($domainMessage->getPayload() instanceof RightToObtainDataInterface) {
+                    $index = $domainMessage->getPlayhead() . '-' . $domainMessage->getType();
+                    $data[$index] = $this->userDataFilter->filter($domainMessage->getPayload());
                 }
-                // A combination of the playhead and event name are used to index the data array
-                $index = $domainMessage->getPlayhead() . '-' . $domainMessage->getType();
-                // The data is retrieved from the payload (the event object), sensitive data is merged into it
-                $eventData = $event->serialize();
-                if ($event instanceof Forgettable) {
-                    $eventData += $event->getSensitiveData()->serialize();
-                }
-
-                $data[$index] = $eventData;
             }
             return $data;
         } catch (EventStreamNotFoundException $e) {

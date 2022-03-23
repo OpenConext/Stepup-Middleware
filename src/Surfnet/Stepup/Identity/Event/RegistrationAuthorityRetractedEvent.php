@@ -116,9 +116,7 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
     {
         $serializedPublicUserData = $this->serialize();
         $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
-        $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
-        $whitelist = array_flip(self::$whitelist);
-        return array_intersect_key($serializedCombinedUserData, $whitelist);
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
     public function getAllowlist(): array

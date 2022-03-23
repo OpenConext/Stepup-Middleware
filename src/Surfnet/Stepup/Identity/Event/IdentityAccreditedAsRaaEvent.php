@@ -120,9 +120,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
 
     public function obtainUserData(): array
     {
-        $serializedUserData = $this->serialize();
-        $whitelist = array_flip(self::$whitelist);
-        return array_intersect_key($serializedUserData, $whitelist);
+        return $this->serialize();
     }
 
     public function getAllowlist(): array

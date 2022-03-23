@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'institution',
         'name_id',
@@ -123,6 +123,6 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -128,6 +128,6 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -208,6 +208,6 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

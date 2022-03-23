@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'id',
         'institution',
         'name_id',
@@ -134,6 +134,6 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

@@ -26,7 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'id',
         'institution',
         'preferred_locale',
@@ -92,6 +92,6 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

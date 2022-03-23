@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'name_id',
         'institution',
@@ -127,6 +127,6 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

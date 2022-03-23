@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -168,6 +168,6 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

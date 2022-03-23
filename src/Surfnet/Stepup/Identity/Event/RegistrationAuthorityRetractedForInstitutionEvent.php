@@ -30,7 +30,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $whitelist = [
+    private $allowlist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -133,6 +133,6 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
 
     public function getAllowlist(): array
     {
-        return $this->whitelist;
+        return $this->allowlist;
     }
 }

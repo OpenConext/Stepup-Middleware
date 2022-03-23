@@ -26,6 +26,7 @@ use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -76,6 +77,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory,
+                m::mock(UserDataFilterInterface::class),
                 $logger
             ),
             $this->apiIdentityRepository,

@@ -6,6 +6,11 @@ services:
     Surfnet\Stepup\Helper\UserDataFilterInterface:
         class: Surfnet\Stepup\Helper\UserDataFilter
 
+    Surfnet\Stepup\Helper\UserDataFormatterInterface:
+        class: Surfnet\Stepup\Helper\UserDataFormatter
+        arguments:
+            $applicationName: '%application_name%'
+
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:

@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -85,6 +86,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory,
+                m::mock(UserDataFilterInterface::class),
                 $logger
             ),
             m::mock(IdentityProjectionRepository::class),

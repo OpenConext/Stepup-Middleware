@@ -17,7 +17,7 @@ services:
     Surfnet\StepupMiddleware\ApiBundle\Controller\DeprovisionController:
         arguments:
             $deprovisionService: '@Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService'
-            $applicationName: '%application_name%'
+            $formatHelper: '@Surfnet\Stepup\Helper\UserDataFormatterInterface'
         tags: [ 'controller.service_arguments' ]
 
     # Repositories

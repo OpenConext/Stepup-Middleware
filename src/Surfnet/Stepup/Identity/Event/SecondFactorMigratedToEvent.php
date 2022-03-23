@@ -26,13 +26,23 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable
+class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'identity_id',
+        'identity_institution',
+        'second_factor_id',
+        'target_institution',
+        'target_second_factor_id',
+        'second_factor_type',
+        'second_factor_identifier',
+    ];
 
     /**
      * @var \Surfnet\Stepup\Identity\Value\Institution
@@ -130,5 +140,14 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedCombinedUserData, $whitelist);
     }
 }

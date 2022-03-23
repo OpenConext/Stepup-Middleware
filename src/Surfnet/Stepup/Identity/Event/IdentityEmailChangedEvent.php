@@ -23,10 +23,17 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable
+class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'id',
+        'identity_institution',
+        'email'
+    ];
+
     /**
      * @var Email
      */
@@ -81,5 +88,14 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->email = $sensitiveData->getEmail();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedCombinedUserData, $whitelist);
     }
 }

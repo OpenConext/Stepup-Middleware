@@ -22,9 +22,17 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class AppointedAsRaForInstitutionEvent extends IdentityEvent
+class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    protected static $whitelist = [
+        'identity_id',
+        'institution',
+        'name_id',
+        'ra_institution'
+    ];
+
     /**
      * @var NameId
      */
@@ -81,5 +89,12 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent
             'name_id'        => (string) $this->nameId,
             'ra_institution' => (string) $this->raInstitution,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedUserData = $this->serialize();
+        $whitelist = array_flip(self::$whitelist);
+        return array_intersect_key($serializedUserData, $whitelist);
     }
 }

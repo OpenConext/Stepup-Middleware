@@ -40,7 +40,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $whitelist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -187,5 +187,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
         $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
         $whitelist = array_flip(self::$whitelist);
         return array_intersect_key($serializedCombinedUserData, $whitelist);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->whitelist;
     }
 }

@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class EmailVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $whitelist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -193,5 +193,10 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
         $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
         $whitelist = array_flip(self::$whitelist);
         return array_intersect_key($serializedCombinedUserData, $whitelist);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->whitelist;
     }
 }

@@ -30,7 +30,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $whitelist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -129,5 +129,10 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
         $whitelist = array_flip(self::$whitelist);
         return array_intersect_key($serializedCombinedUserData, $whitelist);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->whitelist;
     }
 }

@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $whitelist = [
         'identity_id',
         'institution',
         'name_id',
@@ -88,5 +88,10 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         $serializedUserData = $this->serialize();
         $whitelist = array_flip(self::$whitelist);
         return array_intersect_key($serializedUserData, $whitelist);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

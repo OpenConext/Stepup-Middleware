@@ -25,7 +25,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $whitelist = [
         'identity_id',
         'identity_institution',
     ];
@@ -70,5 +70,10 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
         $serializedUserData = $this->serialize();
         $whitelist = array_flip(self::$whitelist);
         return array_intersect_key($serializedUserData, $whitelist);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->whitelist;
     }
 }

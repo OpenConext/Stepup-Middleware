@@ -8,7 +8,7 @@ As part of the effort to implement the [Right to be Forgotton](https://github.co
 - *commonName* - The common name attribute as received from the remote IdP. This is the full name of the user
 - *email* - The email attribute as received from the remote IdP. This is the email address of the user
 - *secondFactorIdentifier* - The identifier of the second factor. For SMS this is the mobile phone number, for Yubikey this is the Yubikey ID, for GSSPs (like e.g. Tiqr) this is the Subject NameID that the GSSP returns during registration. For Tiqr this is the Tiqr account name.
-- *secondFactorType* - The type of second factor (sms, yubikey, tiqr)
+- secondFactorType - The type of second factor (sms, yubikey, tiqr)
 - *documentNumber* - What the RA entered in the document number field during registration. The RA is instructed to enter the last 6 digits of the document number of the ID (i.e. passport or drivers license) of the user.
 
 The data in the `event_stream` and `event_steam_sensitive_data` is replicated in the projection tables. These tables reflect the current state of the system, whereas the event_stream can be used to reconstruct all previous states. When a user is deleted, the projections need to be updated as well. The current implementation uses the [IdentityForgottenEvent](../src/Surfnet/Stepup/Identity/Event/IdentityForgottenEvent.php) to accomplish this. Because no new information is added to the projection tables compared to what is stored in the event_stream, we do not further describe the data that the projections contain. Instead we describe the data that is stored in the events.
@@ -34,24 +34,27 @@ Below a list of all the events in Stepup, together with their data types. The da
 
 These are all the datatypes that are used in the events (i.e. the `payload`). Data that we think should be considered "personal data" is *emphasised*.
 
-| Data type                                                                                 | Description |
-|:------------------------------------------------------------------------------------------|:------------|
-| *authority_id* | Used in revocation events. The identity_id of the user doing the revocation. |
-| *contact_information* | contact information entered by an RA(A) |
-| *email_verification_nonce* | the nonce that was sent to the user to verify the email address during registration |
-| email_verification_required | whether email verification is required (deprecated) |
-| email_verification_window | start and end times of the validity of the email_verification_nonce |
-| *identity_id* | GUID. This is the unique identifier of an identity in Stepup. It is used internally in Stepup only. |
-| *identity_institution* | the identifier of the institution that the user belongs to. This is the value of the schacHomeOrganization attribute as received from the remote IdP |
-| institution | the identifier of the institution to which the event applies |
-| *location* | contact location entered by an RA(A) |
-| *name_id* | The nameID in the Subject of the Assertion as received from the remote IdP |
-| preferred_locale | The locate of the user |
-| *registration_authority_role* | role identifier (1=RA or 2=RAA) |
-| *registration_code* | the registration code |
-| registration_requested_at | timestamp at which registration was requested |
-| *second_factor_id* | GUID. Unique identifier of the second factor |
-| *second_factor_type* | The type of second factor (e.g. tiqr, yubikey, sms) |
+| Data type                     | In sensitive data stream | Description                                                                                                                                          |
+|:------------------------------|:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| *authority_id*                |                          | Used in revocation events. The identity_id of the user doing the revocation.                                                                         |
+| *contact_information*         |                          | Contact information entered by an RA(A)                                                                                                              |
+| email_verification_nonce      |                          | The nonce that was sent to the user to verify the email address during registration                                                                  |
+| email_verification_required   |                          | Whether email verification is required (deprecated)                                                                                                  |
+| email_verification_window     |                          | Start and end times of the validity of the email_verification_nonce                                                                                  |
+| *identity_id*                 |                          | GUID. This is the unique identifier of an identity in Stepup. It is used internally in Stepup only.                                                  |
+| *identity_institution*        |                          | The identifier of the institution that the user belongs to. This is the value of the schacHomeOrganization attribute as received from the remote IdP |
+| institution                   |                          | The identifier of the institution to which the event applies                                                                                         |
+| *location*                    |                          | Contact location entered by an RA(A)                                                                                                                 |
+| *name_id*                     |                          | The nameID in the Subject of the Assertion as received from the remote IdP                                                                           |
+| preferred_locale              |                          | The locate of the user                                                                                                                               |
+| *registration_authority_role* |                          | Role identifier (1=RA or 2=RAA)                                                                                                                      |
+| registration_code             |                          | The registration code                                                                                                                                |
+| registration_requested_at     |                          | Timestamp at which registration was requested                                                                                                        |
+| second_factor_id              |                          | UID of the second factor method                                                                                                                      |
+| *second_factor_identifier*    | &#9745;                  | GUID. Unique identifier of the second factor                                                                                                         |
+| *second_factor_type*          | &#9745;                  | The type of second factor (e.g. tiqr, yubikey, sms)                                                                                                  |
+| *email*                       | &#9745;                  | The email of the user                                                                                                                                |
+| *vetting_type*                | &#9745;                  | Registration type used at the RA                                                                                                                     |
 
 ## Identity Events
 

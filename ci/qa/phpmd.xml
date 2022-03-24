@@ -32,6 +32,7 @@
         <exclude name="LongVariable" />
         <exclude name="LongClassName" />
         <exclude name="ShortClassName" />
+        <exclude name="ShortMethodName" />
     </rule>
 
 </ruleset>

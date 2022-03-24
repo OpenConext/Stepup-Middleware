@@ -8,7 +8,7 @@ As part of the effort to implement the [Right to be Forgotton](https://github.co
 - *commonName* - The common name attribute as received from the remote IdP. This is the full name of the user
 - *email* - The email attribute as received from the remote IdP. This is the email address of the user
 - *secondFactorIdentifier* - The identifier of the second factor. For SMS this is the mobile phone number, for Yubikey this is the Yubikey ID, for GSSPs (like e.g. Tiqr) this is the Subject NameID that the GSSP returns during registration. For Tiqr this is the Tiqr account name.
-- secondFactorType - The type of second factor (sms, yubikey, tiqr)
+- *secondFactorType* - The type of second factor (sms, yubikey, tiqr)
 - *documentNumber* - What the RA entered in the document number field during registration. The RA is instructed to enter the last 6 digits of the document number of the ID (i.e. passport or drivers license) of the user.
 
 The data in the `event_stream` and `event_steam_sensitive_data` is replicated in the projection tables. These tables reflect the current state of the system, whereas the event_stream can be used to reconstruct all previous states. When a user is deleted, the projections need to be updated as well. The current implementation uses the [IdentityForgottenEvent](../src/Surfnet/Stepup/Identity/Event/IdentityForgottenEvent.php) to accomplish this. Because no new information is added to the projection tables compared to what is stored in the event_stream, we do not further describe the data that the projections contain. Instead we describe the data that is stored in the events.
@@ -57,15 +57,31 @@ These are all the datatypes that are used in the events (i.e. the `payload`). Da
 
 A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in stepup and the data that these events store in the `payload`.
 
-[AppointedAsRaaEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaaEvent.php)
+[~~AppointedAsRaaEvent~~](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaaEvent.php)  
+Status: deprecated  
+Superseded by: [AppointedAsRaaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaaForInstitutionEvent.php)
 - identity_id
 - institution
 - name_id
 
-[AppointedAsRaEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaEvent.php)
+[AppointedAsRaaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaaForInstitutionEvent.php)
 - identity_id
 - institution
 - name_id
+- ra_institution
+
+[~~AppointedAsRaEvent~~](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaEvent.php)  
+Status: deprecated  
+Superseded by: [AppointedAsRaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaForInstitutionEvent.php)
+- identity_id
+- institution
+- name_id
+
+[AppointedAsRaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/AppointedAsRaForInstitutionEvent.php)
+- identity_id
+- institution
+- name_id
+- ra_institution
 
 [CompliedWithUnverifiedSecondFactorRevocationEvent](../src/Surfnet/Stepup/Identity/Event/CompliedWithUnverifiedSecondFactorRevocationEvent.php), [CompliedWithVerifiedSecondFactorRevocationEvent](../src/Surfnet/Stepup/Identity/Event/CompliedWithVerifiedSecondFactorRevocationEvent.php), [CompliedWithVerifiedSecondFactorRevocationEvent](../src/Surfnet/Stepup/Identity/Event/CompliedWithVerifiedSecondFactorRevocationEvent.php) and [CompliedWithVettedSecondFactorRevocationEvent](../src/Surfnet/Stepup/Identity/Event/CompliedWithVettedSecondFactorRevocationEvent.php) (all derived from [CompliedWithRevocationEvent](../src/Surfnet/Stepup/Identity/Event/CompliedWithRevocationEvent.php))
 - identity_id
@@ -73,7 +89,7 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - second_factor_id
 - second_factor_type
 - authority_id
-- Forgattable: secondFactorIdentifier
+- Forgettable: second_factor_identifier
 
 [EmailVerifiedEvent](../src/Surfnet/Stepup/Identity/Event/EmailVerifiedEvent.php)
 - identity_id
@@ -84,8 +100,8 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - registration_code
 - preferred_locale
 - Forgettable: email
-- Forgettable: commonName
-- Forgettable: secondFactorIdentifier
+- Forgettable: common_name
+- Forgettable: second_factor_identifier
 
 [GssfPossessionProvenAndVerifiedEvent](../src/Surfnet/Stepup/Identity/Event/GssfPossessionProvenAndVerifiedEvent.php)
 - identity_id
@@ -94,9 +110,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - stepup_provider (is second_factor_type)
 - registration_requested_at
 - registration_code
-- Forgettable: gssfId (is secondFactorIdentifier)
+- Forgettable: gssfId (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 [GssfPossessionProvenEvent](../src/Surfnet/Stepup/Identity/Event/GssfPossessionProvenEvent.php)
 - identity_id
@@ -107,11 +123,13 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - email_verification_window
 - email_verification_nonce
 - preferred_locale
-- Forgettable: gssfId (is secondFactorIdentifier)
+- Forgettable: gssfId (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
-[IdentityAccreditedAsRaaEvent](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaaEvent.php)
+[~~IdentityAccreditedAsRaaEvent~~](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaaEvent.php)  
+Status: deprecated  
+Superseded by: [IdentityAccreditedAsRaaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaaForInstitutionEvent.php)
 - identity_id
 - name_id
 - institution
@@ -119,7 +137,18 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - location
 - contact_information
 
-[IdentityAccreditedAsRaEvent](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaEvent.php)
+[IdentityAccreditedAsRaaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaaForInstitutionEvent.php)
+- identity_id
+- name_id
+- institution
+- registration_authority_ro
+- location
+- contact_information
+- ra_institution
+
+[~~IdentityAccreditedAsRaEvent~~](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaEvent.php)  
+Status: deprecated  
+Superseded by: [IdentityAccreditedAsRaForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/IdentityAccreditedAsRaForInstitutionEvent.php)
 - identity_id
 - name_id
 - institution
@@ -133,7 +162,7 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - name_id
 - preferred_locale
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 [IdentityEmailChangedEvent](../src/Surfnet/Stepup/Identity/Event/IdentityEmailChangedEvent.php)
 - id
@@ -147,7 +176,7 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 [IdentityRenamedEvent](../src/Surfnet/Stepup/Identity/Event/IdentityRenamedEvent.php)
 - id
 - institution
-- Forgettable: commonName
+- Forgettable: common_name
 
 [InstitutionsAddedToWhitelistEvent](../src/Surfnet/Stepup/Identity/Event/InstitutionsAddedToWhitelistEvent.php)
 - added_institutions
@@ -166,9 +195,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - second_factor_id
 - registration_requested_at
 - registration_code
-- Forgettable: phoneNumber (is secondFactorIdentifier)
+- Forgettable: phoneNumber (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 [PhonePossessionProvenEvent](../src/Surfnet/Stepup/Identity/Event/PhonePossessionProvenEvent.php)
 - identity_id
@@ -178,30 +207,72 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - email_verification_window
 - email_verification_nonce
 - preferred_locale
-- Forgettable: phoneNumber (is secondFactorIdentifier)
+- Forgettable: phoneNumber (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
-[RegistrationAuthorityInformationAmendedEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityInformationAmendedEvent.php)
+[~~RegistrationAuthorityInformationAmendedEvent~~](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityInformationAmendedEvent.php)  
+Status: deprecated  
+Superseded by: [RegistrationAuthorityInformationAmendedEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityInformationAmendedEvent.php)
 - identity_id
 - institution
 - name_id
 - location
 - contact_information
 
-[RegistrationAuthorityRetractedEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityRetractedEvent.php)
+[RegistrationAuthorityInformationAmendedForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityInformationAmendedForInstitutionEvent.php) 
+- identity_id
+- institution
+- name_id
+- location
+- contact_information
+- ra_institution
+
+[~~RegistrationAuthorityRetractedEvent~~](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityRetractedEvent.php)  
+Status: deprecated  
+Superseded by: [RegistrationAuthorityRetractedForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityRetractedForInstitutionEvent.php)
 - identity_id
 - identity_institution
 - name_id
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
+
+[RegistrationAuthorityRetractedForInstitutionEvent](../src/Surfnet/Stepup/Identity/Event/RegistrationAuthorityRetractedForInstitutionEvent.php)
+- identity_id
+- identity_institution
+- name_id
+- ra_institution
+- Forgettable: email
+- Forgettable: common_name
+
+[SecondFactorMigratedEvent](../src/Surfnet/Stepup/Identity/Event/SecondFactorMigratedEvent.php)
+- identity_id
+- source_institution
+- target_name_id
+- identity_institution
+- second_factor_id
+- new_second_factor_id
+- second_factor_type
+- preferred_locale
+- Forgettable: second_factor_identifier
+- Forgettable: common_name
+- Forgettable: email
+
+[SecondFactorMigratedToEvent](../src/Surfnet/Stepup/Identity/Event/SecondFactorMigratedToEvent.php)
+- identity_id
+- identity_institution
+- second_factor_id
+- target_institution
+- target_second_factor_id
+- second_factor_type
+- Forgettable: second_factor_identifier
 
 [UnverifiedSecondFactorRevokedEvent](../src/Surfnet/Stepup/Identity/Event/UnverifiedSecondFactorRevokedEvent.php), [VerifiedSecondFactorRevokedEvent](../src/Surfnet/Stepup/Identity/Event/VerifiedSecondFactorRevokedEvent.php) and [VettedSecondFactorRevokedEvent](../src/Surfnet/Stepup/Identity/Event/VettedSecondFactorRevokedEvent.php) (all derived from [SecondFactorRevokedEvent](../src/Surfnet/Stepup/Identity/Event/SecondFactorRevokedEvent.php))
 - identity_id
 - identity_institution
 - second_factor_id
 - second_factor_type
-- Forgettable: secondFactorIdentifier
+- Forgettable: second_factor_identifier
 
 [SecondFactorVettedEvent](../src/Surfnet/Stepup/Identity/Event/SecondFactorVettedEvent.php)
 - identity_id
@@ -211,9 +282,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - second_factor_type
 - preferred_locale
 - Forgettable: email
-- Forgettable: commonName
-- Forgettable: secondFactorIdentifier
-- Forgettable: vettingType (each vetting type has different data)
+- Forgettable: common_name
+- Forgettable: second_factor_identifier
+- Forgettable: vetting_type (each vetting type has different data)
 
 [SecondFactorVettedWithoutTokenProofOfPossession](../src/Surfnet/Stepup/Identity/Event/SecondFactorVettedEvent.php)
 - identity_id
@@ -223,9 +294,34 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - second_factor_type
 - preferred_locale
 - Forgettable: email
-- Forgettable: commonName
-- Forgettable: secondFactorIdentifier
-- Forgettable: vettingType (each vetting type has different data)
+- Forgettable: common_name
+- Forgettable: U2F (is second_factor_identifier)
+- Forgettable: vetting_type (each vetting type has different data)
+
+[~~U2fDevicePossessionProvenAndVerifiedEvent~~](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenAndVerifiedEvent.php)  
+Status: deprecated  
+Removed: Built in U2F support is dropped from StepUp, this Event was not removed to support event replay
+- identity_id
+- identity_institution
+- second_factor_id
+- registration_requested_at
+- preferred_locale
+- second_factor_type
+- Forgettable: U2F (is second_factor_identifier)
+- Forgettable: email
+- Forgettable: common_name
+
+[~~U2fDevicePossessionProvenEvent~~](../src/Surfnet/Stepup/Identity/Event/U2fDevicePossessionProvenEvent.php)  
+Status: deprecated  
+Removed: Built in U2F support is dropped from StepUp, this Event was not removed to support event replay
+- identity_id
+- identity_institution
+- second_factor_id
+- preferred_locale
+- second_factor_type
+- Forgettable: U2F (second_factor_identifier)
+- Forgettable: email
+- Forgettable: common_name
 
 [WhitelistCreatedEvent](../src/Surfnet/Stepup/Identity/Event/WhitelistCreatedEvent.php)
 - whitelisted_institutions
@@ -239,9 +335,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - second_factor_id
 - registration_requested_at
 - registration_code
-- Forgettable: yubikeyPublicId (is secondFactorIdentifier)
+- Forgettable: yubikeyPublicId (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 [YubikeyPossessionProvenEvent](../src/Surfnet/Stepup/Identity/Event/YubikeyPossessionProvenEvent.php)
 - identity_id
@@ -251,9 +347,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - email_verification_window
 - email_verification_nonce
 - preferred_locale
-- Forgettable: yubikeyPublicId (is secondFactorIdentifier)
+- Forgettable: yubikeyPublicId (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 [YubikeySecondFactorBootstrappedEvent](../src/Surfnet/Stepup/Identity/Event/YubikeySecondFactorBootstrappedEvent.php)
 - identity_id
@@ -261,9 +357,9 @@ A list of all the [Identity events]((../src/Surfnet/Stepup/Identity/Event/) in s
 - identity_institution
 - preferred_locale
 - second_factor_id
-- Forgettable: yubikeyPublicId (is secondFactorIdentifier)
+- Forgettable: yubikeyPublicId (is second_factor_identifier)
 - Forgettable: email
-- Forgettable: commonName
+- Forgettable: common_name
 
 ## Configuration Events
 

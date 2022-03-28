@@ -30,11 +30,9 @@ config/services.yml
 
 ###> squizlabs/php_codesniffer ###
 /.phpcs-cache
-/ci/qa/phpcs.xml
+/phpcs.xml
 ###< squizlabs/php_codesniffer ###
 
 ###> symfony/phpunit-bridge ###
 .phpunit
-.phpunit.result.cache
-/phpunit.xml
 ###< symfony/phpunit-bridge ###

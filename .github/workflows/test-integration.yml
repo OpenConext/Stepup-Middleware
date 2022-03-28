@@ -31,4 +31,5 @@ jobs:
         run: cd ci/docker && docker-compose exec -T stepup-middleware bash -lc ' composer test '
       - name: Output log files on failure
         if: failure()
-        run: cd ci/docker && docker-compose exec -T stepup-middleware -c 'cat var/log/webtest.log'
+        run: |
+          tail -2000 /var/log/syslog 

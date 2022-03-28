@@ -102,9 +102,8 @@
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "@auto-scripts"
         ],
-        "frontend-install": [
+        "frontend-install":
             "echo 'Skipping task: no frontend assets available'"
-        ]
     },
     "archive": {
         "exclude": [

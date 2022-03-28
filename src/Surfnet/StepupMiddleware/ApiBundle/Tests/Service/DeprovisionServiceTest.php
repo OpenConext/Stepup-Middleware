@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\UserNotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService;
@@ -74,15 +75,15 @@ class DeprovisionServiceTest extends TestCase
      */
     public function test_it_deals_with_non_exisiting_collab_user_id()
     {
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage('User identified by: urn:collab:person:example.com:maynard_keenan was not found. Unable to provide deprovision data.');
+
         $this->apiRepo
             ->shouldReceive('findOneByNameId')
             ->with('urn:collab:person:example.com:maynard_keenan')
             ->once()
             ->andReturnNull();
-        $data = $this->deprovisionService->readUserData('urn:collab:person:example.com:maynard_keenan');
-
-        $this->assertTrue(is_array($data));
-        $this->assertEmpty($data);
+        $this->deprovisionService->readUserData('urn:collab:person:example.com:maynard_keenan');
     }
 
     /**
@@ -115,6 +116,9 @@ class DeprovisionServiceTest extends TestCase
             ->andReturnNull();
         $this->pipeline
             ->shouldNotHaveReceived('process');
+
+        $this->expectException(UserNotFoundException::class);
+        $this->expectExceptionMessage('User identified by: urn:collab:person:example.com:maynard_keenan was not found. Unable to provide deprovision data.');
         $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
     }
     public function test_deprovision_method_performs_the_right_to_be_forgotten_command()

@@ -40,7 +40,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $allowlist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -189,8 +189,11 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     {
         $serializedPublicUserData = $this->serialize();
         $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
-        $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
-        $whitelist = array_flip(self::$whitelist);
-        return array_intersect_key($serializedCombinedUserData, $whitelist);
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

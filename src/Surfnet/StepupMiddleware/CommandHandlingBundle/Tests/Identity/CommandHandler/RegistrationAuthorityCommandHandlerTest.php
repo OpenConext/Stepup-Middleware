@@ -27,6 +27,7 @@ use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
@@ -95,6 +96,7 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory,
+                m::mock(UserDataFilterInterface::class),
                 $logger
             ),
             $this->institutionConfigurationRepositoryMock

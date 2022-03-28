@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Exception;
+use Surfnet\Stepup\Helper\UserDataFormatterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,38 +28,42 @@ class DeprovisionController extends AbstractController
 {
     private $deprovisionService;
 
-    private $applicationName;
+    private $formatHelper;
 
-    public function __construct(DeprovisionServiceInterface $deprovisionService, string $applicationName)
-    {
+    public function __construct(
+        DeprovisionServiceInterface $deprovisionService,
+        UserDataFormatterInterface $formatHelper
+    ) {
         $this->deprovisionService = $deprovisionService;
-        $this->applicationName = $applicationName;
+        $this->formatHelper = $formatHelper;
     }
 
     public function deprovisionAction(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
-
-        $userData = $this->deprovisionService->readUserData($collabPersonId);
-        if (!empty($userData)) {
-            $this->deprovisionService->deprovision($collabPersonId);
+        $errors = [];
+        try {
+            $userData = $this->deprovisionService->readUserData($collabPersonId);
+            if (!empty($userData)) {
+                $this->deprovisionService->deprovision($collabPersonId);
+            }
+        } catch (Exception $e) {
+            $userData = [];
+            $errors = [$e->getMessage()];
         }
-        return new JsonResponse($this->formatResponse('OK', $userData));
+        return new JsonResponse($this->formatHelper->format($userData, $errors));
     }
 
     public function dryRunAction(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
-        $userData = $this->deprovisionService->readUserData($collabPersonId);
-        return new JsonResponse($this->formatResponse('OK', $userData));
-    }
-
-    private function formatResponse(string $status, array $userData): array
-    {
-        return [
-            'status'  => $status,
-            'name'    => $this->applicationName,
-            'data'    => $userData,
-        ];
+        $errors = [];
+        try {
+            $userData = $this->deprovisionService->readUserData($collabPersonId);
+        } catch (Exception $e) {
+            $userData = [];
+            $errors = [$e->getMessage()];
+        }
+        return new JsonResponse($this->formatHelper->format($userData, $errors));
     }
 }

@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+use function sprintf;
 
 class DeprovisionService implements DeprovisionServiceInterface
 {
@@ -51,10 +52,10 @@ class DeprovisionService implements DeprovisionServiceInterface
     private $logger;
 
     public function __construct(
-        Pipeline $pipeline,
-        IdentityRepository $eventSourcingRepository,
+        Pipeline              $pipeline,
+        IdentityRepository    $eventSourcingRepository,
         ApiIdentityRepository $apiRepository,
-        LoggerInterface $logger
+        LoggerInterface       $logger
     ) {
         $this->pipeline = $pipeline;
         $this->eventSourcingRepository = $eventSourcingRepository;
@@ -75,36 +76,32 @@ class DeprovisionService implements DeprovisionServiceInterface
                     $collabPersonId
                 )
             );
-            return [];
+            throw $e;
         }
     }
 
     public function deprovision(string $collabPersonId): void
     {
-        try {
-            $this->logger->debug(sprintf('Searching user identified by: %s', $collabPersonId));
-            $user = $this->getIdentityByNameId($collabPersonId);
-            $command = new ForgetIdentityCommand();
-            $command->UUID = (string) Uuid::uuid4();
-            $command->nameId = $collabPersonId;
-            $command->institution = (string) $user->institution;
-            $this->logger->debug('Processing the ForgetIdentityCommand');
-            $this->pipeline->process($command);
-        } catch (UserNotFoundException $e) {
-            $this->logger->notice(
-                sprintf(
-                    'User identified by: %s was not found. Unable to provide deprovision data.',
-                    $collabPersonId
-                )
-            );
-        }
+        $this->logger->debug(sprintf('Searching user identified by: %s', $collabPersonId));
+        $user = $this->getIdentityByNameId($collabPersonId);
+        $command = new ForgetIdentityCommand();
+        $command->UUID = (string)Uuid::uuid4();
+        $command->nameId = $collabPersonId;
+        $command->institution = (string)$user->institution;
+        $this->logger->debug('Processing the ForgetIdentityCommand');
+        $this->pipeline->process($command);
     }
 
     private function getIdentityByNameId(string $collabPersonId): Identity
     {
         $user = $this->apiRepository->findOneByNameId($collabPersonId);
         if (!$user) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException(
+                sprintf(
+                    'User identified by: %s was not found. Unable to provide deprovision data.',
+                    $collabPersonId
+                )
+            );
         }
         return $user;
     }

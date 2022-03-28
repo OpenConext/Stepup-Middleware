@@ -28,6 +28,7 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -107,6 +108,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
                 $aggregateFactory,
+                m::mock(UserDataFilterInterface::class),
                 $logger
             ),
             $this->identityProjectionRepository,

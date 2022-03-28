@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    protected static $whitelist = [
+    private $allowlist = [
         'id',
         'institution',
         'common_name',
@@ -94,8 +94,11 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
     {
         $serializedPublicUserData = $this->serialize();
         $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
-        $serializedCombinedUserData = array_merge($serializedPublicUserData, $serializedSensitiveUserData);
-        $whitelist = array_flip(self::$whitelist);
-        return array_intersect_key($serializedCombinedUserData, $whitelist);
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

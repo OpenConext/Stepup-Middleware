@@ -20,6 +20,9 @@
     "composer/ca-bundle": {
         "version": "1.2.7"
     },
+    "composer/package-versions-deprecated": {
+        "version": "1.11.99.5"
+    },
     "composer/pcre": {
         "version": "0.0",
         "recipe": {
@@ -58,6 +61,9 @@
     },
     "doctrine/dbal": {
         "version": "2.10.2"
+    },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
     },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
@@ -165,6 +171,9 @@
     "myclabs/deep-copy": {
         "version": "1.9.5"
     },
+    "n98/junit-xml": {
+        "version": "1.1.0"
+    },
     "nelmio/security-bundle": {
         "version": "2.4",
         "recipe": {
@@ -180,17 +189,20 @@
     "nikic/php-parser": {
         "version": "v4.5.0"
     },
-    "ocramius/package-versions": {
-        "version": "1.4.2"
-    },
     "ocramius/proxy-manager": {
         "version": "2.2.3"
     },
     "openconext/monitor-bundle": {
         "version": "dev-feature/add-symfony-4-support"
     },
+    "overtrue/phplint": {
+        "version": "3.0.6"
+    },
     "pagerfanta/pagerfanta": {
         "version": "v1.1.0"
+    },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.5.0"
     },
     "paragonie/random_compat": {
         "version": "v2.0.18"
@@ -203,9 +215,6 @@
     },
     "phar-io/version": {
         "version": "2.0.1"
-    },
-    "php": {
-        "version": "7.2"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.1.0"
@@ -332,18 +341,6 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
-    "sensiolabs/security-checker": {
-        "version": "4.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "4.0",
-            "ref": "160c9b600564faa1224e8f387d49ef13ceb8b793"
-        },
-        "files": [
-            "config/packages/security_checker.yaml"
-        ]
-    },
     "simplesamlphp/saml2": {
         "version": "v3.2.6"
     },
@@ -377,6 +374,9 @@
     "symfony/cache": {
         "version": "v4.4.10"
     },
+    "symfony/cache-contracts": {
+        "version": "v1.1.11"
+    },
     "symfony/config": {
         "version": "v4.4.10"
     },
@@ -392,9 +392,6 @@
             "bin/console",
             "config/bootstrap.php"
         ]
-    },
-    "symfony/contracts": {
-        "version": "v1.1.8"
     },
     "symfony/debug": {
         "version": "v4.4.10"
@@ -419,6 +416,9 @@
     },
     "symfony/event-dispatcher": {
         "version": "v4.4.10"
+    },
+    "symfony/event-dispatcher-contracts": {
+        "version": "v1.1.11"
     },
     "symfony/expression-language": {
         "version": "v4.4.9"
@@ -464,8 +464,8 @@
             "src/Kernel.php"
         ]
     },
-    "symfony/http-client": {
-        "version": "v4.4.10"
+    "symfony/http-client-contracts": {
+        "version": "v1.1.11"
     },
     "symfony/http-foundation": {
         "version": "v4.4.10"
@@ -524,9 +524,6 @@
     "symfony/options-resolver": {
         "version": "v4.4.9"
     },
-    "symfony/orm-pack": {
-        "version": "v1.0.8"
-    },
     "symfony/phpunit-bridge": {
         "version": "3.3",
         "recipe": {
@@ -578,8 +575,8 @@
             "ref": ""
         }
     },
-    "symfony/profiler-pack": {
-        "version": "v1.0.4"
+    "symfony/process": {
+        "version": "v4.4.37"
     },
     "symfony/property-access": {
         "version": "v4.4.9"
@@ -622,6 +619,9 @@
     "symfony/security-http": {
         "version": "v4.4.9"
     },
+    "symfony/service-contracts": {
+        "version": "v1.1.11"
+    },
     "symfony/stopwatch": {
         "version": "v4.4.10"
     },
@@ -655,6 +655,9 @@
             "translations/.gitignore"
         ]
     },
+    "symfony/translation-contracts": {
+        "version": "v1.1.11"
+    },
     "symfony/twig-bridge": {
         "version": "v4.4.10"
     },
@@ -671,9 +674,6 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.0"
     },
     "symfony/validator": {
         "version": "4.3",

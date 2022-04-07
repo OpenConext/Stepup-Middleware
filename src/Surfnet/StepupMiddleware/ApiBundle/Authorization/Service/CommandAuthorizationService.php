@@ -133,22 +133,26 @@ class CommandAuthorizationService
      */
     public function mayRaCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null, Institution $actorInstitution = null)
     {
+        $this->logger->notice('Running the mayRaCommandBeExecutedOnBehalfOf sequence');
         // Assert RAA specific authorizations
         if ($command instanceof RaExecutable) {
             $this->logger->notice('Asserting a RA command');
 
             // No additional FGA authorization is required for this shared (SS/RA) command
             if ($command instanceof ExpressLocalePreferenceCommand) {
+                $this->logger->notice('Ra is allowed to perform ExpressLocalePreferenceCommand');
                 return true;
             }
 
             // The actor metadata should be set
             if (is_null($actorId) || is_null($actorInstitution)) {
+                $this->logger->warning('actorId and/or actorInstitution is missing in mayRaCommandBeExecutedOnBehalfOf');
                 return false;
             }
 
             // If the actor is SRAA all actions should be allowed
             if ($this->isSraa($actorId)) {
+                $this->logger->notice('SRAA is always allowed');
                 return true;
             }
 
@@ -156,6 +160,7 @@ class CommandAuthorizationService
             if (is_null($raInstitution)) {
                 $raInstitution = $actorInstitution->getInstitution();
             }
+            $this->logger->notice(sprintf('RA institution = %s', $raInstitution));
 
             $role = InstitutionRole::useRaa();
 
@@ -164,12 +169,34 @@ class CommandAuthorizationService
             // Both are only sent by the RA where the minimal role requirement is RA
             // all the other actions require RAA rights
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+                $this->logger->notice('VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role');
                 $role = InstitutionRole::useRa();
+                // Use the institution of the identity (the user vetting or having his token revoked).
+                $identity = $this->identityService->find($command->identityId);
+                if (!$identity) {
+                    $this->logger->error('Unable to find the identity of the user that is being vetted, or revoked');
+                    return false;
+                }
+                $this->logger->notice(
+                    sprintf(
+                        'Changed ra institution (before %s) to identity institution: %s',
+                        $raInstitution,
+                        $identity->institution->getInstitution()
+                    )
+                );
+                $raInstitution = $identity->institution->getInstitution();
             }
 
             $authorizationContext = $this->authorizationContextService->buildInstitutionAuthorizationContext(
                 $actorId,
                 $role
+            );
+
+            $this->logger->notice(
+                sprintf(
+                    'Authorized RA in institutions: %s',
+                    implode(',', $authorizationContext->getInstitutions()->serialize())
+                )
             );
 
             if (!$authorizationContext->getInstitutions()->contains(new Institution($raInstitution))) {

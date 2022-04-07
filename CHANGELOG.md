@@ -4,6 +4,9 @@
 - Middleware was made compatible with User-Lifecycle #342 #343 #344 #346 #347 #348 #350
 - Github Actions are used to run QA/CI tests #349
 
+**Bugfix**
+- RA/RAA MW command denied when user is not RA/RAA in home institution #351
+
 **Maintenance:**
 - Composer: prevent flex warning #337
 - Composer package upgrades #341

@@ -32,13 +32,27 @@ use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
+class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'name_id',
+        'identity_institution',
+        'second_factor_id',
+        'second_factor_type',
+        'preferred_locale',
+        'email',
+        'common_name',
+        'second_factor_identifier',
+        'vetting_type',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
      */
@@ -164,5 +178,17 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable
         $this->commonName     = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->vettingType = $sensitiveData->getVettingType();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

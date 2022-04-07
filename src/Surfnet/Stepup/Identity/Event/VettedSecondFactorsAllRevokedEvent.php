@@ -21,9 +21,14 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class VettedSecondFactorsAllRevokedEvent extends IdentityEvent
+class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'identity_institution',
+    ];
 
     final public function __construct(
         IdentityId $identityId,
@@ -58,5 +63,15 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent
             'identity_id'              => (string) $this->identityId,
             'identity_institution'     => (string) $this->identityInstitution,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        return $this->serialize();
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

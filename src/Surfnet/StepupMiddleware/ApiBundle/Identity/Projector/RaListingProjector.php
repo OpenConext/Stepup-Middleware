@@ -151,7 +151,7 @@ class RaListingProjector extends Projector
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
-        $this->raListingRepository->removeByIdentityId($event->identityId);
+        $this->raListingRepository->removeByIdentityId($event->identityId, $event->identityInstitution);
     }
 
     /**

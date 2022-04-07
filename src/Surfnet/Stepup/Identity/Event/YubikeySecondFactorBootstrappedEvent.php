@@ -29,10 +29,23 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable
+final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'name_id',
+        'identity_institution',
+        'preferred_locale',
+        'second_factor_id',
+        'second_factor_identifier',
+        'second_factor_type',
+        'email',
+        'common_name',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\NameId
      */
@@ -142,5 +155,17 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
         $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

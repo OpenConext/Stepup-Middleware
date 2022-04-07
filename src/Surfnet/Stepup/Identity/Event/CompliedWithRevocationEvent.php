@@ -26,10 +26,19 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forgettable
+abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'identity_institution',
+        'second_factor_identifier',
+        'second_factor_type',
+        'authority_id',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\IdentityId
      */
@@ -115,5 +124,16 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

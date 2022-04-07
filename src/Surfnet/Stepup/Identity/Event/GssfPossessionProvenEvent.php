@@ -30,10 +30,22 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
+class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'identity_institution',
+        'second_factor_id',
+        'stepup_provider',
+        'preferred_locale',
+        'second_factor_identifier',
+        'common_name',
+        'email',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
@@ -183,5 +195,17 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
         $this->gssfId     = $sensitiveData->getSecondFactorIdentifier();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

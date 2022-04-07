@@ -3,12 +3,22 @@ services:
     # BC aliases
     Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher: "@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"
 
+    Surfnet\Stepup\Helper\UserDataFilterInterface:
+        class: Surfnet\Stepup\Helper\UserDataFilter
+
+    Surfnet\Stepup\Helper\UserDataFormatterInterface:
+        class: Surfnet\Stepup\Helper\UserDataFormatter
+        arguments:
+            $applicationName: '%application_name%'
+
     surfnet_stepup.repository.identity:
         class: Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
         arguments:
             - "@surfnet_stepup_middleware_command_handling.event_store.sensitive_data"
             - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
             - "@surfnet_stepup.aggregate_factory.public_constructor"
+            - '@Surfnet\Stepup\Helper\UserDataFilterInterface'
+            - "@logger"
             - ["@surfnet_stepup_middleware_command_handling.metadata_enricher.actor"]
 
     surfnet_stepup_middleware_command_handling.metadata_enricher.actor:

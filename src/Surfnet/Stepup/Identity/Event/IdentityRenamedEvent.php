@@ -23,10 +23,17 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class IdentityRenamedEvent extends IdentityEvent implements Forgettable
+class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'id',
+        'institution',
+        'common_name',
+    ];
+
     /**
      * @var CommonName
      */
@@ -81,5 +88,17 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->commonName = $sensitiveData->getCommonName();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

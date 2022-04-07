@@ -80,6 +80,60 @@ Basic Command Structure
 }
 ```
 
+## Deprovision API - Deprovision user
+
+### Request
+URL: `http://middleware.tld/deprovision/{collabPersonId}
+Method: DELETE
+Request parameters:
+- collabPersonId: collabPersonId of the identity
+
+### Response
+`200 OK`
+```json
+{
+  "status": 200,
+  "name": "StepUp",
+  "data": [
+    {
+        "name": "userName",
+        "value": "Jane"
+    },
+    {
+      "name": "lastName",
+      "value": "Doe"
+    }
+  ]
+}
+```
+
+## Deprovision API - Dry run
+
+### Request
+URL: `http://middleware.tld/deprovision/{collabPersonId}/dry-run
+Method: GET
+Request parameters:
+- collabPersonId: collabPersonId of the identity
+
+### Response
+`200 OK`
+```json
+{
+  "status": 200,
+  "name": "StepUp",
+  "data": [
+    {
+      "name": "userName",
+      "value": "Jane"
+    },
+    {
+      "name": "lastName",
+      "value": "Doe"
+    }
+  ]
+}
+```
+
 
 ## Identity & Second Factors
 
@@ -108,7 +162,7 @@ Request parameters:
 ### Identities - Identity Collection
 
 #### Request
-URL: `http://middleware.tld/identity/?insitution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
+URL: `http://middleware.tld/identity?institution=Ibuildings{&NameID=}{&commonName=}{&email=}{&p=3}`
 Method: GET
 Request parameters:
 - Institution: (required) string, the institution as scope determination

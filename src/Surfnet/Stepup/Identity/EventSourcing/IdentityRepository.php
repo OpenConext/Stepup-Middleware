@@ -18,32 +18,66 @@
 
 namespace Surfnet\Stepup\Identity\EventSourcing;
 
+use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\AggregateFactory;
 use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\EventSourcing\EventStreamDecorator;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Broadway\EventStore\EventStreamNotFoundException;
+use Broadway\Repository\AggregateNotFoundException;
+use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
+use Surfnet\Stepup\Identity\Identity;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
 class IdentityRepository extends EventSourcingRepository
 {
+    protected $events;
+
+    protected $logger;
+
+    private $userDataFilter;
+
     /**
-     * @param EventStoreInterface             $eventStore
-     * @param EventBusInterface               $eventBus
-     * @param AggregateFactory       $aggregateFactory
      * @param EventStreamDecorator[] $eventStreamDecorators
      */
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
         AggregateFactory $aggregateFactory,
+        UserDataFilterInterface $userDataFilter,
+        LoggerInterface $logger,
         array $eventStreamDecorators = []
     ) {
+        $this->events = $eventStore;
+        $this->logger = $logger;
+        $this->userDataFilter = $userDataFilter;
         parent::__construct(
             $eventStore,
             $eventBus,
-            \Surfnet\Stepup\Identity\Identity::class,
+            Identity::class,
             $aggregateFactory,
             $eventStreamDecorators
         );
+    }
+
+    public function obtainInformation(IdentityId $id): array
+    {
+        try {
+            $domainEventStream = $this->events->load($id);
+            $data = [];
+            /** @var DomainMessage $domainMessage */
+            foreach ($domainEventStream as $domainMessage) {
+                if ($domainMessage->getPayload() instanceof RightToObtainDataInterface) {
+                    $index = $domainMessage->getPlayhead() . '-' . $domainMessage->getType();
+                    $data[$index] = $this->userDataFilter->filter($domainMessage->getPayload());
+                }
+            }
+            return $data;
+        } catch (EventStreamNotFoundException $e) {
+            throw AggregateNotFoundException::create($id, $e);
+        }
     }
 }

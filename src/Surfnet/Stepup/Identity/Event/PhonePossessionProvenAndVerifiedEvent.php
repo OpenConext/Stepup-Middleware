@@ -29,10 +29,23 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified
+class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'identity_institution',
+        'second_factor_id',
+        'registration_requested_at',
+        'preferred_locale',
+        'second_factor_type',
+        'second_factor_identifier',
+        'email',
+        'common_name',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
@@ -161,5 +174,17 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

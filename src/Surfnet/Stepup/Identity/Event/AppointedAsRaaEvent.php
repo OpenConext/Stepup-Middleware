@@ -22,12 +22,19 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
 /**
  * @deprecated This event is superseded by the AppointedAsRaaForInstitutionEvent because an RA institution was needed
  */
-class AppointedAsRaaEvent extends IdentityEvent
+class AppointedAsRaaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'institution',
+        'name_id',
+    ];
+
     /**
      * @var NameId
      */
@@ -74,5 +81,15 @@ class AppointedAsRaaEvent extends IdentityEvent
             'institution'    => (string) $this->identityInstitution,
             'name_id'        => (string) $this->nameId
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        return $this->serialize();
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

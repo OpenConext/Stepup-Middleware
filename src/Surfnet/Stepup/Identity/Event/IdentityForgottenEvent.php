@@ -21,9 +21,15 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class IdentityForgottenEvent extends IdentityEvent
+class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'institution',
+    ];
+
     /**
      * @return Metadata
      */
@@ -46,6 +52,19 @@ class IdentityForgottenEvent extends IdentityEvent
      */
     public function serialize(): array
     {
-        return ['identity_id' => $this->identityId, 'institution' => $this->identityInstitution];
+        return [
+            'identity_id' => $this->identityId,
+            'institution' => $this->identityInstitution
+        ];
+    }
+
+    public function obtainUserData(): array
+    {
+        return $this->serialize();
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

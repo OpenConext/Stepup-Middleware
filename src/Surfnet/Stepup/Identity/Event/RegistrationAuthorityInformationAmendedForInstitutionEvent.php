@@ -24,9 +24,19 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent
+class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'institution',
+        'name_id',
+        'location',
+        'contact_information',
+        'ra_institution'
+    ];
+
     /**
      * @var NameId
      */
@@ -102,5 +112,15 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
             'contact_information' => (string) $this->contactInformation,
             'ra_institution'      => (string) $this->raInstitution,
         ];
+    }
+
+    public function obtainUserData(): array
+    {
+        return $this->serialize();
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

@@ -30,13 +30,28 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable
+class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'source_institution',
+        'target_name_id',
+        'identity_institution',
+        'second_factor_id',
+        'new_second_factor_id',
+        'second_factor_type',
+        'preferred_locale',
+        'second_factor_identifier',
+        'common_name',
+        'email',
+    ];
+
     /**
      * @var Institution
      */
@@ -170,5 +185,17 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();
         $this->email = $sensitiveData->getEmail();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

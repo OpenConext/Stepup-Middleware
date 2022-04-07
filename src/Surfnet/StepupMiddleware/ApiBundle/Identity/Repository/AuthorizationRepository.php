@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
@@ -32,11 +33,20 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AuthorizationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
         parent::__construct($registry, AuditLogEntry::class);
+        $this->logger = $logger;
     }
 
     /**
@@ -49,6 +59,7 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     public function getInstitutionsForRole(InstitutionRole $role, IdentityId $actorId)
     {
+        $result = new InstitutionCollection();
         $qb = $this->_em->createQueryBuilder()
             ->select("a.institution")
             ->from(ConfiguredInstitution::class, 'i')
@@ -73,10 +84,36 @@ class AuthorizationRepository extends ServiceEntityRepository
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
-
-        $result = new InstitutionCollection();
         foreach ($institutions as $institution) {
+            $this->logger->notice(
+                sprintf('Adding %s to authorized institutions', $institution['institution'])
+            );
             $result->add(new Institution((string)$institution['institution']));
+        }
+
+        // Also get the institutions that are linked to the user via the 'institution_relation' field.
+        // Effectively getting the use_raa relation.
+        // See https://www.pivotaltracker.com/story/show/181537313
+        $qb = $this->_em->createQueryBuilder()
+            ->select('ia.institution')
+            ->from(InstitutionAuthorization::class, 'ia')
+            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation')
+            ->where('r.identityId = :identityId')
+            ->andWhere("ia.institutionRole = :role") // Only filter on use_ra and use_raa roles here.
+            ->groupBy('ia.institution');
+
+        $qb->setParameter('identityId', (string)$actorId);
+        $qb->setParameter('role', $role->getType());
+
+        $institutions = $qb->getQuery()->getArrayResult();
+        foreach ($institutions as $institution) {
+            $institutionVo = new Institution((string)$institution['institution']);
+            if (!$result->contains($institutionVo)) {
+                $result->add($institutionVo);
+                $this->logger->notice(
+                    sprintf('Adding %s to authorized institutions from use_raa', $institution['institution'])
+                );
+            }
         }
 
         return $result;

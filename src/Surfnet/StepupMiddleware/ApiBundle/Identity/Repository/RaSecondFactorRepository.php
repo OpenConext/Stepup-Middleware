@@ -215,4 +215,16 @@ class RaSecondFactorRepository extends ServiceEntityRepository
 
         $entityManager->flush();
     }
+
+    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId)
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->update($this->_entityName, 'rasf')
+            ->set('rasf.status', ":forgotten")
+            ->where('rasf.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->setParameter('forgotten', 40)
+            ->getQuery()
+            ->execute();
+    }
 }

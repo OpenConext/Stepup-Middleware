@@ -29,13 +29,25 @@ use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
  * @deprecated Built in U2F support is dropped from StepUp, this Event was not removed to support event replay
  */
-class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettable
+class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    private $allowlist = [
+        'identity_id',
+        'identity_institution',
+        'second_factor_id',
+        'preferred_locale',
+        'second_factor_type',
+        'second_factor_identifier',
+        'email',
+        'common_name',
+    ];
+
     /**
      * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
      */
@@ -175,5 +187,17 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         $this->email       = $sensitiveData->getEmail();
         $this->commonName  = $sensitiveData->getCommonName();
         $this->keyHandle   = $sensitiveData->getSecondFactorIdentifier();
+    }
+
+    public function obtainUserData(): array
+    {
+        $serializedPublicUserData = $this->serialize();
+        $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
+        return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
+    }
+
+    public function getAllowlist(): array
+    {
+        return $this->allowlist;
     }
 }

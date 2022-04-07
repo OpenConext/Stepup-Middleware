@@ -353,7 +353,7 @@ class RaSecondFactorProjector extends Projector
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
-        $this->raSecondFactorRepository->removeByIdentityId($event->identityId);
+        $this->raSecondFactorRepository->updateStatusByIdentityIdToForgotten($event->identityId);
     }
 
     /**

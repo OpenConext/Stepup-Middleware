@@ -1,4 +1,5 @@
 parameters:
+    application_name: StepUp Middleware
     # IP addresses of any HTTP proxies that are sitting in from of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
     trusted_proxies:   ~
@@ -43,10 +44,12 @@ parameters:
     # - registration - user "ra"
     # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
+    # - GDPR complience: deprovision and retrieval of user information - user "lifecycle"
     selfservice_api_password: OI7Wr63wxx2-Pel
     registration_authority_api_password: BAeBxn813SB4_QX
     readonly_api_password: wkpTzg.CJzc5sWU
     management_password: UktsgjiFJOSP87d
+    lifecycle_password: AXn0n9cOFymT_oF
 
     self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}
     email_sender_name: SURFnet bv

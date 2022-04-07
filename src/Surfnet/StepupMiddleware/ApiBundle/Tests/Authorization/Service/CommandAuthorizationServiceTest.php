@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\CommandAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
@@ -211,6 +212,12 @@ class CommandAuthorizationServiceTest extends TestCase
             $role = InstitutionRole::useRaa();
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
                 $role = InstitutionRole::useRa();
+                $mockInstitution = new Institution('mock institution');
+                $mockIdentity = m::mock(Identity::class);
+                $mockIdentity->institution = $mockInstitution;
+                $this->identityService->shouldReceive('find')
+                    ->with($command->identityId)
+                    ->andReturn($mockIdentity);
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
@@ -369,6 +376,13 @@ class CommandAuthorizationServiceTest extends TestCase
             $role = InstitutionRole::useRaa();
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
                 $role = InstitutionRole::useRa();
+
+                $mockInstitution = new Institution('mock institution');
+                $mockIdentity = m::mock(Identity::class);
+                $mockIdentity->institution = $mockInstitution;
+                $this->identityService->shouldReceive('find')
+                    ->with($command->identityId)
+                    ->andReturn($mockIdentity);
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')

@@ -25,6 +25,8 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -67,11 +69,16 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->sensitiveDataService = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService');
         $this->sraaRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository');
 
+        $logger = m::mock(LoggerInterface::class);
+        $logger->shouldIgnoreMissing();
+
         return new RightToBeForgottenCommandHandler(
             new IdentityRepository(
                 new IdentityIdEnforcingEventStoreDecorator($eventStore),
                 $eventBus,
-                $aggregateFactory
+                $aggregateFactory,
+                m::mock(UserDataFilterInterface::class),
+                $logger
             ),
             $this->apiIdentityRepository,
             $this->sensitiveDataService,

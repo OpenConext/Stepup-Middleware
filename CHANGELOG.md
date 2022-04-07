@@ -1,4 +1,13 @@
 # Changelog
+# 4.5.0
+**Features:**
+- Middleware was made compatible with User-Lifecycle #342 #343 #344 #346 #347 #348 #350
+- Github Actions are used to run QA/CI tests #349
+
+**Maintenance:**
+- Composer: prevent flex warning #337
+- Composer package upgrades #341
+
 # 4.4.1
 - Add Github Actions tag automation workflow
 

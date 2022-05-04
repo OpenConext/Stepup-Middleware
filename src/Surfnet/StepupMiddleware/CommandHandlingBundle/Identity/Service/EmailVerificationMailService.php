@@ -21,10 +21,11 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 use Assert\Assertion;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
+
 
 final class EmailVerificationMailService
 {
@@ -59,11 +60,6 @@ final class EmailVerificationMailService
     private $sender;
 
     /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
      * @var string
      */
     private $selfServiceUrl;
@@ -72,7 +68,7 @@ final class EmailVerificationMailService
      * @param Mailer $mailer
      * @param Sender $sender
      * @param TranslatorInterface $translator
-     * @param Environment $twig
+
      * @param string $emailVerificationUrlTemplate
      * @param EmailTemplateService $emailTemplateService
      * @param string $fallbackLocale
@@ -84,7 +80,6 @@ final class EmailVerificationMailService
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
         $fallbackLocale,
@@ -98,7 +93,6 @@ final class EmailVerificationMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
@@ -110,6 +104,7 @@ final class EmailVerificationMailService
      * @param string $commonName
      * @param string $email
      * @param string $verificationNonce
+     * @throws TransportExceptionInterface
      */
     public function sendEmailVerificationEmail(
         $locale,
@@ -140,21 +135,12 @@ final class EmailVerificationMailService
             'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        $this->mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to($email, $commonName)
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
+        $this->mailer->send($email);
     }
 }

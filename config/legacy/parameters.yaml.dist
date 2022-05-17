@@ -44,7 +44,7 @@ parameters:
     # - registration - user "ra"
     # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
-    # - GDPR complience: deprovision and retrieval of user information - user "lifecycle"
+    # - GDPR compliance: deprovision and retrieval of user information - user "lifecycle"
     selfservice_api_password: OI7Wr63wxx2-Pel
     registration_authority_api_password: BAeBxn813SB4_QX
     readonly_api_password: wkpTzg.CJzc5sWU

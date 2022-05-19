@@ -22,6 +22,7 @@ use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
 use Surfnet\Stepup\Configuration\Event\NumberOfTokensPerIdentityOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
@@ -58,7 +59,8 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->showRaaContactInformationOption,
             $event->verifyEmailOption,
             $event->numberOfTokensPerIdentityOption,
-            $event->selfVetOption
+            $event->selfVetOption,
+            $event->selfAssertedTokensOption
         );
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -100,6 +102,14 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     {
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
         $institutionConfigurationOptions->selfVetOption = $event->selfVetOption;
+
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
+    }
+
+    public function applySelfAssertedTokensOptionChangedEvent(SelfAssertedTokensOptionChangedEvent $event)
+    {
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->selfAssertedTokensOption = $event->selfAssertedTokensOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }

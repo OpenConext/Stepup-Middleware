@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
+use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
@@ -70,6 +71,13 @@ class InstitutionConfigurationOptions
     public $selfVetOption;
 
     /**
+     * @ORM\Column(type="stepup_self_asserted_tokens_option", options={"default" : 0})
+     *
+     * @var SelfAssertedTokensOption
+     */
+    public $selfAssertedTokensOption;
+
+    /**
      * @ORM\Column(type="stepup_number_of_tokens_per_identity_option", options={"default" : 0})
      *
      * @var NumberOfTokensPerIdentityOption
@@ -82,7 +90,8 @@ class InstitutionConfigurationOptions
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        SelfVetOption $selfVetOption
+        SelfVetOption $selfVetOption,
+        SelfAssertedTokensOption $selfAssertedTokensOption
     ) {
         $options = new self;
 
@@ -92,6 +101,7 @@ class InstitutionConfigurationOptions
         $options->verifyEmailOption               = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $options->selfVetOption = $selfVetOption;
+        $options->selfAssertedTokensOption = $selfAssertedTokensOption;
 
         return $options;
     }

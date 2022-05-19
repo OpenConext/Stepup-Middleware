@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
@@ -48,6 +48,7 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
@@ -127,7 +128,8 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new ShowRaaContactInformationOption(true),
                     new VerifyEmailOption(true),
                     new NumberOfTokensPerIdentityOption(0),
-                    new SelfVetOption(true)
+                    new SelfVetOption(true),
+                    new SelfAssertedTokensOption(true)
                 )
             ],
             'UseRaLocationsOptionChangedEvent' => [

@@ -24,6 +24,7 @@ return [
             'use_ra_locations' => true,
             'verify_email' => false,
             'self_vet' => false,
+            'allow_self_asserted_tokens' => false,
             'number_of_tokens_per_identity' => 2,
             'allowed_second_factors' => [],
         ]

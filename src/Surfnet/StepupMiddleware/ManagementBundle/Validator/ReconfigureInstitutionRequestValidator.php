@@ -129,6 +129,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'show_raa_contact_information',
             'verify_email',
             'self_vet',
+            'allow_self_asserted_tokens',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];

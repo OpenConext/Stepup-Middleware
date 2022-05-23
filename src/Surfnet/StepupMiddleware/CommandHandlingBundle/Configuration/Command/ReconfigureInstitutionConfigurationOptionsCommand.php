@@ -61,6 +61,13 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public $selfVetOption;
 
     /**
+     * @Assert\Type(type="boolean")
+     *
+     * @var bool
+     */
+    public $selfAssertedTokensOption;
+
+    /**
      * @Assert\Type(type="integer")
      *
      * @var int

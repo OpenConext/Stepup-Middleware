@@ -102,6 +102,9 @@ doctrine:
             stepup_self_vet_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType
                 commented: false
+            stepup_self_asserted_tokens_option:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfAssertedTokensOptionType
+                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
                 commented: false

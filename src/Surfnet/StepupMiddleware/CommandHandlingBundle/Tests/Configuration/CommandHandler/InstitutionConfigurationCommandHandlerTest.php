@@ -205,6 +205,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $selfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->useRaOption = $useRaOption->jsonSerialize();
         $command->useRaaOption = $useRaaOption->jsonSerialize();
@@ -278,6 +279,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $selfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->useRaOption = $useRaOption->jsonSerialize();
         $command->useRaaOption = $useRaaOption->jsonSerialize();
@@ -356,6 +358,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->useRaLocationsOption            = $useRaLocationsOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $selfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->allowedSecondFactors            = [];
 
@@ -436,6 +439,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $selfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->allowedSecondFactors = $secondFactorsToAllow;
 
@@ -515,6 +519,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $selfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->allowedSecondFactors = $secondFactorsToAllow;
 
@@ -936,6 +941,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
         $command->showRaaContactInformationOption = $showRaaContactInformationOption->isEnabled();
         $command->verifyEmailOption               = $verifyEmailOption->isEnabled();
         $command->selfVetOption = $newSelfVetOption->isEnabled();
+        $command->allowedSecondFactors = $selfAssertedTokensOption->isEnabled();
         $command->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         $command->allowedSecondFactors = [];
 

@@ -325,7 +325,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
         $selfVetOption = new SelfVetOption(false);
-        $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $selfAssertedTokensOption = new SelfAssertedTokensOption(false);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $expectedUseRaLocationsOption = new UseRaLocationsOption(false);
         $useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());

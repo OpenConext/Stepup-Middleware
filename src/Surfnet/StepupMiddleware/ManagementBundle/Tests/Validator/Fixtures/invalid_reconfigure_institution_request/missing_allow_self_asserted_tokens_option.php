@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016 SURFnet B.V.
+ * Copyright 2022 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ return [
             'show_raa_contact_information' => true,
             'verify_email' => false,
             'self_vet' => false,
-            'allow_self_asserted_tokens' => false,
             'number_of_tokens_per_identity' => 1,
+            'allowed_second_factors' => [],
         ]
     ]
 ];

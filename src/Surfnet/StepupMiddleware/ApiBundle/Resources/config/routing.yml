@@ -4,6 +4,14 @@ command_handle:
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+authorization_self_asserted_tokens:
+    path: /authorization/may-register-self-asserted-tokens/{identityId}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::mayRegisterSelfAssertedTokensAction }
+    methods: [ GET ]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 deprovision_dry_run:
     path: /deprovision/{collabPersonId}/dry-run
     requirements:

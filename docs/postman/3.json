@@ -874,22 +874,33 @@
 			"response": []
 		},
 		{
-			"name": "/sraa",
+			"name": "/authorization/may-register-self-asserted-tokens/123e4567-e89b-12d3-a456-426655440000",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"key": "Accept",
+						"value": "application/json"
 					},
 					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
+						"key": "Content-Type",
+						"value": "application/json"
 					}
 				],
-				"url": "http://middleware.stepup.example.com/sraa"
+				"url": {
+					"raw": "http://middleware.stepup.example.com/authorization/may-register-self-asserted-tokens",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"authorization",
+						"may-register-self-asserted-tokens"
+					]
+				}
 			},
 			"response": []
 		}

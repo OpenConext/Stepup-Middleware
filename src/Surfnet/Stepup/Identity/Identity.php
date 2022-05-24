@@ -25,6 +25,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\RecoveryTokenCollection;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
@@ -158,6 +159,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var boolean
      */
     private $forgotten;
+
+    /**
+     * @var RecoveryTokenCollection
+     */
+    private $recoveryTokens;
 
     public static function create(
         IdentityId $id,
@@ -492,6 +498,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $documentNumber,
             $provePossessionSkipped
         );
+    }
+
+    public function selfAssertSecondFactor(): void
+    {
+        $this->assertNotForgotten();
+        $this->assertSelfAssertedTokenRegistrationAllowed();
     }
 
     public function selfVetSecondFactor(
@@ -864,6 +876,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors = new SecondFactorCollection();
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
+        $this->recoveryTokens = new RegistrationAuthorityCollection();
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -1318,6 +1331,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             if ($vettedSecondFactor->typeAndIdentifierAreEqual($type, $identifier)) {
                 throw new DomainException("The second factor was registered as a vetted second factor");
             }
+        }
+    }
+
+    private function assertSelfAssertedTokenRegistrationAllowed()
+    {
+        if ($this->vettedSecondFactors->count() !== 0) {
+            throw new DomainException("Self-asserted second factor registration is only allowed when no tokens are vetted yet");
+        }
+        if ($this->recoveryTokens->count() === 0) {
+            throw new DomainException("A recovery token is required to perform a self-asserted token registration");
         }
     }
 }

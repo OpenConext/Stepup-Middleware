@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Response;
 
 use Assert\Assertion;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\AuthorizationDecision;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class JsonAuthorizationResponse extends JsonResponse
@@ -26,7 +27,7 @@ class JsonAuthorizationResponse extends JsonResponse
     public function __construct(int $code, array $errors = [])
     {
         Assertion::choice($code, [200, 403], 'The status code can be either 200 or 403');
-        Assertion::allString($errors,'The error messages should all be strings');
+        Assertion::allString($errors, 'The error messages should all be strings');
 
         $data = [
             'code' => $code
@@ -35,5 +36,10 @@ class JsonAuthorizationResponse extends JsonResponse
             $data['errors'] = $errors;
         }
         parent::__construct($data, $code);
+    }
+
+    public static function from(AuthorizationDecision $decision)
+    {
+        return new self($decision->getCode(), $decision->getErrorMessages());
     }
 }

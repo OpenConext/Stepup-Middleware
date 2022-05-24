@@ -18,20 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Exception;
-use Surfnet\Stepup\Helper\UserDataFormatterInterface;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonAuthorizationResponse;
-use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthorizationController extends AbstractController
 {
-    public function __construct() {
+    /**
+     * @var AuthorizationService
+     */
+    private $authorizationService;
+
+    /**
+     * @param AuthorizationService $authorizationService
+     */
+    public function __construct(AuthorizationService $authorizationService)
+    {
+        $this->authorizationService = $authorizationService;
     }
 
-    public function mayRegisterSelfAssertedTokensAction()
+    public function mayRegisterSelfAssertedTokensAction(string $identityId)
     {
-        return new JsonAuthorizationResponse(403, ['Forbidden, go away']);
+        $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(new IdentityId($identityId));
+        return JsonAuthorizationResponse::from($decision);
     }
 }

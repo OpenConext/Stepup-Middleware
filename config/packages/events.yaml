@@ -13,6 +13,8 @@ parameters:
         - Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent
         - Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent
         - Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent
+        - Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent
+        - Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
         - Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent

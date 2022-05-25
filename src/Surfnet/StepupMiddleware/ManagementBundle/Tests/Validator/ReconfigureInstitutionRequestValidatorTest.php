@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
-use PHPUnit\Framework\TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -46,7 +46,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
                 $fixture['expectedPropertyPath'],
                 $fixture['expectErrorMessageToContain']
             ];
-        };
+        }
 
         return $dataSet;
     }
@@ -169,6 +169,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
                 'show_raa_contact_information' => true,
                 'verify_email'                 => false,
                 'self_vet' => false,
+                'allow_self_asserted_tokens' => false,
                 'number_of_tokens_per_identity' => 1,
                 'allowed_second_factors'       => [],
             ],
@@ -214,6 +215,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
                 'show_raa_contact_information' => true,
                 'verify_email'                 => true,
                 'self_vet' => false,
+                'allow_self_asserted_tokens' => false,
                 'number_of_tokens_per_identity' => 3,
                 'allowed_second_factors'       => [],
             ],

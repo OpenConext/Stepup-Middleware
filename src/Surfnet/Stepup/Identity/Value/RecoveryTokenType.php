@@ -19,10 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use Surfnet\Stepup\Identity\Api\Id;
 
 final class RecoveryTokenType
 {
+    const TYPE_SMS = 'sms';
+    const TYPE_SAFE_STORE = 'safe-store';
+
     /**
      * @var string
      */
@@ -31,10 +33,34 @@ final class RecoveryTokenType
     public function __construct($type)
     {
         if (!is_string($type)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $type);
+            throw new InvalidArgumentException(sprintf('The RecoveryTokenType must be of type string, %s given', gettype($type)));
+        }
+
+        if (!in_array($type, [self::TYPE_SMS, self::TYPE_SAFE_STORE])) {
+            throw new InvalidArgumentException('The RecoveryTokenType must be one of "sms" or "safe-store".');
         }
 
         $this->type = $type;
+    }
+
+    public static function sms()
+    {
+        return new RecoveryTokenType(self::TYPE_SMS);
+    }
+
+    public static function safeStore()
+    {
+        return new RecoveryTokenType(self::TYPE_SAFE_STORE);
+    }
+
+    public function isSms(): bool
+    {
+        return $this->type === self::TYPE_SMS;
+    }
+
+    public function isSafeStore(): bool
+    {
+        return $this->type === self::TYPE_SAFE_STORE;
     }
 
     /**
@@ -48,5 +74,10 @@ final class RecoveryTokenType
     public function __toString()
     {
         return $this->type;
+    }
+
+    public function equals(RecoveryTokenType $other): bool
+    {
+        return $this->type === $other->getType();
     }
 }

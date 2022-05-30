@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2014 SURFnet bv
+ * Copyright 2022 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,13 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
 
-interface SecondFactorIdentifier extends JsonSerializable
+interface RecoveryTokenIdentifier extends JsonSerializable
 {
-    /**
-     * @return static
-     */
     public static function unknown();
 
-    /**
-     * Return a string representation of the value of this value object.
-     *
-     * @return string
-     */
     public function getValue();
 
-    /**
-     * @param self $other
-     * @return bool
-     */
     public function equals($other): bool;
 
-    /**
-     * @return string
-     */
     public function __toString();
 }

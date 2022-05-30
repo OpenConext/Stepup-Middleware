@@ -601,6 +601,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->selfVetOption = $event->selfVetOption;
     }
 
+    protected function applySelfAssertedTokensOptionChangedEvent(
+        SelfAssertedTokensOptionChangedEvent $event
+    ) {
+        $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
+    }
+
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(
         NumberOfTokensPerIdentityOptionChangedEvent $event
     ) {

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 
 final class RecoveryTokenCollection
 {
@@ -35,6 +36,16 @@ final class RecoveryTokenCollection
     public function get(RecoveryTokenId $id): RecoveryToken
     {
         return $this->recoveryTokens[(string)$id];
+    }
+
+    public function hasType(RecoveryTokenType $type)
+    {
+        foreach ($this->recoveryTokens as $token) {
+            if ($type->equals($token->getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function count(): int

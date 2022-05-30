@@ -25,6 +25,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Entity\RecoveryToken as RecoveryTokenEntity;
 use Surfnet\Stepup\Identity\Entity\RecoveryTokenCollection;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
@@ -53,6 +54,7 @@ use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
@@ -83,6 +85,8 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
@@ -95,6 +99,7 @@ use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -312,6 +317,23 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 )
             );
         }
+    }
+
+    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber)
+    {
+        $this->assertNotForgotten();
+        $this->assertUserMayAddRecoveryToken(RecoveryTokenType::sms());
+        $this->apply(
+            new PhoneRecoveryTokenPossessionProvenEvent(
+                $this->id,
+                $this->institution,
+                $recoveryTokenId,
+                $phoneNumber,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
+            )
+        );
     }
 
     public function provePossessionOfGssf(
@@ -876,7 +898,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors = new SecondFactorCollection();
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
-        $this->recoveryTokens = new RegistrationAuthorityCollection();
+        $this->recoveryTokens = new RecoveryTokenCollection();
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -1011,6 +1033,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
 
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
+    }
+
+    protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
+    {
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms());
+
+        $this->recoveryTokens->set($recoveryToken);
     }
 
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
@@ -1266,6 +1295,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             throw new DomainException(
                 sprintf('User may not have more than %d token(s)', $maxNumberOfTokens)
             );
+        }
+    }
+
+    private function assertUserMayAddRecoveryToken(RecoveryTokenType $recoveryTokenType)
+    {
+        // Assert this token type is not yet registered
+        if ($this->recoveryTokens->hasType($recoveryTokenType)) {
+            throw new DomainException(sprintf('Recovery token type %s is already registered', (string) $recoveryTokenType));
         }
     }
 

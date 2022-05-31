@@ -36,8 +36,8 @@ final class RecoveryTokenIdentifierFactoryTest extends TestCase
             RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678')
         );
         $this->assertEquals(
-            new SafeStore(),
-            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), '')
+            new SafeStore('super-secret'),
+            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret')
         );
 
         $this->assertEquals(

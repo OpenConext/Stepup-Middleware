@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -27,17 +28,16 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
-use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
- * PhoneRecoveryTokenPossessionProvenEvent
+ * SafeStoreSecretRecoveryTokenPossessionPromisedEvent
  *
- * This event is recorded when the user prove possession of a Phone (SMS)
- * based Recovery Token.
+ * This event is recorded when the user promised it stored the password
+ * (displayed only once to the user) in a safe location.
  */
-class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
+class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
     private $allowlist = [
         'identity_id',
@@ -54,9 +54,9 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
+     * @var \Surfnet\Stepup\Identity\Value\SafeStore
      */
-    public $phoneNumber;
+    public $secret;
 
     /**
      * @var \Surfnet\Stepup\Identity\Value\CommonName
@@ -77,7 +77,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         IdentityId $identityId,
         Institution $identityInstitution,
         RecoveryTokenId $recoveryTokenId,
-        PhoneNumber $phoneNumber,
+        SafeStore $secret,
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale
@@ -85,7 +85,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         parent::__construct($identityId, $identityInstitution);
 
         $this->recoveryTokenId = $recoveryTokenId;
-        $this->phoneNumber = $phoneNumber;
+        $this->secret = $secret;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
@@ -105,7 +105,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new RecoveryTokenId($data['recovery_token_id']),
-            PhoneNumber::unknown(),
+            SafeStore::unknown(),
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale'])
@@ -121,7 +121,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             'identity_id' => (string) $this->identityId,
             'identity_institution' => (string) $this->identityInstitution,
             'recovery_token_id' => (string) $this->recoveryTokenId,
-            'recovery_token_type' => RecoveryTokenType::TYPE_SMS,
+            'recovery_token_type' => RecoveryTokenType::TYPE_SAFE_STORE,
             'preferred_locale' => (string) $this->preferredLocale,
         ];
     }
@@ -131,14 +131,14 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         return (new SensitiveData)
             ->withCommonName($this->commonName)
             ->withEmail($this->email)
-            ->withRecoveryTokenSecret($this->phoneNumber, RecoveryTokenType::sms());
+            ->withRecoveryTokenSecret($this->secret, RecoveryTokenType::safeStore());
     }
 
     public function setSensitiveData(SensitiveData $sensitiveData)
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->phoneNumber = $sensitiveData->getRecoveryTokenIdentifier();
+        $this->secret = $sensitiveData->getRecoveryTokenIdentifier();
     }
 
     public function obtainUserData(): array

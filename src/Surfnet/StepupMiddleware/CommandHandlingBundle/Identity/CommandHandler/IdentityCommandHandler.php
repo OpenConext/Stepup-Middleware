@@ -36,6 +36,7 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
@@ -55,6 +56,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIde
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
@@ -325,6 +327,20 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $identity->provePossessionOfPhoneRecoveryToken(
             new RecoveryTokenId($command->recoveryTokenId),
             new PhoneNumber($command->phoneNumber)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handlePromiseSafeStoreSecretTokenPossessionCommand(PromiseSafeStoreSecretTokenPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $identity->promisePossessionOfSafeStoreSecretRecoveryToken(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new SafeStore($command->secret)
         );
 
         $this->eventSourcedRepository->save($identity);

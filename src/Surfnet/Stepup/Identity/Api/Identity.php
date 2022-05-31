@@ -36,7 +36,9 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
@@ -350,4 +352,14 @@ interface Identity extends AggregateRoot
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
     public function getAggregateRootId(): string;
+
+    /**
+     * Identity proved possession of a phone number by reproducing a secret sent to it via SMS
+     */
+    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber): void;
+
+    /**
+     * Identity promises it stored the once printed on screen password in a safe location
+     */
+    public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void;
 }

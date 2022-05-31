@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ProvePhoneRecoveryTokenPossessionCommand extends AbstractCommand implements SelfServiceExecutable
+class PromiseSafeStoreSecretTokenPossessionCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
      * The ID of an existing identity.
@@ -52,18 +52,17 @@ class ProvePhoneRecoveryTokenPossessionCommand extends AbstractCommand implement
      *
      * @var string
      */
-    public $recoveryTokenType = RecoveryTokenType::TYPE_SMS;
+    public $recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
 
     /**
-     * The phone number
+     * The unhashed password
      *
      * @Assert\NotBlank()
      * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^\+[\d\s]+ \(0\) \d+$~")
      *
      * @var string
      */
-    public $phoneNumber;
+    public $secret;
 
     /**
      * @return string

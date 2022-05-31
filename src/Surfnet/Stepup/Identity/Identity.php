@@ -59,6 +59,7 @@ use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -88,6 +89,7 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
@@ -319,7 +321,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber)
+    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber): void
     {
         $this->assertNotForgotten();
         $this->assertUserMayAddRecoveryToken(RecoveryTokenType::sms());
@@ -329,6 +331,24 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->institution,
                 $recoveryTokenId,
                 $phoneNumber,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
+            )
+        );
+    }
+
+
+    public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void
+    {
+        $this->assertNotForgotten();
+        $this->assertUserMayAddRecoveryToken(RecoveryTokenType::safeStore());
+        $this->apply(
+            new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                $this->id,
+                $this->institution,
+                $tokenId,
+                $secret,
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
@@ -1038,6 +1058,13 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
     {
         $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms());
+
+        $this->recoveryTokens->set($recoveryToken);
+    }
+
+    protected function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event)
+    {
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore());
 
         $this->recoveryTokens->set($recoveryToken);
     }

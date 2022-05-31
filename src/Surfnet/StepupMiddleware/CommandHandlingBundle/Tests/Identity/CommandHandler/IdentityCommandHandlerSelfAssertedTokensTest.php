@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use GuzzleHttp\Promise\Promise;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
@@ -31,6 +32,7 @@ use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -40,6 +42,7 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -47,6 +50,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
@@ -114,7 +118,6 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      */
     private $preferredLocale;
 
-
     public function setUp(): void
     {
         $this->allowedSecondFactorListServiceMock = m::mock(AllowedSecondFactorListService::class);
@@ -168,9 +171,96 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_proven()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = new SafeStore('secret-for-safe-keeping');
+
+        $command = new PromiseSafeStoreSecretTokenPossessionCommand();
+        $command->identityId = (string)$this->id;
+        $command->recoveryTokenId = (string)$recoveryTokenId;
+        $command->secret = (string)$secret;
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([$this->buildIdentityCreatedEvent()])
+            ->when($command)
+            ->then([
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    $secret,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = new SafeStore('secret-for-safe-keeping');
+        $phoneNumber = new PhoneNumber('+31 (0) 612345678');
+
+        $command = new PromiseSafeStoreSecretTokenPossessionCommand();
+        $command->identityId = (string)$this->id;
+        $command->recoveryTokenId = (string)$recoveryTokenId;
+        $command->secret = (string)$secret;
+
+        $command2 = new ProvePhoneRecoveryTokenPossessionCommand();
+        $command2->identityId = (string)$this->id;
+        $command2->recoveryTokenId = (string)$recoveryTokenId;
+        $command2->phoneNumber = (string)$phoneNumber;
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+        // Having both types of recovery tokens is allowed
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([$this->buildIdentityCreatedEvent()])
+            ->when($command)
+            ->then([
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    $secret,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ])
+            ->when($command2)
+            ->then([
+                new PhoneRecoveryTokenPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    $phoneNumber,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
     public function test_a_sms_recovery_code_possession_can_not_be_proven_twice()
     {
-
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
 
@@ -195,6 +285,45 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->institution,
                     $recoveryTokenId,
                     $phoneNumber,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ])
+            ->when($command);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_only_one_safe_store_secret_allowed()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = new SafeStore('secret-for-safe-keeping');
+
+        $command = new PromiseSafeStoreSecretTokenPossessionCommand();
+        $command->identityId = (string)$this->id;
+        $command->recoveryTokenId = (string)$recoveryTokenId;
+        $command->secret = (string)$secret;
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Recovery token type safe-store is already registered');
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([$this->buildIdentityCreatedEvent()])
+            ->when($command)
+            ->then([
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    $secret,
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale

@@ -872,6 +872,37 @@
 				"description": "nothing"
 			},
 			"response": []
+		},
+		{
+			"name": "/authorization/may-register-self-asserted-tokens/123e4567-e89b-12d3-a456-426655440000",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/authorization/may-register-self-asserted-tokens",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"authorization",
+						"may-register-self-asserted-tokens"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {

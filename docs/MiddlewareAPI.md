@@ -43,6 +43,60 @@ curl -u ss:password -H 'Accept: application/json' 'http://middleware.dev.surfcon
 | ------------- | --------------------- | --------- | --------------- |  
 | 501           | Not Implemented       | The requested resource/action has not yet been implemented | `{ "errors": ["Some descriptive message"] }` |
 
+## Authorization
+In order to assert certain more complex application features may be performed by a certain user. A authz endpoint is
+facilitated. Note that all authorizations are later re-verified in the aggregates. But these authorization endpoints can
+help to offload verification logic in the SelfService or RA environment.
+
+## Standard Responses
+
+| Response Code | Definition | Used When                                        | Response Format |
+|---------------|------------|--------------------------------------------------| --------------- |  
+| 200           | OK         | The user is authorized to perform the action     | |
+| 403           | Forbidden  | The user is not authorized to perform the action | |
+
+### Allowed to register self-asserted tokens?
+
+- URL: `http://middleware.tld/authorization/may-register-self-asserted-tokens/{identityId}`
+- Method: GET
+- Request parameters:
+    - identityId: (required) UUIDv4 of the identity to assert the authorization for
+
+### Response
+`200 OK`
+```json
+{   
+    "code": 200
+}
+```
+
+`403 Forbidden`
+
+Example of possible error messages. These may differ in the real world, but give a grasp on what they should look like.
+
+```json
+{   
+  "code": 403,
+  "errors": [
+    "Not permitted: institution does not allow self-asserted tokens.",
+    "Not permitted: no recovery method found.",
+    "Not permitted: no vetted tokens may be in possession."
+  ]
+}
+```
+
+#### Response
+`200 OK`
+```json
+[
+    {
+        "name": "SURFnet"
+    },
+    {
+        "name": "Ibuildings"
+    }
+]
+```
 
 ## Command API
 

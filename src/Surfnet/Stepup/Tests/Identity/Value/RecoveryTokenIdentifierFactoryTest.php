@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
@@ -36,7 +37,7 @@ final class RecoveryTokenIdentifierFactoryTest extends TestCase
             RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678')
         );
         $this->assertEquals(
-            new SafeStore('super-secret'),
+            new SafeStore(new HashedSecret('super-secret')),
             RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret')
         );
 

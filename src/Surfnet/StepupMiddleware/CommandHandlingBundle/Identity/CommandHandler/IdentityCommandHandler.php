@@ -22,6 +22,7 @@ use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -41,6 +42,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -110,10 +112,16 @@ class IdentityCommandHandler extends SimpleCommandHandler
      * @var InstitutionConfigurationRepository
      */
     private $loaResolutionService;
+
     /**
      * @var SecondFactorProvePossessionHelper
      */
     private $provePossessionHelper;
+
+    /**
+     * @var RecoveryTokenSecretHelper
+     */
+    private $recoveryTokenSecretHelper;
 
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
@@ -123,7 +131,8 @@ class IdentityCommandHandler extends SimpleCommandHandler
         SecondFactorTypeService $secondFactorTypeService,
         SecondFactorProvePossessionHelper $provePossessionHelper,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        LoaResolutionService $loaResolutionService
+        LoaResolutionService $loaResolutionService,
+        RecoveryTokenSecretHelper $recoveryTokenSecretHelper
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -133,6 +142,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->provePossessionHelper = $provePossessionHelper;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->loaResolutionService = $loaResolutionService;
+        $this->recoveryTokenSecretHelper = $recoveryTokenSecretHelper;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -338,9 +348,10 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
 
         $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $secret = $this->recoveryTokenSecretHelper->hash(new UnhashedSecret($command->secret));
         $identity->promisePossessionOfSafeStoreSecretRecoveryToken(
             new RecoveryTokenId($command->recoveryTokenId),
-            new SafeStore($command->secret)
+            new SafeStore($secret)
         );
 
         $this->eventSourcedRepository->save($identity);

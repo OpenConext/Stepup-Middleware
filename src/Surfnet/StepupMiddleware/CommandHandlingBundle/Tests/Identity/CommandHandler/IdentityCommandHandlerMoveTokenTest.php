@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -83,6 +84,11 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
      */
     private $configService;
 
+    /**
+     * @var IdentityProjectionRepository|m\MockInterface
+     */
+    private $identityProjectionRepository;
+
 
     public function setUp(): void
     {
@@ -117,7 +123,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $secondFactorTypeService,
             $secondFactorProvePossessionHelper,
             $this->configService,
-            $this->loaResolutionService
+            $this->loaResolutionService,
+            m::mock(RecoveryTokenSecretHelper::class)
         );
     }
 

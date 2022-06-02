@@ -28,7 +28,7 @@ final class RecoveryTokenIdentifierFactory
             return new PhoneNumber($recoveryTokenIdentifier);
         }
         if ($type->isSafeStore()) {
-            return new SafeStore($recoveryTokenIdentifier);
+            return new SafeStore(new HashedSecret($recoveryTokenIdentifier));
         }
         throw new InvalidArgumentException(sprintf('Unsupported type given while building recovery method: "%s"', $type));
     }

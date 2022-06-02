@@ -22,11 +22,11 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
-use GuzzleHttp\Promise\Promise;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -36,6 +36,7 @@ use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromised
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -43,6 +44,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\SafeStore;
+use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -117,6 +119,10 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @var Locale
      */
     private $preferredLocale;
+    /**
+     * @var RecoveryTokenSecretHelper|m\MockInterface
+     */
+    private $recoveryTokenSecretHelper;
 
     public function setUp(): void
     {
@@ -174,16 +180,25 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     public function test_a_safe_store_secret_recovery_code_possession_can_be_proven()
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
-        $secret = new SafeStore('secret-for-safe-keeping');
+        $secret = m::mock(HashedSecret::class);
 
         $command = new PromiseSafeStoreSecretTokenPossessionCommand();
         $command->identityId = (string)$this->id;
         $command->recoveryTokenId = (string)$recoveryTokenId;
-        $command->secret = (string)$secret;
+        $command->secret = 'super-safe-secret';
 
         $confMock = m::mock(InstitutionConfigurationOptions::class);
         $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $this->recoveryTokenSecretHelper
+            ->shouldReceive('hash')
+            ->with(m::on(function ($unhashedSecret) {
+                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                $hasExpectedSecret = $unhashedSecret->getSecret() === 'super-safe-secret';
+                return $isUnhashedSecret && $hasExpectedSecret;
+            }))
+            ->andReturn($secret);
 
         $this->scenario
             ->withAggregateId($this->id)
@@ -194,7 +209,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->id,
                     $this->institution,
                     $recoveryTokenId,
-                    $secret,
+                    new SafeStore($secret),
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale
@@ -209,18 +224,28 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven()
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
-        $secret = new SafeStore('secret-for-safe-keeping');
+
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
 
         $command = new PromiseSafeStoreSecretTokenPossessionCommand();
         $command->identityId = (string)$this->id;
         $command->recoveryTokenId = (string)$recoveryTokenId;
-        $command->secret = (string)$secret;
+        $command->secret = 'secret-for-safe-keeping';
 
         $command2 = new ProvePhoneRecoveryTokenPossessionCommand();
         $command2->identityId = (string)$this->id;
         $command2->recoveryTokenId = (string)$recoveryTokenId;
         $command2->phoneNumber = (string)$phoneNumber;
+
+        $secret = new HashedSecret('secret-for-safe-keeping');
+        $this->recoveryTokenSecretHelper
+            ->shouldReceive('hash')
+            ->with(m::on(function ($unhashedSecret) {
+                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
+                return $isUnhashedSecret && $hasExpectedSecret;
+            }))
+            ->andReturn($secret);
 
         $confMock = m::mock(InstitutionConfigurationOptions::class);
         $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
@@ -235,7 +260,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->id,
                     $this->institution,
                     $recoveryTokenId,
-                    $secret,
+                    new SafeStore($secret),
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale
@@ -300,16 +325,25 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     public function test_only_one_safe_store_secret_allowed()
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
-        $secret = new SafeStore('secret-for-safe-keeping');
 
         $command = new PromiseSafeStoreSecretTokenPossessionCommand();
         $command->identityId = (string)$this->id;
         $command->recoveryTokenId = (string)$recoveryTokenId;
-        $command->secret = (string)$secret;
+        $command->secret = 'secret-for-safe-keeping';
 
         $confMock = m::mock(InstitutionConfigurationOptions::class);
         $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $secret = new HashedSecret('secret-for-safe-keeping');
+        $this->recoveryTokenSecretHelper
+            ->shouldReceive('hash')
+            ->with(m::on(function ($unhashedSecret) {
+                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
+                return $isUnhashedSecret && $hasExpectedSecret;
+            }))
+            ->andReturn($secret);
 
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Recovery token type safe-store is already registered');
@@ -323,7 +357,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->id,
                     $this->institution,
                     $recoveryTokenId,
-                    $secret,
+                    new SafeStore($secret),
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale
@@ -380,6 +414,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $this->secondFactorProvePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
+        $this->recoveryTokenSecretHelper = m::mock(RecoveryTokenSecretHelper::class);
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
         return new IdentityCommandHandler(
@@ -396,7 +431,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             $this->secondFactorTypeService,
             $this->secondFactorProvePossessionHelper,
             $this->configService,
-            $this->loaResolutionService
+            $this->loaResolutionService,
+            $this->recoveryTokenSecretHelper
         );
     }
 

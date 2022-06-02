@@ -24,8 +24,8 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
-use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -95,7 +95,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
             m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
-            m::mock(LoaResolutionService::class)
+            m::mock(LoaResolutionService::class),
+            m::mock(RecoveryTokenSecretHelper::class)
         );
     }
 

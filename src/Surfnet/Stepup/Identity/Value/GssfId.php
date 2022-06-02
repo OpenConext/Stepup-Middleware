@@ -51,7 +51,7 @@ final class GssfId implements SecondFactorIdentifier
         return $this->gssfId;
     }
 
-    public function equals(SecondFactorIdentifier $other)
+    public function equals($other): bool
     {
         return $other instanceof self && $this->gssfId === $other->gssfId;
     }

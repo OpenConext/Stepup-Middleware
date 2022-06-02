@@ -34,6 +34,16 @@ final class RecoveryToken extends SimpleEventSourcedEntity
      */
     private $type;
 
+    public static function create(
+        RecoveryTokenId $id,
+        RecoveryTokenType $type
+    ): self {
+        $token = new self;
+        $token->tokenId = $id;
+        $token->type = $type;
+        return $token;
+    }
+
     public function getTokenId(): RecoveryTokenId
     {
         return $this->tokenId;

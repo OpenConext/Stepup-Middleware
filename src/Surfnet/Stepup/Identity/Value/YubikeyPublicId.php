@@ -75,7 +75,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function equals(SecondFactorIdentifier $other)
+    public function equals($other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }

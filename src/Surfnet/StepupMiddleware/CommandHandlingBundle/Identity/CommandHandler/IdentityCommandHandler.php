@@ -35,6 +35,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
@@ -46,6 +48,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnknownLoaException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
@@ -53,8 +56,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIde
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
@@ -312,6 +317,35 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
+
+    public function handleProvePhoneRecoveryTokenPossessionCommand(ProvePhoneRecoveryTokenPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $identity->provePossessionOfPhoneRecoveryToken(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new PhoneNumber($command->phoneNumber)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handlePromiseSafeStoreSecretTokenPossessionCommand(PromiseSafeStoreSecretTokenPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $identity->promisePossessionOfSafeStoreSecretRecoveryToken(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new SafeStore($command->secret)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
     {
         /** @var IdentityApi $authority */
@@ -453,6 +487,24 @@ class IdentityCommandHandler extends SimpleCommandHandler
                 $institution->getInstitution(),
                 $secondFactor->getSecondFactorType()
             ));
+        }
+    }
+
+    public function assertSelfAssertedTokensEnabled(Institution $institution)
+    {
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $institution
+        );
+
+        $institutionConfiguration = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($configurationInstitution);
+        if (!$institutionConfiguration || !$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
+            throw new RuntimeException(
+                sprintf(
+                    'Registration of self-asserted tokens is not allowed for this institution "%s".',
+                    (string) $institution
+                )
+            );
         }
     }
 

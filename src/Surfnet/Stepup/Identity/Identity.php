@@ -37,6 +37,7 @@ use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -55,6 +56,7 @@ use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
@@ -739,6 +741,26 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
+    public function revokeRecoveryToken(RecoveryTokenId $recoveryTokenId): void
+    {
+        $this->assertNotForgotten();
+        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        if (!$recoveryToken) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        }
+        $recoveryToken->revoke();
+    }
+
+    public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void
+    {
+        $this->assertNotForgotten();
+        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        if (!$recoveryToken) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        }
+        $recoveryToken->complyWithRevocation($authorityId);
+    }
+
     /**
      * @param RegistrationAuthorityRole $role
      * @param Institution $institution
@@ -1057,14 +1079,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
     {
-        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms());
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms(), $this);
 
         $this->recoveryTokens->set($recoveryToken);
     }
 
     protected function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event)
     {
-        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore());
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore(), $this);
 
         $this->recoveryTokens->set($recoveryToken);
     }
@@ -1150,6 +1172,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
+    }
+
+    protected function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event)
+    {
+        $this->recoveryTokens->remove($event->recoveryTokenId);
+    }
+
+    protected function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event)
+    {
+        $this->recoveryTokens->remove($event->recoveryTokenId);
     }
 
     protected function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)

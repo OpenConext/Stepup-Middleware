@@ -19,6 +19,10 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
+use Surfnet\Stepup\Identity\Api\Identity;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 
@@ -34,14 +38,26 @@ final class RecoveryToken extends SimpleEventSourcedEntity
      */
     private $type;
 
+    /**
+     * @var Identity
+     */
+    private $identity;
+
     public static function create(
         RecoveryTokenId $id,
-        RecoveryTokenType $type
+        RecoveryTokenType $type,
+        Identity $identity
     ): self {
         $token = new self;
         $token->tokenId = $id;
         $token->type = $type;
+        $token->identity = $identity;
+        $token->registerAggregateRoot($identity);
         return $token;
+    }
+
+    final public function __construct()
+    {
     }
 
     public function getTokenId(): RecoveryTokenId
@@ -52,5 +68,30 @@ final class RecoveryToken extends SimpleEventSourcedEntity
     public function getType(): RecoveryTokenType
     {
         return $this->type;
+    }
+
+    public function revoke()
+    {
+        $this->apply(
+            new RecoveryTokenRevokedEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->tokenId,
+                $this->type
+            )
+        );
+    }
+
+    public function complyWithRevocation(IdentityId $authorityId)
+    {
+        $this->apply(
+            new CompliedWithRecoveryCodeRevocationEvent(
+                $this->identity->getId(),
+                $this->identity->getInstitution(),
+                $this->tokenId,
+                $this->type,
+                $authorityId
+            )
+        );
     }
 }

@@ -18,7 +18,9 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\Value\HashableSecret;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
@@ -54,7 +56,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SafeStore
+     * @var \Surfnet\Stepup\Identity\Value\HashableSecret
      */
     public $secret;
 
@@ -77,7 +79,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         IdentityId $identityId,
         Institution $identityInstitution,
         RecoveryTokenId $recoveryTokenId,
-        SafeStore $secret,
+        RecoveryTokenIdentifier $secret,
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale

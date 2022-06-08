@@ -170,3 +170,7 @@ services:
             $eventSourcingRepository: '@surfnet_stepup.repository.identity'
             $apiRepository: '@surfnet_stepup_middleware_api.repository.identity'
             $logger: '@logger'
+
+    Surfnet\Stepup\Helper\RecoveryTokenSecretHelper:
+        class: Surfnet\Stepup\Helper\RecoveryTokenSecretHelper
+

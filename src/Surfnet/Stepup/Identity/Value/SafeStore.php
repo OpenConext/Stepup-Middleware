@@ -19,27 +19,26 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 /**
- * Marker recovery token identifier for the SafeStore token type
+ * Recovery token identifier for the SafeStore token type
  */
-final class SafeStore implements RecoveryTokenIdentifier
+class SafeStore implements RecoveryTokenIdentifier
 {
-    private $hashedSecret;
+    /** @var Secret */
+    private $secret;
 
-
-    public function __construct(string $hashedSecret)
+    public function __construct(Secret $hashedSecret)
     {
-        $this->hashedSecret = $hashedSecret;
+        $this->secret = $hashedSecret;
     }
-
 
     public static function unknown(): self
     {
-        return new self('');
+        return new self(new ForgottenSecret());
     }
 
     public function getValue()
     {
-        return $this->hashedSecret;
+        return $this->secret->getSecret();
     }
 
     public function equals($other): bool
@@ -49,7 +48,7 @@ final class SafeStore implements RecoveryTokenIdentifier
 
     public function __toString(): string
     {
-        return $this->hashedSecret;
+        return $this->getValue();
     }
 
     public function jsonSerialize(): string

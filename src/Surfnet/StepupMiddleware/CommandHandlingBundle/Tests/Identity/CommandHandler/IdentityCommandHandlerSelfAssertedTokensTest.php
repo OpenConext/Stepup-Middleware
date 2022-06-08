@@ -30,9 +30,12 @@ use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -43,8 +46,11 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
+use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -54,6 +60,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
@@ -402,6 +410,119 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                 )
             ])
             ->when($command);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = m::mock(HashedSecret::class);
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $authorityId = new IdentityId('authority_id_uuid');
+        $authorityNameId = new NameId(self::uuid());
+        $authorityInstitution = new Institution('Unseen University');
+        $authorityEmail = new Email('lecturer@unseen.uni');
+        $authorityCommonName = new CommonName('Lecturer in Recent Runes');
+
+        $command = new RevokeRegistrantsRecoveryTokenCommand();
+        $command->identityId = (string)$this->id;
+        $command->recoveryTokenId = (string)$recoveryTokenId;
+        $command->authorityId = (string)$authorityId;
+
+        $this->scenario
+            ->withAggregateId($authorityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $authorityId,
+                    $authorityInstitution,
+                    $authorityNameId,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeySecondFactorBootstrappedEvent(
+                    $authorityId,
+                    $authorityNameId,
+                    $authorityInstitution,
+                    $authorityCommonName,
+                    $authorityEmail,
+                    new Locale('en_GB'),
+                    new SecondFactorId(self::uuid()),
+                    new YubikeyPublicId('00000012')
+                )
+            ])
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    new SafeStore($secret),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ])
+            ->when($command)
+            ->then([
+                new CompliedWithRecoveryCodeRevocationEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    RecoveryTokenType::safeStore(),
+                    $authorityId
+                )
+            ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = m::mock(HashedSecret::class);
+
+        $command = new RevokeOwnRecoveryTokenCommand();
+        $command->identityId = (string)$this->id;
+        $command->recoveryTokenId = (string)$recoveryTokenId;
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    new SafeStore($secret),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ])
+            ->when($command)
+            ->then([
+                new RecoveryTokenRevokedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    RecoveryTokenType::safeStore()
+                )
+            ]);
     }
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler

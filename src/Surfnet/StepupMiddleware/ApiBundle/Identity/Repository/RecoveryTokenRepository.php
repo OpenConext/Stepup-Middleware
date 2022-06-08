@@ -29,10 +29,16 @@ class RecoveryTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, RecoveryToken::class);
     }
 
-    public function save(RecoveryToken $entry)
+    public function save(RecoveryToken $entry): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($entry);
         $entityManager->flush();
+    }
+
+    public function remove(RecoveryToken $recoveryToken): void
+    {
+        $this->getEntityManager()->remove($recoveryToken);
+        $this->getEntityManager()->flush();
     }
 }

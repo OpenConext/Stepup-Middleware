@@ -54,4 +54,14 @@ final class Metadata
 
     /** @var VettingType */
     public $vettingType;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
+     */
+    public $recoveryTokenId;
+
+    /**
+     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenType
+     */
+    public $recoveryTokenType;
 }

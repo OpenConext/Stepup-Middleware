@@ -24,6 +24,7 @@ interface VettingType extends JsonSerializable
 {
     public const TYPE_ON_PREMISE = 'on-premise';
     public const TYPE_SELF_VET = 'self-vet';
+    public const TYPE_SELF_ASSERTED_REGISTRATION = 'self-asserted-registration';
 
     public function auditLog(): string;
 

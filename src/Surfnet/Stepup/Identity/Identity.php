@@ -94,6 +94,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
 use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
@@ -544,10 +545,39 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function selfAssertSecondFactor(): void
-    {
+    public function registerSelfAssertedSecondFactor(
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService,
+        RecoveryTokenId $recoveryTokenId
+    ): void {
         $this->assertNotForgotten();
         $this->assertSelfAssertedTokenRegistrationAllowed();
+
+        try {
+            $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        } catch (DomainException $e) {
+            throw new DomainException(
+                sprintf('Recovery token used during registration is not possessed by identity %s', (string)$this->id)
+            );
+        }
+
+        $registeringSecondFactor = null;
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            if ($secondFactorIdentifier->equals($secondFactor->getIdentifier())) {
+                $registeringSecondFactor = $secondFactor;
+            }
+        }
+
+        if ($registeringSecondFactor === null) {
+            throw new DomainException(
+                sprintf(
+                    'Registering second factor of type %s with ID %s does not exist',
+                    get_class($secondFactorIdentifier),
+                    $secondFactorIdentifier->getValue()
+                )
+            );
+        }
+        $registeringSecondFactor->vet(true, new SelfAssertedRegistrationVettingType($recoveryToken->getTokenId()));
     }
 
     public function selfVetSecondFactor(

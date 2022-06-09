@@ -18,8 +18,10 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use function array_key_exists;
 
 final class RecoveryTokenCollection
 {
@@ -35,6 +37,9 @@ final class RecoveryTokenCollection
 
     public function get(RecoveryTokenId $id): RecoveryToken
     {
+        if (!array_key_exists((string)$id, $this->recoveryTokens)) {
+            throw new DomainException(sprintf('Unable to find recovery token with id %s', $id));
+        }
         return $this->recoveryTokens[(string)$id];
     }
 

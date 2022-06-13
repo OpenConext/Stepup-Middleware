@@ -30,7 +30,7 @@ final class RecoveryTokenCollection
 
     public function set(RecoveryToken $recoveryToken): void
     {
-        $this->recoveryTokens[] = $recoveryToken;
+        $this->recoveryTokens[(string)$recoveryToken->getTokenId()] = $recoveryToken;
     }
 
     public function get(RecoveryTokenId $id): RecoveryToken
@@ -51,5 +51,10 @@ final class RecoveryTokenCollection
     public function count(): int
     {
         return count($this->recoveryTokens);
+    }
+
+    public function remove(RecoveryTokenId $recoveryTokenId)
+    {
+        unset($this->recoveryTokens[(string)$recoveryTokenId]);
     }
 }

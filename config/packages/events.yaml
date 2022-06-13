@@ -21,6 +21,7 @@ parameters:
         - Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaEvent
+        - Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent
         - Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent
         - Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent
         - Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent
@@ -35,6 +36,7 @@ parameters:
         - Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent
         - Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent
+        - Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent

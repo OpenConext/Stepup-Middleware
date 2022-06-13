@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
@@ -61,5 +63,17 @@ class RecoveryTokenProjector extends Projector
         $recoveryToken->recoveryMethodIdentifier = (string) $event->secret;
 
         $this->recoveryTokenRepository->save($recoveryToken);
+    }
+
+    public function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event): void
+    {
+        $token = $this->recoveryTokenRepository->find((string)$event->recoveryTokenId);
+        $this->recoveryTokenRepository->remove($token);
+    }
+
+    public function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event): void
+    {
+        $token = $this->recoveryTokenRepository->find((string)$event->recoveryTokenId);
+        $this->recoveryTokenRepository->remove($token);
     }
 }

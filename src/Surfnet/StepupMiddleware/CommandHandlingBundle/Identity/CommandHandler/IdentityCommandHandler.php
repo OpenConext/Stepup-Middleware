@@ -64,7 +64,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
@@ -456,6 +458,27 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
         $identity->complyWithSecondFactorRevocation(
             new SecondFactorId($command->secondFactorId),
+            new IdentityId($command->authorityId)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handleRevokeOwnRecoveryTokenCommand(RevokeOwnRecoveryTokenCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $identity->revokeRecoveryToken(new RecoveryTokenId($command->recoveryTokenId));
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handleRevokeRegistrantsRecoveryTokenCommand(RevokeRegistrantsRecoveryTokenCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $identity->complyWithRecoveryTokenRevocation(
+            new RecoveryTokenId($command->recoveryTokenId),
             new IdentityId($command->authorityId)
         );
 

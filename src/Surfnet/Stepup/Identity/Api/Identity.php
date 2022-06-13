@@ -257,6 +257,17 @@ interface Identity extends AggregateRoot
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
 
     /**
+     * From SelfService, an Identity is allowed to revoke a recovery token
+     */
+    public function revokeRecoveryToken(RecoveryTokenId $recoveryTokenId): void;
+
+    /**
+     * RA(A) users are allowed on behalf of an Identity to revoke a
+     * recovery token.
+     */
+    public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void;
+
+    /**
      * @param RegistrationAuthorityRole $role
      * @param Institution $institution
      * @param Location $location

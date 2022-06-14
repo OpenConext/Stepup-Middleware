@@ -99,6 +99,20 @@ vetted_second_factor:
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+recovery_token:
+    path: /recovery_token/{id}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::getAction }
+    methods:  [GET]
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+recovery_tokens:
+    path: /recovery_tokens
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::collectionAction }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 ra_second_factors:
     path:     /ra-second-factors
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RaSecondFactorController::collectionAction }

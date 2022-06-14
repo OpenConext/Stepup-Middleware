@@ -343,6 +343,80 @@
 			"response": []
 		},
 		{
+			"name": "/recovery_tokens",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/recovery_tokens?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"recovery_tokens"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page"
+			},
+			"response": []
+		},
+		{
+			"name": "/recovery_token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/recovery_tokens?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"recovery_tokens"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page"
+			},
+			"response": []
+		}
+		{
 			"name": "/vetted-second-factor/{secondFactorId} copy",
 			"request": {
 				"method": "GET",

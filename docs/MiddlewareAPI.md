@@ -307,7 +307,7 @@ Request parameters:
 ### Unverified Second Factors - Search Unverified Second Factors
 
 #### Request
-URL: `http://middleware.tld/unverified-second-factors?{identityId=}{&verificationNonce=}(&p=}`
+URL: `http://middleware.tld/unverified-second-factors?{identityId=}{&verificationNonce=}{&p=}`
 Method: GET
 Request parameters:
 - IdentityId: (optional) UUIDv4 of the identity to search for
@@ -363,7 +363,7 @@ Request parameters:
 ### Verified Second Factor - Search Verified Second Factors
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors?{actorId=}&{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors?{actorId=}&{identityId=}{&secondFactorId=}{&registrationCode=}{&p=}`
 Method: GET
 Request parameters:
 - actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
@@ -373,7 +373,7 @@ Request parameters:
 - p: (optional, default 1) integer, the requested result page
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}{&p=}`
 Method: GET
 Request parameters:
 - IdentityId: (optional) UUIDv4 of the identity to search for
@@ -429,7 +429,7 @@ Request parameters:
 ### Vetted Second Factor - Search Vetted Second Factors
 
 #### Request
-URL: `http://middleware.tld/vetted-second-factors?{identityId=}(&p=}`
+URL: `http://middleware.tld/vetted-second-factors?{identityId=}{&p=}`
 Method: GET
 Request parameters:
 - identityId: (optional) UUIDv4 of the identity to search for
@@ -454,7 +454,57 @@ Request parameters:
 }
 ```
 
+### Recovery Token - Single Recovery Token
 
+#### Request
+URL: `http://middleware.tld/recovery_token/{recoveryTokenIdId}`
+Method: GET
+Request parameters:
+- recoveryTokenIdId: (required) UUIDv4 of the Recovery Token to get
+
+#### Response
+`200 OK`
+```json
+{
+    "id": "c732d0ac-9f61-4ae1-924e-40d5172fca86",
+    "type": "safe-store",
+    "recovery_token_identifier": "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
+}
+```
+
+### Recovery Token - Search Recovery Tokens
+
+#### Request
+URL: `http://middleware.tld/recovery_tokens?{identityId=}{type=}{&p=}`
+Method: GET
+Request parameters:
+- identityId: (optional) UUIDv4 of the identity to search for
+- type: (optional) UUIDv4 of the identity to search for
+- p: (optional, default 1) integer, the requested result page
+
+#### Response
+`200 OK`
+```json
+{
+    "collection": {
+        "total_items": 2,
+        "page": 1,
+        "page_size": 25
+    },
+    "items": [
+        {
+            "id": "c732d0ac-9f61-4ae1-924e-40d5172fca86",
+            "type": "yubikey",
+            "second_factor_identifier": "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
+        },
+        {
+          "id": "d925d0df-8f61-8ef1-924e-40d5172fca86",
+          "type": "sms",
+          "second_factor_identifier": "+31 (0) 610101010"
+        }
+    ]
+}
+```
 
 ## Registration Authorities
 
@@ -657,7 +707,7 @@ Request parameters:
 ### Registration Authority Candidate - Search RaCandidate
 
 #### Request
-URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}{&secondFactorTypes=}{&raInstitution}(&p=}`
+URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}{&secondFactorTypes=}{&raInstitution}{&p=}`
 Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination

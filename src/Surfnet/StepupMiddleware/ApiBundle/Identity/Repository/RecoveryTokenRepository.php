@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
@@ -40,5 +41,23 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     {
         $this->getEntityManager()->remove($recoveryToken);
         $this->getEntityManager()->flush();
+    }
+
+    public function createSearchQuery(RecoveryTokenQuery $query)
+    {
+        $queryBuilder = $this->createQueryBuilder('rt');
+
+        if ($query->identityId) {
+            $queryBuilder
+                ->andWhere('rt.identityId = :identityId')
+                ->setParameter('identityId', $query->identityId);
+        }
+        if ($query->type) {
+            $queryBuilder
+                ->andWhere('rt.type = :type')
+                ->setParameter('type', $query->type);
+        }
+
+        return $queryBuilder->getQuery();
     }
 }

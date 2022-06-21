@@ -427,7 +427,7 @@ class CommandAuthorizationServiceTest extends TestCase
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhoneRecoveryTokenPossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveYubikeyPossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RegisterSelfAsseredtSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RegisterSelfAssertedSecondFactorCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoveFromWhitelistCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ReplaceWhitelistCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',

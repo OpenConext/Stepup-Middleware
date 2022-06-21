@@ -64,7 +64,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAsseredtSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
@@ -390,7 +390,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($registrant);
     }
 
-    public function handleRegisterSelfAsseredtSecondFactorCommand(RegisterSelfAsseredtSecondFactorCommand $command)
+    public function handleRegisterSelfAssertedSecondFactorCommand(RegisterSelfAssertedSecondFactorCommand $command)
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));

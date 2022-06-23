@@ -100,6 +100,8 @@ Example of possible error messages. These may differ in the real world, but give
 
 ## Command API
 
+For documentation of the commands that can be handled with the Command API. Please consult [this document](MiddlewareAPICommands.md).
+
 ### Request
 URL: `http://middleware.tld/command/`
 Method: POST

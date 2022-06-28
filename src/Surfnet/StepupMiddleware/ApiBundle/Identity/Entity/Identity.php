@@ -25,7 +25,6 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
@@ -82,18 +81,28 @@ class Identity implements JsonSerializable
      */
     public $preferredLocale;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * Indicator if the first vetted second factor was of the self-asserted token type
+     *
+     * Three possible values:
+     * - null: Identity does not have a vetted second factor yet
+     * - true: The Identity has registered a self-asserted second factor token
+     * - false: The first token was not self-asserted but one of the other vetting types
+     *
+     * @var mixed null|bool
+     */
+    public $possessedSelfAssertedToken;
+
     public static function create(
-        $id,
+        string $id,
         Institution $institution,
         NameId $nameId,
         Email $email,
         CommonName $commonName,
         Locale $preferredLocale
     ) {
-        if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
         $identity = new self();
 
         $identity->id = $id;
@@ -102,19 +111,21 @@ class Identity implements JsonSerializable
         $identity->email = $email;
         $identity->commonName = $commonName;
         $identity->preferredLocale = $preferredLocale;
-
+        // By default the possessedSelfAssertedToken is set to null
+        $identity->possessedSelfAssertedToken = null;
         return $identity;
     }
 
     public function jsonSerialize()
     {
         return [
-            'id'                        => $this->id,
-            'name_id'                   => $this->nameId,
-            'institution'               => $this->institution,
-            'email'                     => $this->email,
-            'common_name'               => $this->commonName,
-            'preferred_locale'          => $this->preferredLocale,
+            'id' => $this->id,
+            'name_id' => $this->nameId,
+            'institution' => $this->institution,
+            'email' => $this->email,
+            'common_name' => $this->commonName,
+            'preferred_locale' => $this->preferredLocale,
+            'possessed_self_asserted_token' => $this->possessedSelfAssertedToken,
         ];
     }
 }

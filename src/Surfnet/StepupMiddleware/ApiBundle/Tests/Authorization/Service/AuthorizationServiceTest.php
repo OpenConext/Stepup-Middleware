@@ -129,6 +129,7 @@ class AuthorizationServiceTest extends TestCase
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = null;
 
         $this->identityService
             ->shouldReceive('find')
@@ -155,10 +156,42 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEquals('Identity already has a vetted second factor', reset($messages));
     }
 
+    public function test_it_rejects_when_identity_had_prior_non_sat_token()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = false;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+        $this->secondFactorService
+            ->shouldReceive('hasVettedByIdentity')
+            ->with($identityId)
+            ->andReturnFalse();
+
+        $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(403, $decision->getCode());
+        $this->assertEquals('Identity never possessed a self-asserted token, but did/does possess one of the other types', reset($messages));
+    }
+
     public function test_it_allows_when_identity_meets_all_requirements()
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = null;
 
         $this->identityService
             ->shouldReceive('find')
@@ -185,5 +218,34 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
+    public function test_it_allows_when_identity_with_prior_sat_meets_all_requirements()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
 
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+        $this->secondFactorService
+            ->shouldReceive('hasVettedByIdentity')
+            ->with($identityId)
+            ->andReturnFalse();
+
+        $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(200, $decision->getCode());
+        $this->assertEmpty($messages);
+    }
 }

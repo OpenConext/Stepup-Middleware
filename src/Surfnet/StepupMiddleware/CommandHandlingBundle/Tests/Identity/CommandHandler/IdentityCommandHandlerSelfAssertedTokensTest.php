@@ -68,7 +68,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAsseredtSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
@@ -510,7 +510,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
 
-        $command = new RegisterSelfAsseredtSecondFactorCommand();
+        $command = new RegisterSelfAssertedSecondFactorCommand();
         $command->authoringRecoveryTokenId = (string)$recoveryTokenId;
         $command->secondFactorType = 'yubikey';
         $command->secondFactorId = 'SFID';
@@ -593,7 +593,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
 
-        $command = new RegisterSelfAsseredtSecondFactorCommand();
+        $command = new RegisterSelfAssertedSecondFactorCommand();
         $command->authoringRecoveryTokenId = (string)$madeUpRecoveryTokenId;
         $command->secondFactorType = 'yubikey';
         $command->secondFactorId = 'SFID';

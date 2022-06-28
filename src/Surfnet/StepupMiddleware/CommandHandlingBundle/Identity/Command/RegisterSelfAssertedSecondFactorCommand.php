@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class RegisterSelfAsseredtSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
+class RegisterSelfAssertedSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
 {
     /**
      * The ID of an existing identity.

@@ -78,6 +78,16 @@ class AuthorizationService
             return $this->deny('Identity already has a vetted second factor');
         }
 
+        // Only allow self-asserted token (SAT) if the user does not have a token yet, or the first
+        // registered token was a SAT.
+        $options = $this->identityService->getSelfAssertedTokenRegistrationOptions(
+            $identity,
+            $this->secondFactorService->hasVettedByIdentity($identityId)
+        );
+        if ($options->possessedSelfAssertedToken === false) {
+            return $this->deny('Identity never possessed a self-asserted token, but did/does possess one of the other types');
+        }
+
         return $this->allow();
     }
 

@@ -81,6 +81,20 @@ class Identity implements JsonSerializable
      */
     public $preferredLocale;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * Indicator if the first vetted second factor was of the self-asserted token type
+     *
+     * Three possible values:
+     * - null: Identity does not have a vetted second factor yet
+     * - true: The Identity has registered a self-asserted second factor token
+     * - false: The first token was not self-asserted but one of the other vetting types
+     *
+     * @var mixed null|bool
+     */
+    public $possessedSelfAssertedToken;
+
     public static function create(
         string $id,
         Institution $institution,

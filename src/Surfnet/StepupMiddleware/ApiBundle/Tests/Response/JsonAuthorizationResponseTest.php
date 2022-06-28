@@ -33,13 +33,13 @@ class JsonAuthorizationResponseTest extends TestCase
     public function test_happy_flow_error_response() {
         $response = new JsonAuthorizationResponse(403);
         $this->assertEquals('{"code":403}',$response->getContent());
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function test_happy_flow_error_response_with_error_message() {
         $response = new JsonAuthorizationResponse(403, ['Not allowed']);
         $this->assertEquals('{"code":403,"errors":["Not allowed"]}',$response->getContent());
-        $this->assertEquals(403, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function test_response_code_can_be_one_of_200_or_403() {

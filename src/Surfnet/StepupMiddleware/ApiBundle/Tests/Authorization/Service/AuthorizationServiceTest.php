@@ -286,7 +286,6 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-
     public function test_recovery_tokens_never_owned_a_sat_token_but_did_own_other_token_type()
     {
         $identity = new Identity();

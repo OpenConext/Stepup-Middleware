@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationServic
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\IdentitySelfAssertedTokenOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 
@@ -149,6 +150,15 @@ class AuthorizationServiceTest extends TestCase
             ->with($identityId)
             ->andReturnTrue();
 
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = true;
+        $satOptions->possessedSelfAssertedToken = false;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
+
         $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
         $messages = $decision->getErrorMessages();
 
@@ -179,6 +189,15 @@ class AuthorizationServiceTest extends TestCase
             ->shouldReceive('hasVettedByIdentity')
             ->with($identityId)
             ->andReturnFalse();
+
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = true;
+        $satOptions->possessedSelfAssertedToken = false;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
 
         $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
         $messages = $decision->getErrorMessages();
@@ -211,6 +230,15 @@ class AuthorizationServiceTest extends TestCase
             ->with($identityId)
             ->andReturnFalse();
 
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = false;
+        $satOptions->possessedSelfAssertedToken = false;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
+
         $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
         $messages = $decision->getErrorMessages();
 
@@ -242,7 +270,97 @@ class AuthorizationServiceTest extends TestCase
             ->with($identityId)
             ->andReturnFalse();
 
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = true;
+        $satOptions->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
+
         $decision = $this->service->assertRegistrationOfSelfAssertedTokensIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(200, $decision->getCode());
+        $this->assertEmpty($messages);
+    }
+
+
+    public function test_recovery_tokens_never_owned_a_sat_token_but_did_own_other_token_type()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+        $this->secondFactorService
+            ->shouldReceive('hasVettedByIdentity')
+            ->with($identityId)
+            ->andReturnFalse();
+
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = true;
+        $satOptions->possessedSelfAssertedToken = false;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
+
+        $decision = $this->service->assertRecoveryTokensAreAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(403, $decision->getCode());
+        $this->assertEquals('Identity never possessed a self-asserted token, deny access to recovery token CRUD actions', reset($messages));
+    }
+
+    public function test_recovery_tokens_all_requirements_met()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+        $this->secondFactorService
+            ->shouldReceive('hasVettedByIdentity')
+            ->with($identityId)
+            ->andReturnFalse();
+
+        $satOptions = new IdentitySelfAssertedTokenOptions();
+        $satOptions->possessedToken = true;
+        $satOptions->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('getSelfAssertedTokenRegistrationOptions')
+            ->once()
+            ->andReturn($satOptions);
+
+        $decision = $this->service->assertRecoveryTokensAreAllowed($identityId);
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(200, $decision->getCode());

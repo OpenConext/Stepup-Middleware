@@ -74,18 +74,52 @@ class AuthorizationService
             return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
         }
 
-        if ($this->secondFactorService->hasVettedByIdentity($identityId)) {
+        $hasVettedSecondFactorToken = $this->secondFactorService->hasVettedByIdentity($identityId);
+
+        $options = $this->identityService->getSelfAssertedTokenRegistrationOptions(
+            $identity,
+            $hasVettedSecondFactorToken
+        );
+
+        if ($hasVettedSecondFactorToken) {
             return $this->deny('Identity already has a vetted second factor');
         }
 
         // Only allow self-asserted token (SAT) if the user does not have a token yet, or the first
         // registered token was a SAT.
+        $hadOtherTokenType = $options->possessedSelfAssertedToken === false && $options->possessedToken === true;
+        if ($hadOtherTokenType) {
+            return $this->deny('Identity never possessed a self-asserted token, but did/does possess one of the other types');
+        }
+
+        return $this->allow();
+    }
+
+    public function assertRecoveryTokensAreAllowed(IdentityId $identityId): AuthorizationDecision
+    {
+        $identity = $this->identityService->find((string)$identityId);
+        if (!$identity) {
+            return $this->deny('Identity not found');
+        }
+
+        $institution = new Institution((string)$identity->institution);
+        $institutionConfiguration = $this->institutionConfigurationService
+            ->findInstitutionConfigurationOptionsFor($institution);
+        if (!$institutionConfiguration) {
+            return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
+        }
+
+        if (!$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
+            return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
+        }
+
+        // Only allow CRUD actions on recovery tokens when the identity previously registered a SAT
         $options = $this->identityService->getSelfAssertedTokenRegistrationOptions(
             $identity,
             $this->secondFactorService->hasVettedByIdentity($identityId)
         );
         if ($options->possessedSelfAssertedToken === false) {
-            return $this->deny('Identity never possessed a self-asserted token, but did/does possess one of the other types');
+            return $this->deny('Identity never possessed a self-asserted token, deny access to recovery token CRUD actions');
         }
 
         return $this->allow();

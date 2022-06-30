@@ -27,6 +27,7 @@ services:
     surfnet_stepup_middleware_api.repository.institution_authorization: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository'
     surfnet_stepup_middleware_api.repository.ra_location: '@Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository'
     surfnet_stepup_middleware_api.repository.identity: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository'
+    surfnet_stepup_middleware_api.repository.identity_self_asserted_token_options: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedTokenOptionsRepository'
     surfnet_stepup_middleware_api.repository.institution_listing: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository'
     surfnet_stepup_middleware_api.repository.ra_candidate: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository'
     surfnet_stepup_middleware_api.repository.ra_listing: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository'
@@ -93,6 +94,7 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService
         arguments:
             - "@surfnet_stepup_middleware_api.repository.identity"
+            - "@surfnet_stepup_middleware_api.repository.identity_self_asserted_token_options"
             - "@surfnet_stepup_middleware_api.repository.ra_listing"
             - "@surfnet_stepup_middleware_api.repository.sraa"
 

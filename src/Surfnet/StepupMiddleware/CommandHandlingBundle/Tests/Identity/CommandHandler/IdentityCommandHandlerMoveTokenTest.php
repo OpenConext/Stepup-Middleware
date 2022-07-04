@@ -50,6 +50,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -204,6 +205,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $sourceYubikeySecFacId,
+                    new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')
@@ -271,6 +273,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $sourceYubikeySecFacId,
+                    new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')

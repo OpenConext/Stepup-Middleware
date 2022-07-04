@@ -28,6 +28,7 @@ use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
@@ -36,10 +37,11 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
@@ -69,8 +71,7 @@ class SecondFactorProjector extends Projector
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
         VerifiedSecondFactorRepository $verifiedRepository,
-        VettedSecondFactorRepository $vettedRepository,
-        IdentityRepository $identityRepository
+        VettedSecondFactorRepository $vettedRepository
     ) {
         $this->unverifiedRepository = $unverifiedRepository;
         $this->verifiedRepository = $verifiedRepository;
@@ -84,7 +85,7 @@ class SecondFactorProjector extends Projector
         $secondFactor->identityId = $event->identityId->getIdentityId();
         $secondFactor->type = 'yubikey';
         $secondFactor->secondFactorIdentifier = $event->yubikeyPublicId->getValue();
-
+        $secondFactor->vettingType = VettingType::TYPE_ON_PREMISE;
         $this->vettedRepository->save($secondFactor);
     }
 
@@ -196,6 +197,13 @@ class SecondFactorProjector extends Projector
         $vetted->identityId = $event->identityId->getIdentityId();
         $vetted->type = $event->secondFactorType->getSecondFactorType();
         $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+        // In case the vetting type is unknown (for example when no event replay was performed)
+        // fall back to the unknown vetting type.
+        $vettingType = $event->vettingType;
+        if (!$vettingType) {
+            $vettingType = new UnknownVettingType();
+        }
+        $vetted->vettingType = $vettingType->type();
 
         $this->vettedRepository->save($vetted);
         $this->verifiedRepository->remove($verified);
@@ -212,6 +220,8 @@ class SecondFactorProjector extends Projector
         $vetted->id = $event->newSecondFactorId->getSecondFactorId();
         $vetted->identityId = $event->identityId->getIdentityId();
         $vetted->type = $event->secondFactorType->getSecondFactorType();
+        $vettingType = $event->vettingType ?? new UnknownVettingType();
+        $vetted->vettingType = $vettingType;
         $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
         $this->vettedRepository->save($vetted);
     }
@@ -225,6 +235,13 @@ class SecondFactorProjector extends Projector
         $vetted->identityId = $event->identityId->getIdentityId();
         $vetted->type = $event->secondFactorType->getSecondFactorType();
         $vetted->secondFactorIdentifier = $event->secondFactorIdentifier->getValue();
+        $vettingType = $event->vettingType;
+        // In case the vetting type is unknown (for example when no event replay was performed)
+        // fall back to the unknown vetting type.
+        if (!$vettingType) {
+            $vettingType = new UnknownVettingType();
+        }
+        $vetted->vettingType = $vettingType->type();
 
         $this->vettedRepository->save($vetted);
         $this->verifiedRepository->remove($verified);

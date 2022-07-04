@@ -27,7 +27,7 @@ class UnknownVettingType implements VettingType
 
     public function __construct()
     {
-        $this->type = 'unknown';
+        $this->type = VettingType::TYPE_UNKNOWN;
     }
 
     public function auditLog(): string

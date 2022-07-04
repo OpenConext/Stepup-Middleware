@@ -977,6 +977,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "/authorization/may-register-recovery-tokens",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/authorization/may-register-recovery-tokens/2fb0b832-653f-408a-812d-9c84f82fcf02",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"authorization",
+						"may-register-recovery-tokens",
+						"2fb0b832-653f-408a-812d-9c84f82fcf02"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {

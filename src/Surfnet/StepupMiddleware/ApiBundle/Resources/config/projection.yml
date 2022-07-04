@@ -5,6 +5,12 @@ services:
             - "@surfnet_stepup_middleware_api.repository.identity"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
+    surfnet_stepup_middleware_api.projector.identity_self_asserted_token_options:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentitySelfAssertedTokenOptionsProjector
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.identity_self_asserted_token_options"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
     surfnet_stepup_middleware_api.projector.institution_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\InstitutionListingProjector
         arguments:

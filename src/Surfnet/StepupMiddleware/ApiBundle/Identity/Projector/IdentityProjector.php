@@ -50,7 +50,8 @@ class IdentityProjector extends Projector
             $event->nameId,
             $event->email,
             $event->commonName,
-            $event->preferredLocale
+            $event->preferredLocale,
+            false
         ));
     }
 
@@ -76,5 +77,26 @@ class IdentityProjector extends Projector
         $identity->preferredLocale = $event->preferredLocale;
 
         $this->identityRepository->save($identity);
+    }
+
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+    }
+
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    {
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+    }
+
+    private function determinePossessionOfSelfAssertedToken(VettingType $vettingType, string $identityId): void
+    {
+        if ($vettingType->type() === VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
+            $identity = $this->identityRepository->find($identityId);
+            if ($identity) {
+                $identity->possessedSelfAssertedToken = true;
+                $this->identityRepository->save($identity);
+            }
+        }
     }
 }

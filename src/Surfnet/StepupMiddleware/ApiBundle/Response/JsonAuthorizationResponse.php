@@ -35,7 +35,8 @@ class JsonAuthorizationResponse extends JsonResponse
         if ($errors) {
             $data['errors'] = $errors;
         }
-        parent::__construct($data, $code);
+        // Don't confuse the HTTP status code with the authorization status code
+        parent::__construct($data, 200);
     }
 
     public static function from(AuthorizationDecision $decision)

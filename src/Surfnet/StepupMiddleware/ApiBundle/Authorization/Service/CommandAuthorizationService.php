@@ -25,11 +25,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
@@ -103,7 +103,8 @@ class CommandAuthorizationService
                 return true;
             }
 
-            if ($command instanceof SelfVetSecondFactorCommand) {
+            // Self Asserted token registration is allowed for SelfServiceExecutable commands
+            if ($command instanceof SelfAsserted) {
                 return true;
             }
 

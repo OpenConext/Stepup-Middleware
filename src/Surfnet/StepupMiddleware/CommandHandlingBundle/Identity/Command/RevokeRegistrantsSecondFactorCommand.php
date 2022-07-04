@@ -62,6 +62,9 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
      */
     public function getRaInstitution()
     {
+        // Returning null as opposed to having the institution on this command was done
+        // because the RA (actor) institution can be loaded from the authorityId
+        // See: src/Surfnet/StepupMiddleware/ApiBundle/Authorization/Service/CommandAuthorizationService.php:163
         return null;
     }
 }

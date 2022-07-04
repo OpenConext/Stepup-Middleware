@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 SURFnet B.V.
+ * Copyright 2022 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,13 @@
  * limitations under the License.
  */
 
-namespace Surfnet\Stepup\Identity\Value;
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Command;
 
-use JsonSerializable;
-
-interface VettingType extends JsonSerializable
+/**
+ * Marker interface used to indicate that the command is a self asserted token registration.
+ * For example a self-vet (vet using on of your existing tokens). Or self-asserted token
+ * registration are of this type.
+ */
+interface SelfAsserted
 {
-    public const TYPE_ON_PREMISE = 'on-premise';
-    public const TYPE_SELF_VET = 'self-vet';
-    public const TYPE_SELF_ASSERTED_REGISTRATION = 'self-asserted-registration';
-
-    public function auditLog(): string;
-
-    public function type(): string;
-
-    public function __toString(): string;
-
-    public function getDocumentNumber(): ?DocumentNumber;
 }

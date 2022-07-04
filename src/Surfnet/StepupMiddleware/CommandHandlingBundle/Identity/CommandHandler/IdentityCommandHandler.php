@@ -64,6 +64,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
@@ -387,6 +388,24 @@ class IdentityCommandHandler extends SimpleCommandHandler
 
         $this->eventSourcedRepository->save($authority);
         $this->eventSourcedRepository->save($registrant);
+    }
+
+    public function handleRegisterSelfAssertedSecondFactorCommand(RegisterSelfAssertedSecondFactorCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
+            new SecondFactorType($command->secondFactorType),
+            $command->secondFactorIdentifier
+        );
+
+        $identity->registerSelfAssertedSecondFactor(
+            $secondFactorIdentifier,
+            $this->secondFactorTypeService,
+            new RecoveryTokenId($command->authoringRecoveryTokenId)
+        );
+
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleSelfVetSecondFactorCommand(SelfVetSecondFactorCommand $command)

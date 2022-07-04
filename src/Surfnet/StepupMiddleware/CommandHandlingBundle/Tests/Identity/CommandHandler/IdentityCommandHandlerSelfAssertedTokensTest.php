@@ -25,20 +25,25 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -49,10 +54,13 @@ use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
+use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
@@ -60,6 +68,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
@@ -131,6 +140,11 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @var RecoveryTokenSecretHelper|m\MockInterface
      */
     private $recoveryTokenSecretHelper;
+
+    /**
+     * @var NameId
+     */
+    private $nameId;
 
     public function setUp(): void
     {
@@ -487,6 +501,151 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
+    public function test_a_token_can_be_registered_self_asserted()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = m::mock(HashedSecret::class);
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $command = new RegisterSelfAssertedSecondFactorCommand();
+        $command->authoringRecoveryTokenId = (string)$recoveryTokenId;
+        $command->secondFactorType = 'yubikey';
+        $command->secondFactorId = 'SFID';
+        $command->secondFactorIdentifier = '00028278';
+        $command->identityId = (string)$this->id;
+
+        $secondFactorId = new SecondFactorId($command->secondFactorId);
+        $yubikeyPublicId = new YubikeyPublicId($command->secondFactorIdentifier);
+
+        $expectedVettingType = new SelfAssertedRegistrationVettingType($recoveryTokenId);
+
+        $this->scenario
+
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new YubikeyPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $yubikeyPublicId,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    new SafeStore($secret),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                )
+            ])
+            ->when($command)
+            ->then([
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->id,
+                    $this->nameId,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType($command->secondFactorType),
+                    $yubikeyPublicId,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale,
+                    $expectedVettingType
+                )
+            ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_self_asserted_token_registration_requires_possession_of_recovery_token()
+    {
+        $madeUpRecoveryTokenId = new RecoveryTokenId(self::uuid());
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $command = new RegisterSelfAssertedSecondFactorCommand();
+        $command->authoringRecoveryTokenId = (string)$madeUpRecoveryTokenId;
+        $command->secondFactorType = 'yubikey';
+        $command->secondFactorId = 'SFID';
+        $command->secondFactorIdentifier = '00028278';
+        $command->identityId = (string)$this->id;
+
+        $secondFactorId = new SecondFactorId($command->secondFactorId);
+        $yubikeyPublicId = new YubikeyPublicId($command->secondFactorIdentifier);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('A recovery token is required to perform a self-asserted token registration');
+        $this->scenario
+
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new YubikeyPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $yubikeyPublicId,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                )
+            ])
+        ->when($command);
+
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
     public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked()
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -559,12 +718,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
     private function buildIdentityCreatedEvent()
     {
-        $nameId = new NameId(md5(__METHOD__));
+        $this->nameId = new NameId(md5(__METHOD__));
 
         return new IdentityCreatedEvent(
             $this->id,
             $this->institution,
-            $nameId,
+            $this->nameId,
             $this->commonName,
             $this->email,
             $this->preferredLocale

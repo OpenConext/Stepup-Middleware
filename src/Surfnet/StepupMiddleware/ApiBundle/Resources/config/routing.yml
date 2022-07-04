@@ -12,6 +12,14 @@ authorization_self_asserted_tokens:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+authorization_recovery_tokens:
+    path: /authorization/may-register-recovery-tokens/{identityId}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::mayRegisterRecoveryTokensAction }
+    methods: [ GET ]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 deprovision_dry_run:
     path: /deprovision/{collabPersonId}/dry-run
     requirements:
@@ -96,6 +104,20 @@ verified_second_factor_can_skip_prove_posession:
 vetted_second_factor:
     path:     /vetted-second-factor/{id}
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettedSecondFactorController::getAction }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+recovery_token:
+    path: /recovery_token/{id}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::getAction }
+    methods:  [GET]
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+recovery_tokens:
+    path: /recovery_tokens
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 

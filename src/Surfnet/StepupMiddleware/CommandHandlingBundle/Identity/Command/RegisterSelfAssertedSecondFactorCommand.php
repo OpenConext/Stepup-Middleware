@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 SURF bv
+ * Copyright 2022 SURF bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
+class RegisterSelfAssertedSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
 {
     /**
      * The ID of an existing identity.
@@ -58,7 +57,7 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
      *
      * @var string
      */
-    public $registrationCode;
+    public $secondFactorIdentifier;
 
     /**
      * @Assert\NotBlank()
@@ -66,7 +65,7 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
      *
      * @var string
      */
-    public $authoringSecondFactorIdentifier;
+    public $authoringRecoveryTokenId;
 
     public function getIdentityId()
     {

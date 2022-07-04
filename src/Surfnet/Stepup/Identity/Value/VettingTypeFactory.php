@@ -31,6 +31,9 @@ final class VettingTypeFactory
                 case VettingType::TYPE_ON_PREMISE:
                     $vettingType = OnPremiseVettingType::deserialize($data['vetting_type']);
                     break;
+                case VettingType::TYPE_SELF_ASSERTED_REGISTRATION:
+                    $vettingType = SelfAssertedRegistrationVettingType::deserialize($data['vetting_type']);
+                    break;
             }
         }
         // BC fix for older events without a vetting type, they default back to ON_PREMISE.

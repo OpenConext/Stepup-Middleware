@@ -212,6 +212,12 @@ interface Identity extends AggregateRoot
         SecondFactorTypeService $secondFactorTypeService
     ): void;
 
+    public function registerSelfAssertedSecondFactor(
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService,
+        RecoveryTokenId $recoveryTokenId
+    ): void;
+
     /**
      * Migrate a token from the source identity to the target identity
      */

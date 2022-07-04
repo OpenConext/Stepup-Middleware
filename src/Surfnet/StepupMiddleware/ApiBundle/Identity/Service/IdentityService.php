@@ -24,18 +24,28 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\IdentitySelfAssertedTokenOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedTokenOptionsRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class IdentityService extends AbstractSearchService
 {
     /**
      * @var IdentityRepository
      */
     private $repository;
+
+    /**
+     * @var IdentitySelfAssertedTokenOptionsRepository
+     */
+    private $identitySelfAssertedTokensOptionsRepository;
 
     /**
      * @var RaListingRepository
@@ -47,17 +57,14 @@ class IdentityService extends AbstractSearchService
      */
     private $sraaRepository;
 
-    /**
-     * @param IdentityRepository $repository
-     * @param RaListingRepository $raListingRepository
-     * @param SraaRepository $sraaRepository
-     */
     public function __construct(
         IdentityRepository $repository,
+        IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokenOptionsRepository,
         RaListingRepository $raListingRepository,
         SraaRepository $sraaRepository
     ) {
         $this->repository = $repository;
+        $this->identitySelfAssertedTokensOptionsRepository = $identitySelfAssertedTokenOptionsRepository;
         $this->raListingRepository = $raListingRepository;
         $this->sraaRepository = $sraaRepository;
     }
@@ -158,5 +165,21 @@ class IdentityService extends AbstractSearchService
         }
 
         return null;
+    }
+
+    public function getSelfAssertedTokenRegistrationOptions(
+        Identity $identity,
+        bool $hasVettedSecondFactor
+    ): IdentitySelfAssertedTokenOptions {
+        $options = $this->identitySelfAssertedTokensOptionsRepository->find($identity->id);
+        // Backward compatibility for Identities from the pre SAT era
+        if (!$options) {
+            $options = new IdentitySelfAssertedTokenOptions();
+            // Safe to say they did not have a SAT
+            $options->possessedSelfAssertedToken = false;
+            // Based on current reality. It could be that the user had a token and then revoked it.
+            $options->possessedToken = $hasVettedSecondFactor;
+        }
+        return $options;
     }
 }

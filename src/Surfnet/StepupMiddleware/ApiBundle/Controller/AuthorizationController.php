@@ -43,4 +43,10 @@ class AuthorizationController extends AbstractController
         $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(new IdentityId($identityId));
         return JsonAuthorizationResponse::from($decision);
     }
+
+    public function mayRegisterRecoveryTokensAction(string $identityId)
+    {
+        $decision = $this->authorizationService->assertRecoveryTokensAreAllowed(new IdentityId($identityId));
+        return JsonAuthorizationResponse::from($decision);
+    }
 }

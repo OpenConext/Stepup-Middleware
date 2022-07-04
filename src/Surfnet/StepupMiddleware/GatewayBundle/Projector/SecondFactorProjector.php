@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
@@ -56,7 +57,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
-                'yubikey'
+                'yubikey',
+                VettingType::TYPE_UNKNOWN
             )
         );
     }
@@ -71,7 +73,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->preferredLocale,
                 (string) $event->newSecondFactorId,
                 $event->secondFactorIdentifier,
-                $event->secondFactorType
+                $event->secondFactorType,
+                $event->vettingType->type()
             )
         );
     }
@@ -86,7 +89,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
-                $event->secondFactorType
+                $event->secondFactorType,
+                $event->vettingType->type()
             )
         );
     }
@@ -101,7 +105,8 @@ class SecondFactorProjector extends Projector
                 (string) $event->preferredLocale,
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
-                $event->secondFactorType
+                $event->secondFactorType,
+                $event->vettingType->type()
             )
         );
     }

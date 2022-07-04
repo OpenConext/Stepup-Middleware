@@ -85,18 +85,35 @@ Example of possible error messages. These may differ in the real world, but give
 }
 ```
 
-#### Response
+### Allowed to create and delete recovery tokens?
+
+- URL: `http://middleware.tld/authorization/may-register-recovery-tokens/{identityId}`
+- Method: GET
+- Request parameters:
+    - identityId: (required) UUIDv4 of the identity to assert the authorization for
+
+### Response
 `200 OK`
 ```json
-[
-    {
-        "name": "SURFnet"
-    },
-    {
-        "name": "Ibuildings"
-    }
-]
+{   
+    "code": 200
+}
 ```
+
+`403 Forbidden`
+
+Example of possible error messages. These may differ in the real world, but give a grasp on what they should look like.
+
+```json
+{   
+  "code": 403,
+  "errors": [
+    "Not permitted: institution does not allow self-asserted tokens.",
+    "Not permitted: no previous self asserted token was registered."
+  ]
+}
+```
+
 
 ## Command API
 

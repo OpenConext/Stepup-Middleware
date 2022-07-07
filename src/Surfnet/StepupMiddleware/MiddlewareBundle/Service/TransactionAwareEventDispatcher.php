@@ -18,8 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\Domain\DomainEventStreamInterface;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\Domain\DomainEventStream;
+use Broadway\ReadModel\Projector;
 use Exception;
 
 final class TransactionAwareEventDispatcher implements EventDispatcher
@@ -40,12 +40,12 @@ final class TransactionAwareEventDispatcher implements EventDispatcher
         $this->eventDispatcher  = $eventDispatcher;
     }
 
-    public function registerProjector(ProjectorInterface $projector)
+    public function registerProjector(Projector $projector)
     {
         $this->eventDispatcher->registerProjector($projector);
     }
 
-    public function dispatch(DomainEventStreamInterface $events)
+    public function dispatch(DomainEventStream $events)
     {
         $this->connectionHelper->beginTransaction();
 

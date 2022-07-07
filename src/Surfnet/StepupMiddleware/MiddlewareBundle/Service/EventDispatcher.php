@@ -18,20 +18,20 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\Domain\DomainEventStreamInterface;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\Domain\DomainEventStream;
+use Broadway\ReadModel\Projector;
 
 interface EventDispatcher
 {
     /**
-     * @param ProjectorInterface $projector
+     * @param Projector $projector
      * @return void
      */
-    public function registerProjector(ProjectorInterface $projector);
+    public function registerProjector(Projector $projector);
 
     /**
-     * @param DomainEventStreamInterface $event
+     * @param DomainEventStream $event
      * @return void
      */
-    public function dispatch(DomainEventStreamInterface $event);
+    public function dispatch(DomainEventStream $event);
 }

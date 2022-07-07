@@ -1,5 +1,5 @@
 parameters:
-    # All events should be registered here in order to be able to replay them
+    # All events should be registered here in order to be able to replay them using the ReplaySpecificEventsCommand
     registered_events:
         - Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent
         - Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent
@@ -36,7 +36,6 @@ parameters:
         - Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent
         - Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent
-        - Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent
@@ -59,3 +58,8 @@ parameters:
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent
         # New versions for the RegistrationAuthorityRetractedEvent event
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent
+        # Self-asserted-tokens and recovery tokens events
+        - Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent
+        - Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent
+        - Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent
+        - Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent

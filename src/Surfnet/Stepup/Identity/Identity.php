@@ -98,6 +98,7 @@ use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
 use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
@@ -652,6 +653,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 new SecondFactorId($targetSecondFactorId),
                 $secondFactor->getType(),
                 $secondFactor->getIdentifier(),
+                $secondFactor->vettingType(),
                 $this->getCommonName(),
                 $this->getEmail(),
                 $this->getPreferredLocale()
@@ -989,7 +991,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            $event->yubikeyPublicId
+            $event->yubikeyPublicId,
+            new UnknownVettingType()
         );
 
         $this->vettedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
@@ -1145,7 +1148,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->newSecondFactorId,
             $this,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
+            $event->vettingType
         );
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
@@ -1154,7 +1158,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $secondFactorId = (string)$event->secondFactorId;
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
-        $vetted = $verified->asVetted();
+        $vetted = $verified->asVetted($event->vettingType);
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
@@ -1165,7 +1169,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         /** @var VerifiedSecondFactor $verified */
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
-        $vetted = $verified->asVetted();
+        $vetted = $verified->asVetted($event->vettingType);
 
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);

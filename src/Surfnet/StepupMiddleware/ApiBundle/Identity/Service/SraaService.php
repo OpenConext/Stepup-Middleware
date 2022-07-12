@@ -44,6 +44,14 @@ class SraaService
     }
 
     /**
+     * @return Sraa[]
+     */
+    public function findAll()
+    {
+        return $this->sraaRepository->findAll();
+    }
+
+    /**
      * @param NameId $nameId
      * @return bool
      */

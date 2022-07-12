@@ -404,6 +404,25 @@ Request parameters:
 
 ## Registration Authorities
 
+### SRAA - all
+
+#### Request
+URL: `http://middleware.tld/sraa`
+Method: GET
+
+#### Response
+`200 OK`
+```json
+[
+    {
+        "name_id": "the-name-id"
+    },
+    {
+        "name_id": "other-name-id"
+    }
+]
+```
+
 ### SRAA - Single SRAA
 
 #### Request

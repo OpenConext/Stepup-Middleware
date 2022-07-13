@@ -52,4 +52,9 @@ class RecoveryTokenService extends AbstractSearchService
         }
         return $recoveryToken;
     }
+
+    public function getFilterOptions(RecoveryTokenQuery $query)
+    {
+        return $this->getFilteredQueryOptions($this->recoveryTokenRepository->createOptionsQuery($query));
+    }
 }

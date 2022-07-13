@@ -499,6 +499,13 @@ Method: GET
 Request parameters:
 - identityId: (optional) UUIDv4 of the identity to search for
 - type: (optional) UUIDv4 of the identity to search for
+- email: (optional) string, the email to match against
+- institution: (optional) string, the institution to match against
+- status: (optional) string, the status to match against
+- p: (optional, default 1) integer, the requested result page
+- orderBy: (optional) string, sorting column; possible values: name, type, secondFactorId, email, institution, status
+- orderDirection: (optional, default desc) string, sorting direction; only asc or desc allowed.
+
 - p: (optional, default 1) integer, the requested result page
 
 #### Response

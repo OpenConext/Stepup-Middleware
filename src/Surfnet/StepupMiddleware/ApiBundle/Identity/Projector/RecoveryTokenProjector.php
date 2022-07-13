@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
@@ -86,5 +87,14 @@ class RecoveryTokenProjector extends Projector
         $token = $this->recoveryTokenRepository->find((string)$event->recoveryTokenId);
         $token->status = RecoveryTokenStatus::revoked();
         $this->recoveryTokenRepository->save($token);
+    }
+
+    /**
+     * When Identity is forgotten, the recovery token projections for this identity
+     * are removed from the recovery_tokens table.
+     */
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    {
+        $this->recoveryTokenRepository->removeByIdentity($event->identityId);
     }
 }

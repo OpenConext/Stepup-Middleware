@@ -76,6 +76,10 @@ class AuditLogEntry implements JsonSerializable
         'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent'                  => 'appointed_as_ra',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent'               => 'retracted_as_ra',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent' => 'retracted_as_ra',
+        'Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent' => 'recovery_token_possession_promised',
+        'Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent' => 'recovery_token_revoked',
+        'Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent' => 'recovery_token_possession_proven',
+        'Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent' => 'recovery_token_revoked',
     ];
 
     /**
@@ -154,6 +158,20 @@ class AuditLogEntry implements JsonSerializable
     public $secondFactorType;
 
     /**
+     * @ORM\Column(length=255, nullable=true)
+     *
+     * @var string
+     */
+    public $recoveryTokenIdentifier;
+
+    /**
+     * @ORM\Column(length=36, nullable=true)
+     *
+     * @var string|null
+     */
+    public $recoveryTokenType;
+
+    /**
      * @ORM\Column(length=255)
      *
      * @var string
@@ -179,6 +197,8 @@ class AuditLogEntry implements JsonSerializable
             'second_factor_id' => $this->secondFactorId,
             'second_factor_type' => $this->secondFactorType ? (string)$this->secondFactorType : null,
             'second_factor_identifier' => $this->secondFactorIdentifier,
+            'recovery_token_type' => $this->recoveryTokenType,
+            'recovery_token_identifier' => $this->recoveryTokenIdentifier,
             'action' => $this->mapEventToAction($this->event),
             'recorded_on' => (string) $this->recordedOn,
         ];

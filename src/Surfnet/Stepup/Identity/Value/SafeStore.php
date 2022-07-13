@@ -36,6 +36,11 @@ class SafeStore implements RecoveryTokenIdentifier
         return new self(new ForgottenSecret());
     }
 
+    public static function hidden()
+    {
+        return new self(new HiddenSecret());
+    }
+
     public function getValue()
     {
         return $this->secret->getSecret();

@@ -26,6 +26,7 @@ use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromised
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 /**
  * Project RecoveryTokens that are successfully registered by an Identity
@@ -49,7 +50,11 @@ class RecoveryTokenProjector extends Projector
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();
         $recoveryToken->identityId = $event->identityId->getIdentityId();
         $recoveryToken->type = RecoveryTokenType::TYPE_SMS;
+        $recoveryToken->status = RecoveryTokenStatus::active();
         $recoveryToken->recoveryMethodIdentifier = (string) $event->phoneNumber;
+        $recoveryToken->institution = $event->identityInstitution;
+        $recoveryToken->email = $event->email;
+        $recoveryToken->name = $event->commonName;
 
         $this->recoveryTokenRepository->save($recoveryToken);
     }
@@ -60,7 +65,11 @@ class RecoveryTokenProjector extends Projector
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();
         $recoveryToken->identityId = $event->identityId->getIdentityId();
         $recoveryToken->type = RecoveryTokenType::TYPE_SAFE_STORE;
+        $recoveryToken->status = RecoveryTokenStatus::active();
         $recoveryToken->recoveryMethodIdentifier = (string) $event->secret;
+        $recoveryToken->institution = $event->identityInstitution;
+        $recoveryToken->email = $event->email;
+        $recoveryToken->name = $event->commonName;
 
         $this->recoveryTokenRepository->save($recoveryToken);
     }
@@ -68,12 +77,14 @@ class RecoveryTokenProjector extends Projector
     public function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event): void
     {
         $token = $this->recoveryTokenRepository->find((string)$event->recoveryTokenId);
-        $this->recoveryTokenRepository->remove($token);
+        $token->status = RecoveryTokenStatus::revoked();
+        $this->recoveryTokenRepository->save($token);
     }
 
     public function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event): void
     {
         $token = $this->recoveryTokenRepository->find((string)$event->recoveryTokenId);
-        $this->recoveryTokenRepository->remove($token);
+        $token->status = RecoveryTokenStatus::revoked();
+        $this->recoveryTokenRepository->save($token);
     }
 }

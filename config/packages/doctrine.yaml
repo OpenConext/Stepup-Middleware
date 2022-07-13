@@ -72,6 +72,9 @@ doctrine:
             stepup_second_factor_status:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
                 commented: false
+            stepup_recovery_token_status:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType
+                commented: false
             stepup_ra_location_name:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType
                 commented: false

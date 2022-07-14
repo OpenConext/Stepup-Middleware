@@ -21,9 +21,11 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 class RecoveryTokenService extends AbstractSearchService
 {
@@ -56,5 +58,17 @@ class RecoveryTokenService extends AbstractSearchService
     public function getFilterOptions(RecoveryTokenQuery $query)
     {
         return $this->getFilteredQueryOptions($this->recoveryTokenRepository->createOptionsQuery($query));
+    }
+
+    public function identityHasActiveRecoveryToken(Identity $identity): bool
+    {
+        $recoveryTokens = $this->recoveryTokenRepository->findBy(
+            [
+                'identityId' => $identity->id,
+                'status' => RecoveryTokenStatus::active()
+            ]
+        );
+
+        return count($recoveryTokens) > 0;
     }
 }

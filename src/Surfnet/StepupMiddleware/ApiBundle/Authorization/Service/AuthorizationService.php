@@ -23,11 +23,14 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\AuthorizationDecision;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RecoveryTokenService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 
 /**
  * Perform authorization checks
  * For example, test if an identity is allowed to register self-asserted tokens.
+ *
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 class AuthorizationService
 {
@@ -46,14 +49,21 @@ class AuthorizationService
      */
     private $secondFactorService;
 
+    /**
+     * @var RecoveryTokenService
+     */
+    private $recoveryTokenService;
+
     public function __construct(
         IdentityService $identityService,
         InstitutionConfigurationOptionsService $institutionConfigurationService,
-        SecondFactorService $secondFactorService
+        SecondFactorService $secondFactorService,
+        RecoveryTokenService $recoveryTokenService
     ) {
         $this->identityService = $identityService;
         $this->institutionConfigurationService = $institutionConfigurationService;
         $this->secondFactorService = $secondFactorService;
+        $this->recoveryTokenService = $recoveryTokenService;
     }
 
     public function assertRegistrationOfSelfAssertedTokensIsAllowed(IdentityId $identityId): AuthorizationDecision
@@ -90,6 +100,11 @@ class AuthorizationService
         $hadOtherTokenType = $options->possessedSelfAssertedToken === false && $options->possessedToken === true;
         if ($hadOtherTokenType) {
             return $this->deny('Identity never possessed a self-asserted token, but did/does possess one of the other types');
+        }
+        // The Identity is not allowed to do a SAT when he had a RT, but lost it. And also currently has no SF
+        $hasActiveRecoveryToken = $this->recoveryTokenService->identityHasActiveRecoveryToken($identity);
+        if ($options->possessedSelfAssertedToken && !$hasActiveRecoveryToken && !$hasVettedSecondFactorToken) {
+            return $this->deny('Identity lost both Recovery and Second Factor token, SAT is not allowed');
         }
 
         return $this->allow();

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 
 class RecoveryTokenQuery extends AbstractQuery
 {
@@ -31,4 +32,39 @@ class RecoveryTokenQuery extends AbstractQuery
      * @var string|null
      */
     public $type;
+
+    /**
+     * @var string|null
+     */
+    public $status;
+
+    /**
+     * @var string|null
+     */
+    public $institution;
+
+    /**
+     * @var string|null
+     */
+    public $name;
+
+    /**
+     * @var string|null
+     */
+    public $email;
+
+    /**
+     * @var string|null
+     */
+    public $orderBy;
+
+    /**
+     * @var string|null
+     */
+    public $orderDirection;
+
+    /**
+     * @var InstitutionAuthorizationContextInterface
+     */
+    public $authorizationContext;
 }

@@ -19,6 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 /**
  * @ORM\Entity(
@@ -55,6 +59,38 @@ class RecoveryToken implements \JsonSerializable
     public $type;
 
     /**
+     * @ORM\Column(type="stepup_recovery_token_status")
+     *
+     * @var RecoveryTokenStatus
+     */
+    public $status;
+
+    /**
+     * @ORM\Column(type="institution")
+     *
+     * @var Institution
+     */
+    public $institution;
+
+    /**
+     * The name of the registrant.
+     *
+     * @ORM\Column(type="stepup_common_name")
+     *
+     * @var CommonName
+     */
+    public $name;
+
+    /**
+     * The e-mail of the registrant.
+     *
+     * @ORM\Column(type="stepup_email")
+     *
+     * @var Email
+     */
+    public $email;
+
+    /**
      * @ORM\Column(length=255)
      *
      * @var string
@@ -66,7 +102,12 @@ class RecoveryToken implements \JsonSerializable
         return [
             'id'   => $this->id,
             'type' => $this->type,
+            'status' => (string) $this->status,
             'recovery_method_identifier' => $this->recoveryMethodIdentifier,
+            'identity_id' => $this->identityId,
+            'name' => $this->name,
+            'email' => $this->email,
+            'institution' => $this->institution,
         ];
     }
 }

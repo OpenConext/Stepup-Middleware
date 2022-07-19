@@ -96,6 +96,8 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->recoveryTokenId = (string) $this->phoneNumber;
+        $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SMS;
         return $metadata;
     }
 

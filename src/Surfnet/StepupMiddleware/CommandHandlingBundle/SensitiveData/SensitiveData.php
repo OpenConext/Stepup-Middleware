@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
@@ -164,9 +165,15 @@ class SensitiveData implements SerializableInterface
         return $this->secondFactorIdentifier ?: SecondFactorIdentifierFactory::unknownForType($this->secondFactorType);
     }
 
-    public function getRecoveryTokenIdentifier(): RecoveryTokenIdentifier
+    public function getRecoveryTokenIdentifier(): ?RecoveryTokenIdentifier
     {
-        return $this->recoveryTokenIdentifier ?: RecoveryTokenIdentifierFactory::unknownForType($this->recoveryTokenType);
+        if ($this->recoveryTokenIdentifier) {
+            return $this->recoveryTokenIdentifier;
+        }
+        if ($this->recoveryTokenType) {
+            return RecoveryTokenIdentifierFactory::unknownForType($this->recoveryTokenType);
+        }
+        return null;
     }
 
     /**

@@ -21,13 +21,14 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Query;
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
-use function sprintf;
 
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
@@ -138,7 +139,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    public function createOptionsQuery(RecoveryTokenQuery $query)
+    public function createOptionsQuery(RecoveryTokenQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf')
             ->select('sf.institution')
@@ -155,5 +156,15 @@ class RecoveryTokenRepository extends ServiceEntityRepository
             );
         }
         return $queryBuilder->getQuery();
+    }
+
+    public function removeByIdentity(IdentityId $identityId): void
+    {
+        $this->getEntityManager()->createQueryBuilder()
+            ->delete($this->_entityName, 'rt')
+            ->where('rt.identityId = :identityId')
+            ->setParameter('identityId', $identityId->getIdentityId())
+            ->getQuery()
+            ->execute();
     }
 }

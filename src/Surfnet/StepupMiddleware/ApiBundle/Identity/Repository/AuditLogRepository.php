@@ -66,6 +66,10 @@ class AuditLogRepository extends ServiceEntityRepository
         'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',
         'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent',
+        'Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent',
+        'Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent',
+        'Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent',
+        'Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent',
     ];
 
     /**
@@ -88,6 +92,8 @@ class AuditLogRepository extends ServiceEntityRepository
         switch ($query->orderBy) {
             case 'secondFactorType':
             case 'secondFactorIdentifier':
+            case 'recoveryTokenType':
+            case 'recoveryTokenIdentifier':
             case 'recordedOn':
             case 'actorCommonName':
             case 'actorInstitution':

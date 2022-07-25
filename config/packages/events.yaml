@@ -46,6 +46,7 @@ parameters:
         - Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent
         - Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent
         - Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent
+        - Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent
         - Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent
         - Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent
         - Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent

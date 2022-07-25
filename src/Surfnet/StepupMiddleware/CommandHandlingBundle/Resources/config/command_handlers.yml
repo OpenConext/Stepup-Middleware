@@ -18,7 +18,7 @@ services:
         arguments:
             - "@surfnet_stepup.repository.identity"
             - "@surfnet_stepup.repository.institution_configuration"
-            - "@surfnet_stepup_middleware_api.repository.sraa"
+            - '@Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService'
         tags: [{ name: command_bus.command_handler }]
 
     surfnet_stepup_middleware_command_handling.command_handler.configuration:
@@ -53,4 +53,10 @@ services:
         arguments:
           - "@surfnet_stepup_middleware_middleware.verfied_second_factor_reminder"
         tags: [{ name: command_bus.command_handler }]
+
+    # Helper services for command handlers
+    Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService:
+        arguments:
+            - '%locales%'
+            - '@logger'
 

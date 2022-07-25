@@ -22,6 +22,7 @@ use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
+use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -379,4 +380,6 @@ interface Identity extends AggregateRoot
      * Identity promises it stored the once printed on screen password in a safe location
      */
     public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void;
+
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints);
 }

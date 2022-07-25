@@ -326,6 +326,12 @@ Removed: Built in U2F support is dropped from StepUp, this Event was not removed
 - Forgettable: email
 - Forgettable: common_name
 
+[VettingTypeHintsSavedEvent](../src/Surfnet/Stepup/Identity/Event/VettingTypeHintsSavedEvent.php)
+- identity_id
+- identity_institution
+- hints
+- institution
+
 [WhitelistCreatedEvent](../src/Surfnet/Stepup/Identity/Event/WhitelistCreatedEvent.php)
 - whitelisted_institutions
 

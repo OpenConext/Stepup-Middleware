@@ -25,6 +25,7 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
 use Surfnet\Stepup\Identity\Entity\RecoveryToken as RecoveryTokenEntity;
 use Surfnet\Stepup\Identity\Entity\RecoveryTokenCollection;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
@@ -72,6 +73,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -356,6 +358,19 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 $this->commonName,
                 $this->email,
                 $this->preferredLocale
+            )
+        );
+    }
+
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints)
+    {
+        $this->assertNotForgotten();
+        $this->apply(
+            new VettingTypeHintsSavedEvent(
+                $this->id,
+                $this->institution,
+                $hints,
+                $institution
             )
         );
     }

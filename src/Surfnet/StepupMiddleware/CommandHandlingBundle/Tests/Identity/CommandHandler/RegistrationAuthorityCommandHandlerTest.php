@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
+use Broadway\EventSourcing\EventStreamDecorator;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
@@ -54,6 +55,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistr
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RegistrationAuthorityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
@@ -99,7 +101,8 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
                 m::mock(UserDataFilterInterface::class),
                 $logger
             ),
-            $this->institutionConfigurationRepositoryMock
+            $this->institutionConfigurationRepositoryMock,
+            m::mock(VettingTypeHintService::class)
         );
     }
 

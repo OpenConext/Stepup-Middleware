@@ -22,6 +22,7 @@ use Broadway\Serializer\Serializable as SerializableInterface;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\VettingTypeHint;
+use function json_encode;
 
 final class VettingTypeHintCollection implements JsonSerializable, SerializableInterface
 {
@@ -73,6 +74,11 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         }, $data);
 
         return new self($institutions);
+    }
+
+    public function __toString(): string
+    {
+        return (string) json_encode($this->jsonSerialize());
     }
 
     public function serialize(): array

@@ -304,6 +304,27 @@ Request parameters:
 }
 ```
 
+### Vetting type hints
+A vetting type hint is a hint to inform an identity on what sort of vetting type is expected to be used,
+nudging the Identity to the right activation method.
+
+RA users can manage these texts in the Stepup RA application. Texts are displayed on the SelfService app.
+
+#### Request
+URL: `http://middleware.tld/vetting-type-hint/{institution}`
+Method: GET
+Request parameters:
+- institution: (required) Identifier of the institution to get. Example: institution-a.example.com
+
+#### Response
+`200 OK`
+```json
+{
+    "institution": "institution-a.example.com",
+    "hints": "[{\"locale\": \"nl_NL\", \"hint\": \"Hint for the win\"}]"
+}
+```
+
 ### Unverified Second Factors - Single Unverified Second Factor
 
 #### Request

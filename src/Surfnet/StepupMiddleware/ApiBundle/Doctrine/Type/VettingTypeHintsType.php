@@ -23,7 +23,6 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
 
 /**
  * Custom Type for the vetting type hints Value Object
@@ -50,7 +49,7 @@ class VettingTypeHintsType extends Type
 
         try {
             $data = json_decode($value, true);
-            $vettingTypeHints = VettingTypeHintCollection::deserialize($data['hints']);
+            $vettingTypeHints = VettingTypeHintCollection::deserialize($data);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(

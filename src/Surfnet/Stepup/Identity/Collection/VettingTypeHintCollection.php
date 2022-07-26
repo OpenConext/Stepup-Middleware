@@ -64,7 +64,7 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
 
     public function jsonSerialize()
     {
-        return ['hints' => $this->elements];
+        return $this->elements;
     }
 
     public static function deserialize(array $data)

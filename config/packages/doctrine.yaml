@@ -111,6 +111,9 @@ doctrine:
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
                 commented: false
+            stepup_vetting_type_hints:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VettingTypeHintsType
+                commented: false
     orm:
         default_entity_manager: middleware
         auto_generate_proxy_classes: "%kernel.debug%"

@@ -20,10 +20,19 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\VettingTypeHint;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettingTypeHint as VettingTypeHintEntity;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
 
 class VettingTypeHintService
 {
+    /**
+     * @var VettingTypeHintRepository
+     */
+    private $repository;
+
     /**
      * @var array
      */
@@ -34,8 +43,12 @@ class VettingTypeHintService
      */
     private $logger;
 
-    public function __construct(array $locales, LoggerInterface $logger)
-    {
+    public function __construct(
+        VettingTypeHintRepository $repository,
+        array $locales,
+        LoggerInterface $logger
+    ) {
+        $this->repository = $repository;
         $this->locales = $locales;
         $this->logger = $logger;
     }
@@ -63,5 +76,14 @@ class VettingTypeHintService
     private function unknownLocale(string $locale): bool
     {
         return !in_array($locale, $this->locales, true);
+    }
+
+    public function findBy(Institution $institution): VettingTypeHintEntity
+    {
+        $result = $this->repository->find((string) $institution);
+        if (!$result) {
+            throw new NotFoundException(sprintf('Vetting type hint not found for institution %s', $institution));
+        }
+        return $result;
     }
 }

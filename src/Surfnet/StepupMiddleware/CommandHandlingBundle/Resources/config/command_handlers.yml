@@ -57,6 +57,7 @@ services:
     # Helper services for command handlers
     Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService:
         arguments:
+            - '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository'
             - '%locales%'
             - '@logger'
 

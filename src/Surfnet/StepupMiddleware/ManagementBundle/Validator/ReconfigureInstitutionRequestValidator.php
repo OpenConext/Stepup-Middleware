@@ -172,6 +172,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             $propertyPath
         );
 
+        Assertion::boolean(
+            $options['allow_self_asserted_tokens'],
+            sprintf('Option "allow_self_asserted_tokens" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
         Assertion::integer(
             $options['number_of_tokens_per_identity'],
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be an integer value', $institution),

@@ -45,7 +45,6 @@ class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
     /**
      * @Assert\Type(type="array")
      * @Assert\All({
-     *      @Assert\NotBlank,
      *      @Assert\Type("string")
      * })
      *

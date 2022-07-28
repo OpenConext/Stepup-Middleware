@@ -28,11 +28,12 @@ class VettingTypeHint implements JsonSerializable
     private $locale;
 
     /**
+     * The hint text is nullable
      * @var string
      */
     private $hint;
 
-    public function __construct(string $locale, string $hint)
+    public function __construct(string $locale, ?string $hint)
     {
         $this->locale = $locale;
         $this->hint = $hint;

@@ -22,6 +22,14 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Vetting type hints are used by Institutions to inform Identities on
+ * what vetting type is preferred. Or to explain what effect certain vetting
+ * types have on the level of assurance of a second factor token
+ *
+ * Saving a vetting type hint is performed by a RA. An institution, identity
+ * and a set of translated hints are stored in the VettingTypeHintsSavedEvent
+ */
 class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
 {
     /**

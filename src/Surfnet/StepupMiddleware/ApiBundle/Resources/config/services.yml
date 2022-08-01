@@ -35,6 +35,7 @@ services:
     surfnet_stepup_middleware_api.repository.unverified_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository'
     surfnet_stepup_middleware_api.repository.verified_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository'
     surfnet_stepup_middleware_api.repository.vetted_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository'
+    surfnet_stepup_middleware_api.repository.vetting_type_hint: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository'
     surfnet_stepup_middleware_api.repository.ra_second_factor: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository'
     surfnet_stepup_middleware_api.repository.audit_log: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository'
     surfnet_stepup_middleware_api.repository.second_factor_revocation: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository'

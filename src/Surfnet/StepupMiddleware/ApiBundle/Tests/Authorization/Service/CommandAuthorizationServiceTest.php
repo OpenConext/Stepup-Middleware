@@ -435,6 +435,7 @@ class CommandAuthorizationServiceTest extends TestCase
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsRecoveryTokenCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SaveVettingTypeHintCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SelfVetSecondFactorCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',

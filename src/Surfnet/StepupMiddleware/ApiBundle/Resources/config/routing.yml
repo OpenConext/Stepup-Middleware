@@ -219,3 +219,11 @@ institution_configuration_options_for_institution:
     requirements:
         institution: ".+"
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+vetting_type_hint:
+    path: /vetting-type-hint/{institution}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettingTypeHintController::getAction }
+    methods:  [GET]
+    requirements:
+        institution: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"

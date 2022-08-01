@@ -2,8 +2,8 @@ jms_translation:
   locales: "%locales%"
   configs:
     default:
-      dirs: ["%kernel.root_dir%/../src", "%kernel.root_dir%"]
-      output_dir: "%kernel.root_dir%/Resources/translations"
+      dirs: ["%kernel.project_dir%/src", "%kernel.project_dir%/templates", "%kernel.project_dir%/vendor/surfnet"]
+      output_dir: "%kernel.project_dir%/translations"
       ignored_domains: []
       excluded_names: ['*TestCase.php', '*Test.php']
       excluded_dirs: [cache, data, logs, Tests]

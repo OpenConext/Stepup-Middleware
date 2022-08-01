@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
+  <file date="2022-08-01T12:04:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+    <header>
+      <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
+      <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
+    </header>
+    <body>
+      <trans-unit id="a08764057e3607049e3495943676b29f7baefba9" resname="locale.en_GB">
+        <source>locale.en_GB</source>
+        <target state="translated">Engels</target>
+        <jms:reference-file line="2">/vendor/surfnet/stepup-bundle/src/Resources/views/translations.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="169792c2b812adec2ddf0b47e7be0a56c1b892ae" resname="locale.nl_NL">
+        <source>locale.nl_NL</source>
+        <target state="translated">Nederlands</target>
+        <jms:reference-file line="3">/vendor/surfnet/stepup-bundle/src/Resources/views/translations.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="39fa7a2a290c8ead04a3f657443b7bc99549008f" resname="mw.mail.second_factor_revoked.subject">
+        <source>mw.mail.second_factor_revoked.subject</source>
+        <target xml:space="preserve">Je %tokenType% token is ingetrokken
+        </target>
+        <jms:reference-file line="129">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/SecondFactorRevocationMailService.php</jms:reference-file>
+        <jms:reference-file line="185">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/SecondFactorRevocationMailService.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="a4ecaec491b38e8084eeaa53a7e5479a7714feb2" resname="ss.mail.email_verification_email.subject">
+        <source>ss.mail.email_verification_email.subject</source>
+        <target>Token registratie: bevestig je e-mailadres</target>
+        <jms:reference-file line="120">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/EmailVerificationMailService.php</jms:reference-file>
+        <jms:reference-file line="1">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Resources/views/translations.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="d75ff98153fdc619752c135a41e48deadf4ce039" resname="ss.mail.recovery_token_created_email.subject">
+        <source>ss.mail.recovery_token_created_email.subject</source>
+        <target>[Recovery token] klaar voor gebruik</target>
+        <jms:reference-file line="163">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RecoveryTokenMailService.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="fc18c7bc72eaf89299a900e0b911c4662e29859d" resname="ss.mail.recovery_token_revoked_email.subject">
+        <source>ss.mail.recovery_token_revoked_email.subject</source>
+        <target state="translated">Je %tokenType% [recovery token] is ingetrokken</target>
+        <jms:reference-file line="117">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RecoveryTokenMailService.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="0ddb12f14d7aee72840d8a71af5a6547ab9864da" resname="ss.mail.registration_email.subject">
+        <source>ss.mail.registration_email.subject</source>
+        <target>Token activatie: activeer je token</target>
+        <jms:reference-file line="116">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RegistrationMailService.php</jms:reference-file>
+        <jms:reference-file line="174">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RegistrationMailService.php</jms:reference-file>
+        <jms:reference-file line="2">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Resources/views/translations.twig</jms:reference-file>
+        <jms:reference-file line="180">/src/Surfnet/StepupMiddleware/MiddlewareBundle/Service/VerifiedSecondFactorReminderMailService.php</jms:reference-file>
+        <jms:reference-file line="228">/src/Surfnet/StepupMiddleware/MiddlewareBundle/Service/VerifiedSecondFactorReminderMailService.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="bc0cc8035d5d7f5a4dc2d97d93db8b8ec9afacdc" resname="ss.mail.registration_reminder_email.subject">
+        <source>ss.mail.registration_reminder_email.subject</source>
+        <target>Token activatie herinnering: activeer je token</target>
+        <jms:reference-file line="3">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Resources/views/translations.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="1bfca8c7eb070f6654283560765b55c8ffa07200" resname="ss.mail.vetted_email.subject">
+        <source>ss.mail.vetted_email.subject</source>
+        <target>Token klaar voor gebruik - inloggen in twee stappen</target>
+        <jms:reference-file line="109">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/SecondFactorVettedMailService.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="c50aaca50072a446eab71327c6bfc5e5de8698f5" resname="stepup.error.authentication_error.description">
+        <source>stepup.error.authentication_error.description</source>
+        <target state="new">stepup.error.authentication_error.description</target>
+        <jms:reference-file line="137">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+        <jms:reference-file line="140">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="3dfd06a14f059828bb8d5dc76f85c2799b5336ae" resname="stepup.error.authentication_error.title">
+        <source>stepup.error.authentication_error.title</source>
+        <target state="new">stepup.error.authentication_error.title</target>
+        <jms:reference-file line="136">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+        <jms:reference-file line="139">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="be715de0ee4e47de280a8ed873572a1c70cb94e7" resname="stepup.error.authn_failed.description">
+        <source>stepup.error.authn_failed.description</source>
+        <target state="new">stepup.error.authn_failed.description</target>
+        <jms:reference-file line="129">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="51b97a37320d3c0bde0711a4e4a239d0ea15034f" resname="stepup.error.authn_failed.title">
+        <source>stepup.error.authn_failed.title</source>
+        <target state="new">stepup.error.authn_failed.title</target>
+        <jms:reference-file line="128">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="45278127b39b1029ff5941470adcab5cc0358c58" resname="stepup.error.error_code">
+        <source>stepup.error.error_code</source>
+        <target state="new">stepup.error.error_code</target>
+        <jms:reference-file line="24">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="91d524414db2193ad8462909ec5da4c9a732b595" resname="stepup.error.generic_error.description">
+        <source>stepup.error.generic_error.description</source>
+        <target state="new">stepup.error.generic_error.description</target>
+        <jms:reference-file line="143">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="5dac3939e990d8ad764c06634b14adf85517d4f1" resname="stepup.error.generic_error.title">
+        <source>stepup.error.generic_error.title</source>
+        <target state="new">stepup.error.generic_error.title</target>
+        <jms:reference-file line="142">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="42b8b855a8b8180a4f469f0a35b440e21016d695" resname="stepup.error.hostname">
+        <source>stepup.error.hostname</source>
+        <target state="new">stepup.error.hostname</target>
+        <jms:reference-file line="16">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="9bb9f4a8016a17f539ff6d1aeee607b0ce5760b4" resname="stepup.error.ip_address">
+        <source>stepup.error.ip_address</source>
+        <target state="new">stepup.error.ip_address</target>
+        <jms:reference-file line="34">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="b4809e818f782127b31392936e35593812543700" resname="stepup.error.page_not_found.text">
+        <source>stepup.error.page_not_found.text</source>
+        <target state="new">stepup.error.page_not_found.text</target>
+        <jms:reference-file line="8">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="00a9129b20bf36b967a6fe27bc188494e43600e6" resname="stepup.error.page_not_found.title">
+        <source>stepup.error.page_not_found.title</source>
+        <target state="new">stepup.error.page_not_found.title</target>
+        <jms:reference-file line="3">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="708c217a666f488cb1ed8789192855b8d0a3dc91" resname="stepup.error.precondition_not_met.description">
+        <source>stepup.error.precondition_not_met.description</source>
+        <target state="new">stepup.error.precondition_not_met.description</target>
+        <jms:reference-file line="133">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="0c393d05bc482296c3415e2c97f0d0bc2c871cd0" resname="stepup.error.precondition_not_met.title">
+        <source>stepup.error.precondition_not_met.title</source>
+        <target state="new">stepup.error.precondition_not_met.title</target>
+        <jms:reference-file line="132">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="f303d8138f38ef225b9e4f511ac91c8e34f5fa07" resname="stepup.error.request_id">
+        <source>stepup.error.request_id</source>
+        <target state="new">stepup.error.request_id</target>
+        <jms:reference-file line="20">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="2b4218eab37df989f5273a774c35222e8d9631b9" resname="stepup.error.signature_validation_failed.description">
+        <source>stepup.error.signature_validation_failed.description</source>
+        <target state="new">stepup.error.signature_validation_failed.description</target>
+        <jms:reference-file line="113">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="6342db69fdf7d95402132c466bf8fa092f763307" resname="stepup.error.signature_validation_failed.title">
+        <source>stepup.error.signature_validation_failed.title</source>
+        <target state="new">stepup.error.signature_validation_failed.title</target>
+        <jms:reference-file line="112">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="13cca787752c500356fbd62690001b8cb2a04e9a" resname="stepup.error.support_page.text">
+        <source>stepup.error.support_page.text</source>
+        <target state="new">stepup.error.support_page.text</target>
+        <jms:reference-file line="12">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error404.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="27518086f13a0c4f33e2e1f4c118187a4e41ce53" resname="stepup.error.timestamp">
+        <source>stepup.error.timestamp</source>
+        <target state="new">stepup.error.timestamp</target>
+        <jms:reference-file line="12">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="555c8c1584cd37f11f630ca685f2dd1836018608" resname="stepup.error.unknown_service_provider.title">
+        <source>stepup.error.unknown_service_provider.title</source>
+        <target state="new">stepup.error.unknown_service_provider.title</target>
+        <jms:reference-file line="124">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="a8f949cd59f29bedf06a37db78e166266ec6379d" resname="stepup.error.unsigned_request.description">
+        <source>stepup.error.unsigned_request.description</source>
+        <target state="new">stepup.error.unsigned_request.description</target>
+        <jms:reference-file line="117">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="b763c86ba6586ee3680b880cea7ac345066b5dd4" resname="stepup.error.unsigned_request.title">
+        <source>stepup.error.unsigned_request.title</source>
+        <target state="new">stepup.error.unsigned_request.title</target>
+        <jms:reference-file line="116">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="2db5d0496af544f0581ab1bb2cef2713dd6bdb93" resname="stepup.error.unsupported_signature.description">
+        <source>stepup.error.unsupported_signature.description</source>
+        <target state="new">stepup.error.unsupported_signature.description</target>
+        <jms:reference-file line="121">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="8ad489d552646f3173e212901e999cbc09defe67" resname="stepup.error.unsupported_signature.title">
+        <source>stepup.error.unsupported_signature.title</source>
+        <target state="new">stepup.error.unsupported_signature.title</target>
+        <jms:reference-file line="120">/vendor/surfnet/stepup-bundle/src/Controller/ExceptionController.php</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="0b18df78a6a355c42f216da4a98d1afaac5e5aba" resname="stepup.error.user_agent">
+        <source>stepup.error.user_agent</source>
+        <target state="new">stepup.error.user_agent</target>
+        <jms:reference-file line="29">/vendor/surfnet/stepup-bundle/src/Resources/views/Exception/error.html.twig</jms:reference-file>
+      </trans-unit>
+      <trans-unit id="fcbfd9e643bb8d8f3fcf3ca0380a73bb9dffee2b" resname="stepup_middleware_client.form.switch_locale.switch">
+        <source>stepup_middleware_client.form.switch_locale.switch</source>
+        <target state="translated">Vertalen</target>
+        <jms:reference-file line="59">/vendor/surfnet/stepup-bundle/src/Form/Type/SwitchLocaleType.php</jms:reference-file>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

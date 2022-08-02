@@ -21,6 +21,13 @@ services:
             - "@surfnet_stepup_middleware_api.service.identity"
         tags: [{ name: event_bus.event_listener, disable_for_replay: true }]
 
+    surfnet_stepup_middleware_command_handling.processor.recovery_token_revocation_email:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\RecoveryTokenRevocationEmailProcessor
+        arguments:
+            - "@surfnet_stepup_middleware_command_handling.service.recovery_token_mail"
+            - "@surfnet_stepup_middleware_api.service.identity"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: true }]
+
     surfnet_stepup_middleware_command_handling.processor.second_factor_vetted_email:
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\SecondFactorVettedEmailProcessor
         arguments:
@@ -64,6 +71,19 @@ services:
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
             - "@surfnet_stepup_middleware_middleware.second_factor_display_name_resolver"
+
+    surfnet_stepup_middleware_command_handling.service.recovery_token_mail:
+        public: false
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService
+        arguments:
+            - "@mailer"
+            - "@surfnet_stepup_middleware_command_handling.email_sender"
+            - "@translator"
+            - "@twig"
+            - "@surfnet_stepup_middleware_management.service.email_template"
+            - "" # Fallback locale
+            - "" # Self service url is set in bundle extension
+            - "@logger"
 
     surfnet_stepup_middleware_command_handling.service.second_factor_vetted_mail:
         public: false

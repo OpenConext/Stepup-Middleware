@@ -65,5 +65,10 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
             ->getDefinition('surfnet_stepup_middleware_command_handling.service.second_factor_vetted_mail')
             ->replaceArgument(5, $config['email_fallback_locale'])
             ->replaceArgument(6, $config['self_service_url']);
+
+        $container
+            ->getDefinition('surfnet_stepup_middleware_command_handling.service.recovery_token_mail')
+            ->replaceArgument(5, $config['email_fallback_locale'])
+            ->replaceArgument(6, $config['self_service_url']);
     }
 }

@@ -51,6 +51,8 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
             'second_factor_revoked',
             'second_factor_verification_reminder_with_ras',
             'second_factor_verification_reminder_with_ra_locations',
+            'recovery_token_created',
+            'recovery_token_revoked',
         ];
 
         StepupAssert::keysMatch(

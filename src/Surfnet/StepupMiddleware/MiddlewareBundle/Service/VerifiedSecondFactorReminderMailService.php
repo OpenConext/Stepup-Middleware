@@ -28,11 +28,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\VerifiedTokenInformation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class VerifiedSecondFactorReminderMailService
 {
     /**
@@ -75,16 +78,6 @@ class VerifiedSecondFactorReminderMailService
      */
     private $fallbackLocale;
 
-    /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param EmailTemplateService $emailTemplateService
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param RaListingService $raListingService
-     * @param RaLocationService $raLocationService
-     * @param string $fallbackLocale
-     */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
@@ -93,7 +86,7 @@ class VerifiedSecondFactorReminderMailService
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaListingService $raListingService,
         RaLocationService $raLocationService,
-        $fallbackLocale
+        string $fallbackLocale
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         $this->mailer = $mailer;

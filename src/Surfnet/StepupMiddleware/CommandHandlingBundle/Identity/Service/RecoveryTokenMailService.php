@@ -23,14 +23,18 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class RecoveryTokenMailService
 {
     /**
@@ -47,11 +51,6 @@ final class RecoveryTokenMailService
      * @var TranslatorInterface
      */
     private $translator;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
 
     /**
      * @var EmailTemplateService
@@ -77,7 +76,6 @@ final class RecoveryTokenMailService
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         string $selfServiceUrl,
@@ -88,7 +86,6 @@ final class RecoveryTokenMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
@@ -100,37 +97,85 @@ final class RecoveryTokenMailService
         CommonName $commonName,
         Email $email,
         RecoveryTokenType $recoveryTokenType,
+        RecoveryTokenId $tokenId,
         bool $revokedByRa
     ) {
+        $this->logger->notice(
+            sprintf('Sending a recovery token revoked mail message for token type %s', $recoveryTokenType)
+        );
+
+        $subjectParameters = [
+            '%commonName%' => $commonName->getCommonName(),
+            '%email%' => $email->getEmail(),
+            '%tokenType%' => (string)$recoveryTokenType,
+        ];
+
         $subject = $this->translator->trans(
             'ss.mail.recovery_token_revoked_email.subject',
-            ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
+            $subjectParameters,
             'messages',
             $locale->getLocale()
         );
 
-        $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'recovery_token_revoked',
+            $locale->getLocale(),
+            $this->fallbackLocale
+        );
+
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale->getLocale(),
-            'revokedByRa' => $revokedByRa,
+            'isRevokedByRa' => $revokedByRa,
+            'tokenType' => (string)$recoveryTokenType,
+            'tokenIdentifier' => (string)$tokenId,
             'commonName' => $commonName->getCommonName(),
-            'selfServiceUrl' => $this->selfServiceUrl,
-            'email' => $email->getEmail(),
         ];
 
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/RecoveryTokenMailService/email.html.twig',
-            $parameters
+        $message = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/RecoveryTokenMailService/email.html.twig')
+            ->context($parameters);
+
+        $this->mailer->send($message);
+    }
+
+    public function sendCreated(Locale $locale, CommonName $commonName, Email $email)
+    {
+        $this->logger->notice('Sending a recovery token created mail message');
+
+        $subjectParameters = [
+            '%commonName%' => $commonName->getCommonName(),
+            '%email%' => $email->getEmail(),
+        ];
+
+        $subject = $this->translator->trans(
+            'ss.mail.recovery_token_created_email.subject',
+            $subjectParameters,
+            'messages',
+            $locale->getLocale()
         );
 
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email->getEmail(), $commonName->getCommonName())
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
+        $emailTemplate = $this->emailTemplateService->findByName(
+            'recovery_token_created',
+            $locale->getLocale(),
+            $this->fallbackLocale
+        );
+
+        $parameters = [
+            'templateString' => $emailTemplate->htmlContent,
+            'locale' => $locale->getLocale(),
+            'commonName' => $commonName->getCommonName(),
+        ];
+
+        $message = (new TemplatedEmail())
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/RecoveryTokenMailService/email.html.twig')
+            ->context($parameters);
 
         $this->mailer->send($message);
     }

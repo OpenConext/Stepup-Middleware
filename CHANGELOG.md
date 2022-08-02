@@ -1,4 +1,19 @@
 # Changelog
+
+# 5.0.0
+**Self-asserted token registration**
+- Create the self-asserted tokens feature toggle #353
+- Self-asserted registration commands are handled #360
+- Audit log now show recovery tokens #371
+- Projections where updated #368
+- Support recovery token interactions #370 #361 #358 #357  #356
+- Authorization endpoint changes  #354 #372 #366 #365
+- Support vetting type hints (creation and retrieval) #373
+- Send recovery token mail messages #374
+
+**Maintenance**
+- Replace deprecated Swiftmailer with Symfony mailer #352
+
 # 4.5.1
 - Respond with OK when identity not found (deprovisioning) #375
 - Several minor security and other improvements 

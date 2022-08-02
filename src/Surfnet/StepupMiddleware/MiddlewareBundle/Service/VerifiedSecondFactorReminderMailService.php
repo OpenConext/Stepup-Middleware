@@ -28,11 +28,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\VerifiedTokenInformation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class VerifiedSecondFactorReminderMailService
 {
     /**
@@ -49,11 +52,6 @@ class VerifiedSecondFactorReminderMailService
      * @var TranslatorInterface
      */
     private $translator;
-
-    /**
-     * @var Environment
-     */
-    private $twig;
 
     /**
      * @var EmailTemplateService
@@ -80,33 +78,20 @@ class VerifiedSecondFactorReminderMailService
      */
     private $fallbackLocale;
 
-    /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param Environment $twig
-     * @param EmailTemplateService $emailTemplateService
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param RaListingService $raListingService
-     * @param RaLocationService $raLocationService
-     * @param string $fallbackLocale
-     */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         RaListingService $raListingService,
         RaLocationService $raLocationService,
-        $fallbackLocale
+        string $fallbackLocale
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->raListingService = $raListingService;
@@ -167,7 +152,8 @@ class VerifiedSecondFactorReminderMailService
      * @param string $email
      * @param DateTime $requestedAt
      * @param $registrationCode
-     * @return int
+     * @return void
+     * @throws TransportExceptionInterface
      */
     private function sendReminderWithInstitution(
         $locale,
@@ -199,22 +185,13 @@ class VerifiedSecondFactorReminderMailService
             'raLocations' => $raLocations,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        return $this->mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to($email, $commonName)
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
+        $this->mailer->send($email);
     }
 
     private function sendReminderWithRas(
@@ -247,21 +224,12 @@ class VerifiedSecondFactorReminderMailService
             'ras' => $ras,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        return $this->mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to($email, $commonName)
+            ->subject($subject)
+            ->htmlTemplate('SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
+        $this->mailer->send($email);
     }
 }

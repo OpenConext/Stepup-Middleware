@@ -24,10 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
 final class RegistrationMailService
 {
@@ -47,11 +48,6 @@ final class RegistrationMailService
     private $translator;
 
     /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
      */
     private $emailTemplateService;
@@ -67,31 +63,21 @@ final class RegistrationMailService
     private $selfServiceUrl;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param Environment $twig
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param $selfServiceUrl
-     *
      * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl
+        string $fallbackLocale,
+        string $selfServiceUrl
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
@@ -104,6 +90,7 @@ final class RegistrationMailService
      * @param string $registrationCode
      * @param DateTime $expirationDate
      * @param RegistrationAuthorityCredentials[] $ras
+     * @throws TransportExceptionInterface
      */
     public function sendRegistrationEmailWithRas(
         $locale,
@@ -137,22 +124,13 @@ final class RegistrationMailService
             'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        $this->mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
+        $this->mailer->send($email);
     }
 
     /**
@@ -162,6 +140,7 @@ final class RegistrationMailService
      * @param string $registrationCode
      * @param DateTime $expirationDate
      * @param RaLocation[] $raLocations
+     * @throws TransportExceptionInterface
      */
     public function sendRegistrationEmailWithRaLocations(
         $locale,
@@ -195,21 +174,12 @@ final class RegistrationMailService
             'selfServiceUrl'   => $this->selfServiceUrl,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
-        $this->mailer->send($message);
+        $email = (new TemplatedEmail())
+            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->to($email, $commonName)
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
+        $this->mailer->send($email);
     }
 }

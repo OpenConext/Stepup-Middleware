@@ -26,6 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
 
 final class SecondFactorVettedMailService
@@ -114,8 +115,8 @@ final class SecondFactorVettedMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

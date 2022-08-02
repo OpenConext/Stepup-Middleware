@@ -27,6 +27,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
 
 final class RegistrationMailService
@@ -62,13 +63,6 @@ final class RegistrationMailService
     private $selfServiceUrl;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param $selfServiceUrl
-     *
      * @throws \Assert\AssertionFailedException
      */
     public function __construct(
@@ -76,8 +70,8 @@ final class RegistrationMailService
         Sender $sender,
         TranslatorInterface $translator,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl
+        string $fallbackLocale,
+        string $selfServiceUrl
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
@@ -132,7 +126,7 @@ final class RegistrationMailService
 
         $email = (new TemplatedEmail())
             ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

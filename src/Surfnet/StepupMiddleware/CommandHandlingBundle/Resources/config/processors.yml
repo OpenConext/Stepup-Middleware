@@ -41,7 +41,6 @@ services:
             - "@mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
-            - "@twig"
             - "" # Verification URL set in bundle extension
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
@@ -54,7 +53,6 @@ services:
             - "@mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
-            - "@twig"
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
@@ -66,7 +64,6 @@ services:
             - "@mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
-            - "@twig"
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
@@ -79,7 +76,6 @@ services:
             - "@mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
-            - "@twig"
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension
@@ -92,7 +88,6 @@ services:
             - "@mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
-            - "@twig"
             - "@surfnet_stepup_middleware_management.service.email_template"
             - "" # Fallback locale
             - "" # Self service url is set in bundle extension

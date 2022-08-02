@@ -21,11 +21,11 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 use Assert\Assertion;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-
 
 final class EmailVerificationMailService
 {
@@ -136,8 +136,8 @@ final class EmailVerificationMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

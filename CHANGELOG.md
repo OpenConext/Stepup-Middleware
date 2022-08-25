@@ -1,4 +1,8 @@
 # Changelog
+# 4.5.1
+- Respond with OK when identity not found (deprovisioning) #375
+- Several minor security and other improvements 
+
 # 4.5.0
 **Features:**
 - Middleware was made compatible with User-Lifecycle #342 #343 #344 #346 #347 #348 #350

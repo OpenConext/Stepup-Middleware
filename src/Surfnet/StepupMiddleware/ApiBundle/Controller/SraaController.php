@@ -53,4 +53,11 @@ class SraaController extends Controller
 
         return new JsonResponse($sraa);
     }
+
+    public function listAction() : JsonResponse
+    {
+        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+
+        return new JsonResponse($this->sraaService->findAll());
+    }
 }

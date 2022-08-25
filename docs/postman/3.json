@@ -872,6 +872,26 @@
 				"description": "nothing"
 			},
 			"response": []
+		},
+		{
+			"name": "/sraa",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": "http://middleware.stepup.example.com/sraa"
+			},
+			"response": []
 		}
 	],
 	"auth": {

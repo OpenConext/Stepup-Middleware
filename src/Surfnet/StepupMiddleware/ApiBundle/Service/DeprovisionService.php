@@ -71,19 +71,23 @@ class DeprovisionService implements DeprovisionServiceInterface
             return $this->eventSourcingRepository->obtainInformation(new IdentityId($identity->id));
         } catch (UserNotFoundException $e) {
             $this->logger->notice(
-                sprintf(
-                    'User identified by: %s was not found. Unable to provide deprovision data.',
-                    $collabPersonId
-                )
+                $e->getMessage()
             );
-            throw $e;
+            return [];
         }
     }
 
     public function deprovision(string $collabPersonId): void
     {
         $this->logger->debug(sprintf('Searching user identified by: %s', $collabPersonId));
-        $user = $this->getIdentityByNameId($collabPersonId);
+        try {
+            $user = $this->getIdentityByNameId($collabPersonId);
+        } catch (UserNotFoundException $e) {
+            $this->logger->notice(
+                $e->getMessage()
+            );
+            return;
+        }
         $command = new ForgetIdentityCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->nameId = $collabPersonId;

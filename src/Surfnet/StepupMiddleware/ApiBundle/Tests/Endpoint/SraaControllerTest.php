@@ -22,7 +22,7 @@ use Generator;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ConfiguredInstitutionControllerTest extends WebTestCase
+class SraaControllerTest extends WebTestCase
 {
     use FixturesTrait;
 
@@ -53,7 +53,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
 
         $this->accounts = ['ss' => $passwordSs, 'ra' => $passwordRa, 'apireader' => $passwordRo];
 
-        $this->endpoint = '/institution-listing';
+        $this->endpoint = '/sraa';
     }
 
     public function tearDown(): void

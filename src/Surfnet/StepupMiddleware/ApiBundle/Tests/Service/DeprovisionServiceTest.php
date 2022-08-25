@@ -75,15 +75,13 @@ class DeprovisionServiceTest extends TestCase
      */
     public function test_it_deals_with_non_exisiting_collab_user_id()
     {
-        $this->expectException(UserNotFoundException::class);
-        $this->expectExceptionMessage('User identified by: urn:collab:person:example.com:maynard_keenan was not found. Unable to provide deprovision data.');
-
         $this->apiRepo
             ->shouldReceive('findOneByNameId')
             ->with('urn:collab:person:example.com:maynard_keenan')
             ->once()
             ->andReturnNull();
-        $this->deprovisionService->readUserData('urn:collab:person:example.com:maynard_keenan');
+        $data = $this->deprovisionService->readUserData('urn:collab:person:example.com:maynard_keenan');
+        $this->assertEmpty($data);
     }
 
     /**
@@ -116,11 +114,10 @@ class DeprovisionServiceTest extends TestCase
             ->andReturnNull();
         $this->pipeline
             ->shouldNotHaveReceived('process');
-
-        $this->expectException(UserNotFoundException::class);
-        $this->expectExceptionMessage('User identified by: urn:collab:person:example.com:maynard_keenan was not found. Unable to provide deprovision data.');
-        $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
+        $data = $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
+        $this->assertNull($data);
     }
+
     public function test_deprovision_method_performs_the_right_to_be_forgotten_command()
     {
         $identity = m::mock(Identity::class);

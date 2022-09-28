@@ -186,8 +186,8 @@ class VerifiedSecondFactorReminderMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email, $commonName))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
@@ -225,8 +225,8 @@ class VerifiedSecondFactorReminderMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email, $commonName))
             ->subject($subject)
             ->htmlTemplate('SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

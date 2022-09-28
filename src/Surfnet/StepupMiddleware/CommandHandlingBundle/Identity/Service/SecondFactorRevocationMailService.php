@@ -186,8 +186,8 @@ final class SecondFactorRevocationMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email->getEmail(), $commonName->getCommonName())
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

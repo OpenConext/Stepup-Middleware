@@ -133,7 +133,7 @@ final class RecoveryTokenMailService
         ];
 
         $message = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/RecoveryTokenMailService/email.html.twig')

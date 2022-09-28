@@ -125,7 +125,7 @@ final class RegistrationMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
@@ -175,8 +175,8 @@ final class RegistrationMailService
         ];
 
         $email = (new TemplatedEmail())
-            ->from($this->sender->getEmail(), $this->sender->getName())
-            ->to($email, $commonName)
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email, $commonName))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);

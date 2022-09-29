@@ -38,7 +38,7 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerificationMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "" # Verification URL set in bundle extension
@@ -50,7 +50,7 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@surfnet_stepup_middleware_management.service.email_template"
@@ -61,7 +61,7 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorRevocationMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@surfnet_stepup_middleware_management.service.email_template"
@@ -73,7 +73,7 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@surfnet_stepup_middleware_management.service.email_template"
@@ -85,7 +85,7 @@ services:
         public: false
         class: Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorVettedMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@surfnet_stepup_middleware_management.service.email_template"

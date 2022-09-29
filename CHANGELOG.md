@@ -1,5 +1,9 @@
 # Changelog
 
+# 5.0.1
+**Buffix**
+- Repair addressing in Swiftmailer 
+
 # 5.0.0
 **Self-asserted token registration**
 - Create the self-asserted tokens feature toggle #353

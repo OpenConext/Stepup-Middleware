@@ -32,7 +32,7 @@ services:
     surfnet_stepup_middleware_middleware.verfied_second_factor_reminder_mailer:
         class: Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderMailService
         arguments:
-            - "@mailer"
+            - "@mailer.mailer"
             - "@surfnet_stepup_middleware_command_handling.email_sender"
             - "@translator"
             - "@surfnet_stepup_middleware_management.service.email_template"

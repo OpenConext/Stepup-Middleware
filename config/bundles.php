@@ -24,5 +24,4 @@ return [
     Surfnet\StepupMiddleware\ManagementBundle\SurfnetStepupMiddlewareManagementBundle::class => ['all' => true],
     Surfnet\StepupMiddleware\MiddlewareBundle\SurfnetStepupMiddlewareMiddlewareBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle::class => ['all' => true],
-    Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
 ];

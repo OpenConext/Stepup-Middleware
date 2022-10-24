@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Exception;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFormatterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +48,12 @@ class DeprovisionController extends AbstractController
             if (!empty($userData)) {
                 $this->deprovisionService->deprovision($collabPersonId);
             }
+        } catch (DomainException $e) {
+            // On domain exceptions, like when the identity is forgotten, we return OK, with empty data
+            // just so the deprovision run does not end prematurely. At this point, no other domain exceptions
+            // are thrown.
+            $userData = [];
+            $errors = [];
         } catch (Exception $e) {
             $userData = [];
             $errors = [$e->getMessage()];

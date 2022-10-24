@@ -1,7 +1,12 @@
 # Changelog
 
+# 5.0.2
+**Bugfix**
+- Repair several mailer service issues #381
+- Deprovision endpoint no longer returns FAILED when user already deprovisioned  
+
 # 5.0.1
-**Buffix**
+**Bugfix**
 - Repair addressing in Swiftmailer 
 
 # 5.0.0

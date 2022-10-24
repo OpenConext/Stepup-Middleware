@@ -65,25 +65,16 @@ final class EmailVerificationMailService
     private $selfServiceUrl;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-
-     * @param string $emailVerificationUrlTemplate
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param string $selfServiceUrl
-     *
      * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        $emailVerificationUrlTemplate,
+        string $emailVerificationUrlTemplate,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl
+        string $fallbackLocale,
+        string $selfServiceUrl
     ) {
         Assertion::string(
             $emailVerificationUrlTemplate,
@@ -100,18 +91,14 @@ final class EmailVerificationMailService
     }
 
     /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param string $verificationNonce
      * @throws TransportExceptionInterface
      */
     public function sendEmailVerificationEmail(
-        $locale,
-        $commonName,
-        $email,
-        $verificationNonce
-    ) {
+        string $locale,
+        string $commonName,
+        string $email,
+        string $verificationNonce
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.email_verification_email.subject',
             ['%commonName%' => $commonName],
@@ -124,23 +111,35 @@ final class EmailVerificationMailService
             urlencode($verificationNonce),
             $this->emailVerificationUrlTemplate
         );
+
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
         $emailTemplate = $this->emailTemplateService->findByName('confirm_email', $locale, $this->fallbackLocale);
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
+        );
 
         $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale,
-            'commonName'       => $commonName,
-            'email'            => $email,
-            'verificationUrl'  => $verificationUrl,
-            'selfServiceUrl'   => $this->selfServiceUrl,
+            'templateString' => $emailTemplate->htmlContent,
+            'locale' => $locale,
+            'commonName' => $commonName,
+            'emailAddress' => $email,
+            'verificationUrl' => $verificationUrl,
+            'selfServiceUrl' => $this->selfServiceUrl,
         ];
 
-        $email = (new TemplatedEmail())
-            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
-            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+        $fromAddress = new Address($this->sender->getEmail(), $this->sender->getName());
+        $toAddress = new Address($email, $commonName);
+        $message = new TemplatedEmail();
+        $message
+            ->from($fromAddress)
+            ->to($toAddress)
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
-        $this->mailer->send($email);
+        $this->mailer->send($message);
     }
 }

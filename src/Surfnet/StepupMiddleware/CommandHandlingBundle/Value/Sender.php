@@ -32,11 +32,7 @@ class Sender
      */
     private $email;
 
-    /**
-     * @param string $name
-     * @param string $email
-     */
-    public function __construct($name, $email)
+    public function __construct(string $name, string $email)
     {
         if (!is_string($name)) {
             throw InvalidArgumentException::invalidType('string', 'name', $name);
@@ -56,28 +52,22 @@ class Sender
         $this->email = $email;
     }
 
-    public function equals(Sender $other)
+    public function equals(Sender $other): bool
     {
         return $this == $other;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('%s <%s>', $this->name, $this->email);
     }

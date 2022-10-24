@@ -132,7 +132,8 @@ final class RecoveryTokenMailService
             'commonName' => $commonName->getCommonName(),
         ];
 
-        $message = (new TemplatedEmail())
+        $message = new TemplatedEmail();
+        $message
             ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)

@@ -27,7 +27,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail as TemplatedEmail;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
@@ -98,11 +98,6 @@ final class SecondFactorRevocationMailService
     }
 
     /**
-     * @param Locale $locale
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param SecondFactorType $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @throws TransportExceptionInterface
      */
     public function sendVettedSecondFactorRevokedByRaEmail(
@@ -128,30 +123,26 @@ final class SecondFactorRevocationMailService
         );
 
         $parameters = [
-            'isRevokedByRa'   => true,
-            'templateString'  => $emailTemplate->htmlContent,
-            'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
+            'isRevokedByRa' => true,
+            'templateString' => $emailTemplate->htmlContent,
+            'commonName' => $commonName->getCommonName(),
+            'tokenType' => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
-            'selfServiceUrl'  => $this->selfServiceUrl,
-            'locale'          => $locale->getLocale(),
+            'selfServiceUrl' => $this->selfServiceUrl,
+            'locale' => $locale->getLocale(),
         ];
 
-        $email = (new TemplatedEmail())
+        $message = new TemplatedEmail();
+        $message
             ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
-        $this->mailer->send($email);
+        $this->mailer->send($message);
     }
 
     /**
-     * @param Locale $locale
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param SecondFactorType $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @throws TransportExceptionInterface
      */
     public function sendVettedSecondFactorRevokedByRegistrantEmail(
@@ -176,21 +167,22 @@ final class SecondFactorRevocationMailService
             $this->fallbackLocale
         );
         $parameters = [
-            'isRevokedByRa'   => false,
-            'templateString'  => $emailTemplate->htmlContent,
-            'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
+            'isRevokedByRa' => false,
+            'templateString' => $emailTemplate->htmlContent,
+            'commonName' => $commonName->getCommonName(),
+            'tokenType' => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
-            'selfServiceUrl'  => $this->selfServiceUrl,
-            'locale'          => $locale->getLocale(),
+            'selfServiceUrl' => $this->selfServiceUrl,
+            'locale' => $locale->getLocale(),
         ];
 
-        $email = (new TemplatedEmail())
+        $message = new TemplatedEmail();
+        $message
             ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email->getEmail(), $commonName->getCommonName()))
             ->subject($subject)
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
-        $this->mailer->send($email);
+        $this->mailer->send($message);
     }
 }

@@ -1702,11 +1702,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('00028278'),
-                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    VettingType::onPremise()
+                    new OnPremiseVettingType(new DocumentNumber('123456'))
                 ),
             ]);
     }

@@ -71,6 +71,7 @@ final class InstitutionConfigurationState
                 $options->useRaLocationsOption,
                 $options->showRaaContactInformationOption,
                 $options->verifyEmailOption,
+                $options->selfVetOption,
                 $options->numberOfTokensPerIdentityOption,
                 $locations
             );

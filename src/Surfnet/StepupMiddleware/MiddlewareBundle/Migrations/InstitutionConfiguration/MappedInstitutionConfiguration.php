@@ -71,6 +71,7 @@ final class MappedInstitutionConfiguration
      * @param UseRaLocationsOption $useRaLocationsOption
      * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @param VerifyEmailOption $verifyEmailOption
+     * @param SelfVetOptoin $setVetPtion
      * @param NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
      * @param RaLocation[] $raLocations
      */
@@ -87,7 +88,7 @@ final class MappedInstitutionConfiguration
         $this->useRaLocationsOption            = $useRaLocationsOption;
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->verifyEmailOption               = $verifyEmailOption;
-        $this->selfVetOption = $selfVetOption;
+        $this->selfVetOption                   = $selfVetOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $this->raLocations                     = $raLocations;
     }

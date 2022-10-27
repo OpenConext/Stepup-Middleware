@@ -58,6 +58,7 @@ final class RecoveryTokenRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->recoveryTokenType,
+            $event->recoveryTokenId,
             true
         );
     }
@@ -75,6 +76,7 @@ final class RecoveryTokenRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->recoveryTokenType,
+            $event->recoveryTokenId,
             false
         );
     }

@@ -362,9 +362,6 @@
     "surfnet/stepup-saml-bundle": {
         "version": "4.1.11"
     },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.3.0"
-    },
     "symfony/asset": {
         "version": "v4.4.9"
     },
@@ -542,9 +539,6 @@
     "symfony/polyfill-ctype": {
         "version": "v1.17.0"
     },
-    "symfony/polyfill-iconv": {
-        "version": "v1.25.0"
-    },
     "symfony/polyfill-intl-icu": {
         "version": "v1.17.0"
     },
@@ -624,20 +618,6 @@
     },
     "symfony/stopwatch": {
         "version": "v4.4.10"
-    },
-    "symfony/swiftmailer-bundle": {
-        "version": "3.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.5",
-            "ref": "f0b2fccdca2dfd97dc2fd5ad216d5e27c4f895ac"
-        },
-        "files": [
-            "config/packages/dev/swiftmailer.yaml",
-            "config/packages/swiftmailer.yaml",
-            "config/packages/test/swiftmailer.yaml"
-        ]
     },
     "symfony/templating": {
         "version": "v4.4.9"

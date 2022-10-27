@@ -71,7 +71,7 @@ final class MappedInstitutionConfiguration
      * @param UseRaLocationsOption $useRaLocationsOption
      * @param ShowRaaContactInformationOption $showRaaContactInformationOption
      * @param VerifyEmailOption $verifyEmailOption
-     * @param SelfVetOptoin $setVetPtion
+     * @param SelfVetOption $setVetOption
      * @param NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
      * @param RaLocation[] $raLocations
      */

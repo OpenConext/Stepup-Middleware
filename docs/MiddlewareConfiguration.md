@@ -82,6 +82,8 @@ Each property of this object denotes a specific type of email, the types availab
 * `second_factor_verification_reminder_with_ra_locations`: **(required)** the email sent when the registrant registered it's token 7 days ago and is invited to visit an RA for institutions using RA locations.
 * `vetted`: **(required)** the email sent when the Registrant has successfully vetted a Second Factor.
 * `second_factor_revoked` **(required)**: the email sent when a Second Factor has been revoked.
+* `recovery_token_created` **(required)**: the email sent when a recovery token was created.
+* `recovery_token_revoked` **(required)**: the email sent when a recovery token has been revoked.
 
 Each email contains an object, where each property corresponds with an IETF language tag (2 letter lower cased language code + underscore + 2 letter upper cased country code, i.e. nl_NL, nl_BE) that may be supported in the application.
 
@@ -160,6 +162,30 @@ Sent when the token of the user has been revoked by the user or by an RA.
 | email          | string  | jan@modaal.nl              |
 | tokenType      | string  | yubikey                    |
 | tokenId        | string  | 123923                     |
+| isRevokedByRa  | boolean | true                       |
+| selfServiceUrl | string  | http://selfservice.example |
+
+* `` **(required)**: 
+
+#### After vetting (recovery_token_created)
+
+Sent when an identity created a new recovery token.
+
+| name       | type   | example       |
+|------------|--------|---------------|
+| commonName | string | Jan Modaal    |
+| email      | string | jan@modaal.nl |
+
+#### Recovery token revocation (recovery_token_revoked)
+
+Sent when the token of the user has been revoked by the user or by an RA.
+
+| name           | type    | example                    |
+|----------------|---------|----------------------------|
+| commonName     | string  | Jan Modaal                 |
+| email          | string  | jan@modaal.nl              |
+| tokenType      | string  | sms                        |
+| tokenIdentifier| string  | +31612345678               |
 | isRevokedByRa  | boolean | true                       |
 | selfServiceUrl | string  | http://selfservice.example |
 

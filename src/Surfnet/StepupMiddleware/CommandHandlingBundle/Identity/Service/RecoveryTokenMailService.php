@@ -35,7 +35,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-final class RecoveryTokenMailService
+class RecoveryTokenMailService
 {
     /**
      * @var Mailer

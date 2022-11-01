@@ -20,11 +20,13 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService;
 
-final class RecoveryTokenRevocationEmailProcessor extends Processor
+final class RecoveryTokenEmailProcessor extends Processor
 {
     /**
      * @var RecoveryTokenMailService
@@ -78,6 +80,35 @@ final class RecoveryTokenRevocationEmailProcessor extends Processor
             $event->recoveryTokenType,
             $event->recoveryTokenId,
             false
+        );
+    }
+
+    public function handlePhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event): void
+    {
+        $identity = $this->identityService->find($event->identityId->getIdentityId());
+
+        if ($identity === null) {
+            return;
+        }
+        $this->mailService->sendCreated(
+            $identity->preferredLocale,
+            $event->commonName,
+            $event->email
+        );
+    }
+
+    public function handleSafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event
+    ): void {
+        $identity = $this->identityService->find($event->identityId->getIdentityId());
+
+        if ($identity === null) {
+            return;
+        }
+        $this->mailService->sendCreated(
+            $identity->preferredLocale,
+            $event->commonName,
+            $event->email
         );
     }
 }

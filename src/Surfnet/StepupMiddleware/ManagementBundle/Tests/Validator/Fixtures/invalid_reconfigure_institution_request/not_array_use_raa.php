@@ -25,6 +25,7 @@ return [
             "show_raa_contact_information" => true,
             "verify_email" => true,
             'self_vet' => true,
+            'sso_on_2fa' => false,
             'allow_self_asserted_tokens' => true,
             "allowed_second_factors" => [],
             "number_of_tokens_per_identity" => 2,

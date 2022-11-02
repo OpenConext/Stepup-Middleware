@@ -58,6 +58,13 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      *
      * @var bool
      */
+    public $ssoOn2faOption;
+
+    /**
+     * @Assert\Type(type="boolean")
+     *
+     * @var bool
+     */
     public $selfVetOption;
 
     /**

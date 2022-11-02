@@ -129,6 +129,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'show_raa_contact_information',
             'verify_email',
             'self_vet',
+            'sso_on_2fa',
             'allow_self_asserted_tokens',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
@@ -174,6 +175,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         Assertion::boolean(
             $options['self_vet'],
             sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::boolean(
+            $options['sso_on_2fa'],
+            sprintf('Option "sso_on_2fa" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
 

@@ -24,6 +24,7 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
@@ -71,6 +72,13 @@ class InstitutionConfigurationOptions
     public $selfVetOption;
 
     /**
+     * @ORM\Column(type="stepup_sso_on_2fa_option", options={"default" : 0})
+     *
+     * @var SsoOn2FaOption
+     */
+    public $ssoOn2faOption;
+
+    /**
      * @ORM\Column(type="stepup_self_asserted_tokens_option", options={"default" : 0})
      *
      * @var SelfAssertedTokensOption
@@ -90,6 +98,7 @@ class InstitutionConfigurationOptions
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
         SelfAssertedTokensOption $selfAssertedTokensOption
     ) {
@@ -100,6 +109,7 @@ class InstitutionConfigurationOptions
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
         $options->verifyEmailOption               = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
+        $options->ssoOn2faOption = $ssoOn2faOption;
         $options->selfVetOption = $selfVetOption;
         $options->selfAssertedTokensOption = $selfAssertedTokensOption;
 

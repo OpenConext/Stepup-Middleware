@@ -95,6 +95,13 @@ class SecondFactor
      */
     private $secondFactorIdentifier;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(length=255)
+     */
+    private $vettingType;
+
     public function __construct(
         $identityId,
         $nameId,
@@ -102,7 +109,8 @@ class SecondFactor
         $displayLocale,
         $secondFactorId,
         $secondFactorIdentifier,
-        $secondFactorType
+        $secondFactorType,
+        $vettingType
     ) {
         $this->id                     = (string) Uuid::uuid4();
         $this->identityId             = $identityId;
@@ -112,5 +120,6 @@ class SecondFactor
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
         $this->secondFactorType       = $secondFactorType;
+        $this->vettingType = $vettingType;
     }
 }

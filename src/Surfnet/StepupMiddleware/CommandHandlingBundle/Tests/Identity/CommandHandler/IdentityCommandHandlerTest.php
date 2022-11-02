@@ -28,6 +28,7 @@ use Mockery as m;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -159,7 +160,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->secondFactorTypeService,
             $this->secondFactorProvePossessionHelper,
             $this->configService,
-            $this->loaResolutionService
+            $this->loaResolutionService,
+            m::mock(RecoveryTokenSecretHelper::class)
         );
     }
 
@@ -1700,11 +1702,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacId,
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('00028278'),
-                    new DocumentNumber('NH9392'),
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    VettingType::onPremise()
+                    new OnPremiseVettingType(new DocumentNumber('123456'))
                 ),
             ]);
     }

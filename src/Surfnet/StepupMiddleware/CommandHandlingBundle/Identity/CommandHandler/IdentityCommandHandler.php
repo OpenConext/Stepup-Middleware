@@ -22,6 +22,7 @@ use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -35,10 +36,13 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -46,6 +50,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnknownLoaException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
@@ -53,11 +58,16 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIde
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
@@ -105,10 +115,16 @@ class IdentityCommandHandler extends SimpleCommandHandler
      * @var InstitutionConfigurationRepository
      */
     private $loaResolutionService;
+
     /**
      * @var SecondFactorProvePossessionHelper
      */
     private $provePossessionHelper;
+
+    /**
+     * @var RecoveryTokenSecretHelper
+     */
+    private $recoveryTokenSecretHelper;
 
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
@@ -118,7 +134,8 @@ class IdentityCommandHandler extends SimpleCommandHandler
         SecondFactorTypeService $secondFactorTypeService,
         SecondFactorProvePossessionHelper $provePossessionHelper,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        LoaResolutionService $loaResolutionService
+        LoaResolutionService $loaResolutionService,
+        RecoveryTokenSecretHelper $recoveryTokenSecretHelper
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -128,6 +145,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->provePossessionHelper = $provePossessionHelper;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->loaResolutionService = $loaResolutionService;
+        $this->recoveryTokenSecretHelper = $recoveryTokenSecretHelper;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -312,6 +330,36 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
+
+    public function handleProvePhoneRecoveryTokenPossessionCommand(ProvePhoneRecoveryTokenPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $identity->provePossessionOfPhoneRecoveryToken(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new PhoneNumber($command->phoneNumber)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handlePromiseSafeStoreSecretTokenPossessionCommand(PromiseSafeStoreSecretTokenPossessionCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+
+        $this->assertSelfAssertedTokensEnabled($identity->getInstitution());
+        $secret = $this->recoveryTokenSecretHelper->hash(new UnhashedSecret($command->secret));
+        $identity->promisePossessionOfSafeStoreSecretRecoveryToken(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new SafeStore($secret)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
     public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
     {
         /** @var IdentityApi $authority */
@@ -340,6 +388,24 @@ class IdentityCommandHandler extends SimpleCommandHandler
 
         $this->eventSourcedRepository->save($authority);
         $this->eventSourcedRepository->save($registrant);
+    }
+
+    public function handleRegisterSelfAssertedSecondFactorCommand(RegisterSelfAssertedSecondFactorCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $secondFactorIdentifier = SecondFactorIdentifierFactory::forType(
+            new SecondFactorType($command->secondFactorType),
+            $command->secondFactorIdentifier
+        );
+
+        $identity->registerSelfAssertedSecondFactor(
+            $secondFactorIdentifier,
+            $this->secondFactorTypeService,
+            new RecoveryTokenId($command->authoringRecoveryTokenId)
+        );
+
+        $this->eventSourcedRepository->save($identity);
     }
 
     public function handleSelfVetSecondFactorCommand(SelfVetSecondFactorCommand $command)
@@ -417,6 +483,27 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
+    public function handleRevokeOwnRecoveryTokenCommand(RevokeOwnRecoveryTokenCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $identity->revokeRecoveryToken(new RecoveryTokenId($command->recoveryTokenId));
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handleRevokeRegistrantsRecoveryTokenCommand(RevokeRegistrantsRecoveryTokenCommand $command)
+    {
+        /** @var IdentityApi $identity */
+        $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
+        $identity->complyWithRecoveryTokenRevocation(
+            new RecoveryTokenId($command->recoveryTokenId),
+            new IdentityId($command->authorityId)
+        );
+
+        $this->eventSourcedRepository->save($identity);
+    }
+
     public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command)
     {
         $preferredLocale = new Locale($command->preferredLocale);
@@ -453,6 +540,24 @@ class IdentityCommandHandler extends SimpleCommandHandler
                 $institution->getInstitution(),
                 $secondFactor->getSecondFactorType()
             ));
+        }
+    }
+
+    public function assertSelfAssertedTokensEnabled(Institution $institution)
+    {
+        $configurationInstitution = new ConfigurationInstitution(
+            (string) $institution
+        );
+
+        $institutionConfiguration = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($configurationInstitution);
+        if (!$institutionConfiguration || !$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
+            throw new RuntimeException(
+                sprintf(
+                    'Registration of self-asserted tokens is not allowed for this institution "%s".',
+                    (string) $institution
+                )
+            );
         }
     }
 

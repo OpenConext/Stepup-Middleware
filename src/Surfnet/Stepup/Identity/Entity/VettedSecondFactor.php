@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
 /**
@@ -55,23 +56,26 @@ class VettedSecondFactor extends AbstractSecondFactor
     private $secondFactorIdentifier;
 
     /**
-     * @param SecondFactorId $id
-     * @param Identity $identity
-     * @param SecondFactorType $type
-     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @var VettingType
+     */
+    private $vettingType;
+
+    /**
      * @return VettedSecondFactor
      */
     public static function create(
         SecondFactorId $id,
         Identity $identity,
         SecondFactorType $type,
-        SecondFactorIdentifier $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier,
+        VettingType $vettingType
     ) {
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
         $secondFactor->type = $type;
         $secondFactor->secondFactorIdentifier = $secondFactorIdentifier;
+        $secondFactor->vettingType = $vettingType;
 
         return $secondFactor;
     }
@@ -113,6 +117,11 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $authorityId
             )
         );
+    }
+
+    public function vettingType(): VettingType
+    {
+        return $this->vettingType;
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

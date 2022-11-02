@@ -46,6 +46,8 @@ return [
             'second_factor_revoked'               => ['en_GB' => 'Revoked token for {{ commonName }}'],
             'second_factor_verification_reminder_with_ras' => ['en_GB' => 'Code {{ commonName }}'],
             'second_factor_verification_reminder_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
+            'recovery_token_created' => ['en_GB' => 'Code {{ commonName }}'],
+            'recovery_token_revoked' => ['en_GB' => 'Code {{ commonName }}'],
         ],
     ],
 ];

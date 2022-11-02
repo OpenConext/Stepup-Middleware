@@ -206,13 +206,14 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     /**
      * @return VettedSecondFactor
      */
-    public function asVetted()
+    public function asVetted(VettingType $vettingType)
     {
         return VettedSecondFactor::create(
             $this->id,
             $this->identity,
             $this->type,
-            $this->secondFactorIdentifier
+            $this->secondFactorIdentifier,
+            $vettingType
         );
     }
 

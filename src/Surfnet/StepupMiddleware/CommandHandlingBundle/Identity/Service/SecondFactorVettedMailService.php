@@ -24,10 +24,10 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
 final class SecondFactorVettedMailService
 {
@@ -47,11 +47,6 @@ final class SecondFactorVettedMailService
     private $translator;
 
     /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
      */
     private $emailTemplateService;
@@ -67,40 +62,26 @@ final class SecondFactorVettedMailService
     private $selfServiceUrl;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param Environment $twig
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param string $selfServiceUrl
      * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl
+        string $fallbackLocale,
+        string $selfServiceUrl
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
     }
 
-    /**
-     * @param Locale     $locale
-     * @param CommonName $commonName
-     * @param Email      $email
-     */
     public function sendVettedEmail(
         Locale $locale,
         CommonName $commonName,
@@ -114,29 +95,30 @@ final class SecondFactorVettedMailService
         );
 
         $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
+
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
+        );
         $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale->getLocale(),
-            'commonName'       => $commonName->getCommonName(),
-            'selfServiceUrl'   => $this->selfServiceUrl,
-            'email'            => $email->getEmail(),
+            'templateString' => $emailTemplate->htmlContent,
+            'locale' => $locale->getLocale(),
+            'commonName' => $commonName->getCommonName(),
+            'selfServiceUrl' => $this->selfServiceUrl,
+            'emailAddress' => $email->getEmail(),
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
+        $message = new TemplatedEmail();
         $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email->getEmail(), $commonName->getCommonName())
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
         $this->mailer->send($message);
     }
 }

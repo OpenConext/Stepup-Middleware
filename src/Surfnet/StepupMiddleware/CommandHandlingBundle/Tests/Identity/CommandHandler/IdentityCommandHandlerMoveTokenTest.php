@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -49,6 +50,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -82,6 +84,11 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
      * @var m\Mock|InstitutionConfigurationOptionsService
      */
     private $configService;
+
+    /**
+     * @var IdentityProjectionRepository|m\MockInterface
+     */
+    private $identityProjectionRepository;
 
 
     public function setUp(): void
@@ -117,7 +124,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $secondFactorTypeService,
             $secondFactorProvePossessionHelper,
             $this->configService,
-            $this->loaResolutionService
+            $this->loaResolutionService,
+            m::mock(RecoveryTokenSecretHelper::class)
         );
     }
 
@@ -197,6 +205,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $sourceYubikeySecFacId,
+                    new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')
@@ -264,6 +273,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
                     $sourceYubikeySecFacId,
+                    new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')

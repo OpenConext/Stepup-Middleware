@@ -19,8 +19,12 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\UnknownVettingType;
@@ -54,6 +58,16 @@ class SensitiveData implements SerializableInterface
      * @var VettingType
      */
     private $vettingType;
+
+    /**
+     * @var RecoveryTokenType
+     */
+    private $recoveryTokenType;
+
+    /**
+     * @var RecoveryTokenIdentifier
+     */
+    private $recoveryTokenIdentifier;
 
     /**
      * @param CommonName $commonName
@@ -91,6 +105,17 @@ class SensitiveData implements SerializableInterface
         $clone = clone $this;
         $clone->secondFactorType = $secondFactorType;
         $clone->secondFactorIdentifier = $secondFactorIdentifier;
+
+        return $clone;
+    }
+
+    public function withRecoveryTokenSecret(
+        RecoveryTokenIdentifier $recoveryTokenIdentifier,
+        RecoveryTokenType $type
+    ): SensitiveData {
+        $clone = clone $this;
+        $clone->recoveryTokenType = $type;
+        $clone->recoveryTokenIdentifier = $recoveryTokenIdentifier;
 
         return $clone;
     }
@@ -140,6 +165,17 @@ class SensitiveData implements SerializableInterface
         return $this->secondFactorIdentifier ?: SecondFactorIdentifierFactory::unknownForType($this->secondFactorType);
     }
 
+    public function getRecoveryTokenIdentifier(): ?RecoveryTokenIdentifier
+    {
+        if ($this->recoveryTokenIdentifier) {
+            return $this->recoveryTokenIdentifier;
+        }
+        if ($this->recoveryTokenType) {
+            return RecoveryTokenIdentifierFactory::unknownForType($this->recoveryTokenType);
+        }
+        return null;
+    }
+
     /**
      * @return VettingType
      */
@@ -168,11 +204,20 @@ class SensitiveData implements SerializableInterface
             $self->secondFactorIdentifier =
                 SecondFactorIdentifierFactory::forType($self->secondFactorType, $data['second_factor_identifier']);
         }
+        if (isset($data['recovery_token_type'])) {
+            $self->recoveryTokenType = new RecoveryTokenType($data['recovery_token_type']);
+        }
+
+        if (isset($data['recovery_token_identifier'])) {
+            $self->recoveryTokenIdentifier = RecoveryTokenIdentifierFactory::forType(
+                $self->recoveryTokenType,
+                $data['recovery_token_identifier']
+            );
+        }
 
         if (isset($data['document_number']) || isset($data['vetting_type'])) {
             $self->vettingType = VettingTypeFactory::fromData($data);
         }
-
 
         return $self;
     }
@@ -185,6 +230,8 @@ class SensitiveData implements SerializableInterface
             'email'                    => $this->email,
             'second_factor_type'       => $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
+            'recovery_token_type' => (string) $this->recoveryTokenType,
+            'recovery_token_identifier' => $this->recoveryTokenIdentifier,
             'vetting_type' => $vettingType
         ]);
     }

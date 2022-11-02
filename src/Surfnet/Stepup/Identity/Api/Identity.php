@@ -22,6 +22,7 @@ use Broadway\Domain\AggregateRoot;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
+use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
 use Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -36,7 +37,9 @@ use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
@@ -210,6 +213,12 @@ interface Identity extends AggregateRoot
         SecondFactorTypeService $secondFactorTypeService
     ): void;
 
+    public function registerSelfAssertedSecondFactor(
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService,
+        RecoveryTokenId $recoveryTokenId
+    ): void;
+
     /**
      * Migrate a token from the source identity to the target identity
      */
@@ -253,6 +262,17 @@ interface Identity extends AggregateRoot
      * @return void
      */
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
+
+    /**
+     * From SelfService, an Identity is allowed to revoke a recovery token
+     */
+    public function revokeRecoveryToken(RecoveryTokenId $recoveryTokenId): void;
+
+    /**
+     * RA(A) users are allowed on behalf of an Identity to revoke a
+     * recovery token.
+     */
+    public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void;
 
     /**
      * @param RegistrationAuthorityRole $role
@@ -350,4 +370,16 @@ interface Identity extends AggregateRoot
      *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
      */
     public function getAggregateRootId(): string;
+
+    /**
+     * Identity proved possession of a phone number by reproducing a secret sent to it via SMS
+     */
+    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber): void;
+
+    /**
+     * Identity promises it stored the once printed on screen password in a safe location
+     */
+    public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void;
+
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints);
 }

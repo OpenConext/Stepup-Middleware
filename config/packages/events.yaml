@@ -13,12 +13,15 @@ parameters:
         - Surfnet\Stepup\Configuration\Event\RaLocationRelocatedEvent
         - Surfnet\Stepup\Configuration\Event\RaLocationRemovedEvent
         - Surfnet\Stepup\Configuration\Event\RaLocationRenamedEvent
+        - Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent
+        - Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
         - Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent
         - Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaEvent
+        - Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent
         - Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent
         - Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent
         - Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent
@@ -33,6 +36,7 @@ parameters:
         - Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent
         - Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent
+        - Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent
         - Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent
         - Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent
@@ -42,6 +46,7 @@ parameters:
         - Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent
         - Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent
         - Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent
+        - Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent
         - Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent
         - Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent
         - Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent

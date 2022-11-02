@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
+  <file date="2022-08-01T12:04:46Z" source-language="en" target-language="nl_NL" datatype="plaintext" original="not.available">
+    <header>
+      <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.1.0-DEV"/>
+      <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
+    </header>
+    <body>
+      <trans-unit id="049f2b52bc9cf777280bbfc8b787f6e69a701beb" resname="stepup.send_sms_command.recipient.may_not_be_empty">
+        <source>stepup.send_sms_command.recipient.may_not_be_empty</source>
+        <target state="new">stepup.send_sms_command.recipient.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="9e988968acb8506939fa9b6c5d15b6e65cdcdb9f" resname="stepup.send_sms_command.recipient.must_be_string">
+        <source>stepup.send_sms_command.recipient.must_be_string</source>
+        <target state="new">stepup.send_sms_command.recipient.must_be_string</target>
+      </trans-unit>
+      <trans-unit id="f40a78148c674a1d7961ef7ca5d048664caf70b7" resname="stepup.send_sms_command.recipient.must_consist_of_digits">
+        <source>stepup.send_sms_command.recipient.must_consist_of_digits</source>
+        <target state="new">stepup.send_sms_command.recipient.must_consist_of_digits</target>
+      </trans-unit>
+      <trans-unit id="b7bcb89ad4b6ed61daa138541702c67ce7dd63c9" resname="stepup.verify_possession_of_phone_command.challenge.may_not_be_empty">
+        <source>stepup.verify_possession_of_phone_command.challenge.may_not_be_empty</source>
+        <target state="new">stepup.verify_possession_of_phone_command.challenge.may_not_be_empty</target>
+      </trans-unit>
+      <trans-unit id="8b87f20ba80c487ed07070e32d031343571d34b9" resname="stepup.verify_possession_of_phone_command.challenge.must_be_string">
+        <source>stepup.verify_possession_of_phone_command.challenge.must_be_string</source>
+        <target state="new">stepup.verify_possession_of_phone_command.challenge.must_be_string</target>
+      </trans-unit>
+      <trans-unit id="e835d8b451f38086986c8e10ae614aacf5e5d8e8" resname="stepup.verify_possession_of_phone_command.second_factor_id.must_be_string">
+        <source>stepup.verify_possession_of_phone_command.second_factor_id.must_be_string</source>
+        <target state="new">stepup.verify_possession_of_phone_command.second_factor_id.must_be_string</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

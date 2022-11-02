@@ -25,6 +25,9 @@ use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Api\Identity as IdentityApi;
+use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
+use Surfnet\Stepup\Identity\Entity\RecoveryToken as RecoveryTokenEntity;
+use Surfnet\Stepup\Identity\Entity\RecoveryTokenCollection;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthority;
 use Surfnet\Stepup\Identity\Entity\RegistrationAuthorityCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
@@ -35,6 +38,7 @@ use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
@@ -52,10 +56,13 @@ use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityInformationAmendedForInstitutionEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
 use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -66,6 +73,7 @@ use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
 use Surfnet\Stepup\Identity\Event\VettedSecondFactorsAllRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettingTypeHintsSavedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -82,18 +90,24 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
 use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -158,6 +172,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @var boolean
      */
     private $forgotten;
+
+    /**
+     * @var RecoveryTokenCollection
+     */
+    private $recoveryTokens;
 
     public static function create(
         IdentityId $id,
@@ -306,6 +325,54 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 )
             );
         }
+    }
+
+    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber): void
+    {
+        $this->assertNotForgotten();
+        $this->assertUserMayAddRecoveryToken(RecoveryTokenType::sms());
+        $this->apply(
+            new PhoneRecoveryTokenPossessionProvenEvent(
+                $this->id,
+                $this->institution,
+                $recoveryTokenId,
+                $phoneNumber,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
+            )
+        );
+    }
+
+
+    public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void
+    {
+        $this->assertNotForgotten();
+        $this->assertUserMayAddRecoveryToken(RecoveryTokenType::safeStore());
+        $this->apply(
+            new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                $this->id,
+                $this->institution,
+                $tokenId,
+                $secret,
+                $this->commonName,
+                $this->email,
+                $this->preferredLocale
+            )
+        );
+    }
+
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints)
+    {
+        $this->assertNotForgotten();
+        $this->apply(
+            new VettingTypeHintsSavedEvent(
+                $this->id,
+                $this->institution,
+                $hints,
+                $institution
+            )
+        );
     }
 
     public function provePossessionOfGssf(
@@ -494,6 +561,41 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
+    public function registerSelfAssertedSecondFactor(
+        SecondFactorIdentifier $secondFactorIdentifier,
+        SecondFactorTypeService $secondFactorTypeService,
+        RecoveryTokenId $recoveryTokenId
+    ): void {
+        $this->assertNotForgotten();
+        $this->assertSelfAssertedTokenRegistrationAllowed();
+
+        try {
+            $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        } catch (DomainException $e) {
+            throw new DomainException(
+                sprintf('Recovery token used during registration is not possessed by identity %s', (string)$this->id)
+            );
+        }
+
+        $registeringSecondFactor = null;
+        foreach ($this->verifiedSecondFactors as $secondFactor) {
+            if ($secondFactorIdentifier->equals($secondFactor->getIdentifier())) {
+                $registeringSecondFactor = $secondFactor;
+            }
+        }
+
+        if ($registeringSecondFactor === null) {
+            throw new DomainException(
+                sprintf(
+                    'Registering second factor of type %s with ID %s does not exist',
+                    get_class($secondFactorIdentifier),
+                    $secondFactorIdentifier->getValue()
+                )
+            );
+        }
+        $registeringSecondFactor->vet(true, new SelfAssertedRegistrationVettingType($recoveryToken->getTokenId()));
+    }
+
     public function selfVetSecondFactor(
         Loa $authoringSecondFactorLoa,
         string $registrationCode,
@@ -566,6 +668,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 new SecondFactorId($targetSecondFactorId),
                 $secondFactor->getType(),
                 $secondFactor->getIdentifier(),
+                $secondFactor->vettingType(),
                 $this->getCommonName(),
                 $this->getEmail(),
                 $this->getPreferredLocale()
@@ -683,6 +786,26 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         if ($this->vettedSecondFactors->isEmpty()) {
             $this->allVettedSecondFactorsRemoved();
         }
+    }
+
+    public function revokeRecoveryToken(RecoveryTokenId $recoveryTokenId): void
+    {
+        $this->assertNotForgotten();
+        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        if (!$recoveryToken) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        }
+        $recoveryToken->revoke();
+    }
+
+    public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void
+    {
+        $this->assertNotForgotten();
+        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        if (!$recoveryToken) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        }
+        $recoveryToken->complyWithRevocation($authorityId);
     }
 
     /**
@@ -864,6 +987,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors = new SecondFactorCollection();
         $this->vettedSecondFactors = new SecondFactorCollection();
         $this->registrationAuthorities = new RegistrationAuthorityCollection();
+        $this->recoveryTokens = new RecoveryTokenCollection();
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
@@ -882,7 +1006,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->secondFactorId,
             $this,
             new SecondFactorType('yubikey'),
-            $event->yubikeyPublicId
+            $event->yubikeyPublicId,
+            new UnknownVettingType()
         );
 
         $this->vettedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
@@ -1000,6 +1125,20 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
+    protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
+    {
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms(), $this);
+
+        $this->recoveryTokens->set($recoveryToken);
+    }
+
+    protected function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event)
+    {
+        $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore(), $this);
+
+        $this->recoveryTokens->set($recoveryToken);
+    }
+
     protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
     {
         $secondFactorId = (string)$event->secondFactorId;
@@ -1024,7 +1163,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $event->newSecondFactorId,
             $this,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
+            $event->vettingType
         );
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
@@ -1033,7 +1173,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $secondFactorId = (string)$event->secondFactorId;
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
-        $vetted = $verified->asVetted();
+        $vetted = $verified->asVetted($event->vettingType);
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
@@ -1044,7 +1184,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
         /** @var VerifiedSecondFactor $verified */
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
-        $vetted = $verified->asVetted();
+        $vetted = $verified->asVetted($event->vettingType);
 
         $this->verifiedSecondFactors->remove($secondFactorId);
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
@@ -1081,6 +1221,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         CompliedWithVettedSecondFactorRevocationEvent $event
     ) {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
+    }
+
+    protected function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event)
+    {
+        $this->recoveryTokens->remove($event->recoveryTokenId);
+    }
+
+    protected function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event)
+    {
+        $this->recoveryTokens->remove($event->recoveryTokenId);
     }
 
     protected function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
@@ -1256,6 +1406,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
+    private function assertUserMayAddRecoveryToken(RecoveryTokenType $recoveryTokenType)
+    {
+        // Assert this token type is not yet registered
+        if ($this->recoveryTokens->hasType($recoveryTokenType)) {
+            throw new DomainException(sprintf('Recovery token type %s is already registered', (string) $recoveryTokenType));
+        }
+    }
+
     public function getId()
     {
         return $this->id;
@@ -1318,6 +1476,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             if ($vettedSecondFactor->typeAndIdentifierAreEqual($type, $identifier)) {
                 throw new DomainException("The second factor was registered as a vetted second factor");
             }
+        }
+    }
+
+    private function assertSelfAssertedTokenRegistrationAllowed()
+    {
+        if ($this->vettedSecondFactors->count() !== 0) {
+            throw new DomainException("Self-asserted second factor registration is only allowed when no tokens are vetted yet");
+        }
+        if ($this->recoveryTokens->count() === 0) {
+            throw new DomainException("A recovery token is required to perform a self-asserted token registration");
         }
     }
 }

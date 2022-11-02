@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
@@ -30,6 +31,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFacto
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Coupling to Entities and ValueObjects in parameters cause the high
+ * coupling warning. Decoupling them (replacing VOs with primitives) bring a degradation in type strictness.
+ */
 class SecondFactorService extends AbstractSearchService
 {
     /**
@@ -142,5 +147,11 @@ class SecondFactorService extends AbstractSearchService
     public function findVetted(SecondFactorId $id)
     {
         return $this->vettedRepository->find($id);
+    }
+
+    public function hasVettedByIdentity(IdentityId $id): bool
+    {
+        $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string) $id]);
+        return count($vettedSecondFactors) > 0;
     }
 }

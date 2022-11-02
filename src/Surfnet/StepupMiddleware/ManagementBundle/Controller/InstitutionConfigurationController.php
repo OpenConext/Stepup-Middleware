@@ -123,6 +123,7 @@ final class InstitutionConfigurationController extends AbstractController
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
                 'verify_email' => $options->verifyEmailOption,
                 'self_vet' => $options->selfVetOption,
+                'sso_on_2fa' => $options->ssoOn2faOption,
                 'allow_self_asserted_tokens' => $options->selfAssertedTokensOption,
                 'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(

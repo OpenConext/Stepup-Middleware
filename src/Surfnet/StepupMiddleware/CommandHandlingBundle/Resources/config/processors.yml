@@ -21,8 +21,8 @@ services:
             - "@surfnet_stepup_middleware_api.service.identity"
         tags: [{ name: event_bus.event_listener, disable_for_replay: true }]
 
-    surfnet_stepup_middleware_command_handling.processor.recovery_token_revocation_email:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\RecoveryTokenRevocationEmailProcessor
+    surfnet_stepup_middleware_command_handling.processor.recovery_token_email:
+        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\RecoveryTokenEmailProcessor
         arguments:
             - "@surfnet_stepup_middleware_command_handling.service.recovery_token_mail"
             - "@surfnet_stepup_middleware_api.service.identity"

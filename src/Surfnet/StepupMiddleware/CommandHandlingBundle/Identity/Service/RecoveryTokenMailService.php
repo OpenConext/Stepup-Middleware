@@ -36,7 +36,7 @@ use function str_replace;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-final class RecoveryTokenMailService
+class RecoveryTokenMailService
 {
     /**
      * @var Mailer

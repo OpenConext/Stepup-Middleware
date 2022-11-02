@@ -31,6 +31,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
+use function str_replace;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -123,13 +124,24 @@ final class RecoveryTokenMailService
             $this->fallbackLocale
         );
 
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
+        );
+
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale->getLocale(),
             'isRevokedByRa' => $revokedByRa,
             'tokenType' => (string)$recoveryTokenType,
             'tokenIdentifier' => (string)$tokenId,
+            'selfServiceUrl' => $this->selfServiceUrl,
             'commonName' => $commonName->getCommonName(),
+            'emailAddress' => $email->getEmail(),
         ];
 
         $message = new TemplatedEmail();
@@ -165,10 +177,20 @@ final class RecoveryTokenMailService
             $this->fallbackLocale
         );
 
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
+        );
+
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale->getLocale(),
             'commonName' => $commonName->getCommonName(),
+            'emailAddress' => $email->getEmail(),
         ];
 
         $message = (new TemplatedEmail())

@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
@@ -73,6 +74,11 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
      */
     public $selfAssertedTokensOption;
 
+    /**
+     * @var SsoOn2faOption
+     */
+    public $ssoOn2faOption;
+
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
@@ -80,6 +86,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         ShowRaaContactInformationOption $showRaaContactInformationOption,
         VerifyEmailOption $verifyEmailOption,
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
         SelfAssertedTokensOption $selfAssertedTokensOption
     ) {
@@ -89,6 +96,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
         $this->verifyEmailOption               = $verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
+        $this->ssoOn2faOption = $ssoOn2faOption;
         $this->selfVetOption = $selfVetOption;
         $this->selfAssertedTokensOption = $selfAssertedTokensOption;
     }
@@ -100,6 +108,10 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         }
         if (!isset($data['number_of_tokens_per_identity_option'])) {
             $data['number_of_tokens_per_identity_option'] = NumberOfTokensPerIdentityOption::DISABLED;
+        }
+        // If sso on 2fa option is not yet present, default to false
+        if (!isset($data['sso_on_2fa_option'])) {
+            $data['sso_on_2fa_option'] = false;
         }
         // If self vet option is not yet present, default to false
         if (!isset($data['self_vet_option'])) {
@@ -116,6 +128,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
             new VerifyEmailOption($data['verify_email_option']),
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
+            new SsoOn2faOption($data['sso_on_2fa_option']),
             new SelfVetOption($data['self_vet_option']),
             new SelfAssertedTokensOption($data['self_asserted_tokens_option'])
         );
@@ -130,6 +143,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
+            'sso_on_2fa_option' => $this->ssoOn2faOption->isEnabled(),
             'self_vet_option' => $this->selfVetOption->isEnabled(),
             'self_asserted_tokens_option' => $this->selfAssertedTokensOption->isEnabled(),
         ];

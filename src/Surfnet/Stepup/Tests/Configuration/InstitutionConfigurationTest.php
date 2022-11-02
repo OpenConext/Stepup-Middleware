@@ -36,6 +36,7 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -52,6 +53,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -61,7 +63,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
         $this->scenario
-            ->when(function () use ($institution, $institutionConfigurationId, $showRaaContactInformationOption, $verifyEmailOption) {
+            ->when(function () use ($institution, $institutionConfigurationId) {
                 return InstitutionConfiguration::create(
                     $institutionConfigurationId,
                     $institution
@@ -74,6 +76,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $showRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 ),
@@ -110,6 +113,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
         $useRaLocationsOption       = new UseRaLocationsOption(false);
         $verifyEmailOption          = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -132,6 +136,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $expectedShowRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 ),
@@ -169,6 +174,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalUseRaLocationsOption    = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = SelfVetOption::getDefault();
         $selfAssertedTokensOption = SelfAssertedTokensOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -184,6 +190,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $showRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 )
@@ -205,6 +212,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaLocationsOption                    = new UseRaLocationsOption(true);
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption                       = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
@@ -220,6 +228,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $originalShowRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 )
@@ -241,6 +250,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $originalUseRaLocationsOption    = new UseRaLocationsOption(true);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -256,6 +266,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $showRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 )
@@ -283,6 +294,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaLocationsOption                    = new UseRaLocationsOption(true);
         $originalShowRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption                       = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(true);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -298,6 +310,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $originalShowRaaContactInformationOption,
                     $verifyEmailOption,
                     $numberOfTokensPerIdentityOption,
+                    $ssoOn2faOption,
                     $selfVetOption,
                     $selfAssertedTokensOption
                 )
@@ -324,6 +337,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $verifyEmailOption               = new VerifyEmailOption(true);
+        $ssoOn2faOption = SsoOn2faOption::getDefault();
         $selfVetOption = new SelfVetOption(false);
         $selfAssertedTokensOption = new SelfAssertedTokensOption(false);
         $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption(0);
@@ -332,20 +346,11 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa());
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
-        $updatedRaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), ['Institution']);
-        $updatedRaaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRaa(), []);
-        $updatedSelectRaaOption = InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::selectRaa(), ['Institution', 'Institution2']);
-
         $this->scenario
             ->when(
                 function () use (
                     $institution,
-                    $institutionConfigurationId,
-                    $showRaaContactInformationOption,
-                    $verifyEmailOption,
-                    $updatedRaOption,
-                    $updatedRaaOption,
-                    $updatedSelectRaaOption
+                    $institutionConfigurationId
                 ) {
                     $institutionConfiguration = InstitutionConfiguration::create(
                         $institutionConfigurationId,
@@ -366,6 +371,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                         $showRaaContactInformationOption,
                         $verifyEmailOption,
                         $numberOfTokensPerIdentityOption,
+                        $ssoOn2faOption,
                         $selfVetOption,
                         $selfAssertedTokensOption
                     ),

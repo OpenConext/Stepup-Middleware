@@ -18,6 +18,7 @@ parameters:
         - Surfnet\Stepup\Configuration\Event\ServiceProvidersUpdatedEvent
         - Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\SraaUpdatedEvent
+        - Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent
         - Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent
         - Surfnet\Stepup\Identity\Event\AppointedAsRaEvent

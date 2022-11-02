@@ -108,6 +108,9 @@ doctrine:
             stepup_self_asserted_tokens_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfAssertedTokensOptionType
                 commented: false
+            stepup_sso_on_2fa_option:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SsoOn2faOptionType
+                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
                 commented: false

@@ -144,7 +144,8 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             $options,
             $requiredOptions,
             $optionalOptions,
-            sprintf('Invalid option(s) for "%s". Required options: "%s"; Optional options: "%s"',
+            sprintf(
+                'Invalid option(s) for "%s". Required options: "%s"; Optional options: "%s"',
                 $institution,
                 join(', ', $requiredOptions),
                 join(', ', $optionalOptions)

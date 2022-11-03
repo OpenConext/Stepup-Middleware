@@ -169,6 +169,7 @@ final class InstitutionConfigurationController extends AbstractController
             $command->verifyEmailOption               = $options['verify_email'];
             $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
+            $command->ssoOn2faOption = $options['sso_on_2fa'];
             $command->selfVetOption = $options['self_vet'];
             $command->selfAssertedTokensOption = $options['allow_self_asserted_tokens'];
 

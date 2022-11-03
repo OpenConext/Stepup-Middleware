@@ -87,6 +87,7 @@ final class InstitutionConfigurationOptionsController extends Controller
             'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
             'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
+            'sso_on_2fa' => $institutionConfigurationOptions->ssoOn2faOption,
             'self_vet' => $institutionConfigurationOptions->selfVetOption,
             'allow_self_asserted_tokens' => $institutionConfigurationOptions->selfAssertedTokensOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,

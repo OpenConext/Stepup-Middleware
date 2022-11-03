@@ -18,7 +18,7 @@
 
 return [
     'expectedPropertyPath' => 'Institution(another-organisation.test)',
-    'expectErrorMessageToContain' => 'Expected only options',
+    'expectErrorMessageToContain' => 'Invalid option(s) for',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,

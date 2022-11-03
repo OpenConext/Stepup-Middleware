@@ -55,6 +55,52 @@ public function testItWorks()
 }
 ```
 
+### Middleware vs Gateway projections
+You might have seen that both the Gateway and Middleware have databases of their own. Gateway has very little
+knowledge of any Middleware business logic. However some data is required in Gateway for smooth operation. For example
+we want to verify in Gateway if an institution is whitelisted. Doing an API call for each gateway interaction would 
+be more costly than having this data projected in the Gateway database. 
+
+At this point four Gateway projections exist. Note that they are exclusively managed by Middleware! 
+
+Results from a Middleware event might result in an update of a Gateway projection.
+
+#### Creating a Gateway projection
+Middleware uses Doctrine for ORM and DBAL implementation. Middleware is configured with a multi entity manager setup.
+Three EntityManagers (EM) are known: middleware (default), gateway and deploy. Each have a different user with each his
+own privileges.
+
+Note that when you want to do an interaction on a specific EM, you need to specifically instruct Symfony/Doctrine to do
+so. This becomes apparent when creating and running Doctrine Migrations. Say you want to add a field to the 
+`whitelist_entry` Entity. Simply running:
+
+```shell
+$ ./bin/console doctrine:migrations:diff 
+```
+
+Does not result in a new Migration file containing the whitelist entity change. In order to get that change to show up,
+you need to explicitly instruct use of the correct Entity Manager.
+
+```shell
+$ ./bin/console doctrine:migrations:diff --em=gateway
+```
+
+The resulting migration is not yet ready to go. The migration file itself needs to be marked to use the correct database 
+schema. The following snippet from a Migration shows how to achieve this goal.
+
+```php
+// Excerpt from Version20220519134637
+$gatewaySchema = $this->getGatewaySchema();
+$this->addSql(sprintf('ALTER TABLE %s.second_factor ADD vetting_type VARCHAR(255) NOT NULL', $gatewaySchema));
+```
+
+#### Keep entities in sync
+Now here comes the tricky bit. Both Gateway and Middleware have a view on the projection. Middleware writes to the 
+gateway schema. And Gateway reads the data. Both projects utilize Doctrine to achieve those goals. Needless to say
+the Entity definitions for the entity in question needs to be synchronized. If they are not, weird errors may occur.
+
+For example see [this PR](https://github.com/OpenConext/Stepup-Gateway/pull/123/commits/4ec910f22c9b2dd0347dda2ae0f855a50bd43e64)
+
 ### Adding support for a new Generic SAML Second Factor `biometric`, by example
 
  * https://github.com/OpenConext/Stepup-bundle/pull/31/commits/55279033a7f4e261277008603d9be94ebb582469

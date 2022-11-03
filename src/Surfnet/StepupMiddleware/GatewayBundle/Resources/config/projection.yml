@@ -1,4 +1,10 @@
 services:
+    surfnet_stepup_middleware_gateway.projector.institution_configuration:
+        class: Surfnet\StepupMiddleware\GatewayBundle\Projector\InstitutionConfigurationProjector
+        arguments:
+            - "@middleware.gateway_repository.institution_configuration"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
     surfnet_stepup_middleware_gateway.projector.second_factor:
         class: Surfnet\StepupMiddleware\GatewayBundle\Projector\SecondFactorProjector
         arguments:

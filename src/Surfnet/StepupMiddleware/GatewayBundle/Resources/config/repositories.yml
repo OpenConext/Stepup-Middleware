@@ -11,6 +11,12 @@ services:
         arguments:
             - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor'
 
+    middleware.gateway_repository.institution_configuration:
+        class:   Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository
+        factory: ["@doctrine.orm.gateway_entity_manager", getRepository]
+        arguments:
+            - 'Surfnet\StepupMiddleware\GatewayBundle\Entity\InstitutionConfiguration'
+
     middleware.gateway_repository.whitelist_entry:
         class:   Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository
         factory: ["@doctrine.orm.gateway_entity_manager", getRepository]

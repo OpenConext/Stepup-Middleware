@@ -53,26 +53,6 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      */
     public $verifyEmailOption;
 
-    /**
-     * @Assert\Type(type="boolean")
-     *
-     * @var bool
-     */
-    public $ssoOn2faOption;
-
-    /**
-     * @Assert\Type(type="boolean")
-     *
-     * @var bool
-     */
-    public $selfVetOption;
-
-    /**
-     * @Assert\Type(type="boolean")
-     *
-     * @var bool
-     */
-    public $selfAssertedTokensOption;
 
     /**
      * @Assert\Type(type="integer")
@@ -100,4 +80,19 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      * @var array|null
      */
     public $selectRaaOption;
+
+    /**
+     * @var bool|null
+     */
+    public $selfVetOption;
+
+    /**
+     * @var bool|null
+     */
+    public $selfAssertedTokensOption;
+
+    /**
+     * @var bool|null
+     */
+    public $ssoOn2faOption;
 }

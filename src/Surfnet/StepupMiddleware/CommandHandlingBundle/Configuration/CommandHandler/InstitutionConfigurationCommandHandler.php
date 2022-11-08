@@ -97,15 +97,6 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $institutionConfiguration->configureVerifyEmailOption(
             new VerifyEmailOption($command->verifyEmailOption)
         );
-        $institutionConfiguration->configureSsoOn2faOption(
-            new SsoOn2faOption((bool)$command->ssoOn2faOption)
-        );
-        $institutionConfiguration->configureSelfVetOption(
-            new SelfVetOption((bool)$command->selfVetOption)
-        );
-        $institutionConfiguration->configureSelfAssertedTokensOption(
-            new SelfAssertedTokensOption((bool)$command->selfAssertedTokensOption)
-        );
         $institutionConfiguration->configureNumberOfTokensPerIdentityOption(
             new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption)
         );
@@ -130,6 +121,23 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $institutionConfiguration->updateAllowedSecondFactorList(
             AllowedSecondFactorList::ofTypes($allowedSecondFactors)
         );
+
+        // Handle optional options
+        if ($command->selfVetOption !== null) {
+            $institutionConfiguration->configureSelfVetOption(
+                new SelfVetOption((bool)$command->selfVetOption)
+            );
+        }
+        if ($command->ssoOn2faOption !== null) {
+            $institutionConfiguration->configureSsoOn2faOption(
+                new SsoOn2faOption((bool)$command->ssoOn2faOption)
+            );
+        }
+        if ($command->selfAssertedTokensOption !== null) {
+            $institutionConfiguration->configureSelfAssertedTokensOption(
+                new SelfAssertedTokensOption((bool)$command->selfAssertedTokensOption)
+            );
+        }
 
         $this->repository->save($institutionConfiguration);
     }

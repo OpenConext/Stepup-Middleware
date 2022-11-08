@@ -54,7 +54,7 @@ class InstitutionConfigurationProjector extends Projector
     {
         $institutionConfiguration = $this->repository->findByInstitution((string) $event->institution);
         if ($institutionConfiguration) {
-            $institutionConfiguration->ssoOn2faEnabled = $event->ssoOn2faOption;
+            $institutionConfiguration->ssoOn2faEnabled = $event->ssoOn2faOption->isEnabled();
             $this->repository->save($institutionConfiguration);
         }
     }

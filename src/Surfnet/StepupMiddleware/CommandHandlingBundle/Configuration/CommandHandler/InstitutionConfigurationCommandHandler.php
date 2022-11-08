@@ -123,21 +123,16 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         );
 
         // Handle optional options
-        if ($command->selfVetOption !== null) {
-            $institutionConfiguration->configureSelfVetOption(
-                new SelfVetOption((bool)$command->selfVetOption)
-            );
-        }
-        if ($command->ssoOn2faOption !== null) {
-            $institutionConfiguration->configureSsoOn2faOption(
-                new SsoOn2faOption((bool)$command->ssoOn2faOption)
-            );
-        }
-        if ($command->selfAssertedTokensOption !== null) {
-            $institutionConfiguration->configureSelfAssertedTokensOption(
-                new SelfAssertedTokensOption((bool)$command->selfAssertedTokensOption)
-            );
-        }
+        $selfVetOptionValue = $command->selfVetOption ?? SelfVetOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSelfVetOption(new SelfVetOption($selfVetOptionValue));
+
+        $ssoOn2faOptionValue = $command->ssoOn2faOption ?? SsoOn2faOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSsoOn2faOption(new SsoOn2faOption($ssoOn2faOptionValue));
+
+        $satOption = $command->selfAssertedTokensOption ?? SelfAssertedTokensOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSelfAssertedTokensOption(
+            new SelfAssertedTokensOption($satOption)
+        );
 
         $this->repository->save($institutionConfiguration);
     }

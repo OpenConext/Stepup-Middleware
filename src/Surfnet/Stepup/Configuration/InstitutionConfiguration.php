@@ -336,7 +336,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSelfAssertedTokensOption(SelfAssertedTokensOption $selfAssertedTokensOption)
     {
-        if ($this->selfAssertedTokensOption->equals($selfAssertedTokensOption)) {
+        if ($this->selfAssertedTokensOption !== null &&
+            $this->selfAssertedTokensOption->equals($selfAssertedTokensOption)
+        ) {
             return;
         }
 
@@ -351,7 +353,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSsoOn2faOption(SsoOn2faOption $ssoOn2faOption)
     {
-        if ($this->ssoOn2faOption->equals($ssoOn2faOption)) {
+        if ($this->ssoOn2faOption !== null && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
             return;
         }
 
@@ -629,6 +631,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         SelfAssertedTokensOptionChangedEvent $event
     ) {
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
+    }
+
+    protected function applySsoOn2faOptionChangedEvent(
+        SsoOn2faOptionChangedEvent $event
+    ) {
+        $this->ssoOn2faOption = $event->ssoOn2faOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(

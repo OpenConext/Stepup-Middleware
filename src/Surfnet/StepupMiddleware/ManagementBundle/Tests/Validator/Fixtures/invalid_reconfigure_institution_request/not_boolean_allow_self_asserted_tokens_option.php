@@ -18,14 +18,13 @@
 
 return [
     'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'Invalid option(s) for',
+    'expectErrorMessageToContain' => 'Option "allow_self_asserted_tokens" for "surfnet.nl" must be a boolean value',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
             'verify_email' => false,
-            'sso_on_2fa' => false,
-            'allow_self_asserted_tokens' => false,
+            'allow_self_asserted_tokens' => "false",
             'number_of_tokens_per_identity' => 1,
             'allowed_second_factors' => [],
         ]

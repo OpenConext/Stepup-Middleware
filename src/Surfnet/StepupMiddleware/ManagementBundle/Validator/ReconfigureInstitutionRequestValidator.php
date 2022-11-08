@@ -114,16 +114,10 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param array $options
-     * @param string $institution
-     */
-    public function validateInstitutionConfigurationOptions($options, $institution)
+    public function validateInstitutionConfigurationOptions(array $options, string $institution)
     {
         $propertyPath = sprintf('Institution(%s)', $institution);
-
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
-
         $requiredOptions = [
             'use_ra_locations',
             'show_raa_contact_information',
@@ -131,7 +125,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];
-
         $optionalOptions = [
             'self_vet',
             'sso_on_2fa',
@@ -140,7 +133,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'use_raa',
             'select_raa',
         ];
-
         StepupAssert::requiredAndOptionalOptions(
             $options,
             $requiredOptions,
@@ -153,25 +145,21 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             ),
             $propertyPath
         );
-
         Assertion::boolean(
             $options['use_ra_locations'],
             sprintf('Option "use_ra_locations" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
-
         Assertion::boolean(
             $options['show_raa_contact_information'],
             sprintf('Option "show_raa_contact_information" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
-
         Assertion::boolean(
             $options['verify_email'],
             sprintf('Option "verify_email" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
-
         if (isset($options['self_vet'])) {
             Assertion::boolean(
                 $options['self_vet'],
@@ -179,7 +167,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                 $propertyPath
             );
         }
-
         if (isset($options['sso_on_2fa'])) {
             Assertion::boolean(
                 $options['sso_on_2fa'],
@@ -187,7 +174,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                 $propertyPath
             );
         }
-
         if (isset($options['allow_self_asserted_tokens'])) {
             Assertion::nullOrBoolean(
                 $options['allow_self_asserted_tokens'],
@@ -195,20 +181,17 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                 $propertyPath
             );
         }
-
         Assertion::integer(
             $options['number_of_tokens_per_identity'],
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be an integer value', $institution),
             $propertyPath
         );
-
         Assertion::min(
             $options['number_of_tokens_per_identity'],
             0,
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be greater than or equal to 0', $institution),
             $propertyPath
         );
-
         Assertion::isArray(
             $options['allowed_second_factors'],
             sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),
@@ -225,7 +208,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'Option "allowed_second_factors" for "%s" must contain valid second factor types',
             $propertyPath
         );
-
         $this->validateAuthorizationSettings($options, $institution, $propertyPath);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2022 SURFnet bv
  *
@@ -40,7 +42,7 @@ class InstitutionConfigurationProjector extends Projector
         $this->repository = $repository;
     }
 
-    public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
+    public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void
     {
         $institutionConfiguration = new InstitutionConfiguration(
             (string)$event->institution,
@@ -50,7 +52,7 @@ class InstitutionConfigurationProjector extends Projector
         $this->repository->save($institutionConfiguration);
     }
 
-    public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event)
+    public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event): void
     {
         $institutionConfiguration = $this->repository->findByInstitution((string) $event->institution);
         if ($institutionConfiguration) {
@@ -59,9 +61,8 @@ class InstitutionConfigurationProjector extends Projector
         }
     }
 
-    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         $this->repository->removeFor((string)$event->institution);
-
     }
 }

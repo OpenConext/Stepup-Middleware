@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2022 SURF B.V.
  *
@@ -50,7 +52,7 @@ final class SsoOn2faOptionChangedEvent implements SerializableInterface
         $this->ssoOn2faOption = $ssoOn2faOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),

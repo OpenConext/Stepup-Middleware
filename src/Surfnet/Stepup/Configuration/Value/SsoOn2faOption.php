@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2022 SURF B.V.
  *
@@ -27,7 +29,7 @@ final class SsoOn2faOption implements JsonSerializable
      */
     private $ssoOn2faOption;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }

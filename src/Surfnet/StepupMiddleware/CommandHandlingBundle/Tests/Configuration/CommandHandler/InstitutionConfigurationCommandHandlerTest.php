@@ -993,11 +993,6 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
             ])
             ->when($command)
             ->then([
-                new SelfVetOptionChangedEvent(
-                    $institutionConfigurationId,
-                    $institution,
-                    $newSelfVetOption
-                ),
                 new UseRaOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
@@ -1017,6 +1012,11 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
                     $institutionConfigurationId,
                     $institution,
                     $defaultAllowedSecondFactorList
+                ),
+                new SelfVetOptionChangedEvent(
+                    $institutionConfigurationId,
+                    $institution,
+                    $newSelfVetOption
                 ),
             ]);
     }

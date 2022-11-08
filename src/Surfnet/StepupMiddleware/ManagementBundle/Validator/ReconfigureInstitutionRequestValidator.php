@@ -128,14 +128,14 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'use_ra_locations',
             'show_raa_contact_information',
             'verify_email',
-            'self_vet',
-            'sso_on_2fa',
-            'allow_self_asserted_tokens',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];
 
         $optionalOptions = [
+            'self_vet',
+            'sso_on_2fa',
+            'allow_self_asserted_tokens',
             'use_ra',
             'use_raa',
             'select_raa',
@@ -172,23 +172,29 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             $propertyPath
         );
 
-        Assertion::boolean(
-            $options['self_vet'],
-            sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
-            $propertyPath
-        );
+        if (isset($options['self_vet'])) {
+            Assertion::boolean(
+                $options['self_vet'],
+                sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
+                $propertyPath
+            );
+        }
 
-        Assertion::boolean(
-            $options['sso_on_2fa'],
-            sprintf('Option "sso_on_2fa" for "%s" must be a boolean value', $institution),
-            $propertyPath
-        );
+        if (isset($options['sso_on_2fa'])) {
+            Assertion::boolean(
+                $options['sso_on_2fa'],
+                sprintf('Option "sso_on_2fa" for "%s" must be a boolean value', $institution),
+                $propertyPath
+            );
+        }
 
-        Assertion::boolean(
-            $options['allow_self_asserted_tokens'],
-            sprintf('Option "allow_self_asserted_tokens" for "%s" must be a boolean value', $institution),
-            $propertyPath
-        );
+        if (isset($options['allow_self_asserted_tokens'])) {
+            Assertion::nullOrBoolean(
+                $options['allow_self_asserted_tokens'],
+                sprintf('Option "allow_self_asserted_tokens" for "%s" must be a boolean value', $institution),
+                $propertyPath
+            );
+        }
 
         Assertion::integer(
             $options['number_of_tokens_per_identity'],

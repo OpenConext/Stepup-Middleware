@@ -1,4 +1,7 @@
 # Changelog
+# 4.5.2
+- Fix type error during middleware:migrate:vetted-tokens console command #390
+
 # 4.5.1
 - Respond with OK when identity not found (deprovisioning) #375
 - Several minor security and other improvements 

@@ -34,6 +34,7 @@ use Surfnet\Stepup\Configuration\Event\SelectRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
@@ -52,6 +53,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\Stepup\Exception\DomainException;
@@ -114,6 +116,11 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     private $selfVetOption;
 
     /**
+     * @var SsoOn2faOption
+     */
+    private $ssoOn2faOption;
+
+    /**
      * @var SelfAssertedTokensOption
      */
     private $selfAssertedTokensOption;
@@ -160,6 +167,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
+                SsoOn2faOption::getDefault(),
                 SelfVetOption::getDefault(),
                 SelfAssertedTokensOption::getDefault()
             )
@@ -328,7 +336,9 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSelfAssertedTokensOption(SelfAssertedTokensOption $selfAssertedTokensOption)
     {
-        if ($this->selfAssertedTokensOption->equals($selfAssertedTokensOption)) {
+        if ($this->selfAssertedTokensOption !== null &&
+            $this->selfAssertedTokensOption->equals($selfAssertedTokensOption)
+        ) {
             return;
         }
 
@@ -337,6 +347,21 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $this->institutionConfigurationId,
                 $this->institution,
                 $selfAssertedTokensOption
+            )
+        );
+    }
+
+    public function configureSsoOn2faOption(SsoOn2faOption $ssoOn2faOption)
+    {
+        if ($this->ssoOn2faOption !== null && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
+            return;
+        }
+
+        $this->apply(
+            new SsoOn2faOptionChangedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $ssoOn2faOption
             )
         );
     }
@@ -545,6 +570,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
         $this->verifyEmailOption               = $event->verifyEmailOption;
         $this->selfVetOption = $event->selfVetOption;
+        $this->ssoOn2faOption = $event->ssoOn2faOption;
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
         $this->raLocations                     = new RaLocationList([]);
@@ -605,6 +631,12 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         SelfAssertedTokensOptionChangedEvent $event
     ) {
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
+    }
+
+    protected function applySsoOn2faOptionChangedEvent(
+        SsoOn2faOptionChangedEvent $event
+    ) {
+        $this->ssoOn2faOption = $event->ssoOn2faOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(

@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\Event\NumberOfTokensPerIdentityOptionChangedEve
 use Surfnet\Stepup\Configuration\Event\SelfAssertedTokensOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\SelfVetOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\ShowRaaContactInformationOptionChangedEvent;
+use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\UseRaLocationsOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Event\VerifyEmailOptionChangedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
@@ -59,6 +60,7 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->showRaaContactInformationOption,
             $event->verifyEmailOption,
             $event->numberOfTokensPerIdentityOption,
+            $event->ssoOn2faOption,
             $event->selfVetOption,
             $event->selfAssertedTokensOption
         );
@@ -102,6 +104,14 @@ final class InstitutionConfigurationOptionsProjector extends Projector
     {
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
         $institutionConfigurationOptions->selfVetOption = $event->selfVetOption;
+
+        $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
+    }
+
+    public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event)
+    {
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions->ssoOn2faOption = $event->ssoOn2faOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }

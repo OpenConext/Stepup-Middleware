@@ -34,6 +34,7 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -96,12 +97,6 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $institutionConfiguration->configureVerifyEmailOption(
             new VerifyEmailOption($command->verifyEmailOption)
         );
-        $institutionConfiguration->configureSelfVetOption(
-            new SelfVetOption((bool)$command->selfVetOption)
-        );
-        $institutionConfiguration->configureSelfAssertedTokensOption(
-            new SelfAssertedTokensOption((bool)$command->selfAssertedTokensOption)
-        );
         $institutionConfiguration->configureNumberOfTokensPerIdentityOption(
             new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption)
         );
@@ -125,6 +120,18 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 
         $institutionConfiguration->updateAllowedSecondFactorList(
             AllowedSecondFactorList::ofTypes($allowedSecondFactors)
+        );
+
+        // Handle optional options
+        $selfVetOptionValue = $command->selfVetOption ?? SelfVetOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSelfVetOption(new SelfVetOption($selfVetOptionValue));
+
+        $ssoOn2faOptionValue = $command->ssoOn2faOption ?? SsoOn2faOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSsoOn2faOption(new SsoOn2faOption($ssoOn2faOptionValue));
+
+        $satOption = $command->selfAssertedTokensOption ?? SelfAssertedTokensOption::getDefault()->isEnabled();
+        $institutionConfiguration->configureSelfAssertedTokensOption(
+            new SelfAssertedTokensOption($satOption)
         );
 
         $this->repository->save($institutionConfiguration);

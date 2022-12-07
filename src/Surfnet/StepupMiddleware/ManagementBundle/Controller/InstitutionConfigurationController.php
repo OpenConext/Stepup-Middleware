@@ -123,6 +123,7 @@ final class InstitutionConfigurationController extends AbstractController
                 'show_raa_contact_information' => $options->showRaaContactInformationOption,
                 'verify_email' => $options->verifyEmailOption,
                 'self_vet' => $options->selfVetOption,
+                'sso_on_2fa' => $options->ssoOn2faOption,
                 'allow_self_asserted_tokens' => $options->selfAssertedTokensOption,
                 'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
                 'allowed_second_factors' => $allowedSecondFactorMap->getAllowedSecondFactorListFor(
@@ -168,13 +169,14 @@ final class InstitutionConfigurationController extends AbstractController
             $command->verifyEmailOption               = $options['verify_email'];
             $command->numberOfTokensPerIdentityOption = $options['number_of_tokens_per_identity'];
             $command->allowedSecondFactors            = $options['allowed_second_factors'];
-            $command->selfVetOption = $options['self_vet'];
-            $command->selfAssertedTokensOption = $options['allow_self_asserted_tokens'];
-
             // The useRa, useRaa and selectRaa options are optional
             $command->useRaOption = isset($options['use_ra']) ? $options['use_ra'] : null;
             $command->useRaaOption = isset($options['use_raa']) ? $options['use_raa'] : null;
             $command->selectRaaOption = isset($options['select_raa']) ? $options['select_raa'] : null;
+            // So are sso_on_2fa and the allow_self_asserted_tokens options
+            $command->selfVetOption = $options['self_vet'] ?? null;
+            $command->ssoOn2faOption = $options['sso_on_2fa'] ?? null;
+            $command->selfAssertedTokensOption = $options['allow_self_asserted_tokens'] ?? null;
 
             $commands[] = $command;
         }

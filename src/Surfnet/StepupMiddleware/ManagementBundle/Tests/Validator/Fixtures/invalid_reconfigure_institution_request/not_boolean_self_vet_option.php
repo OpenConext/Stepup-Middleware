@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016 SURFnet B.V.
+ * Copyright 2022 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,15 @@
 
 return [
     'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'All values of option "use_raa" should be known institutions.',
+    'expectErrorMessageToContain' => 'Option "self_vet" for "surfnet.nl" must be a boolean value',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
-            "use_ra_locations" => true,
-            "show_raa_contact_information" => true,
-            "verify_email" => true,
-            'self_vet' => false,
-            'sso_on_2fa' => false,
-            'allow_self_asserted_tokens' => false,
-            "allowed_second_factors" => [],
-            "number_of_tokens_per_identity" => 2,
-            "use_ra" => ["surfnet.nl"],
-            "use_raa" => ["example.com"],
-            "select_raa" => ["surfnet.nl"],
+            'use_ra_locations' => true,
+            'show_raa_contact_information' => true,
+            'verify_email' => false,
+            'self_vet' => 'yes',
+            'number_of_tokens_per_identity' => 1,
+            'allowed_second_factors' => [],
         ]
     ]
 ];

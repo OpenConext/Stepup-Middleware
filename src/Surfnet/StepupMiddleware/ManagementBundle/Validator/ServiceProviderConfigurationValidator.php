@@ -36,11 +36,21 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             'second_factor_only',
             'second_factor_only_nameid_patterns',
             'blacklisted_encryption_algorithms',
-            'use_pdp'
+            'use_pdp',
+            'allow_sso_on_2fa',
+            'set_sso_cookie_on_2fa'
         ];
 
         if (empty($configuration['use_pdp'])) {
             $configuration['use_pdp'] = false;
+        }
+
+        if (empty($configuration['allow_sso_on_2fa'])) {
+            $configuration['allow_sso_on_2fa'] = false;
+        }
+
+        if (empty($configuration['set_sso_cookie_on_2fa'])) {
+            $configuration['set_sso_cookie_on_2fa'] = false;
         }
 
         StepupAssert::keysMatch(
@@ -78,6 +88,8 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $propertyPath
         );
         $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
+        $this->validateBooleanValue($configuration, 'allow_sso_on_2fa', $propertyPath);
+        $this->validateBooleanValue($configuration, 'set_sso_cookie_on_2fa', $propertyPath);
     }
 
     /**

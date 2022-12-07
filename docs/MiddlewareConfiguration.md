@@ -211,6 +211,8 @@ Each element in the ```service_providers``` array must be an object and contain 
 * ```assertion_encryption_enabled``` must be a boolean value that allows configuring whether or not the assertion that is sent to the SP should be encrypted.
 * ```blacklisted_encryption_algorithms``` contains an array that lists (each as single string-element) algorithms that may not be used for encryption. When left empty, no algorithms are blacklisted. As the gateway currently only allows the " http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" algorithm this option is of little practical use.
 * `use_pdp` optional boolean value, defaults to false, the PDP policy decision is enforced when enabled
+* `allow_sso_on_2fa` optional boolean value, defaults to false, allow the sp to evaluate the SSO on 2FA cookie (if present) 
+* `set_sso_cookie_on_2fa` optional boolean value, defaults to false. Is the SP allowed to set a SSO on 2FA cookie in Gateway?
 
 #### Identity Providers
 

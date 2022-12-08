@@ -70,11 +70,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSec
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendSecondFactorRegistrationEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
-use function sprintf;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -126,6 +127,14 @@ class IdentityCommandHandler extends SimpleCommandHandler
      */
     private $recoveryTokenSecretHelper;
 
+    /**
+     * @var RegistrationMailService
+     */
+    private $registrationMailService;
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
         RepositoryInterface $eventSourcedRepository,
         IdentityRepository $identityProjectionRepository,
@@ -135,7 +144,8 @@ class IdentityCommandHandler extends SimpleCommandHandler
         SecondFactorProvePossessionHelper $provePossessionHelper,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         LoaResolutionService $loaResolutionService,
-        RecoveryTokenSecretHelper $recoveryTokenSecretHelper
+        RecoveryTokenSecretHelper $recoveryTokenSecretHelper,
+        RegistrationMailService $registrationMailService
     ) {
         $this->eventSourcedRepository = $eventSourcedRepository;
         $this->identityProjectionRepository = $identityProjectionRepository;
@@ -146,6 +156,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
         $this->loaResolutionService = $loaResolutionService;
         $this->recoveryTokenSecretHelper = $recoveryTokenSecretHelper;
+        $this->registrationMailService = $registrationMailService;
     }
 
     public function handleCreateIdentityCommand(CreateIdentityCommand $command)
@@ -502,6 +513,11 @@ class IdentityCommandHandler extends SimpleCommandHandler
         );
 
         $this->eventSourcedRepository->save($identity);
+    }
+
+    public function handleSendSecondFactorRegistrationEmailCommand(SendSecondFactorRegistrationEmailCommand $command)
+    {
+        $this->registrationMailService->send($command->identityId, $command->secondFactorId);
     }
 
     public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command)

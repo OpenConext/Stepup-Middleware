@@ -72,6 +72,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelf
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 
@@ -695,6 +696,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
         $this->recoveryTokenSecretHelper = m::mock(RecoveryTokenSecretHelper::class);
+        $registrationMailService = m::mock(RegistrationMailService::class);
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
         return new IdentityCommandHandler(
@@ -712,7 +714,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             $this->secondFactorProvePossessionHelper,
             $this->configService,
             $this->loaResolutionService,
-            $this->recoveryTokenSecretHelper
+            $this->recoveryTokenSecretHelper,
+            $registrationMailService
         );
     }
 

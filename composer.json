@@ -91,7 +91,7 @@
         "phpcs": "./ci/qa/phpcs",
         "phpcpd": "./ci/qa/phpcpd",
         "phpunit": "./ci/qa/phpunit",
-        "security-tests": "./ci/qa/security-tests",
+        "security-tests": "composer audit",
 
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

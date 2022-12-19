@@ -61,6 +61,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 /**
@@ -107,6 +108,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
         $secondFactorTypeService->shouldReceive('hasEqualOrHigherLoaComparedTo')->andReturn(true);
         $secondFactorProvePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
+        $registrationMailService = m::mock(RegistrationMailService::class);
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
 
@@ -125,7 +127,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $secondFactorProvePossessionHelper,
             $this->configService,
             $this->loaResolutionService,
-            m::mock(RecoveryTokenSecretHelper::class)
+            m::mock(RecoveryTokenSecretHelper::class),
+            $registrationMailService
         );
     }
 

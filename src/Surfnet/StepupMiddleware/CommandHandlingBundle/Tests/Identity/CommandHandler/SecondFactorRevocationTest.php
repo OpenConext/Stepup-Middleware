@@ -66,6 +66,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 /**
@@ -96,7 +97,8 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
             m::mock(LoaResolutionService::class),
-            m::mock(RecoveryTokenSecretHelper::class)
+            m::mock(RecoveryTokenSecretHelper::class),
+            m::mock(RegistrationMailService::class)
         );
     }
 

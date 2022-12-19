@@ -25,6 +25,7 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Hamcrest\Matchers;
 use Mockery as m;
+use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -79,11 +80,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePo
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendSecondFactorRegistrationEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception\DuplicateIdentityException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 use function md5;
@@ -124,6 +127,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @var LoaResolutionService
      */
     private $loaResolutionService;
+    /**
+     * @var RegistrationMailService|Mock
+     */
+    private $registrationMailService;
 
 
     public function setUp(): void
@@ -144,6 +151,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->secondFactorProvePossessionHelper = m::mock(SecondFactorProvePossessionHelper::class);
         $this->configService = m::mock(InstitutionConfigurationOptionsService::class);
         $this->configService->shouldIgnoreMissing();
+        $this->registrationMailService = m::mock(RegistrationMailService::class);
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
         return new IdentityCommandHandler(
@@ -161,7 +169,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->secondFactorProvePossessionHelper,
             $this->configService,
             $this->loaResolutionService,
-            m::mock(RecoveryTokenSecretHelper::class)
+            m::mock(RecoveryTokenSecretHelper::class),
+            $this->registrationMailService
         );
     }
 
@@ -1740,6 +1749,40 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->then([
                 new LocalePreferenceExpressedEvent($identityId, $institution, new Locale('nl_NL')),
             ]);
+    }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function an_identity_can_send_registration_mail()
+    {
+        $command = new SendSecondFactorRegistrationEmailCommand();
+        $command->identityId = self::uuid();
+        $command->secondFactorId = 'second-factor-id';
+
+        $identityId  = new IdentityId($command->identityId);
+        $institution = new Institution('Institution');
+
+        $this->registrationMailService
+            ->shouldReceive('send')
+            ->with($command->identityId, $command->secondFactorId);
+
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    new NameId('N-ID'),
+                    new CommonName('Matti Vanhanen'),
+                    new Email('m.vanhanen@domain.invalid'),
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([]); // No event is emanated from this command
     }
 
     /**

@@ -19,16 +19,28 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use DateInterval;
+use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
 
-final class RegistrationMailService
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class RegistrationMailService
 {
     /**
      * @var Mailer
@@ -46,7 +58,7 @@ final class RegistrationMailService
     private $translator;
 
     /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
+     * @var EmailTemplateService
      */
     private $emailTemplateService;
 
@@ -61,7 +73,32 @@ final class RegistrationMailService
     private $selfServiceUrl;
 
     /**
-     * @throws \Assert\AssertionFailedException
+     * @var IdentityService
+     */
+    private $identityService;
+
+    /**
+     * @var SecondFactorService
+     */
+    private $secondFactorService;
+
+    /**
+     * @var RaLocationService
+     */
+    private $raLocationsService;
+
+    /**
+     * @var RaListingService
+     */
+    private $raListingService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Mailer $mailer,
@@ -69,7 +106,13 @@ final class RegistrationMailService
         TranslatorInterface $translator,
         EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
-        string $selfServiceUrl
+        string $selfServiceUrl,
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        IdentityService $identityService,
+        SecondFactorService $secondFactorService,
+        RaLocationService $raLocationService,
+        RaListingService $raListingService,
+        LoggerInterface $logger
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
@@ -79,12 +122,75 @@ final class RegistrationMailService
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->identityService = $identityService;
+        $this->secondFactorService = $secondFactorService;
+        $this->raLocationsService = $raLocationService;
+        $this->raListingService = $raListingService;
+        $this->logger = $logger;
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function sendRegistrationEmailWithRas(
+    public function send(string $identityId, string $secondFactorId)
+    {
+        $this->logger->notice(sprintf('Start processing of a registration email for %s', $identityId));
+        $identity = $this->identityService->find($identityId);
+        $institution = new Institution($identity->institution->getInstitution());
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($institution);
+        $verifiedSecondFactor = $this->secondFactorService->findVerified(new SecondFactorId($secondFactorId));
+
+        if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
+            $this->logger->notice('Sending a registration mail with ra locations');
+
+            $this->sendRegistrationEmailWithRaLocations(
+                $identity->preferredLocale->getLocale(),
+                $identity->commonName->getCommonName(),
+                $identity->email->getEmail(),
+                $verifiedSecondFactor->registrationCode,
+                $this->getExpirationDateOfRegistration(
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                ),
+                $this->raLocationsService->listRaLocationsFor($institution)
+            );
+
+            return;
+        }
+
+        $ras = $this->raListingService->listRegistrationAuthoritiesFor($identity->institution);
+        if ($institutionConfigurationOptions->showRaaContactInformationOption->isEnabled()) {
+            $this->logger->notice('Sending a registration mail with raa contact information');
+            $this->sendRegistrationEmailWithRas(
+                $identity->preferredLocale->getLocale(),
+                $identity->commonName->getCommonName(),
+                $identity->email->getEmail(),
+                $verifiedSecondFactor->registrationCode,
+                $this->getExpirationDateOfRegistration(
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                ),
+                $ras
+            );
+            return;
+        }
+
+        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
+            return !$ra->isRaa();
+        });
+        $this->logger->notice(
+            'Sending a registration mail with ra contact information as there are no RAAs at this location'
+        );
+        $this->sendRegistrationEmailWithRas(
+            $identity->preferredLocale->getLocale(),
+            $identity->commonName->getCommonName(),
+            $identity->email->getEmail(),
+            $verifiedSecondFactor->registrationCode,
+            $this->getExpirationDateOfRegistration(
+                DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+            ),
+            $rasWithoutRaas
+        );
+    }
+
+    private function sendRegistrationEmailWithRas(
         string $locale,
         string $commonName,
         string $email,
@@ -134,10 +240,7 @@ final class RegistrationMailService
         $this->mailer->send($message);
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function sendRegistrationEmailWithRaLocations(
+    private function sendRegistrationEmailWithRaLocations(
         string $locale,
         string $commonName,
         string $email,
@@ -185,5 +288,12 @@ final class RegistrationMailService
             ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
         $this->mailer->send($message);
+    }
+
+    private function getExpirationDateOfRegistration(DateTime $date)
+    {
+        return $date->add(
+            new DateInterval('P14D')
+        )->endOfDay();
     }
 }

@@ -28,12 +28,14 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\VettingTypeFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+use function array_key_exists;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -147,6 +149,13 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
 
     public static function deserialize(array $data)
     {
+        // Events not having a vetting type (recorded pre 5.0) default the
+        // vetting type to 'unknown'
+        $vettingType = new UnknownVettingType();
+        if (array_key_exists('vetting_type', $data)) {
+            $vettingType = VettingTypeFactory::fromData($data['vetting_type']);
+        }
+
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(
             new IdentityId($data['identity_id']),
@@ -157,7 +166,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             new SecondFactorId($data['new_second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
-            VettingTypeFactory::fromData($data['vetting_type']),
+            $vettingType,
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale'])

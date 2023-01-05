@@ -27,10 +27,11 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -53,11 +54,6 @@ final class SecondFactorRevocationMailService
     private $translator;
 
     /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
      * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
      */
     private $emailTemplateService;
@@ -78,25 +74,15 @@ final class SecondFactorRevocationMailService
     private $displayNameResolver;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param Environment $twig
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param string $selfServiceUrl
-     * @param SecondFactorDisplayNameResolverService $displayNameResolver
-     *
      * @throws \Assert\AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl,
+        string $fallbackLocale,
+        string $selfServiceUrl,
         SecondFactorDisplayNameResolverService $displayNameResolver
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
@@ -105,7 +91,6 @@ final class SecondFactorRevocationMailService
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
@@ -113,11 +98,7 @@ final class SecondFactorRevocationMailService
     }
 
     /**
-     * @param Locale $locale
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param SecondFactorType $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @throws TransportExceptionInterface
      */
     public function sendVettedSecondFactorRevokedByRaEmail(
         Locale $locale,
@@ -140,40 +121,29 @@ final class SecondFactorRevocationMailService
             $locale->getLocale(),
             $this->fallbackLocale
         );
+
         $parameters = [
-            'isRevokedByRa'   => true,
-            'templateString'  => $emailTemplate->htmlContent,
-            'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
+            'isRevokedByRa' => true,
+            'templateString' => $emailTemplate->htmlContent,
+            'commonName' => $commonName->getCommonName(),
+            'tokenType' => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
-            'selfServiceUrl'  => $this->selfServiceUrl,
-            'locale'          => $locale->getLocale(),
+            'selfServiceUrl' => $this->selfServiceUrl,
+            'locale' => $locale->getLocale(),
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
+        $message = new TemplatedEmail();
         $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email->getEmail(), $commonName->getCommonName())
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
         $this->mailer->send($message);
     }
 
     /**
-     * @param Locale $locale
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param SecondFactorType $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @throws TransportExceptionInterface
      */
     public function sendVettedSecondFactorRevokedByRegistrantEmail(
         Locale $locale,
@@ -197,30 +167,22 @@ final class SecondFactorRevocationMailService
             $this->fallbackLocale
         );
         $parameters = [
-            'isRevokedByRa'   => false,
-            'templateString'  => $emailTemplate->htmlContent,
-            'commonName'      => $commonName->getCommonName(),
-            'tokenType'       => $this->displayNameResolver->resolveByType($secondFactorType),
+            'isRevokedByRa' => false,
+            'templateString' => $emailTemplate->htmlContent,
+            'commonName' => $commonName->getCommonName(),
+            'tokenType' => $this->displayNameResolver->resolveByType($secondFactorType),
             'tokenIdentifier' => $secondFactorIdentifier->getValue(),
-            'selfServiceUrl'  => $this->selfServiceUrl,
-            'locale'          => $locale->getLocale(),
+            'selfServiceUrl' => $this->selfServiceUrl,
+            'locale' => $locale->getLocale(),
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
+        $message = new TemplatedEmail();
         $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email->getEmail(), $commonName->getCommonName())
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email->getEmail(), $commonName->getCommonName()))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
         $this->mailer->send($message);
     }
 }

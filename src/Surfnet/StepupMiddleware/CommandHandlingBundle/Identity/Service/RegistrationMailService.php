@@ -19,17 +19,28 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use DateInterval;
+use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\DateTime\DateTime;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
-use Swift_Mailer as Mailer;
-use Swift_Message as Message;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\MailerInterface as Mailer;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Translation\TranslatorInterface;
-use Twig\Environment;
 
-final class RegistrationMailService
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
+class RegistrationMailService
 {
     /**
      * @var Mailer
@@ -47,12 +58,7 @@ final class RegistrationMailService
     private $translator;
 
     /**
-     * @var Environment
-     */
-    private $twig;
-
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
+     * @var EmailTemplateService
      */
     private $emailTemplateService;
 
@@ -67,49 +73,128 @@ final class RegistrationMailService
     private $selfServiceUrl;
 
     /**
-     * @param Mailer $mailer
-     * @param Sender $sender
-     * @param TranslatorInterface $translator
-     * @param Environment $twig
-     * @param EmailTemplateService $emailTemplateService
-     * @param string $fallbackLocale
-     * @param $selfServiceUrl
-     *
-     * @throws \Assert\AssertionFailedException
+     * @var IdentityService
+     */
+    private $identityService;
+
+    /**
+     * @var SecondFactorService
+     */
+    private $secondFactorService;
+
+    /**
+     * @var RaLocationService
+     */
+    private $raLocationsService;
+
+    /**
+     * @var RaListingService
+     */
+    private $raListingService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         Mailer $mailer,
         Sender $sender,
         TranslatorInterface $translator,
-        Environment $twig,
         EmailTemplateService $emailTemplateService,
-        $fallbackLocale,
-        $selfServiceUrl
+        string $fallbackLocale,
+        string $selfServiceUrl,
+        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        IdentityService $identityService,
+        SecondFactorService $secondFactorService,
+        RaLocationService $raLocationService,
+        RaListingService $raListingService,
+        LoggerInterface $logger
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
 
         $this->mailer = $mailer;
         $this->sender = $sender;
         $this->translator = $translator;
-        $this->twig = $twig;
         $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
+        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
+        $this->identityService = $identityService;
+        $this->secondFactorService = $secondFactorService;
+        $this->raLocationsService = $raLocationService;
+        $this->raListingService = $raListingService;
+        $this->logger = $logger;
     }
 
-    /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param string $registrationCode
-     * @param DateTime $expirationDate
-     * @param RegistrationAuthorityCredentials[] $ras
-     */
-    public function sendRegistrationEmailWithRas(
-        $locale,
-        $commonName,
-        $email,
-        $registrationCode,
+    public function send(string $identityId, string $secondFactorId)
+    {
+        $this->logger->notice(sprintf('Start processing of a registration email for %s', $identityId));
+        $identity = $this->identityService->find($identityId);
+        $institution = new Institution($identity->institution->getInstitution());
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
+            ->findInstitutionConfigurationOptionsFor($institution);
+        $verifiedSecondFactor = $this->secondFactorService->findVerified(new SecondFactorId($secondFactorId));
+
+        if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
+            $this->logger->notice('Sending a registration mail with ra locations');
+
+            $this->sendRegistrationEmailWithRaLocations(
+                $identity->preferredLocale->getLocale(),
+                $identity->commonName->getCommonName(),
+                $identity->email->getEmail(),
+                $verifiedSecondFactor->registrationCode,
+                $this->getExpirationDateOfRegistration(
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                ),
+                $this->raLocationsService->listRaLocationsFor($institution)
+            );
+
+            return;
+        }
+
+        $ras = $this->raListingService->listRegistrationAuthoritiesFor($identity->institution);
+        if ($institutionConfigurationOptions->showRaaContactInformationOption->isEnabled()) {
+            $this->logger->notice('Sending a registration mail with raa contact information');
+            $this->sendRegistrationEmailWithRas(
+                $identity->preferredLocale->getLocale(),
+                $identity->commonName->getCommonName(),
+                $identity->email->getEmail(),
+                $verifiedSecondFactor->registrationCode,
+                $this->getExpirationDateOfRegistration(
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                ),
+                $ras
+            );
+            return;
+        }
+
+        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
+            return !$ra->isRaa();
+        });
+        $this->logger->notice(
+            'Sending a registration mail with ra contact information as there are no RAAs at this location'
+        );
+        $this->sendRegistrationEmailWithRas(
+            $identity->preferredLocale->getLocale(),
+            $identity->commonName->getCommonName(),
+            $identity->email->getEmail(),
+            $verifiedSecondFactor->registrationCode,
+            $this->getExpirationDateOfRegistration(
+                DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+            ),
+            $rasWithoutRaas
+        );
+    }
+
+    private function sendRegistrationEmailWithRas(
+        string $locale,
+        string $commonName,
+        string $email,
+        string $registrationCode,
         DateTime $expirationDate,
         array $ras
     ) {
@@ -126,48 +211,40 @@ final class RegistrationMailService
             $this->fallbackLocale
         );
 
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
+        );
         $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale,
-            'commonName'       => $commonName,
-            'email'            => $email,
+            'templateString' => $emailTemplate->htmlContent,
+            'locale' => $locale,
+            'commonName' => $commonName,
+            'emailAddress' => $email,
             'registrationCode' => $registrationCode,
-            'expirationDate'   => $expirationDate,
-            'ras'              => $ras,
-            'selfServiceUrl'   => $this->selfServiceUrl,
+            'expirationDate' => $expirationDate,
+            'ras' => $ras,
+            'selfServiceUrl' => $this->selfServiceUrl,
         ];
 
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
-        );
-
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
+        $message = new TemplatedEmail();
         $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
-
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email, $commonName))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
         $this->mailer->send($message);
     }
 
-    /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param string $registrationCode
-     * @param DateTime $expirationDate
-     * @param RaLocation[] $raLocations
-     */
-    public function sendRegistrationEmailWithRaLocations(
-        $locale,
-        $commonName,
-        $email,
-        $registrationCode,
+    private function sendRegistrationEmailWithRaLocations(
+        string $locale,
+        string $commonName,
+        string $email,
+        string $registrationCode,
         DateTime $expirationDate,
         array $raLocations
     ) {
@@ -183,33 +260,40 @@ final class RegistrationMailService
             $locale,
             $this->fallbackLocale
         );
-
-        $parameters = [
-            'templateString'   => $emailTemplate->htmlContent,
-            'locale'           => $locale,
-            'commonName'       => $commonName,
-            'email'            => $email,
-            'registrationCode' => $registrationCode,
-            'expirationDate'   => $expirationDate,
-            'raLocations'      => $raLocations,
-            'selfServiceUrl'   => $this->selfServiceUrl,
-        ];
-
-        // Rendering file template instead of string
-        // (https://github.com/symfony/symfony/issues/10865#issuecomment-42438248)
-        $body = $this->twig->render(
-            '@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig',
-            $parameters
+        // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
+        // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
+        // search and replace of the {email} parameter in the template.
+        $emailTemplate->htmlContent = str_replace(
+            '{email}',
+            '{emailAddress}',
+            $emailTemplate->htmlContent
         );
 
-        /** @var Message $message */
-        $message = $this->mailer->createMessage();
-        $message
-            ->setFrom($this->sender->getEmail(), $this->sender->getName())
-            ->addTo($email, $commonName)
-            ->setSubject($subject)
-            ->setBody($body, 'text/html', 'utf-8');
+        $parameters = [
+            'templateString' => $emailTemplate->htmlContent,
+            'locale' => $locale,
+            'commonName' => $commonName,
+            'emailAddress' => $email,
+            'registrationCode' => $registrationCode,
+            'expirationDate' => $expirationDate,
+            'raLocations' => $raLocations,
+            'selfServiceUrl' => $this->selfServiceUrl,
+        ];
 
+        $message = new TemplatedEmail();
+        $message
+            ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
+            ->to(new Address($email, $commonName))
+            ->subject($subject)
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->context($parameters);
         $this->mailer->send($message);
+    }
+
+    private function getExpirationDateOfRegistration(DateTime $date)
+    {
+        return $date->add(
+            new DateInterval('P14D')
+        )->endOfDay();
     }
 }

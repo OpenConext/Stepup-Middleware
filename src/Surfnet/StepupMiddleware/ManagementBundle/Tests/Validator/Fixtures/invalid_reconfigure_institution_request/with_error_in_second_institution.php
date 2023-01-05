@@ -18,13 +18,14 @@
 
 return [
     'expectedPropertyPath' => 'Institution(another-organisation.test)',
-    'expectErrorMessageToContain' => 'Expected only options',
+    'expectErrorMessageToContain' => 'Invalid option(s) for',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             'use_ra_locations' => true,
             'show_raa_contact_information' => true,
             'verify_email' => false,
             'self_vet' => false,
+            'allow_self_asserted_tokens' => false,
             'number_of_tokens_per_identity' => 1,
             'allowed_second_factors' => [],
         ],

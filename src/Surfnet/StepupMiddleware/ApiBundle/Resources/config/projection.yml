@@ -5,6 +5,12 @@ services:
             - "@surfnet_stepup_middleware_api.repository.identity"
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
+    surfnet_stepup_middleware_api.projector.identity_self_asserted_token_options:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\IdentitySelfAssertedTokenOptionsProjector
+        arguments:
+            - "@surfnet_stepup_middleware_api.repository.identity_self_asserted_token_options"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
     surfnet_stepup_middleware_api.projector.institution_listing:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\InstitutionListingProjector
         arguments:
@@ -38,6 +44,18 @@ services:
         class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\SraaProjector
         arguments:
             - "@surfnet_stepup_middleware_api.repository.sraa"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
+    surfnet_stepup_middleware_api.projector.recovery_token:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RecoveryTokenProjector
+        arguments:
+            - "@Surfnet\\StepupMiddleware\\ApiBundle\\Identity\\Repository\\RecoveryTokenRepository"
+        tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
+
+    surfnet_stepup_middleware_api.projector.vetting_type_hint:
+        class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\VettingTypeHintProjector
+        arguments:
+            - '@surfnet_stepup_middleware_api.repository.vetting_type_hint'
         tags: [{ name: event_bus.event_listener, disable_for_replay: false }]
 
     surfnet_stepup_middleware_api.projector.audit_log:

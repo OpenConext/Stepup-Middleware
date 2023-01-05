@@ -24,8 +24,8 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
-use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -66,6 +66,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 /**
@@ -95,7 +96,9 @@ class SecondFactorRevocationTest extends CommandHandlerTest
             m::mock(SecondFactorTypeService::class)->shouldIgnoreMissing(),
             m::mock(SecondFactorProvePossessionHelper::class)->shouldIgnoreMissing(),
             m::mock(InstitutionConfigurationOptionsService::class)->shouldIgnoreMissing(),
-            m::mock(LoaResolutionService::class)
+            m::mock(LoaResolutionService::class),
+            m::mock(RecoveryTokenSecretHelper::class),
+            m::mock(RegistrationMailService::class)
         );
     }
 

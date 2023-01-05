@@ -24,6 +24,9 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
@@ -47,7 +50,8 @@ class IdentityProjector extends Projector
             $event->nameId,
             $event->email,
             $event->commonName,
-            $event->preferredLocale
+            $event->preferredLocale,
+            false
         ));
     }
 
@@ -73,5 +77,26 @@ class IdentityProjector extends Projector
         $identity->preferredLocale = $event->preferredLocale;
 
         $this->identityRepository->save($identity);
+    }
+
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    {
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+    }
+
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    {
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+    }
+
+    private function determinePossessionOfSelfAssertedToken(VettingType $vettingType, string $identityId): void
+    {
+        if ($vettingType->type() === VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
+            $identity = $this->identityRepository->find($identityId);
+            if ($identity) {
+                $identity->possessedSelfAssertedToken = true;
+                $this->identityRepository->save($identity);
+            }
+        }
     }
 }

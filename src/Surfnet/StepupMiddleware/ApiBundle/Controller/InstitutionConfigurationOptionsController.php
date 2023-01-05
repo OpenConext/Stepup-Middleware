@@ -88,6 +88,7 @@ final class InstitutionConfigurationOptionsController extends Controller
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
             'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
             'self_vet' => $institutionConfigurationOptions->selfVetOption,
+            'allow_self_asserted_tokens' => $institutionConfigurationOptions->selfAssertedTokensOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
             'allowed_second_factors'       => $allowedSecondFactorList,
             'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),

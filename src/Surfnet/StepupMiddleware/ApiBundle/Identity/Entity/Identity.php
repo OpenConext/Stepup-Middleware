@@ -25,7 +25,6 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 /**
  * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository")
@@ -83,17 +82,13 @@ class Identity implements JsonSerializable
     public $preferredLocale;
 
     public static function create(
-        $id,
+        string $id,
         Institution $institution,
         NameId $nameId,
         Email $email,
         CommonName $commonName,
         Locale $preferredLocale
     ) {
-        if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
         $identity = new self();
 
         $identity->id = $id;
@@ -102,19 +97,18 @@ class Identity implements JsonSerializable
         $identity->email = $email;
         $identity->commonName = $commonName;
         $identity->preferredLocale = $preferredLocale;
-
         return $identity;
     }
 
     public function jsonSerialize()
     {
         return [
-            'id'                        => $this->id,
-            'name_id'                   => $this->nameId,
-            'institution'               => $this->institution,
-            'email'                     => $this->email,
-            'common_name'               => $this->commonName,
-            'preferred_locale'          => $this->preferredLocale,
+            'id' => $this->id,
+            'name_id' => $this->nameId,
+            'institution' => $this->institution,
+            'email' => $this->email,
+            'common_name' => $this->commonName,
+            'preferred_locale' => $this->preferredLocale,
         ];
     }
 }

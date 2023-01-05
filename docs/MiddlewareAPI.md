@@ -43,8 +43,81 @@ curl -u ss:password -H 'Accept: application/json' 'http://middleware.dev.surfcon
 | ------------- | --------------------- | --------- | --------------- |  
 | 501           | Not Implemented       | The requested resource/action has not yet been implemented | `{ "errors": ["Some descriptive message"] }` |
 
+## Authorization
+In order to assert certain more complex application features may be performed by a certain user. A authz endpoint is
+facilitated. Note that all authorizations are later re-verified in the aggregates. But these authorization endpoints can
+help to offload verification logic in the SelfService or RA environment.
+
+## Standard Responses
+
+| Response Code | Definition | Used When                                        | Response Format |
+|---------------|------------|--------------------------------------------------| --------------- |  
+| 200           | OK         | The user is authorized to perform the action     | |
+| 403           | Forbidden  | The user is not authorized to perform the action | |
+
+### Allowed to register self-asserted tokens?
+
+- URL: `http://middleware.tld/authorization/may-register-self-asserted-tokens/{identityId}`
+- Method: GET
+- Request parameters:
+    - identityId: (required) UUIDv4 of the identity to assert the authorization for
+
+### Response
+`200 OK`
+```json
+{   
+    "code": 200
+}
+```
+
+`403 Forbidden`
+
+Example of possible error messages. These may differ in the real world, but give a grasp on what they should look like.
+
+```json
+{   
+  "code": 403,
+  "errors": [
+    "Not permitted: institution does not allow self-asserted tokens.",
+    "Not permitted: no recovery method found.",
+    "Not permitted: no vetted tokens may be in possession."
+  ]
+}
+```
+
+### Allowed to create and delete recovery tokens?
+
+- URL: `http://middleware.tld/authorization/may-register-recovery-tokens/{identityId}`
+- Method: GET
+- Request parameters:
+    - identityId: (required) UUIDv4 of the identity to assert the authorization for
+
+### Response
+`200 OK`
+```json
+{   
+    "code": 200
+}
+```
+
+`403 Forbidden`
+
+Example of possible error messages. These may differ in the real world, but give a grasp on what they should look like.
+
+```json
+{   
+  "code": 403,
+  "errors": [
+    "Not permitted: institution does not allow self-asserted tokens.",
+    "Not permitted: no previous self asserted token was registered."
+  ]
+}
+```
+
 
 ## Command API
+
+For documentation of the commands that can be handled with the Command API. Please consult [this document](MiddlewareAPICommands.md).
 
 ### Request
 URL: `http://middleware.tld/command/`
@@ -231,6 +304,27 @@ Request parameters:
 }
 ```
 
+### Vetting type hints
+A vetting type hint is a hint to inform an identity on what sort of vetting type is expected to be used,
+nudging the Identity to the right activation method.
+
+RA users can manage these texts in the Stepup RA application. Texts are displayed on the SelfService app.
+
+#### Request
+URL: `http://middleware.tld/vetting-type-hint/{institution}`
+Method: GET
+Request parameters:
+- institution: (required) Identifier of the institution to get. Example: institution-a.example.com
+
+#### Response
+`200 OK`
+```json
+{
+    "institution": "institution-a.example.com",
+    "hints": "[{\"locale\": \"nl_NL\", \"hint\": \"Hint for the win\"}]"
+}
+```
+
 ### Unverified Second Factors - Single Unverified Second Factor
 
 #### Request
@@ -253,7 +347,7 @@ Request parameters:
 ### Unverified Second Factors - Search Unverified Second Factors
 
 #### Request
-URL: `http://middleware.tld/unverified-second-factors?{identityId=}{&verificationNonce=}(&p=}`
+URL: `http://middleware.tld/unverified-second-factors?{identityId=}{&verificationNonce=}{&p=}`
 Method: GET
 Request parameters:
 - IdentityId: (optional) UUIDv4 of the identity to search for
@@ -309,7 +403,7 @@ Request parameters:
 ### Verified Second Factor - Search Verified Second Factors
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors?{actorId=}&{identityId=}{&secondFactorId=}{&registrationCode=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors?{actorId=}&{identityId=}{&secondFactorId=}{&registrationCode=}{&p=}`
 Method: GET
 Request parameters:
 - actorId: (required) UUIDv4 of the actor. When provided, the actor id can be used to determine the actor role.
@@ -319,7 +413,7 @@ Request parameters:
 - p: (optional, default 1) integer, the requested result page
 
 #### Request
-URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}(&p=}`
+URL: `http://middleware.tld/verified-second-factors-of-identity?{identityId=}{&p=}`
 Method: GET
 Request parameters:
 - IdentityId: (optional) UUIDv4 of the identity to search for
@@ -375,7 +469,7 @@ Request parameters:
 ### Vetted Second Factor - Search Vetted Second Factors
 
 #### Request
-URL: `http://middleware.tld/vetted-second-factors?{identityId=}(&p=}`
+URL: `http://middleware.tld/vetted-second-factors?{identityId=}{&p=}`
 Method: GET
 Request parameters:
 - identityId: (optional) UUIDv4 of the identity to search for
@@ -400,7 +494,64 @@ Request parameters:
 }
 ```
 
+### Recovery Token - Single Recovery Token
 
+#### Request
+URL: `http://middleware.tld/recovery_token/{recoveryTokenIdId}`
+Method: GET
+Request parameters:
+- recoveryTokenIdId: (required) UUIDv4 of the Recovery Token to get
+
+#### Response
+`200 OK`
+```json
+{
+    "id": "c732d0ac-9f61-4ae1-924e-40d5172fca86",
+    "type": "safe-store",
+    "recovery_token_identifier": "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
+}
+```
+
+### Recovery Token - Search Recovery Tokens
+
+#### Request
+URL: `http://middleware.tld/recovery_tokens?{identityId=}{type=}{&p=}`
+Method: GET
+Request parameters:
+- identityId: (optional) UUIDv4 of the identity to search for
+- type: (optional) UUIDv4 of the identity to search for
+- email: (optional) string, the email to match against
+- institution: (optional) string, the institution to match against
+- status: (optional) string, the status to match against
+- p: (optional, default 1) integer, the requested result page
+- orderBy: (optional) string, sorting column; possible values: name, type, secondFactorId, email, institution, status
+- orderDirection: (optional, default desc) string, sorting direction; only asc or desc allowed.
+
+- p: (optional, default 1) integer, the requested result page
+
+#### Response
+`200 OK`
+```json
+{
+    "collection": {
+        "total_items": 2,
+        "page": 1,
+        "page_size": 25
+    },
+    "items": [
+        {
+            "id": "c732d0ac-9f61-4ae1-924e-40d5172fca86",
+            "type": "yubikey",
+            "second_factor_identifier": "$2a$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW"
+        },
+        {
+          "id": "d925d0df-8f61-8ef1-924e-40d5172fca86",
+          "type": "sms",
+          "second_factor_identifier": "+31 (0) 610101010"
+        }
+    ]
+}
+```
 
 ## Registration Authorities
 
@@ -603,7 +754,7 @@ Request parameters:
 ### Registration Authority Candidate - Search RaCandidate
 
 #### Request
-URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}{&secondFactorTypes=}{&raInstitution}(&p=}`
+URL: `http://middleware.tld/ra-candidate?institution={&commonName=}{&email=}{&secondFactorTypes=}{&raInstitution}{&p=}`
 Method: GET
 Request parameters:
 - institution: (required) string, the institution as scope determination

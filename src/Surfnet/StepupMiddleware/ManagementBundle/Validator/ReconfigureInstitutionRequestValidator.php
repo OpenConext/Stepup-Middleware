@@ -129,6 +129,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             'show_raa_contact_information',
             'verify_email',
             'self_vet',
+            'allow_self_asserted_tokens',
             'number_of_tokens_per_identity',
             'allowed_second_factors',
         ];
@@ -143,7 +144,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             $options,
             $requiredOptions,
             $optionalOptions,
-            sprintf('Expected only options "%s" for "%s"', join(', ', $requiredOptions), $institution),
+            sprintf(
+                'Invalid option(s) for "%s". Required options: "%s"; Optional options: "%s"',
+                $institution,
+                join(', ', $requiredOptions),
+                join(', ', $optionalOptions)
+            ),
             $propertyPath
         );
 
@@ -168,6 +174,12 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         Assertion::boolean(
             $options['self_vet'],
             sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
+            $propertyPath
+        );
+
+        Assertion::boolean(
+            $options['allow_self_asserted_tokens'],
+            sprintf('Option "allow_self_asserted_tokens" for "%s" must be a boolean value', $institution),
             $propertyPath
         );
 

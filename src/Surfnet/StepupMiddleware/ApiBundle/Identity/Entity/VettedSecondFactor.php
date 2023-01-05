@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\Identity\Value\VettingType;
+use function is_null;
 
 /**
  * @ORM\Entity(
@@ -27,6 +29,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *      indexes={
  *          @ORM\Index(name="idx_vetted_second_factor_type", columns={"type"}),
+ *          @ORM\Index(name="idx_vetted_second_factor_vetting_type", columns={"vetting_type"}),
  *     }
  * )
  */
@@ -64,6 +67,12 @@ class VettedSecondFactor implements \JsonSerializable
     public $secondFactorIdentifier;
 
     /**
+     * @ORM\Column(length=255, nullable=true)
+     * @var string
+     */
+    public $vettingType;
+
+    /**
      * @param VettedSecondFactor $vettedSecondFactor
      * @return bool
      */
@@ -72,12 +81,21 @@ class VettedSecondFactor implements \JsonSerializable
         return $vettedSecondFactor->type == $this->type && $vettedSecondFactor->secondFactorIdentifier == $this->secondFactorIdentifier;
     }
 
+    public function vettingType(): string
+    {
+        if (is_null($this->vettingType)) {
+            return VettingType::TYPE_ON_PREMISE;
+        }
+        return $this->vettingType;
+    }
+
     public function jsonSerialize()
     {
         return [
             'id'   => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
+            'vetting_type' => $this->vettingType,
         ];
     }
 }

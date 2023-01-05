@@ -28,10 +28,14 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\Stepup\Identity\Value\VettingTypeFactory;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+use function array_key_exists;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -95,6 +99,10 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
      * @var \Surfnet\Stepup\Identity\Value\Locale
      */
     public $preferredLocale;
+    /**
+     * @var VettingType
+     */
+    public $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -108,6 +116,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
+        VettingType $vettingType,
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale
@@ -120,6 +129,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         $this->newSecondFactorId = $newSecondFactorId;
         $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
+        $this->vettingType = $vettingType;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
@@ -139,6 +149,13 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
 
     public static function deserialize(array $data)
     {
+        // Events not having a vetting type (recorded pre 5.0) default the
+        // vetting type to 'unknown'
+        $vettingType = new UnknownVettingType();
+        if (array_key_exists('vetting_type', $data)) {
+            $vettingType = VettingTypeFactory::fromData($data['vetting_type']);
+        }
+
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(
             new IdentityId($data['identity_id']),
@@ -149,6 +166,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             new SecondFactorId($data['new_second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
+            $vettingType,
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale'])
@@ -167,6 +185,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
             'new_second_factor_id' => (string)$this->newSecondFactorId,
+            'vetting_type' => $this->vettingType->jsonSerialize(),
             'second_factor_type' => (string) $this->secondFactorType,
             'preferred_locale' => (string) $this->preferredLocale,
         ];
@@ -177,6 +196,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return (new SensitiveData)
             ->withCommonName($this->commonName)
             ->withEmail($this->email)
+            ->withVettingType($this->vettingType)
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
@@ -185,6 +205,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();
         $this->email = $sensitiveData->getEmail();
+        $this->vettingType = $sensitiveData->getVettingType();
     }
 
     public function obtainUserData(): array

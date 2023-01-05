@@ -343,6 +343,80 @@
 			"response": []
 		},
 		{
+			"name": "/recovery_tokens",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/recovery_tokens?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"recovery_tokens"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page"
+			},
+			"response": []
+		},
+		{
+			"name": "/recovery_token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/recovery_tokens?identityId=8b5cdd14-74b1-43a2-a806-c171728b1bf1",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"recovery_tokens"
+					],
+					"query": [
+						{
+							"key": "identityId",
+							"value": "8b5cdd14-74b1-43a2-a806-c171728b1bf1"
+						}
+					]
+				},
+				"description": "- `identityId` optional get param\n- `verificationNonce` optional get param\n- `p` page"
+			},
+			"response": []
+		}
+		{
 			"name": "/vetted-second-factor/{secondFactorId} copy",
 			"request": {
 				"method": "GET",
@@ -874,22 +948,65 @@
 			"response": []
 		},
 		{
-			"name": "/sraa",
+			"name": "/authorization/may-register-self-asserted-tokens/123e4567-e89b-12d3-a456-426655440000",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"key": "Accept",
+						"value": "application/json"
 					},
 					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
+						"key": "Content-Type",
+						"value": "application/json"
 					}
 				],
-				"url": "http://middleware.stepup.example.com/sraa"
+				"url": {
+					"raw": "http://middleware.stepup.example.com/authorization/may-register-self-asserted-tokens",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"authorization",
+						"may-register-self-asserted-tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/authorization/may-register-recovery-tokens",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://middleware.stepup.example.com/authorization/may-register-recovery-tokens/2fb0b832-653f-408a-812d-9c84f82fcf02",
+					"protocol": "http",
+					"host": [
+						"middleware",
+						"stepup",
+						"example",
+						"com"
+					],
+					"path": [
+						"authorization",
+						"may-register-recovery-tokens",
+						"2fb0b832-653f-408a-812d-9c84f82fcf02"
+					]
+				}
 			},
 			"response": []
 		}

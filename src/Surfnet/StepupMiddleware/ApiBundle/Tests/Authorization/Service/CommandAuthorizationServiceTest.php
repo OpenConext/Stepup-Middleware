@@ -35,11 +35,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 
@@ -109,7 +109,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -137,7 +137,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -172,7 +172,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -234,7 +234,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     * @dataProvider availableCommands-
+     * @dataProvider availableCommands
      *
      * @param mixed $value
      */
@@ -324,7 +324,7 @@ class CommandAuthorizationServiceTest extends TestCase
             // These commands should always be allowed to be executed
             if ($command instanceof CreateIdentityCommand ||
                 $command instanceof UpdateIdentityCommand ||
-                $command instanceof SelfVetSecondFactorCommand
+                $command instanceof SelfAsserted
             ) {
                 $this->assertTrue($this->service->maySelfServiceCommandBeExecutedOnBehalfOf($command, $actorId));
                 return;
@@ -421,16 +421,23 @@ class CommandAuthorizationServiceTest extends TestCase
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ExpressLocalePreferenceCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ForgetIdentityCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\MigrateVettedSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\PromiseSafeStoreSecretTokenPossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveGssfPossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhonePossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhoneRecoveryTokenPossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveYubikeyPossessionCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RegisterSelfAssertedSecondFactorCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoveFromWhitelistCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ReplaceWhitelistCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnRecoveryTokenCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsRecoveryTokenCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SaveVettingTypeHintCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SelfVetSecondFactorCommand',
+            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendSecondFactorRegistrationEmailCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',

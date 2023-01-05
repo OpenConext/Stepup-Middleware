@@ -25,8 +25,16 @@ use Rhumsaa\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
@@ -125,6 +133,17 @@ class AuditLogProjector implements EventListener
             $entry->secondFactorType = (string) $auditLogMetadata->secondFactorType;
         }
 
+        if (!$event instanceof RecoveryTokenRevokedEvent
+            && !$event instanceof CompliedWithRecoveryCodeRevocationEvent
+            && $auditLogMetadata->recoveryTokenId
+        ) {
+            $entry->recoveryTokenIdentifier = (string) $auditLogMetadata->recoveryTokenId;
+        }
+
+        if ($auditLogMetadata->recoveryTokenType) {
+            $entry->recoveryTokenType = (string) $auditLogMetadata->recoveryTokenType;
+        }
+
         if ($auditLogMetadata->secondFactorIdentifier) {
             $entry->secondFactorIdentifier = (string) $auditLogMetadata->secondFactorIdentifier;
         }
@@ -141,6 +160,12 @@ class AuditLogProjector implements EventListener
         $entries = $this->auditLogRepository->findByIdentityId($event->identityId);
         foreach ($entries as $auditLogEntry) {
             $auditLogEntry->actorCommonName = CommonName::unknown();
+
+            if ($auditLogEntry->recoveryTokenIdentifier) {
+                $auditLogEntry->recoveryTokenIdentifier = RecoveryTokenIdentifierFactory::unknownForType(
+                    new RecoveryTokenType($auditLogEntry->recoveryTokenType)
+                );
+            }
         }
 
         $entriesWhereActor = $this->auditLogRepository->findEntriesWhereIdentityIsActorOnly($event->identityId);

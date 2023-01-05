@@ -4,6 +4,22 @@ command_handle:
     methods:   [POST]
     condition: "request.headers.get('Content-Type') == 'application/json' && request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+authorization_self_asserted_tokens:
+    path: /authorization/may-register-self-asserted-tokens/{identityId}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::mayRegisterSelfAssertedTokensAction }
+    methods: [ GET ]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+authorization_recovery_tokens:
+    path: /authorization/may-register-recovery-tokens/{identityId}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::mayRegisterRecoveryTokensAction }
+    methods: [ GET ]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 deprovision_dry_run:
     path: /deprovision/{collabPersonId}/dry-run
     requirements:
@@ -88,6 +104,20 @@ verified_second_factor_can_skip_prove_posession:
 vetted_second_factor:
     path:     /vetted-second-factor/{id}
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettedSecondFactorController::getAction }
+    methods:  [GET]
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+recovery_token:
+    path: /recovery_token/{id}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::getAction }
+    methods:  [GET]
+    requirements:
+        id: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+recovery_tokens:
+    path: /recovery_tokens
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\RecoveryTokenController::collectionAction }
     methods:  [GET]
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
@@ -191,6 +221,14 @@ ra_location:
 institution_configuration_options_for_institution:
     path:     /institution-configuration-options/{institutionName}
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\InstitutionConfigurationOptionsController::getForInstitutionAction }
+    methods:  [GET]
+    requirements:
+        institution: ".+"
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
+vetting_type_hint:
+    path: /vetting-type-hint/{institution}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\VettingTypeHintController::getAction }
     methods:  [GET]
     requirements:
         institution: ".+"

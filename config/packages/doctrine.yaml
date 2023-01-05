@@ -72,6 +72,9 @@ doctrine:
             stepup_second_factor_status:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType
                 commented: false
+            stepup_recovery_token_status:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType
+                commented: false
             stepup_ra_location_name:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType
                 commented: false
@@ -102,8 +105,14 @@ doctrine:
             stepup_self_vet_option:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType
                 commented: false
+            stepup_self_asserted_tokens_option:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfAssertedTokensOptionType
+                commented: false
             stepup_institution_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType
+                commented: false
+            stepup_vetting_type_hints:
+                class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VettingTypeHintsType
                 commented: false
     orm:
         default_entity_manager: middleware

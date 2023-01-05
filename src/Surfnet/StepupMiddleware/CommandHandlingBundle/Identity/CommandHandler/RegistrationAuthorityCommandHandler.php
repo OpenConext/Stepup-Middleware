@@ -35,6 +35,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIden
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SaveVettingTypeHintCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -51,15 +53,18 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
     private $institutionConfigurationRepository;
 
     /**
-     * @param RepositoryInterface $repository
-     * @param InstitutionConfigurationRepository $institutionConfigurationRepository
+     * @var VettingTypeHintService;
      */
+    private $vettingTypeHintService;
+
     public function __construct(
         RepositoryInterface $repository,
-        InstitutionConfigurationRepository $institutionConfigurationRepository
+        InstitutionConfigurationRepository $institutionConfigurationRepository,
+        VettingTypeHintService $hintService
     ) {
         $this->repository = $repository;
         $this->institutionConfigurationRepository = $institutionConfigurationRepository;
+        $this->vettingTypeHintService = $hintService;
     }
 
     public function handleAccreditIdentityCommand(AccreditIdentityCommand $command)
@@ -117,6 +122,17 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 
         $identity->retractRegistrationAuthority(new Institution($command->raInstitution));
 
+        $this->repository->save($identity);
+    }
+
+    public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command)
+    {
+        $identity = $this->repository->load(new IdentityId($command->identityId));
+        $collection = $this->vettingTypeHintService->collectionFrom($command->hints);
+        $identity->saveVettingTypeHints(
+            new Institution($command->institution),
+            $collection
+        );
         $this->repository->save($identity);
     }
 

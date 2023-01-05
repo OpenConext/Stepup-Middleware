@@ -1,4 +1,35 @@
 # Changelog
+
+# 5.0.3 .. 5.0.6
+- Add support for old 'vetting type-less' identity move event payload #393
+- Make deprovision less strict #382
+- Update documentation for recovery token API config #386
+- Listen for recovery token possession events #387
+- Fix misleading institution configuration error message #389
+
+# 5.0.2
+**Bugfix**
+- Repair several mailer service issues #381
+- Deprovision endpoint no longer returns FAILED when user already deprovisioned  
+
+# 5.0.1
+**Bugfix**
+- Repair addressing in Swiftmailer 
+
+# 5.0.0
+**Self-asserted token registration**
+- Create the self-asserted tokens feature toggle #353
+- Self-asserted registration commands are handled #360
+- Audit log now show recovery tokens #371
+- Projections where updated #368
+- Support recovery token interactions #370 #361 #358 #357  #356
+- Authorization endpoint changes  #354 #372 #366 #365
+- Support vetting type hints (creation and retrieval) #373
+- Send recovery token mail messages #374
+
+**Maintenance**
+- Replace deprecated Swiftmailer with Symfony mailer #352
+
 # 4.5.1
 - Respond with OK when identity not found (deprovisioning) #375
 - Several minor security and other improvements 

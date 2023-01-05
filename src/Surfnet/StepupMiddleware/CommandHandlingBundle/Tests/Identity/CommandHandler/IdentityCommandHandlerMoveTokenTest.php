@@ -824,11 +824,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
-                    new SecondFactorType('yubikey'),
-                    $sourceYubikeySecFacId,
-                    $targetRegistrantCommonName,
-                    $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new SecondFactorType('yubikey')
                 ),
             ]);
     }

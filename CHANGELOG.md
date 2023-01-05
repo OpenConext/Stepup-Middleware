@@ -1,5 +1,12 @@
 # Changelog
 
+# 5.0.3 .. 5.0.6
+- Add support for old 'vetting type-less' identity move event payload #393
+- Make deprovision less strict #382
+- Update documentation for recovery token API config #386
+- Listen for recovery token possession events #387
+- Fix misleading institution configuration error message #389
+
 # 5.0.2
 **Bugfix**
 - Repair several mailer service issues #381

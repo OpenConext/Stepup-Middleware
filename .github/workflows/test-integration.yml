@@ -32,4 +32,4 @@ jobs:
       - name: Output log files on failure
         if: failure()
         run: |
-          tail -2000 /var/log/syslog 
+          cd ci/docker && docker-compose logs -t stepup-middleware

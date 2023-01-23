@@ -25,6 +25,25 @@ interface VettingType extends JsonSerializable
     public const TYPE_ON_PREMISE = 'on-premise';
     public const TYPE_SELF_VET = 'self-vet';
 
+    /**
+     * A vetting type is categorized by the way the identity of the user was established. At
+     * this point there are two categories
+     */
+
+    /**
+     * The Identity was proven in a self-asserted manner. By proving possession of a
+     * fysical token without intervention of a third party. The identity asserts
+     * his/her identity his/herself.
+     */
+    public const CATEGORY_IDENTITY_SELF_ASSERTED = 'self-asserted-identity';
+
+    /**
+     * The identity is proven by visiting a fysical vetting station. This means the
+     * identity visits a RA(A) that verifies the identity of the user by checking
+     * a legal document (passport/drivers licence).
+     */
+    public const CATEGORY_IDENTITY_VETTED = 'identity-vetted';
+
     public function auditLog(): string;
 
     public function type(): string;

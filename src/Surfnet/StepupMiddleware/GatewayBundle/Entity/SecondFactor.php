@@ -96,11 +96,16 @@ class SecondFactor
     private $secondFactorIdentifier;
 
     /**
-     * @var string
+     * This boolean indicates if the second factor token was vetted
+     * using one of the vetting types that are considered 'identity-vetted'.
+     * That in turn means if the owner of the second factor token has its
+     * identity vetted (verified) by a RA(A) at the service desk. This trickles
+     * down to the self-vet vetting type. As the token used for self vetting
+     * was RA vetted.
      *
-     * @ORM\Column(length=255)
+     * @ORM\Column(type="boolean", options={"default":"1"})
      */
-    private $vettingType;
+    private $identityVetted;
 
     public function __construct(
         $identityId,
@@ -110,7 +115,7 @@ class SecondFactor
         $secondFactorId,
         $secondFactorIdentifier,
         $secondFactorType,
-        $vettingType
+        $identityVetted
     ) {
         $this->id                     = (string) Uuid::uuid4();
         $this->identityId             = $identityId;
@@ -119,7 +124,7 @@ class SecondFactor
         $this->displayLocale          = $displayLocale;
         $this->secondFactorId         = $secondFactorId;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->secondFactorType       = $secondFactorType;
-        $this->vettingType = $vettingType;
+        $this->secondFactorType = $secondFactorType;
+        $this->identityVetted = $identityVetted;
     }
 }

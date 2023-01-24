@@ -35,7 +35,12 @@ final class Version20220519134637 extends AbstractMigration implements Container
         $this->addSql('CREATE TABLE vetting_type_hint (institution VARCHAR(36) NOT NULL, hints LONGTEXT NOT NULL, PRIMARY KEY(institution)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
 
         $gatewaySchema = $this->getGatewaySchema();
-        $this->addSql(sprintf('ALTER TABLE %s.second_factor ADD vetting_type VARCHAR(255) NOT NULL', $gatewaySchema));
+        $this->addSql(
+            sprintf(
+                'ALTER TABLE %s.second_factor ADD identity_vetted TINYINT(1) DEFAULT \'1\'',
+                $gatewaySchema
+            )
+        );
 
     }
 
@@ -51,7 +56,7 @@ final class Version20220519134637 extends AbstractMigration implements Container
         $this->addSql('DROP TABLE vetting_type_hint');
 
         $gatewaySchema = $this->getGatewaySchema();
-        $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP vetting_type', $gatewaySchema));
+        $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP identity_vetted', $gatewaySchema));
     }
 
     private function getGatewaySchema()

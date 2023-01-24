@@ -30,12 +30,12 @@
       </trans-unit>
       <trans-unit id="d75ff98153fdc619752c135a41e48deadf4ce039" resname="ss.mail.recovery_token_created_email.subject">
         <source>ss.mail.recovery_token_created_email.subject</source>
-        <target>[Recovery token] ready for use</target>
+        <target>Recovery method ready for use</target>
         <jms:reference-file line="163">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RecoveryTokenMailService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="fc18c7bc72eaf89299a900e0b911c4662e29859d" resname="ss.mail.recovery_token_revoked_email.subject">
         <source>ss.mail.recovery_token_revoked_email.subject</source>
-        <target state="translated">Your %tokenType% [recovery token] was revoked</target>
+        <target state="translated">Your recovery method was revoked</target>
         <jms:reference-file line="117">/src/Surfnet/StepupMiddleware/CommandHandlingBundle/Identity/Service/RecoveryTokenMailService.php</jms:reference-file>
       </trans-unit>
       <trans-unit id="0ddb12f14d7aee72840d8a71af5a6547ab9864da" resname="ss.mail.registration_email.subject">

@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -87,6 +88,12 @@ class RaCandidateRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('vsf.type IN (:secondFactorTypes)')
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);
+            // Self asserted tokens diminish the LoA never resulting in a valid
+            // second factor candidate. Only on-premise and self-vetted tokens
+            // can be a valid option.
+            $queryBuilder
+                ->andWhere('vsf.vettingType != :vettingType')
+                ->setParameter('vettingType', VettingType::TYPE_SELF_ASSERTED_REGISTRATION);
         }
 
         if (!empty($query->raInstitution)) {

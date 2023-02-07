@@ -58,7 +58,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 (string) $event->yubikeyPublicId,
                 'yubikey',
-                VettingType::TYPE_UNKNOWN
+                true
             )
         );
     }
@@ -74,7 +74,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->newSecondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $event->vettingType->type()
+                $this->isIdentityVetted($event->vettingType)
             )
         );
     }
@@ -90,7 +90,7 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $event->vettingType->type()
+                $this->isIdentityVetted($event->vettingType)
             )
         );
     }
@@ -106,9 +106,14 @@ class SecondFactorProjector extends Projector
                 (string) $event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $event->vettingType->type()
+                $this->isIdentityVetted($event->vettingType)
             )
         );
+    }
+
+    private function isIdentityVetted(VettingType $vettingType): bool
+    {
+        return $vettingType->type() !== VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
     }
 
     protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)

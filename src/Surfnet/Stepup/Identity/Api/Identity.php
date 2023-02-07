@@ -202,9 +202,15 @@ interface Identity extends AggregateRoot
     );
 
     /**
-     * Self vetting, is when the user uses it's own token to vet another.
+     * Self vetting, is when the user uses its own token to vet another.
      *
      * Here the new token should have a lower or equal LoA to that of the one in possession of the identity
+     *
+     * Alternatively, the selfVetSecondFactor allows for vetting of self-asserted tokens. In that case, a
+     * token that was activated using a self-asserted vetting method, is used to author the possession of
+     * a new verified token. Note that this newly self-vetted token will have a diminished LoA. This because
+     * the self-asserted token used to author itself has a deminished LoA level due to the lack of a vetted
+     * identity.
      */
     public function selfVetSecondFactor(
         Loa $authoringSecondFactorLoa,

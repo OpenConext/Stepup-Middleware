@@ -33,6 +33,7 @@ use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupBundle\Value\VettingType as StepupVettingType;
 
 /**
  * A second factor whose possession has been proven by the registrant and the registrant's e-mail address has been
@@ -219,7 +220,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): int
     {
-        return $secondFactorTypeService->getLevel($this->type);
+        return $secondFactorTypeService->getLevel($this->type, new StepupVettingType(VettingType::TYPE_UNKNOWN));
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)

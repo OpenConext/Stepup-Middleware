@@ -66,7 +66,7 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
      *
      * @var string
      */
-    public $authoringSecondFactorIdentifier;
+    public $authoringSecondFactorLoa;
 
     public function getIdentityId()
     {

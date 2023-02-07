@@ -1,5 +1,12 @@
 # Changelog
 
+# 5.0.7
+This release changes the way the Gateway Second Factor projection is identifying
+if the SF
+
+- Filter non identity-vetted RA candidates #397
+- Update SAT projection #396
+
 # 5.0.3 .. 5.0.6
 - Add support for old 'vetting type-less' identity move event payload #393
 - Make deprovision less strict #382

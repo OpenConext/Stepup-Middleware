@@ -20,8 +20,10 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\AuthorizationDecision;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RecoveryTokenService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
@@ -66,6 +68,15 @@ class AuthorizationService
         $this->recoveryTokenService = $recoveryTokenService;
     }
 
+    /**
+     * Is an identity is allowed to register a self asserted token.
+     *
+     * An identity can register a SAT when:
+     * - The institution of the identity allows SAT
+     * - Has not yet registered a SAT
+     * - Has not possessed a non SAT token previously.
+     * - It did not lose both the recovery token and self-asserted token
+     */
     public function assertRegistrationOfSelfAssertedTokensIsAllowed(IdentityId $identityId): AuthorizationDecision
     {
         $identity = $this->identityService->find((string)$identityId);
@@ -110,6 +121,51 @@ class AuthorizationService
         return $this->allow();
     }
 
+    /**
+     * Is an identity allowed to self vet using a self-asserted token?
+     *
+     * One is allowed to do so when:
+     *  - SAT is allowed for the institution of the identity
+     *  - All of the tokens of the identity are vetted using the SAT vetting type
+     */
+    public function assertSelfVetUsingSelfAssertedTokenIsAllowed(IdentityId $identityId): AuthorizationDecision
+    {
+        $identity = $this->identityService->find((string)$identityId);
+        if (!$identity) {
+            return $this->deny('Identity not found');
+        }
+
+        $institution = new Institution((string)$identity->institution);
+        $institutionConfiguration = $this->institutionConfigurationService
+            ->findInstitutionConfigurationOptionsFor($institution);
+        if (!$institutionConfiguration) {
+            return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
+        }
+
+        if (!$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
+            return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
+        }
+
+        $query = new VettedSecondFactorQuery();
+        $query->identityId = $identityId;
+        $query->pageNumber = 1;
+        $tokens = $this->secondFactorService->searchVettedSecondFactors($query);
+        foreach ($tokens->getIterator() as $vettedToken) {
+            if ($vettedToken->vettingType !== VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
+                return $this->deny('Self-vetting using SAT is only allowed when only SAT tokens are in possession');
+            }
+        }
+
+        return $this->allow();
+    }
+
+    /**
+     * Is an identity allowed to register recovery tokens?
+     *
+     * One is allowed to do so when:
+     *  - SAT is allowed for the institution of the identity
+     *  - Identity must possess a SAT (or did so at one point)
+     */
     public function assertRecoveryTokensAreAllowed(IdentityId $identityId): AuthorizationDecision
     {
         $identity = $this->identityService->find((string)$identityId);

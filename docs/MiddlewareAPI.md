@@ -115,6 +115,42 @@ Example of possible error messages. These may differ in the real world, but give
 ```
 
 
+### Allowed to self-vet using an existing self-asserted token?
+
+Is the Identity allowed to self-vet a token using a self-asserted token (SAT). This is only allowed when the only token(s) 
+possessed by the identity are of the self-asserted token vetting type. If another token type is registered, the 
+middleware will nudge the user to use that token. As using a SAT token will result in a token with a lowered LoA. As the
+identity of the user is not verified by a RA(A).
+
+- URL: `http://middleware.tld/authorization/may-self-vet-using-self-asserted-token/{identityId}`
+- Method: GET
+- Request parameters:
+  - identityId: (required) UUIDv4 of the identity to assert the authorization for
+
+### Response
+`200 OK`
+```json
+{   
+    "code": 200
+}
+```
+
+`403 Forbidden`
+
+Example of possible error messages. These may differ in the real world, but give a grasp on what they should look like.
+
+```json
+{   
+  "code": 403,
+  "errors": [
+    "Not permitted: institution does not allow self-asserted tokens.",
+    "Not permitted: no recovery method found.",
+    "Not permitted: no vetted tokens may be in possession."
+  ]
+}
+```
+
+
 ## Command API
 
 For documentation of the commands that can be handled with the Command API. Please consult [this document](MiddlewareAPICommands.md).

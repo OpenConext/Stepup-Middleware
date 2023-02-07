@@ -3693,16 +3693,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "4.2.2",
+            "version": "4.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "410579c2f0e018fca6cb8acb8e26ee7296654347"
+                "reference": "c7239a4bff489cc40ebb0dd34c5326d5dfac5046"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/410579c2f0e018fca6cb8acb8e26ee7296654347",
-                "reference": "410579c2f0e018fca6cb8acb8e26ee7296654347",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/c7239a4bff489cc40ebb0dd34c5326d5dfac5046",
+                "reference": "c7239a4bff489cc40ebb0dd34c5326d5dfac5046",
                 "shasum": ""
             },
             "require": {
@@ -3711,7 +3711,7 @@
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^6.0",
                 "monolog/monolog": "~1.11",
-                "php": "^7.0",
+                "php": "^7.2",
                 "sensio/framework-extra-bundle": "^5.4",
                 "surfnet/stepup-saml-bundle": "^4.1.8",
                 "symfony/config": "^4.4",
@@ -3749,9 +3749,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-bundle/tree/4.2.2"
+                "source": "https://github.com/OpenConext/Stepup-bundle/tree/4.2.6"
             },
-            "time": "2021-12-20T14:27:51+00:00"
+            "time": "2023-02-16T15:19:16+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",

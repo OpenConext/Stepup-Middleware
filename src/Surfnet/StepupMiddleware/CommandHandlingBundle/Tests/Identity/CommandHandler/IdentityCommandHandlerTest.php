@@ -1862,7 +1862,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorId = '+31 (0) 612345678';
         $command->registrationCode = 'REGCODE';
         $command->identityId = $this->uuid();
-        $command->authoringSecondFactorIdentifier = "4fa592af-dded-4fae-9bc6-7f83f3636da4";
+        $command->authoringSecondFactorLoa = "loa-3";
         $command->secondFactorType = 'sms';
 
         $authorityPhoneSfId         = new SecondFactorId($this->uuid());
@@ -1870,7 +1870,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $registrantId = new IdentityId($command->identityId);
         $registrantInstitution = new Institution('Institution');
-        $registrantSecFacId = new SecondFactorId($command->authoringSecondFactorIdentifier);
+        $registrantSecFacId = new SecondFactorId($command->authoringSecondFactorId);
         $registrantSecPubId = new YubikeyPublicId('00028278');
         $registrantNameId = new NameId('name id');
         $registrantEmail = new Email('jack@zweiblumen.tld');

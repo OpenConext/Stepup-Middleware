@@ -29,7 +29,12 @@ final class Version20220519134637 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE institution_configuration_options ADD self_asserted_tokens_option INT DEFAULT \'0\' NOT NULL');
         $this->addSql('CREATE TABLE recovery_token (id VARCHAR(36) NOT NULL, identity_id VARCHAR(36) NOT NULL, type VARCHAR(16) NOT NULL, recovery_method_identifier VARCHAR(255) NOT NULL, INDEX idx_recovery_method_type (type), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE identity_self_asserted_token_options (identity_id VARCHAR(36) NOT NULL, possessed_token TINYINT(1) NOT NULL, possessed_self_asserted_token TINYINT(1) NOT NULL, PRIMARY KEY(identity_id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE vetted_second_factor ADD vetting_type VARCHAR(255) NOT NULL');
+        // The unknown vetting type is set on the vetted_second_factor::vetting_type column for the existing second
+        // factors. This to inform consumers of the projection, that the vetting type was recorded at a time before we
+        // tracked the vetting type of the vetted second factors. It is safe to assume the vetting type is either
+        // on-premise or self-vetted (both vetting types where the identity of the user was verified at the service desk
+        // at some point).
+        $this->addSql('ALTER TABLE vetted_second_factor ADD vetting_type VARCHAR(255) DEFAULT \'unknown\'');
         $this->addSql('ALTER TABLE recovery_token ADD institution VARCHAR(255) NOT NULL, ADD name VARCHAR(255) NOT NULL, ADD email VARCHAR(255) NOT NULL, ADD status INT NOT NULL');
         $this->addSql('ALTER TABLE audit_log ADD recovery_token_identifier VARCHAR(255) DEFAULT NULL, ADD recovery_token_type VARCHAR(36) DEFAULT NULL');
         $this->addSql('CREATE TABLE vetting_type_hint (institution VARCHAR(36) NOT NULL, hints LONGTEXT NOT NULL, PRIMARY KEY(institution)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB');

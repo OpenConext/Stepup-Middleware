@@ -1,5 +1,8 @@
 # Changelog
 
+# 5.0.8
+-  Set default value for vetted_second_factor vetting_type column #400
+
 # 5.0.7
 This release changes the way the Gateway Second Factor projection is identifying
 if the SF

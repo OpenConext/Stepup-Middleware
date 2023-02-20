@@ -12,6 +12,14 @@ authorization_self_asserted_tokens:
         identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
     condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
 
+authorization_self_vet_self_asserted_tokens:
+    path: /authorization/may-self-vet-using-self-asserted-token/{identityId}
+    defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::maySelfVetSelfAssertedTokenAction }
+    methods: [ GET ]
+    requirements:
+        identityId: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+    condition: "request.headers.get('Accept') matches '/^application\\\\/json($|[;,])/'"
+
 authorization_recovery_tokens:
     path: /authorization/may-register-recovery-tokens/{identityId}
     defaults: { _controller: Surfnet\StepupMiddleware\ApiBundle\Controller\AuthorizationController::mayRegisterRecoveryTokensAction }

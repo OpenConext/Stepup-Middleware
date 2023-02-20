@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren) we simply have a lot of commands
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName) UUID was not camel cased intentionally
  */
 abstract class AbstractCommand implements Command
 {

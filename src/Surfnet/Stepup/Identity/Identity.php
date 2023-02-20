@@ -101,6 +101,7 @@ use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\UnknownVettingType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\Stepup\Token\TokenGenerator;
 use Surfnet\StepupBundle\Security\OtpGenerator;
@@ -108,6 +109,7 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -596,6 +598,27 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $registeringSecondFactor->vet(true, new SelfAssertedRegistrationVettingType($recoveryToken->getTokenId()));
     }
 
+    /**
+     * Two self-vet scenarios are dealt with
+     *
+     * 1. A regular self-vet action. Where an on premise token is used to vet another token
+     *    from the comfort of the identity's SelfService application. In other words, self vetting
+     *    allows the identity to activate a second/third/.. token without visiting the service desk
+     *
+     * 2. A variation on 1: but here a self-asserted token is used to activate the verified token.
+     *    This new token will inherit the LoA of the self-asserted token. Effectively giving it a
+     *    LoA 1.5 level.
+     *
+     * The code below uses the following terminology
+     *
+     *   RegisteringSecondFactor: This is the verified second factor that is to be activated
+     *                            using the self-vet vetting type
+     *   AuthoringSecondFactor:   The vetted token, used to activate (vet) the RegisteringSecondFactor
+     *   IsSelfVetUsingSAT:       Is self-vetting using a self-asserted token allowed for this
+     *                            self-vet scenario? All existing vetted tokens must be of the
+     *                            self-asserted vetting type.
+     *
+     */
     public function selfVetSecondFactor(
         Loa $authoringSecondFactorLoa,
         string $registrationCode,
@@ -629,12 +652,23 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
             $registeringSecondFactor->getLoaLevel($secondFactorTypeService)
         );
 
-        if (!$selfVettingIsAllowed) {
+        // Was the authorizing token a self-asserted token (does it have LoA 1.5?)
+        $isSelfVetUsingSAT = $authoringSecondFactorLoa->getLevel() === Loa::LOA_SELF_VETTED;
+
+        if (!$selfVettingIsAllowed && !$isSelfVetUsingSAT) {
             throw new DomainException(
                 "The second factor to be vetted has a higher LoA then the Token used for proving possession"
             );
         }
 
+        if ($isSelfVetUsingSAT) {
+            // Assert that all previously vetted tokens are SAT tokens. If this is not the case, do not allow
+            // self vetting using a SAT.
+            $this->assertAllVettedTokensAreSelfAsserted();
+            $recoveryToken = $this->recoveryTokens->first();
+            $registeringSecondFactor->vet(true, new SelfAssertedRegistrationVettingType($recoveryToken->getTokenId()));
+            return;
+        }
         $registeringSecondFactor->vet(true, new SelfVetVettingType($authoringSecondFactorLoa));
     }
 
@@ -1487,5 +1521,21 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         if ($this->recoveryTokens->count() === 0) {
             throw new DomainException("A recovery token is required to perform a self-asserted token registration");
         }
+    }
+
+    /**
+     * Verify that every vetted second factor is self-asserted
+     */
+    private function assertAllVettedTokensAreSelfAsserted()
+    {
+        /** @var VettedSecondFactor $vettedToken */
+        foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
+            if ($vettedSecondFactor->vettingType()->type() !== VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
+                throw new DomainException(
+                    'Not all tokens are self-asserted, it is not allowed to self-vet using the self-asserted token'
+                );
+            }
+        }
+        return true;
     }
 }

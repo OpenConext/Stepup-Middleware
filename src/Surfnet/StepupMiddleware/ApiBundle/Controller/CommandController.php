@@ -37,6 +37,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use function json_encode;
+use function var_export;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -93,7 +95,6 @@ class CommandController extends Controller
     public function handleAction(Command $command, Metadata $metadata, Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
-
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));
 
         $this->metadataEnricher->setMetadata($metadata);

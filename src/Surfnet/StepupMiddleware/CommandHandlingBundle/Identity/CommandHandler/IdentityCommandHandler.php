@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler
 
 use Broadway\CommandHandling\SimpleCommandHandler;
 use Broadway\Repository\Repository as RepositoryInterface;
-use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
@@ -113,7 +112,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     private $institutionConfigurationOptionsService;
 
     /**
-     * @var InstitutionConfigurationRepository
+     * @var LoaResolutionService
      */
     private $loaResolutionService;
 
@@ -427,12 +426,12 @@ class IdentityCommandHandler extends SimpleCommandHandler
             new SecondFactorType($command->secondFactorType),
             $command->secondFactorId
         );
-        $loa = $this->loaResolutionService->getLoa($command->authoringSecondFactorIdentifier);
+        $loa = $this->loaResolutionService->getLoa($command->authoringSecondFactorLoa);
         if ($loa === null) {
             throw new UnknownLoaException(
                 sprintf(
                     'Authorizing second factor with LoA %s can not be resolved',
-                    $command->authoringSecondFactorIdentifier
+                    $command->authoringSecondFactorLoa
                 )
             );
         }

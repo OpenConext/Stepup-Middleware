@@ -21,7 +21,6 @@ namespace Surfnet\Stepup\Identity\Entity;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
-use function array_key_exists;
 
 final class RecoveryTokenCollection
 {
@@ -61,5 +60,13 @@ final class RecoveryTokenCollection
     public function remove(RecoveryTokenId $recoveryTokenId)
     {
         unset($this->recoveryTokens[(string)$recoveryTokenId]);
+    }
+
+    public function first(): RecoveryToken
+    {
+        if ($this->count() === 0) {
+            throw new DomainException('Unable to get the first recovery token from an empty collection');
+        }
+        return current($this->recoveryTokens);
     }
 }

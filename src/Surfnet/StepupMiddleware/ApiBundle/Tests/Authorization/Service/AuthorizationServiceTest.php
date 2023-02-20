@@ -19,21 +19,26 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
+use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\IdentitySelfAssertedTokenOptions;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RecoveryTokenService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 
 class AuthorizationServiceTest extends TestCase
 {
+    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
     /**
      * @var m\MockInterface|IdentityService
      */
@@ -430,5 +435,115 @@ class AuthorizationServiceTest extends TestCase
 
         $this->assertEquals(200, $decision->getCode());
         $this->assertEmpty($messages);
+    }
+
+    public function test_it_allows_self_vetting_when_one_sat_present()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+
+        $vettedSecondFactor = m::mock(VettedSecondFactor::class);
+        $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
+
+        $collection = m::mock(Pagerfanta::class);
+        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor]);
+
+        $this->secondFactorService
+            ->shouldReceive('searchVettedSecondFactors')
+            ->andReturn($collection);
+
+        $decision = $this->service->assertSelfVetUsingSelfAssertedTokenIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(200, $decision->getCode());
+        $this->assertEmpty($messages);
+    }
+
+    public function test_it_allows_self_vetting_when_multiple_sat_present()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+        $vettedSecondFactor = m::mock(VettedSecondFactor::class);
+        $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
+
+        $collection = m::mock(Pagerfanta::class);
+        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+
+        $this->secondFactorService
+            ->shouldReceive('searchVettedSecondFactors')
+            ->andReturn($collection);
+
+        $decision = $this->service->assertSelfVetUsingSelfAssertedTokenIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(200, $decision->getCode());
+        $this->assertEmpty($messages);
+    }
+
+   public function test_it_denies_self_vetting_when_other_vetting_type()
+    {
+        $identity = new Identity();
+        $identity->institution = new Institution('Known institution');
+        $identity->possessedSelfAssertedToken = true;
+
+        $this->identityService
+            ->shouldReceive('find')
+            ->once()
+            ->andReturn($identity);
+
+        $options = new InstitutionConfigurationOptions();
+        $options->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->institutionConfigurationService
+            ->shouldReceive('findInstitutionConfigurationOptionsFor')
+            ->once()
+            ->andReturn($options);
+
+        $identityId = new IdentityId('known-user-id');
+
+        $vettedSecondFactor = m::mock(VettedSecondFactor::class);
+        $vettedSecondFactor->vettingType = VettingType::TYPE_ON_PREMISE;
+
+        $collection = m::mock(Pagerfanta::class);
+        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+
+        $this->secondFactorService
+            ->shouldReceive('searchVettedSecondFactors')
+            ->andReturn($collection);
+
+        $decision = $this->service->assertSelfVetUsingSelfAssertedTokenIsAllowed($identityId);
+        $messages = $decision->getErrorMessages();
+
+        $this->assertEquals(403, $decision->getCode());
+        $this->assertEquals('Self-vetting using SAT is only allowed when only SAT tokens are in possession', reset($messages));
     }
 }

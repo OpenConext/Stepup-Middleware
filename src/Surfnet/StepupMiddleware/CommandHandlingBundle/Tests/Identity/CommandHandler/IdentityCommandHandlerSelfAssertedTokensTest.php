@@ -24,6 +24,7 @@ use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\DomainException;
@@ -33,33 +34,42 @@ use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
+use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
+use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+use Surfnet\StepupBundle\Value\Loa;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
@@ -71,6 +81,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\IdentityCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
@@ -94,7 +105,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     private $identityProjectionRepository;
 
     /**
-     * @var SecondFactorTypeService
+     * @var SecondFactorTypeService|m\MockInterface
      */
     private $secondFactorTypeService;
 
@@ -683,6 +694,314 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     RecoveryTokenType::safeStore()
                 )
             ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_a_sat_token_can_be_used_to_self_vet_a_token()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = m::mock(HashedSecret::class);
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $secondFactorId = new SecondFactorId($this->uuid());
+        $yubikeyPublicId = new YubikeyPublicId('12341234');
+
+        $vettingType = new SelfAssertedRegistrationVettingType($recoveryTokenId);
+
+        $loa = new Loa(1.5, 'loa-self-asserted');
+        $this->loaResolutionService->shouldReceive('getLoa')->with('loa-self-asserted')->andReturn($loa);
+        $phoneSfId         = new SecondFactorId($this->uuid());
+        $phoneIdentifier           = new PhoneNumber('+31 (0) 612345678');
+
+        $command = new SelfVetSecondFactorCommand();
+        $command->secondFactorId = '+31 (0) 612345678';
+        $command->registrationCode = 'REGCODE';
+        $command->identityId = $this->id->getIdentityId();
+        $command->authoringSecondFactorLoa = "loa-self-asserted";
+        $command->secondFactorType = 'sms';
+
+        $this->secondFactorTypeService->shouldReceive('getLevel')->andReturn(1.5);
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new YubikeyPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $yubikeyPublicId,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    new SafeStore($secret),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                ),
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->id,
+                    $this->nameId,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType($command->secondFactorType),
+                    $yubikeyPublicId,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale,
+                    $vettingType
+                ),
+                // The next token is self-vetted using the other SAT token
+                new PhonePossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $phoneSfId,
+                    $phoneIdentifier,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $phoneSfId,
+                    new SecondFactorType('sms'),
+                    $phoneIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                // When self vetting, proof of possession is skipped, no RA verification is performed.
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->id,
+                    $this->nameId,
+                    $this->institution,
+                    $phoneSfId,
+                    new SecondFactorType('sms'),
+                    $phoneIdentifier,
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB'),
+                    new SelfAssertedRegistrationVettingType($recoveryTokenId)
+                ),
+            ]);
+    }
+
+    /**
+     * @group command-handler
+     * @runInSeparateProcess
+     */
+    public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted()
+    {
+        $recoveryTokenId = new RecoveryTokenId(self::uuid());
+        $secret = m::mock(HashedSecret::class);
+
+        $confMock = m::mock(InstitutionConfigurationOptions::class);
+        $confMock->selfAssertedTokensOption = new SelfAssertedTokensOption(true);
+        $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
+
+        $secondFactorId = new SecondFactorId($this->uuid());
+        $yubikeyPublicId = new YubikeyPublicId('12341234');
+
+        $vettingType = new SelfAssertedRegistrationVettingType($recoveryTokenId);
+
+        $loa = new Loa(1.5, 'loa-self-asserted');
+        $this->loaResolutionService->shouldReceive('getLoa')->with('loa-self-asserted')->andReturn($loa);
+        $phoneSfId = new SecondFactorId($this->uuid());
+        $phoneIdentifier = new PhoneNumber('+31 (0) 612345678');
+
+        $gsspId = new SecondFactorId('3c085c9a-a69e-4ebe-a17a-8f5aa1a579fb');
+        $gsspIdentifier = new GssfId('identifier-for-a-gssp');
+
+        $command = new SelfVetSecondFactorCommand();
+        $command->secondFactorId = 'identifier-for-a-gssp';
+        $command->registrationCode = 'REGCODE';
+        $command->identityId = $this->id->getIdentityId();
+        $command->authoringSecondFactorLoa = "loa-self-asserted";
+        $command->secondFactorType = 'tiqr';
+
+        $this->secondFactorTypeService->shouldReceive('getLevel')->andReturn(1.5);
+
+        $this->allowedSecondFactorListServiceMock
+            ->shouldReceive('getAllowedSecondFactorListFor')
+            ->andReturn(
+                AllowedSecondFactorList::ofTypes(
+                    [
+                        new SecondFactorType('tiqr'),
+                        new SecondFactorType('yubikey'),
+                        new SecondFactorType('sms'),
+                    ]
+                )
+            );
+
+        $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(5);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Not all tokens are self-asserted, it is not allowed to self-vet using the self-asserted token');
+
+        $this->scenario
+            ->withAggregateId($this->id)
+            ->given([
+                $this->buildIdentityCreatedEvent(),
+                new YubikeyPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    $yubikeyPublicId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType('yubikey'),
+                    $yubikeyPublicId,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+                    $this->id,
+                    $this->institution,
+                    $recoveryTokenId,
+                    new SafeStore($secret),
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale
+                ),
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $this->id,
+                    $this->nameId,
+                    $this->institution,
+                    $secondFactorId,
+                    new SecondFactorType($command->secondFactorType),
+                    $yubikeyPublicId,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale,
+                    $vettingType
+                ),
+                // The next token is ra-vetted
+                new PhonePossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $phoneSfId,
+                    $phoneIdentifier,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $phoneSfId,
+                    new SecondFactorType('sms'),
+                    $phoneIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $this->id,
+                    $this->nameId,
+                    $this->institution,
+                    $phoneSfId,
+                    new SecondFactorType('sms'),
+                    $phoneIdentifier,
+                    $this->commonName,
+                    $this->email,
+                    $this->preferredLocale,
+                    new OnPremiseVettingType(new DocumentNumber('123123'))
+                ),
+                // The third token is an attempt to self-vet a token
+                new GssfPossessionProvenEvent(
+                    $this->id,
+                    $this->institution,
+                    $gsspId,
+                    new StepupProvider('tiqr'),
+                    $gsspIdentifier,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $this->id,
+                    $this->institution,
+                    $gsspId,
+                    new SecondFactorType('tiqr'),
+                    $gsspIdentifier,
+                    DateTime::now(),
+                    'REGCODE',
+                    $this->commonName,
+                    $this->email,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command);
     }
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler

@@ -1,5 +1,8 @@
 # Changelog
 
+# 5.0.9
+- Support self-vetting of self-asserted tokens #401
+
 # 5.0.8
 -  Set default value for vetted_second_factor vetting_type column #400
 

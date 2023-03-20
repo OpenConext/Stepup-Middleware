@@ -78,9 +78,10 @@ class AuthorizationRepository extends ServiceEntityRepository
             'authorizationRoles',
             $this->getAllowedInstitutionRoles($role)
         );
+        $identityRoles = $this->getAllowedIdentityRoles($role);
         $qb->setParameter(
             'roles',
-            $this->getAllowedIdentityRoles($role)
+            $identityRoles
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
@@ -97,13 +98,17 @@ class AuthorizationRepository extends ServiceEntityRepository
         $qb = $this->_em->createQueryBuilder()
             ->select('ia.institution')
             ->from(InstitutionAuthorization::class, 'ia')
-            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation')
+            // Filter the RA listing on the authorizations that apply for the RA(A) listed there
+            // For example, when testing a USE_RA institution authorization, the listed RA should have
+            // at least a RA or RAA role
+            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)')
             ->where('r.identityId = :identityId')
             ->andWhere("ia.institutionRole = :role") // Only filter on use_ra and use_raa roles here.
             ->groupBy('ia.institution');
 
         $qb->setParameter('identityId', (string)$actorId);
         $qb->setParameter('role', $role->getType());
+        $qb->setParameter('identityRoles', $identityRoles);
 
         $institutions = $qb->getQuery()->getArrayResult();
         foreach ($institutions as $institution) {
@@ -111,7 +116,7 @@ class AuthorizationRepository extends ServiceEntityRepository
             if (!$result->contains($institutionVo)) {
                 $result->add($institutionVo);
                 $this->logger->notice(
-                    sprintf('Adding %s to authorized institutions from use_raa', $institution['institution'])
+                    sprintf('Adding %s to authorized institutions from %s', $role->getType(), $institution['institution'])
                 );
             }
         }

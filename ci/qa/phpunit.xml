@@ -16,8 +16,12 @@
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
+        <testsuite name="unit">
             <directory suffix="Test.php">../../src</directory>
+        </testsuite>
+
+        <testsuite name="database">
+            <directory suffix="Test.php">../../tests/database</directory>
         </testsuite>
     </testsuites>
 

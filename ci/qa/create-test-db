@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../../
+
+printf "\nCreating 'middleware' test database\n\n"
+
+./bin/console doctrine:schema:drop -qf --env=test
+./bin/console doctrine:schema:create -q --env=test

@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
@@ -59,7 +59,7 @@ class RaListingController extends Controller
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            InstitutionRole::useRaa()
+            RegistrationAuthorityRole::raa()
         );
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
@@ -116,7 +116,7 @@ class RaListingController extends Controller
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            InstitutionRole::useRaa()
+            RegistrationAuthorityRole::raa()
         );
 
         $searchResults = $this->raListingService->search($query);

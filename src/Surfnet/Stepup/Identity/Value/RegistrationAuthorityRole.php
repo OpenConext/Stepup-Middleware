@@ -27,7 +27,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
     const ROLE_RAA  = 2;
     const ROLE_SRAA = 3;
 
-    /**
+    /**RegistrationAuthorityRole
      * @var int
      */
     private $role;
@@ -44,6 +44,16 @@ final class RegistrationAuthorityRole implements SerializableInterface
         }
 
         $this->role = $role;
+    }
+
+    public static function ra()
+    {
+        return new self(self::ROLE_RA);
+    }
+
+    public static function raa()
+    {
+        return new self(self::ROLE_RAA);
     }
 
     /**

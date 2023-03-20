@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
@@ -97,7 +98,7 @@ class VerifiedSecondFactorController extends Controller
         $query->pageNumber = (int) $request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            new InstitutionRole(InstitutionRole::ROLE_USE_RA)
+            RegistrationAuthorityRole::ra()
         );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);

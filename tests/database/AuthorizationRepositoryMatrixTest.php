@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\Test\Database;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -44,20 +44,19 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
 
     public function authorizationMatrix()
     {
-        // Institution roles are used to filter the queries in the institution_authorization projection
-        $useRa = InstitutionRole::useRa();
-        $useRaa = InstitutionRole::useRaa();
+        $ra = RegistrationAuthorityRole::ra();
+        $raa = RegistrationAuthorityRole::raa();
         // The uuids match those of the `Fixtures/test2.sql` data
         $aRa = new IdentityId('eff4d3bc-bbe9-45d4-b80d-080bc7e06615'); // pieter-a-ra
         $aRaa = new IdentityId('947da709-185b-4d9a-ba49-0a22d99dceb3'); // michiel-a-raa (only raa in institution-a)
         $avRaa = new IdentityId('cccfece4-e5e5-40b7-9aa4-a800d7cd3633'); // pieter-a-raa (raa in inst-a and inst-v)
         return [
-            'RA from inst-a should have RA rights in inst-a+f' => [$useRa, $aRa, ['institution-a.nl', 'institution-f.nl']],
-            'RA from inst-a should not have RAA rights in inst-a+f' => [$useRaa, $aRa, []],
-            'RAA from inst-a should have RA rights in inst-a+f' => [$useRa, $aRaa, ['institution-a.nl', 'institution-f.nl']],
-            'RAA from inst-a should have RAA rights in inst-a+f' => [$useRaa, $aRaa, ['institution-a.nl', 'institution-f.nl']],
-            'RAA from inst-a+v should have RA rights in inst-a+f+i' => [$useRa, $avRaa, ['institution-a.nl', 'institution-f.nl', 'institution-i.nl']],
-            'RAA from inst-a+v should have RAA rights in inst-a+f+i' => [$useRaa, $avRaa, ['institution-a.nl', 'institution-f.nl', 'institution-i.nl']],
+            'RA from inst-a should have RA rights in inst-a+f' => [$ra, $aRa, ['institution-a.nl', 'institution-f.nl']],
+            'RA from inst-a should not have RAA rights in inst-a+f' => [$raa, $aRa, []],
+            'RAA from inst-a should have RA rights in inst-a+f' => [$ra, $aRaa, ['institution-a.nl', 'institution-f.nl']],
+            'RAA from inst-a should have RAA rights in inst-a+f' => [$raa, $aRaa, ['institution-a.nl', 'institution-f.nl']],
+            'RAA from inst-a+v should have RA rights in inst-a+f+i' => [$ra, $avRaa, ['institution-a.nl', 'institution-f.nl', 'institution-i.nl']],
+            'RAA from inst-a+v should have RAA rights in inst-a+f+i' => [$raa, $avRaa, ['institution-a.nl', 'institution-f.nl', 'institution-i.nl']],
         ];
     }
 
@@ -91,11 +90,11 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
      * @dataProvider authorizationMatrix
      */
     public function test_get_institutions_for_role_matrix(
-        InstitutionRole $institutionRole,
+        RegistrationAuthorityRole $requiredRole,
         IdentityId $identity,
         array $expectedInstitutions
     ) {
-        $institutions = $this->authzRepository->getInstitutionsForRole($institutionRole, $identity);
+        $institutions = $this->authzRepository->getInstitutionsForRole($requiredRole, $identity);
         $results = $this->flattenInstitutionResults($institutions);
 
         $this->assertEquals(

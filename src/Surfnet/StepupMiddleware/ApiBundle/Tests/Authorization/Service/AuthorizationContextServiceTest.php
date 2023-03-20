@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -28,6 +27,7 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
@@ -89,7 +89,7 @@ class AuthorizationContextServiceTest extends TestCase
     public function it_can_build_a_context()
     {
         $actorInstitution = new Institution('institution-a');
-        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
+        $role = RegistrationAuthorityRole::raa();
 
         $arbitraryId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -142,7 +142,7 @@ class AuthorizationContextServiceTest extends TestCase
     public function it_can_build_a_context_with_sraa_actor()
     {
         $actorInstitution = new Institution('institution-a');
-        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
+        $role = RegistrationAuthorityRole::raa();
 
         $sraaId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -200,7 +200,6 @@ class AuthorizationContextServiceTest extends TestCase
     public function test_it_can_retrieve_select_raa_institutions()
     {
         $actorInstitution = new Institution('institution-a');
-        $role = new InstitutionRole(InstitutionRole::ROLE_SELECT_RAA);
 
         $arbitraryId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 
@@ -237,9 +236,8 @@ class AuthorizationContextServiceTest extends TestCase
             ->withArgs([$identityId])
             ->andReturn($institutions);
 
-        $context = $this->service->buildInstitutionAuthorizationContext(
-            $identityId,
-            $role
+        $context = $this->service->buildSelectRaaInstitutionAuthorizationContext(
+            $identityId
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -255,7 +253,7 @@ class AuthorizationContextServiceTest extends TestCase
         $this->expectExceptionMessage("The provided id is not associated with any known identity");
         $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException::class);
 
-        $role = new InstitutionRole(InstitutionRole::ROLE_USE_RAA);
+        $role = RegistrationAuthorityRole::raa();
 
         $actorId = 'dc4cc738-5f1c-4d8c-84a2-d6faf8aded89';
 

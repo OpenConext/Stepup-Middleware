@@ -21,6 +21,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -163,7 +164,7 @@ class CommandAuthorizationService
             }
             $this->logger->notice(sprintf('RA institution = %s', $raInstitution));
 
-            $role = InstitutionRole::useRaa();
+            $role = RegistrationAuthorityRole::raa();
 
             // the VetSecondFactorCommand is used to vet a second factor for a user
             // the RevokeRegistrantsSecondFactorCommand is used to revoke a user's secondfactor
@@ -171,7 +172,7 @@ class CommandAuthorizationService
             // all the other actions require RAA rights
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
                 $this->logger->notice('VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role');
-                $role = InstitutionRole::useRa();
+                $role = RegistrationAuthorityRole::ra();
                 // Use the institution of the identity (the user vetting or having his token revoked).
                 $identity = $this->identityService->find($command->identityId);
                 if (!$identity) {

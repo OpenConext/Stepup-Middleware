@@ -3,11 +3,8 @@ doctrine:
     default_connection: middleware
     connections:
       middleware:
-        driver: pdo_sqlite
-        path: "/tmp/middleware.db"
+        url: "sqlite:///%kernel.project_dir%/var/middleware.db"
       gateway:
-        driver: pdo_sqlite
-        path: "/tmp/gateway.db"
+        url: "sqlite:///%kernel.project_dir%/var/gateway.db"
       deploy:
-        driver: pdo_sqlite
-        path: "/tmp/deploy.db"
+        url: "sqlite:///%kernel.project_dir%/var/deploy.db"

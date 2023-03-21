@@ -75,7 +75,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
     public function validPhpValues()
     {
         return [
-            'active' => [RecoveryTokenStatus::unverified(), 0],
+            'active' => [RecoveryTokenStatus::active(), 0],
             'revoked' => [RecoveryTokenStatus::revoked(), 10],
             'forgotten' => [RecoveryTokenStatus::forgotten(), 20],
         ];
@@ -87,7 +87,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      * @group doctrine
      *
      * @param mixed $phpValue
-     * @param int $databaseValue
+     * @param mixed $databaseValue
      */
     public function a_valid_php_value_is_converted_to_a_sql_value($phpValue, $databaseValue)
     {

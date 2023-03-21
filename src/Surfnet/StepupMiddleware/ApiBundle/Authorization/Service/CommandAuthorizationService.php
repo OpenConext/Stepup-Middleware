@@ -105,7 +105,7 @@ class CommandAuthorizationService
     public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool
     {
         $commandName = get_class($command);
-        $identityId = $actorId->getIdentityId();
+        $identityId = $actorId->getIdentityId() ?: null;
 
         // Assert Self Service command could be executed
         if ($command instanceof SelfServiceExecutable) {
@@ -290,8 +290,12 @@ class CommandAuthorizationService
         return true;
     }
 
-    private function logAllowSelfService(string $message, string $commandName, string $identityId): void
+    private function logAllowSelfService(string $message, string $commandName, ?string $identityId): void
     {
+        if (!$identityId) {
+            $identityId = '"unknown identityId"';
+        }
+
         $this->logger->notice(
             sprintf(
                 'Allowing SelfService command %s for identity %s. With message "%s"',
@@ -302,8 +306,11 @@ class CommandAuthorizationService
         );
     }
 
-    private function logDenySelfService(string $message, string $commandName, string $identityId): void
+    private function logDenySelfService(string $message, string $commandName, ?string $identityId): void
     {
+        if (!$identityId) {
+            $identityId = '"unknown identityId"';
+        }
         $this->logger->notice(
             sprintf(
                 'Denying SelfService command %s for identity %s. With message "%s"',

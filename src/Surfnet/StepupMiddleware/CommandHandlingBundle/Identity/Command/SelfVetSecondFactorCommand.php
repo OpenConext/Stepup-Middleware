@@ -61,12 +61,18 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
     public $registrationCode;
 
     /**
-     * @Assert\NotBlank()
      * @Assert\Type(type="string")
      *
      * @var string
      */
     public $authoringSecondFactorLoa;
+
+    /**
+     * @Assert\Type(type="string")
+     *
+     * @var string
+     */
+    public $authoringSecondFactorIdentifier;
 
     public function getIdentityId()
     {

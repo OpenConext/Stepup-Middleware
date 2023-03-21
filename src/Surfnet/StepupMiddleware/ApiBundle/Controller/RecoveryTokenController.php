@@ -19,9 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
@@ -31,8 +31,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use function in_array;
-use function sprintf;
 
 /**
  * Exposes the Recovery Tokens projection through the
@@ -94,7 +92,7 @@ class RecoveryTokenController extends Controller
         $query->orderDirection = $request->get('orderDirection');
 
         $roles = $this->getUser()->getRoles();
-        // Only apply the authorization context on non self service requests
+        // Only apply the authorization context on non selfservice requests
         if (!in_array('ROLE_SS', $roles)) {
             $actorId = $request->get('actorId', $request->get('identityId'));
             $this->logger->info(sprintf('Executing query on behalf of %s', $actorId));

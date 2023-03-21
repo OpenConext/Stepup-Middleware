@@ -426,7 +426,24 @@ class IdentityCommandHandler extends SimpleCommandHandler
             new SecondFactorType($command->secondFactorType),
             $command->secondFactorId
         );
-        $loa = $this->loaResolutionService->getLoa($command->authoringSecondFactorLoa);
+
+        $loaIdentifier = null;
+        // Be backwards compatible for SelfService 3.5, there we misused the `authoringSecondFactorIdentifier` field
+        // on the SelfVetSecondFactorCommand to pass along the LoA of the authoring second factor token.
+        // This was repaired in the SAT release of SelfService (4.0 and upwards)
+        // the field was renamed to `authoringSecondFactorLoa` then.
+        //
+        // @todo remove this BC construct once we drop BC support for SelfService 3.5
+        if ($command->authoringSecondFactorIdentifier) {
+            $loaIdentifier = $command->authoringSecondFactorIdentifier;
+        } elseif ($command->authoringSecondFactorLoa) {
+            $loaIdentifier = $command->authoringSecondFactorLoa;
+        }
+        if (!$loaIdentifier) {
+            throw new UnknownLoaException('The authoring LoA was not configured on the command');
+        }
+
+        $loa = $this->loaResolutionService->getLoa($loaIdentifier);
         if ($loa === null) {
             throw new UnknownLoaException(
                 sprintf(

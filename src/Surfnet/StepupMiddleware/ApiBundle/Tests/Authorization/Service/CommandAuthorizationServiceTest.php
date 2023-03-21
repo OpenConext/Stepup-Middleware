@@ -355,7 +355,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
 
-            $this->logger->shouldReceive('notice');
+            $this->logger->shouldIgnoreMissing();
 
             $raCredentials = m::mock(RegistrationAuthorityCredentials::class);
             $raCredentials->shouldReceive('isSraa')

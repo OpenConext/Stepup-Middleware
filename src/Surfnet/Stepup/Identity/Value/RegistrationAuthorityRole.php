@@ -46,6 +46,9 @@ final class RegistrationAuthorityRole implements SerializableInterface
         $this->role = $role;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ShortMethodName) no use in lengthening a domain term for the sake of shutting up PHPMD
+     */
     public static function ra()
     {
         return new self(self::ROLE_RA);

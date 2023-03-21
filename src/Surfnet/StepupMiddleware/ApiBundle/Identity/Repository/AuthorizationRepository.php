@@ -106,7 +106,7 @@ class AuthorizationRepository extends ServiceEntityRepository
             ->groupBy('ia.institution');
 
         $qb->setParameter('identityId', (string)$actorId);
-        $qb->setParameter('role', $role->getType());
+        $qb->setParameter('role', $this->getInstitutionRoleByRaRole($role));
         $qb->setParameter('identityRoles', $identityRoles);
 
         $institutions = $qb->getQuery()->getArrayResult();
@@ -192,6 +192,16 @@ class AuthorizationRepository extends ServiceEntityRepository
                 return [AuthorityRole::ROLE_RAA];
             default:
                 return [];
+        }
+    }
+
+    private function getInstitutionRoleByRaRole(RegistrationAuthorityRole $role): string
+    {
+        switch (true) {
+            case $role->equals(RegistrationAuthorityRole::ra()):
+                return AuthorityRole::ROLE_RA;
+            case $role->equals(RegistrationAuthorityRole::raa()):
+                return AuthorityRole::ROLE_RAA;
         }
     }
 }

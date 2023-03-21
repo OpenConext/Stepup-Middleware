@@ -81,7 +81,8 @@ class AuthorizationContextService
     /**
      * Build the InstitutionAuthorizationContext to be used for authorization filtering on institutions  in queries
      *
-     * The additional test is performed to indicate if the actor is SRAA.
+     * The additional test is performed to indicate if the actor is SRAA. When the identity is SRAA, all Institutions
+     * are added to the InstitutionAuthorizationContext
      */
     public function buildInstitutionAuthorizationContext(
         IdentityId $actorId,

@@ -1,5 +1,14 @@
 # Changelog
 
+# 5.0.10
+- Bugfix: ensure RA(A) authorisations are verified against the ra_listing projection
+  this caused RAA authorisations to be available to RA users.
+- BC: SelfService 3.5 was not compatible with Middleware 5.0.9. The self vet command changed
+  from using the authoring second factor identifier to use the authoring loa. Underwater, the
+  second factor identifier field already transported the loa, in version 5.0 that field was 
+  renamed. In this release MW can support use of both fields. Version 5.1 should remove this
+  support. #402
+
 # 5.0.9
 - Support self-vetting of self-asserted tokens #401
 

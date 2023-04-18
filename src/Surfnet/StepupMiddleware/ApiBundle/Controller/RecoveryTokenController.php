@@ -99,7 +99,7 @@ class RecoveryTokenController extends Controller
             $actorId = new IdentityId($actorId);
             $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
                 $actorId,
-                RegistrationAuthorityRole::raa()
+                RegistrationAuthorityRole::ra()
             );
         }
         $paginator = $this->service->search($query);

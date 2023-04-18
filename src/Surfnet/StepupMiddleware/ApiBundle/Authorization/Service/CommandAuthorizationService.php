@@ -29,6 +29,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -216,9 +218,13 @@ class CommandAuthorizationService
 
             // the VetSecondFactorCommand is used to vet a second factor for a user
             // the RevokeRegistrantsSecondFactorCommand is used to revoke a user's secondfactor
-            // Both are only sent by the RA where the minimal role requirement is RA
+            // the RevokeRegistrantsRecoveryTokenCommand is used to revoke a user's recovery token
+            // All three are only sent by the RA where the minimal role requirement is RA
             // all the other actions require RAA rights
-            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+            if ($command instanceof VetSecondFactorCommand ||
+                $command instanceof RevokeRegistrantsSecondFactorCommand ||
+                $command instanceof RevokeRegistrantsRecoveryTokenCommand
+            ) {
                 $this->logger->notice('VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role');
                 $roleRequirement = RegistrationAuthorityRole::ra();
                 // Use the institution of the identity (the user vetting or having his token revoked).

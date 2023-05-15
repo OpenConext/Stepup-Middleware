@@ -1,11 +1,11 @@
 parameters:
-    application_name: StepUp Middleware
+    application_name: OpenConext Middleware
     # IP addresses of any HTTP proxies that are sitting in from of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html
     trusted_proxies:   ~
 
     database_driver:   pdo_mysql
-    database_host:     10.10.0.100
+    database_host:     mariadb
     database_port:     ~
     # Enabling the STRICT_ALL_TABLES SQL mode. To prevent 'magic' truncation problems where string
     # values like the identity name id would be truncated after 255 characters without notice. Enabling
@@ -18,10 +18,10 @@ parameters:
     database_server_version: mariadb-10.0.38
     database_middleware_name:     middleware
     database_middleware_user:     middleware
-    database_middleware_password: middleware
+    database_middleware_password: secret
     database_gateway_name:     gateway
     database_gateway_user:     gateway
-    database_gateway_password: gateway
+    database_gateway_password: secret
     database_deploy_user:      deploy
     database_deploy_password:  deploy
 
@@ -46,35 +46,37 @@ parameters:
     # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
     # - GDPR compliance: deprovision and retrieval of user information - user "lifecycle"
-    selfservice_api_password: OI7Wr63wxx2-Pel
-    registration_authority_api_password: BAeBxn813SB4_QX
-    readonly_api_password: wkpTzg.CJzc5sWU
-    management_password: UktsgjiFJOSP87d
-    lifecycle_password: AXn0n9cOFymT_oF
+    selfservice_api_password: secret
+    registration_authority_api_password: secret
+    readonly_api_password: secret
+    management_password: secret
+    lifecycle_password: secret
 
-    self_service_email_verification_url_template: https://selfservice.tld/verify-email?n={nonce}
-    email_sender_name: SURFnet bv
-    email_sender_email: noreply@surfnet.nl
+    self_service_email_verification_url_template: https://sa.dev.openconext.local/verify-email?n={nonce}
+    email_sender_name: OpenConext DEV environment
+    email_sender_email: noreply@dev.openconext.local
 
     email_verification_window: 3600 # the amout of seconds the email verification email/url is valid
 
-    stepup_loa_loa1: https://gateway.tld/authentication/loa1
-    stepup_loa_loa2: https://gateway.tld/authentication/loa2
-    stepup_loa_loa3: https://gateway.tld/authentication/loa3
-    stepup_loa_self_asserted: 'http://stepup.example.com/assurance/loa-self-asserted'
+    stepup_loa_loa1: http://dev.openconext.local/authentication/loa1
+    stepup_loa_loa2: http://dev.openconext.local/authentication/loa2
+    stepup_loa_loa3: http://dev.openconext.local/authentication/loa3
+    stepup_loa_self_asserted: 'http:///dev.openconext.local/loa1.5'
 
-    self_service_url: https://selfservice.tld
+    self_service_url: https://sa.dev.openconext.local
 
     enabled_generic_second_factors:
-        biometric:
-            loa: 3
+        azuremfa:
+            loa: 2
         tiqr:
+            loa: 2
+        webauthn:
             loa: 3
 
     second_factors_display_name:
       yubikey: Yubikey
       azuremfa: AzureMFA
-      webauthn: WebAuthn
+      webauthn: FIDO2
       tiqr: Tiqr
       demo_gssp: GSSP Demo
       demo_gssp_2: GSSP Demo 2

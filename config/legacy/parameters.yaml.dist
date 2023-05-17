@@ -17,13 +17,13 @@ parameters:
     # Also see: https://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration
     database_server_version: mariadb-10.0.38
     database_middleware_name:     middleware
-    database_middleware_user:     middleware
-    database_middleware_password: secret
+    database_middleware_user:     middleware_user
+    database_middleware_password: middleware_secret
     database_gateway_name:     gateway
-    database_gateway_user:     gateway
-    database_gateway_password: secret
-    database_deploy_user:      deploy
-    database_deploy_password:  deploy
+    database_gateway_user:     mw_gateway_user
+    database_gateway_password: mw_gateway_secret
+    database_deploy_user:      mw_deploy_user
+    database_deploy_password:  mw_deploy_secret
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1

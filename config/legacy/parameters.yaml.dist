@@ -46,8 +46,8 @@ parameters:
     # - readonly access to all endpoints - user "apireader"
     # - management - user "management"
     # - GDPR compliance: deprovision and retrieval of user information - user "lifecycle"
-    selfservice_api_password: secret
-    registration_authority_api_password: secret
+    selfservice_api_password: sa_secret
+    registration_authority_api_password: ra_sacret
     readonly_api_password: secret
     management_password: secret
     lifecycle_password: secret

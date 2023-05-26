@@ -1,11 +1,11 @@
 FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest AS php-build
 COPY *.tar.bz2 /tmp/
 RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
-  rm -rf /tmp/*.tar.bz2
+    rm -rf /tmp/*.tar.bz2
 
 # Add the application configuration files
-RUN cp .env .env
-RUN cp config/legacy/parameters.yml.dist config/legacy/parameters.yml
+COPY .env .env
+COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml.dist
 
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*

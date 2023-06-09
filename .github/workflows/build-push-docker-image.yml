@@ -4,6 +4,7 @@ name: build-push-docker-image
 on:
   push:
     branches: feature/docker_configs
+  workflow_dispatch:
 
 jobs:
   build-push-docker-image:

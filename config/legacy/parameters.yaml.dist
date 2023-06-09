@@ -47,7 +47,7 @@ parameters:
     # - management - user "management"
     # - GDPR compliance: deprovision and retrieval of user information - user "lifecycle"
     selfservice_api_password: sa_secret
-    registration_authority_api_password: ra_sacret
+    registration_authority_api_password: ra_secret
     readonly_api_password: secret
     management_password: secret
     lifecycle_password: secret

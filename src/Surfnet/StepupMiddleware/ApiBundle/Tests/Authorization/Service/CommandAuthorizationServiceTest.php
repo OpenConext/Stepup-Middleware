@@ -22,10 +22,10 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Rhumsaa\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\CommandAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
@@ -209,9 +209,9 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
-            $role = InstitutionRole::useRaa();
+            $role = RegistrationAuthorityRole::raa();
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
-                $role = InstitutionRole::useRa();
+                $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);
                 $mockIdentity->institution = $mockInstitution;
@@ -274,9 +274,10 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
-            $role = InstitutionRole::useRaa();
+            $role = RegistrationAuthorityRole::raa();
+
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
-                $role = InstitutionRole::useRa();
+                $role = RegistrationAuthorityRole::ra();
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
@@ -354,7 +355,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
 
-            $this->logger->shouldReceive('notice');
+            $this->logger->shouldIgnoreMissing();
 
             $raCredentials = m::mock(RegistrationAuthorityCredentials::class);
             $raCredentials->shouldReceive('isSraa')
@@ -373,10 +374,9 @@ class CommandAuthorizationServiceTest extends TestCase
                 false
             );
 
-            $role = InstitutionRole::useRaa();
+            $role = RegistrationAuthorityRole::raa();
             if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
-                $role = InstitutionRole::useRa();
-
+                $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);
                 $mockIdentity->institution = $mockInstitution;

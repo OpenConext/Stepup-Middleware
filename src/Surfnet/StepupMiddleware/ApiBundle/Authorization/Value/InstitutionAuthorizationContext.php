@@ -20,6 +20,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 
+/**
+ * The InstitutionAuthorizationContext states which institutions are selected to perform
+ * an action on. Which actions can be performed is determined by the required role the
+ * command will require (RA or RAA).
+ *
+ * In addition, the context also states if the identity initiating this context is SRAA.
+ * If that's the case. The Identity will be allowed access to all institutions.
+ *
+ * For implementation details see:
+ *  - Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService
+ *  - Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository
+ */
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
     /**
@@ -32,31 +44,20 @@ class InstitutionAuthorizationContext implements InstitutionAuthorizationContext
      */
     private $isSraa;
 
-    /**
-     * AuthorizationContext constructor.
-     * @param InstitutionCollection $institutions[]
-     * @param bool $isSraa describes if the actor is SRAA or not. Default: false
-     */
     public function __construct(
         InstitutionCollection $institutions = null,
-        $isSraa = false
+        bool $isSraa = false
     ) {
         $this->institutions = $institutions;
         $this->isSraa = $isSraa;
     }
 
-    /**
-     * @return InstitutionCollection
-     */
-    public function getInstitutions()
+    public function getInstitutions(): InstitutionCollection
     {
         return $this->institutions;
     }
 
-    /**
-     * @return bool
-     */
-    public function isActorSraa()
+    public function isActorSraa(): bool
     {
         return $this->isSraa;
     }

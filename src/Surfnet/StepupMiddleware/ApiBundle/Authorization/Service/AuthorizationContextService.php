@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Service;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
@@ -69,40 +69,46 @@ class AuthorizationContextService
         $this->authorizationRepository = $authorizationRepository;
     }
 
+    public function buildSelectRaaInstitutionAuthorizationContext(IdentityId $actorId): InstitutionAuthorizationContext
+    {
+        $isSraa = $this->isSraa($actorId);
+        // When building an auth context based on the select raa role, we use another query to retrieve the correct
+        // institutions.
+        $institutions = $this->authorizationRepository->getInstitutionsForSelectRaaRole($actorId);
+        return new InstitutionAuthorizationContext($institutions, $isSraa);
+    }
+
     /**
      * Build the InstitutionAuthorizationContext to be used for authorization filtering on institutions  in queries
      *
-     * The additional test is performed to indicate if the actor is SRAA.
-     *
-     * @param IdentityId $actorId
-     * @param InstitutionRole $role
-     * @return InstitutionAuthorizationContext
+     * The additional test is performed to indicate if the actor is SRAA. When the identity is SRAA, all Institutions
+     * are added to the InstitutionAuthorizationContext
      */
-    public function buildInstitutionAuthorizationContext(IdentityId $actorId, InstitutionRole $role)
-    {
-        $identity = $this->identityService->find((string)$actorId);
-
-        if (!$identity) {
-            throw new InvalidArgumentException('The provided id is not associated with any known identity');
-        }
-
-        $sraa = $this->sraaService->findByNameId($identity->nameId);
-        $isSraa = !is_null($sraa);
-
+    public function buildInstitutionAuthorizationContext(
+        IdentityId $actorId,
+        RegistrationAuthorityRole $role
+    ): InstitutionAuthorizationContext {
+        $isSraa = $this->isSraa($actorId);
         if ($isSraa) {
             $institutions = new InstitutionCollection();
             $configuredInstitutions = $this->institutionRepository->findAll();
             foreach ($configuredInstitutions as $institution) {
                 $institutions->add(new Institution((string)$institution->institution));
             }
-        } elseif ($role->getType() === InstitutionRole::ROLE_SELECT_RAA) {
-            // When building an auth context based on the select raa role, we use another query to retrieve the correct
-            // institutions.
-            $institutions = $this->authorizationRepository->getInstitutionsForSelectRaaRole($actorId);
         } else {
+            // Get the institutions the identity is RA(A) for.
             $institutions = $this->authorizationRepository->getInstitutionsForRole($role, $actorId);
         }
-
         return new InstitutionAuthorizationContext($institutions, $isSraa);
+    }
+
+    private function isSraa(IdentityId $actorId)
+    {
+        $identity = $this->identityService->find((string)$actorId);
+        if (!$identity) {
+            throw new InvalidArgumentException('The provided id is not associated with any known identity');
+        }
+        $sraa = $this->sraaService->findByNameId($identity->nameId);
+        return !is_null($sraa);
     }
 }

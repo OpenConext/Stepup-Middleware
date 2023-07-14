@@ -72,6 +72,8 @@ parameters:
             loa: 2
         webauthn:
             loa: 3
+        demo_gssp:
+            loa: 3
 
     second_factors_display_name:
       yubikey: Yubikey

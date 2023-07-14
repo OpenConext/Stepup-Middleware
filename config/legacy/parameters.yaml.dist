@@ -26,7 +26,7 @@ parameters:
     database_deploy_password:  mw_deploy_secret
 
     mailer_transport:  smtp
-    mailer_host:       127.0.0.1
+    mailer_host:       mailcatcher
     mailer_port:       25
     mailer_user:       ''
     mailer_password:   ''

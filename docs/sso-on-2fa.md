@@ -43,3 +43,21 @@ The `allow_sso_on_2fa` and `set_sso_cookie_on_2fa` boolean config options can be
     }
 }
 ```
+
+## How it works
+First of all, in order to work with this feature. The Middleware institution configuration `sso_on_2fa` needs to be 
+enabled for the institution you want to use this feature for. As described above, this is done via the MW institution 
+configuration.
+
+If you only configure that feature, now all step up authentications for the services of that institution are entitled 
+to use the feature.
+
+To allow exclusion of certain SP's from the SSO feature, you can also use the Middleware `configuration` to achieve 
+that goal. 
+
+The `allow_sso_on_2fa` can be used to disable SSO for that specific SP.
+The `set_sso_cookie_on_2fa` can be used to disallow the SP from creating the SSO cookie.
+
+There is another way to force an identity to give 2FA, that is by adding the ForceAuthN attribute to the AuthnRequest to
+the Stepup-Gateway. But to keep this info in scope, Middleware is not responsible for this. The SP or an intermediate 
+SAML proxy can utilize this.

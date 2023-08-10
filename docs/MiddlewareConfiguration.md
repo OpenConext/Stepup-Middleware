@@ -414,6 +414,7 @@ The options must have the following keys:
 * `number_of_tokens_per_identity` (integer) The number of tokens an identity is allowed to vet. If the option is not set, the default value of `1` is set.
 * `allowed_second_factors`: (string[]) a list of second factor types that are allowed to be registered by users of this institution. This option only affects the registration of new second factors, it does not affect second factors that have been registered or vetted. If the list is empty all supported second factors are allowed. The supported second factors are found in the [Stepup-bundle](https://github.com/OpenConext/Stepup-bundle/blob/develop/src/Value/SecondFactorType.php#L31-L37). Default: empty list (all available second factors are allowed).
 * `self_vet`: (boolean) Are users allowed to vet their other tokens with a previously vetted token?
+* `sso_on_2fa`: (boolean) Are identities of the institution allowed to use SSO on 2FA?
 
 And optionally the configuration can have these authorization related options:
 

@@ -58,6 +58,16 @@ class InstitutionConfigurationProjector extends Projector
         if ($institutionConfiguration) {
             $institutionConfiguration->ssoOn2faEnabled = $event->ssoOn2faOption->isEnabled();
             $this->repository->save($institutionConfiguration);
+            return;
+        }
+        // It can happen that the event changed for an institution that already exists, but is not yet projected to
+        // this projection. In that case we can create it.
+        if (!$institutionConfiguration) {
+            $institutionConfiguration = new InstitutionConfiguration(
+                (string)$event->institution,
+                $event->ssoOn2faOption->isEnabled()
+            );
+            $this->repository->save($institutionConfiguration);
         }
     }
 

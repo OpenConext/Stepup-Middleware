@@ -1,22 +1,34 @@
 # Single sign-on on second factor authentication
-Middleware can be configured to allow SSO on 2FA. The institution configuration and the service provider configuration has been updated.
+Whether SSO on the second authentication factor is allowed is controlled though the middleware configuration, the actual SSO is handled by the Steup-Gateway. This document describes the SSO configuration in the Stepup-Middleware only. Please refer to the Stepup-Gateway documentation for more information on the SSO feature itself: https://github.com/OpenConext/Stepup-Gateway/blob/develop/docs/SsoOn2Fa.md 
 
-This document describes how this feature can be installed and configured.
+## Requirements
+SSO requires Stepup-Middleware 5.1.0 (or above) and Stepup-Gateway 4.2.0 (or above). This middleware includes Doctrine Migration `20221102143350` that creates/updates the Middleware and Gateway projections with the SSO specific configuration options.
 
-## Installation
-Run the `20221102143350` Doctrine Migration to prepare the Middleware and Gateway projections for the new feature.
-
-The Gateway projection was added to allow Gateway to quickly decide if it should enable/disable the feature without having to consult the Middleware via the API.
+## Configuration
+All the SSO on 2FA options in the middleware are optional. If no configuration is present, SSO on 2FA is disabled for all institutions and service providers and no SSO cookie is set. For SSO to be active both the institution and the service provider must be configured to allow SSO on 2FA. 
 
 ### Middleware institution configuration
-The `management/institution-configuration` API endpoint can be used to enable the SSO on 2FA feature for the institutions
-Use the `sso_on_2fa` boolean to configure this feature.
+The `management/institution-configuration` API endpoint is used to enable the SSO on 2FA feature for the institutions. Set `sso_on_2fa` to true in order to enable SSO for an institution. E.g.:
+
+```json
+{
+  "example.com": {
+    "use_ra_locations": false,
+    "show_raa_contact_information": true,
+    "verify_email": false,
+    "allowed_second_factors": [],
+    "number_of_tokens_per_identity": 3,
+    "self_vet": true,
+    "allow_self_asserted_tokens": true,
+    "sso_on_2fa": true
+  }
+}
+```
 
 ### Middleware Service Provider configuration
-Secondly, you can configure the SP's known to StepUp with the ability to allow the SSO feature. This allows for a more fine grained configuration setup. Where certain SP's are excluded from SSO on 2FA tokens.
-The `management/configuration` API endpoint can be used to configure this for the service providers.
+The `management/configuration` API endpoint is used to configure to enable the SSO on 2FA feature for the service providers.
 
-The `allow_sso_on_2fa` and `set_sso_cookie_on_2fa` boolean config options can be configure per SP. See this example below 
+The `allow_sso_on_2fa` and `set_sso_cookie_on_2fa` boolean config options are set per SP. See the example below:
 
 ```json
 {
@@ -44,22 +56,10 @@ The `allow_sso_on_2fa` and `set_sso_cookie_on_2fa` boolean config options can be
 }
 ```
 
-## How it works
-First of all, in order to work with this feature. The Middleware institution configuration `sso_on_2fa` needs to be 
-enabled for the institution you want to use this feature for. As described above, this is done via the MW institution 
-configuration.
+`allow_sso_on_2fa` is used to enable or disable SSO on the second factor for that particular SP. When `allow_sso_on_2fa` is set to false (default) for an SP, SSO on 2FA is disabled for all authentications for that SP. If set to true, SSO on 2FA is enabled for all authentications for that SP and SSO will be attempted for all authentications for that SP. SSO is only performed when a valid SSO cookie is present and all the other necessary conditions are met, see the Stepup-Gateway documentation for more information: https://github.com/OpenConext/Stepup-Gateway/blob/develop/docs/SsoOn2Fa.md
 
-If you only configure that feature, now all step up authentications for the services of that institution are entitled 
-to use the feature.
+`set_sso_cookie_on_2fa` is used to enable or disable the creation of the SSO cookie for authentications to that particular SP. When `set_sso_cookie_on_2fa` is set to false (default) for an SP, no SSO cookie is set. If set to true, an SSO cookie is set after a successful second factor authentication to that SP. Note that the SSO cookie itself is shared between all authentications, it is tied to a specific user and second factor, not to an SP.
 
-To allow exclusion of certain SP's from the SSO feature, you can also use the Middleware `configuration` to achieve 
-that goal. 
+## Design
+A Gateway projection was added to allow Gateway to quickly lookup if SSO is enabled/disabled for a particular institution without having to consult the Middleware via the API.
 
-The `allow_sso_on_2fa` can be used to disable SSO for that specific SP.
-The `set_sso_cookie_on_2fa` can be used to disallow the SP from creating the SSO cookie.
-
-There is another way to force an identity to give 2FA, that is by adding the ForceAuthN attribute to the AuthnRequest to
-the Stepup-Gateway. But to keep this info in scope, Middleware is not responsible for this. The SP or an intermediate 
-SAML proxy can utilize this.
-
-See: [Gateway SSO on 2FA docs](https://github.com/OpenConext/Stepup-Gateway/blob/develop/docs/SsoOn2Fa.md)

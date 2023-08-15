@@ -61,3 +61,5 @@ The `set_sso_cookie_on_2fa` can be used to disallow the SP from creating the SSO
 There is another way to force an identity to give 2FA, that is by adding the ForceAuthN attribute to the AuthnRequest to
 the Stepup-Gateway. But to keep this info in scope, Middleware is not responsible for this. The SP or an intermediate 
 SAML proxy can utilize this.
+
+See: [Gateway SSO on 2FA docs](https://github.com/OpenConext/Stepup-Gateway/blob/develop/docs/SsoOn2Fa.md)

@@ -4,6 +4,8 @@
 - Introduction of the SSO on 2FA feature in Stepup-Middleware
 - Please run the provided Doctrine Migration to prepare the Middleware and Gateway projections
 - By default the SSO on 2FA feature is disabled for all institutions and can be enabled via the Middleware institution configuration
+
+**Additional information**
 - See docs/sso-on-2fa.md
 - See docs/MiddlewareConfiguration.md
 - See https://www.pivotaltracker.com/epic/show/5024251 for details

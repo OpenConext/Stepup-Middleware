@@ -58,10 +58,10 @@ parameters:
 
     email_verification_window: 3600 # the amount of seconds the email verification email/url is valid
 
-    stepup_loa_loa1: https://dev.openconext.local/authentication/loa1
-    stepup_loa_loa2: https://dev.openconext.local/authentication/loa2
-    stepup_loa_loa3: https://dev.openconext.local/authentication/loa3
-    stepup_loa_self_asserted: 'https://dev.openconext.local/authentication/loa1.5'
+    stepup_loa_loa1: https://dev.openconext.local/assurance/loa1
+    stepup_loa_loa2: https://dev.openconext.local/assurance/loa2
+    stepup_loa_loa3: https://dev.openconext.local/assurance/loa3
+    stepup_loa_self_asserted: 'https://dev.openconext.local/assurance/loa1.5'
 
     self_service_url: https://selfservice.dev.openconext.local
 

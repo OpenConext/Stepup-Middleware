@@ -56,7 +56,7 @@ parameters:
     email_sender_name: OpenConext DEV environment
     email_sender_email: noreply@dev.openconext.local
 
-    email_verification_window: 3600 # the amout of seconds the email verification email/url is valid
+    email_verification_window: 3600 # the amount of seconds the email verification email/url is valid
 
     stepup_loa_loa1: https://dev.openconext.local/authentication/loa1
     stepup_loa_loa2: https://dev.openconext.local/authentication/loa2

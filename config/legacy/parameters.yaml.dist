@@ -52,7 +52,7 @@ parameters:
     management_password: secret
     lifecycle_password: secret
 
-    self_service_email_verification_url_template: https://sa.dev.openconext.local/verify-email?n={nonce}
+    self_service_email_verification_url_template: https://selfservice.dev.openconext.local/verify-email?n={nonce}
     email_sender_name: OpenConext DEV environment
     email_sender_email: noreply@dev.openconext.local
 
@@ -63,7 +63,7 @@ parameters:
     stepup_loa_loa3: https://dev.openconext.local/authentication/loa3
     stepup_loa_self_asserted: 'https:///dev.openconext.local/loa1.5'
 
-    self_service_url: https://sa.dev.openconext.local
+    self_service_url: https://selfservice.dev.openconext.local
 
     enabled_generic_second_factors:
         azuremfa:

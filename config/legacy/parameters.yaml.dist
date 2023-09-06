@@ -61,7 +61,7 @@ parameters:
     stepup_loa_loa1: https://dev.openconext.local/authentication/loa1
     stepup_loa_loa2: https://dev.openconext.local/authentication/loa2
     stepup_loa_loa3: https://dev.openconext.local/authentication/loa3
-    stepup_loa_self_asserted: 'https:///dev.openconext.local/loa1.5'
+    stepup_loa_self_asserted: 'https://dev.openconext.local/authentication/loa1.5'
 
     self_service_url: https://selfservice.dev.openconext.local
 

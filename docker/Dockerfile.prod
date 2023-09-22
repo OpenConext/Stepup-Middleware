@@ -11,7 +11,12 @@ COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*
 COPY ./docker/conf/middleware-apache2.conf /etc/apache2/sites-enabled/middleware.conf
-RUN rm -rf /var/www/html/var/cache/prod && chown -R www-data /var/www/html/var
+
+# Recreate the cache directory and set the correct permissions
+RUN rm -rf /var/www/html/var/cache/prod && \
+    mkdir -p /var/www/html/var/cache/prod && \
+    chown -R www-data /var/www/html/var
+
 EXPOSE 80
 
 # Set the default workdir

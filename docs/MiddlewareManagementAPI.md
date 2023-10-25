@@ -5,7 +5,7 @@
 ### Request
 URL: `http://middleware.tld/management/configuration`
 Method: POST
-Request Body: The full request body of the configuration API is documented in a [sepearte section](MiddlewareConfiguration.md).
+Request Body: The full request body of the configuration API is documented in a [separate section](MiddlewareConfiguration.md).
 
 ### Response
 `200 OK`

@@ -3,9 +3,9 @@
 The middleware stores the configuration that is set using the [middleware management API](MiddlewareManagementAPI.md) in the middleware and gateway databases. The gateway is designed to not require access to the middleware and to only need read-only access to the gateway database. The the other components (Self-Service and RA) do have access to the middleware API and do not have database access and use the middleware to get access to the configuration when required.
 
 Configuration is done by making a POST request to an URL of the [middleware management API](MiddlewareManagementAPI.md) with the new configuration as JSON in the request body. There are three configuration APIs that each update a different part of the configuration:
-- `http://{middleware.tld/management/configuration` -- the [Middleware configuration API](#using-the-middleware-configuration-api)
-- `http://{middleware.tld/management/institution-configuration` -- [Institution configuration API](#using-the-institution-configuration-api)
-- `http://{middleware.tld/management/whitelist/replace` -- the [Institution whitelist API](#using-the-whitelist-api)
+- `http://middleware.tld/management/configuration` -- the [Middleware configuration API](#using-the-middleware-configuration-api)
+- `http://middleware.tld/management/institution-configuration` -- [Institution configuration API](#using-the-institution-configuration-api)
+- `http://middleware.tld/management/whitelist/replace` -- the [Institution whitelist API](#using-the-whitelist-api)
 
 This section is intended to document the requirements and structure of the above three configuration endpoints.
 

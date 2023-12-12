@@ -3,14 +3,14 @@ doctrine:
         default_connection: middleware
         connections:
             middleware:
-                dbname: "%database_middleware_name_test%"
+                dbname: middleware_test
                 host: localhost
                 password: password
                 user: root
             gateway:
-                dbname: "%database_gateway_name_test%"
+                dbname: gateway_test
                 host: localhost
                 password: password
                 user: root
             deploy:
-                dbname: "%database_middleware_name_test%"
+                dbname: middleware_test

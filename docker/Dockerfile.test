@@ -8,7 +8,7 @@ COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml
 
 # Add the config files for Apache2
 RUN rm -rf /etc/apache2/sites-enabled/*
-COPY ./docker/conf/middleware-apache2.conf /etc/apache2/sites-enabled/middleware.conf
+COPY ./docker/conf/middleware-test-apache2.conf /etc/apache2/sites-enabled/middleware.conf
 
 # Recreate the cache directory and set the correct permissions
 RUN rm -rf /var/www/html/var/cache/prod && \

@@ -4,13 +4,16 @@ doctrine:
         connections:
             middleware:
                 dbname: middleware_test
-                host: localhost
-                password: password
-                user: root
+                host: mariadb
+                password: mw_deploy_secret
+                user: mw_deploy_user
             gateway:
                 dbname: gateway_test
-                host: localhost
-                password: password
-                user: root
+                host: mariadb
+                password: mw_deploy_secret
+                user: mw_deploy_user
             deploy:
                 dbname: middleware_test
+                host: mariadb
+                password: mw_deploy_secret
+                user: mw_deploy_user

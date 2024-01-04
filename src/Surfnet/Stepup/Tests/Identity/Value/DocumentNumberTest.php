@@ -29,9 +29,9 @@ class DocumentNumberTest extends UnitTest
      * @group        domain
      * @dataProvider validDocumentNumberProvider
      *
-     * @param string $documentNumber
+     * @param string|null $documentNumber
      */
-    public function the_document_number_must_be_valid(string $documentNumber): void
+    public function the_document_number_must_be_valid(?string $documentNumber): void
     {
         $document = new DocumentNumber($documentNumber);
         $this->assertInstanceOf(DocumentNumber::class, $document);
@@ -102,7 +102,7 @@ class DocumentNumberTest extends UnitTest
         return [
             'Single hyphen'    => ['-'],
             'Contains hyphen'  => ['123-45'],
-            'Unknown document' => ['–'],
+            'Unknown document' => [null],
             'Uppercase'        => ['A1B2C3'],
             'Lowercase'        => ['a2b2c3'],
             'Mixed case'       => ['a2B2c3'],

@@ -262,7 +262,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -326,7 +326,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -435,7 +435,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -499,7 +499,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -548,7 +548,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
 
         $nonce = 'nonce';
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
@@ -626,7 +626,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
 
         $nonce = 'nonce';
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
@@ -679,7 +679,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -743,7 +743,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
@@ -911,7 +911,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
+            ->shouldReceive('generate')->once()->andReturn('A1B2C3D4');
 
         $id                     = new IdentityId(self::uuid());
         $institution            = new Institution('A Corp.');
@@ -962,7 +962,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
                     DateTime::now(),
-                    'regcode',
+                    'A1B2C3D4',
                     $commonName,
                     $email,
                     $preferredLocale
@@ -1025,7 +1025,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
                     DateTime::now(),
-                    'regcode',
+                    'A1B2C3D4',
                     $commonName,
                     $email,
                     $preferredLocale
@@ -1206,10 +1206,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authorityId            = 'AID';
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
+        $command->registrationCode       = 'A1B2C3D4';
         $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
+        $command->documentNumber         = 'ABC-12';
         $command->identityVerified       = true;
         $command->provePossessionSkipped = false;
 
@@ -1288,7 +1288,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $registrantSecFacIdentifier,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -1306,7 +1306,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('ABC-12'))
                 ),
             ]);
     }
@@ -1324,10 +1324,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authorityId            = 'AID';
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
+        $command->registrationCode       = 'A1B2C3D4';
         $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
+        $command->documentNumber         = 'ABC-12';
         $command->identityVerified       = true;
 
         $authorityId                = new IdentityId($command->authorityId);
@@ -1381,7 +1381,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
                     DateTime::now(),
-                    'regcode',
+                    'A1B2C3D4',
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB')
@@ -1396,7 +1396,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
+                    new OnPremiseVettingType(new DocumentNumber('ABC-12'))
                 )
             ])
             ->withAggregateId($registrantId)
@@ -1431,7 +1431,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $registrantPubId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -1449,7 +1449,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('ABC-12'))
                 ),
             ]);
     }
@@ -1465,10 +1465,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authorityId            = 'AID';
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
+        $command->registrationCode       = 'A1B2C3D4';
         $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
+        $command->documentNumber         = 'ABC-12';
         $command->identityVerified       = true;
         $command->provePossessionSkipped = true;
 
@@ -1547,7 +1547,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $registrantSecFacIdentifier,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -1565,7 +1565,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('ABC-12'))
                 ),
             ]);
     }
@@ -1583,10 +1583,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authorityId            = 'AID';
         $command->identityId             = 'IID';
         $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
+        $command->registrationCode       = 'A1B2C3D4';
         $command->secondFactorType       = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
+        $command->documentNumber         = 'ABC-12';
         $command->identityVerified       = true;
         $command->provePossessionSkipped = true;
 
@@ -1646,7 +1646,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
                     DateTime::now(),
-                    'regcode',
+                    'A1B2C3D4',
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB')
@@ -1661,7 +1661,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
+                    new OnPremiseVettingType(new DocumentNumber('ABC-12'))
                 )
             ])
             ->withAggregateId($registrantId)
@@ -1696,7 +1696,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $registrantPubId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -1860,7 +1860,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = '+31 (0) 612345678';
-        $command->registrationCode = 'REGCODE';
+        $command->registrationCode = 'A1B2C3D4';
         $command->identityId = $this->uuid();
         $command->authoringSecondFactorLoa = "loa-3";
         $command->secondFactorType = 'sms';
@@ -1954,7 +1954,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new SecondFactorType('sms'),
                     $authorityPhoneNo,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')

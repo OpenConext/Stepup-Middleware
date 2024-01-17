@@ -35,6 +35,8 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupBundle\Value\VettingType as StepupVettingType;
 
+use function preg_match;
+
 /**
  * A second factor whose possession has been proven by the registrant and the registrant's e-mail address has been
  * verified. The registrant must visit a registration authority next.
@@ -89,10 +91,10 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        string $registrationCode
     ) {
-        if (!is_string($registrationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
+        if (!preg_match('/^[A-Z0-9]{8}$/i', $registrationCode)) {
+            throw InvalidArgumentException::invalidType('valid characters', 'registrationCode', $registrationCode);
         }
 
         $secondFactor = new self;
@@ -123,7 +125,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
      */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
+    public function hasRegistrationCodeAndIdentifier(string $registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
             && $secondFactorIdentifier->equals($this->secondFactorIdentifier);

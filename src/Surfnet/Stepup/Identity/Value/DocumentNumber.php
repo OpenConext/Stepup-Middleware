@@ -21,47 +21,54 @@ namespace Surfnet\Stepup\Identity\Value;
 use JsonSerializable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
+use function preg_match;
+use function strval;
+
 final class DocumentNumber implements JsonSerializable
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $documentNumber;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
-        return new self('—');
+        return new self(null);
     }
 
     /**
-     * @param string $documentNumber
+     * @param string|null $documentNumber
      */
-    public function __construct($documentNumber)
+    public function __construct(?string $documentNumber)
     {
-        if (!is_string($documentNumber) || empty($documentNumber)) {
+        if ($documentNumber === null) {
+            // Created using the static ::unknown method
+        } elseif (empty($documentNumber)) {
             throw InvalidArgumentException::invalidType('non-empty string', 'documentNumber', $documentNumber);
+        } elseif (!preg_match('/^([-]|[A-Z0-9-]{6})$/i', $documentNumber)) {
+            throw InvalidArgumentException::invalidType('valid characters', 'documentNumber', $documentNumber);
         }
 
         $this->documentNumber = $documentNumber;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDocumentNumber()
+    public function getDocumentNumber(): ?string
     {
         return $this->documentNumber;
     }
 
     public function __toString()
     {
-        return $this->documentNumber;
+        return strval($this->documentNumber);
     }
 
-    public function equals(DocumentNumber $other)
+    public function equals(DocumentNumber $other): bool
     {
         return $this->documentNumber === $other->documentNumber;
     }

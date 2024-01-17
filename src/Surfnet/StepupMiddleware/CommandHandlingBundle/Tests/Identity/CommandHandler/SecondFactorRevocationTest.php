@@ -208,7 +208,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $secondFactorIdentifier,
                     DateTime::now(),
-                    'SOMEREGISTRATIONCODE',
+                    'A1B2C3D4',
                     $commonName,
                     $email,
                     new Locale('en_GB')
@@ -278,7 +278,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorType,
                     $secondFactorIdentifier,
                     DateTime::now(),
-                    'SOMEREGISTRATIONCODE',
+                    'A1B2C3D4',
                     $commonName,
                     $email,
                     new Locale('en_GB')
@@ -293,7 +293,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $commonName,
                     $email,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_42'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 )
             ])
             ->when($command)
@@ -478,7 +478,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
                     DateTime::now(),
-                    'REGISTRATION_CODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -577,7 +577,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
                     DateTime::now(),
-                    'REGISTRATION_CODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -592,7 +592,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 )
             ])
             ->when($command)
@@ -694,7 +694,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
                     DateTime::now(),
-                    'REGISTRATION_CODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -709,7 +709,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 )
             ])
             ->when($command)
@@ -816,7 +816,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorType,
                     $registrantSecondFactorIdentifier,
                     DateTime::now(),
-                    'REGISTRATION_CODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -831,7 +831,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
                 // Second second factor
                 new U2fDevicePossessionProvenEvent(
@@ -856,7 +856,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorType2,
                     $registrantSecondFactorIdentifier2,
                     DateTime::now(),
-                    'REGISTRATION_CODE',
+                    'A1B2C3D4',
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB')
@@ -871,7 +871,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('DOCUMENT_NUMBER'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
             ])
             ->when($command)

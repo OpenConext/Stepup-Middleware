@@ -65,11 +65,11 @@ class DocumentNumberTypeTest extends UnitTest
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
-        $input = new DocumentNumber('a');
+        $input = new DocumentNumber('A1B2C3');
         $output = $type->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
-        $this->assertEquals('a', $output);
+        $this->assertEquals('A1B2C3', $output);
     }
 
     /**
@@ -108,7 +108,7 @@ class DocumentNumberTypeTest extends UnitTest
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
-        $input = '12345';
+        $input = 'A12345';
         $output = $type->convertToPHPValue($input, $this->platform);
 
         $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\DocumentNumber', $output);

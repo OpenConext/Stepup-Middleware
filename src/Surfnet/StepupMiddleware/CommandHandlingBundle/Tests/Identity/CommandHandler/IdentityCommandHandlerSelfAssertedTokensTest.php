@@ -561,7 +561,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $yubikeyPublicId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -644,7 +644,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $yubikeyPublicId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -721,7 +721,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = '+31 (0) 612345678';
-        $command->registrationCode = 'REGCODE';
+        $command->registrationCode = 'A1B2C3D4';
         $command->identityId = $this->id->getIdentityId();
         $command->authoringSecondFactorLoa = "loa-self-asserted";
         $command->secondFactorType = 'sms';
@@ -754,7 +754,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $yubikeyPublicId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -803,7 +803,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('sms'),
                     $phoneIdentifier,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -855,7 +855,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = 'identifier-for-a-gssp';
-        $command->registrationCode = 'REGCODE';
+        $command->registrationCode = 'A1B2C3D4';
         $command->identityId = $this->id->getIdentityId();
         $command->authoringSecondFactorLoa = "loa-self-asserted";
         $command->secondFactorType = 'tiqr';
@@ -905,7 +905,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $yubikeyPublicId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -954,7 +954,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('sms'),
                     $phoneIdentifier,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')
@@ -995,7 +995,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SecondFactorType('tiqr'),
                     $gsspIdentifier,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB')

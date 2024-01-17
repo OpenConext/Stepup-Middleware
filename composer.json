@@ -85,15 +85,13 @@
             "@phpmd",
             "@phpcs",
             "@phpcpd",
-            "@phpunit",
-            "@security-tests"
+            "@phpunit"
         ],
         "phplint": "./ci/qa/phplint",
         "phpmd": "./ci/qa/phpmd",
         "phpcs": "./ci/qa/phpcs",
         "phpcpd": "./ci/qa/phpcpd",
         "phpunit": "./ci/qa/phpunit",
-        "security-tests": "composer audit",
 
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

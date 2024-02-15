@@ -18,13 +18,16 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
+use function sprintf;
 
 class ProfileService extends AbstractSearchService
 {
@@ -43,14 +46,21 @@ class ProfileService extends AbstractSearchService
      */
     private $authorizationService;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         RaListingRepository $raListingRepository,
         IdentityService $identityService,
-        AuthorizationContextService $institutionAuthorizationService
+        AuthorizationContextService $institutionAuthorizationService,
+        LoggerInterface $logger
     ) {
         $this->raListingRepository = $raListingRepository;
         $this->identityService = $identityService;
         $this->authorizationService = $institutionAuthorizationService;
+        $this->logger = $logger;
     }
 
     /**
@@ -72,7 +82,29 @@ class ProfileService extends AbstractSearchService
     public function createProfile($identityId)
     {
         $identity = $this->identityService->find($identityId);
+
         if ($identity === null) {
+            $this->logger->notice(sprintf('No Identity found with IdentityId %s', $identityId));
+            return null;
+        }
+        $this->logger->notice(sprintf('Found IdentityId "%s" NameId "%s"', $identityId, $identity->nameId ));
+
+        $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identityId));
+        $isRa = $this->getRoleFromListing($raListing, AuthorityRole::ROLE_RA);
+        $isRaa = $this->getRoleFromListing($raListing, AuthorityRole::ROLE_RAA);
+
+        $this->logger->notice(
+            sprintf(
+                'Based on RaListing Identity %s has roles(RA: %s, RAA: %s)',
+                $identityId,
+                $isRa ? "YES" : "NO",
+                $isRaa ? "YES" : "NO"
+            )
+        );
+
+
+        if ($raListing === null) {
+            $this->logger->notice(sprintf('No RA listing found for IdentityId %s', $identityId));
             return null;
         }
 
@@ -80,21 +112,43 @@ class ProfileService extends AbstractSearchService
             new IdentityId($identityId),
             InstitutionRole::useRa()
         );
-
-        $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
-            new IdentityId($identityId),
-            InstitutionRole::useRaa()
-        );
-
         $authorizations = AuthorizedInstitutionCollection::from(
-            $authorizationContextRa->getInstitutions(),
-            $authorizationContextRaa->getInstitutions()
+            $authorizationContextRa->getInstitutions()
         );
+
+        $this->logger->notice(sprintf('IdentityId "%s" is RA for: %s', $identityId, json_encode($authorizationContextRa->getInstitutions()->jsonSerialize())));
+
+        if ($isRaa) {
+            $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
+                new IdentityId($identityId),
+                InstitutionRole::useRaa()
+            );
+
+            $this->logger->notice(sprintf('IdentityId "%s" is RAA for: %s', $identityId, json_encode($authorizationContextRaa->getInstitutions()->jsonSerialize())));
+
+            $authorizations = AuthorizedInstitutionCollection::from(
+                $authorizationContextRa->getInstitutions(),
+                $authorizationContextRaa->getInstitutions()
+            );
+        }
 
         return new Profile(
             $identity,
             $authorizations,
             $authorizationContextRa->isActorSraa()
         );
+    }
+
+    /**
+     * @param array<int, RaListing> $raListing
+     */
+    private function getRoleFromListing(array $raListing, string $role): bool
+    {
+        foreach ($raListing as $listing) {
+            if ($listing->role->getRole() === $role) {
+                return true;
+            }
+        }
+        return false;
     }
 }

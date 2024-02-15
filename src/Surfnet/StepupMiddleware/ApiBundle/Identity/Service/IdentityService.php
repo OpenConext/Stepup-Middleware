@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -57,16 +58,23 @@ class IdentityService extends AbstractSearchService
      */
     private $sraaRepository;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         IdentityRepository $repository,
         IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokenOptionsRepository,
         RaListingRepository $raListingRepository,
-        SraaRepository $sraaRepository
+        SraaRepository $sraaRepository,
+        LoggerInterface $logger
     ) {
         $this->repository = $repository;
         $this->identitySelfAssertedTokensOptionsRepository = $identitySelfAssertedTokenOptionsRepository;
         $this->raListingRepository = $raListingRepository;
         $this->sraaRepository = $sraaRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -147,11 +155,13 @@ class IdentityService extends AbstractSearchService
      */
     private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
     {
+        $this->logger->notice(sprintf('Getting profile for IdentityId "%s" NameId "%s"', $identity->id, $identity->nameId ));
         $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);
 
         if (!empty($raListing)) {
-            $credentials = RegistrationAuthorityCredentials::fromRaListings($raListing);
+            $this->logger->notice(sprintf('RA listing(s) found for IdentityId "%s"', $identity->id));
+            $credentials = RegistrationAuthorityCredentials::fromRaListings($raListing, $this->logger);
 
             if ($sraa) {
                 $credentials = $credentials->grantSraa();

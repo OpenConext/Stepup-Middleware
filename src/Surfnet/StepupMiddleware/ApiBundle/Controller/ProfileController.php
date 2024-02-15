@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\ProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function sprintf;
 
 class ProfileController extends Controller
 {
@@ -32,10 +34,15 @@ class ProfileController extends Controller
      */
     private $profileService;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
-        ProfileService $profileService
+        ProfileService $profileService,
+        LoggerInterface $logger
     ) {
         $this->profileService = $profileService;
+        $this->logger = $logger;
     }
 
     public function getAction(Request $request, $identityId)
@@ -47,6 +54,7 @@ class ProfileController extends Controller
         if ($identityId !== $actorId) {
             throw new AccessDeniedHttpException("Identity and actor id should match. It is not yet allowed to view the profile of somebody else.");
         }
+        $this->logger->notice(sprintf('Retrieving profile (autzh) information for IdentityId "%s"', $identityId));
 
         $profile = $this->profileService->createProfile($identityId);
         if (!$profile) {

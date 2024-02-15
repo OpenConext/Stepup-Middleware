@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
+use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -106,7 +107,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
      * @param RaListing[] $raListings
      * @return RegistrationAuthorityCredentials
      */
-    public static function fromRaListings(array $raListings)
+    public static function fromRaListings(array $raListings, LoggerInterface $logger)
     {
         $raListingCredentials = current($raListings);
         $isRa = false;
@@ -114,10 +115,12 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
 
         foreach ($raListings as $raListing) {
             if ($raListing->role->equals(AuthorityRole::ra())) {
+                $logger->info(sprintf('Identity "%s" is RA, for institution "%s"', $raListing->identityId, $raListing->institution->getInstitution()));
                 $isRa = true;
             }
 
             if ($raListing->role->equals(AuthorityRole::raa())) {
+                $logger->info(sprintf('Identity "%s" is RAA, for institution "%s"', $raListing->identityId, $raListing->institution->getInstitution()));
                 $isRaa = true;
             }
         }

@@ -39,6 +39,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
@@ -210,7 +211,10 @@ class CommandAuthorizationServiceTest extends TestCase
             );
 
             $role = RegistrationAuthorityRole::raa();
-            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+            if ($command instanceof VetSecondFactorCommand
+                || $command instanceof RevokeRegistrantsSecondFactorCommand
+                || $command instanceof RevokeRegistrantsRecoveryTokenCommand
+            ) {
                 $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);
@@ -375,7 +379,10 @@ class CommandAuthorizationServiceTest extends TestCase
             );
 
             $role = RegistrationAuthorityRole::raa();
-            if ($command instanceof VetSecondFactorCommand || $command instanceof RevokeRegistrantsSecondFactorCommand) {
+            if ($command instanceof VetSecondFactorCommand
+                || $command instanceof RevokeRegistrantsSecondFactorCommand
+                || $command instanceof RevokeRegistrantsRecoveryTokenCommand
+            ) {
                 $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);

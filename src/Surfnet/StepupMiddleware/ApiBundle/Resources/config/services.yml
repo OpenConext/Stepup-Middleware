@@ -42,6 +42,12 @@ services:
     surfnet_stepup_middleware_api.repository.whitelist_entry: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository'
     surfnet_stepup_middleware_api.repository.authorization: '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository'
 
+    Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository:
+        arguments:
+            - '@Doctrine\Common\Persistence\ManagerRegistry'
+            - '@logger'
+        public: true
+
     # Repository filter
     surfnet_stepup_middleware_api.repository_filter.authorization:
         class: Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter

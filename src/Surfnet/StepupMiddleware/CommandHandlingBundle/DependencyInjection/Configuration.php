@@ -23,67 +23,66 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('surfnet_stepup_middleware_command_handling');
+        $rootNode = $treeBuilder->getRootNode();
+        $rootNode
+            ->children()
+                ->scalarNode('self_service_email_verification_url_template')
+                    ->isRequired()
+                    ->info('Configures the URL where registrants can verify e-mail address ownership.')
+                    ->validate()
+                        ->ifTrue(function ($url) {
+                            $parts = parse_url($url);
 
-        $treeBuilder
-            ->root('surfnet_stepup_middleware_command_handling')
-                ->children()
-                    ->scalarNode('self_service_email_verification_url_template')
-                        ->isRequired()
-                        ->info('Configures the URL where registrants can verify e-mail address ownership.')
-                        ->validate()
-                            ->ifTrue(function ($url) {
-                                $parts = parse_url($url);
-
-                                return empty($parts['scheme']) || empty($parts['host']) || empty($parts['path']);
-                            })
-                            ->thenInvalid(
-                                'Invalid Self-Service e-mail verification URL template: ' .
-                                "must be full Self-Service URL with scheme, host and path, '%s' given." .
-                                "The URL should contain a '{identityId}', '{secondFactorId}' and '{nonce}' parameter."
-                            )
-                        ->end()
+                            return empty($parts['scheme']) || empty($parts['host']) || empty($parts['path']);
+                        })
+                        ->thenInvalid(
+                            'Invalid Self-Service e-mail verification URL template: ' .
+                            "must be full Self-Service URL with scheme, host and path, '%s' given." .
+                            "The URL should contain a '{identityId}', '{secondFactorId}' and '{nonce}' parameter."
+                        )
                     ->end()
-                    ->scalarNode('self_service_url')
-                        ->isRequired()
-                        ->info('Configures the URL for Self Service.')
-                        ->validate()
-                            ->ifTrue(
-                                function ($url) {
-                                    return filter_var($url, FILTER_VALIDATE_URL) === false;
-                                }
-                            )
-                            ->thenInvalid('self_service_url must be a valid url')
-                        ->end()
+                ->end()
+                ->scalarNode('self_service_url')
+                    ->isRequired()
+                    ->info('Configures the URL for Self Service.')
+                    ->validate()
+                        ->ifTrue(
+                            function ($url) {
+                                return filter_var($url, FILTER_VALIDATE_URL) === false;
+                            }
+                        )
+                        ->thenInvalid('self_service_url must be a valid url')
                     ->end()
-                    ->arrayNode('email_sender')
-                        ->isRequired()
-                        ->info('Configures the sender used for all outgoing e-mail messages')
-                        ->children()
-                            ->scalarNode('name')
-                                ->isRequired()
-                                ->validate()
-                                    ->ifTrue(function ($name) {
-                                        return !is_string($name) || empty($name);
-                                    })
-                                    ->thenInvalid("E-mail sender name must be non-empty string, got '%s'")
-                                ->end()
+                ->end()
+                ->arrayNode('email_sender')
+                    ->isRequired()
+                    ->info('Configures the sender used for all outgoing e-mail messages')
+                    ->children()
+                        ->scalarNode('name')
+                            ->isRequired()
+                            ->validate()
+                                ->ifTrue(function ($name) {
+                                    return !is_string($name) || empty($name);
+                                })
+                                ->thenInvalid("E-mail sender name must be non-empty string, got '%s'")
                             ->end()
-                            ->scalarNode('email')
-                                ->isRequired()
-                                ->validate()
-                                    ->ifTrue(function ($name) {
-                                        return !is_string($name) || empty($name);
-                                    })
-                                    ->thenInvalid("E-mail sender e-mail must be non-empty string, got '%s'")
-                                ->end()
+                        ->end()
+                        ->scalarNode('email')
+                            ->isRequired()
+                            ->validate()
+                                ->ifTrue(function ($name) {
+                                    return !is_string($name) || empty($name);
+                                })
+                                ->thenInvalid("E-mail sender e-mail must be non-empty string, got '%s'")
                             ->end()
                         ->end()
                     ->end()
-                    ->scalarNode('email_fallback_locale')->isRequired()->end()
-                ->end();
+                ->end()
+                ->scalarNode('email_fallback_locale')->isRequired()->end()
+            ->end();
 
         return $treeBuilder;
     }

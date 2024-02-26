@@ -4,6 +4,9 @@ imports:
   - { resource: 'legacy/parameters.yaml' }
 
 services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
 
   Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper:
     arguments:

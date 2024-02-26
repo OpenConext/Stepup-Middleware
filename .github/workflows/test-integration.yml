@@ -2,7 +2,7 @@ name: test-integration
 on:
   pull_request:
   push:
-    branches: [ master, develop, feature/*, bugfix/* ]
+    branches: [ main, feature/*, bugfix/*, release/* ]
 jobs:
   build:
     runs-on: ubuntu-latest

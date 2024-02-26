@@ -1,6 +1,4 @@
 framework:
     test: true
-    session:
-        handler_id: session.storage.mock_file
     profiler:
         collect: false

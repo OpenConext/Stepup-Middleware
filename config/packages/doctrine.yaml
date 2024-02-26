@@ -128,19 +128,19 @@ doctrine:
                     api_identity:
                         mapping: true
                         type: annotation
-                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Identity"
+                        dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ApiBundle/Identity"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
                     api_configuration:
                         mapping: true
                         type: annotation
-                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ApiBundle/Configuration"
+                        dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ApiBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Configuration
                         is_bundle: false
                     management_configuration:
                         mapping: true
                         type: annotation
-                        dir: "%kernel.root_dir%/../src/Surfnet/StepupMiddleware/ManagementBundle/Configuration"
+                        dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ManagementBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
             gateway:

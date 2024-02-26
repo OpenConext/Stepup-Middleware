@@ -1977,4 +1977,133 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 ),
             ]);
     }
+
+    /**
+     * @test
+     * @group command-handler
+     * @runInSeparateProcess
+     *
+     * @todo remove this test once we drop BC support for SelfService 3.5
+     */
+    public function a_second_factor_can_be_self_vetted_using_old_authoringSecondFactorIdentifier_command_property()
+    {
+        $command = new SelfVetSecondFactorCommand();
+        $command->secondFactorId = '+31 (0) 612345678';
+        $command->registrationCode = 'REGCODE';
+        $command->identityId = $this->uuid();
+        $command->authoringSecondFactorIdentifier = "loa-3";
+        $command->secondFactorType = 'sms';
+
+        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
+        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('Institution');
+        $registrantSecFacId = new SecondFactorId($this->uuid());
+        $registrantSecPubId = new YubikeyPublicId('00028278');
+        $registrantNameId = new NameId('name id');
+        $registrantEmail = new Email('jack@zweiblumen.tld');
+        $registrantCommonName = new CommonName('Jack Zweiblumen');
+
+        $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
+        $loa = new Loa(1, 'identifier_loa1');
+        $this->loaResolutionService->shouldReceive('getLoa')->andReturn($loa);
+        $this->secondFactorTypeService->shouldReceive('getLevel')->andReturn(1);
+        $this->scenario
+            ->withAggregateId($command->identityId)
+            ->given([
+                // First the existing token is vetted
+                new IdentityCreatedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantNameId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new YubikeyPossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    $registrantSecPubId,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    DateTime::now(),
+                    $command->registrationCode,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new SecondFactorVettedEvent(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $registrantSecFacId,
+                    new SecondFactorType('yubikey'),
+                    $registrantSecPubId,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB'),
+                    new OnPremiseVettingType(new DocumentNumber('123456'))
+                ),
+                // The next token is vetted using the other token
+                new PhonePossessionProvenEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    $authorityPhoneNo,
+                    true,
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(static::$window),
+                        DateTime::now()
+                    ),
+                    'nonce',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+                new EmailVerifiedEvent(
+                    $registrantId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    DateTime::now(),
+                    'REGCODE',
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB')
+                ),
+            ])
+            ->when($command)
+            ->then([
+                // When self vetting, proof of possession is skipped, no RA verification is performed.
+                new SecondFactorVettedWithoutTokenProofOfPossession(
+                    $registrantId,
+                    $registrantNameId,
+                    $registrantInstitution,
+                    $authorityPhoneSfId,
+                    new SecondFactorType('sms'),
+                    $authorityPhoneNo,
+                    $registrantCommonName,
+                    $registrantEmail,
+                    new Locale('en_GB'),
+                    new SelfVetVettingType($loa)
+                ),
+            ]);
+    }
 }

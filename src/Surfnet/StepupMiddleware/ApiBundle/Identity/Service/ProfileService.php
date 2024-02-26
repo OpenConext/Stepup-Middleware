@@ -18,10 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
@@ -78,12 +77,12 @@ class ProfileService extends AbstractSearchService
 
         $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            InstitutionRole::useRa()
+            RegistrationAuthorityRole::ra()
         );
 
         $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            InstitutionRole::useRaa()
+            RegistrationAuthorityRole::raa()
         );
 
         $authorizations = AuthorizedInstitutionCollection::from(

@@ -26,6 +26,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
@@ -53,11 +54,9 @@ class AuthorizationRepository extends ServiceEntityRepository
      * Return all institutions were the actor has the specified role for
      * The returned institutions are used to filter query results on
      *
-     * @param InstitutionRole $role
-     * @param IdentityId $actorId
      * @return InstitutionCollection
      */
-    public function getInstitutionsForRole(InstitutionRole $role, IdentityId $actorId)
+    public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId) :InstitutionCollection
     {
         $result = new InstitutionCollection();
         $qb = $this->_em->createQueryBuilder()
@@ -78,9 +77,10 @@ class AuthorizationRepository extends ServiceEntityRepository
             'authorizationRoles',
             $this->getAllowedInstitutionRoles($role)
         );
+        $identityRoles = $this->getAllowedIdentityRoles($role);
         $qb->setParameter(
             'roles',
-            $this->getAllowedIdentityRoles($role)
+            $identityRoles
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
@@ -97,13 +97,17 @@ class AuthorizationRepository extends ServiceEntityRepository
         $qb = $this->_em->createQueryBuilder()
             ->select('ia.institution')
             ->from(InstitutionAuthorization::class, 'ia')
-            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation')
+            // Filter the RA listing on the authorizations that apply for the RA(A) listed there
+            // For example, when testing a USE_RA institution authorization, the listed RA should have
+            // at least a RA or RAA role
+            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)')
             ->where('r.identityId = :identityId')
             ->andWhere("ia.institutionRole = :role") // Only filter on use_ra and use_raa roles here.
             ->groupBy('ia.institution');
 
         $qb->setParameter('identityId', (string)$actorId);
-        $qb->setParameter('role', $role->getType());
+        $qb->setParameter('role', $this->getInstitutionRoleByRaRole($role));
+        $qb->setParameter('identityRoles', $identityRoles);
 
         $institutions = $qb->getQuery()->getArrayResult();
         foreach ($institutions as $institution) {
@@ -111,7 +115,7 @@ class AuthorizationRepository extends ServiceEntityRepository
             if (!$result->contains($institutionVo)) {
                 $result->add($institutionVo);
                 $this->logger->notice(
-                    sprintf('Adding %s to authorized institutions from use_raa', $institution['institution'])
+                    sprintf('Adding %s to authorized institutions from %s', $role->getType(), $institution['institution'])
                 );
             }
         }
@@ -158,18 +162,15 @@ class AuthorizationRepository extends ServiceEntityRepository
 
     /**
      * This is the mapping to look up allowed institution roles
-     * - if the institution role is RA we should look if the configured institution has RA role
-     * - if the institution role is RAA we should look if the configured institution has RAA role
-     *
-     * @param InstitutionRole $role
-     * @return array
+     * - if the required role is RA we should look if the configured institution has USE_RA role
+     * - if the required role is RAA we should look if the configured institution has USE_RAA role
      */
-    private function getAllowedInstitutionRoles(InstitutionRole $role)
+    private function getAllowedInstitutionRoles(RegistrationAuthorityRole $role): array
     {
         switch (true) {
-            case $role->equals(InstitutionRole::useRa()):
+            case $role->equals(RegistrationAuthorityRole::ra()):
                 return [InstitutionRole::ROLE_USE_RA];
-            case $role->equals(InstitutionRole::useRaa()):
+            case $role->equals(RegistrationAuthorityRole::raa()):
                 return [InstitutionRole::ROLE_USE_RAA];
             default:
                 return [];
@@ -178,21 +179,29 @@ class AuthorizationRepository extends ServiceEntityRepository
 
     /**
      * This is the mapping to look up allowed identity roles for a specific institution role
-     * - if the institution role is RA we should look if the identity has a RA or RAA role
-     * - if the institution role is RAA we should look if the identity has a RAA role
+     * - if the required role is RA we should look if the identity has a RA or RAA role
+     * - if the required role is RAA we should look if the identity has a RAA role
      *
-     * @param InstitutionRole $role
-     * @return array
      */
-    private function getAllowedIdentityRoles(InstitutionRole $role)
+    private function getAllowedIdentityRoles(RegistrationAuthorityRole $role): array
     {
         switch (true) {
-            case $role->equals(InstitutionRole::useRa()):
+            case $role->equals(RegistrationAuthorityRole::ra()):
                 return [AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA];
-            case $role->equals(InstitutionRole::useRaa()):
+            case $role->equals(RegistrationAuthorityRole::raa()):
                 return [AuthorityRole::ROLE_RAA];
             default:
                 return [];
+        }
+    }
+
+    private function getInstitutionRoleByRaRole(RegistrationAuthorityRole $role): string
+    {
+        switch (true) {
+            case $role->equals(RegistrationAuthorityRole::ra()):
+                return AuthorityRole::ROLE_RA;
+            case $role->equals(RegistrationAuthorityRole::raa()):
+                return AuthorityRole::ROLE_RAA;
         }
     }
 }

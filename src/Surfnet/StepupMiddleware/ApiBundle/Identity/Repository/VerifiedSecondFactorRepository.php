@@ -50,7 +50,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
      * @param string $id
      * @return VerifiedSecondFactor|null
      */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null): ?object
     {
         /** @var VerifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);

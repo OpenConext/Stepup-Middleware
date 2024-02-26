@@ -22,7 +22,7 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Tests\Projector;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;

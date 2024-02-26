@@ -19,7 +19,7 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class RaLocationId implements JsonSerializable

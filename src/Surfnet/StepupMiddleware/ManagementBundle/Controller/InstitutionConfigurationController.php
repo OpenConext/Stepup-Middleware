@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 use DateTime;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\JsonHelper;

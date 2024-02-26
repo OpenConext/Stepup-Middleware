@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Exception;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;

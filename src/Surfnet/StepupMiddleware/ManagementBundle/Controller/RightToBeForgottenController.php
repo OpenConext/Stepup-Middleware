@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;

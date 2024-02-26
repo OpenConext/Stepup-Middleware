@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;

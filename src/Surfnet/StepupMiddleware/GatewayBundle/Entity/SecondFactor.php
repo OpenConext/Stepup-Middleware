@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!

@@ -47,7 +47,7 @@ class IdentityRepository extends ServiceEntityRepository
      * @param null $lockVersion
      * @return Identity|null
      */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null): ?object
     {
         /** @var Identity|null $identity */
         $identity = parent::find($id);

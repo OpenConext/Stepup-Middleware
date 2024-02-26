@@ -18,13 +18,11 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
-use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InstitutionConfigurationControllerTest extends WebTestCase
 {
-    use FixturesTrait;
-
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Client
      */
@@ -40,10 +38,14 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      */
     private $passwordRo;
 
+    private DatabaseToolCollection $databaseTool;
+
     public function setUp(): void
     {
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
         // Initialises schema.
-        $this->loadFixtures([]);
+        $this->databaseTool->loadFixtures([]);
+        // Initialises schema.
         $this->client = static::createClient();
         $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
         $this->passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');

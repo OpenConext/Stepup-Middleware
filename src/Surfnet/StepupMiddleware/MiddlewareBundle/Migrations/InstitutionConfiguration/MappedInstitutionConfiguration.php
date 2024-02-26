@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;

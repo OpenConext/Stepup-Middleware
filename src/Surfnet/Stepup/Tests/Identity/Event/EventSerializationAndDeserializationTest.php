@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 use Broadway\Serializer\Serializable as SerializableInterface;
 use DateTime as CoreDateTime;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;

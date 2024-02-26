@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
 {

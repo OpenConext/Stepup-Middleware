@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListener;
 use DateTime as CoreDateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;

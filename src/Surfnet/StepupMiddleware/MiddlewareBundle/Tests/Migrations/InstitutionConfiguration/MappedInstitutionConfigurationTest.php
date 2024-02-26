@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\InstitutionConfiguration;
 
 use PHPUnit\Framework\TestCase as UnitTest;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;

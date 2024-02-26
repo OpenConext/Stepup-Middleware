@@ -19,13 +19,11 @@
 namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
 
 use Generator;
-use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ConfiguredInstitutionControllerTest extends WebTestCase
 {
-    use FixturesTrait;
-
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Client
      */
@@ -41,10 +39,14 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      */
     private $endpoint;
 
+    private DatabaseToolCollection $databaseTool;
+
     public function setUp(): void
     {
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
         // Initialises schema.
-        $this->loadFixtures([]);
+        $this->databaseTool->loadFixtures([]);
+
         $this->client = static::createClient();
 
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');

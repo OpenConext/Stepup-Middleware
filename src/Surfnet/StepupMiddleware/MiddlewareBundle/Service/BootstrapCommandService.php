@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;

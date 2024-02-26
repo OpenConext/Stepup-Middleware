@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor;
 
 use Broadway\Processor\Processor;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;

@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;

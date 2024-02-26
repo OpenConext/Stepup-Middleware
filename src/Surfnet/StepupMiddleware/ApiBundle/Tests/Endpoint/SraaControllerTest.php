@@ -19,13 +19,12 @@
 namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
 
 use Generator;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SraaControllerTest extends WebTestCase
 {
-    use FixturesTrait;
-
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Client
      */
@@ -41,8 +40,13 @@ class SraaControllerTest extends WebTestCase
      */
     private $endpoint;
 
+    private DatabaseToolCollection $databaseTool;
+
     public function setUp(): void
     {
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        // Initialises schema.
+        $this->databaseTool->loadFixtures([]);
         // Initialises schema.
         $this->loadFixtures([]);
         $this->client = static::createClient();

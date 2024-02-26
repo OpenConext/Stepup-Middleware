@@ -1,7 +1,7 @@
 framework:
   test: ~
   session:
-    storage_id: session.storage.mock_file
+    handler_id: session.storage.mock_file
   profiler:
     collect: false
   php_errors:

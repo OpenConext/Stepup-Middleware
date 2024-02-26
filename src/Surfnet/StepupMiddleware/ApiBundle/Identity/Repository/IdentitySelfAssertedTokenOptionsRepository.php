@@ -19,19 +19,21 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\IdentitySelfAssertedTokenOptions;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class IdentitySelfAssertedTokenOptionsRepository extends ServiceEntityRepository
 {
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
+
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
         parent::__construct($registry, IdentitySelfAssertedTokenOptions::class);
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null): ?IdentitySelfAssertedTokenOptions
     {
         return parent::find($id);
     }

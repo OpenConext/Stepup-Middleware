@@ -20,13 +20,13 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class IdentityRepository extends ServiceEntityRepository
 {
@@ -41,13 +41,7 @@ class IdentityRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    /**
-     * @param string $id
-     * @param null $lockMode
-     * @param null $lockVersion
-     * @return Identity|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null): ?object
+    public function find($id, $lockMode = null, $lockVersion = null): ?Identity
     {
         /** @var Identity|null $identity */
         $identity = parent::find($id);

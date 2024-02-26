@@ -19,11 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class VettedSecondFactorRepository extends ServiceEntityRepository
 {
@@ -32,11 +32,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, VettedSecondFactor::class);
     }
 
-    /**
-     * @param string $id
-     * @return VettedSecondFactor|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null): ?VettedSecondFactor
     {
         /** @var VettedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);

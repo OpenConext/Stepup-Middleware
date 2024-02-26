@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -33,6 +32,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)

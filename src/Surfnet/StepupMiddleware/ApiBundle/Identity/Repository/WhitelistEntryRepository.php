@@ -20,9 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class WhitelistEntryRepository extends ServiceEntityRepository
 {

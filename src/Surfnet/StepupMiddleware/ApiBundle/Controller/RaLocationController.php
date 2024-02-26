@@ -23,11 +23,11 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-final class RaLocationController extends Controller
+final class RaLocationController extends AbstractController
 {
     /**
      * @return RaLocationService

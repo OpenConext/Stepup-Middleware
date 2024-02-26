@@ -27,7 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RightToBeForgottenController extends Controller
+class RightToBeForgottenController extends AbstractController
 {
     /**
      * @return TransactionAwarePipeline

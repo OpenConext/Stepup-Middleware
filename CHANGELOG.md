@@ -1,5 +1,8 @@
 # Changelog
 
+# 5.1.1
+- The changes from 5.0.10 got lost in release 5.1, in this version they are added back
+
 # 5.1.0
 - Introduction of the SSO on 2FA feature in Stepup-Middleware
 - Please run the provided Doctrine Migration to prepare the Middleware and Gateway projections

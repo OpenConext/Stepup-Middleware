@@ -23,23 +23,23 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('surfnet_stepup_middleware_api');
+        $rootNode = $treeBuilder->getRootNode();
 
-        $treeBuilder
-            ->root('surfnet_stepup_middleware_api')
-                ->children()
-                    ->scalarNode('http_basic_realm')
-                        ->defaultValue('Secure Gateway API')
-                        ->validate()
-                            ->ifTrue(function ($realm) {
-                                return !is_string($realm) || empty($realm);
-                            })
-                            ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")
-                        ->end()
+        $rootNode
+            ->children()
+                ->scalarNode('http_basic_realm')
+                    ->defaultValue('Secure Gateway API')
+                    ->validate()
+                        ->ifTrue(function ($realm) {
+                            return !is_string($realm) || empty($realm);
+                        })
+                        ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")
                     ->end()
-                ->end();
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

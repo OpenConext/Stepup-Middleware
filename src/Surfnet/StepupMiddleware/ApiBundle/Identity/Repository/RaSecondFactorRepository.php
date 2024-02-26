@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Exception\RuntimeException;
@@ -29,6 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RaSecondFactorRepository extends ServiceEntityRepository
 {
@@ -43,12 +43,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-
-    /**
-     * @param string $id
-     * @return RaSecondFactor|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null): ?RaSecondFactor
     {
         /** @var RaSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);

@@ -23,7 +23,7 @@ class OnPremiseVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type;
+    protected $type = VettingType::TYPE_ON_PREMISE;
 
     /**
      * @var DocumentNumber
@@ -33,7 +33,6 @@ class OnPremiseVettingType implements VettingType
     public function __construct(DocumentNumber $documentNumber)
     {
         $this->documentNumber = $documentNumber;
-        $this->type = VettingType::TYPE_ON_PREMISE;
     }
 
     public static function deserialize($data)

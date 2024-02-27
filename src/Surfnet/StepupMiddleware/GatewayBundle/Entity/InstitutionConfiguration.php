@@ -21,24 +21,22 @@ declare(strict_types=1);
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRepository")
- */
+#[ORM\Entity(repositoryClass: InstitutionConfigurationRepository::class)]
 class InstitutionConfiguration
 {
     /**
      * @var string
-     * @ORM\Id
-     * @ORM\Column(length=200)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 200)]
     public $institution;
 
     /**
-     * @ORM\Column(type="boolean")
-     *
      * @var bool is the SSO on 2FA feature enabled?
      */
+    #[ORM\Column(type: 'boolean')]
     public $ssoOn2faEnabled;
 
     public function __construct(string $institution, bool $ssoOn2faEnabled)

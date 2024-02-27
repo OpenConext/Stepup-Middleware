@@ -20,79 +20,69 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!
  * @see Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Gateway project)
  *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
- *      }
- * )
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_secondfactor_nameid', columns: ['name_id'])]
+#[ORM\Entity(repositoryClass: SecondFactorRepository::class)]
 class SecondFactor
 {
     /**
      * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     private $id;
 
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     private $identityId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=200)
      */
+    #[ORM\Column(length: 200)]
     private $nameId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=200)
      */
+    #[ORM\Column(length: 200)]
     private $institution;
 
     /**
      * In which language to display any second factor verification screens.
      *
      * @var string
-     *
-     * @ORM\Column
      */
+    #[ORM\Column]
     public $displayLocale;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=36)
      */
+    #[ORM\Column(length: 36)]
     private $secondFactorId;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=50)
      */
+    #[ORM\Column(length: 50)]
     private $secondFactorType;
 
     /**
      * @var string
-     *
-     * @ORM\Column(length=255)
      */
+    #[ORM\Column(length: 255)]
     private $secondFactorIdentifier;
 
     /**
@@ -102,9 +92,8 @@ class SecondFactor
      * identity vetted (verified) by a RA(A) at the service desk. This trickles
      * down to the self-vet vetting type. As the token used for self vetting
      * was RA vetted.
-     *
-     * @ORM\Column(type="boolean", options={"default":"1"})
      */
+    #[ORM\Column(type: 'boolean', options: ['default' => '1'])]
     private $identityVetted;
 
     public function __construct(

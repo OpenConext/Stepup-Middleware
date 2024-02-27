@@ -25,7 +25,7 @@ class SelfVetVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type;
+    protected $type = VettingType::TYPE_SELF_VET;
 
     /**
      * @var Loa
@@ -35,7 +35,6 @@ class SelfVetVettingType implements VettingType
     public function __construct(Loa $loa)
     {
         $this->authoringLoa = $loa;
-        $this->type = VettingType::TYPE_SELF_VET;
     }
 
     public static function deserialize($data)

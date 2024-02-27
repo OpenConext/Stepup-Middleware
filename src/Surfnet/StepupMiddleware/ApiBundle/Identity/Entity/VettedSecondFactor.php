@@ -20,56 +20,44 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Identity\Value\VettingType;
-use function is_null;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_vetted_second_factor_type", columns={"type"}),
- *          @ORM\Index(name="idx_vetted_second_factor_vetting_type", columns={"vetting_type"}),
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_vetted_second_factor_type', columns: ['type'])]
+#[ORM\Index(name: 'idx_vetted_second_factor_vetting_type', columns: ['vetting_type'])]
+#[ORM\Entity(repositoryClass: VettedSecondFactorRepository::class)]
 class VettedSecondFactor implements \JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
+    #[ORM\Column(length: 16)]
     public $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     *
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255)]
     public $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(length=255, nullable=true)
      * @var string
      */
+    #[ORM\Column(length: 255, nullable: true)]
     public $vettingType;
 
     /**

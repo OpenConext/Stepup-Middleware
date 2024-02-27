@@ -26,33 +26,27 @@ class ProvePhonePossessionCommand extends AbstractCommand implements SelfService
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
      * The ID of the second factor to create.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorId;
 
     /**
      * The phone number
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^\+[\d\s]+ \(0\) \d+$~")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    #[Assert\Regex(pattern: '~^\+[\d\s]+ \(0\) \d+$~')]
     public $phoneNumber;
 
     /**

@@ -20,23 +20,18 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository")
- */
+#[ORM\Entity(repositoryClass: WhitelistEntryRepository::class)]
 class WhitelistEntry
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="institution")
-     *
-     * @var Institution
-     */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     public static function createFrom(Institution $institution)
     {
-        $instance              = new self();
+        $instance  = new self();
         $instance->institution = $institution;
 
         return $instance;

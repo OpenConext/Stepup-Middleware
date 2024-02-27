@@ -20,20 +20,17 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository"
- * )
- */
+#[ORM\Entity(repositoryClass: ConfiguredInstitutionRepository::class)]
 class ConfiguredInstitution
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
     public $institution;
 
     /**

@@ -27,7 +27,7 @@ final class InstitutionAuthorizationOptionMap
     /**
      * @var InstitutionAuthorizationOption[]
      */
-    private $institutionOptions;
+    private $institutionOptions = [];
 
     /**
      * InstitutionAuthorizationOptionMap constructor.
@@ -51,8 +51,6 @@ final class InstitutionAuthorizationOptionMap
             }
             $institutions[$role->getType()][] = $authorization->institutionRelation;
         }
-
-        $this->institutionOptions = [];
         foreach ($roles as $role) {
             $institutionAuthorizationOption = InstitutionAuthorizationOption::fromInstitutions($role, $institution, $institutions[$role->getType()]);
             $this->institutionOptions[$role->getType()] = $institutionAuthorizationOption;

@@ -27,69 +27,59 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository"
- * )
- */
+#[ORM\Entity(repositoryClass: InstitutionConfigurationOptionsRepository::class)]
 class InstitutionConfigurationOptions
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
     public $institution;
 
     /**
-     * @ORM\Column(type="stepup_use_ra_locations_option")
-     *
      * @var UseRaLocationsOption
      */
+    #[ORM\Column(type: 'stepup_use_ra_locations_option')]
     public $useRaLocationsOption;
 
     /**
-     * @ORM\Column(type="stepup_show_raa_contact_information_option")
-     *
      * @var ShowRaaContactInformationOption
      */
+    #[ORM\Column(type: 'stepup_show_raa_contact_information_option')]
     public $showRaaContactInformationOption;
 
     /**
-     * @ORM\Column(type="stepup_verify_email_option", options={"default" : 1})
-     *
      * @var VerifyEmailOption
      */
+    #[ORM\Column(type: 'stepup_verify_email_option', options: ['default' => 1])]
     public $verifyEmailOption;
 
     /**
-     * @ORM\Column(type="stepup_self_vet_option", options={"default" : 0})
-     *
      * @var SelfVetOption
      */
+    #[ORM\Column(type: 'stepup_self_vet_option', options: ['default' => 0])]
     public $selfVetOption;
 
     /**
-     * @ORM\Column(type="stepup_sso_on_2fa_option", options={"default" : 0})
-     *
      * @var SsoOn2FaOption
      */
+    #[ORM\Column(type: 'stepup_sso_on_2fa_option', options: ['default' => 0])]
     public $ssoOn2faOption;
 
     /**
-     * @ORM\Column(type="stepup_self_asserted_tokens_option", options={"default" : 0})
-     *
      * @var SelfAssertedTokensOption
      */
+    #[ORM\Column(type: 'stepup_self_asserted_tokens_option', options: ['default' => 0])]
     public $selfAssertedTokensOption;
 
     /**
-     * @ORM\Column(type="stepup_number_of_tokens_per_identity_option", options={"default" : 0})
-     *
      * @var NumberOfTokensPerIdentityOption
      */
+    #[ORM\Column(type: 'stepup_number_of_tokens_per_identity_option', options: ['default' => 0])]
     public $numberOfTokensPerIdentityOption;
 
     public static function create(

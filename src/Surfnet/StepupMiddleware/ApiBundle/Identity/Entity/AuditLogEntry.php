@@ -21,22 +21,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 /**
  * @SuppressWarnings(PHPMD.UnusedPrivateField)
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository")
- * @ORM\Table(
- *      name="audit_log",
- *      indexes={
- *          @ORM\Index(name="idx_auditlog_actorid", columns={"actor_id"}),
- *          @ORM\Index(name="idx_auditlog_identityid", columns={"identity_id"}),
- *          @ORM\Index(name="idx_auditlog_identityinstitution", columns={"identity_institution"}),
- *          @ORM\Index(name="idx_auditlog_secondfactorid", columns={"second_factor_id"}),
- *          @ORM\Index(name="idx_auditlog_ra_institution", columns={"ra_institution"}),
- *      }
- * )
  */
+#[ORM\Table(name: 'audit_log')]
+#[ORM\Index(name: 'idx_auditlog_actorid', columns: ['actor_id'])]
+#[ORM\Index(name: 'idx_auditlog_identityid', columns: ['identity_id'])]
+#[ORM\Index(name: 'idx_auditlog_identityinstitution', columns: ['identity_institution'])]
+#[ORM\Index(name: 'idx_auditlog_secondfactorid', columns: ['second_factor_id'])]
+#[ORM\Index(name: 'idx_auditlog_ra_institution', columns: ['ra_institution'])]
+#[ORM\Entity(repositoryClass: AuditLogRepository::class)]
 class AuditLogEntry implements JsonSerializable
 {
     /**
@@ -83,32 +79,29 @@ class AuditLogEntry implements JsonSerializable
     ];
 
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(length=36, nullable=true)
-     *
      * @var string|null
      */
+    #[ORM\Column(length: 36, nullable: true)]
     public $actorId;
 
     /**
-     * @ORM\Column(type="stepup_common_name", nullable=true)
-     *
      * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
+    #[ORM\Column(type: 'stepup_common_name', nullable: true)]
     public $actorCommonName;
 
     /**
-     * @ORM\Column(type="institution", nullable=true)
-     *
      * @var \Surfnet\Stepup\Identity\Value\Institution|null
      */
+    #[ORM\Column(type: 'institution', nullable: true)]
     public $actorInstitution;
 
     /**
@@ -116,73 +109,64 @@ class AuditLogEntry implements JsonSerializable
      * event log entry is targeted at. For example. John Doe is accredited to become RA by Joe from
      * institution-a. The actual institution John is appointed RA for is stored in this field.
      *
-     * @ORM\Column(length=255, nullable=true)
      *
      * @var string|null
      */
+    #[ORM\Column(length: 255, nullable: true)]
     public $raInstitution;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var \Surfnet\Stepup\Identity\Value\Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $identityInstitution;
 
     /**
-     * @ORM\Column(length=36, nullable=true)
-     *
      * @var string|null
      */
+    #[ORM\Column(length: 36, nullable: true)]
     public $secondFactorId;
 
     /**
-     * @ORM\Column(length=255, nullable=true)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255, nullable: true)]
     public $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(length=36, nullable=true)
-     *
      * @var string|null
      */
+    #[ORM\Column(length: 36, nullable: true)]
     public $secondFactorType;
 
     /**
-     * @ORM\Column(length=255, nullable=true)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255, nullable: true)]
     public $recoveryTokenIdentifier;
 
     /**
-     * @ORM\Column(length=36, nullable=true)
-     *
      * @var string|null
      */
+    #[ORM\Column(length: 36, nullable: true)]
     public $recoveryTokenType;
 
     /**
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255)]
     public $event;
 
     /**
-     * @ORM\Column(type="stepup_datetime")
-     *
      * @var \Surfnet\Stepup\DateTime\DateTime
      */
+    #[ORM\Column(type: 'stepup_datetime')]
     public $recordedOn;
 
     public function jsonSerialize()

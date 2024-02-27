@@ -25,56 +25,52 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
 /**
  * Be aware that this entity is used for the RA Candidate presentation only. This entity shouldn't be used to store any RA candidates.
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository", readOnly=true)
  */
+#[ORM\Entity(repositoryClass: RaCandidateRepository::class, readOnly: true)]
 class RaCandidate implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="institution")
      *
      * @var Institution
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'institution')]
     public $raInstitution;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var \Surfnet\Stepup\Identity\Value\Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $institution;
 
     /**
-     * @ORM\Column(type="stepup_name_id")
-     *
      * @var \Surfnet\Stepup\Identity\Value\NameId
      */
+    #[ORM\Column(type: 'stepup_name_id')]
     public $nameId;
 
     /**
-     * @ORM\Column(type="stepup_common_name")
-     *
      * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
+    #[ORM\Column(type: 'stepup_common_name')]
     public $commonName;
 
     /**
-     * @ORM\Column(type="stepup_email")
-     *
      * @var \Surfnet\Stepup\Identity\Value\Email
      */
+    #[ORM\Column(type: 'stepup_email')]
     public $email;
 
     private function __construct()

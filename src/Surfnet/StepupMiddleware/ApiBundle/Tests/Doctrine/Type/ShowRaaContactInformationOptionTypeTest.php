@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
@@ -32,7 +32,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
     /**
      * @var MySqlPlatform
      */
-    private MySqlPlatform $platform;
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -47,7 +47,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**

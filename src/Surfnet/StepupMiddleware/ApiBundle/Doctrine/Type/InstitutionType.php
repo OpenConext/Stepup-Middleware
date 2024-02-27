@@ -31,12 +31,12 @@ class InstitutionType extends Type
 {
     public const NAME = 'institution';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return $value;
@@ -45,7 +45,7 @@ class InstitutionType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Institution
     {
         if (is_null($value)) {
             return $value;
@@ -66,7 +66,7 @@ class InstitutionType extends Type
         return $institution;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

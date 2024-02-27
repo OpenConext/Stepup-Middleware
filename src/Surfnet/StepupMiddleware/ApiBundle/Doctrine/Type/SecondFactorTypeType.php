@@ -31,12 +31,12 @@ class SecondFactorTypeType extends Type
 {
     public const NAME = 'stepup_second_factor_type';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return $value;
@@ -45,7 +45,7 @@ class SecondFactorTypeType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SecondFactorType
     {
         if (is_null($value)) {
             return $value;
@@ -66,7 +66,7 @@ class SecondFactorTypeType extends Type
         return $secondFactorType;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

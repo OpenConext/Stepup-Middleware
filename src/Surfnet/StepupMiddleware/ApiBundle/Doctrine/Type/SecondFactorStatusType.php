@@ -32,13 +32,13 @@ class SecondFactorStatusType extends Type
     public const NAME = 'stepup_second_factor_status';
 
     /**
-     * @param array $fieldDeclaration
+     * @param array $column
      * @param AbstractPlatform $platform
      * @return string
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     /**
@@ -47,7 +47,7 @@ class SecondFactorStatusType extends Type
      * @return int
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): int
     {
         if (!$value instanceof SecondFactorStatus) {
             throw new ConversionException(
@@ -80,7 +80,7 @@ class SecondFactorStatusType extends Type
      * @return SecondFactorStatus
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): SecondFactorStatus
     {
         if ($value === '0') {
             return SecondFactorStatus::unverified();
@@ -103,7 +103,7 @@ class SecondFactorStatusType extends Type
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

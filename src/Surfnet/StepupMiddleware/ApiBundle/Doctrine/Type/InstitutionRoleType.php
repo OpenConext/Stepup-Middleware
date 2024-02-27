@@ -31,9 +31,9 @@ class InstitutionRoleType extends Type
 {
     public const NAME = 'stepup_institution_role';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -55,7 +55,7 @@ class InstitutionRoleType extends Type
         return $value->getType();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?InstitutionRole
     {
         if (is_null($value)) {
             return $value;
@@ -76,7 +76,7 @@ class InstitutionRoleType extends Type
         return $institutionRole;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

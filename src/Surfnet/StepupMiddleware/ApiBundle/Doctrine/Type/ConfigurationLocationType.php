@@ -31,9 +31,9 @@ class ConfigurationLocationType extends Type
 {
     public const NAME = 'stepup_configuration_location';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -55,7 +55,7 @@ class ConfigurationLocationType extends Type
         return $value->getLocation();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Location
     {
         if (is_null($value)) {
             return $value;
@@ -76,7 +76,7 @@ class ConfigurationLocationType extends Type
         return $location;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

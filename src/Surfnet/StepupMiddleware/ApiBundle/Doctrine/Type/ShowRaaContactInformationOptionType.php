@@ -31,12 +31,12 @@ class ShowRaaContactInformationOptionType extends Type
 {
     public const NAME = 'stepup_show_raa_contact_information_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getBooleanTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
             return $value;
@@ -55,7 +55,7 @@ class ShowRaaContactInformationOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ShowRaaContactInformationOption
     {
         if (is_null($value)) {
             return $value;
@@ -78,7 +78,7 @@ class ShowRaaContactInformationOptionType extends Type
         return $showRaaContactInformationOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

@@ -31,9 +31,9 @@ class VettingTypeHintsType extends Type
 {
     public const NAME = 'stepup_vetting_type_hints';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getJsonTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getJsonTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -41,7 +41,7 @@ class VettingTypeHintsType extends Type
         return $value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?VettingTypeHintCollection
     {
         if (is_null($value)) {
             return null;
@@ -63,7 +63,7 @@ class VettingTypeHintsType extends Type
         return $vettingTypeHints;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

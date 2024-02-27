@@ -31,12 +31,12 @@ class UseRaLocationsOptionType extends Type
 {
     public const NAME = 'stepup_use_ra_locations_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getBooleanTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
             return $value;
@@ -55,7 +55,7 @@ class UseRaLocationsOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?UseRaLocationsOption
     {
         if (is_null($value)) {
             return $value;
@@ -76,7 +76,7 @@ class UseRaLocationsOptionType extends Type
         return $useRaLocationsOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

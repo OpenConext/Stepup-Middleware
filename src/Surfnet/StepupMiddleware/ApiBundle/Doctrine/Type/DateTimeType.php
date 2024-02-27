@@ -34,14 +34,14 @@ class DateTimeType extends Type
     public const NAME = 'stepup_datetime';
 
     /**
-     * @param array $fieldDeclaration
+     * @param array $column
      * @param AbstractPlatform $platform
      * @return string
      * @throws DBALException
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getDateTimeTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getDateTimeTypeDeclarationSQL($column);
     }
 
     /**
@@ -49,7 +49,7 @@ class DateTimeType extends Type
      * @param AbstractPlatform $platform
      * @return null|string
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if ($value === null) {
             return null;
@@ -67,7 +67,7 @@ class DateTimeType extends Type
      * @return null|DateTime
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?DateTime
     {
         if (is_null($value)) {
             return $value;
@@ -90,7 +90,7 @@ class DateTimeType extends Type
         return new DateTime($dateTime);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

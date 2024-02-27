@@ -21,14 +21,9 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository")
- * @ORM\Table(
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="unq_saml_entity_entity_id_type", columns={"entity_id", "type"})
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\UniqueConstraint(name: 'unq_saml_entity_entity_id_type', columns: ['entity_id', 'type'])]
+#[ORM\Entity(repositoryClass: SamlEntityRepository::class)]
 class SamlEntity
 {
     /**
@@ -39,31 +34,27 @@ class SamlEntity
 
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     public $entityId;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     public $type;
 
     /**
-     * @ORM\Column(type="text")
-     *
      * @var string the configuration as json string
      */
+    #[ORM\Column(type: 'text')]
     public $configuration;
 
     /**

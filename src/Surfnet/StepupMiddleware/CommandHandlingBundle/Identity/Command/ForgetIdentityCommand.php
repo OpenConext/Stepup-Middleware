@@ -26,18 +26,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ForgetIdentityCommand extends AbstractCommand implements ManagementExecutable, DeprovisionExecutable
 {
     /**
-     * @Assert\NotBlank
-     * @Assert\Type("string")
      *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     public $nameId;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Type("string")
      *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     public $institution;
 }

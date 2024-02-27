@@ -27,12 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractCommand implements Command
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i")
      *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    #[Assert\Regex(pattern: '~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i')]
     public $UUID;
 
     public function __toString()

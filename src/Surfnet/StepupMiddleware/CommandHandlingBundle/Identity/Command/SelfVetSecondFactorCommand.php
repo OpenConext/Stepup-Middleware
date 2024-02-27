@@ -28,50 +28,43 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorType;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $registrationCode;
 
     /**
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\Type(type: 'string')]
     public $authoringSecondFactorLoa;
 
     /**
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\Type(type: 'string')]
     public $authoringSecondFactorIdentifier;
 
     public function getIdentityId()

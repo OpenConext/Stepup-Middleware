@@ -21,28 +21,25 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupBundle\Value\SecondFactorType;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository"
- * )
- */
+#[ORM\Entity(repositoryClass: AllowedSecondFactorRepository::class)]
 class AllowedSecondFactor
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
     public $institution;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_second_factor_type")
      *
      * @var SecondFactorType
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_second_factor_type')]
     public $secondFactorType;
 
     private function __construct()

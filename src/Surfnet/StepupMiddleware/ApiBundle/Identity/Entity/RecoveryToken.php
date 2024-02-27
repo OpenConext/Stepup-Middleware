@@ -22,79 +22,63 @@ use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_recovery_method_type", columns={"type"}),
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_recovery_method_type', columns: ['type'])]
+#[ORM\Entity(repositoryClass: RecoveryTokenRepository::class)]
 class RecoveryToken implements \JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
+    #[ORM\Column(length: 16)]
     public $type;
 
     /**
-     * @ORM\Column(type="stepup_recovery_token_status")
-     *
      * @var RecoveryTokenStatus
      */
+    #[ORM\Column(type: 'stepup_recovery_token_status')]
     public $status;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $institution;
 
     /**
      * The name of the registrant.
-     *
-     * @ORM\Column(type="stepup_common_name")
-     *
      * @var CommonName
      */
+    #[ORM\Column(type: 'stepup_common_name')]
     public $name;
 
     /**
      * The e-mail of the registrant.
-     *
-     * @ORM\Column(type="stepup_email")
-     *
      * @var Email
      */
+    #[ORM\Column(type: 'stepup_email')]
     public $email;
 
     /**
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255)]
     public $recoveryMethodIdentifier;
 
     public function jsonSerialize()

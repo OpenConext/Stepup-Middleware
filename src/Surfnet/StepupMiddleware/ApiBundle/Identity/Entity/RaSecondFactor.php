@@ -24,91 +24,82 @@ use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
  * A second factor as displayed in the registration authority application. One exists for every second factor,
  * regardless of state. As such, it sports a status property, indicating whether its vetted, revoked etc.
- *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_ra_second_factor_second_factor_id", columns={"second_factor_id"}),
- *          @ORM\Index(name="idx_ra_second_factor_identity_id", columns={"identity_id"}),
- *          @ORM\Index(name="idx_ra_second_factor_institution", columns={"institution"}),
- *          @ORM\Index(name="idx_ra_second_factor_name", columns={"name"}, flags={"FULLTEXT"}),
- *          @ORM\Index(name="idx_ra_second_factor_email", columns={"email"}, flags={"FULLTEXT"}),
- *      }
- * )
  */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_ra_second_factor_second_factor_id', columns: ['second_factor_id'])]
+#[ORM\Index(name: 'idx_ra_second_factor_identity_id', columns: ['identity_id'])]
+#[ORM\Index(name: 'idx_ra_second_factor_institution', columns: ['institution'])]
+#[ORM\Index(name: 'idx_ra_second_factor_name', columns: ['name'], flags: ['FULLTEXT'])]
+#[ORM\Index(name: 'idx_ra_second_factor_email', columns: ['email'], flags: ['FULLTEXT'])]
+#[ORM\Entity(repositoryClass: RaSecondFactorRepository::class)]
 class RaSecondFactor implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string The second factor's ID (UUID).
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
+    #[ORM\Column(length: 16)]
     public $type;
 
     /**
-     * @ORM\Column(length=255)
-     *
      * @var string The ID of the specific instance of second factor type (ie. phone number, Yubikey public ID).
      */
+    #[ORM\Column(length: 255)]
     public $secondFactorId;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var \Surfnet\Stepup\Identity\Value\Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $institution;
 
     /**
      * The name of the registrant.
      *
-     * @ORM\Column(type="stepup_common_name")
      *
      * @var \Surfnet\Stepup\Identity\Value\CommonName
      */
+    #[ORM\Column(type: 'stepup_common_name')]
     public $name;
 
     /**
      * The e-mail of the registrant.
      *
-     * @ORM\Column(type="stepup_email")
      *
      * @var \Surfnet\Stepup\Identity\Value\Email
      */
+    #[ORM\Column(type: 'stepup_email')]
     public $email;
 
     /**
-     * @ORM\Column(type="stepup_document_number", nullable=true)
-     *
      * @var DocumentNumber
      */
+    #[ORM\Column(type: 'stepup_document_number', nullable: true)]
     public $documentNumber;
 
     /**
-     * @ORM\Column(type="stepup_second_factor_status")
-     *
      * @var SecondFactorStatus
      */
+    #[ORM\Column(type: 'stepup_second_factor_status')]
     public $status;
 
     /**

@@ -21,23 +21,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository")
- */
+#[ORM\Entity(repositoryClass: WhitelistEntryRepository::class)]
 class WhitelistEntry implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="institution")
-     *
-     * @var Institution
-     */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     public static function createFrom(Institution $institution)
     {
-        $instance              = new self();
+        $instance = new self();
         $instance->institution = $institution;
 
         return $instance;

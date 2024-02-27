@@ -23,55 +23,45 @@ use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_ra_location_institution", columns={"institution"})
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_ra_location_institution', columns: ['institution'])]
+#[ORM\Entity(repositoryClass: RaLocationRepository::class)]
 class RaLocation implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(type="stepup_configuration_institution")
-     *
      * @var Institution
      */
+    #[ORM\Column(type: 'stepup_configuration_institution')]
     public $institution;
 
     /**
-     * @ORM\Column(type="stepup_ra_location_name")
-     *
      * @var RaLocationName
      */
+    #[ORM\Column(type: 'stepup_ra_location_name')]
     public $name;
 
     /**
-     * @ORM\Column(type="stepup_configuration_location")
-     *
      * @var Location
      */
+    #[ORM\Column(type: 'stepup_configuration_location')]
     public $location;
 
     /**
-     * @ORM\Column(type="stepup_configuration_contact_information")
-     *
      * @var ContactInformation
      */
+    #[ORM\Column(type: 'stepup_configuration_contact_information')]
     public $contactInformation;
 
     public static function create(

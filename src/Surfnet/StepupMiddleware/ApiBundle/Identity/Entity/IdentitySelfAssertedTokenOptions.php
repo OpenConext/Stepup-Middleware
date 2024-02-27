@@ -21,42 +21,39 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedTokenOptionsRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedTokenOptionsRepository")
- */
+#[ORM\Entity(repositoryClass: IdentitySelfAssertedTokenOptionsRepository::class)]
 class IdentitySelfAssertedTokenOptions implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
      *
      * @var IdentityId
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(type="boolean")
-     *
-     * In order to determine if the user is allowed to register
-     * a self-asserted token. One of the conditions is that there should
-     * be no previous token registration in his name. Regardless of type.
+     *  In order to determine if the user is allowed to register
+     *  a self-asserted token. One of the conditions is that there should
+     *  be no previous token registration in his name. Regardless of type.
      *
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     public $possessedToken = false;
 
     /**
-     * @ORM\Column(type="boolean")
+     *  Indicator if Identity is allowed to work with Recovery Tokens
      *
-     * Indicator if Identity is allowed to work with Recovery Tokens
-     *
-     * Satisfies business rule:
-     * Limit a user to only add/modify/see recovery methods in the overview
-     * screen when they have previously had an active self-asserted token
+     *  Satisfies business rule:
+     *  Limit a user to only add/modify/see recovery methods in the overview
+     *  screen when they have previously had an active self-asserted token
      *
      * @var bool
      */
+    #[ORM\Column(type: 'boolean')]
     public $possessedSelfAssertedToken;
 
     public static function create(

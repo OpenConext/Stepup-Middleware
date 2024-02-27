@@ -26,86 +26,72 @@ use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository")
- *
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_ra_listing_institution", columns={"institution"}),
- *          @ORM\Index(name="idx_ra_listing_ra_institution", columns={"ra_institution"}),
- *      },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="idx_ra_listing_unique_identity_institution", columns={"identity_id", "ra_institution"})
- *     }
- * )
- */
+
+#[ORM\Table]
+#[ORM\Index(name: 'idx_ra_listing_institution', columns: ['institution'])]
+#[ORM\Index(name: 'idx_ra_listing_ra_institution', columns: ['ra_institution'])]
+#[ORM\UniqueConstraint(name: 'idx_ra_listing_unique_identity_institution', columns: ['identity_id', 'ra_institution'])]
+#[ORM\Entity(repositoryClass: RaListingRepository::class)]
 class RaListing implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
      *
      * @var integer
      */
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
     public $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $raInstitution;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
+    #[ORM\Column(type: 'institution')]
     public $institution;
 
     /**
-     * @ORM\Column(type="stepup_common_name")
-     *
      * @var CommonName
      */
+    #[ORM\Column(type: 'stepup_common_name')]
     public $commonName;
 
     /**
-     * @ORM\Column(type="stepup_email")
-     *
      * @var Email
      */
+    #[ORM\Column(type: 'stepup_email')]
     public $email;
 
     /**
-     * @ORM\Column(type="authority_role")
-     *
      * @var AuthorityRole
      */
+    #[ORM\Column(type: 'authority_role')]
     public $role;
 
     /**
-     * @ORM\Column(type="stepup_location", nullable=true)
-     *
      * @var Location
      */
+    #[ORM\Column(type: 'stepup_location', nullable: true)]
     public $location;
 
     /**
-     * @ORM\Column(type="stepup_contact_information", nullable=true)
-     *
      * @var ContactInformation
      */
+    #[ORM\Column(type: 'stepup_contact_information', nullable: true)]
     public $contactInformation;
 
     public static function create(

@@ -34,31 +34,24 @@ class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $institution;
 
-    /**
-     * @Assert\Type(type="array")
-     * @Assert\All({
-     *      @Assert\Type("string")
-     * })
-     *
-     * @var string[]
-     */
-    public $hints;
+    #[Assert\Type(type: 'array')]
+    #[Assert\All([
+        new Assert\Type("string")
+    ])]
+    public array $hints;
 
     public function getRaInstitution()
     {

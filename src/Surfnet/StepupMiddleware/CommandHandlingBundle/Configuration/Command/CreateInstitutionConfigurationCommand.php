@@ -25,10 +25,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CreateInstitutionConfigurationCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $institution;
 }

@@ -25,45 +25,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCommand implements ManagementExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $institution;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
+    #[Assert\Type(type: 'boolean')]
     public $useRaLocationsOption;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
+    #[Assert\Type(type: 'boolean')]
     public $showRaaContactInformationOption;
 
     /**
-     * @Assert\Type(type="boolean")
-     *
      * @var bool
      */
+    #[Assert\Type(type: 'boolean')]
     public $verifyEmailOption;
 
 
     /**
-     * @Assert\Type(type="integer")
-     *
      * @var int
      */
+    #[Assert\Type(type: 'integer')]
     public $numberOfTokensPerIdentityOption;
 
-    /**
-     * @Assert\NotNull()
-     */
+    #[Assert\NotNull]
     public $allowedSecondFactors;
 
     /**

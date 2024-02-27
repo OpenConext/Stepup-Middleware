@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 
 final class EmailTemplateRepository extends ServiceEntityRepository

@@ -36,7 +36,7 @@ final class AuditLogController extends AbstractController
         $this->auditLogService = $service;
     }
 
-    public function secondFactorAuditLogAction(Request $request, Institution $institution)
+    public function secondFactorAuditLog(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

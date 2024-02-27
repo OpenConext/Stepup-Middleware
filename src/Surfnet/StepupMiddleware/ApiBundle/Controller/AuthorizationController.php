@@ -32,19 +32,19 @@ class AuthorizationController extends AbstractController
         $this->authorizationService = $authorizationService;
     }
 
-    public function mayRegisterSelfAssertedTokensAction(string $identityId)
+    public function mayRegisterSelfAssertedTokens(string $identityId)
     {
         $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(new IdentityId($identityId));
         return JsonAuthorizationResponse::from($decision);
     }
 
-    public function mayRegisterRecoveryTokensAction(string $identityId)
+    public function mayRegisterRecoveryTokens(string $identityId)
     {
         $decision = $this->authorizationService->assertRecoveryTokensAreAllowed(new IdentityId($identityId));
         return JsonAuthorizationResponse::from($decision);
     }
 
-    public function maySelfVetSelfAssertedTokenAction(string $identityId)
+    public function maySelfVetSelfAssertedToken(string $identityId)
     {
         $decision = $this->authorizationService->assertSelfVetUsingSelfAssertedTokenIsAllowed(new IdentityId($identityId));
         return JsonAuthorizationResponse::from($decision);

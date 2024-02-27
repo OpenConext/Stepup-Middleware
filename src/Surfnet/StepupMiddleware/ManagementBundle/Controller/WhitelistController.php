@@ -52,7 +52,7 @@ class WhitelistController extends AbstractController
         $this->whitelistService = $whitelistService;
     }
 
-    public function replaceWhitelistAction(Request $request)
+    public function replaceWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -63,7 +63,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function addToWhitelistAction(Request $request)
+    public function addToWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -74,7 +74,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function removeFromWhitelistAction(Request $request)
+    public function removeFromWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -85,7 +85,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function showWhitelistAction(): JsonResponse
+    public function showWhitelist(): JsonResponse
     {
         $entries = $this->whitelistService->getAllEntries();
 

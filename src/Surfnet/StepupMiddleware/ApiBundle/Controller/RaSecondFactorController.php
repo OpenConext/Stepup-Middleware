@@ -42,7 +42,7 @@ final class RaSecondFactorController extends AbstractController
         $this->authorizationService = $authorizationService;
     }
 
-    public function collectionAction(Request $request)
+    public function collection(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -55,7 +55,7 @@ final class RaSecondFactorController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 
-    public function exportAction(Request $request): JsonResponse
+    public function export(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

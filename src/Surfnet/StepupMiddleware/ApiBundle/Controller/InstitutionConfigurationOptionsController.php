@@ -48,7 +48,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
-    public function getForInstitutionAction($institutionName): JsonResponse
+    public function getForInstitution($institutionName): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 

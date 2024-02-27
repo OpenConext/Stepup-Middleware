@@ -73,7 +73,7 @@ class RaListingController extends AbstractController
      * @param Request $request
      * @return JsonCollectionResponse
      */
-    public function searchAction(Request $request)
+    public function search(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

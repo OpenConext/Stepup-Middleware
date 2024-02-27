@@ -122,7 +122,7 @@ class EmailVerificationWindowTest extends TestCase
     {
         $start = DateTime::now();
         if ($startTimeOffset) {
-            if (substr($startTimeOffset, 0, 1) === '-') {
+            if (str_starts_with($startTimeOffset, '-')) {
                 $offset = substr($startTimeOffset, 1);
                 $start = $start->sub(new DateInterval($offset));
             } else {

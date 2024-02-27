@@ -44,6 +44,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
+    protected static $defaultName = 'middleware:cron:email-reminder';
     private TransactionAwarePipeline $pipeline;
 
     private BufferedEventBus $eventBus;
@@ -55,7 +56,6 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('middleware:cron:email-reminder')
             ->setDescription('Sends email reminders to identities with verified tokens more than 7 days old.')
             ->addOption(
                 'dry-run',

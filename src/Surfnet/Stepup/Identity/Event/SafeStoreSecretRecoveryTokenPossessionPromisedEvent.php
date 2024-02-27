@@ -18,19 +18,19 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\HashableSecret;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
-use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**

@@ -51,7 +51,7 @@ class SraaController extends AbstractController
         return new JsonResponse($sraa);
     }
 
-    public function listAction() : JsonResponse
+    public function list() : JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

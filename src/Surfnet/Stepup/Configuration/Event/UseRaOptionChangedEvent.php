@@ -20,10 +20,9 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
+use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 
 final class UseRaOptionChangedEvent implements SerializableInterface
 {

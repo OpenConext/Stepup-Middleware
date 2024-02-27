@@ -50,7 +50,7 @@ class UnverifiedSecondFactorController extends AbstractController
         return new JsonResponse($secondFactor);
     }
 
-    public function collectionAction(Request $request)
+    public function collection(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

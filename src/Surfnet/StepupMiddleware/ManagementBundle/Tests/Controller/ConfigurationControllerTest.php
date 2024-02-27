@@ -22,6 +22,7 @@ use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ConfigurationControllerTest extends WebTestCase
 {
@@ -79,7 +80,7 @@ class ConfigurationControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode(), $this->client->getResponse()->getContent());
     }
 
     /**
@@ -100,7 +101,7 @@ class ConfigurationControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('401', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -123,7 +124,7 @@ class ConfigurationControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('403', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -146,7 +147,7 @@ class ConfigurationControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('405', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
     /**

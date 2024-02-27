@@ -32,7 +32,7 @@ class RaController extends AbstractController
         $this->raListingService = $raListingService;
     }
 
-    public function listAction(Institution $institution): JsonCollectionResponse
+    public function list(Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
 

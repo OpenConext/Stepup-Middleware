@@ -67,7 +67,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
             $this->verifiedSecondFactorRepository,
             $this->identityRepository,
             $this->mailService,
-            $this->logger
+            $this->logger,
         );
     }
 
@@ -138,7 +138,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message successfully sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message successfully sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -188,7 +190,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message was not sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message was not sent to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -239,7 +243,11 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(m::pattern('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(
+                m::pattern(
+                    '/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/',
+                ),
+            )
             ->times(9);
 
         $this->logger
@@ -322,7 +330,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->logger
             ->shouldReceive('info')
             ->once()
-            ->with('Message successfully sent in dry run mode to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"');
+            ->with(
+                'Message successfully sent in dry run mode to "mail@example1.org" with token id "fa125c7c-c9ee-11e7-8001-000000000001" of type "yubikey"',
+            );
 
         $this->logger
             ->shouldReceive('info')
@@ -367,7 +377,11 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(m::pattern('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(
+                m::pattern(
+                    '/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/',
+                ),
+            )
             ->times(9);
 
         $this->logger
@@ -405,14 +419,12 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     }
 
     /**
-     * @param int $numberOfResults
-     * @param DateTime $requestedAt
      * @return VerifiedSecondFactor[]
      */
     private function buildVerifiedSecondFactors(int $numberOfResults, DateTime $requestedAt): array
     {
         $collection = [];
-        for ($i=1; $i<=$numberOfResults; $i++) {
+        for ($i = 1; $i <= $numberOfResults; $i++) {
             $token = new VerifiedSecondFactor();
             $token->id = "fa125c7c-c9ee-11e7-800{$i}-00000000000{$i}";
             $token->identityId = $i;
@@ -427,7 +439,6 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     }
 
     /**
-     * @param VerifiedSecondFactor $token
      * @return Identity
      */
     private function buildIdentity(VerifiedSecondFactor $token): Identity
@@ -440,6 +451,5 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $identity->email = "mail@example{$token->identityId}.org";
 
         return $identity;
-
     }
 }

@@ -85,9 +85,9 @@ class RecoveryToken implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
-            'status' => (string) $this->status,
+            'status' => (string)$this->status,
             'recovery_method_identifier' => $this->recoveryMethodIdentifier,
             'identity_id' => $this->identityId,
             'name' => $this->name,

@@ -32,15 +32,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
  */
 final class InstitutionAuthorizationProjector extends Projector
 {
-    private InstitutionAuthorizationRepository $institutionAuthorizationRepository;
-    private InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository;
-
     public function __construct(
-        InstitutionAuthorizationRepository $institutionAuthorizationRepository,
-        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository
+        private readonly InstitutionAuthorizationRepository $institutionAuthorizationRepository,
+        private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
     ) {
-        $this->institutionAuthorizationRepository = $institutionAuthorizationRepository;
-        $this->institutionConfigurationOptionsRepository = $institutionConfigurationOptionsRepository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void
@@ -52,7 +47,7 @@ final class InstitutionAuthorizationProjector extends Projector
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
             $event->institution,
-            $event->useRaOption
+            $event->useRaOption,
         );
     }
 
@@ -60,7 +55,7 @@ final class InstitutionAuthorizationProjector extends Projector
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
             $event->institution,
-            $event->useRaaOption
+            $event->useRaaOption,
         );
     }
 
@@ -68,14 +63,14 @@ final class InstitutionAuthorizationProjector extends Projector
     {
         $this->institutionAuthorizationRepository->saveInstitutionOption(
             $event->institution,
-            $event->selectRaaOption
+            $event->selectRaaOption,
         );
     }
 
     public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         $this->institutionAuthorizationRepository->clearInstitutionOption(
-            $event->institution
+            $event->institution,
         );
     }
 }

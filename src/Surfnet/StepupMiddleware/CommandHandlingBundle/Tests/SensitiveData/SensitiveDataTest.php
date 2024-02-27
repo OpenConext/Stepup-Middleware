@@ -36,11 +36,11 @@ class SensitiveDataTest extends TestCase
         return [
             'None' => [
                 (new SensitiveData()),
-                []
+                [],
             ],
             'None, forgotten' => [
                 (new SensitiveData())->forget(),
-                []
+                [],
             ],
             'CommonName' => [
                 (new SensitiveData())->withCommonName(new CommonName('Willie')),
@@ -103,13 +103,10 @@ class SensitiveDataTest extends TestCase
      * @test
      * @group sensitive-data
      * @dataProvider sensitiveDataToSerialise
-     *
-     * @param SensitiveData $sensitiveData
-     * @param array         $getterExpectations
      */
     public function it_serialises_and_deserialises(
         SensitiveData $sensitiveData,
-        array $getterExpectations
+        array $getterExpectations,
     ): void {
         $sensitiveData = SensitiveData::deserialize(json_decode(json_encode($sensitiveData->serialize()), true));
 
@@ -117,7 +114,7 @@ class SensitiveDataTest extends TestCase
             $this->assertEquals(
                 $expectedValue,
                 $sensitiveData->{"get$data"}(),
-                "get$data() returned an unexpected value"
+                "get$data() returned an unexpected value",
             );
         }
 

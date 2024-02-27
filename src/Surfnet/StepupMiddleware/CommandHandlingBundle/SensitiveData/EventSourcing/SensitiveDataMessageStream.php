@@ -27,14 +27,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
 class SensitiveDataMessageStream implements IteratorAggregate
 {
-    private array $messages;
-
     /**
      * @param SensitiveDataMessage[] $messages
      */
-    public function __construct(array $messages)
+    public function __construct(private readonly array $messages)
     {
-        $this->messages = $messages;
     }
 
     public function applyToDomainEventStream(DomainEventStream $domainEventStream): void
@@ -43,19 +40,19 @@ class SensitiveDataMessageStream implements IteratorAggregate
 
         /** @var DomainMessage $domainMessage */
         foreach ($domainEventStream as $domainMessage) {
-            $sensitiveDataMessage = isset($sensitiveDataMap[$domainMessage->getPlayhead()])
-                ? $sensitiveDataMap[$domainMessage->getPlayhead()]
-                : null;
+            $sensitiveDataMessage = $sensitiveDataMap[$domainMessage->getPlayhead()] ?? null;
             unset($sensitiveDataMap[$domainMessage->getPlayhead()]);
 
             $this->setSensitiveData($domainMessage, $sensitiveDataMessage);
         }
 
         if ($sensitiveDataMap !== []) {
-            throw new SensitiveDataApplicationException(sprintf(
-                '%d sensitive data messages are still to be matched to events',
-                count($sensitiveDataMap)
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    '%d sensitive data messages are still to be matched to events',
+                    count($sensitiveDataMap),
+                ),
+            );
         }
     }
 
@@ -72,11 +69,12 @@ class SensitiveDataMessageStream implements IteratorAggregate
     }
 
     /**
-     * @param DomainMessage $domainMessage
      * @param SensitiveDataMessage|null $sensitiveDataMessage
      */
-    private function setSensitiveData(DomainMessage $domainMessage, SensitiveDataMessage $sensitiveDataMessage = null): void
-    {
+    private function setSensitiveData(
+        DomainMessage $domainMessage,
+        SensitiveDataMessage $sensitiveDataMessage = null,
+    ): void {
         $event = $domainMessage->getPayload();
         $eventIsForgettable = $event instanceof Forgettable;
 
@@ -85,27 +83,33 @@ class SensitiveDataMessageStream implements IteratorAggregate
         }
 
         if ($eventIsForgettable && !$sensitiveDataMessage) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Sensitive data is missing for event with UUID %s, playhead %d',
-                $domainMessage->getId(),
-                $domainMessage->getPlayhead()
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Sensitive data is missing for event with UUID %s, playhead %d',
+                    $domainMessage->getId(),
+                    $domainMessage->getPlayhead(),
+                ),
+            );
         }
 
         if (!$eventIsForgettable && $sensitiveDataMessage) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Encountered sensitive data for event which does not support sensitive data, UUID %s, playhead %d',
-                $domainMessage->getId(),
-                $domainMessage->getPlayhead()
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Encountered sensitive data for event which does not support sensitive data, UUID %s, playhead %d',
+                    $domainMessage->getId(),
+                    $domainMessage->getPlayhead(),
+                ),
+            );
         }
 
         if ($domainMessage->getId() != $sensitiveDataMessage->getIdentityId()) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Encountered sensitive data from stream %s for event from stream %s',
-                $sensitiveDataMessage->getIdentityId(),
-                $domainMessage->getId()
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Encountered sensitive data from stream %s for event from stream %s',
+                    $sensitiveDataMessage->getIdentityId(),
+                    $domainMessage->getId(),
+                ),
+            );
         }
 
         $event->setSensitiveData($sensitiveDataMessage->getSensitiveData());

@@ -43,7 +43,7 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId
+        NameId $nameId,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -67,7 +67,7 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
         );
     }
 
@@ -77,9 +77,9 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
     public function serialize(): array
     {
         return [
-            'identity_id'    => (string) $this->identityId,
-            'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
         ];
     }
 

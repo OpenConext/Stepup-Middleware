@@ -39,7 +39,7 @@ class RaLocationNameTypeTest extends UnitTest
     {
         Type::addType(
             RaLocationNameType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType'
+            RaLocationNameType::class,
         );
     }
 
@@ -70,8 +70,8 @@ class RaLocationNameTypeTest extends UnitTest
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 
         $expected = 'An RA Location Name';
-        $input    = new RaLocationName($expected);
-        $output   = $raLocationName->convertToDatabaseValue($input, $this->platform);
+        $input = new RaLocationName($expected);
+        $output = $raLocationName->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -117,7 +117,7 @@ class RaLocationNameTypeTest extends UnitTest
 
         $output = $raLocationName->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\RaLocationName', $output);
+        $this->assertInstanceOf(RaLocationName::class, $output);
         $this->assertEquals(new RaLocationName($input), $output);
     }
 

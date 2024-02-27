@@ -28,12 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EventStreamReplayer
 {
-    private BufferedEventBus $eventBus;
-
-    private DBALEventHydrator $eventHydrator;
-
-    private DBALConnectionHelper $connectionHelper;
-
     /**
      * @var string[]
      */
@@ -64,18 +58,15 @@ class EventStreamReplayer
     ];
 
     public function __construct(
-        BufferedEventBus $eventBus,
-        DBALEventHydrator $eventHydrator,
-        DBALConnectionHelper $connectionHelper
+        private readonly BufferedEventBus $eventBus,
+        private readonly DBALEventHydrator $eventHydrator,
+        private readonly DBALConnectionHelper $connectionHelper,
     ) {
-        $this->eventBus         = $eventBus;
-        $this->eventHydrator    = $eventHydrator;
-        $this->connectionHelper = $connectionHelper;
         ProgressBar::setFormatDefinition(
             'event_replay',
             "<info> %message%</info>\n"
             . ' <comment>%current%/%max%</comment> [%bar%] <comment>%percent:3s%%</comment><info>%elapsed:6s%/'
-            . "%estimated:-6s%</info>\n %memory:6s%"
+            . "%estimated:-6s%</info>\n %memory:6s%",
         );
     }
 
@@ -107,7 +98,7 @@ class EventStreamReplayer
                 $defaultMessage = sprintf(
                     'Found <comment>%s</comment> Events, replaying in increments of <comment>%d</comment>',
                     $totalEvents,
-                    $increments
+                    $increments,
                 );
                 $preparationProgress->setMessage($defaultMessage);
                 $preparationProgress->finish();
@@ -128,7 +119,7 @@ class EventStreamReplayer
                         $messages[] = sprintf(
                             ' > <info>Publishing Event "<comment>%s</comment>" for UUID <comment>"%s</comment>"</info>',
                             $event->getType(),
-                            $event->getId()
+                            $event->getId(),
                         );
                     }
 
@@ -165,32 +156,36 @@ class EventStreamReplayer
         }
 
         $middlewareConnection = $this->connectionHelper->getConnection('middleware');
-        $gatewayConnection    = $this->connectionHelper->getConnection('gateway');
+        $gatewayConnection = $this->connectionHelper->getConnection('gateway');
 
         $middlewareDatabaseName = $middlewareConnection->getDatabase();
-        $gatewayDatabaseName    = $gatewayConnection->getDatabase();
+        $gatewayDatabaseName = $gatewayConnection->getDatabase();
 
         foreach ($this->middlewareTables as $table) {
             $rows = $middlewareConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
-                $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
-                    $rows,
-                    $middlewareDatabaseName,
-                    $table
-                ));
+                $output->writeln(
+                    sprintf(
+                        '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
+                        $rows,
+                        $middlewareDatabaseName,
+                        $table,
+                    ),
+                );
             }
         }
 
         foreach ($this->gatewayTables as $table) {
             $rows = $gatewayConnection->delete($table, [1 => 1]);
             if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
-                $output->writeln(sprintf(
-                    '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
-                    $rows,
-                    $gatewayDatabaseName,
-                    $table
-                ));
+                $output->writeln(
+                    sprintf(
+                        '<info>Deleted <comment>%d</comment> rows from table <comment>%s.%s</comment></info>',
+                        $rows,
+                        $gatewayDatabaseName,
+                        $table,
+                    ),
+                );
             }
         }
     }

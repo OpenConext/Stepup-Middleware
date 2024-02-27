@@ -29,11 +29,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class AuditLogController extends AbstractController
 {
-    private AuditLogService $auditLogService;
-
-    public function __construct(AuditLogService $service)
-    {
-        $this->auditLogService = $service;
+    public function __construct(
+        private readonly AuditLogService $auditLogService,
+    ) {
     }
 
     public function secondFactorAuditLog(Request $request, Institution $institution)
@@ -45,12 +43,12 @@ final class AuditLogController extends AbstractController
             throw new BadApiRequestException(['This API-call MUST include the identityId as get parameter']);
         }
 
-        $query                      = new SecondFactorAuditLogQuery();
+        $query = new SecondFactorAuditLogQuery();
         $query->identityInstitution = $institution;
-        $query->identityId          = new IdentityId($identityId);
-        $query->orderBy             = $request->get('orderBy', $query->orderBy);
-        $query->orderDirection      = $request->get('orderDirection', $query->orderDirection);
-        $query->pageNumber          = $request->get('p', 1);
+        $query->identityId = new IdentityId($identityId);
+        $query->orderBy = $request->get('orderBy', $query->orderBy);
+        $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
+        $query->pageNumber = $request->get('p', 1);
 
         $paginator = $this->auditLogService->searchSecondFactorAuditLog($query);
 

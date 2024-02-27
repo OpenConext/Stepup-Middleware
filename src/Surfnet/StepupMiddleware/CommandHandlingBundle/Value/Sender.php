@@ -18,13 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Value;
 
+use Stringable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
-class Sender
+class Sender implements Stringable
 {
-    private string $name;
+    private readonly string $name;
 
-    private string $email;
+    private readonly string $email;
 
     public function __construct(string $name, string $email)
     {
@@ -38,7 +39,7 @@ class Sender
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException(
-                sprintf("Invalid argument type: expected e-mail address for 'email', got '%s'", $email)
+                sprintf("Invalid argument type: expected e-mail address for 'email', got '%s'", $email),
             );
         }
 

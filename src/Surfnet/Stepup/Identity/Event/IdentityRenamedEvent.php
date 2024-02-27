@@ -64,7 +64,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            CommonName::unknown()
+            CommonName::unknown(),
         );
     }
 
@@ -74,8 +74,8 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
         ];
     }
 

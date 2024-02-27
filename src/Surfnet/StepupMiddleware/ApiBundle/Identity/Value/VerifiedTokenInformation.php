@@ -23,22 +23,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 
 class VerifiedTokenInformation
 {
-    private $email;
-
-    private $tokenId;
-
-    private $tokenType;
-
-    private $commonName;
-
-    private $requestedAt;
-
-    private $preferredLocale;
-
-    private $institution;
-
-    private $registrationCode;
-
     /**
      * @param $email
      * @param $tokenId
@@ -50,36 +34,28 @@ class VerifiedTokenInformation
      * @param $registrationCode
      */
     public function __construct(
-        $email,
-        $tokenId,
-        $tokenType,
-        $commonName,
-        $requestedAt,
-        $preferredLocale,
-        $institution,
-        $registrationCode
+        private $email,
+        private $tokenId,
+        private $tokenType,
+        private $commonName,
+        private $requestedAt,
+        private $preferredLocale,
+        private $institution,
+        private $registrationCode,
     ) {
-        $this->email = $email;
-        $this->tokenId = $tokenId;
-        $this->tokenType = $tokenType;
-        $this->commonName = $commonName;
-        $this->requestedAt = $requestedAt;
-        $this->preferredLocale = $preferredLocale;
-        $this->institution = $institution;
-        $this->registrationCode = $registrationCode;
     }
 
     public static function fromEntity(VerifiedSecondFactor $token, Identity $identity): self
     {
         return new self(
-            (string) $identity->email,
+            (string)$identity->email,
             $token->id,
             $token->type,
-            (string) $identity->commonName,
+            (string)$identity->commonName,
             $token->registrationRequestedAt,
-            (string) $identity->preferredLocale,
+            (string)$identity->preferredLocale,
             $identity->institution,
-            $token->registrationCode
+            $token->registrationCode,
         );
     }
 

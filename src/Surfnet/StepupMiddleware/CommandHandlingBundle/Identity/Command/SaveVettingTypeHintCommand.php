@@ -49,7 +49,7 @@ class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
 
     #[Assert\Type(type: 'array')]
     #[Assert\All([
-        new Assert\Type("string")
+        new Assert\Type("string"),
     ])]
     public array $hints;
 

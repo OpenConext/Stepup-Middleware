@@ -24,14 +24,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
-final class EmailTemplateService implements CommandHandlingEmailTemplateService
+final readonly class EmailTemplateService implements CommandHandlingEmailTemplateService
 {
-    private EmailTemplateRepository $repository;
-
     public function __construct(
-        EmailTemplateRepository $repository
+        private EmailTemplateRepository $repository,
     ) {
-        $this->repository = $repository;
     }
 
     /**

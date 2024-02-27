@@ -30,7 +30,7 @@ class TimeFrameTest extends UnitTest
      * @group        domain
      * @dataProvider invalidValueProvider
      */
-    public function it_cannot_be_given_an_non_positive_amount_of_seconds(string|float|int|StdClass|array $invalidValue): void
+    public function it_cannot_be_given_an_non_positive_amount_of_seconds(string|float|int|StdClass|array $invalidValue,): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -49,8 +49,8 @@ class TimeFrameTest extends UnitTest
 
         $this->assertEquals(
             '1000',
-            (string) $timeFrame,
-            'The amount of seconds as string must match timeFrame::__toString'
+            (string)$timeFrame,
+            'The amount of seconds as string must match timeFrame::__toString',
         );
     }
 
@@ -61,12 +61,12 @@ class TimeFrameTest extends UnitTest
     {
         return [
             'empty string' => [''],
-            'string'       => ['abc'],
-            'array'        => [[]],
-            'float'        => [2.718],
-            'zero'         => [0],
+            'string' => ['abc'],
+            'array' => [[]],
+            'float' => [2.718],
+            'zero' => [0],
             'negative int' => [-1],
-            'object'       => [new StdClass()],
+            'object' => [new StdClass()],
         ];
     }
 }

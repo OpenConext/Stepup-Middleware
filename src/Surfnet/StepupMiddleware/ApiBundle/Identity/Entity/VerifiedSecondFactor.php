@@ -81,7 +81,7 @@ class VerifiedSecondFactor implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'registration_code' => $this->registrationCode,

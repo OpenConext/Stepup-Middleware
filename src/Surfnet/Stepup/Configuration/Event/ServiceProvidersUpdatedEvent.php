@@ -27,7 +27,7 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $serviceProviders
+     * @param array $serviceProviders
      */
     public function __construct($configurationId, array $serviceProviders)
     {

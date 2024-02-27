@@ -30,12 +30,9 @@ final class ProjectorCollection implements IteratorAggregate
      */
     private array $projectors = [];
 
-    /**
-     * @param ProjectorInterface $projector
-     */
     public function add(ProjectorInterface $projector): void
     {
-        $this->projectors[get_class($projector)] = $projector;
+        $this->projectors[$projector::class] = $projector;
     }
 
     /**
@@ -44,15 +41,12 @@ final class ProjectorCollection implements IteratorAggregate
     public function getProjectorNames(): array
     {
         return array_map(
-            function (ProjectorInterface $projector): string {
-                return get_class($projector);
-            },
-            array_values($this->projectors)
+            fn(ProjectorInterface $projector): string => $projector::class,
+            array_values($this->projectors),
         );
     }
 
     /**
-     * @param array $projectorNames
      * @return ProjectorCollection
      */
     public function selectByNames(array $projectorNames): ProjectorCollection
@@ -64,8 +58,8 @@ final class ProjectorCollection implements IteratorAggregate
                 throw new InvalidArgumentException(
                     sprintf(
                         'Cannot select a subset of projectors, because projector "%s" is not present in the collection',
-                        $projectorName
-                    )
+                        $projectorName,
+                    ),
                 );
             }
 
@@ -76,12 +70,11 @@ final class ProjectorCollection implements IteratorAggregate
     }
 
     /**
-     * @param ProjectorInterface $projector
      * @return bool
      */
     public function contains(ProjectorInterface $projector): bool
     {
-        return array_key_exists(get_class($projector), $this->projectors);
+        return array_key_exists($projector::class, $this->projectors);
     }
 
     public function getIterator()

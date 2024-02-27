@@ -25,29 +25,11 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
 final class UseRaLocationsOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var UseRaLocationsOption
-     */
-    public $useRaLocationsOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public UseRaLocationsOption $useRaLocationsOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->useRaLocationsOption = $useRaLocationsOption;
     }
 
     public static function deserialize(array $data)
@@ -55,7 +37,7 @@ final class UseRaLocationsOptionChangedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new UseRaLocationsOption($data['use_ra_locations_option'])
+            new UseRaLocationsOption($data['use_ra_locations_option']),
         );
     }
 
@@ -63,8 +45,8 @@ final class UseRaLocationsOptionChangedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'use_ra_locations_option'      => $this->useRaLocationsOption->isEnabled(),
+            'institution' => $this->institution->getInstitution(),
+            'use_ra_locations_option' => $this->useRaLocationsOption->isEnabled(),
         ];
     }
 }

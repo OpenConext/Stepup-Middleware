@@ -29,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class RaLocationNameType extends Type
 {
-    const NAME = 'stepup_ra_location_name';
+    public const NAME = 'stepup_ra_location_name';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -46,9 +46,9 @@ class RaLocationNameType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal RA location name of type %s '%s', expected a RaLocationName instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -67,7 +67,7 @@ class RaLocationNameType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

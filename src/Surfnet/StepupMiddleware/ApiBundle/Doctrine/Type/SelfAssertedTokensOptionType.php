@@ -29,7 +29,7 @@ use TypeError;
  */
 class SelfAssertedTokensOptionType extends Type
 {
-    const NAME = 'stepup_self_asserted_tokens_option';
+    public const NAME = 'stepup_self_asserted_tokens_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -47,13 +47,13 @@ class SelfAssertedTokensOptionType extends Type
                 sprintf(
                     "Encountered illegal self vet option %s '%s', expected a 
                     SelfAssertedTokensOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -63,12 +63,12 @@ class SelfAssertedTokensOptionType extends Type
         }
 
         try {
-            $selfAssertedTokensOption = new SelfAssertedTokensOption((bool) $value);
+            $selfAssertedTokensOption = new SelfAssertedTokensOption((bool)$value);
         } catch (TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

@@ -29,17 +29,11 @@ final class InstitutionCollection
      */
     private $institutions = [];
 
-    /**
-     * @param Institution $institution
-     */
     public function set(Institution $institution): void
     {
         $this->institutions[(string)$institution] = $institution;
     }
 
-    /**
-     * @param Institutions $institutions
-     */
     public function update(Institutions $institutions): void
     {
         foreach ($institutions as $institution) {
@@ -48,7 +42,6 @@ final class InstitutionCollection
     }
 
     /**
-     * @param Institution $institution
      * @return Institution
      */
     public function get(Institution $institution)
@@ -57,7 +50,6 @@ final class InstitutionCollection
     }
 
     /**
-     * @param Institution $institution
      * @return Institution
      */
     public function exists(Institution $institution): bool
@@ -65,9 +57,6 @@ final class InstitutionCollection
         return array_key_exists((string)$institution, $this->institutions);
     }
 
-    /**
-     * @param Institution $institution
-     */
     public function remove(Institution $institution): void
     {
         unset($this->institutions[(string)$institution]);

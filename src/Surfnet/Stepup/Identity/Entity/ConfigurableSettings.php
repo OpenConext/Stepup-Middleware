@@ -29,30 +29,27 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
  */
 final class ConfigurableSettings
 {
-    private TimeFrame $emailVerificationTimeFrame;
-
     /**
      * @var Locale[]
      */
-    private array $locales;
+    private readonly array $locales;
 
     /**
-     * @param TimeFrame $timeFrame
-     * @param Locale[]  $locales
+     * @param Locale[] $locales
      */
-    private function __construct(TimeFrame $timeFrame, array $locales)
-    {
+    private function __construct(
+        private readonly TimeFrame $emailVerificationTimeFrame,
+        array $locales,
+    ) {
         foreach ($locales as $index => $locale) {
             if (!$locale instanceof Locale) {
                 throw InvalidArgumentException::invalidType(
-                    'Surfnet\Stepup\Identity\Value\Locale',
+                    Locale::class,
                     sprintf('locales[%s]', $index),
-                    $locale
+                    $locale,
                 );
             }
         }
-
-        $this->emailVerificationTimeFrame = $timeFrame;
         $this->locales = $locales;
     }
 
@@ -66,11 +63,9 @@ final class ConfigurableSettings
         return new self(
             TimeFrame::ofSeconds($emailVerificationTimeFrame),
             array_map(
-                function ($locale): Locale {
-                    return new Locale($locale);
-                },
-                $locales
-            )
+                fn($locale): Locale => new Locale($locale),
+                $locales,
+            ),
         );
     }
 
@@ -81,22 +76,19 @@ final class ConfigurableSettings
     {
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             $this->emailVerificationTimeFrame,
-            DateTime::now()
+            DateTime::now(),
         );
     }
 
     /**
-     * @param Locale $locale
      * @return bool
      */
     public function isSupportedLocale(Locale $locale): bool
     {
         return array_reduce(
             $this->locales,
-            function ($supported, Locale $supportedLocale) use ($locale): bool {
-                return $supported || $supportedLocale->equals($locale);
-            },
-            false
+            fn($supported, Locale $supportedLocale): bool => $supported || $supportedLocale->equals($locale),
+            false,
         );
     }
 }

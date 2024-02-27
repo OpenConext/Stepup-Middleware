@@ -18,11 +18,12 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class StepupProvider
+final class StepupProvider implements Stringable
 {
-    private string $provider;
+    private readonly string $provider;
 
     public function __construct($provider)
     {

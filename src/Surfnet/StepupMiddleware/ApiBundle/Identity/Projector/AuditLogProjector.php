@@ -42,16 +42,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
  */
 class AuditLogProjector implements EventListener
 {
-    private AuditLogRepository $auditLogRepository;
-
-    private IdentityRepository $identityRepository;
-
     public function __construct(
-        AuditLogRepository $auditLogRepository,
-        IdentityRepository $identityRepository
+        private readonly AuditLogRepository $auditLogRepository,
+        private readonly IdentityRepository $identityRepository,
     ) {
-        $this->auditLogRepository = $auditLogRepository;
-        $this->identityRepository = $identityRepository;
     }
 
     /**
@@ -74,8 +68,6 @@ class AuditLogProjector implements EventListener
     }
 
     /**
-     * @param AuditableEvent $event
-     * @param DomainMessage $domainMessage
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
@@ -85,19 +77,21 @@ class AuditLogProjector implements EventListener
 
         $metadata = $domainMessage->getMetadata()->serialize();
         $entry = new AuditLogEntry();
-        $entry->id = (string) Uuid::uuid4();
+        $entry->id = (string)Uuid::uuid4();
 
         if (isset($metadata['actorId'])) {
             $actor = $this->identityRepository->find($metadata['actorId']);
 
             if (!$actor instanceof Identity) {
-                throw new RuntimeException(sprintf(
-                    'Cannot create AuditLogEntry, given Actor Identity "%s" does not exist',
-                    $metadata['actorId']
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Cannot create AuditLogEntry, given Actor Identity "%s" does not exist',
+                        $metadata['actorId'],
+                    ),
+                );
             }
 
-            $entry->actorId         = $metadata['actorId'];
+            $entry->actorId = $metadata['actorId'];
             $entry->actorCommonName = $actor->commonName;
         }
 
@@ -107,36 +101,36 @@ class AuditLogProjector implements EventListener
             $entry->actorInstitution = $metadata['actorInstitution'];
         }
 
-        $entry->identityId          = (string) $auditLogMetadata->identityId;
+        $entry->identityId = (string)$auditLogMetadata->identityId;
         $entry->identityInstitution = $auditLogMetadata->identityInstitution;
-        $entry->event               = get_class($event);
-        $entry->recordedOn          = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
+        $entry->event = $event::class;
+        $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
         if ($auditLogMetadata->secondFactorId) {
-            $entry->secondFactorId = (string) $auditLogMetadata->secondFactorId;
+            $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;
         }
 
         if ($auditLogMetadata->secondFactorType) {
-            $entry->secondFactorType = (string) $auditLogMetadata->secondFactorType;
+            $entry->secondFactorType = (string)$auditLogMetadata->secondFactorType;
         }
 
         if (!$event instanceof RecoveryTokenRevokedEvent
             && !$event instanceof CompliedWithRecoveryCodeRevocationEvent
             && $auditLogMetadata->recoveryTokenId
         ) {
-            $entry->recoveryTokenIdentifier = (string) $auditLogMetadata->recoveryTokenId;
+            $entry->recoveryTokenIdentifier = (string)$auditLogMetadata->recoveryTokenId;
         }
 
         if ($auditLogMetadata->recoveryTokenType) {
-            $entry->recoveryTokenType = (string) $auditLogMetadata->recoveryTokenType;
+            $entry->recoveryTokenType = (string)$auditLogMetadata->recoveryTokenType;
         }
 
         if ($auditLogMetadata->secondFactorIdentifier) {
-            $entry->secondFactorIdentifier = (string) $auditLogMetadata->secondFactorIdentifier;
+            $entry->secondFactorIdentifier = (string)$auditLogMetadata->secondFactorIdentifier;
         }
 
         if ($auditLogMetadata->raInstitution) {
-            $entry->raInstitution = (string) $auditLogMetadata->raInstitution;
+            $entry->raInstitution = (string)$auditLogMetadata->raInstitution;
         }
 
         $this->auditLogRepository->save($entry);
@@ -150,7 +144,7 @@ class AuditLogProjector implements EventListener
 
             if ($auditLogEntry->recoveryTokenIdentifier) {
                 $auditLogEntry->recoveryTokenIdentifier = RecoveryTokenIdentifierFactory::unknownForType(
-                    new RecoveryTokenType($auditLogEntry->recoveryTokenType)
+                    new RecoveryTokenType($auditLogEntry->recoveryTokenType),
                 );
             }
         }

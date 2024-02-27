@@ -34,16 +34,10 @@ use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
  */
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
-    private ?InstitutionCollection $institutions;
-
-    private bool $isSraa;
-
     public function __construct(
-        InstitutionCollection $institutions = null,
-        bool $isSraa = false
+        private readonly ?InstitutionCollection $institutions = null,
+        private readonly bool $isSraa = false,
     ) {
-        $this->institutions = $institutions;
-        $this->isSraa = $isSraa;
     }
 
     public function getInstitutions(): InstitutionCollection

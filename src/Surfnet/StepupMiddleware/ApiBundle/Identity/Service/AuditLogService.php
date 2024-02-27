@@ -24,15 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 class AuditLogService extends AbstractSearchService
 {
-    private AuditLogRepository $repository;
-
-    public function __construct(AuditLogRepository $repository)
+    public function __construct(private readonly AuditLogRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
-     * @param SecondFactorAuditLogQuery $query
      * @return Pagerfanta
      */
     public function searchSecondFactorAuditLog(SecondFactorAuditLogQuery $query)

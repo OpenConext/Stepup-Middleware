@@ -38,10 +38,9 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return AllowedSecondFactor[]
      */
-    public function getAllowedSecondFactorsFor(Institution $institution)
+    public function getAllowedSecondFactorsFor(Institution $institution): array
     {
         return $this->createQueryBuilder('asf')
             ->select()

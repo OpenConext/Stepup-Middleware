@@ -90,14 +90,14 @@ class InstitutionConfigurationOptions
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
-        SelfAssertedTokensOption $selfAssertedTokensOption
+        SelfAssertedTokensOption $selfAssertedTokensOption,
     ): self {
         $options = new self;
 
-        $options->institution                     = $institution;
-        $options->useRaLocationsOption            = $useRaLocationsOption;
+        $options->institution = $institution;
+        $options->useRaLocationsOption = $useRaLocationsOption;
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $options->verifyEmailOption               = $verifyEmailOption;
+        $options->verifyEmailOption = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $options->ssoOn2faOption = $ssoOn2faOption;
         $options->selfVetOption = $selfVetOption;

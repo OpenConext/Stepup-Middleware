@@ -63,14 +63,14 @@ class RaLocationAddedEvent implements SerializableInterface
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ) {
         $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution                = $institution;
-        $this->raLocationId               = $raLocationId;
-        $this->raLocationName             = $raLocationName;
-        $this->location                   = $location;
-        $this->contactInformation         = $contactInformation;
+        $this->institution = $institution;
+        $this->raLocationId = $raLocationId;
+        $this->raLocationName = $raLocationName;
+        $this->location = $location;
+        $this->contactInformation = $contactInformation;
     }
 
     public static function deserialize(array $data)
@@ -81,7 +81,7 @@ class RaLocationAddedEvent implements SerializableInterface
             new RaLocationId($data['ra_location_id']),
             new RaLocationName($data['ra_location_name']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
@@ -89,11 +89,11 @@ class RaLocationAddedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
-            'ra_location_name'             => $this->raLocationName->getRaLocationName(),
-            'location'                     => $this->location->getLocation(),
-            'contact_information'          => $this->contactInformation->getContactInformation(),
+            'institution' => $this->institution->getInstitution(),
+            'ra_location_id' => $this->raLocationId->getRaLocationId(),
+            'ra_location_name' => $this->raLocationName->getRaLocationName(),
+            'location' => $this->location->getLocation(),
+            'contact_information' => $this->contactInformation->getContactInformation(),
         ];
     }
 }

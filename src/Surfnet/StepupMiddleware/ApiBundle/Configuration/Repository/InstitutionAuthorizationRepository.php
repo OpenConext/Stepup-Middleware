@@ -35,8 +35,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
-     * @param InstitutionRole $role
      * @return InstitutionAuthorization[]
      */
     public function findAuthorizationOptionsForInstitutionByRole(Institution $institution, InstitutionRole $role)
@@ -51,7 +49,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return InstitutionAuthorization[]
      */
     public function findAuthorizationOptionsForInstitution(Institution $institution)
@@ -64,7 +61,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return InstitutionAuthorization[]
      */
     public function findSelectRaasForInstitution(Institution $institution)
@@ -79,19 +75,19 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
-     * @param InstitutionAuthorizationOption $institutionOption
      * @throws OptimisticLockException
      */
-    public function saveInstitutionOption(Institution $institution, InstitutionAuthorizationOption $institutionOption): void
-    {
+    public function saveInstitutionOption(
+        Institution $institution,
+        InstitutionAuthorizationOption $institutionOption,
+    ): void {
         $institutionAuthorizations = [];
 
         foreach ($institutionOption->getInstitutions($institution) as $relatedInstitution) {
             $institutionAuthorizations[] = InstitutionAuthorization::create(
                 $institution,
                 $relatedInstitution,
-                $institutionOption->getInstitutionRole()
+                $institutionOption->getInstitutionRole(),
             );
         }
 
@@ -99,7 +95,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @param InstitutionAuthorizationOption $institutionOption
      * @throws OptimisticLockException
      */
@@ -108,8 +103,8 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $entityManager->createQuery(
-            'DELETE '.InstitutionAuthorization::class.' ia
-            WHERE ia.institution = :institution'
+            'DELETE ' . InstitutionAuthorization::class . ' ia
+            WHERE ia.institution = :institution',
         )
             ->setParameter('institution', $institution->getInstitution())
             ->execute();
@@ -119,28 +114,25 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
 
 
     /**
-     * @param Institution $institution
      * @throws OptimisticLockException
      */
     public function setDefaultInstitutionOption(Institution $institution): void
     {
         $this->saveInstitutionOption(
             $institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa()),
         );
         $this->saveInstitutionOption(
             $institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa()),
         );
         $this->saveInstitutionOption(
             $institution,
-            InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
+            InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa()),
         );
     }
 
     /**
-     * @param Institution $institution
-     * @param InstitutionRole $role
      * @param InstitutionAuthorization[] $institutionAuthorizations
      * @throws OptimisticLockException
      */
@@ -154,16 +146,14 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param EntityManager $entityManager
-     * @param Institution $institution
-     * @param InstitutionRole $role
-     */
-    private function clearOldAuthorizations(EntityManager $entityManager, Institution $institution, InstitutionRole $role): void
-    {
+    private function clearOldAuthorizations(
+        EntityManager $entityManager,
+        Institution $institution,
+        InstitutionRole $role,
+    ): void {
         $entityManager->createQuery(
-            'DELETE '.InstitutionAuthorization::class.' ia
-            WHERE ia.institutionRole = :role AND ia.institution = :institution'
+            'DELETE ' . InstitutionAuthorization::class . ' ia
+            WHERE ia.institutionRole = :role AND ia.institution = :institution',
         )
             ->setParameter('role', $role)
             ->setParameter('institution', $institution->getInstitution())
@@ -171,12 +161,13 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param EntityManager $entityManager
-     * @param InstitutionRole $role
      * @param InstitutionAuthorization[] $institutionAuthorizations
      */
-    private function addNewAuthorizations(EntityManager $entityManager, InstitutionRole $role, array $institutionAuthorizations): void
-    {
+    private function addNewAuthorizations(
+        EntityManager $entityManager,
+        InstitutionRole $role,
+        array $institutionAuthorizations,
+    ): void {
         foreach ($institutionAuthorizations as $institutionAuthorization) {
             if ($institutionAuthorization->institutionRole === $role) {
                 $entityManager->persist($institutionAuthorization);

@@ -22,8 +22,13 @@ use Mockery as m;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizingStageTest extends UnitTest
 {
@@ -41,7 +46,7 @@ class AuthorizingStageTest extends UnitTest
     {
         $this->logger = new NullLogger();
         $this->authorizationChecker = m::mock(
-            'Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface'
+            AuthorizationCheckerInterface::class,
         );
     }
 
@@ -51,7 +56,7 @@ class AuthorizingStageTest extends UnitTest
      */
     public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
+        $command = m::mock(Command::class);
         $this->authorizationChecker->shouldReceive('isGranted')->never();
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
@@ -65,12 +70,11 @@ class AuthorizingStageTest extends UnitTest
      * @test
      * @group pipeline
      * @dataProvider interfaceToRoleMappingProvider
-     *
-     * @param string $interface
-     * @param string $role
      */
-    public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role(string $interface, string $role): void
-    {
+    public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role(
+        string $interface,
+        string $role,
+    ): void {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, ' . $interface);
         $this->authorizationChecker
             ->shouldReceive('isGranted')
@@ -95,7 +99,7 @@ class AuthorizingStageTest extends UnitTest
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
             . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable, '
             . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable, '
-            . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable'
+            . ManagementExecutable::class,
         );
 
         $this->authorizationChecker
@@ -130,7 +134,7 @@ class AuthorizingStageTest extends UnitTest
 
         $command = m::mock(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
-            . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable'
+            . SelfServiceExecutable::class,
         );
 
         $this->authorizationChecker
@@ -148,19 +152,19 @@ class AuthorizingStageTest extends UnitTest
 
     public function interfaceToRoleMappingProvider(): array
     {
-        return  [
+        return [
             'SelfServiceExecutable => ROLE_SS' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable',
-                'ROLE_SS'
+                SelfServiceExecutable::class,
+                'ROLE_SS',
             ],
             'RaExecutable => ROLE_RA' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable',
-                'ROLE_RA'
+                RaExecutable::class,
+                'ROLE_RA',
             ],
             'ManagementExecutable => ROLE_MANAGEMENT' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable',
-                'ROLE_MANAGEMENT'
-            ]
+                ManagementExecutable::class,
+                'ROLE_MANAGEMENT',
+            ],
         ];
     }
 }

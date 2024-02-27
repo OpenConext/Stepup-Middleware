@@ -19,12 +19,13 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * The natural identifier of an Identity is the SAML Name ID.
  */
-final class NameId implements JsonSerializable
+final class NameId implements JsonSerializable, Stringable
 {
     /**
      * This length reflects the maximum length supported by the data store for the
@@ -34,7 +35,7 @@ final class NameId implements JsonSerializable
      */
     private const MAX_LENGTH = 255;
 
-    private string $value;
+    private readonly string $value;
 
     public function __construct($value)
     {
@@ -44,7 +45,7 @@ final class NameId implements JsonSerializable
 
         if (strlen($value) > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
-                'Invalid argument type: maximum length for nameId exceeds configured length of ' . self::MAX_LENGTH
+                'Invalid argument type: maximum length for nameId exceeds configured length of ' . self::MAX_LENGTH,
             );
         }
 

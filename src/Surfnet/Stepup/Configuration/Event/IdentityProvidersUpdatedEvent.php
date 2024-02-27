@@ -27,7 +27,7 @@ class IdentityProvidersUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $identityProviders
+     * @param array $identityProviders
      */
     public function __construct($configurationId, array $identityProviders)
     {

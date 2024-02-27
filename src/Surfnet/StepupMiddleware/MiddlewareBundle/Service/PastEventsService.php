@@ -22,17 +22,13 @@ use Broadway\Domain\DomainEventStream;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 
-final class PastEventsService
+final readonly class PastEventsService
 {
-    private DBALEventHydrator $eventHydrator;
-
-    public function __construct(DBALEventHydrator $eventHydrator)
+    public function __construct(private DBALEventHydrator $eventHydrator)
     {
-        $this->eventHydrator = $eventHydrator;
     }
 
     /**
-     * @param EventCollection $events
      * @return DomainEventStream
      */
     public function findEventsBy(EventCollection $events)

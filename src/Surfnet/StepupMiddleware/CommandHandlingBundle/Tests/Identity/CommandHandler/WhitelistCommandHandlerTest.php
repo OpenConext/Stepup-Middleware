@@ -42,10 +42,12 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     /**
      * Shorthand for fixed Whitelist ID.
      */
-    const WID = Whitelist::WHITELIST_AGGREGATE_ID;
+    public const WID = Whitelist::WHITELIST_AGGREGATE_ID;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new WhitelistCommandHandler(new WhitelistRepository($eventStore, $eventBus, $aggregateFactory));
@@ -58,15 +60,15 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      */
     public function when_the_whitelist_does_not_exist_yet_it_is_created(): void
     {
-        $command               = new ReplaceWhitelistCommand();
+        $command = new ReplaceWhitelistCommand();
         $command->institutions = ['Replace A', 'Replace B', 'Replace C'];
-        $institutions          = $this->mapStringValuesToInstitutions($command->institutions);
+        $institutions = $this->mapStringValuesToInstitutions($command->institutions);
 
         $this->scenario
             ->when($command)
             ->then([
                 new WhitelistCreatedEvent(new InstitutionCollection()),
-                new WhitelistReplacedEvent(new InstitutionCollection($institutions))
+                new WhitelistReplacedEvent(new InstitutionCollection($institutions)),
             ]);
     }
 
@@ -88,8 +90,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new WhitelistReplacedEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutions))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutions)),
+                ),
             ]);
     }
 
@@ -103,7 +105,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
-        $command                        = new AddToWhitelistCommand();
+        $command = new AddToWhitelistCommand();
         $command->institutionsToBeAdded = ['Added Institution'];
 
         $this->scenario
@@ -112,8 +114,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new InstitutionsAddedToWhitelistEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeAdded))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeAdded)),
+                ),
             ]);
     }
 
@@ -129,7 +131,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
 
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Already Exists']);
 
-        $command                        = new AddToWhitelistCommand();
+        $command = new AddToWhitelistCommand();
         $command->institutionsToBeAdded = ['Already Exists'];
 
         $this->scenario
@@ -147,7 +149,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'On the whitelist']);
 
-        $command                          = new RemoveFromWhitelistCommand();
+        $command = new RemoveFromWhitelistCommand();
         $command->institutionsToBeRemoved = ['On the whitelist'];
 
         $this->scenario
@@ -156,8 +158,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new InstitutionsRemovedFromWhitelistEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeRemoved))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeRemoved)),
+                ),
             ]);
     }
 
@@ -183,13 +185,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
 
     /**
      * Helper function to quickly map String[] to Institution[]
-     * @param array $institutions
      * @return array
      */
     private function mapStringValuesToInstitutions(array $institutions): array
     {
-        return array_map(function ($institution): Institution {
-            return new Institution($institution);
-        }, $institutions);
+        return array_map(fn($institution): Institution => new Institution($institution), $institutions);
     }
 }

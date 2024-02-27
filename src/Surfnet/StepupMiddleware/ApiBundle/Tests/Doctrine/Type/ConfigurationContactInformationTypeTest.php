@@ -39,7 +39,7 @@ class ConfigurationContactInformationTypeTest extends UnitTest
     {
         Type::addType(
             ConfigurationContactInformationType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationContactInformationType'
+            ConfigurationContactInformationType::class,
         );
     }
 
@@ -57,7 +57,7 @@ class ConfigurationContactInformationTypeTest extends UnitTest
      */
     public function a_value_can_only_be_converted_to_sql_if_it_is_contact_information_or_null($incorrectValue): void
     {
-        $this->expectException('Doctrine\DBAL\Types\ConversionException');
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(ConfigurationContactInformationType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -85,7 +85,7 @@ class ConfigurationContactInformationTypeTest extends UnitTest
         $configurationContactInformation = Type::getType(ConfigurationContactInformationType::NAME);
 
         $expected = 'Call me maybe';
-        $input  = new ContactInformation($expected);
+        $input = new ContactInformation($expected);
         $output = $configurationContactInformation->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -117,7 +117,7 @@ class ConfigurationContactInformationTypeTest extends UnitTest
 
         $output = $configurationContactInformation->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\ContactInformation', $output);
+        $this->assertInstanceOf(ContactInformation::class, $output);
         $this->assertEquals(new ContactInformation($input), $output);
     }
 

@@ -30,19 +30,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocatio
 
 class SecondFactorRevocationProjector extends Projector
 {
-    private SecondFactorRevocationRepository $repository;
-
-    public function __construct(SecondFactorRevocationRepository $repository)
+    public function __construct(private readonly SecondFactorRevocationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     protected function applyVettedSecondFactorRevokedEvent(
         VettedSecondFactorRevokedEvent $event,
-        DomainMessage $domainMessage
+        DomainMessage $domainMessage,
     ) {
         $revocation = new SecondFactorRevocation();
-        $revocation->id = (string) Uuid::uuid4();
+        $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'self';
@@ -53,10 +50,10 @@ class SecondFactorRevocationProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-        DomainMessage $domainMessage
+        DomainMessage $domainMessage,
     ) {
         $revocation = new SecondFactorRevocation();
-        $revocation->id = (string) Uuid::uuid4();
+        $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;
         $revocation->secondFactorType = $event->secondFactorType->getSecondFactorType();
         $revocation->revokedBy = 'ra';

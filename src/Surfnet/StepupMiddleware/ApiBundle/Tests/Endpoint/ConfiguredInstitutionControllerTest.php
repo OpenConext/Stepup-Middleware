@@ -80,10 +80,10 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -102,12 +102,12 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => $account,
-                'PHP_AUTH_PW'   => $this->accounts[$account],
+                'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -125,19 +125,19 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'ra',
-                'PHP_AUTH_PW'   => $this->accounts['ra'],
+                'PHP_AUTH_PW' => $this->accounts['ra'],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertTrue(
             $this->client->getResponse()->headers->contains(
                 'Content-Type',
-                'application/json'
-            )
+                'application/json',
+            ),
         );
     }
 
@@ -154,12 +154,12 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => $account,
-                'PHP_AUTH_PW'   => $this->accounts[$account],
+                'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
@@ -176,7 +176,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             'POST' => ['POST'],
             'DELETE' => ['DELETE'],
             'PUT' => ['PUT'],
-            'OPTIONS' => ['OPTIONS']
+            'OPTIONS' => ['OPTIONS'],
         ];
     }
 

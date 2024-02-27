@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class ContactInformation implements JsonSerializable
+final class ContactInformation implements JsonSerializable, Stringable
 {
-    private string $contactInformation;
+    private readonly string $contactInformation;
 
     /**
      * @param string $contactInformation
@@ -37,10 +38,6 @@ final class ContactInformation implements JsonSerializable
         $this->contactInformation = trim($contactInformation);
     }
 
-    /**
-     * @param ContactInformation $otherContactInformation
-     * @return bool
-     */
     public function equals(ContactInformation $otherContactInformation): bool
     {
         return $this->contactInformation === $otherContactInformation->contactInformation;

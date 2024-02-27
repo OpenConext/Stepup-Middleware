@@ -23,16 +23,11 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use Surfnet\Stepup\Identity\Event\IdentityEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
-final class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterface
+final readonly class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterface
 {
-    /**
-     * @var EventStoreInterface
-     */
-    private EventStoreInterface $decoratedEventStore;
-
-    public function __construct(EventStoreInterface $decoratedEventStore)
-    {
-        $this->decoratedEventStore = $decoratedEventStore;
+    public function __construct(
+        private EventStoreInterface $decoratedEventStore,
+    ) {
     }
 
     public function load($id): DomainEventStreamInterface
@@ -65,15 +60,12 @@ final class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterfac
         return $eventStream;
     }
 
-    /**
-     * @param DomainEventStreamInterface $stream
-     */
     public function assertIdentityAggregate(DomainEventStreamInterface $stream): void
     {
         foreach ($stream as $message) {
             if (!$message->getPayload() instanceof IdentityEvent) {
                 throw new InvalidArgumentException(
-                    'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id'
+                    'The SensitiveDataEventStoreDecorator only works with Identities, please pass in an IdentityId $id',
                 );
             }
         }

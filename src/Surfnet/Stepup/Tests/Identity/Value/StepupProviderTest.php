@@ -32,8 +32,9 @@ class StepupProviderTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $invalidValue): void
-    {
+    public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string(
+        string|int|float|StdClass|array $invalidValue,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new StepupProvider($invalidValue);
@@ -46,8 +47,8 @@ class StepupProviderTest extends UnitTest
     public function two_stepup_providers_with_the_same_value_are_equal(): void
     {
         $institution = new StepupProvider('a');
-        $theSame     = new StepupProvider('a');
-        $different   = new StepupProvider('A');
+        $theSame = new StepupProvider('a');
+        $different = new StepupProvider('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertFalse($institution->equals($different));
@@ -61,10 +62,10 @@ class StepupProviderTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

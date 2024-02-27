@@ -27,7 +27,7 @@ class EmailTemplatesUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $emailTemplates
+     * @param array $emailTemplates
      */
     public function __construct($configurationId, array $emailTemplates)
     {

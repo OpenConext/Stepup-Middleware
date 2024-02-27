@@ -21,6 +21,41 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
+use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
@@ -44,41 +79,41 @@ class AuditLogEntry implements JsonSerializable
      * @var string[]
      */
     private array $eventActionMap = [
-        'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
-        'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent'                                => 'email_verified',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent'                         => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent'              => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\IdentityCreatedEvent'                              => 'created',
-        'Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent'                         => 'email_changed',
-        'Surfnet\Stepup\Identity\Event\IdentityRenamedEvent'                              => 'renamed',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent'                        => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent'             => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent'                           => 'vetted',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession' => 'vetted_possession_unknown',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent' => 'migrated_to',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent' => 'migrated_from',
-        'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent'                => 'revoked',
-        'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent'                  => 'revoked',
-        'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent'                    => 'revoked',
-        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent'                      => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent'           => 'possession_proven',
-        'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent'              => 'bootstrapped',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent'                      => 'accredited_as_raa',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent'                       => 'accredited_as_ra',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent'         => 'accredited_as_ra',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent'        => 'accredited_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent'                               => 'appointed_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent'                                => 'appointed_as_ra',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent'                 => 'appointed_as_raa',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent'                  => 'appointed_as_ra',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent'               => 'retracted_as_ra',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent' => 'retracted_as_ra',
-        'Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent' => 'recovery_token_possession_promised',
-        'Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent' => 'recovery_token_revoked',
-        'Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent' => 'recovery_token_possession_proven',
-        'Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent' => 'recovery_token_revoked',
+        CompliedWithUnverifiedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        CompliedWithVerifiedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        CompliedWithVettedSecondFactorRevocationEvent::class => 'revoked_by_ra',
+        EmailVerifiedEvent::class => 'email_verified',
+        GssfPossessionProvenEvent::class => 'possession_proven',
+        GssfPossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        IdentityCreatedEvent::class => 'created',
+        IdentityEmailChangedEvent::class => 'email_changed',
+        IdentityRenamedEvent::class => 'renamed',
+        PhonePossessionProvenEvent::class => 'possession_proven',
+        PhonePossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        SecondFactorVettedEvent::class => 'vetted',
+        SecondFactorVettedWithoutTokenProofOfPossession::class => 'vetted_possession_unknown',
+        SecondFactorMigratedToEvent::class => 'migrated_to',
+        SecondFactorMigratedEvent::class => 'migrated_from',
+        UnverifiedSecondFactorRevokedEvent::class => 'revoked',
+        VerifiedSecondFactorRevokedEvent::class => 'revoked',
+        VettedSecondFactorRevokedEvent::class => 'revoked',
+        YubikeyPossessionProvenEvent::class => 'possession_proven',
+        YubikeyPossessionProvenAndVerifiedEvent::class => 'possession_proven',
+        YubikeySecondFactorBootstrappedEvent::class => 'bootstrapped',
+        IdentityAccreditedAsRaaEvent::class => 'accredited_as_raa',
+        IdentityAccreditedAsRaEvent::class => 'accredited_as_ra',
+        IdentityAccreditedAsRaForInstitutionEvent::class => 'accredited_as_ra',
+        IdentityAccreditedAsRaaForInstitutionEvent::class => 'accredited_as_raa',
+        AppointedAsRaaEvent::class => 'appointed_as_raa',
+        AppointedAsRaEvent::class => 'appointed_as_ra',
+        AppointedAsRaaForInstitutionEvent::class => 'appointed_as_raa',
+        AppointedAsRaForInstitutionEvent::class => 'appointed_as_ra',
+        RegistrationAuthorityRetractedEvent::class => 'retracted_as_ra',
+        RegistrationAuthorityRetractedForInstitutionEvent::class => 'retracted_as_ra',
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent::class => 'recovery_token_possession_promised',
+        RecoveryTokenRevokedEvent::class => 'recovery_token_revoked',
+        PhoneRecoveryTokenPossessionProvenEvent::class => 'recovery_token_possession_proven',
+        CompliedWithRecoveryCodeRevocationEvent::class => 'recovery_token_revoked',
     ];
 
     /**
@@ -187,7 +222,7 @@ class AuditLogEntry implements JsonSerializable
             'recovery_token_type' => $this->recoveryTokenType,
             'recovery_token_identifier' => $this->recoveryTokenIdentifier,
             'action' => $this->mapEventToAction($this->event),
-            'recorded_on' => (string) $this->recordedOn,
+            'recorded_on' => (string)$this->recordedOn,
         ];
     }
 

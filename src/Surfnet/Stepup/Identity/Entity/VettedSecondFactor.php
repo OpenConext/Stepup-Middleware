@@ -56,7 +56,7 @@ class VettedSecondFactor extends AbstractSecondFactor
         Identity $identity,
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
-        VettingType $vettingType
+        VettingType $vettingType,
     ): self {
         $secondFactor = new self();
         $secondFactor->id = $id;
@@ -88,8 +88,8 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
@@ -102,8 +102,8 @@ class VettedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
@@ -114,7 +114,7 @@ class VettedSecondFactor extends AbstractSecondFactor
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }

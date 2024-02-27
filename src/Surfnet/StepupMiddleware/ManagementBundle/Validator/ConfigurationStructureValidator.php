@@ -33,16 +33,10 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
  */
 class ConfigurationStructureValidator extends ConstraintValidator
 {
-    private GatewayConfigurationValidator $gatewayConfigurationValidator;
-
-    private EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator;
-
     public function __construct(
-        GatewayConfigurationValidator $gatewayConfigurationValidator,
-        EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator
+        private readonly GatewayConfigurationValidator $gatewayConfigurationValidator,
+        private readonly EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator,
     ) {
-        $this->gatewayConfigurationValidator = $gatewayConfigurationValidator;
-        $this->emailTemplatesConfigurationValidator = $emailTemplatesConfigurationValidator;
     }
 
     public function validate($value, Constraint $constraint): void
@@ -81,7 +75,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
             $configuration,
             $acceptedProperties,
             sprintf("Expected only properties '%s'", implode(',', $acceptedProperties)),
-            '(root)'
+            '(root)',
         );
 
         $this->validateGatewayConfiguration($configuration, 'gateway');
@@ -101,14 +95,14 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assertion::isArray(
             $configuration['sraa'],
             'Property sraa must have an array of name_ids (string) as value',
-            $propertyPath
+            $propertyPath,
         );
 
         foreach ($configuration['sraa'] as $index => $value) {
             Assertion::string(
                 $value,
                 'value must be a string (the name_id of the SRAA)',
-                $propertyPath . '[' . $index. ']'
+                $propertyPath . '[' . $index . ']',
             );
         }
     }
@@ -118,7 +112,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         Assertion::isArray(
             $configuration['email_templates'],
             'Property "email_templates" must have an object as value',
-            $propertyPath
+            $propertyPath,
         );
 
         $this->emailTemplatesConfigurationValidator->validate($configuration['email_templates'], $propertyPath);

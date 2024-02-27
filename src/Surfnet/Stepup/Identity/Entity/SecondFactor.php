@@ -26,7 +26,10 @@ interface SecondFactor
 {
     public function hasEqualOrHigherLoaComparedTo(SecondFactor $comparable, SecondFactorTypeService $service): bool;
 
-    public function hasTypeWithEqualOrLowerLoaComparedTo(SecondFactorType $type, SecondFactorTypeService $service): bool;
+    public function hasTypeWithEqualOrLowerLoaComparedTo(
+        SecondFactorType $type,
+        SecondFactorTypeService $service,
+    ): bool;
 
     public function typeAndIdentifierAreEqual(SecondFactorType $type, SecondFactorIdentifier $identifier): bool;
 

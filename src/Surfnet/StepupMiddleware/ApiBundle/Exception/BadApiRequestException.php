@@ -24,25 +24,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 class BadApiRequestException extends RuntimeException
 {
     /**
-     * @var string[]
-     */
-    private array $errors;
-
-    /**
      * @param string[] $errors
      * @param string $message
      * @param int $code
-     * @param \Exception|null $previous
+     * @param Exception|null $previous
      */
     public function __construct(
-        array $errors,
+        private readonly array $errors,
         $message = 'Invalid Request',
         $code = 0,
-        \Exception $previous = null
+        Exception $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
-
-        $this->errors = $errors;
     }
 
     /**

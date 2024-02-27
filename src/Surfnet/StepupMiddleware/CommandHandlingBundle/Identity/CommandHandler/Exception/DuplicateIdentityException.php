@@ -30,8 +30,6 @@ final class DuplicateIdentityException extends RuntimeException
     }
 
     /**
-     * @param NameId $nameId
-     * @param Institution $institution
      *
      * @return DuplicateIdentityException
      */
@@ -41,8 +39,8 @@ final class DuplicateIdentityException extends RuntimeException
             sprintf(
                 'Trying to bootstrap a duplicate identity: an identity with name ID "%s" from institution "%s" already exists.',
                 $nameId->getNameId(),
-                $institution->getInstitution()
-            )
+                $institution->getInstitution(),
+            ),
         );
     }
 }

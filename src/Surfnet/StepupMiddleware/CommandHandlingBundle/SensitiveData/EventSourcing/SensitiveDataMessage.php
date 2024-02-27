@@ -24,21 +24,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class SensitiveDataMessage
 {
-    private IdentityId $identityId;
+    private readonly IdentityId $identityId;
 
-    private int $playhead;
-
-    /**
-     * @var SensitiveData
-     */
-    private $sensitiveData;
+    private readonly int $playhead;
 
     /**
      * @param IdentityId $identityId
      * @param int $playhead The associated broadway domain message's playhead.
-     * @param SensitiveData $sensitiveData
      */
-    public function __construct(string $identityId, $playhead, SensitiveData $sensitiveData)
+    public function __construct(string $identityId, $playhead, private SensitiveData $sensitiveData)
     {
         if (!is_int($playhead)) {
             throw InvalidArgumentException::invalidType('int', 'playhead', $playhead);
@@ -46,7 +40,6 @@ class SensitiveDataMessage
 
         $this->identityId = new IdentityId($identityId);
         $this->playhead = $playhead;
-        $this->sensitiveData = $sensitiveData;
     }
 
     /**

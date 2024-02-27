@@ -20,19 +20,20 @@ namespace Surfnet\Stepup\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DateTime
+class DateTime implements Stringable
 {
     /**
      * The 'c' format, expanded in separate format characters. This string can also be used with
      * `DateTime::createFromString()`.
      */
-    const FORMAT = 'Y-m-d\\TH:i:sP';
+    public const FORMAT = 'Y-m-d\\TH:i:sP';
 
     /**
      * Allows for mocking of time.
@@ -41,7 +42,7 @@ class DateTime
      */
     private static $now;
 
-    private CoreDateTime $dateTime;
+    private readonly CoreDateTime $dateTime;
 
     /**
      * @return self
@@ -79,7 +80,6 @@ class DateTime
     }
 
     /**
-     * @param DateInterval $interval
      * @return DateTime
      */
     public function add(DateInterval $interval): self
@@ -91,7 +91,6 @@ class DateTime
     }
 
     /**
-     * @param DateInterval $interval
      * @return DateTime
      */
     public function sub(DateInterval $interval): self
@@ -114,7 +113,6 @@ class DateTime
     }
 
     /**
-     * @param DateTime $dateTime
      * @return boolean
      */
     public function comesBefore(DateTime $dateTime): bool
@@ -123,7 +121,6 @@ class DateTime
     }
 
     /**
-     * @param DateTime $dateTime
      * @return boolean
      */
     public function comesBeforeOrIsEqual(DateTime $dateTime): bool
@@ -132,7 +129,6 @@ class DateTime
     }
 
     /**
-     * @param DateTime $dateTime
      * @return boolean
      */
     public function comesAfter(DateTime $dateTime): bool
@@ -141,7 +137,6 @@ class DateTime
     }
 
     /**
-     * @param DateTime $dateTime
      * @return boolean
      */
     public function comesAfterOrIsEqual(DateTime $dateTime): bool
@@ -158,10 +153,12 @@ class DateTime
         $formatted = $this->dateTime->format($format);
 
         if ($formatted === false) {
-            throw new InvalidArgumentException(sprintf(
-                'Given format "%s" is not a valid format for DateTime',
-                $format
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Given format "%s" is not a valid format for DateTime',
+                    $format,
+                ),
+            );
         }
 
         return $formatted;

@@ -23,9 +23,7 @@ use Exception;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
-    as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
 use Symfony\Component\Console\Command\Command;
@@ -40,14 +38,6 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
     protected static $defaultName = 'middleware:bootstrap:identity-with-yubikey';
-    private BootstrapCommandService $bootstrapService;
-
-    private TransactionHelper $transactionHelper;
-
-    /**
-     * @var IdentityRepository
-     */
-    private ServiceEntityRepository $projectionRepository;
 
     protected function configure(): void
     {
@@ -61,28 +51,25 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
             ->addArgument(
                 'yubikey',
                 InputArgument::REQUIRED,
-                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.'
+                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.',
             );
     }
 
     public function __construct(
-        BootstrapCommandService $bootstrapService,
-        ServiceEntityRepository $projectionRepository,
-        TransactionHelper $transactionHelper
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly ServiceEntityRepository $projectionRepository,
+        private readonly TransactionHelper $transactionHelper,
     ) {
         parent::__construct();
-        $this->bootstrapService = $bootstrapService;
-        $this->projectionRepository = $projectionRepository;
-        $this->transactionHelper = $transactionHelper;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT'])
+            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT']),
         );
 
-        $nameId      = new NameId($input->getArgument('name-id'));
+        $nameId = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));
 
         if ($this->projectionRepository->hasIdentityWithNameIdAndInstitution($nameId, $institution)) {
@@ -90,22 +77,22 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" already exists</error>',
                     $nameId->getNameId(),
-                    $institution->getInstitution()
-                )
+                    $institution->getInstitution(),
+                ),
             );
 
             return 1;
         }
 
-        $command                  = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
-        $command->UUID            = (string) Uuid::uuid4();
-        $command->identityId      = (string) Uuid::uuid4();
-        $command->nameId          = $input->getArgument('name-id');
-        $command->institution     = $input->getArgument('institution');
-        $command->commonName      = $input->getArgument('common-name');
-        $command->email           = $input->getArgument('email');
+        $command = new BootstrapIdentityWithYubikeySecondFactorIdentityCommand();
+        $command->UUID = (string)Uuid::uuid4();
+        $command->identityId = (string)Uuid::uuid4();
+        $command->nameId = $input->getArgument('name-id');
+        $command->institution = $input->getArgument('institution');
+        $command->commonName = $input->getArgument('common-name');
+        $command->email = $input->getArgument('email');
         $command->preferredLocale = $input->getArgument('preferred-locale');
-        $command->secondFactorId  = (string) Uuid::uuid4();
+        $command->secondFactorId = (string)Uuid::uuid4();
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 
         $this->transactionHelper->beginTransaction();
@@ -114,19 +101,23 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
             $command = $this->transactionHelper->process($command);
             $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
-            $output->writeln(sprintf(
-                '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
-                $e->getMessage()
-            ));
+            $output->writeln(
+                sprintf(
+                    '<error>An Error occurred when trying to bootstrap the token for identity: "%s"</error>',
+                    $e->getMessage(),
+                ),
+            );
 
             $this->transactionHelper->rollBack();
 
             throw $e;
         }
 
-        $output->writeln(sprintf(
-            '<info>Successfully registered a Yubikey token with UUID %s</info>',
-            $command->secondFactorId
-        ));
+        $output->writeln(
+            sprintf(
+                '<info>Successfully registered a Yubikey token with UUID %s</info>',
+                $command->secondFactorId,
+            ),
+        );
     }
 }

@@ -32,15 +32,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class ReplaySpecificEventsCommand extends Command
 {
     protected static $defaultName = 'stepup:event:replay';
-    const OPTION_LIST_EVENTS = 'list-events';
-    const OPTION_LIST_PROJECTORS = 'list-projectors';
-
-    private EventCollection $collection;
-
-    private PastEventsService $pastEventsService;
-
-    private TransactionAwareEventDispatcher $eventDispatcher;
-    private ProjectorCollection $projectorCollection;
+    public const OPTION_LIST_EVENTS = 'list-events';
+    public const OPTION_LIST_PROJECTORS = 'list-projectors';
 
     protected function configure()
     {
@@ -50,32 +43,28 @@ class ReplaySpecificEventsCommand extends Command
                 self::OPTION_LIST_EVENTS,
                 null,
                 InputOption::VALUE_NONE,
-                'List all events available to replay'
+                'List all events available to replay',
             )
             ->addOption(
                 self::OPTION_LIST_PROJECTORS,
                 null,
                 InputOption::VALUE_NONE,
-                'List all projectors available for which events can be replayed'
+                'List all projectors available for which events can be replayed',
             );
     }
 
     public function __construct(
-        EventCollection $collection,
-        ProjectorCollection $projectorCollection,
-        PastEventsService $pastEventsService,
-        TransactionAwareEventDispatcher $eventDispatcher
+        private readonly EventCollection $collection,
+        private readonly ProjectorCollection $projectorCollection,
+        private readonly PastEventsService $pastEventsService,
+        private readonly TransactionAwareEventDispatcher $eventDispatcher,
     ) {
-        $this->collection = $collection;
-        $this->projectorCollection = $projectorCollection;
-        $this->pastEventsService = $pastEventsService;
-        $this->eventDispatcher = $eventDispatcher;
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $availableEvents     = $this->collection->getEventNames();
+        $availableEvents = $this->collection->getEventNames();
         $availableProjectors = $this->projectorCollection->getProjectorNames();
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
@@ -103,21 +92,21 @@ class ReplaySpecificEventsCommand extends Command
 
         $selectEventsQuestion = new ChoiceQuestion(
             'Which events would you like to replay? Please supply a comma-separated list of numbers.',
-            $availableEvents
+            $availableEvents,
         );
         $selectEventsQuestion->setMultiselect(true);
 
-        $chosenEvents   = $questionHelper->ask($input, $output, $selectEventsQuestion);
+        $chosenEvents = $questionHelper->ask($input, $output, $selectEventsQuestion);
         $eventSelection = $this->collection->select($chosenEvents);
 
         $selectProjectorsQuestion = new ChoiceQuestion(
             'For which projectors would you like to replay the selected events? '
             . 'Please supply a comma-separated list of numbers.',
-            $availableProjectors
+            $availableProjectors,
         );
         $selectProjectorsQuestion->setMultiselect(true);
 
-        $chosenProjectors   = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
+        $chosenProjectors = $questionHelper->ask($input, $output, $selectProjectorsQuestion);
         $projectorSelection = $this->projectorCollection->selectByNames($chosenProjectors);
 
         $events = $this->pastEventsService->findEventsBy($eventSelection);

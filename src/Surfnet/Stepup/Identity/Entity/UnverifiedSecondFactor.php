@@ -56,12 +56,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     private ?string $verificationNonce = null;
 
     /**
-     * @param SecondFactorId          $id
-     * @param Identity                $identity
-     * @param SecondFactorType        $type
-     * @param SecondFactorIdentifier  $secondFactorIdentifier
-     * @param EmailVerificationWindow $emailVerificationWindow
-     * @param string                  $verificationNonce
+     * @param SecondFactorIdentifier $secondFactorIdentifier
+     * @param string $verificationNonce
      * @return UnverifiedSecondFactor
      */
     public static function create(
@@ -70,7 +66,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         SecondFactorType $type,
         $secondFactorIdentifier,
         EmailVerificationWindow $emailVerificationWindow,
-        $verificationNonce
+        $verificationNonce,
     ): self {
         if (!is_string($verificationNonce)) {
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
@@ -133,8 +129,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 OtpGenerator::generate(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
-                $this->identity->getPreferredLocale()
-            )
+                $this->identity->getPreferredLocale(),
+            ),
         );
     }
 
@@ -146,8 +142,8 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
@@ -160,14 +156,13 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
     /**
-     * @param DateTime $registrationRequestedAt
-     * @param string   $registrationCode
+     * @param string $registrationCode
      * @return VerifiedSecondFactor
      */
     public function asVerified(DateTime $registrationRequestedAt, $registrationCode)
@@ -178,13 +173,13 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
             $this->type,
             $this->secondFactorIdentifier,
             $registrationRequestedAt,
-            $registrationCode
+            $registrationCode,
         );
     }
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }

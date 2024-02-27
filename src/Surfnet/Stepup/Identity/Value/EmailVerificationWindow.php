@@ -19,24 +19,19 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Stringable;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class EmailVerificationWindow implements SerializableInterface
+final readonly class EmailVerificationWindow implements SerializableInterface, Stringable
 {
-    private DateTime $start;
-
-    private DateTime $end;
-
-    private function __construct(DateTime $start, DateTime $end)
-    {
-        $this->start = $start;
-        $this->end   = $end;
+    private function __construct(
+        private DateTime $start,
+        private DateTime $end,
+    ) {
     }
 
     /**
-     * @param TimeFrame $timeFrame
-     * @param DateTime  $start
      * @return EmailVerificationWindow
      */
     public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start): EmailVerificationWindow
@@ -45,19 +40,19 @@ final class EmailVerificationWindow implements SerializableInterface
     }
 
     /**
-     * @param DateTime $start
-     * @param DateTime $end
      * @return EmailVerificationWindow
      */
     public static function createWindowFromTill(DateTime $start, DateTime $end): EmailVerificationWindow
     {
         if (!$end->comesAfter($start)) {
-            throw new InvalidArgumentException(sprintf(
-                'An EmailVerificationWindow can only be created with an end time that is after the start time, '
-                . 'given start: "%s", given end: "%s"',
-                (string) $start,
-                (string) $end
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'An EmailVerificationWindow can only be created with an end time that is after the start time, '
+                    . 'given start: "%s", given end: "%s"',
+                    (string)$start,
+                    (string)$end,
+                ),
+            );
         }
 
         return new EmailVerificationWindow($start, $end);
@@ -82,7 +77,6 @@ final class EmailVerificationWindow implements SerializableInterface
     }
 
     /**
-     * @param EmailVerificationWindow $other
      * @return bool
      */
     public function equals(EmailVerificationWindow $other): bool
@@ -94,13 +88,13 @@ final class EmailVerificationWindow implements SerializableInterface
     {
         return new EmailVerificationWindow(
             DateTime::fromString($data['start']),
-            DateTime::fromString($data['end'])
+            DateTime::fromString($data['end']),
         );
     }
 
     public function serialize(): array
     {
-        return ['start' => (string) $this->start, 'end' => (string) $this->end];
+        return ['start' => (string)$this->start, 'end' => (string)$this->end];
     }
 
     public function __toString(): string

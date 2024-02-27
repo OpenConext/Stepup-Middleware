@@ -29,10 +29,10 @@ use Surfnet\Stepup\Identity\Value\DocumentNumber;
  */
 class DocumentNumberType extends Type
 {
-    const NAME = 'stepup_document_number';
+    public const NAME = 'stepup_document_number';
 
     /**
-     * @param array            $fieldDeclaration
+     * @param array $fieldDeclaration
      * @param AbstractPlatform $platform
      * @return string
      * @throws DBALException
@@ -58,9 +58,9 @@ class DocumentNumberType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal document number of type %s '%s', expected a DocumentNumber instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -68,7 +68,7 @@ class DocumentNumberType extends Type
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return null|DocumentNumber
      * @throws ConversionException

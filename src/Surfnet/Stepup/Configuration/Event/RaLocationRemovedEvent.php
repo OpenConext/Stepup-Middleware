@@ -42,17 +42,17 @@ class RaLocationRemovedEvent implements SerializableInterface
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
-        RaLocationId $raLocationId
+        RaLocationId $raLocationId,
     ) {
         $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->raLocationId               = $raLocationId;
+        $this->raLocationId = $raLocationId;
     }
 
     public static function deserialize(array $data)
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
-            new RaLocationId($data['ra_location_id'])
+            new RaLocationId($data['ra_location_id']),
         );
     }
 
@@ -60,7 +60,7 @@ class RaLocationRemovedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
+            'ra_location_id' => $this->raLocationId->getRaLocationId(),
         ];
     }
 }

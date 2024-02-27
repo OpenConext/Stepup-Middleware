@@ -18,19 +18,22 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RecoveryTokenType
+final class RecoveryTokenType implements Stringable
 {
-    const TYPE_SMS = 'sms';
-    const TYPE_SAFE_STORE = 'safe-store';
+    public const TYPE_SMS = 'sms';
+    public const TYPE_SAFE_STORE = 'safe-store';
 
-    private string $type;
+    private readonly string $type;
 
     public function __construct($type)
     {
         if (!is_string($type)) {
-            throw new InvalidArgumentException(sprintf('The RecoveryTokenType must be of type string, %s given', gettype($type)));
+            throw new InvalidArgumentException(
+                sprintf('The RecoveryTokenType must be of type string, %s given', gettype($type)),
+            );
         }
 
         if (!in_array($type, [self::TYPE_SMS, self::TYPE_SAFE_STORE])) {

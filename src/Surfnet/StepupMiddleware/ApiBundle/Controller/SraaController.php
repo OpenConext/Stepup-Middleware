@@ -27,18 +27,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SraaController extends AbstractController
 {
 
-    private SraaService $sraaService;
-
-    public function __construct(SraaService $sraaService)
+    public function __construct(private readonly SraaService $sraaService)
     {
-        $this->sraaService = $sraaService;
     }
 
     /**
      * @param string $nameId injected by symfony from the request
      * @return JsonNotFoundResponse|JsonResponse
      */
-    public function getAction($nameId): JsonResponse
+    public function get($nameId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -51,7 +48,7 @@ class SraaController extends AbstractController
         return new JsonResponse($sraa);
     }
 
-    public function list() : JsonResponse
+    public function list(): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

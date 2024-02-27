@@ -53,20 +53,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
  */
 class SecondFactorProjector extends Projector
 {
-    private UnverifiedSecondFactorRepository $unverifiedRepository;
-
-    private VerifiedSecondFactorRepository $verifiedRepository;
-
-    private VettedSecondFactorRepository $vettedRepository;
-
     public function __construct(
-        UnverifiedSecondFactorRepository $unverifiedRepository,
-        VerifiedSecondFactorRepository $verifiedRepository,
-        VettedSecondFactorRepository $vettedRepository
+        private readonly UnverifiedSecondFactorRepository $unverifiedRepository,
+        private readonly VerifiedSecondFactorRepository $verifiedRepository,
+        private readonly VettedSecondFactorRepository $vettedRepository,
     ) {
-        $this->unverifiedRepository = $unverifiedRepository;
-        $this->verifiedRepository = $verifiedRepository;
-        $this->vettedRepository = $vettedRepository;
     }
 
     public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
@@ -217,8 +208,9 @@ class SecondFactorProjector extends Projector
         $this->vettedRepository->save($vetted);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
-    {
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
         $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
         $vetted = new VettedSecondFactor();
@@ -240,13 +232,17 @@ class SecondFactorProjector extends Projector
 
     protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
     {
-        $this->unverifiedRepository->remove($this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()));
+        $this->unverifiedRepository->remove(
+            $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()),
+        );
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
-        CompliedWithUnverifiedSecondFactorRevocationEvent $event
+        CompliedWithUnverifiedSecondFactorRevocationEvent $event,
     ) {
-        $this->unverifiedRepository->remove($this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()));
+        $this->unverifiedRepository->remove(
+            $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()),
+        );
     }
 
     protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
@@ -255,7 +251,7 @@ class SecondFactorProjector extends Projector
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
-        CompliedWithVerifiedSecondFactorRevocationEvent $event
+        CompliedWithVerifiedSecondFactorRevocationEvent $event,
     ) {
         $this->verifiedRepository->remove($this->verifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
@@ -266,7 +262,7 @@ class SecondFactorProjector extends Projector
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
+        CompliedWithVettedSecondFactorRevocationEvent $event,
     ) {
         $this->vettedRepository->remove($this->vettedRepository->find($event->secondFactorId->getSecondFactorId()));
     }

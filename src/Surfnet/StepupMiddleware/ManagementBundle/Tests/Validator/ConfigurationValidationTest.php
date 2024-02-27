@@ -27,6 +27,8 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurat
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\GatewayConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class ConfigurationValidationTest extends TestCase
 {
@@ -41,9 +43,9 @@ final class ConfigurationValidationTest extends TestCase
             $fixture = include $invalidConfiguration;
             $dataSet[basename($invalidConfiguration)] = [
                 $fixture['configuration'],
-                $fixture['expectedPropertyPath']
+                $fixture['expectedPropertyPath'],
             ];
-        };
+        }
 
         return $dataSet;
     }
@@ -57,19 +59,19 @@ final class ConfigurationValidationTest extends TestCase
      */
     public function it_rejects_invalid_configuration($configuration, $expectedPropertyPath): void
     {
-        $builder = m::mock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+        $builder = m::mock(ConstraintViolationBuilderInterface::class);
         $builder->shouldReceive('addViolation')->with()->once();
         $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
-        $context = m::mock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = m::mock(ExecutionContextInterface::class);
         $context->shouldReceive('buildViolation')->with($this->spy($errorMessage))->once()->andReturn($builder);
 
         $validator = new ConfigurationStructureValidator(
             new GatewayConfigurationValidator(
                 new IdentityProviderConfigurationValidator(),
-                new ServiceProviderConfigurationValidator()
+                new ServiceProviderConfigurationValidator(),
             ),
-            new EmailTemplatesConfigurationValidator('en_GB')
+            new EmailTemplatesConfigurationValidator('en_GB'),
         );
         $validator->initialize($context);
         $validator->validate(json_encode($configuration), new HasValidConfigurationStructure());
@@ -78,22 +80,21 @@ final class ConfigurationValidationTest extends TestCase
         $this->assertEquals(
             $expectedPropertyPath,
             $actualPropertyPath,
-            sprintf("Actual path to erroneous property doesn't match expected path (%s)", $errorMessage)
+            sprintf("Actual path to erroneous property doesn't match expected path (%s)", $errorMessage),
         );
     }
 
     /**
-     * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private function spy(&$spy)
+    private function spy(mixed &$spy)
     {
         return m::on(
             function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;
-            }
+            },
         );
     }
 }

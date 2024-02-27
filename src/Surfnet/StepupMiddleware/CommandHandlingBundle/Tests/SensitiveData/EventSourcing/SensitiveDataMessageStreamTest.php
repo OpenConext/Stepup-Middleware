@@ -34,8 +34,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class SensitiveDataMessageStreamTest extends TestCase
 {
-    const EVENT_STREAM_A = 'A';
-    const EVENT_STREAM_B = 'B';
+    public const EVENT_STREAM_A = 'A';
+    public const EVENT_STREAM_B = 'B';
 
     /**
      * @test
@@ -58,7 +58,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 0,
-                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby'))
+                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby')),
             ),
         ];
         $domainMessages = [
@@ -67,7 +67,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -85,12 +85,12 @@ final class SensitiveDataMessageStreamTest extends TestCase
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 0,
-                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby'))
+                (new SensitiveData)->withCommonName(new CommonName('Willie Willoughby')),
             ),
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 1,
-                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid')),
             ),
         ];
         $domainMessages = [
@@ -99,14 +99,14 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
             new DomainMessage(
                 self::EVENT_STREAM_A,
                 1,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -125,7 +125,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 1,
-                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget(),
             ),
         ];
         $domainMessages = [
@@ -134,14 +134,14 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new RegularEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
             new DomainMessage(
                 self::EVENT_STREAM_A,
                 1,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -165,7 +165,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -184,7 +184,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 1,
-                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget(),
             ),
         ];
         $domainMessages = [
@@ -193,7 +193,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new RegularEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -206,14 +206,16 @@ final class SensitiveDataMessageStreamTest extends TestCase
      */
     public function it_fails_when_sensitive_data_matches_a_regular_event(): void
     {
-        $this->expectExceptionMessage("Encountered sensitive data for event which does not support sensitive data, UUID A, playhead 0");
+        $this->expectExceptionMessage(
+            "Encountered sensitive data for event which does not support sensitive data, UUID A, playhead 0",
+        );
         $this->expectException(SensitiveDataApplicationException::class);
 
         $sensitiveDataMessages = [
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 0,
-                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget(),
             ),
         ];
         $domainMessages = [
@@ -222,7 +224,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new RegularEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -242,7 +244,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
             new SensitiveDataMessage(
                 new IdentityId(self::EVENT_STREAM_A),
                 0,
-                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget()
+                (new SensitiveData)->withEmail(new Email('willie@willougby.invalid'))->forget(),
             ),
         ];
         $domainMessages = [
@@ -251,7 +253,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
                 0,
                 new Metadata(),
                 new ForgettableEventStub(),
-                DateTime::now()
+                DateTime::now(),
             ),
         ];
 
@@ -265,7 +267,7 @@ final class SensitiveDataMessageStreamTest extends TestCase
     public function it_can_forget_all_sensitive_data(): void
     {
         $sensitiveDataMessageStream = new SensitiveDataMessageStream([
-            m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSourcing\SensitiveDataMessage')
+            m::mock(SensitiveDataMessage::class)
                 ->shouldReceive('forget')->once()
                 ->getMock(),
         ]);
@@ -280,8 +282,10 @@ final class SensitiveDataMessageStreamTest extends TestCase
             ->applyToDomainEventStream(new DomainEventStream($domainMessages));
     }
 
-    private function assertSensitiveDataEquals(SensitiveDataMessage $sensitiveDataMessage, DomainMessage $domainMessage): void
-    {
+    private function assertSensitiveDataEquals(
+        SensitiveDataMessage $sensitiveDataMessage,
+        DomainMessage $domainMessage,
+    ): void {
         $this->assertEquals($sensitiveDataMessage->getSensitiveData(), $domainMessage->getPayload()->sensitiveData);
     }
 }

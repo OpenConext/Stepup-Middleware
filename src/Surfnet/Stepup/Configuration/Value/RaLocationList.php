@@ -38,7 +38,6 @@ final class RaLocationList implements IteratorAggregate
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return bool
      */
     public function containsWithId(RaLocationId $raLocationId): bool
@@ -52,24 +51,20 @@ final class RaLocationList implements IteratorAggregate
         return false;
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
     public function add(RaLocation $raLocation): void
     {
         if ($this->containsWithId($raLocation->getId())) {
-            throw new LogicException(sprintf(
-                'Cannot add RaLocation with id "%s" to RaLocationList: it is already present',
-                $raLocation->getId()
-            ));
+            throw new LogicException(
+                sprintf(
+                    'Cannot add RaLocation with id "%s" to RaLocationList: it is already present',
+                    $raLocation->getId(),
+                ),
+            );
         }
 
         $this->raLocations[] = $raLocation;
     }
 
-    /**
-     * @param RaLocationId $raLocationId
-     */
     public function removeWithId(RaLocationId $raLocationId): void
     {
         foreach ($this->raLocations as $key => $raLocation) {
@@ -81,14 +76,15 @@ final class RaLocationList implements IteratorAggregate
             }
         }
 
-        throw new LogicException(sprintf(
-            'Cannot remove RaLocation with id "%s" from RaLocationList: it is not present',
-            $raLocationId
-        ));
+        throw new LogicException(
+            sprintf(
+                'Cannot remove RaLocation with id "%s" from RaLocationList: it is not present',
+                $raLocationId,
+            ),
+        );
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return RaLocation
      */
     public function getById(RaLocationId $raLocationId)
@@ -99,10 +95,12 @@ final class RaLocationList implements IteratorAggregate
             }
         }
 
-        throw new LogicException(sprintf(
-            'Cannot get RaLocation by id "%s" from RaLocationList: RaLocationId not found',
-            $raLocationId
-        ));
+        throw new LogicException(
+            sprintf(
+                'Cannot get RaLocation by id "%s" from RaLocationList: RaLocationId not found',
+                $raLocationId,
+            ),
+        );
     }
 
     public function getIterator()

@@ -32,11 +32,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationProjector extends Projector
 {
-    private RaLocationRepository $repository;
-
-    public function __construct(RaLocationRepository $repository)
+    public function __construct(private readonly RaLocationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     public function applyRaLocationAddedEvent(RaLocationAddedEvent $event): void
@@ -46,7 +43,7 @@ class RaLocationProjector extends Projector
             $event->institution,
             $event->raLocationName,
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
         );
 
         $this->repository->save($raLocation);
@@ -92,7 +89,6 @@ class RaLocationProjector extends Projector
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return RaLocation
      */
     private function fetchRaLocationById(RaLocationId $raLocationId)
@@ -101,13 +97,13 @@ class RaLocationProjector extends Projector
 
         if (is_null($raLocation)) {
             throw new RuntimeException(
-                'Tried to update an RA Locations contact information, but location could not be found'
+                'Tried to update an RA Locations contact information, but location could not be found',
             );
         }
 
         if (!$raLocation instanceof RaLocation) {
             throw new RuntimeException(
-                'Tried to update an RA Locations contact information, but location is of the wrong type'
+                'Tried to update an RA Locations contact information, but location is of the wrong type',
             );
         }
 

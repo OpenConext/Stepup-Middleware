@@ -32,7 +32,7 @@ class ContactInformationTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue): void
+    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue,): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -46,9 +46,9 @@ class ContactInformationTest extends UnitTest
     public function two_instances_with_the_same_value_are_equal(): void
     {
         $contactInformation = new ContactInformation('a');
-        $theSame            = new ContactInformation('a');
-        $theSameWithSpaces  = new ContactInformation('  a ');
-        $different          = new ContactInformation('A');
+        $theSame = new ContactInformation('a');
+        $theSameWithSpaces = new ContactInformation('  a ');
+        $different = new ContactInformation('A');
 
         $this->assertTrue($contactInformation->equals($theSame));
         $this->assertTrue($contactInformation->equals($theSameWithSpaces));
@@ -61,10 +61,10 @@ class ContactInformationTest extends UnitTest
     public function invalidValueProvider(): array
     {
         return [
-            'array'   => [[]],
+            'array' => [[]],
             'integer' => [1],
-            'float'   => [1.2],
-            'object'  => [new StdClass()],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

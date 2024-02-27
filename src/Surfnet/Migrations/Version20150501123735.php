@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -16,7 +16,10 @@ class Version20150501123735 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql('ALTER TABLE audit_log ADD COLUMN uuid VARCHAR(36) DEFAULT NULL');
         $this->addSql('UPDATE audit_log set uuid = UUID() WHERE 1 = 1');
@@ -33,7 +36,10 @@ class Version20150501123735 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql('ALTER TABLE audit_log DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE audit_log CHANGE id uuid VARCHAR(36)');

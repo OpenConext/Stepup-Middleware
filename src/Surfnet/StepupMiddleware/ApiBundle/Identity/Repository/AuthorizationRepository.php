@@ -39,12 +39,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class AuthorizationRepository extends ServiceEntityRepository
 {
-    private LoggerInterface $logger;
-
-    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly LoggerInterface $logger,
+    ) {
         parent::__construct($registry, AuditLogEntry::class);
-        $this->logger = $logger;
     }
 
     /**
@@ -53,7 +52,7 @@ class AuthorizationRepository extends ServiceEntityRepository
      *
      * @return InstitutionCollection
      */
-    public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId) :InstitutionCollection
+    public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId): InstitutionCollection
     {
         $result = new InstitutionCollection();
         $qb = $this->_em->createQueryBuilder()
@@ -64,7 +63,7 @@ class AuthorizationRepository extends ServiceEntityRepository
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
-                "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)"
+                "i.institution = a.institutionRelation AND a.institutionRole IN (:authorizationRoles)",
             )
             ->where("r.identityId = :identityId AND r.role IN(:roles)")
             ->groupBy("a.institution");
@@ -72,18 +71,18 @@ class AuthorizationRepository extends ServiceEntityRepository
         $qb->setParameter('identityId', (string)$actorId);
         $qb->setParameter(
             'authorizationRoles',
-            $this->getAllowedInstitutionRoles($role)
+            $this->getAllowedInstitutionRoles($role),
         );
         $identityRoles = $this->getAllowedIdentityRoles($role);
         $qb->setParameter(
             'roles',
-            $identityRoles
+            $identityRoles,
         );
 
         $institutions = $qb->getQuery()->getArrayResult();
         foreach ($institutions as $institution) {
             $this->logger->notice(
-                sprintf('Adding %s to authorized institutions', $institution['institution'])
+                sprintf('Adding %s to authorized institutions', $institution['institution']),
             );
             $result->add(new Institution((string)$institution['institution']));
         }
@@ -97,7 +96,12 @@ class AuthorizationRepository extends ServiceEntityRepository
             // Filter the RA listing on the authorizations that apply for the RA(A) listed there
             // For example, when testing a USE_RA institution authorization, the listed RA should have
             // at least a RA or RAA role
-            ->join(RaListing::class, 'r', Join::WITH, 'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)')
+            ->join(
+                RaListing::class,
+                'r',
+                Join::WITH,
+                'r.raInstitution = ia.institutionRelation AND r.role IN (:identityRoles)',
+            )
             ->where('r.identityId = :identityId')
             ->andWhere("ia.institutionRole = :role") // Only filter on use_ra and use_raa roles here.
             ->groupBy('ia.institution');
@@ -112,7 +116,11 @@ class AuthorizationRepository extends ServiceEntityRepository
             if (!$result->contains($institutionVo)) {
                 $result->add($institutionVo);
                 $this->logger->notice(
-                    sprintf('Adding %s to authorized institutions from %s', $role->getType(), $institution['institution'])
+                    sprintf(
+                        'Adding %s to authorized institutions from %s',
+                        $role->getType(),
+                        $institution['institution'],
+                    ),
                 );
             }
         }
@@ -139,12 +147,12 @@ class AuthorizationRepository extends ServiceEntityRepository
         // The identity requires RAA role to perform this search
         $qb->setParameter(
             'authorizationRole',
-            AuthorityRole::ROLE_RAA
+            AuthorityRole::ROLE_RAA,
         );
         // Filter on the SELECT_RAA authorization in the institution authorization projection
         $qb->setParameter(
             'institutionRole',
-            InstitutionRole::ROLE_SELECT_RAA
+            InstitutionRole::ROLE_SELECT_RAA,
         );
 
         $institutions = $qb->getQuery()->getArrayResult();

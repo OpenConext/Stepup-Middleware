@@ -78,7 +78,7 @@ class BufferedEventBusTest extends TestCase
      */
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice(): void
     {
-        $event    = $this->createDummyDomainMessage(null);
+        $event = $this->createDummyDomainMessage(null);
         $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -107,7 +107,7 @@ class BufferedEventBusTest extends TestCase
 
         $listener = new RecordEventsAndPublishToBusOnFirstCallEventListener(
             $bus,
-            new DomainEventStream([$eventCausedByFirstEvent])
+            new DomainEventStream([$eventCausedByFirstEvent]),
         );
 
         $bus->subscribe($listener);
@@ -134,4 +134,3 @@ class BufferedEventBusTest extends TestCase
         return m::mock(EntityManagerInterface::class)->shouldIgnoreMissing(true);
     }
 }
-

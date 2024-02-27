@@ -34,16 +34,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 
 final class InstitutionConfigurationOptionsProjector extends Projector
 {
-    private InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository;
-
-    private AllowedSecondFactorRepository $allowedSecondFactorRepository;
-
     public function __construct(
-        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
-        AllowedSecondFactorRepository $allowedSecondFactorRepository
+        private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
+        private readonly AllowedSecondFactorRepository $allowedSecondFactorRepository,
     ) {
-        $this->institutionConfigurationOptionsRepository = $institutionConfigurationOptionsRepository;
-        $this->allowedSecondFactorRepository             = $allowedSecondFactorRepository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void
@@ -56,7 +50,7 @@ final class InstitutionConfigurationOptionsProjector extends Projector
             $event->numberOfTokensPerIdentityOption,
             $event->ssoOn2faOption,
             $event->selfVetOption,
-            $event->selfAssertedTokensOption
+            $event->selfAssertedTokensOption,
         );
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -64,15 +58,19 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
     public function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->useRaLocationsOption = $event->useRaLocationsOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 
-    public function applyShowRaaContactInformationOptionChangedEvent(ShowRaaContactInformationOptionChangedEvent $event): void
+    public function applyShowRaaContactInformationOptionChangedEvent(ShowRaaContactInformationOptionChangedEvent $event,): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->showRaaContactInformationOption = $event->showRaaContactInformationOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -80,15 +78,19 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
     public function applyVerifyEmailOptionChangedEvent(VerifyEmailOptionChangedEvent $event): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->verifyEmailOption = $event->verifyEmailOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
     }
 
-    public function applyNumberOfTokensPerIdentityOptionChangedEvent(NumberOfTokensPerIdentityOptionChangedEvent $event): void
+    public function applyNumberOfTokensPerIdentityOptionChangedEvent(NumberOfTokensPerIdentityOptionChangedEvent $event,): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -96,7 +98,9 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
     public function applySelfVetOptionChangedEvent(SelfVetOptionChangedEvent $event): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->selfVetOption = $event->selfVetOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -104,7 +108,9 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
     public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->ssoOn2faOption = $event->ssoOn2faOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);
@@ -112,7 +118,9 @@ final class InstitutionConfigurationOptionsProjector extends Projector
 
     public function applySelfAssertedTokensOptionChangedEvent(SelfAssertedTokensOptionChangedEvent $event): void
     {
-        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor($event->institution);
+        $institutionConfigurationOptions = $this->institutionConfigurationOptionsRepository->findConfigurationOptionsFor(
+            $event->institution,
+        );
         $institutionConfigurationOptions->selfAssertedTokensOption = $event->selfAssertedTokensOption;
 
         $this->institutionConfigurationOptionsRepository->save($institutionConfigurationOptions);

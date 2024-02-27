@@ -29,7 +29,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  */
 class SecondFactorTypeType extends Type
 {
-    const NAME = 'stepup_second_factor_type';
+    public const NAME = 'stepup_second_factor_type';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -42,7 +42,7 @@ class SecondFactorTypeType extends Type
             return $value;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -57,7 +57,7 @@ class SecondFactorTypeType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

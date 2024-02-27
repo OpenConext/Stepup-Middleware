@@ -37,7 +37,7 @@ class CommonNameTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(CommonNameType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\CommonNameType');
+        Type::addType(CommonNameType::NAME, CommonNameType::class);
     }
 
     public function setUp(): void
@@ -66,7 +66,7 @@ class CommonNameTypeTest extends UnitTest
     {
         $commonName = Type::getType(CommonNameType::NAME);
 
-        $input  = new CommonName('Arthur Dent');
+        $input = new CommonName('Arthur Dent');
         $output = $commonName->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -94,11 +94,11 @@ class CommonNameTypeTest extends UnitTest
     {
         $commonName = Type::getType(CommonNameType::NAME);
 
-        $input               = 'Arthur Dent';
+        $input = 'Arthur Dent';
 
         $output = $commonName->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\CommonName', $output);
+        $this->assertInstanceOf(CommonName::class, $output);
         $this->assertEquals(new CommonName($input), $output);
     }
 

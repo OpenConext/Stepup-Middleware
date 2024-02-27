@@ -24,11 +24,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConfiguredInstitutionController extends AbstractController
 {
-    private ConfiguredInstitutionService $configuredInstitutionService;
-
-    public function __construct(ConfiguredInstitutionService $allListings)
-    {
-        $this->configuredInstitutionService = $allListings;
+    public function __construct(
+        private readonly ConfiguredInstitutionService $configuredInstitutionService,
+    ) {
     }
 
     public function collection(): JsonResponse

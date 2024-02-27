@@ -38,23 +38,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class RecoveryTokenController extends AbstractController
 {
-    private RecoveryTokenService $service;
-
-    private AuthorizationContextService $authorizationService;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        RecoveryTokenService $recoveryTokenServiceService,
-        AuthorizationContextService $authorizationService,
-        LoggerInterface $logger
+        private readonly RecoveryTokenService $service,
+        private readonly AuthorizationContextService $authorizationService,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->service = $recoveryTokenServiceService;
-        $this->authorizationService = $authorizationService;
-        $this->logger = $logger;
     }
 
-    public function getAction($id): JsonResponse
+    public function get($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get recovery token: %s', $id));
@@ -70,7 +61,9 @@ class RecoveryTokenController extends AbstractController
     public function collection(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
-        $this->logger->info(sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()));
+        $this->logger->info(
+            sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()),
+        );
         $query = new RecoveryTokenQuery();
         $query->identityId = $request->get('identityId');
         $query->type = $request->get('type');
@@ -78,7 +71,7 @@ class RecoveryTokenController extends AbstractController
         $query->institution = $request->get('institution');
         $query->email = $request->get('email');
         $query->name = $request->get('name');
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query->pageNumber = (int)$request->get('p', 1);
         $query->orderBy = $request->get('orderBy');
         $query->orderDirection = $request->get('orderDirection');
 
@@ -90,7 +83,7 @@ class RecoveryTokenController extends AbstractController
             $actorId = new IdentityId($actorId);
             $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
                 $actorId,
-                RegistrationAuthorityRole::ra()
+                RegistrationAuthorityRole::ra(),
             );
         }
         $paginator = $this->service->search($query);

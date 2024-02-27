@@ -43,6 +43,6 @@ class InstitutionParamConverter implements ParamConverterInterface
     public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'institution'
-            && $configuration->getClass() === 'Surfnet\Stepup\Identity\Value\Institution';
+            && $configuration->getClass() === Institution::class;
     }
 }

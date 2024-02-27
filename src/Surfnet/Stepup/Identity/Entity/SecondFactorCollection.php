@@ -24,17 +24,17 @@ use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 final class SecondFactorCollection extends ArrayCollection
 {
     /**
-     * @param SecondFactorTypeService $service
      * @return null|SecondFactor
      */
     public function getSecondFactorWithHighestLoa(SecondFactorTypeService $service)
     {
         return array_reduce(
             $this->toArray(),
-            function (SecondFactor $carry, SecondFactor $item) use ($service): SecondFactor {
-                return $service->hasEqualOrHigherLoaComparedTo($carry->getType(), $item->getType()) ? $carry : $item;
-            },
-            $this->first() ?: null
+            fn(SecondFactor $carry, SecondFactor $item): SecondFactor => $service->hasEqualOrHigherLoaComparedTo(
+                $carry->getType(),
+                $item->getType(),
+            ) ? $carry : $item,
+            $this->first() ?: null,
         );
     }
 }

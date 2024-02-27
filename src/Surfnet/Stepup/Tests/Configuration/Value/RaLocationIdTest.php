@@ -33,12 +33,14 @@ class RaLocationIdTest extends TestCase
      *
      * @param mixed $nonStringOrEmptyString
      */
-    public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $nonStringOrEmptyString): void
-    {
+    public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string(
+        string|int|float|StdClass|array $nonStringOrEmptyString,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new RaLocationId($nonStringOrEmptyString);
     }
+
     /**
      * @test
      * @group        domain
@@ -61,7 +63,7 @@ class RaLocationIdTest extends TestCase
         $uuid = $this->uuid();
 
         $raLocationId = new RaLocationId($uuid);
-        $theSame      = new RaLocationId($uuid);
+        $theSame = new RaLocationId($uuid);
 
         $this->assertTrue($raLocationId->equals($theSame));
     }
@@ -73,7 +75,7 @@ class RaLocationIdTest extends TestCase
     public function two_ra_location_ids_with_different_values_are_not_equal(): void
     {
         $raLocationId = new RaLocationId($this->uuid());
-        $different    = new RaLocationId($this->uuid());
+        $different = new RaLocationId($this->uuid());
 
         $this->assertFalse($raLocationId->equals($different));
     }
@@ -83,14 +85,15 @@ class RaLocationIdTest extends TestCase
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 
-    private function uuid(): string {
-        return (string) Uuid::uuid4();
+    private function uuid(): string
+    {
+        return (string)Uuid::uuid4();
     }
 }

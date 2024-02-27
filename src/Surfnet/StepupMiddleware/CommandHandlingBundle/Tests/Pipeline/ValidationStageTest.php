@@ -22,8 +22,11 @@ use ArrayIterator;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStageTest extends TestCase
 {
@@ -33,11 +36,11 @@ class ValidationStageTest extends TestCase
      */
     public function it_validates_commands(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')
+        $command = m::mock(Command::class);
+        $violations = m::mock(ConstraintViolationListInterface::class)
             ->shouldReceive('count')->with()->andReturn(0)
             ->getMock();
-        $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface')
+        $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 
@@ -54,12 +57,12 @@ class ValidationStageTest extends TestCase
     {
         $this->expectException(InvalidCommandException::class);
 
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')
+        $command = m::mock(Command::class);
+        $violations = m::mock(ConstraintViolationListInterface::class)
             ->shouldReceive('count')->with()->andReturn(1)
             ->shouldReceive('getIterator')->with()->andReturn(new ArrayIterator())
             ->getMock();
-        $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface')
+        $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 

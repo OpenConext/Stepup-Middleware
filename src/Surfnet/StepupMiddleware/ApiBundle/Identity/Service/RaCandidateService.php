@@ -26,18 +26,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
 
 class RaCandidateService extends AbstractSearchService
 {
-    private RaCandidateRepository $raCandidateRepository;
-
-    /**
-     * @param RaCandidateRepository $raCandidateRepository
-     */
-    public function __construct(RaCandidateRepository $raCandidateRepository)
+    public function __construct(private readonly RaCandidateRepository $raCandidateRepository)
     {
-        $this->raCandidateRepository = $raCandidateRepository;
     }
 
     /**
-     * @param RaCandidateQuery $query
      * @return Pagerfanta
      */
     public function search(RaCandidateQuery $query)
@@ -48,7 +41,6 @@ class RaCandidateService extends AbstractSearchService
     }
 
     /**
-     * @param RaCandidateQuery $query
      * @return array
      */
     public function getFilterOptions(RaCandidateQuery $query)
@@ -57,7 +49,6 @@ class RaCandidateService extends AbstractSearchService
     }
 
     /**
-     * @param string $identityId
      * @return null|array
      */
     public function findOneByIdentityId(string $identityId)

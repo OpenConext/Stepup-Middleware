@@ -43,7 +43,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
         $this->repository = m::mock(InstitutionAuthorizationRepository::class);
 
         $this->service = new InstitutionAuthorizationService(
-            $this->repository
+            $this->repository,
         );
     }
 

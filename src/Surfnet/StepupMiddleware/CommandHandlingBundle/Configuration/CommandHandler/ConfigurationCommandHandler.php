@@ -26,14 +26,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateC
 
 class ConfigurationCommandHandler extends SimpleCommandHandler
 {
-    private ConfigurationRepository $repository;
-
-    /**
-     * @param ConfigurationRepository     $repository
-     */
-    public function __construct(ConfigurationRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly ConfigurationRepository $repository,
+    ) {
     }
 
     public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command): void
@@ -55,7 +50,7 @@ class ConfigurationCommandHandler extends SimpleCommandHandler
     {
         try {
             return $this->repository->load(Configuration::CONFIGURATION_ID);
-        } catch (AggregateNotFoundException $e) {
+        } catch (AggregateNotFoundException) {
             return null;
         }
     }

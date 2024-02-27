@@ -31,10 +31,10 @@ use Surfnet\Stepup\DateTime\DateTime;
  */
 class DateTimeType extends Type
 {
-    const NAME = 'stepup_datetime';
+    public const NAME = 'stepup_datetime';
 
     /**
-     * @param array            $fieldDeclaration
+     * @param array $fieldDeclaration
      * @param AbstractPlatform $platform
      * @return string
      * @throws DBALException
@@ -45,7 +45,7 @@ class DateTimeType extends Type
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return null|string
      */
@@ -62,7 +62,7 @@ class DateTimeType extends Type
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return null|DateTime
      * @throws ConversionException
@@ -73,13 +73,17 @@ class DateTimeType extends Type
             return $value;
         }
 
-        $dateTime = CoreDateTime::createFromFormat($platform->getDateTimeFormatString(), $value, new DateTimeZone('UTC'));
+        $dateTime = CoreDateTime::createFromFormat(
+            $platform->getDateTimeFormatString(),
+            $value,
+            new DateTimeZone('UTC'),
+        );
 
         if (!$dateTime) {
             throw ConversionException::conversionFailedFormat(
                 $value,
                 $this->getName(),
-                $platform->getDateTimeFormatString()
+                $platform->getDateTimeFormatString(),
             );
         }
 

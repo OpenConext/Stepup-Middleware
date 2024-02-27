@@ -33,8 +33,8 @@ class AbstractCommandTest extends UnitTest
 
         $this->assertEquals(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand[' . $uuid . ']',
-            (string) $command,
-            'Command cast to string should give F\Q\C\N[UuidOfCommand]'
+            (string)$command,
+            'Command cast to string should give F\Q\C\N[UuidOfCommand]',
         );
     }
 }

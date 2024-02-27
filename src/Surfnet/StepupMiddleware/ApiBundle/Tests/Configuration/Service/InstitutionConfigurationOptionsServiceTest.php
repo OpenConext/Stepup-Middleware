@@ -50,7 +50,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
 
         $this->service = new InstitutionConfigurationOptionsService(
             $this->repository,
-            $this->numberOfTokensPerIdentityDefault
+            $this->numberOfTokensPerIdentityDefault,
         );
     }
 

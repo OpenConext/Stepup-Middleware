@@ -31,23 +31,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
 {
-    private ConfiguredInstitutionRepository $configuredInstitutionRepository;
-
-    private ContainerInterface $container;
-
     /**
      * The container needs to be called during runtime in order to prevent a circular reference
      * during container compilation.
-     *
-     * @param ConfiguredInstitutionRepository $configuredInstitutionRepository
-     * @param ContainerInterface $container
      */
     public function __construct(
-        ConfiguredInstitutionRepository $configuredInstitutionRepository,
-        ContainerInterface $container
+        private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
+        private readonly ContainerInterface $container,
     ) {
-        $this->configuredInstitutionRepository = $configuredInstitutionRepository;
-        $this->container                       = $container;
     }
 
     public function handleIdentityCreatedEvent(IdentityCreatedEvent $event): void
@@ -100,13 +91,10 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    /**
-     * @param Institution $institution
-     */
     private function createConfigurationFor(Institution $institution): void
     {
-        $command              = new CreateInstitutionConfigurationCommand();
-        $command->UUID        = (string) Uuid::uuid4();
+        $command = new CreateInstitutionConfigurationCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institution = $institution->getInstitution();
 
         $this->container->get('pipeline')->process($command);

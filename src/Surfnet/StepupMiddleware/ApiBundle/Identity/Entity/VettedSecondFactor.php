@@ -62,7 +62,6 @@ class VettedSecondFactor implements JsonSerializable
     public $vettingType;
 
     /**
-     * @param VettedSecondFactor $vettedSecondFactor
      * @return bool
      */
     public function isEqual(VettedSecondFactor $vettedSecondFactor): bool
@@ -81,7 +80,7 @@ class VettedSecondFactor implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'vetting_type' => $this->vettingType,

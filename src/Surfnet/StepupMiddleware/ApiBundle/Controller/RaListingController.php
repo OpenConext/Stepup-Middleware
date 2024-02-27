@@ -32,19 +32,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RaListingController extends AbstractController
 {
-    private RaListingService $raListingService;
-
-    private AuthorizationContextService $authorizationService;
-
     public function __construct(
-        RaListingService $raListingService,
-        AuthorizationContextService $authorizationService
+        private readonly RaListingService $raListingService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raListingService = $raListingService;
-        $this->authorizationService = $authorizationService;
     }
 
-    public function getAction(Request $request, $identityId): JsonResponse
+    public function get(Request $request, $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -53,13 +47,13 @@ class RaListingController extends AbstractController
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $raListing = $this->raListingService->findByIdentityIdAndRaInstitutionWithContext(
             new IdentityId($identityId),
             $institution,
-            $authorizationContext
+            $authorizationContext,
         );
 
         if ($raListing === null) {
@@ -70,7 +64,6 @@ class RaListingController extends AbstractController
     }
 
     /**
-     * @param Request $request
      * @return JsonCollectionResponse
      */
     public function search(Request $request)
@@ -110,7 +103,7 @@ class RaListingController extends AbstractController
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $searchResults = $this->raListingService->search($query);

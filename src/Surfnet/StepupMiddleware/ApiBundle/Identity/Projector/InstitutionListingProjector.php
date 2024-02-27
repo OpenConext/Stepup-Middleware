@@ -28,11 +28,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\InstitutionListingRep
  */
 class InstitutionListingProjector extends Projector
 {
-    private InstitutionListingRepository $institutionListingRepository;
-
-    public function __construct(InstitutionListingRepository $institutionListingRepository)
+    public function __construct(private readonly InstitutionListingRepository $institutionListingRepository)
     {
-        $this->institutionListingRepository = $institutionListingRepository;
     }
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void

@@ -22,27 +22,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstituti
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 
-final class InstitutionConfigurationProvider
+final readonly class InstitutionConfigurationProvider
 {
-    private ConfiguredInstitutionService $configuredInstitutionService;
-
-    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
-
-    private RaLocationService $raLocationService;
-
-    /**
-     * @param ConfiguredInstitutionService           $configuredInstitutionService
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param RaLocationService                      $raLocationService
-     */
     public function __construct(
-        ConfiguredInstitutionService $configuredInstitutionService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        RaLocationService $raLocationService
+        private ConfiguredInstitutionService $configuredInstitutionService,
+        private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private RaLocationService $raLocationService,
     ) {
-        $this->configuredInstitutionService = $configuredInstitutionService;
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->raLocationService = $raLocationService;
     }
 
     public function loadData(): InstitutionConfigurationState
@@ -55,7 +41,7 @@ final class InstitutionConfigurationProvider
         return InstitutionConfigurationState::load(
             $configuredInstitutions,
             $institutionConfigurationOptions,
-            $raLocations
+            $raLocations,
         );
     }
 }

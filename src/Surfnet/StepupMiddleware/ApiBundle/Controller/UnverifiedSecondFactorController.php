@@ -30,14 +30,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UnverifiedSecondFactorController extends AbstractController
 {
-    private SecondFactorService $secondFactorService;
-
-    public function __construct(SecondFactorService $secondFactorService)
-    {
-        $this->secondFactorService = $secondFactorService;
+    public function __construct(
+        private readonly SecondFactorService $secondFactorService,
+    ) {
     }
 
-    public function getAction($id): JsonResponse
+    public function get($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -54,10 +52,10 @@ class UnverifiedSecondFactorController extends AbstractController
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
-        $query                    = new UnverifiedSecondFactorQuery();
-        $query->identityId        = $request->get('identityId');
+        $query = new UnverifiedSecondFactorQuery();
+        $query->identityId = $request->get('identityId');
         $query->verificationNonce = $request->get('verificationNonce');
-        $query->pageNumber        = (int) $request->get('p', 1);
+        $query->pageNumber = (int)$request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchUnverifiedSecondFactors($query);
 

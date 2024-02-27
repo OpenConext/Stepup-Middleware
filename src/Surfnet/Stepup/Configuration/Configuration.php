@@ -33,7 +33,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     /**
      * There can ever be only one configuration, so using a fixed UUIDv4
      */
-    const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
+    public const CONFIGURATION_ID = '12345678-abcd-4321-abcd-123456789012';
 
     /**
      * @var array
@@ -52,20 +52,26 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     {
         $decodedConfiguration = JsonHelper::decode($configurationAsJson);
 
-        $this->apply(new ConfigurationUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration,
-            $this->configuration
-        ));
+        $this->apply(
+            new ConfigurationUpdatedEvent(
+                self::CONFIGURATION_ID,
+                $decodedConfiguration,
+                $this->configuration,
+            ),
+        );
 
-        $this->apply(new ServiceProvidersUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration['gateway']['service_providers']
-        ));
-        $this->apply(new IdentityProvidersUpdatedEvent(
-            self::CONFIGURATION_ID,
-            $decodedConfiguration['gateway']['identity_providers']
-        ));
+        $this->apply(
+            new ServiceProvidersUpdatedEvent(
+                self::CONFIGURATION_ID,
+                $decodedConfiguration['gateway']['service_providers'],
+            ),
+        );
+        $this->apply(
+            new IdentityProvidersUpdatedEvent(
+                self::CONFIGURATION_ID,
+                $decodedConfiguration['gateway']['identity_providers'],
+            ),
+        );
         $this->apply(new SraaUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['sraa']));
         $this->apply(new EmailTemplatesUpdatedEvent(self::CONFIGURATION_ID, $decodedConfiguration['email_templates']));
     }

@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
  */
 class AuthorityRoleType extends Type
 {
-    const NAME = 'authority_role';
+    public const NAME = 'authority_role';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -46,7 +46,7 @@ class AuthorityRoleType extends Type
             return $value;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -61,7 +61,7 @@ class AuthorityRoleType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

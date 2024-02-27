@@ -25,12 +25,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class IdentitySelfAssertedTokenOptionsRepository extends ServiceEntityRepository
 {
-    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, IdentitySelfAssertedTokenOptions::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     public function find(mixed $id, $lockMode = null, $lockVersion = null): ?IdentitySelfAssertedTokenOptions

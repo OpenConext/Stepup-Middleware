@@ -66,7 +66,7 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
         Institution $institution,
         NameId $nameId,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
 
@@ -91,18 +91,18 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
             new Institution($data['institution']),
             new NameId($data['name_id']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'         => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation,
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 

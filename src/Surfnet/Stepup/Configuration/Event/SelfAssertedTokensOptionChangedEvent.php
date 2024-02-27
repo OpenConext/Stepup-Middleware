@@ -25,29 +25,11 @@ use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 
 final class SelfAssertedTokensOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SelfAssertedTokensOption
-     */
-    public $selfAssertedTokensOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        SelfAssertedTokensOption $selfVetOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public SelfAssertedTokensOption $selfAssertedTokensOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->selfAssertedTokensOption = $selfVetOption;
     }
 
     public static function deserialize(array $data)
@@ -55,7 +37,7 @@ final class SelfAssertedTokensOptionChangedEvent implements SerializableInterfac
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new SelfAssertedTokensOption($data['self_asserted_tokens_option'])
+            new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );
     }
 

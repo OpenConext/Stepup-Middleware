@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Institution implements JsonSerializable
+final class Institution implements JsonSerializable, Stringable
 {
-    private string $institution;
+    private readonly string $institution;
 
     /**
      * @param string $institution may not be an empty string
@@ -46,7 +47,6 @@ final class Institution implements JsonSerializable
     }
 
     /**
-     * @param Institution $otherInstitution
      * @return bool
      */
     public function equals(Institution $otherInstitution): bool

@@ -27,24 +27,14 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactor
 
 final class SecondFactorRevocationEmailProcessor extends Processor
 {
-    private SecondFactorRevocationMailService $mailService;
-
-    private IdentityService $identityService;
-
-    /**
-     * @param SecondFactorRevocationMailService $secondFactorRevocationMailService
-     * @param IdentityService $identityService
-     */
     public function __construct(
-        SecondFactorRevocationMailService $secondFactorRevocationMailService,
-        IdentityService $identityService
+        private readonly SecondFactorRevocationMailService $mailService,
+        private readonly IdentityService $identityService,
     ) {
-        $this->mailService = $secondFactorRevocationMailService;
-        $this->identityService = $identityService;
     }
 
     public function handleCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
+        CompliedWithVettedSecondFactorRevocationEvent $event,
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
@@ -57,7 +47,7 @@ final class SecondFactorRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
         );
     }
 
@@ -74,7 +64,7 @@ final class SecondFactorRevocationEmailProcessor extends Processor
             $identity->commonName,
             $identity->email,
             $event->secondFactorType,
-            $event->secondFactorIdentifier
+            $event->secondFactorIdentifier,
         );
     }
 }

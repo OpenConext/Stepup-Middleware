@@ -36,7 +36,7 @@ class DBALConnectionHelper
     {
         foreach ($connections as $connection) {
             if (!$connection instanceof Connection) {
-                throw InvalidArgumentException::invalidType('\Doctrine\DBAL\Connection', 'connection', $connection);
+                throw InvalidArgumentException::invalidType(Connection::class, 'connection', $connection);
             }
         }
 

@@ -18,15 +18,16 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
+use Stringable;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
-class AuthorityRole
+class AuthorityRole implements Stringable
 {
-    const ROLE_RA   = 'ra';
-    const ROLE_RAA  = 'raa';
-    const ROLE_SRAA = 'sraa';
+    public const ROLE_RA = 'ra';
+    public const ROLE_RAA = 'raa';
+    public const ROLE_SRAA = 'sraa';
 
     /**
      * @var string
@@ -39,7 +40,7 @@ class AuthorityRole
             throw InvalidArgumentException::invalidType(
                 'One of AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA or AuthorityRole::ROLE_SRAA',
                 'role',
-                $role
+                $role,
             );
         }
 
@@ -68,7 +69,6 @@ class AuthorityRole
     }
 
     /**
-     * @param RegistrationAuthorityRole $registrationAuthorityRole
      * @return AuthorityRole
      */
     public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole)
@@ -79,14 +79,15 @@ class AuthorityRole
             return static::raa();
         }
 
-        throw new RuntimeException(sprintf(
-            'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
-            (string) $registrationAuthorityRole
-        ));
+        throw new RuntimeException(
+            sprintf(
+                'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
+                (string)$registrationAuthorityRole,
+            ),
+        );
     }
 
     /**
-     * @param AuthorityRole $other
      * @return bool
      */
     public function equals(AuthorityRole $other): bool

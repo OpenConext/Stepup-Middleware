@@ -39,7 +39,7 @@ class ContactInformationTypeTest extends UnitTest
     {
         Type::addType(
             ContactInformationType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ContactInformationType'
+            ContactInformationType::class,
         );
     }
 
@@ -70,7 +70,7 @@ class ContactInformationTypeTest extends UnitTest
         $contactInformation = Type::getType(ContactInformationType::NAME);
 
         $expected = 'Call me maybe';
-        $input  = new ContactInformation($expected);
+        $input = new ContactInformation($expected);
         $output = $contactInformation->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -102,7 +102,7 @@ class ContactInformationTypeTest extends UnitTest
 
         $output = $contactInformation->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\ContactInformation', $output);
+        $this->assertInstanceOf(ContactInformation::class, $output);
         $this->assertEquals(new ContactInformation($input), $output);
     }
 

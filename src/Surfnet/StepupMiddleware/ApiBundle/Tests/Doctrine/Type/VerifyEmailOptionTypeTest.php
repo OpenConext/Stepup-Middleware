@@ -39,7 +39,7 @@ class VerifyEmailOptionTypeTest extends UnitTest
     {
         Type::addType(
             VerifyEmailOptionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\VerifyEmailOptionType'
+            VerifyEmailOptionType::class,
         );
     }
 
@@ -85,8 +85,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
         $configurationInstitution = Type::getType(VerifyEmailOptionType::NAME);
 
         $expected = true;
-        $input    = new VerifyEmailOption($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new VerifyEmailOption($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -117,7 +117,7 @@ class VerifyEmailOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\VerifyEmailOption', $output);
+        $this->assertInstanceOf(VerifyEmailOption::class, $output);
         $this->assertEquals(new VerifyEmailOption($input), $output);
     }
 }

@@ -26,7 +26,6 @@ interface Forgettable
     public function getSensitiveData();
 
     /**
-     * @param SensitiveData $sensitiveData
      * @return void
      */
     public function setSensitiveData(SensitiveData $sensitiveData);

@@ -26,21 +26,19 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerific
 
 final class EmailVerificationEmailProcessor extends Processor
 {
-    private EmailVerificationMailService $emailVerificationMailService;
-
-    public function __construct(EmailVerificationMailService $emailVerificationMailService)
-    {
-        $this->emailVerificationMailService = $emailVerificationMailService;
+    public function __construct(
+        private readonly EmailVerificationMailService $emailVerificationMailService,
+    ) {
     }
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }
@@ -49,10 +47,10 @@ final class EmailVerificationEmailProcessor extends Processor
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }
@@ -61,10 +59,10 @@ final class EmailVerificationEmailProcessor extends Processor
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }

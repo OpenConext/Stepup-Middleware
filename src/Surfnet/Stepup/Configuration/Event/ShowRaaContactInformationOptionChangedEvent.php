@@ -25,29 +25,11 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 
 final class ShowRaaContactInformationOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var ShowRaaContactInformationOption
-     */
-    public $showRaaContactInformationOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        ShowRaaContactInformationOption $showRaaContactInformationOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public ShowRaaContactInformationOption $showRaaContactInformationOption,
     ) {
-        $this->institutionConfigurationId      = $institutionConfigurationId;
-        $this->institution                     = $institution;
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
     }
 
     public static function deserialize(array $data)
@@ -55,15 +37,15 @@ final class ShowRaaContactInformationOptionChangedEvent implements SerializableI
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new ShowRaaContactInformationOption($data['show_raa_contact_information_option'])
+            new ShowRaaContactInformationOption($data['show_raa_contact_information_option']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'institution_configuration_id'        => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                         => $this->institution->getInstitution(),
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution' => $this->institution->getInstitution(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
         ];
     }

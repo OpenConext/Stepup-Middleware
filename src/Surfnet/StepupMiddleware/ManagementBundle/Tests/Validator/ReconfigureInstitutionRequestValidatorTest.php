@@ -48,7 +48,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             $dataSet[basename($invalidConfiguration)] = [
                 $fixture['reconfigureInstitutionRequest'],
                 $fixture['expectedPropertyPath'],
-                $fixture['expectErrorMessageToContain']
+                $fixture['expectErrorMessageToContain'],
             ];
         }
 
@@ -61,14 +61,13 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @dataProvider invalidReconfigureInstitutionRequests
      * @param array $reconfigureRequest
      * @param string $expectedPropertyPath
-     * @param string $expectErrorMessageToContain
      */
     public function it_rejects_invalid_configuration(
         $reconfigureRequest,
         $expectedPropertyPath,
-        string $expectErrorMessageToContain
+        string $expectErrorMessageToContain,
     ): void {
-        $existingInstitution        = ConfiguredInstitution::createFrom(new Institution('surfnet.nl'));
+        $existingInstitution = ConfiguredInstitution::createFrom(new Institution('surfnet.nl'));
         $anotherExistingInstitution = ConfiguredInstitution::createFrom(new Institution('another-organisation.test'));
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
@@ -76,7 +75,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             ->shouldReceive('getAll')
             ->andReturn([
                 $existingInstitution,
-                $anotherExistingInstitution
+                $anotherExistingInstitution,
             ]);
 
         $builder = Mockery::mock(ConstraintViolationBuilderInterface::class);
@@ -91,12 +90,12 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $whitelistedInstitution = WhitelistEntry::createFrom(new IdentityInstitution('surfnet.nl'));
         $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]));
+        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]),);
 
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
             $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $whitelistServiceMock,
         );
         $validator->initialize($context);
         $validator->validate($reconfigureRequest, new ValidReconfigureInstitutionsRequest);
@@ -105,7 +104,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $this->assertEquals(
             $expectedPropertyPath,
             $actualPropertyPath,
-            sprintf('Actual path to erroneous property does not match expected path (%s)', $actualErrorMessage)
+            sprintf('Actual path to erroneous property does not match expected path (%s)', $actualErrorMessage),
         );
         $this->assertStringContainsString(
             $expectErrorMessageToContain,
@@ -113,8 +112,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             sprintf(
                 'The error message (%s) does not contain the expected message (%s)',
                 $actualErrorMessage,
-                $expectErrorMessageToContain
-            )
+                $expectErrorMessageToContain,
+            ),
         );
     }
 
@@ -149,7 +148,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
             $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $whitelistServiceMock,
         );
         $validator->initialize($context);
 
@@ -169,14 +168,14 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $invalidRequest = [
             $differentlyCasedButSameInstitution => [
-                'use_ra_locations'             => false,
+                'use_ra_locations' => false,
                 'show_raa_contact_information' => true,
-                'verify_email'                 => false,
+                'verify_email' => false,
                 'sso_on_2fa' => false,
                 'self_vet' => false,
                 'allow_self_asserted_tokens' => false,
                 'number_of_tokens_per_identity' => 1,
-                'allowed_second_factors'       => [],
+                'allowed_second_factors' => [],
             ],
         ];
 
@@ -198,7 +197,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
             $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $whitelistServiceMock,
         );
         $validator->initialize($context);
 
@@ -216,14 +215,14 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $institution = 'surfnet.nl';
         $validRequest = [
             $institution => [
-                'use_ra_locations'             => true,
+                'use_ra_locations' => true,
                 'show_raa_contact_information' => true,
-                'verify_email'                 => true,
+                'verify_email' => true,
                 'self_vet' => false,
                 'sso_on_2fa' => false,
                 'allow_self_asserted_tokens' => false,
                 'number_of_tokens_per_identity' => 3,
-                'allowed_second_factors'       => [],
+                'allowed_second_factors' => [],
             ],
         ];
 
@@ -241,11 +240,11 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
         $whitelistServiceMock = Mockery::mock(WhitelistService::class);
-        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]));
+        $whitelistServiceMock->shouldReceive('getAllEntries')->andReturn(new ArrayCollection([$whitelistedInstitution]),);
         $validator = new ReconfigureInstitutionRequestValidator(
             $configuredInstitutionServiceMock,
             $secondFactorTypeServiceMock,
-            $whitelistServiceMock
+            $whitelistServiceMock,
         );
         $validator->initialize($context);
         $validator->validate($validRequest, new ValidReconfigureInstitutionsRequest);
@@ -255,17 +254,16 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     }
 
     /**
-     * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private function spy(&$spy)
+    private function spy(mixed &$spy)
     {
         return Mockery::on(
             function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;
-            }
+            },
         );
     }
 }

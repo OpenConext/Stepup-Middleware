@@ -29,10 +29,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
  */
 class SecondFactorStatusType extends Type
 {
-    const NAME = 'stepup_second_factor_status';
+    public const NAME = 'stepup_second_factor_status';
 
     /**
-     * @param array            $fieldDeclaration
+     * @param array $fieldDeclaration
      * @param AbstractPlatform $platform
      * @return string
      */
@@ -42,7 +42,7 @@ class SecondFactorStatusType extends Type
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return int
      * @throws ConversionException
@@ -53,9 +53,9 @@ class SecondFactorStatusType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal second factor status of type %s '%s', expected a SecondFactorStatus instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -71,11 +71,11 @@ class SecondFactorStatusType extends Type
             return 40;
         }
 
-        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
+        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string)$value));
     }
 
     /**
-     * @param mixed            $value
+     * @param mixed $value
      * @param AbstractPlatform $platform
      * @return SecondFactorStatus
      * @throws ConversionException
@@ -97,9 +97,9 @@ class SecondFactorStatusType extends Type
         throw new ConversionException(
             sprintf(
                 "Encountered illegal second factor status of type %s '%s', expected it to be one of [0,10,20,30,40]",
-                is_object($value) ? get_class($value) : gettype($value),
-                is_scalar($value) ? (string) $value : ''
-            )
+                get_debug_type($value),
+                is_scalar($value) ? (string)$value : '',
+            ),
         );
     }
 

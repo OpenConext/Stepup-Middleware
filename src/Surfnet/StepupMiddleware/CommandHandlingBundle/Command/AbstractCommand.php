@@ -37,6 +37,6 @@ abstract class AbstractCommand implements Command
 
     public function __toString(): string
     {
-        return get_class($this) . '[' . $this->UUID . ']';
+        return static::class . '[' . $this->UUID . ']';
     }
 }

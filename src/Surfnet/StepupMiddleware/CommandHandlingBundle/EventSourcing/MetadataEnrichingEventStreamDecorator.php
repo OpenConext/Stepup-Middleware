@@ -36,7 +36,7 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
     public function decorateForWrite(
         $aggregateType,
         $aggregateIdentifier,
-        DomainEventStream $eventStream
+        DomainEventStream $eventStream,
     ): DomainEventStream {
         if (!$this->metadata instanceof Metadata) {
             return $eventStream;
@@ -48,9 +48,9 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
             /** @var DomainMessage $domainMessage */
             $domainMessages[] = $domainMessage->andMetadata(
                 new BroadwayMetadata([
-                    'actorId'          => $this->metadata->actorId,
-                    'actorInstitution' => $this->metadata->actorInstitution
-                ])
+                    'actorId' => $this->metadata->actorId,
+                    'actorInstitution' => $this->metadata->actorInstitution,
+                ]),
             );
         }
 

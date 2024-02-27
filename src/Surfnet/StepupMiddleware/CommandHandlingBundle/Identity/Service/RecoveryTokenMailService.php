@@ -30,7 +30,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 use function str_replace;
 
 /**
@@ -38,41 +39,25 @@ use function str_replace;
  */
 class RecoveryTokenMailService
 {
-    private Mailer $mailer;
-
-    private Sender $sender;
-
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
-
-    private string $fallbackLocale;
-
-    private string $selfServiceUrl;
-
-    private LoggerInterface $logger;
+    private readonly string $fallbackLocale;
 
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
-        string $selfServiceUrl,
-        LoggerInterface $logger
+        private readonly string $selfServiceUrl,
+        private readonly LoggerInterface $logger,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
-        $this->logger = $logger;
     }
 
     public function sendRevoked(
@@ -81,10 +66,10 @@ class RecoveryTokenMailService
         Email $email,
         RecoveryTokenType $recoveryTokenType,
         RecoveryTokenId $tokenId,
-        bool $revokedByRa
+        bool $revokedByRa,
     ): void {
         $this->logger->notice(
-            sprintf('Sending a recovery token revoked mail message for token type %s', $recoveryTokenType)
+            sprintf('Sending a recovery token revoked mail message for token type %s', $recoveryTokenType),
         );
 
         $subjectParameters = [
@@ -97,13 +82,13 @@ class RecoveryTokenMailService
             'ss.mail.recovery_token_revoked_email.subject',
             $subjectParameters,
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'recovery_token_revoked',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
@@ -112,7 +97,7 @@ class RecoveryTokenMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
 
         $parameters = [
@@ -150,13 +135,13 @@ class RecoveryTokenMailService
             'ss.mail.recovery_token_created_email.subject',
             $subjectParameters,
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'recovery_token_created',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
@@ -165,7 +150,7 @@ class RecoveryTokenMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
 
         $parameters = [

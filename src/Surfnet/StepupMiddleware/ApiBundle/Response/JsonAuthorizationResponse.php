@@ -30,7 +30,7 @@ class JsonAuthorizationResponse extends JsonResponse
         Assertion::allString($errors, 'The error messages should all be strings');
 
         $data = [
-            'code' => $code
+            'code' => $code,
         ];
         if ($errors !== []) {
             $data['errors'] = $errors;

@@ -25,11 +25,8 @@ class OnPremiseVettingType implements VettingType
      */
     protected $type = VettingType::TYPE_ON_PREMISE;
 
-    private DocumentNumber $documentNumber;
-
-    public function __construct(DocumentNumber $documentNumber)
+    public function __construct(private readonly DocumentNumber $documentNumber)
     {
-        $this->documentNumber = $documentNumber;
     }
 
     public static function deserialize(array $data): self
@@ -52,7 +49,7 @@ class OnPremiseVettingType implements VettingType
     {
         return [
             'type' => $this->type(),
-            'document_number' => (string) $this->getDocumentNumber()
+            'document_number' => (string)$this->getDocumentNumber(),
         ];
     }
 

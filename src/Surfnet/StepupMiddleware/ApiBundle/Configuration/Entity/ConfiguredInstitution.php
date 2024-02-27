@@ -33,10 +33,6 @@ class ConfiguredInstitution
     #[ORM\Column(type: 'stepup_configuration_institution')]
     public $institution;
 
-    /**
-     * @param Institution $institution
-     * @return ConfiguredInstitution
-     */
     public static function createFrom(Institution $institution): self
     {
         $configuredInstitution = new self;

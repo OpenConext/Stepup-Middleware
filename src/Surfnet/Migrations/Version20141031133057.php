@@ -12,7 +12,10 @@ class Version20141031133057 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $sql = <<<SQL
             CREATE TABLE event_stream (
@@ -32,7 +35,10 @@ SQL;
 
     public function down(Schema $schema): void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql('DROP TABLE event_stream');
     }

@@ -33,7 +33,7 @@ class UseRaLocationsOptionTest extends TestCase
      *
      * @param mixed $nonBooleanProvider
      */
-    public function use_ra_locations_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider): void
+    public function use_ra_locations_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider,): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -50,7 +50,7 @@ class UseRaLocationsOptionTest extends TestCase
         $option = true;
 
         $useRaLocationsOption = new UseRaLocationsOption($option);
-        $theSame              = new UseRaLocationsOption($option);
+        $theSame = new UseRaLocationsOption($option);
 
         $this->assertTrue($useRaLocationsOption->equals($theSame));
     }
@@ -63,7 +63,7 @@ class UseRaLocationsOptionTest extends TestCase
     public function two_use_ra_location_options_with_different_values_are_not_equal(): void
     {
         $useRaLocationsOption = new UseRaLocationsOption(true);
-        $different            = new UseRaLocationsOption(false);
+        $different = new UseRaLocationsOption(false);
 
         $this->assertFalse($useRaLocationsOption->equals($different));
     }
@@ -76,7 +76,7 @@ class UseRaLocationsOptionTest extends TestCase
     public function default_value_is_false(): void
     {
         $default = UseRaLocationsOption::getDefault();
-        $false   = new UseRaLocationsOption(false);
+        $false = new UseRaLocationsOption(false);
 
         $this->assertTrue($default->equals($false));
     }
@@ -84,11 +84,11 @@ class UseRaLocationsOptionTest extends TestCase
     public function nonBooleanProvider(): array
     {
         return [
-            'string'       => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'string' => [''],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

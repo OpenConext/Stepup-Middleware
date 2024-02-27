@@ -45,7 +45,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
                 'CASE WHEN tpl.locale = :preferredLocale THEN 2
                       WHEN tpl.locale = :fallbackLocale THEN 1
                       ELSE 0
-                 END AS HIDDEN localePreference'
+                 END AS HIDDEN localePreference',
             )
             ->setParameter('preferredLocale', $preferredLocale)
             ->setParameter('fallbackLocale', $fallbackLocale)

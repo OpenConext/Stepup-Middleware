@@ -33,7 +33,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class EmailVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class EmailVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
     private array $allowlist = [
         'identity_id',
@@ -44,7 +47,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
         'registration_requested_at',
         'preferred_locale',
         'common_name',
-        'email'
+        'email',
     ];
 
     /**
@@ -58,19 +61,9 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
     public $secondFactorType;
 
     /**
-     * @var SecondFactorIdentifier
-     */
-    private $secondFactorIdentifier;
-
-    /**
      * @var DateTime
      */
     public $registrationRequestedAt;
-
-    /**
-     * @var string
-     */
-    public $registrationCode;
 
     /**
      * @var CommonName
@@ -88,16 +81,16 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
     public $preferredLocale;
 
     /**
-     * @param IdentityId        $identityId
-     * @param Institution       $identityInstitution
-     * @param SecondFactorId    $secondFactorId
-     * @param SecondFactorType  $secondFactorType
+     * @param IdentityId $identityId
+     * @param Institution $identityInstitution
+     * @param SecondFactorId $secondFactorId
+     * @param SecondFactorType $secondFactorType
      * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DateTime          $registrationRequestedAt
-     * @param string            $registrationCode
-     * @param CommonName        $commonName
-     * @param Email             $email
-     * @param Locale            $preferredLocale
+     * @param DateTime $registrationRequestedAt
+     * @param string $registrationCode
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param Locale $preferredLocale
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -106,23 +99,21 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
+        private SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
-        $registrationCode,
+        public $registrationCode,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId          = $secondFactorId;
-        $this->secondFactorType        = $secondFactorType;
-        $this->secondFactorIdentifier  = $secondFactorIdentifier;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->registrationCode        = $registrationCode;
-        $this->commonName              = $commonName;
-        $this->email                   = $email;
-        $this->preferredLocale         = $preferredLocale;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -151,7 +142,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
             $data['registration_code'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -161,13 +152,13 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
     public function serialize(): array
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'second_factor_type'        => (string) $this->secondFactorType,
-            'registration_requested_at' => (string) $this->registrationRequestedAt,
-            'registration_code'         => $this->registrationCode,
-            'preferred_locale'          => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -181,7 +172,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }

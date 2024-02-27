@@ -28,19 +28,10 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository;
 
 class WhitelistProjector extends Projector
 {
-    private WhitelistEntryRepository $whitelistEntryRepository;
-
-    /**
-     * @param WhitelistEntryRepository $whitelistRepository
-     */
-    public function __construct(WhitelistEntryRepository $whitelistRepository)
+    public function __construct(private readonly WhitelistEntryRepository $whitelistEntryRepository)
     {
-        $this->whitelistEntryRepository = $whitelistRepository;
     }
 
-    /**
-     * @param WhitelistCreatedEvent $event
-     */
     protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
     {
         $whitelistEntries = [];
@@ -51,9 +42,6 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    /**
-     * @param WhitelistReplacedEvent $event
-     */
     protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
     {
         $this->whitelistEntryRepository->removeAll();
@@ -66,9 +54,6 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    /**
-     * @param InstitutionsAddedToWhitelistEvent $event
-     */
     protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
     {
         $whitelistEntries = [];
@@ -79,9 +64,6 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    /**
-     * @param InstitutionsRemovedFromWhitelistEvent $event
-     */
     protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
     {
         $institutions = [];

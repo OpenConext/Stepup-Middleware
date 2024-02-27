@@ -39,7 +39,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     /**
      * Shorthand for fixed Configuration ID.
      */
-    const CID = Configuration::CONFIGURATION_ID;
+    public const CID = Configuration::CONFIGURATION_ID;
 
     /**
      * @test
@@ -48,13 +48,13 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     public function configuration_can_be_initialised(): void
     {
         $configuration = [
-            'gateway'         => [
+            'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [],
             ],
-            'sraa'            => [],
+            'sraa' => [],
             'email_templates' => [
-                'confirm_email'     => ['en_GB' => ''],
+                'confirm_email' => ['en_GB' => ''],
                 'registration_code' => ['en_GB' => ''],
             ],
         ];
@@ -73,26 +73,26 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     public function configuration_can_be_updated(): void
     {
         $configuration1 = [
-            'gateway'         => [
+            'gateway' => [
                 'identity_providers' => [],
                 'service_providers' => [],
             ],
-            'sraa'            => [],
+            'sraa' => [],
             'email_templates' => [
-                'confirm_email'     => ['en_GB' => ''],
+                'confirm_email' => ['en_GB' => ''],
                 'registration_code' => ['en_GB' => ''],
             ],
         ];
 
         $configuration2 = [
-            'gateway'         => [
+            'gateway' => [
                 'identity_providers' => [
                     [
                         "entity_id" => "https://entity.tld/id",
                         "loa" => [
                             "__default__" => "https://entity.tld/authentication/loa2",
                         ],
-                    ]
+                    ],
                 ],
                 'service_providers' => [
                     [
@@ -103,45 +103,48 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
                             "__default__" => "https://entity.tld/authentication/loa2",
                         ],
                         "assertion_encryption_enabled" => false,
-                        "blacklisted_encryption_algorithms" => []
-                    ]
+                        "blacklisted_encryption_algorithms" => [],
+                    ],
                 ],
             ],
-            'sraa'            => [
+            'sraa' => [
                 'SURFnet bv' => [
                     [
                         'name_id' => 'ddfd',
-                    ]
+                    ],
                 ],
             ],
             'email_templates' => [
-                'confirm_email'                       => ['en_GB' => 'Verify {{ commonName }}'],
-                'registration_code_with_ras'          => ['en_GB' => 'Code {{ commonName }}'],
+                'confirm_email' => ['en_GB' => 'Verify {{ commonName }}'],
+                'registration_code_with_ras' => ['en_GB' => 'Code {{ commonName }}'],
                 'registration_code_with_ra_locations' => ['en_GB' => 'Code {{ commonName }}'],
             ],
         ];
 
         $this->scenario
             ->withAggregateId(self::CID)
-            ->given(array_merge(
-                [$this->createNewConfigurationCreatedEvent()],
-                $this->createConfigurationUpdatedEvents($configuration1, null)
-            ))
+            ->given(
+                array_merge(
+                    [$this->createNewConfigurationCreatedEvent()],
+                    $this->createConfigurationUpdatedEvents($configuration1, null),
+                ),
+            )
             ->when($this->createUpdateCommand($configuration2))
             ->then($this->createConfigurationUpdatedEvents($configuration2, $configuration1));
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new ConfigurationCommandHandler(
-            new ConfigurationRepository($eventStore, $eventBus, $aggregateFactory)
+            new ConfigurationRepository($eventStore, $eventBus, $aggregateFactory),
         );
     }
 
     /**
-     * @param array $configuration
      * @return UpdateConfigurationCommand
      */
     private function createUpdateCommand(array $configuration): UpdateConfigurationCommand
@@ -161,8 +164,6 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     }
 
     /**
-     * @param array $newConfiguration
-     * @param array $oldConfiguration
      * @return array
      */
     private function createConfigurationUpdatedEvents(array $newConfiguration, array $oldConfiguration = null): array

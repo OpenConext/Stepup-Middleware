@@ -39,7 +39,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
     {
         Type::addType(
             UseRaLocationsOptionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\UseRaLocationsOptionType'
+            UseRaLocationsOptionType::class,
         );
     }
 
@@ -68,7 +68,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
      * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_use_ra_locations_option_or_null($incorrectValue): void
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_use_ra_locations_option_or_null($incorrectValue,): void
     {
         $this->expectException(ConversionException::class);
 
@@ -85,8 +85,8 @@ class UseRaLocationsOptionTypeTest extends UnitTest
         $configurationInstitution = Type::getType(UseRaLocationsOptionType::NAME);
 
         $expected = true;
-        $input    = new UseRaLocationsOption($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new UseRaLocationsOption($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -117,7 +117,7 @@ class UseRaLocationsOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\UseRaLocationsOption', $output);
+        $this->assertInstanceOf(UseRaLocationsOption::class, $output);
         $this->assertEquals(new UseRaLocationsOption($input), $output);
     }
 }

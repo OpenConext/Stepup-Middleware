@@ -25,16 +25,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFac
 
 final class AllowedSecondFactorListProjector extends Projector
 {
-    private AllowedSecondFactorRepository $allowedSecondFactorRepository;
-
-    public function __construct(AllowedSecondFactorRepository $allowedSecondFactorRepository)
-    {
-        $this->allowedSecondFactorRepository = $allowedSecondFactorRepository;
+    public function __construct(
+        private readonly AllowedSecondFactorRepository $allowedSecondFactorRepository,
+    ) {
     }
 
-    /**
-     * @param AllowedSecondFactorListUpdatedEvent $event
-     */
     public function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event): void
     {
         // Start with a clean slate

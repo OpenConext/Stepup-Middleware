@@ -26,7 +26,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemp
 #[ORM\Entity(repositoryClass: EmailTemplateRepository::class)]
 class EmailTemplate
 {
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column]
@@ -53,7 +53,7 @@ class EmailTemplate
     public static function create($name, $locale, $htmlContent): self
     {
         $self = new self();
-        $self->id = (string) Uuid::uuid4();
+        $self->id = (string)Uuid::uuid4();
 
         $self->name = $name;
         $self->locale = $locale;

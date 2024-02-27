@@ -16,13 +16,13 @@ class Version20141112094457 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on \'mysql\'.'
+            'Migration can only be executed safely on \'mysql\'.',
         );
 
         $this->addSql('ALTER TABLE event_stream DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE event_stream DROP INDEX unique_uuid_playhead');
         $this->addSql(
-            'ALTER TABLE event_stream ADD CONSTRAINT pk_event_stream_uuid_playhead PRIMARY KEY (uuid, playhead)'
+            'ALTER TABLE event_stream ADD CONSTRAINT pk_event_stream_uuid_playhead PRIMARY KEY (uuid, playhead)',
         );
     }
 
@@ -31,7 +31,7 @@ class Version20141112094457 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf(
             $this->connection->getDatabasePlatform()->getName() != 'mysql',
-            'Migration can only be executed safely on \'mysql\'.'
+            'Migration can only be executed safely on \'mysql\'.',
         );
 
         $this->addSql('ALTER TABLE event_stream DROP PRIMARY KEY');

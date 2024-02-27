@@ -88,13 +88,13 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
-        SelfAssertedTokensOption $selfAssertedTokensOption
+        SelfAssertedTokensOption $selfAssertedTokensOption,
     ) {
-        $this->institutionConfigurationId      = $institutionConfigurationId;
-        $this->institution                     = $institution;
-        $this->useRaLocationsOption            = $useRaLocationsOption;
+        $this->institutionConfigurationId = $institutionConfigurationId;
+        $this->institution = $institution;
+        $this->useRaLocationsOption = $useRaLocationsOption;
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $this->verifyEmailOption               = $verifyEmailOption;
+        $this->verifyEmailOption = $verifyEmailOption;
         $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $this->ssoOn2faOption = $ssoOn2faOption;
         $this->selfVetOption = $selfVetOption;
@@ -130,19 +130,20 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
             new SsoOn2faOption($data['sso_on_2fa_option']),
             new SelfVetOption($data['self_vet_option']),
-            new SelfAssertedTokensOption($data['self_asserted_tokens_option'])
+            new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'institution_configuration_id'        => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                         => $this->institution->getInstitution(),
-            'use_ra_locations_option'             => $this->useRaLocationsOption->isEnabled(),
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution' => $this->institution->getInstitution(),
+            'use_ra_locations_option' => $this->useRaLocationsOption->isEnabled(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
-            'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
-            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
+            'verify_email_option' => $this->verifyEmailOption->isEnabled(),
+            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(
+            ),
             'sso_on_2fa_option' => $this->ssoOn2faOption->isEnabled(),
             'self_vet_option' => $this->selfVetOption->isEnabled(),
             'self_asserted_tokens_option' => $this->selfAssertedTokensOption->isEnabled(),

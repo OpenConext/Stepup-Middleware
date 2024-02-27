@@ -25,29 +25,11 @@ use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 
 final class NumberOfTokensPerIdentityOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var NumberOfTokensPerIdentityOption
-     */
-    public $numberOfTokensPerIdentityOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
     }
 
     public static function deserialize(array $data)
@@ -55,7 +37,7 @@ final class NumberOfTokensPerIdentityOptionChangedEvent implements SerializableI
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option'])
+            new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
         );
     }
 
@@ -63,8 +45,9 @@ final class NumberOfTokensPerIdentityOptionChangedEvent implements SerializableI
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
+            'institution' => $this->institution->getInstitution(),
+            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(
+            ),
         ];
     }
 }

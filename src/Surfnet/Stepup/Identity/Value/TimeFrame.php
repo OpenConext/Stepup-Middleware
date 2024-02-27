@@ -20,19 +20,14 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use DateInterval;
+use Stringable;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class TimeFrame
+final readonly class TimeFrame implements Stringable
 {
-    private DateInterval $timeFrame;
-
-    /**
-     * @param DateInterval $timeFrame
-     */
-    final private function __construct(DateInterval $timeFrame)
+    final private function __construct(private DateInterval $timeFrame)
     {
-        $this->timeFrame = $timeFrame;
     }
 
     /**
@@ -49,7 +44,6 @@ final class TimeFrame
     }
 
     /**
-     * @param DateTime $dateTime
      * @return DateTime
      */
     public function getEndWhenStartingAt(DateTime $dateTime): DateTime
@@ -58,7 +52,6 @@ final class TimeFrame
     }
 
     /**
-     * @param TimeFrame $other
      * @return bool
      */
     public function equals(TimeFrame $other): bool

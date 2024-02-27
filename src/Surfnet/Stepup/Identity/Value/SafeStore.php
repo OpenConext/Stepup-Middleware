@@ -23,11 +23,9 @@ namespace Surfnet\Stepup\Identity\Value;
  */
 class SafeStore implements RecoveryTokenIdentifier
 {
-    private Secret $secret;
-
-    public function __construct(Secret $hashedSecret)
-    {
-        $this->secret = $hashedSecret;
+    public function __construct(
+        private readonly Secret $secret,
+    ) {
     }
 
     public static function unknown(): self

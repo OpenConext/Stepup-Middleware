@@ -24,18 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorReposit
 
 class RaSecondFactorService extends AbstractSearchService
 {
-    private RaSecondFactorRepository $repository;
-
-    /**
-     * @param RaSecondFactorRepository $repository
-     */
-    public function __construct(RaSecondFactorRepository $repository)
+    public function __construct(private readonly RaSecondFactorRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return Pagerfanta
      */
     public function search(RaSecondFactorQuery $query)
@@ -46,7 +39,6 @@ class RaSecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return array
      */
     public function getFilterOptions(RaSecondFactorQuery $query)
@@ -55,7 +47,6 @@ class RaSecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return array
      */
     public function searchUnpaginated(RaSecondFactorQuery $query)

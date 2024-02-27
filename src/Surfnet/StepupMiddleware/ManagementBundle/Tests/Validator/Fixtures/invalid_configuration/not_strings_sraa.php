@@ -18,8 +18,8 @@
 
 return [
     'expectedPropertyPath' => 'sraa[0]',
-    'configuration'        => [
-        'gateway'         => [
+    'configuration' => [
+        'gateway' => [
             'identity_providers' => [],
             'service_providers' => [
                 [
@@ -27,18 +27,18 @@ return [
                     'public_key' => 'MIIEEE...',
                     'acs' => ['http://entity.tld/consume-assertion'],
                     'loa' => [
-                        '__default__' => 'http://gateway.tld/loa/1'
+                        '__default__' => 'http://gateway.tld/loa/1',
                     ],
                     "second_factor_only" => false,
                     "second_factor_only_nameid_patterns" => [],
-                    "assertion_encryption_enabled"      => false,
-                    "blacklisted_encryption_algorithms" => []
+                    "assertion_encryption_enabled" => false,
+                    "blacklisted_encryption_algorithms" => [],
                 ],
             ],
         ],
-        'sraa'            => [
-            9
+        'sraa' => [
+            9,
         ],
         'email_templates' => [],
-    ]
+    ],
 ];

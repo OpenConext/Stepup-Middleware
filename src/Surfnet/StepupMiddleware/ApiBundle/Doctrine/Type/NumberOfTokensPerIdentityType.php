@@ -29,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class NumberOfTokensPerIdentityType extends Type
 {
-    const NAME = 'stepup_number_of_tokens_per_identity_option';
+    public const NAME = 'stepup_number_of_tokens_per_identity_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -47,9 +47,9 @@ class NumberOfTokensPerIdentityType extends Type
                 sprintf(
                     "Encountered illegal number of tokens per identity %s '%s', expected a 
                     NumberOfTokensPerIdentityOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -63,12 +63,12 @@ class NumberOfTokensPerIdentityType extends Type
         }
 
         try {
-            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int) $value);
+            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int)$value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

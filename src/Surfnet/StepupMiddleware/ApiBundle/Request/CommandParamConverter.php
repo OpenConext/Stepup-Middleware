@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Symfony\Component\HttpFoundation\Request;
 
 class CommandParamConverter implements ParamConverterInterface
@@ -37,18 +38,18 @@ class CommandParamConverter implements ParamConverterInterface
         $this->assertIsValidCommandStructure($data);
 
         $commandName = [];
-        preg_match('~^(\w+):([\w\\.]+)$~', $data['command']['name'], $commandName);
+        preg_match('~^(\w+):([\w\\.]+)$~', (string)$data['command']['name'], $commandName);
         $commandClassName = sprintf(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\%s\Command\%sCommand',
             $commandName[1],
-            str_replace('.', '\\', $commandName[2])
+            str_replace('.', '\\', $commandName[2]),
         );
 
         $command = new $commandClassName;
         $command->UUID = $data['command']['uuid'];
 
         foreach ($data['command']['payload'] as $property => $value) {
-            $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
+            $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', (string)$property))));
             $command->$properlyCasedProperty = $value;
         }
 
@@ -58,20 +59,19 @@ class CommandParamConverter implements ParamConverterInterface
     public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'command'
-            && $configuration->getClass() === 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command';
+            && $configuration->getClass() === Command::class;
     }
 
     /**
-     * @param mixed $data
      * @throws BadCommandRequestException
      */
-    private function assertIsValidCommandStructure($data): void
+    private function assertIsValidCommandStructure(mixed $data): void
     {
         if (!is_array($data)) {
             $type = gettype($data);
 
             throw new BadCommandRequestException(
-                [sprintf('Command is not valid: body must be a JSON object, but is of type %s', $type)]
+                [sprintf('Command is not valid: body must be a JSON object, but is of type %s', $type)],
             );
         }
 

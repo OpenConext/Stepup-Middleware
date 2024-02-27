@@ -47,7 +47,7 @@ class JsonHelperTest extends TestCase
     public function json_helper_decodes_strings_to_arrays(): void
     {
         $expectedDecodedResult = ['hello' => 'world'];
-        $json                  = '{ "hello" : "world" }';
+        $json = '{ "hello" : "world" }';
 
         $actualDecodedResult = JsonHelper::decode($json);
 
@@ -72,10 +72,10 @@ class JsonHelperTest extends TestCase
     {
         return [
             'boolean' => [true],
-            'array'   => [[]],
+            'array' => [[]],
             'integer' => [1],
-            'float'   => [1.2],
-            'object'  => [new StdClass()],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

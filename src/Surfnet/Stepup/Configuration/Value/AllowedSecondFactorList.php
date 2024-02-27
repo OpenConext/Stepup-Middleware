@@ -55,10 +55,6 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return new self($allowedSecondFactors);
     }
 
-    /**
-     * @param SecondFactorType $secondFactor
-     * @return bool
-     */
     public function allows(SecondFactorType $secondFactor): bool
     {
         return $this->isBlank() || $this->contains($secondFactor);
@@ -72,10 +68,6 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return $this->allowedSecondFactors === [];
     }
 
-    /**
-     * @param SecondFactorType $secondFactor
-     * @return bool
-     */
     public function contains(SecondFactorType $secondFactor): bool
     {
         foreach ($this->allowedSecondFactors as $allowedSecondFactor) {
@@ -105,10 +97,8 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
     public static function deserialize(array $data)
     {
         $secondFactorTypes = array_map(
-            function ($secondFactorString): SecondFactorType {
-                return new SecondFactorType($secondFactorString);
-            },
-            $data['allowed_second_factors']
+            fn($secondFactorString): SecondFactorType => new SecondFactorType($secondFactorString),
+            $data['allowed_second_factors'],
         );
 
         return new self($secondFactorTypes);
@@ -117,10 +107,8 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
     public function serialize(): array
     {
         $allowedSecondFactors = array_map(
-            function (SecondFactorType $secondFactorType): string {
-                return $secondFactorType->getSecondFactorType();
-            },
-            $this->allowedSecondFactors
+            fn(SecondFactorType $secondFactorType): string => $secondFactorType->getSecondFactorType(),
+            $this->allowedSecondFactors,
         );
 
         return [

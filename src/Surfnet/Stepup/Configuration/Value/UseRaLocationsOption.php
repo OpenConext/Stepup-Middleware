@@ -23,7 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class UseRaLocationsOption implements JsonSerializable
 {
-    private bool $useRaLocationsOption;
+    private readonly bool $useRaLocationsOption;
 
     /**
      * @return UseRaLocationsOption
@@ -39,7 +39,7 @@ final class UseRaLocationsOption implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'boolean',
                 'useRaLocationsOption',
-                $useRaLocationsOption
+                $useRaLocationsOption,
             );
         }
 
@@ -47,7 +47,6 @@ final class UseRaLocationsOption implements JsonSerializable
     }
 
     /**
-     * @param UseRaLocationsOption $other
      * @return bool
      */
     public function equals(UseRaLocationsOption $other): bool

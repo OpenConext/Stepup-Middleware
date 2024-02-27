@@ -38,24 +38,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
  */
 class AuthorizationContextService
 {
-    private SraaService $sraaService;
-
-    private IdentityService $identityService;
-
-    private ConfiguredInstitutionRepository $institutionRepository;
-
-    private AuthorizationRepository $authorizationRepository;
-
     public function __construct(
-        SraaService $sraaService,
-        IdentityService $identityService,
-        ConfiguredInstitutionRepository $institutionRepository,
-        AuthorizationRepository $authorizationRepository
+        private readonly SraaService $sraaService,
+        private readonly IdentityService $identityService,
+        private readonly ConfiguredInstitutionRepository $institutionRepository,
+        private readonly AuthorizationRepository $authorizationRepository,
     ) {
-        $this->sraaService = $sraaService;
-        $this->identityService = $identityService;
-        $this->institutionRepository = $institutionRepository;
-        $this->authorizationRepository = $authorizationRepository;
     }
 
     public function buildSelectRaaInstitutionAuthorizationContext(IdentityId $actorId): InstitutionAuthorizationContext
@@ -75,7 +63,7 @@ class AuthorizationContextService
      */
     public function buildInstitutionAuthorizationContext(
         IdentityId $actorId,
-        RegistrationAuthorityRole $role
+        RegistrationAuthorityRole $role,
     ): InstitutionAuthorizationContext {
         $isSraa = $this->isSraa($actorId);
         if ($isSraa) {

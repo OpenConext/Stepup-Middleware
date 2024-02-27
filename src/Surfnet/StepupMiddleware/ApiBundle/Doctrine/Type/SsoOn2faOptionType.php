@@ -29,7 +29,7 @@ use TypeError;
  */
 class SsoOn2faOptionType extends Type
 {
-    const NAME = 'stepup_sso_on_2fa_option';
+    public const NAME = 'stepup_sso_on_2fa_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -47,13 +47,13 @@ class SsoOn2faOptionType extends Type
                 sprintf(
                     "Encountered illegal sso on 2fo vet option %s '%s', expected a 
                     SsoOn2faOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -63,12 +63,12 @@ class SsoOn2faOptionType extends Type
         }
 
         try {
-            $ssoOn2faOption = new SsoOn2faOption((bool) $value);
+            $ssoOn2faOption = new SsoOn2faOption((bool)$value);
         } catch (TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

@@ -80,7 +80,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         PhoneNumber $phoneNumber,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -96,7 +96,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->recoveryTokenId = (string) $this->phoneNumber;
+        $metadata->recoveryTokenId = (string)$this->phoneNumber;
         $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SMS;
         return $metadata;
     }
@@ -110,7 +110,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             PhoneNumber::unknown(),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -120,11 +120,11 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'recovery_token_id' => (string) $this->recoveryTokenId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'recovery_token_id' => (string)$this->recoveryTokenId,
             'recovery_token_type' => RecoveryTokenType::TYPE_SMS,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

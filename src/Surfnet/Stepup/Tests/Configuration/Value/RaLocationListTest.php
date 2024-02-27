@@ -97,7 +97,7 @@ class RaLocationListTest extends TestCase
     public function an_ra_location_list_does_not_have_ra_locations_with_a_non_present_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
-        $expectedRaLocationIdNotToBePresent = new RaLocationId((string) Uuid::uuid4());
+        $expectedRaLocationIdNotToBePresent = new RaLocationId((string)Uuid::uuid4());
 
         $raLocationList = new RaLocationList($raLocations);
 
@@ -142,16 +142,16 @@ class RaLocationListTest extends TestCase
     {
         return [
             RaLocation::create(
-                new RaLocationId((string) Uuid::uuid4()),
+                new RaLocationId((string)Uuid::uuid4()),
                 new RaLocationName('An RA location name'),
                 new Location('A location'),
-                new ContactInformation('Contact Information')
+                new ContactInformation('Contact Information'),
             ),
             RaLocation::create(
-                new RaLocationId((string) Uuid::uuid4()),
+                new RaLocationId((string)Uuid::uuid4()),
                 new RaLocationName('Another RA location name'),
                 new Location('Another location'),
-                new ContactInformation('Some more contact Information')
+                new ContactInformation('Some more contact Information'),
             ),
         ];
     }

@@ -33,54 +33,38 @@ use Symfony\Component\Translation\TranslatorInterface;
 final class SecondFactorVettedMailService
 {
     /**
-     * @var Mailer
-     */
-    private Mailer $mailer;
-
-    private Sender $sender;
-
-    /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
-
-    private string $fallbackLocale;
-
-    private string $selfServiceUrl;
+    private readonly string $fallbackLocale;
 
     /**
      * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
-        string $selfServiceUrl
+        private readonly string $selfServiceUrl,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     public function sendVettedEmail(
         Locale $locale,
         CommonName $commonName,
-        Email $email
+        Email $email,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.vetted_email.subject',
             ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName('vetted', $locale->getLocale(), $this->fallbackLocale);
@@ -91,7 +75,7 @@ final class SecondFactorVettedMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,

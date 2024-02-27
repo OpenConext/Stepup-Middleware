@@ -23,7 +23,6 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType;
 
 class InstitutionRoleTypeTest extends UnitTest
@@ -40,7 +39,7 @@ class InstitutionRoleTypeTest extends UnitTest
     {
         Type::addType(
             InstitutionRoleType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionRoleType'
+            InstitutionRoleType::class,
         );
     }
 
@@ -71,8 +70,8 @@ class InstitutionRoleTypeTest extends UnitTest
         $configurationInstitution = Type::getType(InstitutionRoleType::NAME);
 
         $expected = 'use_ra';
-        $input    = new InstitutionRole($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new InstitutionRole($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -103,7 +102,7 @@ class InstitutionRoleTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\InstitutionRole', $output);
+        $this->assertInstanceOf(InstitutionRole::class, $output);
         $this->assertEquals(new InstitutionRole($input), $output);
     }
 

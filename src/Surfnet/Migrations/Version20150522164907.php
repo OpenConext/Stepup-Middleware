@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -27,9 +27,17 @@ class Version20150522164907 extends AbstractMigration implements ContainerAwareI
         $gatewaySchema = $this->getGatewaySchema();
 
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
-        $this->addSql(sprintf('CREATE UNIQUE INDEX unq_saml_entity_entity_id_type ON %s.saml_entity (entity_id, type)', $gatewaySchema));
+        $this->addSql(
+            sprintf(
+                'CREATE UNIQUE INDEX unq_saml_entity_entity_id_type ON %s.saml_entity (entity_id, type)',
+                $gatewaySchema,
+            ),
+        );
     }
 
     /**
@@ -40,7 +48,10 @@ class Version20150522164907 extends AbstractMigration implements ContainerAwareI
         $gatewaySchema = $this->getGatewaySchema();
 
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql(sprintf('DROP INDEX unq_saml_entity_entity_id_type ON %s.saml_entity', $gatewaySchema));
     }

@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandBus;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage;
 
 class DispatchStageTest extends TestCase
@@ -32,7 +33,7 @@ class DispatchStageTest extends TestCase
      */
     public function it_dispatches_commands(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
+        $command = m::mock(Command::class);
         $commandBus = m::mock(CommandBus::class)->makePartial()
             ->shouldReceive('dispatch')->once()->with($command)->andReturnNull()
             ->getMock();

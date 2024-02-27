@@ -40,12 +40,14 @@ class ProcessingAbortedExceptionListener implements EventSubscriberInterface
             return;
         }
 
-        $event->setResponse(new JsonResponse(
-            [
-                'exception' => get_class($throwable),
-                'errors' => $throwable->getErrors(),
-            ],
-            Response::HTTP_BAD_REQUEST
-        ));
+        $event->setResponse(
+            new JsonResponse(
+                [
+                    'exception' => $throwable::class,
+                    'errors' => $throwable->getErrors(),
+                ],
+                Response::HTTP_BAD_REQUEST,
+            ),
+        );
     }
 }

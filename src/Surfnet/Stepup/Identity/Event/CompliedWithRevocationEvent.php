@@ -65,23 +65,23 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
-        IdentityId $authorityId
+        IdentityId $authorityId,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->authorityId            = $authorityId;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorType       = $secondFactorType;
+        $this->authorityId = $authorityId;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
@@ -97,7 +97,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
             new SecondFactorId($data['second_factor_id']),
             $secondFactorType,
             SecondFactorIdentifierFactory::unknownForType($secondFactorType),
-            new IdentityId($data['authority_id'])
+            new IdentityId($data['authority_id']),
         );
     }
 
@@ -107,11 +107,11 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
     final public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'second_factor_id'         => (string) $this->secondFactorId,
-            'second_factor_type'       => (string) $this->secondFactorType,
-            'authority_id'             => (string) $this->authorityId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'authority_id' => (string)$this->authorityId,
         ];
     }
 
@@ -132,6 +132,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         $serializedSensitiveUserData = $this->getSensitiveData()->serialize();
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
+
     public function getAllowlist(): array
     {
         return $this->allowlist;

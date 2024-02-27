@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class SecondFactorId implements Id
 {
-    private string $value;
+    private readonly string $value;
 
     public function __construct($value)
     {

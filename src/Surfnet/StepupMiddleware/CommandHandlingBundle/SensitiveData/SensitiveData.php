@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
@@ -52,7 +51,6 @@ class SensitiveData implements SerializableInterface
     private ?RecoveryTokenIdentifier $recoveryTokenIdentifier = null;
 
     /**
-     * @param CommonName $commonName
      * @return SensitiveData
      */
     public function withCommonName(CommonName $commonName): static
@@ -64,7 +62,6 @@ class SensitiveData implements SerializableInterface
     }
 
     /**
-     * @param Email $email
      * @return SensitiveData
      */
     public function withEmail(Email $email): static
@@ -76,13 +73,11 @@ class SensitiveData implements SerializableInterface
     }
 
     /**
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param SecondFactorType       $secondFactorType
      * @return SensitiveData
      */
     public function withSecondFactorIdentifier(
         SecondFactorIdentifier $secondFactorIdentifier,
-        SecondFactorType $secondFactorType
+        SecondFactorType $secondFactorType,
     ): static {
         $clone = clone $this;
         $clone->secondFactorType = $secondFactorType;
@@ -93,7 +88,7 @@ class SensitiveData implements SerializableInterface
 
     public function withRecoveryTokenSecret(
         RecoveryTokenIdentifier $recoveryTokenIdentifier,
-        RecoveryTokenType $type
+        RecoveryTokenType $type,
     ): SensitiveData {
         $clone = clone $this;
         $clone->recoveryTokenType = $type;
@@ -193,7 +188,7 @@ class SensitiveData implements SerializableInterface
         if (isset($data['recovery_token_identifier'])) {
             $self->recoveryTokenIdentifier = RecoveryTokenIdentifierFactory::forType(
                 $self->recoveryTokenType,
-                $data['recovery_token_identifier']
+                $data['recovery_token_identifier'],
             );
         }
 
@@ -208,13 +203,13 @@ class SensitiveData implements SerializableInterface
     {
         $vettingType = (is_null($this->vettingType)) ? null : $this->vettingType->jsonSerialize();
         return array_filter([
-            'common_name'              => $this->commonName,
-            'email'                    => $this->email,
-            'second_factor_type'       => $this->secondFactorType,
+            'common_name' => $this->commonName,
+            'email' => $this->email,
+            'second_factor_type' => $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'recovery_token_type' => (string) $this->recoveryTokenType,
+            'recovery_token_type' => (string)$this->recoveryTokenType,
             'recovery_token_identifier' => $this->recoveryTokenIdentifier,
-            'vetting_type' => $vettingType
+            'vetting_type' => $vettingType,
         ]);
     }
 }

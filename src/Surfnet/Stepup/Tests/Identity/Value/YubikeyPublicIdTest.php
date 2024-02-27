@@ -30,10 +30,10 @@ class YubikeyPublicIdTest extends UnitTest
      */
     public function two_yubikey_public_ids_with_the_same_value_are_equal(): void
     {
-        $id          = new YubikeyPublicId('00001234');
-        $theSame     = new YubikeyPublicId('00001234');
-        $different   = new YubikeyPublicId('987654321');
-        $unknown     = YubikeyPublicId::unknown();
+        $id = new YubikeyPublicId('00001234');
+        $theSame = new YubikeyPublicId('00001234');
+        $different = new YubikeyPublicId('987654321');
+        $unknown = YubikeyPublicId::unknown();
 
         $this->assertTrue($id->equals($theSame));
         $this->assertFalse($id->equals($different));
@@ -43,14 +43,14 @@ class YubikeyPublicIdTest extends UnitTest
     public function invalidFormatProvider(): array
     {
         return [
-            '7-character unpadded ID'           => ['1906381'],
-            '9-character padded ID'             => ['0123456789'],
-            '19-character padded ID'            => ['01234567890123456789'],
-            '21-character ID'                   => ['101234567890123456789'],
-            'empty ID'                          => [''],
-            'ID with alphabetical characters'   => ['abc'],
+            '7-character unpadded ID' => ['1906381'],
+            '9-character padded ID' => ['0123456789'],
+            '19-character padded ID' => ['01234567890123456789'],
+            '21-character ID' => ['101234567890123456789'],
+            'empty ID' => [''],
+            'ID with alphabetical characters' => ['abc'],
             'ID with alphanumerical characters' => ['abc01908389'],
-            'Larger than 0xffffffffffffffff'    => ['18446744073709551616']
+            'Larger than 0xffffffffffffffff' => ['18446744073709551616'],
         ];
     }
 
@@ -71,9 +71,9 @@ class YubikeyPublicIdTest extends UnitTest
     public function validFormatProvider(): array
     {
         return [
-            '8-character ID'  => ['01906381'],
-            '1-character ID'  => ['00000001'],
-            '0-character ID'  => ['00000000'],
+            '8-character ID' => ['01906381'],
+            '1-character ID' => ['00000001'],
+            '0-character ID' => ['00000000'],
             '16-character ID' => ['1234560123456789'],
             '20-character ID' => ['12345678901234567890'],
         ];
@@ -83,8 +83,6 @@ class YubikeyPublicIdTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider validFormatProvider
-     *
-     * @param string $validFormat
      */
     public function its_value_matches_its_input_value(string $validFormat): void
     {

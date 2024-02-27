@@ -30,7 +30,7 @@ class SurfnetStepupMiddlewareCommandHandlingExtension extends Extension
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config')
+            new FileLocator(__DIR__ . '/../Resources/config'),
         );
         $loader->load('command_handlers.yml');
         $loader->load('event_sourcing.yml');

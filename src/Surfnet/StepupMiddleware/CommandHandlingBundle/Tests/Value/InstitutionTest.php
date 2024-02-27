@@ -31,8 +31,9 @@ class InstitutionTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $invalidValue): void
-    {
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
+        string|int|float|StdClass|array $invalidValue,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new Institution($invalidValue);
@@ -43,10 +44,10 @@ class InstitutionTest extends UnitTest
      */
     public function two_institutions_with_the_same_value_are_equal(): void
     {
-        $institution       = new Institution('a');
-        $theSame           = new Institution('a');
+        $institution = new Institution('a');
+        $theSame = new Institution('a');
         $theSameWithSpaces = new Institution('  a ');
-        $different         = new Institution('A');
+        $different = new Institution('A');
 
         $this->assertTrue($institution->equals($theSame));
         $this->assertTrue($institution->equals($theSameWithSpaces));
@@ -58,10 +59,10 @@ class InstitutionTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

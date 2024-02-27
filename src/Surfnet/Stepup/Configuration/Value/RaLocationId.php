@@ -20,11 +20,12 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 use Ramsey\Uuid\Uuid;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationId implements JsonSerializable
+final class RaLocationId implements JsonSerializable, Stringable
 {
-    private string $raLocationId;
+    private readonly string $raLocationId;
 
     /**
      * @param string $raLocationId
@@ -35,7 +36,7 @@ final class RaLocationId implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'raLocationId',
-                $raLocationId
+                $raLocationId,
             );
         }
 
@@ -43,7 +44,7 @@ final class RaLocationId implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'UUID',
                 'raLocationId',
-                $raLocationId
+                $raLocationId,
             );
         }
 
@@ -51,7 +52,6 @@ final class RaLocationId implements JsonSerializable
     }
 
     /**
-     * @param RaLocationId $otherRaLocationId
      * @return bool
      */
     public function equals(RaLocationId $otherRaLocationId): bool

@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 {
-    const INSTITUTION = 'institution';
+    public const INSTITUTION = 'institution';
 
     public function apply(Request $request, ParamConverter $configuration): void
     {
@@ -36,11 +36,10 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
     public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === self::INSTITUTION
-            && $configuration->getClass() === 'Surfnet\Stepup\Configuration\Value\Institution';
+            && $configuration->getClass() === Institution::class;
     }
 
     /**
-     * @param Request $request
      * @return string
      */
     private function getInstitutionFromRequest(Request $request)
@@ -59,6 +58,6 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
             return $institution;
         }
 
-        throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters']);
+        throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters'],);
     }
 }

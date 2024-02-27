@@ -29,9 +29,6 @@ class SecondFactorRevocationRepository extends ServiceEntityRepository
         parent::__construct($registry, SecondFactorRevocation::class);
     }
 
-    /**
-     * @param SecondFactorRevocation $revocation
-     */
     public function save(SecondFactorRevocation $revocation): void
     {
         $entityManager = $this->getEntityManager();

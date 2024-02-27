@@ -26,9 +26,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 class SecondFactorRepository extends EntityRepository
 {
     public $_entityName;
-    /**
-     * @param SecondFactor $secondFactor
-     */
+
     public function save(SecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
@@ -36,21 +34,19 @@ class SecondFactorRepository extends EntityRepository
     }
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @return SecondFactor|null
      */
     public function findOneBySecondFactorId(SecondFactorId $secondFactorId): ?object
     {
-        return $this->findOneBy(['secondFactorId' => (string) $secondFactorId]);
+        return $this->findOneBy(['secondFactorId' => (string)$secondFactorId]);
     }
 
     /**
-     * @param IdentityId $identityId
      * @return SecondFactor[]
      */
     public function findByIdentityId(IdentityId $identityId): array
     {
-        return $this->findBy(['identityId' => (string) $identityId]);
+        return $this->findBy(['identityId' => (string)$identityId]);
     }
 
     public function removeByIdentityId(IdentityId $identityId): void
@@ -63,9 +59,6 @@ class SecondFactorRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param SecondFactor $secondFactor
-     */
     public function remove(SecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);

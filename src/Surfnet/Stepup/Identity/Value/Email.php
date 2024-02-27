@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Email implements JsonSerializable
+final class Email implements JsonSerializable, Stringable
 {
-    private string $email;
+    private readonly string $email;
 
     /**
      * @return self
@@ -43,10 +44,12 @@ final class Email implements JsonSerializable
         }
 
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new InvalidArgumentException(sprintf(
-                'Email given: "%s is not a RFC 822 (https://www.ietf.org/rfc/rfc0822.txt) compliant email address"',
-                $email
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Email given: "%s is not a RFC 822 (https://www.ietf.org/rfc/rfc0822.txt) compliant email address"',
+                    $email,
+                ),
+            );
         }
 
         $this->email = trim($email);

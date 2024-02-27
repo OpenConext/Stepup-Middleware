@@ -32,13 +32,10 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapGsspSecondFactorCommand extends Command
 {
-    private BootstrapCommandService $bootstrapService;
-    private TransactionHelper $transactionHelper;
-
-    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
-    {
-        $this->bootstrapService = $bootstrapService;
-        $this->transactionHelper = $transactionHelper;
+    public function __construct(
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly TransactionHelper $transactionHelper,
+    ) {
         parent::__construct();
     }
 
@@ -51,17 +48,17 @@ final class BootstrapGsspSecondFactorCommand extends Command
             ->addArgument(
                 'gssp-token-type',
                 InputArgument::REQUIRED,
-                'The GSSP token type as defined in the GSSP config, for example tiqr or webauthn'
+                'The GSSP token type as defined in the GSSP config, for example tiqr or webauthn',
             )
             ->addArgument(
                 'gssp-token-identifier',
                 InputArgument::REQUIRED,
-                'The identifier of the token as registered at the GSSP'
+                'The identifier of the token as registered at the GSSP',
             )
             ->addArgument(
                 'registration-status',
                 InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted'
+                'Valid arguments: unverified, verified, vetted',
             )
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
@@ -72,7 +69,7 @@ final class BootstrapGsspSecondFactorCommand extends Command
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
         $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-gssp-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
+            new AnonymousToken('cli.bootstrap-gssp-token', 'cli', ['ROLE_SS', 'ROLE_RA']),
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
@@ -87,14 +84,21 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" does not exist, create it first.</error>',
                     $nameId->getNameId(),
-                    $institution->getInstitution()
-                )
+                    $institution->getInstitution(),
+                ),
             );
 
             return;
         }
         $identity = $this->bootstrapService->getIdentity($nameId, $institution);
-        $output->writeln(sprintf('<comment>Adding a %s %s GSSP token for %s</comment>', $registrationStatus, $tokenType, $identity->commonName));
+        $output->writeln(
+            sprintf(
+                '<comment>Adding a %s %s GSSP token for %s</comment>',
+                $registrationStatus,
+                $tokenType,
+                $identity->commonName,
+            ),
+        );
         $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
@@ -102,11 +106,21 @@ final class BootstrapGsspSecondFactorCommand extends Command
             switch ($registrationStatus) {
                 case "unverified":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
+                    $this->bootstrapService->proveGsspPossession(
+                        $secondFactorId,
+                        $identity,
+                        $tokenType,
+                        $tokenIdentifier,
+                    );
                     break;
                 case "verified":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
+                    $this->bootstrapService->proveGsspPossession(
+                        $secondFactorId,
+                        $identity,
+                        $tokenType,
+                        $tokenIdentifier,
+                    );
                     if ($mailVerificationRequired) {
                         $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
                         $this->bootstrapService->verifyEmail($identity, $tokenType);
@@ -114,7 +128,12 @@ final class BootstrapGsspSecondFactorCommand extends Command
                     break;
                 case "vetted":
                     $output->writeln(sprintf('<comment>Creating an unverified %s token</comment>', $tokenType));
-                    $this->bootstrapService->proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier);
+                    $this->bootstrapService->proveGsspPossession(
+                        $secondFactorId,
+                        $identity,
+                        $tokenType,
+                        $tokenIdentifier,
+                    );
                     if ($mailVerificationRequired) {
                         $output->writeln(sprintf('<comment>Creating an verified %s token</comment>', $tokenType));
                         $this->bootstrapService->verifyEmail($identity, $tokenType);
@@ -125,7 +144,7 @@ final class BootstrapGsspSecondFactorCommand extends Command
                         $actorId,
                         $identity,
                         $secondFactorId,
-                        $tokenIdentifier
+                        $tokenIdentifier,
                     );
                     break;
             }
@@ -135,8 +154,8 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 sprintf(
                     '<error>An Error occurred when trying to bootstrap the %s token: "%s"</error>',
                     $tokenType,
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             $this->transactionHelper->rollback();
             throw $e;
@@ -146,8 +165,8 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 '<info>Successfully %s %s second factor with UUID %s</info>',
                 $registrationStatus,
                 $tokenType,
-                $secondFactorId
-            )
+                $secondFactorId,
+            ),
         );
     }
 }

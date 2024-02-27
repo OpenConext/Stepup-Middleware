@@ -37,7 +37,7 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     public function __construct(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
     {
         $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution                = $institution;
+        $this->institution = $institution;
     }
 
     /**
@@ -48,7 +48,7 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
-            new Institution($data['institution'])
+            new Institution($data['institution']),
         );
     }
 
@@ -59,7 +59,7 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution()
+            'institution' => $this->institution->getInstitution(),
         ];
     }
 }

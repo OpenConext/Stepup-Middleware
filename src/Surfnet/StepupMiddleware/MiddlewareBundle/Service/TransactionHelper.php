@@ -22,18 +22,13 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
-final class TransactionHelper
+final readonly class TransactionHelper
 {
-    private Pipeline $pipeline;
-    /** @var EventBusInterface  */
-    private EventBusInterface $eventBus;
-    private DBALConnectionHelper $connection;
-
-    public function __construct(Pipeline $pipeline, EventBusInterface $eventBus, DBALConnectionHelper $connection)
-    {
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
+    public function __construct(
+        private Pipeline $pipeline,
+        private EventBusInterface $eventBus,
+        private DBALConnectionHelper $connection,
+    ) {
     }
 
     public function beginTransaction(): void

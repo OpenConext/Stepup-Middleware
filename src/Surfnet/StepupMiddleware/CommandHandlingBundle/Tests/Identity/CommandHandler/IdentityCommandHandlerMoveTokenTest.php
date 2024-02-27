@@ -100,8 +100,10 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
         parent::setUp();
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
         $secondFactorTypeService = m::mock(SecondFactorTypeService::class);
@@ -118,7 +120,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory,
                 m::mock(UserDataFilterInterface::class),
-                $logger
+                $logger,
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
@@ -128,7 +130,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $this->configService,
             $this->loaResolutionService,
             m::mock(RecoveryTokenSecretHelper::class),
-            $registrationMailService
+            $registrationMailService,
         );
     }
 
@@ -173,7 +175,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -184,7 +186,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -194,8 +196,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([
@@ -211,7 +213,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedToEvent(
                     $sourceRegistrantId,
@@ -220,7 +222,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ]);
     }
@@ -265,7 +267,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedEvent(
                     $targetRegistrantId,
@@ -279,7 +281,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new UnknownVettingType(),
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorMigratedToEvent(
                     $sourceRegistrantId,
@@ -288,7 +290,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -299,7 +301,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -309,7 +311,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -357,7 +359,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $targetRegistrantId,
@@ -367,7 +369,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
                     $targetRegistrantSecFacId,
-                    $targetYubikeySecFacId
+                    $targetYubikeySecFacId,
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -378,7 +380,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -388,7 +390,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -437,7 +439,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -447,12 +449,12 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $targetRegistrantId,
@@ -464,7 +466,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     'REGCODE',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $targetRegistrantId,
@@ -476,7 +478,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('NH9392')),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -487,7 +489,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -497,7 +499,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -545,7 +547,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -555,12 +557,12 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $targetRegistrantId,
@@ -572,7 +574,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     'REGCODE',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -583,7 +585,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -593,7 +595,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -641,7 +643,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $targetRegistrantId,
@@ -651,12 +653,12 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -667,7 +669,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -677,7 +679,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
+                    $sourceYubikeySecFacId,
                 ),
             ])
             ->when($command)
@@ -723,7 +725,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -734,7 +736,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -744,8 +746,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([]);
@@ -791,7 +793,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->withAggregateId($sourceRegistrantId)
@@ -802,7 +804,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -812,8 +814,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([
@@ -824,7 +826,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
-                    new SecondFactorType('yubikey')
+                    new SecondFactorType('yubikey'),
                 ),
             ]);
     }
@@ -870,7 +872,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantNameId,
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $targetRegistrantId,
@@ -880,8 +882,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetRegistrantEmail,
                     new Locale('en_GB'),
                     $targetRegistrantSecFacId,
-                    $targetYubikeySecFacId
-                )
+                    $targetYubikeySecFacId,
+                ),
             ])
             ->withAggregateId($sourceRegistrantId)
             ->given([
@@ -891,7 +893,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantNameId,
                     $sourceRegistrantCommonName,
                     $sourceRegistrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $sourceRegistrantId,
@@ -901,8 +903,8 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $sourceRegistrantEmail,
                     new Locale('en_GB'),
                     $sourceRegistrantSecFacId,
-                    $sourceYubikeySecFacId
-                )
+                    $sourceYubikeySecFacId,
+                ),
             ])
             ->when($command)
             ->then([]);
@@ -915,7 +917,9 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             $secondFactorTypes[] = new SecondFactorType($type);
         }
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn($allowedMaxNumberOfTokens);
-        $this->allowedSecondFactorListServiceMock->shouldReceive('getAllowedSecondFactorListFor')->andReturn(AllowedSecondFactorList::ofTypes($secondFactorTypes));
+        $this->allowedSecondFactorListServiceMock->shouldReceive('getAllowedSecondFactorListFor')->andReturn(
+            AllowedSecondFactorList::ofTypes($secondFactorTypes),
+        );
         $this->configService->shouldIgnoreMissing();
     }
 }

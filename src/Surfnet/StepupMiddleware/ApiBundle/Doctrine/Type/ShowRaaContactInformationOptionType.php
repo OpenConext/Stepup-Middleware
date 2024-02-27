@@ -29,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class ShowRaaContactInformationOptionType extends Type
 {
-    const NAME = 'stepup_show_raa_contact_information_option';
+    public const NAME = 'stepup_show_raa_contact_information_option';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -46,13 +46,13 @@ class ShowRaaContactInformationOptionType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal location of type %s '%s', expected a ShowRaaContactInformationOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -63,13 +63,13 @@ class ShowRaaContactInformationOptionType extends Type
 
         try {
             $showRaaContactInformationOption = new ShowRaaContactInformationOption(
-                $platform->convertFromBoolean($value)
+                $platform->convertFromBoolean($value),
             );
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

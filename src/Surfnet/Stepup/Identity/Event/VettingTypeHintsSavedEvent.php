@@ -30,7 +30,7 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         'identity_id',
         'identity_institution',
         'hints',
-        'institution'
+        'institution',
     ];
 
     /**
@@ -47,7 +47,7 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         IdentityId $identityId,
         Institution $identityInstitution,
         VettingTypeHintCollection $hints,
-        Institution $institution
+        Institution $institution,
     ) {
         parent::__construct($identityId, $identityInstitution);
         $this->hints = $hints;
@@ -79,16 +79,17 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             VettingTypeHintCollection::deserialize($data['hints']),
-            new Institution($data['institution'])
+            new Institution($data['institution']),
         );
     }
+
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
             'hints' => $this->hints->serialize(),
-            'institution' => (string) $this->institution,
+            'institution' => (string)$this->institution,
         ];
     }
 }

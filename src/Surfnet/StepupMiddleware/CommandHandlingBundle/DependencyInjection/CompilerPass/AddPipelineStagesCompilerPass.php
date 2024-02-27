@@ -39,13 +39,15 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
         foreach ($stageDefinitions as $stageServiceId => $tagAttributes) {
             $priority = $tagAttributes[0]['priority'];
             if (isset($prioritized[$priority])) {
-                throw new InvalidConfigurationException(sprintf(
-                    'Cannot add stage with service_id "%s" to StagedPipeline at priority "%d", Stage with service_id '
-                    . '"%s" is already registered at that position',
-                    $stageServiceId,
-                    $tagAttributes['priority'],
-                    (string) $prioritized[$priority]
-                ));
+                throw new InvalidConfigurationException(
+                    sprintf(
+                        'Cannot add stage with service_id "%s" to StagedPipeline at priority "%d", Stage with service_id '
+                        . '"%s" is already registered at that position',
+                        $stageServiceId,
+                        $tagAttributes['priority'],
+                        (string)$prioritized[$priority],
+                    ),
+                );
             }
 
             $prioritized[$priority] = new Reference($stageServiceId);

@@ -39,7 +39,7 @@ class ConfigurationLocationTypeTest extends UnitTest
     {
         Type::addType(
             ConfigurationLocationType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType'
+            ConfigurationLocationType::class,
         );
     }
 
@@ -85,8 +85,8 @@ class ConfigurationLocationTypeTest extends UnitTest
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 
         $expected = 'Somewhere behind you';
-        $input    = new Location($expected);
-        $output   = $configurationLocation->convertToDatabaseValue($input, $this->platform);
+        $input = new Location($expected);
+        $output = $configurationLocation->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -117,7 +117,7 @@ class ConfigurationLocationTypeTest extends UnitTest
 
         $output = $configurationLocation->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\Location', $output);
+        $this->assertInstanceOf(Location::class, $output);
         $this->assertEquals(new Location($input), $output);
     }
 

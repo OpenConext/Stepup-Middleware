@@ -22,18 +22,15 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
-final class SsoOn2faOption implements JsonSerializable
+final readonly class SsoOn2faOption implements JsonSerializable
 {
-    private bool $ssoOn2faOption;
-
     public static function getDefault(): self
     {
         return new self(false);
     }
 
-    public function __construct(bool $ssoOn2faOption)
+    public function __construct(private bool $ssoOn2faOption)
     {
-        $this->ssoOn2faOption = $ssoOn2faOption;
     }
 
     public function equals(SsoOn2faOption $other): bool

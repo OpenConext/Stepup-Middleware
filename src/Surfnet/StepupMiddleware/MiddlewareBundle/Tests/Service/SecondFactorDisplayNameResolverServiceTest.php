@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
-
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;

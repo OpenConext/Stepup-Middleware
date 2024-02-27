@@ -37,10 +37,12 @@ final class EventCollection implements IteratorAggregate
             }
 
             if (!class_exists($eventName)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Cannot create EventCollection: class "%s" does not exist',
-                    $eventName
-                ));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Cannot create EventCollection: class "%s" does not exist',
+                        $eventName,
+                    ),
+                );
             }
 
             $this->eventNames[] = $eventName;
@@ -58,15 +60,12 @@ final class EventCollection implements IteratorAggregate
     public function formatAsEventStreamTypes(): array
     {
         return array_map(
-            function ($eventName): string {
-                return strtr($eventName, '\\', '.');
-            },
-            $this->eventNames
+            fn($eventName): string => strtr($eventName, '\\', '.'),
+            $this->eventNames,
         );
     }
 
     /**
-     * @param array $subset
      * @return EventCollection
      */
     public function select(array $subset): self
@@ -77,8 +76,8 @@ final class EventCollection implements IteratorAggregate
             throw new InvalidArgumentException(
                 sprintf(
                     'Subset of event names contains event names not present in collection: %s',
-                    implode(', ', $nonAvailableEventNames)
-                )
+                    implode(', ', $nonAvailableEventNames),
+                ),
             );
         }
 

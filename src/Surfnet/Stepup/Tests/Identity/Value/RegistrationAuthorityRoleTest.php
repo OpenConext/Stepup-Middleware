@@ -45,9 +45,9 @@ class RegistrationAuthorityRoleTest extends UnitTest
      */
     public function two_roles_with_the_same_value_are_equal(): void
     {
-        $role              = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);
-        $theSame           = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);
-        $different         = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_SRAA);
+        $role = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);
+        $theSame = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA);
+        $different = new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_SRAA);
 
         $this->assertTrue($role->equals($theSame));
         $this->assertFalse($role->equals($different));
@@ -59,9 +59,9 @@ class RegistrationAuthorityRoleTest extends UnitTest
     public function invalidValueProvider(): array
     {
         return [
-            'array'        => [[]],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

@@ -27,11 +27,6 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 class BadCommandRequestException extends RuntimeException
 {
     /**
-     * @var string[]
-     */
-    private array $errors;
-
-    /**
      * @param string $message
      * @return self
      */
@@ -62,17 +57,14 @@ class BadCommandRequestException extends RuntimeException
      * @param string[] $errors
      * @param string $message
      * @param int $code
-     * @param \Exception|null $previous
      */
     public function __construct(
-        array $errors,
+        private readonly array $errors,
         $message = 'JSON could not be reconstituted into valid object.',
         $code = 0,
-        \Exception $previous = null
+        Exception $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
-
-        $this->errors = $errors;
     }
 
     /**

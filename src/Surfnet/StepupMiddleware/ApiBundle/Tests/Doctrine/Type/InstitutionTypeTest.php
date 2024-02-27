@@ -39,7 +39,7 @@ class InstitutionTypeTest extends UnitTest
     {
         Type::addType(
             InstitutionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\InstitutionType'
+            InstitutionType::class,
         );
     }
 
@@ -70,8 +70,8 @@ class InstitutionTypeTest extends UnitTest
         $configurationInstitution = Type::getType(InstitutionType::NAME);
 
         $expected = 'an institution';
-        $input    = new Institution($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new Institution($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -102,7 +102,7 @@ class InstitutionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Institution', $output);
+        $this->assertInstanceOf(Institution::class, $output);
         $this->assertEquals(new Institution($input), $output);
     }
 

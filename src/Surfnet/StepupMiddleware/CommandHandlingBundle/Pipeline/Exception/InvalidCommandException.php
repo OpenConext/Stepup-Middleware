@@ -28,7 +28,7 @@ class InvalidCommandException extends RuntimeException implements ProcessingAbor
     /**
      * @var string[]
      */
-    private array $errors;
+    private readonly array $errors;
 
     public static function createFromViolations(ConstraintViolationListInterface $violations): self
     {
@@ -51,7 +51,6 @@ class InvalidCommandException extends RuntimeException implements ProcessingAbor
     }
 
     /**
-     * @param ConstraintViolationListInterface $violations
      * @return array
      */
     private static function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations): array

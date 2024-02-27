@@ -23,8 +23,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class NumberOfTokensPerIdentityOption implements JsonSerializable
 {
-    const DISABLED = 0;
-    
+    public const DISABLED = 0;
+
     /**
      * @var int
      */
@@ -41,7 +41,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'integer',
                 'numberOfTokensPerIdentity',
-                $numberOfTokensPerIdentity
+                $numberOfTokensPerIdentity,
             );
         }
 
@@ -49,7 +49,6 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
     }
 
     /**
-     * @param NumberOfTokensPerIdentityOption $other
      * @return bool
      */
     public function equals(NumberOfTokensPerIdentityOption $other): bool

@@ -25,27 +25,27 @@ final class SecondFactorStatus
      */
     private $status;
 
-    public static function unverified()
+    public static function unverified(): self
     {
         return new self('unverified');
     }
 
-    public static function verified()
+    public static function verified(): self
     {
         return new self('verified');
     }
 
-    public static function vetted()
+    public static function vetted(): self
     {
         return new self('vetted');
     }
 
-    public static function revoked()
+    public static function revoked(): self
     {
         return new self('revoked');
     }
 
-    public static function forgotten()
+    public static function forgotten(): self
     {
         return new self('forgotten');
     }
@@ -54,7 +54,7 @@ final class SecondFactorStatus
      * @param string $status
      * @return bool
      */
-    public static function isValidStatus($status)
+    public static function isValidStatus($status): bool
     {
         return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', 'forgotten', true]);
     }
@@ -71,7 +71,7 @@ final class SecondFactorStatus
      * @param SecondFactorStatus $other
      * @return bool
      */
-    public function equals(SecondFactorStatus $other)
+    public function equals(SecondFactorStatus $other): bool
     {
         return $this->status === $other->status;
     }
@@ -79,7 +79,7 @@ final class SecondFactorStatus
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->status;
     }

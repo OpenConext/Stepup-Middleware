@@ -36,7 +36,7 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
      */
     public $recoveryTokenType;
 
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -66,7 +66,7 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
         );
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

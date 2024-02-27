@@ -67,7 +67,7 @@ class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceE
     #[Assert\Type(type: 'string')]
     public $authoringSecondFactorIdentifier;
 
-    public function getIdentityId()
+    public function getIdentityId(): void
     {
         $this->identityId;
     }

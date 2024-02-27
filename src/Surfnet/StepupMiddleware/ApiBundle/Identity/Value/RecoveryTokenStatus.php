@@ -20,10 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 final class RecoveryTokenStatus
 {
-    /**
-     * @var string
-     */
-    private $status;
+    private string $status;
 
     public static function active(): self
     {

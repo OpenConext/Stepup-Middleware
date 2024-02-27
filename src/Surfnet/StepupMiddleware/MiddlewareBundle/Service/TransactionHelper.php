@@ -24,12 +24,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
 final class TransactionHelper
 {
-    /** @var Pipeline  */
-    private $pipeline;
+    private Pipeline $pipeline;
     /** @var EventBusInterface  */
-    private $eventBus;
-    /** @var DBALConnectionHelper  */
-    private $connection;
+    private EventBusInterface $eventBus;
+    private DBALConnectionHelper $connection;
 
     public function __construct(Pipeline $pipeline, EventBusInterface $eventBus, DBALConnectionHelper $connection)
     {

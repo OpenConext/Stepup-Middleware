@@ -39,20 +39,16 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
  */
 final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 {
-    /** @var BootstrapCommandService */
-    private $bootstrapService;
+    private BootstrapCommandService $bootstrapService;
 
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
+    private TransactionHelper $transactionHelper;
 
     /**
      * @var IdentityRepository
      */
-    private $projectionRepository;
+    private ServiceEntityRepository $projectionRepository;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('middleware:bootstrap:identity-with-yubikey')

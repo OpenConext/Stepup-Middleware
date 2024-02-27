@@ -33,12 +33,9 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 #[ORM\Entity(repositoryClass: SecondFactorRepository::class)]
 class SecondFactor
 {
-    /**
-     * @var int
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    private $id;
+    private string $id;
 
     /**
      * @var string

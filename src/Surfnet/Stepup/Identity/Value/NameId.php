@@ -34,10 +34,7 @@ final class NameId implements JsonSerializable
      */
     private const MAX_LENGTH = 255;
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     public function __construct($value)
     {
@@ -62,12 +59,12 @@ final class NameId implements JsonSerializable
         return $this->value;
     }
 
-    public function equals($other)
+    public function equals($other): bool
     {
         return $this == $other;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

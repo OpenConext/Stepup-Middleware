@@ -31,7 +31,7 @@ class ConfigurableSettingsTest extends UnitTest
      * @test
      * @group domain
      */
-    public function a_new_email_verification_window_always_starts_now()
+    public function a_new_email_verification_window_always_starts_now(): void
     {
         $settings = ConfigurableSettings::create(3, []);
 
@@ -53,7 +53,7 @@ class ConfigurableSettingsTest extends UnitTest
         $this->assertTrue($secondWindow->isOpen());
     }
 
-    public function localeVerifications()
+    public function localeVerifications(): array
     {
         return [
             'No app locales, false'                                => [false, 'nl_NL', []],
@@ -71,7 +71,7 @@ class ConfigurableSettingsTest extends UnitTest
      * @param string   $localeString
      * @param string[] $validLocaleStrings
      */
-    public function a_locale_can_be_verified_to_be_a_valid_locale($isValid, $localeString, array $validLocaleStrings)
+    public function a_locale_can_be_verified_to_be_a_valid_locale(bool $isValid, string $localeString, array $validLocaleStrings): void
     {
         $configuration = ConfigurableSettings::create(3, $validLocaleStrings);
 

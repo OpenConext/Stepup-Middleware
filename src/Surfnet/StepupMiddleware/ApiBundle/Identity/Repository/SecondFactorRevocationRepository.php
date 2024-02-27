@@ -32,7 +32,7 @@ class SecondFactorRevocationRepository extends ServiceEntityRepository
     /**
      * @param SecondFactorRevocation $revocation
      */
-    public function save(SecondFactorRevocation $revocation)
+    public function save(SecondFactorRevocation $revocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($revocation);

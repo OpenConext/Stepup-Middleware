@@ -33,7 +33,7 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
     /**
      * @param ConfiguredInstitution $configuredInstitution
      */
-    public function save(ConfiguredInstitution $configuredInstitution)
+    public function save(ConfiguredInstitution $configuredInstitution): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($configuredInstitution);
@@ -44,7 +44,7 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
      * @param Institution $institution
      * @return bool
      */
-    public function hasConfigurationFor(Institution $institution)
+    public function hasConfigurationFor(Institution $institution): bool
     {
         $result = $this->createQueryBuilder('ci')
             ->select('ci.institution')
@@ -59,7 +59,7 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
     /**
      * @param Institution $institution
      */
-    public function removeConfigurationFor(Institution $institution)
+    public function removeConfigurationFor(Institution $institution): void
     {
         $this->createQueryBuilder('ci')
             ->delete()

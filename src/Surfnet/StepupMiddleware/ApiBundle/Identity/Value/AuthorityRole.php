@@ -52,7 +52,7 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function ra()
+    public static function ra(): self
     {
         return new self(self::ROLE_RA);
     }
@@ -62,7 +62,7 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function raa()
+    public static function raa(): self
     {
         return new self(self::ROLE_RAA);
     }
@@ -89,7 +89,7 @@ class AuthorityRole
      * @param AuthorityRole $other
      * @return bool
      */
-    public function equals(AuthorityRole $other)
+    public function equals(AuthorityRole $other): bool
     {
         return $this->role === $other->role;
     }
@@ -102,7 +102,7 @@ class AuthorityRole
         return $this->role;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->role;
     }

@@ -26,17 +26,14 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerific
 
 final class EmailVerificationEmailProcessor extends Processor
 {
-    /**
-     * @var EmailVerificationMailService
-     */
-    private $emailVerificationMailService;
+    private EmailVerificationMailService $emailVerificationMailService;
 
     public function __construct(EmailVerificationMailService $emailVerificationMailService)
     {
         $this->emailVerificationMailService = $emailVerificationMailService;
     }
 
-    public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
@@ -48,7 +45,7 @@ final class EmailVerificationEmailProcessor extends Processor
         }
     }
 
-    public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
@@ -60,7 +57,7 @@ final class EmailVerificationEmailProcessor extends Processor
         }
     }
 
-    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
         if ($event->emailVerificationRequired !== false) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(

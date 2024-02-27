@@ -19,7 +19,7 @@ namespace Surfnet\Stepup\Helper;
 
 class UserDataFormatter implements UserDataFormatterInterface
 {
-    private $applicationName;
+    private string $applicationName;
 
     public function __construct(string $applicationName)
     {

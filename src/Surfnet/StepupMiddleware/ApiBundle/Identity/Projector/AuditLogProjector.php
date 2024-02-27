@@ -49,15 +49,9 @@ use function sprintf;
  */
 class AuditLogProjector implements EventListener
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
-     */
-    private $auditLogRepository;
+    private AuditLogRepository $auditLogRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
-     */
-    private $identityRepository;
+    private IdentityRepository $identityRepository;
 
     public function __construct(
         AuditLogRepository $auditLogRepository,
@@ -92,7 +86,7 @@ class AuditLogProjector implements EventListener
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage)
+    private function applyAuditableEvent(AuditableEvent $event, DomainMessage $domainMessage): void
     {
         $auditLogMetadata = $event->getAuditLogMetadata();
 
@@ -155,7 +149,7 @@ class AuditLogProjector implements EventListener
         $this->auditLogRepository->save($entry);
     }
 
-    private function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    private function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $entries = $this->auditLogRepository->findByIdentityId($event->identityId);
         foreach ($entries as $auditLogEntry) {

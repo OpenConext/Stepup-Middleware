@@ -26,7 +26,7 @@ class AbstractCommandTest extends UnitTest
      * @test
      * @group command
      */
-    public function to_string_generates_command_identifiable_information()
+    public function to_string_generates_command_identifiable_information(): void
     {
         $command = new FixedUuidStubCommand();
         $uuid = $command->UUID;

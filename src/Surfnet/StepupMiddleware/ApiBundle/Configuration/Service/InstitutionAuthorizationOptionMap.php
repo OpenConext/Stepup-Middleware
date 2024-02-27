@@ -27,7 +27,7 @@ final class InstitutionAuthorizationOptionMap
     /**
      * @var InstitutionAuthorizationOption[]
      */
-    private $institutionOptions = [];
+    private array $institutionOptions = [];
 
     /**
      * InstitutionAuthorizationOptionMap constructor.
@@ -62,7 +62,7 @@ final class InstitutionAuthorizationOptionMap
      * @param InstitutionAuthorization[]|null
      * @return InstitutionAuthorizationOptionMap
      */
-    public static function fromInstitutionAuthorizations(Institution $institution, array $institutionAuthorizations)
+    public static function fromInstitutionAuthorizations(Institution $institution, array $institutionAuthorizations): self
     {
         return new self($institution, $institutionAuthorizations);
     }

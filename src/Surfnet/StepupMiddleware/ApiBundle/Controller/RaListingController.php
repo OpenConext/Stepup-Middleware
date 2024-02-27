@@ -32,15 +32,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RaListingController extends AbstractController
 {
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
+    private RaListingService $raListingService;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
+    private AuthorizationContextService $authorizationService;
 
     public function __construct(
         RaListingService $raListingService,
@@ -50,7 +44,7 @@ class RaListingController extends AbstractController
         $this->authorizationService = $authorizationService;
     }
 
-    public function getAction(Request $request, $identityId)
+    public function getAction(Request $request, $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

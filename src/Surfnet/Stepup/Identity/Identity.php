@@ -136,49 +136,40 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     private $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     private $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     private $email;
 
     /**
      * @var SecondFactorCollection|UnverifiedSecondFactor[]
      */
-    private $unverifiedSecondFactors;
+    private ?SecondFactorCollection $unverifiedSecondFactors = null;
 
     /**
      * @var SecondFactorCollection|VerifiedSecondFactor[]
      */
-    private $verifiedSecondFactors;
+    private ?SecondFactorCollection $verifiedSecondFactors = null;
 
     /**
      * @var SecondFactorCollection|VettedSecondFactor[]
      */
-    private $vettedSecondFactors;
+    private ?SecondFactorCollection $vettedSecondFactors = null;
 
-    /**
-     * @var RegistrationAuthorityCollection
-     */
-    private $registrationAuthorities;
+    private ?RegistrationAuthorityCollection $registrationAuthorities = null;
 
     /**
      * @var Locale
      */
     private $preferredLocale;
 
-    /**
-     * @var boolean
-     */
-    private $forgotten;
+    private ?bool $forgotten = null;
 
-    /**
-     * @var RecoveryTokenCollection
-     */
-    private $recoveryTokens;
+    private ?RecoveryTokenCollection $recoveryTokens = null;
 
     public static function create(
         IdentityId $id,
@@ -187,7 +178,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale
-    ) {
+    ): self {
         $identity = new self();
         $identity->apply(new IdentityCreatedEvent($id, $institution, $nameId, $commonName, $email, $preferredLocale));
 
@@ -198,7 +189,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
     }
 
-    public function rename(CommonName $commonName)
+    public function rename(CommonName $commonName): void
     {
         $this->assertNotForgotten();
 
@@ -210,7 +201,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityRenamedEvent($this->id, $this->institution, $commonName));
     }
 
-    public function changeEmail(Email $email)
+    public function changeEmail(Email $email): void
     {
         $this->assertNotForgotten();
 
@@ -222,7 +213,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityEmailChangedEvent($this->id, $this->institution, $email));
     }
 
-    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId, $maxNumberOfTokens)
+    public function bootstrapYubikeySecondFactor(SecondFactorId $secondFactorId, YubikeyPublicId $yubikeyPublicId, $maxNumberOfTokens): void
     {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -247,7 +238,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $maxNumberOfTokens
-    ) {
+    ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
@@ -291,7 +282,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $maxNumberOfTokens
-    ) {
+    ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
@@ -364,7 +355,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints)
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints): void
     {
         $this->assertNotForgotten();
         $this->apply(
@@ -384,7 +375,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $maxNumberOfTokens
-    ) {
+    ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
@@ -433,7 +424,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
         $maxNumberOfTokens
-    ) {
+    ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
 
@@ -471,7 +462,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function verifyEmail($verificationNonce)
+    public function verifyEmail($verificationNonce): void
     {
         $this->assertNotForgotten();
 
@@ -511,7 +502,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         SecondFactorTypeService $secondFactorTypeService,
         SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
         $provePossessionSkipped
-    ) {
+    ): void {
         $this->assertNotForgotten();
 
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
@@ -729,7 +720,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $registrationCode,
         DocumentNumber $documentNumber,
         $provePossessionSkipped
-    ) {
+    ): void {
         $this->assertNotForgotten();
 
         $secondFactorToVet = null;
@@ -754,7 +745,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $secondFactorToVet->vet($provePossessionSkipped, new OnPremiseVettingType($documentNumber));
     }
 
-    public function revokeSecondFactor(SecondFactorId $secondFactorId)
+    public function revokeSecondFactor(SecondFactorId $secondFactorId): void
     {
         $this->assertNotForgotten();
 
@@ -788,7 +779,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId)
+    public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId): void
     {
         $this->assertNotForgotten();
 
@@ -856,7 +847,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         Location $location,
         ContactInformation $contactInformation,
         InstitutionConfiguration $institutionConfiguration
-    ) {
+    ): void {
         $this->assertNotForgotten();
 
         if (!$institutionConfiguration->isInstitutionAllowedToAccreditRoles(new ConfigurationInstitution($this->institution->getInstitution()))) {
@@ -898,7 +889,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation)
+    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation): void
     {
         $this->assertNotForgotten();
 
@@ -931,7 +922,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         Institution $institution,
         RegistrationAuthorityRole $role,
         InstitutionConfiguration $institutionConfiguration
-    ) {
+    ): void {
         $this->assertNotForgotten();
 
         if (!$institutionConfiguration->isInstitutionAllowedToAccreditRoles(new ConfigurationInstitution($this->institution->getInstitution()))) {
@@ -955,7 +946,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function retractRegistrationAuthority(Institution $institution)
+    public function retractRegistrationAuthority(Institution $institution): void
     {
         $this->assertNotForgotten();
 
@@ -975,7 +966,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         ));
     }
 
-    public function expressPreferredLocale(Locale $preferredLocale)
+    public function expressPreferredLocale(Locale $preferredLocale): void
     {
         $this->assertNotForgotten();
 
@@ -986,7 +977,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new LocalePreferenceExpressedEvent($this->id, $this->institution, $preferredLocale));
     }
 
-    public function forget()
+    public function forget(): void
     {
         $this->assertNotForgotten();
 
@@ -997,7 +988,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->apply(new IdentityForgottenEvent($this->id, $this->institution));
     }
 
-    public function allVettedSecondFactorsRemoved()
+    public function allVettedSecondFactorsRemoved(): void
     {
         $this->apply(
             new VettedSecondFactorsAllRevokedEvent(
@@ -1024,12 +1015,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->recoveryTokens = new RecoveryTokenCollection();
     }
 
-    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event): void
     {
         $this->commonName = $event->commonName;
     }
 
-    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event): void
     {
         $this->email = $event->email;
     }
@@ -1190,7 +1181,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * vetted second factor on the target identity. The source
      * second factor is not yet forgotten.
      */
-    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event): void
     {
         $secondFactorId = (string)$event->newSecondFactorId;
         $vetted = VettedSecondFactor::create(
@@ -1418,7 +1409,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @throws DomainException
      */
-    private function assertNotForgotten()
+    private function assertNotForgotten(): void
     {
         if ($this->forgotten) {
             throw new DomainException('Operation on this Identity is not allowed: it has been forgotten');
@@ -1428,7 +1419,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @throws DomainException
      */
-    private function assertUserMayAddSecondFactor($maxNumberOfTokens)
+    private function assertUserMayAddSecondFactor($maxNumberOfTokens): void
     {
         if (count($this->unverifiedSecondFactors) +
             count($this->verifiedSecondFactors) +
@@ -1440,7 +1431,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    private function assertUserMayAddRecoveryToken(RecoveryTokenType $recoveryTokenType)
+    private function assertUserMayAddRecoveryToken(RecoveryTokenType $recoveryTokenType): void
     {
         // Assert this token type is not yet registered
         if ($this->recoveryTokens->hasType($recoveryTokenType)) {
@@ -1494,7 +1485,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         return $this->vettedSecondFactors->get((string)$secondFactorId);
     }
 
-    private function assertTokenNotAlreadyRegistered(SecondFactorType $type, SecondFactorIdentifier $identifier)
+    private function assertTokenNotAlreadyRegistered(SecondFactorType $type, SecondFactorIdentifier $identifier): void
     {
         foreach ($this->unverifiedSecondFactors as $unverified) {
             if ($unverified->typeAndIdentifierAreEqual($type, $identifier)) {
@@ -1513,7 +1504,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    private function assertSelfAssertedTokenRegistrationAllowed()
+    private function assertSelfAssertedTokenRegistrationAllowed(): void
     {
         if ($this->vettedSecondFactors->count() !== 0) {
             throw new DomainException("Self-asserted second factor registration is only allowed when no tokens are vetted yet");
@@ -1526,7 +1517,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * Verify that every vetted second factor is self-asserted
      */
-    private function assertAllVettedTokensAreSelfAsserted()
+    private function assertAllVettedTokensAreSelfAsserted(): bool
     {
         /** @var VettedSecondFactor $vettedToken */
         foreach ($this->vettedSecondFactors as $vettedSecondFactor) {

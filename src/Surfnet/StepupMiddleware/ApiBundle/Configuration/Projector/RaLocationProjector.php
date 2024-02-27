@@ -32,17 +32,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationProjector extends Projector
 {
-    /**
-     * @var RaLocationRepository
-     */
-    private $repository;
+    private RaLocationRepository $repository;
 
     public function __construct(RaLocationRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
+    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event): void
     {
         $raLocation = RaLocation::create(
             $event->raLocationId->getRaLocationId(),
@@ -55,7 +52,7 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
+    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -64,7 +61,7 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -73,7 +70,7 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -82,14 +79,14 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
         $this->repository->remove($raLocation);
     }
 
-    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         $this->repository->removeRaLocationsFor($event->institution);
     }

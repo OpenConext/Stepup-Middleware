@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class EmailVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -48,22 +48,22 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $registrationRequestedAt;
 
@@ -73,17 +73,17 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
     public $registrationCode;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -125,7 +125,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
         $this->preferredLocale         = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -179,7 +179,7 @@ class EmailVerifiedEvent extends IdentityEvent implements Forgettable, Possessio
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

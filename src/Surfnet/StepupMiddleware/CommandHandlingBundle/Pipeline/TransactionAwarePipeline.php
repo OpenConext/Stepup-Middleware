@@ -19,30 +19,19 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Doctrine\DBAL\Driver\Connection;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class TransactionAwarePipeline implements Pipeline
 {
-    /**
-     * @var Pipeline
-     */
-    private $innerPipeline;
+    private Pipeline $innerPipeline;
 
-    /**
-     * @var Connection
-     */
-    private $middlewareConnection;
+    private Connection $middlewareConnection;
 
-    /**
-     * @var Connection
-     */
-    private $gatewayConnection;
+    private Connection $gatewayConnection;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @param LoggerInterface $logger
@@ -81,7 +70,7 @@ class TransactionAwarePipeline implements Pipeline
 
             $this->middlewareConnection->commit();
             $this->gatewayConnection->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // log at highest level if we may have a split head in the db-cluster...
             if (strpos($e->getMessage(), 'ER_UNKNOWN_COM_ERROR')) {
                 $this->logger->emergency(

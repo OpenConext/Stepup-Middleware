@@ -23,10 +23,7 @@ use Webmozart\Assert\Assert;
 
 class SecondFactorProvePossessionHelper
 {
-    /**
-     * @var array
-     */
-    private $skipProvePossessionSecondFactorTypes;
+    private array $skipProvePossessionSecondFactorTypes;
 
     /**
      * @param SecondFactorTypeService $secondFactorTypeService
@@ -49,7 +46,7 @@ class SecondFactorProvePossessionHelper
      * @param SecondFactorType $secondFactorType
      * @return bool
      */
-    public function canSkipProvePossession(SecondFactorType $secondFactorType)
+    public function canSkipProvePossession(SecondFactorType $secondFactorType): bool
     {
         return in_array($secondFactorType->getSecondFactorType(), $this->skipProvePossessionSecondFactorTypes);
     }

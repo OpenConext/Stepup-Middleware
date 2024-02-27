@@ -28,7 +28,7 @@ class ConfiguredInstitutionTest extends TestCase
      * @test
      * @group entity
      */
-    public function a_configured_institution_is_correctly_serialized_to_json()
+    public function a_configured_institution_is_correctly_serialized_to_json(): void
     {
         $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];
         $configuredInstitution = ConfiguredInstitution::createFrom(

@@ -27,7 +27,7 @@ final class EventCollection implements IteratorAggregate
     /**
      * @var string[]
      */
-    private $eventNames = [];
+    private array $eventNames = [];
 
     public function __construct(array $eventNames)
     {
@@ -55,10 +55,10 @@ final class EventCollection implements IteratorAggregate
         return $this->eventNames;
     }
 
-    public function formatAsEventStreamTypes()
+    public function formatAsEventStreamTypes(): array
     {
         return array_map(
-            function ($eventName) {
+            function ($eventName): string {
                 return strtr($eventName, '\\', '.');
             },
             $this->eventNames
@@ -69,7 +69,7 @@ final class EventCollection implements IteratorAggregate
      * @param array $subset
      * @return EventCollection
      */
-    public function select(array $subset)
+    public function select(array $subset): self
     {
         $nonAvailableEventNames = array_diff($subset, $this->eventNames);
 
@@ -89,7 +89,7 @@ final class EventCollection implements IteratorAggregate
      * @param $eventName
      * @return bool
      */
-    public function contains($eventName)
+    public function contains($eventName): bool
     {
         return in_array($eventName, $this->eventNames);
     }

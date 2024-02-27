@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository;
 
@@ -26,7 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
 #[ORM\Index(name: 'idx_vetted_second_factor_type', columns: ['type'])]
 #[ORM\Index(name: 'idx_vetted_second_factor_vetting_type', columns: ['vetting_type'])]
 #[ORM\Entity(repositoryClass: VettedSecondFactorRepository::class)]
-class VettedSecondFactor implements \JsonSerializable
+class VettedSecondFactor implements JsonSerializable
 {
     /**
      * @var string

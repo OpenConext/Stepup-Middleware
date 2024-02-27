@@ -81,7 +81,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @dataProvider eventProvider
      * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
         $providesSensitiveData = method_exists($event, 'getSensitiveData') || method_exists($event, 'setSensitiveData');
@@ -115,7 +115,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @param string $serializedSensitiveData
      * @param SerializableInterface $event
      */
-    public function an_serialized_event_should_be_the_same(string $serializedData, string $serializedSensitiveData, SerializableInterface $event)
+    public function an_serialized_event_should_be_the_same(string $serializedData, string $serializedSensitiveData, SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
 
@@ -134,7 +134,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization()
+    public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization(): void
     {
         // use a fixed datetime instance, to prevent microsecond precision issues in PHP 7.1+
         $startDateTime = new DateTime(new CoreDateTime('@1000'));
@@ -143,7 +143,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertTrue($window == EmailVerificationWindow::deserialize($window->serialize()));
     }
 
-    public function eventProvider()
+    public function eventProvider(): array
     {
         return [
             'CompliedWithUnverifiedSecondFactorRevocationEvent:sms' => [
@@ -546,7 +546,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
         ];
     }
 
-    public function serializedDataProvider(){
+    public function serializedDataProvider(): array{
         return [
             // Tests for changes in BC support for adding the VettingType in the SecondFactorVettedEvents in favour of the 'DocumentNumber'
             'SecondFactorVettedEvent:support-new-event-with-vetting-type' => [
@@ -616,7 +616,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
         ];
     }
 
-    private static function UUID()
+    private static function UUID(): string
     {
         return (string) Uuid::uuid4();
     }

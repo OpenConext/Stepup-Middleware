@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class ShowRaaContactInformationOptionTest extends TestCase
 {
@@ -31,9 +33,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
      *
      * @param mixed $nonBooleanProvider
      */
-    public function show_raa_contact_information_option_can_only_be_boolean($nonBooleanProvider)
+    public function show_raa_contact_information_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new ShowRaaContactInformationOption($nonBooleanProvider);
     }
@@ -43,7 +45,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_show_raa_contact_information_options_with_the_same_values_are_equal()
+    public function two_show_raa_contact_information_options_with_the_same_values_are_equal(): void
     {
         $option = true;
 
@@ -58,7 +60,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_show_raa_contact_information_options_with_different_values_are_not_equal()
+    public function two_show_raa_contact_information_options_with_different_values_are_not_equal(): void
     {
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
         $different            = new ShowRaaContactInformationOption(false);
@@ -71,7 +73,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function default_value_is_true()
+    public function default_value_is_true(): void
     {
         $default = ShowRaaContactInformationOption::getDefault();
         $true = new ShowRaaContactInformationOption(true);
@@ -79,14 +81,14 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $this->assertTrue($default->equals($true));
     }
 
-    public function nonBooleanProvider()
+    public function nonBooleanProvider(): array
     {
         return [
             'string'       => [''],
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 }

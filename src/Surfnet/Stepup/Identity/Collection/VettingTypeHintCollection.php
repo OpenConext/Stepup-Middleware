@@ -26,7 +26,7 @@ use function json_encode;
 
 final class VettingTypeHintCollection implements JsonSerializable, SerializableInterface
 {
-    private $elements = [];
+    private array $elements = [];
 
     public function __construct(array $hints = [])
     {
@@ -35,7 +35,7 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         }
     }
 
-    public function add(VettingTypeHint $hint)
+    public function add(VettingTypeHint $hint): void
     {
         if (in_array($hint, $this->elements)) {
             throw new RuntimeException(sprintf(
@@ -47,7 +47,7 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         $this->elements[] = $hint;
     }
 
-    public function remove(VettingTypeHint $hint)
+    public function remove(VettingTypeHint $hint): void
     {
         if (!in_array($hint, $this->elements)) {
             throw new RuntimeException(sprintf(
@@ -56,7 +56,7 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
             ));
         }
 
-        $elements = array_filter($this->elements, function ($inst) use ($hint) {
+        $elements = array_filter($this->elements, function ($inst) use ($hint): bool {
             return !$hint->equals($inst);
         });
         $this->elements = $elements;
@@ -69,7 +69,7 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
 
     public static function deserialize(array $data)
     {
-        $institutions = array_map(function ($hint) {
+        $institutions = array_map(function (array $hint): VettingTypeHint {
             return new VettingTypeHint($hint['locale'], $hint['hint']);
         }, $data);
 

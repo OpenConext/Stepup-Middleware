@@ -24,10 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 
 class SraaService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
-     */
-    private $sraaRepository;
+    private SraaRepository $sraaRepository;
 
     public function __construct(SraaRepository $sraaRepository)
     {
@@ -46,7 +43,7 @@ class SraaService
     /**
      * @return Sraa[]
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->sraaRepository->findAll();
     }

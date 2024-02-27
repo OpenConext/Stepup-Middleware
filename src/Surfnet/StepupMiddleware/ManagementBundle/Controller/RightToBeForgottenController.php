@@ -41,12 +41,9 @@ class RightToBeForgottenController extends AbstractController
     /**
      * @return TransactionAwarePipeline
      */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
     public function __construct(TransactionAwarePipeline $pipeline, IdentityService $identityService)
     {
@@ -83,7 +80,7 @@ class RightToBeForgottenController extends AbstractController
      * @param Command $command
      * @return JsonResponse
      */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, Command $command): JsonResponse
     {
         $this->pipeline->process($command);
 
@@ -102,7 +99,7 @@ class RightToBeForgottenController extends AbstractController
      * @param Institution $institution
      * @throws ConflictHttpException
      */
-    private function assertMayForget(NameId $nameId, Institution $institution)
+    private function assertMayForget(NameId $nameId, Institution $institution): void
     {
         $credentials =
             $this->identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);

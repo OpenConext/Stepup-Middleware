@@ -33,12 +33,12 @@ class IdentitySelfAssertedTokenOptionsRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null): ?IdentitySelfAssertedTokenOptions
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?IdentitySelfAssertedTokenOptions
     {
         return parent::find($id);
     }
 
-    public function save(IdentitySelfAssertedTokenOptions $options)
+    public function save(IdentitySelfAssertedTokenOptions $options): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($options);

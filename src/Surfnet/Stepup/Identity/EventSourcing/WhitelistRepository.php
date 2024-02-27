@@ -23,6 +23,7 @@ use Broadway\EventSourcing\AggregateFactory\AggregateFactory;
 use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\EventSourcing\EventStreamDecorator;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Surfnet\Stepup\Identity\Whitelist;
 
 class WhitelistRepository extends EventSourcingRepository
 {
@@ -41,7 +42,7 @@ class WhitelistRepository extends EventSourcingRepository
         parent::__construct(
             $eventStore,
             $eventBus,
-            \Surfnet\Stepup\Identity\Whitelist::class,
+            Whitelist::class,
             $aggregateFactory,
             $eventStreamDecorators
         );

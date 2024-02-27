@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -34,10 +35,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class RaListingRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
@@ -49,7 +47,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param IdentityId $identityId The RA's identity id.
      * @return null|RaListing[]
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): array
     {
         return parent::findBy(['identityId' => (string) $identityId]);
     }
@@ -59,7 +57,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param Institution $raInstitution
      * @return null|RaListing
      */
-    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): ?object
     {
         return parent::findOneBy([
             'identityId' => (string) $identityId,
@@ -105,7 +103,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param Institution $institution
      * @return RaListing[]
      */
-    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): array
     {
         return parent::findBy([
             'identityId' => (string) $identityId,
@@ -113,7 +111,7 @@ class RaListingRepository extends ServiceEntityRepository
         ]);
     }
 
-    public function save(RaListing $raListingEntry)
+    public function save(RaListing $raListingEntry): void
     {
         $this->getEntityManager()->persist($raListingEntry);
         $this->getEntityManager()->flush();
@@ -124,9 +122,9 @@ class RaListingRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.NPathComplexity)      below complex or hard to maintain.
      *
      * @param RaListingQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createSearchQuery(RaListingQuery $query)
+    public function createSearchQuery(RaListingQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('r');
 
@@ -196,9 +194,9 @@ class RaListingRepository extends ServiceEntityRepository
 
     /**
      * @param RaListingQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaListingQuery $query)
+    public function createOptionsQuery(RaListingQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('r')
             ->select('r.institution, r.raInstitution')
@@ -222,7 +220,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param Institution $raInstitution
      * @return ArrayCollection
      */
-    public function listRasFor(Institution $raInstitution)
+    public function listRasFor(Institution $raInstitution): ArrayCollection
     {
         $listings = $this->createQueryBuilder('rl')
             ->where('rl.raInstitution = :institution')
@@ -237,7 +235,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param IdentityId $identityId
      * @return void
      */
-    public function removeByIdentityId(IdentityId $identityId, Institution $institution)
+    public function removeByIdentityId(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
@@ -254,7 +252,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param Institution $raInstitution
      * @return void
      */
-    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
@@ -271,7 +269,7 @@ class RaListingRepository extends ServiceEntityRepository
      * @param Institution $institution
      * @return void
      */
-    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')

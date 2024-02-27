@@ -18,12 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 
 class RaCandidateQuery extends AbstractQuery
 {
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     * @var string|Institution
      */
     public $institution;
 
@@ -43,7 +44,7 @@ class RaCandidateQuery extends AbstractQuery
     public $secondFactorTypes;
 
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     * @var string|Institution
      */
     public $raInstitution;
 

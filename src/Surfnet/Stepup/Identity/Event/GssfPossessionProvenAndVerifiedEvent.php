@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'stepup_provider',
@@ -48,37 +48,37 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forg
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\StepupProvider
+     * @var StepupProvider
      */
     public $stepupProvider;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\GssfId
+     * @var GssfId
      */
     public $gssfId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $registrationRequestedAt;
 
@@ -125,7 +125,7 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forg
         $this->registrationCode          = $registrationCode;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -182,7 +182,7 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forg
             ->withSecondFactorIdentifier($this->gssfId, new SecondFactorType((string) $this->stepupProvider));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->gssfId = $sensitiveData->getSecondFactorIdentifier();
         $this->email = $sensitiveData->getEmail();

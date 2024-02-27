@@ -75,7 +75,7 @@ class SamlEntity
      * @param array  $configuration
      * @return SamlEntity
      */
-    public static function createServiceProvider($entityId, array $configuration)
+    public static function createServiceProvider($entityId, array $configuration): self
     {
         return new self($entityId, self::TYPE_SP, json_encode($configuration));
     }
@@ -85,7 +85,7 @@ class SamlEntity
      * @param array  $configuration
      * @return SamlEntity
      */
-    public static function createIdentityProvider($entityId, array $configuration)
+    public static function createIdentityProvider($entityId, array $configuration): self
     {
         return new self($entityId, self::TYPE_IDP, json_encode($configuration));
     }

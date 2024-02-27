@@ -22,16 +22,16 @@ use Assert\Assertion;
 
 final class AuthorizationDecision
 {
-    private $code;
+    private int $code;
 
-    private $errorMessages;
+    private array $errorMessages;
 
-    public static function allowed()
+    public static function allowed(): self
     {
         return new self(200);
     }
 
-    public static function denied(array $messages = [])
+    public static function denied(array $messages = []): self
     {
         Assertion::allString($messages, 'The error messages should all be strings');
         return new self(403, $messages);

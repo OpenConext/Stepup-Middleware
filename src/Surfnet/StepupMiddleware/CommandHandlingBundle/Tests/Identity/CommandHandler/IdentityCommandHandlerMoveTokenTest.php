@@ -69,7 +69,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
  */
 class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
     /**
      * @var AllowedSecondFactorListService|m\MockInterface
@@ -136,7 +136,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_second_factor_can_be_moved()
+    public function test_a_second_factor_can_be_moved(): void
     {
         $this->setUpInstitutionConfiguration(2, ['yubikey']);
 
@@ -225,7 +225,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ]);
     }
 
-    public function test_can_not_be_moved_if_already_moved()
+    public function test_can_not_be_moved_if_already_moved(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -316,7 +316,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_bootstrapped_thus_vetted_token()
+    public function test_can_not_be_moved_if_already_present_as_bootstrapped_thus_vetted_token(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -396,7 +396,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
     }
 
 
-    public function test_can_not_be_moved_if_already_present_as_vetted_token()
+    public function test_can_not_be_moved_if_already_present_as_vetted_token(): void
     {
         $this->expectExceptionMessage("The second factor was registered as a vetted second factor");
         $this->expectException(DomainException::class);
@@ -504,7 +504,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_verified_token()
+    public function test_can_not_be_moved_if_already_present_as_verified_token(): void
     {
         $this->expectExceptionMessage("The second factor was already registered as a verified second factor");
         $this->expectException(DomainException::class);
@@ -600,7 +600,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_already_present_as_unverified_token()
+    public function test_can_not_be_moved_if_already_present_as_unverified_token(): void
     {
         $this->expectExceptionMessage("The second factor was already registered as a unverified second factor");
         $this->expectException(DomainException::class);
@@ -684,7 +684,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    public function test_can_not_be_moved_to_same_institution()
+    public function test_can_not_be_moved_to_same_institution(): void
     {
         $this->expectExceptionMessage("Cannot move the second factor to the same institution");
         $this->expectException(DomainException::class);
@@ -751,7 +751,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    public function test_can_not_be_moved_if_token_type_not_allowed_for_institution()
+    public function test_can_not_be_moved_if_token_type_not_allowed_for_institution(): void
     {
         $this->expectExceptionMessage('Institution "institution2.com" does not support second factor "yubikey"');
         $this->expectException(SecondFactorNotAllowedException::class);
@@ -829,7 +829,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ]);
     }
 
-    public function test_the_max_number_of_tokens_can_not_be_exceeded()
+    public function test_the_max_number_of_tokens_can_not_be_exceeded(): void
     {
         $this->expectExceptionMessage("User may not have more than 1 token(s)");
         $this->expectException(DomainException::class);
@@ -908,7 +908,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([]);
     }
 
-    private function setUpInstitutionConfiguration(int $allowedMaxNumberOfTokens, array $allowedTokenTypes)
+    private function setUpInstitutionConfiguration(int $allowedMaxNumberOfTokens, array $allowedTokenTypes): void
     {
         $secondFactorTypes = [];
         foreach ($allowedTokenTypes as $type) {

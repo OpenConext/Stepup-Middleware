@@ -56,22 +56,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
  */
 class CommandAuthorizationService
 {
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationContextService;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private WhitelistService $whitelistService;
+    private IdentityService $identityService;
+    private AuthorizationContextService $authorizationContextService;
+    private LoggerInterface $logger;
 
     public function __construct(
         WhitelistService $whitelistService,
@@ -90,7 +78,7 @@ class CommandAuthorizationService
      * @param IdentityId|null $actorId
      * @return bool
      */
-    public function isInstitutionWhitelisted(Institution $institution, IdentityId $actorId = null)
+    public function isInstitutionWhitelisted(Institution $institution, IdentityId $actorId = null): bool
     {
         // If the actor is SRAA all actions should be allowed
         if (!is_null($actorId) && $this->isSraa($actorId)) {

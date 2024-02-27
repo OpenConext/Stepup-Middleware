@@ -25,6 +25,7 @@ use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 /**
  * Once the Assert 2.0 library has been built this should be converted to the lazy assertions so we can report
@@ -32,15 +33,9 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class ConfigurationStructureValidator extends ConstraintValidator
 {
-    /**
-     * @var GatewayConfigurationValidator
-     */
-    private $gatewayConfigurationValidator;
+    private GatewayConfigurationValidator $gatewayConfigurationValidator;
 
-    /**
-     * @var EmailTemplatesConfigurationValidator
-     */
-    private $emailTemplatesConfigurationValidator;
+    private EmailTemplatesConfigurationValidator $emailTemplatesConfigurationValidator;
 
     public function __construct(
         GatewayConfigurationValidator $gatewayConfigurationValidator,
@@ -50,9 +45,9 @@ class ConfigurationStructureValidator extends ConstraintValidator
         $this->emailTemplatesConfigurationValidator = $emailTemplatesConfigurationValidator;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        /** @var \Symfony\Component\Validator\Violation\ConstraintViolationBuilder|false $violation */
+        /** @var ConstraintViolationBuilder|false $violation */
         $violation = false;
 
         try {
@@ -77,7 +72,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         return JsonHelper::decode($rawValue);
     }
 
-    public function validateRoot($configuration)
+    public function validateRoot($configuration): void
     {
         Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
 
@@ -94,14 +89,14 @@ class ConfigurationStructureValidator extends ConstraintValidator
         $this->validateEmailTemplatesConfiguration($configuration, 'email_templates');
     }
 
-    private function validateGatewayConfiguration($configuration, $propertyPath)
+    private function validateGatewayConfiguration(array $configuration, string $propertyPath): void
     {
         Assertion::isArray($configuration['gateway'], 'Property "gateway" must have an object as value', $propertyPath);
 
         $this->gatewayConfigurationValidator->validate($configuration['gateway'], $propertyPath);
     }
 
-    private function validateSraaConfiguration($configuration, $propertyPath)
+    private function validateSraaConfiguration(array $configuration, string $propertyPath): void
     {
         Assertion::isArray(
             $configuration['sraa'],
@@ -118,7 +113,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         }
     }
 
-    private function validateEmailTemplatesConfiguration($configuration, $propertyPath)
+    private function validateEmailTemplatesConfiguration(array $configuration, string $propertyPath): void
     {
         Assertion::isArray(
             $configuration['email_templates'],

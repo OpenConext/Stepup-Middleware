@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddEventBusListenersCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.event_bus.buffered');
         $eventListenerDefinitions = $container->findTaggedServiceIds('event_bus.event_listener');

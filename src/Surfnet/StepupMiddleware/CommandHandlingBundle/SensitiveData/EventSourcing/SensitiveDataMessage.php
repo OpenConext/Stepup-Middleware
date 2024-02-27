@@ -24,15 +24,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class SensitiveDataMessage
 {
-    /**
-     * @var IdentityId
-     */
-    private $identityId;
+    private IdentityId $identityId;
 
-    /**
-     * @var int
-     */
-    private $playhead;
+    private int $playhead;
 
     /**
      * @var SensitiveData
@@ -58,7 +52,7 @@ class SensitiveDataMessage
     /**
      * Forgets all contained sensitive data.
      */
-    public function forget()
+    public function forget(): void
     {
         $this->sensitiveData = $this->sensitiveData->forget();
     }

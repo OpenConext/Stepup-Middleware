@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class IdentityProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
-    public function validate(array $configuration, $propertyPath)
+    public function validate(array $configuration, $propertyPath): void
     {
         Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
@@ -57,7 +57,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateStringValue($configuration, $name, $propertyPath)
+    private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
@@ -67,7 +67,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateBooleanValue($configuration, $name, $propertyPath)
+    private function validateBooleanValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
@@ -76,7 +76,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
      * @param array  $configuration
      * @param string $propertyPath
      */
-    private function validateLoaDefinition($configuration, $propertyPath)
+    private function validateLoaDefinition(array $configuration, string $propertyPath): void
     {
         $value = $configuration['loa'];
         $path  = $propertyPath . '.loa';

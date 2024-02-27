@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class JsonCollectionResponse extends JsonResponse
 {
-    public static function fromPaginator(Pagerfanta $paginator, $filters = array())
+    public static function fromPaginator(Pagerfanta $paginator, $filters = array()): self
     {
         return new self(
             $paginator->getNbResults(),
@@ -43,7 +43,7 @@ class JsonCollectionResponse extends JsonResponse
      * @param array $headers
      * @param array $filters
      */
-    public function __construct($totalItems, $page, $pageSize, array $collection, $headers = array(), $filters = array())
+    public function __construct($totalItems, $page, $pageSize, array $collection, array $headers = array(), $filters = array())
     {
         $data = array(
             'collection' => array(

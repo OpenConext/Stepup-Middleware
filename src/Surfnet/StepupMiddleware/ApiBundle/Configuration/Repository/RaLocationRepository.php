@@ -72,7 +72,7 @@ class RaLocationRepository extends ServiceEntityRepository
     /**
      * @param RaLocation $raLocation
      */
-    public function save(RaLocation $raLocation)
+    public function save(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($raLocation);
@@ -82,7 +82,7 @@ class RaLocationRepository extends ServiceEntityRepository
     /**
      * @param RaLocation $raLocation
      */
-    public function remove(RaLocation $raLocation)
+    public function remove(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->remove($raLocation);
@@ -105,7 +105,7 @@ class RaLocationRepository extends ServiceEntityRepository
     /**
      * @param Institution $institution
      */
-    public function removeRaLocationsFor(Institution $institution)
+    public function removeRaLocationsFor(Institution $institution): void
     {
         $this->createQueryBuilder('rl')
             ->delete()

@@ -42,7 +42,7 @@ use function array_key_exists;
  */
 class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'source_institution',
         'target_name_id',
@@ -56,47 +56,44 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         'email',
     ];
 
-    /**
-     * @var Institution
-     */
-    private $sourceInstitution;
+    private Institution $sourceInstitution;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
     public $targetNameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $newSecondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
+     * @var Locale
      */
     public $preferredLocale;
     /**
@@ -135,7 +132,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -200,7 +197,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();

@@ -24,15 +24,9 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class EmailVerificationWindow implements SerializableInterface
 {
-    /**
-     * @var DateTime
-     */
-    private $start;
+    private DateTime $start;
 
-    /**
-     * @var DateTime
-     */
-    private $end;
+    private DateTime $end;
 
     private function __construct(DateTime $start, DateTime $end)
     {
@@ -45,7 +39,7 @@ final class EmailVerificationWindow implements SerializableInterface
      * @param DateTime  $start
      * @return EmailVerificationWindow
      */
-    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start)
+    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start): EmailVerificationWindow
     {
         return new EmailVerificationWindow($start, $timeFrame->getEndWhenStartingAt($start));
     }
@@ -55,7 +49,7 @@ final class EmailVerificationWindow implements SerializableInterface
      * @param DateTime $end
      * @return EmailVerificationWindow
      */
-    public static function createWindowFromTill(DateTime $start, DateTime $end)
+    public static function createWindowFromTill(DateTime $start, DateTime $end): EmailVerificationWindow
     {
         if (!$end->comesAfter($start)) {
             throw new InvalidArgumentException(sprintf(
@@ -72,7 +66,7 @@ final class EmailVerificationWindow implements SerializableInterface
     /**
      * @return bool
      */
-    public function isOpen()
+    public function isOpen(): bool
     {
         $now = DateTime::now();
 
@@ -91,7 +85,7 @@ final class EmailVerificationWindow implements SerializableInterface
      * @param EmailVerificationWindow $other
      * @return bool
      */
-    public function equals(EmailVerificationWindow $other)
+    public function equals(EmailVerificationWindow $other): bool
     {
         return $this->start == $other->start && $this->end == $other->end;
     }
@@ -109,7 +103,7 @@ final class EmailVerificationWindow implements SerializableInterface
         return ['start' => (string) $this->start, 'end' => (string) $this->end];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->start . '-' . $this->end;
     }

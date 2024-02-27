@@ -30,15 +30,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaSecondFactorController extends AbstractController
 {
-    /**
-     * @var RaSecondFactorService
-     */
-    private $raSecondFactorService;
+    private RaSecondFactorService $raSecondFactorService;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
+    private AuthorizationContextService $authorizationService;
 
     public function __construct(
         RaSecondFactorService $raSecondFactorService,
@@ -61,7 +55,7 @@ final class RaSecondFactorController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 
-    public function exportAction(Request $request)
+    public function exportAction(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -76,7 +70,7 @@ final class RaSecondFactorController extends AbstractController
      * @param Request $request
      * @return RaSecondFactorQuery
      */
-    private function buildRaSecondFactorQuery(Request $request)
+    private function buildRaSecondFactorQuery(Request $request): RaSecondFactorQuery
     {
         $actorId = new IdentityId($request->get('actorId'));
 

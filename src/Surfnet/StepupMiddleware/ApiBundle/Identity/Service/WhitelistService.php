@@ -22,10 +22,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryReposit
 
 class WhitelistService
 {
-    /**
-     * @var WhitelistEntryRepository
-     */
-    private $whitelistEntryRepository;
+    private WhitelistEntryRepository $whitelistEntryRepository;
 
     public function __construct(WhitelistEntryRepository $whitelistEntryRepository)
     {

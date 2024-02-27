@@ -33,38 +33,22 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveI
 
 final class MappedInstitutionConfiguration
 {
-    /**
-     * @var Institution
-     */
-    private $institution;
+    private Institution $institution;
 
-    /**
-     * @var ShowRaaContactInformationOption
-     */
-    private $showRaaContactInformationOption;
+    private ShowRaaContactInformationOption $showRaaContactInformationOption;
 
-    /**
-     * @var UseRaLocationsOption
-     */
-    private $useRaLocationsOption;
+    private UseRaLocationsOption $useRaLocationsOption;
 
-    /**
-     * @var VerifyEmailOption
-     */
-    private $verifyEmailOption;
+    private VerifyEmailOption $verifyEmailOption;
 
-    /** @var SelfVetOption */
-    private $selfVetOption;
+    private SelfVetOption $selfVetOption;
 
-    /**
-     * @var NumberOfTokensPerIdentityOption
-     */
-    private $numberOfTokensPerIdentityOption;
+    private NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
     /**
      * @var RaLocation[]
      */
-    private $raLocations;
+    private array $raLocations;
 
     /**
      * @param Institution $institution
@@ -96,7 +80,7 @@ final class MappedInstitutionConfiguration
     /**
      * @return RemoveInstitutionConfigurationByUnnormalizedIdCommand
      */
-    public function inferRemoveInstitutionConfigurationByIdCommand()
+    public function inferRemoveInstitutionConfigurationByIdCommand(): RemoveInstitutionConfigurationByUnnormalizedIdCommand
     {
         $command              = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
         $command->UUID        = (string) Uuid::uuid4();
@@ -108,7 +92,7 @@ final class MappedInstitutionConfiguration
     /**
      * @return CreateInstitutionConfigurationCommand
      */
-    public function inferCreateInstitutionConfigurationCommand()
+    public function inferCreateInstitutionConfigurationCommand(): CreateInstitutionConfigurationCommand
     {
         $command              = new CreateInstitutionConfigurationCommand();
         $command->UUID        = (string) Uuid::uuid4();
@@ -120,7 +104,7 @@ final class MappedInstitutionConfiguration
     /**
      * @return ReconfigureInstitutionConfigurationOptionsCommand
      */
-    public function inferReconfigureInstitutionConfigurationCommand()
+    public function inferReconfigureInstitutionConfigurationCommand(): ReconfigureInstitutionConfigurationOptionsCommand
     {
         $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
         $command->UUID                            = (string) Uuid::uuid4();
@@ -137,7 +121,7 @@ final class MappedInstitutionConfiguration
     /**
      * @return AddRaLocationCommand[]
      */
-    public function inferAddRaLocationCommands()
+    public function inferAddRaLocationCommands(): array
     {
         $commands = [];
         $institution = $this->institution->getInstitution();

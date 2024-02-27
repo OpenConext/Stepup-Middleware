@@ -18,13 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
 #[ORM\Table]
 #[ORM\Index(name: 'idx_institution', columns: ['institution'])]
 #[ORM\Entity(repositoryClass: VerifiedSecondFactorRepository::class)]
-class VerifiedSecondFactor implements \JsonSerializable
+class VerifiedSecondFactor implements JsonSerializable
 {
     /**
      * @var string
@@ -71,7 +73,7 @@ class VerifiedSecondFactor implements \JsonSerializable
     public $registrationCode;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     #[ORM\Column(type: 'stepup_datetime')]
     public $registrationRequestedAt;

@@ -37,25 +37,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
  */
 class AuthorizationContextService
 {
-    /**
-     * @var SraaService
-     */
-    private $sraaService;
+    private SraaService $sraaService;
 
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $institutionRepository;
+    private ConfiguredInstitutionRepository $institutionRepository;
 
-    /**
-     * @var AuthorizationRepository
-     */
-    private $authorizationRepository;
+    private AuthorizationRepository $authorizationRepository;
 
     public function __construct(
         SraaService $sraaService,
@@ -102,7 +90,7 @@ class AuthorizationContextService
         return new InstitutionAuthorizationContext($institutions, $isSraa);
     }
 
-    private function isSraa(IdentityId $actorId)
+    private function isSraa(IdentityId $actorId): bool
     {
         $identity = $this->identityService->find((string)$actorId);
         if (!$identity) {

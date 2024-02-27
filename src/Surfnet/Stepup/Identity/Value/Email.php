@@ -23,15 +23,12 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class Email implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $email;
+    private string $email;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('unknown@domain.invalid');
     }
@@ -63,12 +60,12 @@ final class Email implements JsonSerializable
         return $this->email;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->email;
     }
 
-    public function equals(Email $other)
+    public function equals(Email $other): bool
     {
         return $this->email === $other->email;
     }

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
@@ -28,10 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
 
 class RaListingService extends AbstractSearchService
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
+    private RaListingRepository $raListingRepository;
 
     public function __construct(RaListingRepository $raListingRepository)
     {
@@ -42,7 +40,7 @@ class RaListingService extends AbstractSearchService
      * @param IdentityId $identityId
      * @param Institution $raInstitution
      * @param InstitutionAuthorizationContextInterface $authorizationContext
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
+     * @return null|RaListing
      */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
@@ -54,7 +52,7 @@ class RaListingService extends AbstractSearchService
 
     /**
      * @param RaListingQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function search(RaListingQuery $query)
     {

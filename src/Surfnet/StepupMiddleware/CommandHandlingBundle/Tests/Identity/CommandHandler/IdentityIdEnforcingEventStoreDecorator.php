@@ -28,7 +28,7 @@ final class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterfac
     /**
      * @var EventStoreInterface
      */
-    private $decoratedEventStore;
+    private EventStoreInterface $decoratedEventStore;
 
     public function __construct(EventStoreInterface $decoratedEventStore)
     {
@@ -68,7 +68,7 @@ final class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterfac
     /**
      * @param DomainEventStreamInterface $stream
      */
-    public function assertIdentityAggregate(DomainEventStreamInterface $stream)
+    public function assertIdentityAggregate(DomainEventStreamInterface $stream): void
     {
         foreach ($stream as $message) {
             if (!$message->getPayload() instanceof IdentityEvent) {

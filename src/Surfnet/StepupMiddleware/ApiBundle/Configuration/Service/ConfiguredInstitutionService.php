@@ -25,10 +25,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
 class ConfiguredInstitutionService
 {
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $repository;
+    private ConfiguredInstitutionRepository $repository;
 
     public function __construct(ConfiguredInstitutionRepository $repository)
     {
@@ -38,7 +35,7 @@ class ConfiguredInstitutionService
     /**
      * @return ConfiguredInstitution[]
      */
-    public function getAll()
+    public function getAll(): array
     {
         return $this->repository->findAll();
     }
@@ -47,7 +44,7 @@ class ConfiguredInstitutionService
     /**
      * @return InstitutionListing[]
      */
-    public function getAllAsInstitution()
+    public function getAllAsInstitution(): array
     {
         $configuredInstitutions = $this->repository->findAll();
 

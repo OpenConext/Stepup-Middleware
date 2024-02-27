@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class AppointedAsRaaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'institution',
         'name_id',
@@ -50,7 +50,7 @@ class AppointedAsRaaEvent extends IdentityEvent implements RightToObtainDataInte
         $this->nameId = $nameId;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

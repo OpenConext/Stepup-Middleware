@@ -44,35 +44,20 @@ use Surfnet\StepupBundle\Value\VettingType as StepupVettingType;
  */
 class VerifiedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    private $id;
+    private ?SecondFactorId $id = null;
+
+    private ?Identity $identity = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
-     */
-    private $identity;
-
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
-    /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
-     */
-    private $registrationRequestedAt;
+    private ?DateTime $registrationRequestedAt = null;
 
-    /**
-     * @var string
-     */
-    private $registrationCode;
+    private ?string $registrationCode = null;
 
     /**
      * @param SecondFactorId $id
@@ -90,7 +75,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
         $registrationCode
-    ) {
+    ): self {
         if (!is_string($registrationCode)) {
             throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
         }
@@ -123,7 +108,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
      * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
      */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
+    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier): bool
     {
         return strcasecmp($registrationCode, $this->registrationCode) === 0
             && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
@@ -132,7 +117,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     /**
      * @return bool
      */
-    public function canBeVettedNow()
+    public function canBeVettedNow(): bool
     {
         return !DateTime::now()->comesAfter(
             $this->registrationRequestedAt
@@ -141,7 +126,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function vet($provePossessionSkipped, VettingType $type)
+    public function vet($provePossessionSkipped, VettingType $type): void
     {
         if ($provePossessionSkipped) {
             $this->apply(
@@ -177,7 +162,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new VerifiedSecondFactorRevokedEvent(
@@ -190,7 +175,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithVerifiedSecondFactorRevocationEvent(

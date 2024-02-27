@@ -34,24 +34,12 @@ class ReplaySpecificEventsCommand extends Command
     const OPTION_LIST_EVENTS = 'list-events';
     const OPTION_LIST_PROJECTORS = 'list-projectors';
 
-    /**
-     * @var EventCollection
-     */
-    private $collection;
+    private EventCollection $collection;
 
-    /**
-     * @var PastEventsService
-     */
-    private $pastEventsService;
+    private PastEventsService $pastEventsService;
 
-    /**
-     * @var TransactionAwareEventDispatcher
-     */
-    private $eventDispatcher;
-    /**
-     * @var ProjectorCollection
-     */
-    private $projectorCollection;
+    private TransactionAwareEventDispatcher $eventDispatcher;
+    private ProjectorCollection $projectorCollection;
 
     protected function configure()
     {

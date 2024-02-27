@@ -41,7 +41,7 @@ final class RaLocationList implements IteratorAggregate
      * @param RaLocationId $raLocationId
      * @return bool
      */
-    public function containsWithId(RaLocationId $raLocationId)
+    public function containsWithId(RaLocationId $raLocationId): bool
     {
         foreach ($this->raLocations as $raLocation) {
             if ($raLocation->hasId($raLocationId)) {
@@ -55,7 +55,7 @@ final class RaLocationList implements IteratorAggregate
     /**
      * @param RaLocation $raLocation
      */
-    public function add(RaLocation $raLocation)
+    public function add(RaLocation $raLocation): void
     {
         if ($this->containsWithId($raLocation->getId())) {
             throw new LogicException(sprintf(
@@ -70,7 +70,7 @@ final class RaLocationList implements IteratorAggregate
     /**
      * @param RaLocationId $raLocationId
      */
-    public function removeWithId(RaLocationId $raLocationId)
+    public function removeWithId(RaLocationId $raLocationId): void
     {
         foreach ($this->raLocations as $key => $raLocation) {
             if ($raLocation->hasId($raLocationId)) {

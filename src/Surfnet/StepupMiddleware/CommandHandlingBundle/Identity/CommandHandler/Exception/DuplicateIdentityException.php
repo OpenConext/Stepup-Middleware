@@ -35,7 +35,7 @@ final class DuplicateIdentityException extends RuntimeException
      *
      * @return DuplicateIdentityException
      */
-    public static function forBootstrappingWithYubikeySecondFactor(NameId $nameId, Institution $institution)
+    public static function forBootstrappingWithYubikeySecondFactor(NameId $nameId, Institution $institution): self
     {
         return new self(
             sprintf(

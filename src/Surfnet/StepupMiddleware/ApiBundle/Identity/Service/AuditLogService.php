@@ -24,10 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 class AuditLogService extends AbstractSearchService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
-     */
-    private $repository;
+    private AuditLogRepository $repository;
 
     public function __construct(AuditLogRepository $repository)
     {

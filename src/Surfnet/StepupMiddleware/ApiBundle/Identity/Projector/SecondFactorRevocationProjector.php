@@ -30,10 +30,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocatio
 
 class SecondFactorRevocationProjector extends Projector
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository
-     */
-    private $repository;
+    private SecondFactorRevocationRepository $repository;
 
     public function __construct(SecondFactorRevocationRepository $repository)
     {

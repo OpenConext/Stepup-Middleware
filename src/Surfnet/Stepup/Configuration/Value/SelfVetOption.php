@@ -22,12 +22,9 @@ use JsonSerializable;
 
 final class SelfVetOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $selfVetOption;
+    private bool $selfVetOption;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }

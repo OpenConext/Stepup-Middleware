@@ -30,10 +30,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class VerifiedSecondFactorRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
@@ -41,7 +38,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null): ?VerifiedSecondFactor
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?VerifiedSecondFactor
     {
         /** @var VerifiedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -74,7 +71,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
      * @param VerifiedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(VerifiedSecondFactorQuery $query)
+    public function createSearchQuery(VerifiedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
@@ -112,7 +109,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
      * @param VerifiedSecondFactorOfIdentityQuery $query
      * @return Query
      */
-    public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query)
+    public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
@@ -123,7 +120,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'sf')
@@ -136,13 +133,13 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     /**
      * @param VerifiedSecondFactor $secondFactor
      */
-    public function save(VerifiedSecondFactor $secondFactor)
+    public function save(VerifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
 
-    public function remove(VerifiedSecondFactor $secondFactor)
+    public function remove(VerifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();

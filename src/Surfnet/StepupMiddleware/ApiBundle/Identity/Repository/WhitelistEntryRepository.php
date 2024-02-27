@@ -48,7 +48,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function saveEntries(array $whitelistEntries)
+    public function saveEntries(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -62,7 +62,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * Removes all WhitelistEntries
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this->createQueryBuilder('w')
             ->delete()
@@ -74,7 +74,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function remove(array $whitelistEntries)
+    public function remove(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -85,7 +85,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function hasEntryFor($institution)
+    public function hasEntryFor(mixed $institution): bool
     {
         $count = $this->createQueryBuilder('w')
             ->select('COUNT(w.institution)')
@@ -100,7 +100,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     /**
      * @return ArrayCollection
      */
-    public function getAll()
+    public function getAll(): ArrayCollection
     {
         $results = $this->findAll();
 

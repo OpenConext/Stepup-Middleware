@@ -35,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,17 +47,17 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\StepupProvider
+     * @var StepupProvider
      */
     public $stepupProvider;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\GssfId
+     * @var GssfId
      */
     public $gssfId;
 
@@ -67,7 +67,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     public $emailVerificationRequired;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
+     * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -77,17 +77,17 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     public $emailVerificationNonce;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -132,7 +132,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
         $this->preferredLocale           = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -190,7 +190,7 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
             ->withSecondFactorIdentifier($this->gssfId, new SecondFactorType((string) $this->stepupProvider));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

@@ -28,12 +28,12 @@ final class ProjectorCollection implements IteratorAggregate
     /**
      * @var ProjectorInterface[]
      */
-    private $projectors = [];
+    private array $projectors = [];
 
     /**
      * @param ProjectorInterface $projector
      */
-    public function add(ProjectorInterface $projector)
+    public function add(ProjectorInterface $projector): void
     {
         $this->projectors[get_class($projector)] = $projector;
     }
@@ -41,10 +41,10 @@ final class ProjectorCollection implements IteratorAggregate
     /**
      * @return string[]
      */
-    public function getProjectorNames()
+    public function getProjectorNames(): array
     {
         return array_map(
-            function (ProjectorInterface $projector) {
+            function (ProjectorInterface $projector): string {
                 return get_class($projector);
             },
             array_values($this->projectors)
@@ -55,7 +55,7 @@ final class ProjectorCollection implements IteratorAggregate
      * @param array $projectorNames
      * @return ProjectorCollection
      */
-    public function selectByNames(array $projectorNames)
+    public function selectByNames(array $projectorNames): ProjectorCollection
     {
         $subsetCollection = new ProjectorCollection;
 
@@ -79,7 +79,7 @@ final class ProjectorCollection implements IteratorAggregate
      * @param ProjectorInterface $projector
      * @return bool
      */
-    public function contains(ProjectorInterface $projector)
+    public function contains(ProjectorInterface $projector): bool
     {
         return array_key_exists(get_class($projector), $this->projectors);
     }

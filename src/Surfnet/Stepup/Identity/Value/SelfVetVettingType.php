@@ -27,17 +27,14 @@ class SelfVetVettingType implements VettingType
      */
     protected $type = VettingType::TYPE_SELF_VET;
 
-    /**
-     * @var Loa
-     */
-    private $authoringLoa;
+    private Loa $authoringLoa;
 
     public function __construct(Loa $loa)
     {
         $this->authoringLoa = $loa;
     }
 
-    public static function deserialize($data)
+    public static function deserialize(array $data): self
     {
         $loa = new Loa($data['loa']['level'], $data['loa']['identifier']);
         return new self($loa);

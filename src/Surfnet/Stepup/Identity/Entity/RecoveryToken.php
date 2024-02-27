@@ -28,20 +28,11 @@ use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 
 final class RecoveryToken extends SimpleEventSourcedEntity
 {
-    /**
-     * @var RecoveryTokenId
-     */
-    private $tokenId;
+    private ?RecoveryTokenId $tokenId = null;
 
-    /**
-     * @var RecoveryTokenType
-     */
-    private $type;
+    private ?RecoveryTokenType $type = null;
 
-    /**
-     * @var Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
 
     public static function create(
         RecoveryTokenId $id,
@@ -70,7 +61,7 @@ final class RecoveryToken extends SimpleEventSourcedEntity
         return $this->type;
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new RecoveryTokenRevokedEvent(
@@ -82,7 +73,7 @@ final class RecoveryToken extends SimpleEventSourcedEntity
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithRecoveryCodeRevocationEvent(

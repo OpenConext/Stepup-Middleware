@@ -23,7 +23,7 @@ use Surfnet\Stepup\Helper\UserDataFormatter;
 
 class UserDataFormatterTest extends TestCase
 {
-    public function test_data_is_formatted()
+    public function test_data_is_formatted(): void
     {
         $formatter = new UserDataFormatter('Stepup-Middleware');
         $expected = [
@@ -45,7 +45,7 @@ class UserDataFormatterTest extends TestCase
         $this->assertEquals($expected, $formatter->format($inputData, []));
     }
 
-    public function test_errors_are_included_in_output()
+    public function test_errors_are_included_in_output(): void
     {
         $formatter = new UserDataFormatter('Stepup-Middleware');
         $expected = [

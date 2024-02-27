@@ -19,20 +19,22 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InstitutionParamConverterTest extends UnitTest
 {
     /**
-     * @var \Mockery\MockInterface
+     * @var MockInterface
      */
     private $request;
 
     /**
-     * @var \Mockery\MockInterface
+     * @var MockInterface
      */
     private $paramConverterConfig;
 
@@ -46,9 +48,9 @@ class InstitutionParamConverterTest extends UnitTest
      * @test
      * @group api-bundle
      */
-    public function an_exception_is_thrown_when_the_parameter_is_missing()
+    public function an_exception_is_thrown_when_the_parameter_is_missing(): void
     {
-        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException::class);
+        $this->expectException(BadApiRequestException::class);
 
         $this->request->query = $this->mockQuery(false);
 
@@ -60,7 +62,7 @@ class InstitutionParamConverterTest extends UnitTest
      * @test
      * @group api-bundle
      */
-    public function an_institution_is_set_as_attribute()
+    public function an_institution_is_set_as_attribute(): void
     {
         $query = $this->mockQuery('ABC');
         $query
@@ -79,7 +81,7 @@ class InstitutionParamConverterTest extends UnitTest
         $this->assertTrue($this->request->attributes->get('institution')->equals($equal));
     }
 
-    private function mockQuery($returnValue)
+    private function mockQuery(bool|string $returnValue)
     {
         $query = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
         $query

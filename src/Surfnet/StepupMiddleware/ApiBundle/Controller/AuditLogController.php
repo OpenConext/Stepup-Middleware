@@ -29,10 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class AuditLogController extends AbstractController
 {
-    /**
-     * @var AuditLogService
-     */
-    private $auditLogService;
+    private AuditLogService $auditLogService;
 
     public function __construct(AuditLogService $service)
     {

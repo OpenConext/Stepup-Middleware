@@ -19,21 +19,23 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage;
 
 class AuthorizingStageTest extends UnitTest
 {
     /**
-     * @var \Mockery\MockInterface mock of Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface
+     * @var MockInterface mock of Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
     /**
      * @var NullLogger
      */
-    private $logger;
+    private NullLogger $logger;
 
     public function setUp(): void
     {
@@ -47,7 +49,7 @@ class AuthorizingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default()
+    public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $this->authorizationChecker->shouldReceive('isGranted')->never();
@@ -67,7 +69,7 @@ class AuthorizingStageTest extends UnitTest
      * @param string $interface
      * @param string $role
      */
-    public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role($interface, $role)
+    public function a_command_with_a_marker_interface_triggers_a_check_for_the_correct_role(string $interface, string $role): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, ' . $interface);
         $this->authorizationChecker
@@ -87,7 +89,7 @@ class AuthorizingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required()
+    public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required(): void
     {
         $command = m::mock(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
@@ -122,9 +124,9 @@ class AuthorizingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown()
+    public function when_the_client_does_not_have_the_required_role_an_forbidden_exception_is_thrown(): void
     {
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException::class);
+        $this->expectException(ForbiddenException::class);
 
         $command = m::mock(
             'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
@@ -144,7 +146,7 @@ class AuthorizingStageTest extends UnitTest
         $this->assertInstanceOf($authorizingStage, AuthorizingStage::class);
     }
 
-    public function interfaceToRoleMappingProvider()
+    public function interfaceToRoleMappingProvider(): array
     {
         return  [
             'SelfServiceExecutable => ROLE_SS' => [

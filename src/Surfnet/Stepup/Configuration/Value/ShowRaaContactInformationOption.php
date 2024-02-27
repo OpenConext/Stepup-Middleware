@@ -23,12 +23,9 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class ShowRaaContactInformationOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $showRaaContactInformationOption;
+    private bool $showRaaContactInformationOption;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(true);
     }
@@ -50,7 +47,7 @@ final class ShowRaaContactInformationOption implements JsonSerializable
      * @param ShowRaaContactInformationOption $other
      * @return bool
      */
-    public function equals(ShowRaaContactInformationOption $other)
+    public function equals(ShowRaaContactInformationOption $other): bool
     {
         return $this->showRaaContactInformationOption === $other->showRaaContactInformationOption;
     }

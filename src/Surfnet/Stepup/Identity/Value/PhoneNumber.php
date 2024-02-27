@@ -22,10 +22,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifier
 {
-    /**
-     * @var string
-     */
-    private $phoneNumber;
+    private string $phoneNumber;
 
     public static function unknown(): self
     {
@@ -59,7 +56,7 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
         return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->phoneNumber;
     }

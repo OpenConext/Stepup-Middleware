@@ -23,7 +23,7 @@ namespace Surfnet\Stepup\Identity\Value;
  */
 class HashedSecret implements Secret
 {
-    private $secret;
+    private string $secret;
 
     public function __construct(string $secret)
     {

@@ -45,7 +45,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function configuration_can_be_initialised()
+    public function configuration_can_be_initialised(): void
     {
         $configuration = [
             'gateway'         => [
@@ -70,7 +70,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function configuration_can_be_updated()
+    public function configuration_can_be_updated(): void
     {
         $configuration1 = [
             'gateway'         => [
@@ -144,7 +144,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      * @param array $configuration
      * @return UpdateConfigurationCommand
      */
-    private function createUpdateCommand(array $configuration)
+    private function createUpdateCommand(array $configuration): UpdateConfigurationCommand
     {
         $command = new UpdateConfigurationCommand();
         $command->configuration = json_encode($configuration);
@@ -155,7 +155,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
     /**
      * @return NewConfigurationCreatedEvent
      */
-    private function createNewConfigurationCreatedEvent()
+    private function createNewConfigurationCreatedEvent(): NewConfigurationCreatedEvent
     {
         return new NewConfigurationCreatedEvent(self::CID);
     }
@@ -165,7 +165,7 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
      * @param array $oldConfiguration
      * @return array
      */
-    private function createConfigurationUpdatedEvents(array $newConfiguration, array $oldConfiguration = null)
+    private function createConfigurationUpdatedEvents(array $newConfiguration, array $oldConfiguration = null): array
     {
         return [
             new ConfigurationUpdatedEvent(self::CID, $newConfiguration, $oldConfiguration),

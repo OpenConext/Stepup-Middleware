@@ -20,7 +20,9 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class RaLocationIdTest extends TestCase
 {
@@ -31,9 +33,9 @@ class RaLocationIdTest extends TestCase
      *
      * @param mixed $nonStringOrEmptyString
      */
-    public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
+    public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $nonStringOrEmptyString): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new RaLocationId($nonStringOrEmptyString);
     }
@@ -41,9 +43,9 @@ class RaLocationIdTest extends TestCase
      * @test
      * @group        domain
      */
-    public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid()
+    public function an_ra_location_id_cannot_be_created_with_anything_but_a_uuid(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $nonUuid = 'this-is-not-a-uuid';
 
@@ -54,7 +56,7 @@ class RaLocationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_ids_with_the_same_values_are_equal()
+    public function two_ra_location_ids_with_the_same_values_are_equal(): void
     {
         $uuid = self::uuid();
 
@@ -68,7 +70,7 @@ class RaLocationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_ids_with_different_values_are_not_equal()
+    public function two_ra_location_ids_with_different_values_are_not_equal(): void
     {
         $raLocationId = new RaLocationId(self::uuid());
         $different    = new RaLocationId(self::uuid());
@@ -76,7 +78,7 @@ class RaLocationIdTest extends TestCase
         $this->assertFalse($raLocationId->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider()
+    public function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],
@@ -84,11 +86,11 @@ class RaLocationIdTest extends TestCase
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 
-    private static function uuid() {
+    private static function uuid(): string {
         return (string) Uuid::uuid4();
     }
 }

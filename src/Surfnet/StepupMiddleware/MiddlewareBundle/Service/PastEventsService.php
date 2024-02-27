@@ -18,15 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
+use Broadway\Domain\DomainEventStream;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 
 final class PastEventsService
 {
-    /**
-     * @var DBALEventHydrator
-     */
-    private $eventHydrator;
+    private DBALEventHydrator $eventHydrator;
 
     public function __construct(DBALEventHydrator $eventHydrator)
     {
@@ -35,7 +33,7 @@ final class PastEventsService
 
     /**
      * @param EventCollection $events
-     * @return \Broadway\Domain\DomainEventStream
+     * @return DomainEventStream
      */
     public function findEventsBy(EventCollection $events)
     {

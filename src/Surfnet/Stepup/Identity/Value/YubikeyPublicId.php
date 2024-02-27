@@ -24,12 +24,9 @@ final class YubikeyPublicId implements SecondFactorIdentifier
 {
     const UNKNOWN = '—';
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self(self::UNKNOWN);
     }
@@ -70,7 +67,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

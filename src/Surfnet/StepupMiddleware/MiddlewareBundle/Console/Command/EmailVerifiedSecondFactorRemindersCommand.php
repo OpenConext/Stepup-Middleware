@@ -44,27 +44,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
-    /**
-     * @var TransactionAwarePipeline
-     */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
+    private BufferedEventBus $eventBus;
 
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connection;
+    private DBALConnectionHelper $connection;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('middleware:cron:email-reminder')
@@ -135,7 +123,7 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
         }
     }
 
-    private function validateInput(InputInterface $input)
+    private function validateInput(InputInterface $input): void
     {
         if ($input->hasOption('date')) {
             $date = $input->getOption('date');

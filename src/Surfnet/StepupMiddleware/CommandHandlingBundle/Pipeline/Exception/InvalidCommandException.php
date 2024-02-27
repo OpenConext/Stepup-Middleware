@@ -18,22 +18,24 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception;
 
+use Exception;
+use RuntimeException;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class InvalidCommandException extends \RuntimeException implements ProcessingAbortedException
+class InvalidCommandException extends RuntimeException implements ProcessingAbortedException
 {
     /**
      * @var string[]
      */
-    private $errors;
+    private array $errors;
 
-    public static function createFromViolations(ConstraintViolationListInterface $violations)
+    public static function createFromViolations(ConstraintViolationListInterface $violations): self
     {
         return new self(self::mapViolationsToErrorStrings($violations));
     }
 
-    public function __construct(array $errors, $code = 0, \Exception $previous = null)
+    public function __construct(array $errors, $code = 0, Exception $previous = null)
     {
         parent::__construct(sprintf('Command is invalid: %s', join('; ', $errors)), $code, $previous);
 
@@ -52,7 +54,7 @@ class InvalidCommandException extends \RuntimeException implements ProcessingAbo
      * @param ConstraintViolationListInterface $violations
      * @return array
      */
-    private static function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations)
+    private static function mapViolationsToErrorStrings(ConstraintViolationListInterface $violations): array
     {
         $errors = [];
 

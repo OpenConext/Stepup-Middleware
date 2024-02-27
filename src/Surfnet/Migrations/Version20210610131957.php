@@ -14,7 +14,7 @@ use function json_encode;
  */
 final class Version20210610131957 extends AbstractMigration
 {
-    private static $select = <<<SQL
+    private static string $select = <<<SQL
         SELECT uuid, playhead, payload
         FROM event_stream
         WHERE (type = 'Surfnet.Stepup.Identity.Event.SecondFactorVettedEvent'
@@ -23,7 +23,7 @@ final class Version20210610131957 extends AbstractMigration
         AND payload LIKE '%"vetting_type":%';
 SQL;
 
-    private static $update = <<<SQL
+    private static string $update = <<<SQL
         UPDATE event_stream
         SET payload = :payload
         WHERE uuid = :uuid

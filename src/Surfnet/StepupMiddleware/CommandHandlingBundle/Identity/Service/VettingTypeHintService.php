@@ -28,20 +28,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintReposi
 
 class VettingTypeHintService
 {
-    /**
-     * @var VettingTypeHintRepository
-     */
-    private $repository;
+    private VettingTypeHintRepository $repository;
 
-    /**
-     * @var array
-     */
-    private $locales;
+    private array $locales;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         VettingTypeHintRepository $repository,

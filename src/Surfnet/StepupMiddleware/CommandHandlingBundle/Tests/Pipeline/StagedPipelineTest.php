@@ -29,7 +29,7 @@ class StagedPipelineTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_passes_a_command_through_a_single_stage()
+    public function it_passes_a_command_through_a_single_stage(): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $stage = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
@@ -46,7 +46,7 @@ class StagedPipelineTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_passes_a_command_through_multiple_stages()
+    public function it_passes_a_command_through_multiple_stages(): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $stage1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Stage')
@@ -67,7 +67,7 @@ class StagedPipelineTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next()
+    public function it_passes_the_command_returned_from_an_earlier_stage_on_to_the_next(): void
     {
         $command1 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $command2 = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');

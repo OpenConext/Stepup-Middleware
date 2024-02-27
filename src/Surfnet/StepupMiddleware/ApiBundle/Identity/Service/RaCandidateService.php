@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
@@ -25,10 +26,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
 
 class RaCandidateService extends AbstractSearchService
 {
-    /**
-     * @var RaCandidateRepository
-     */
-    private $raCandidateRepository;
+    private RaCandidateRepository $raCandidateRepository;
 
     /**
      * @param RaCandidateRepository $raCandidateRepository
@@ -40,7 +38,7 @@ class RaCandidateService extends AbstractSearchService
 
     /**
      * @param RaCandidateQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function search(RaCandidateQuery $query)
     {
@@ -64,15 +62,16 @@ class RaCandidateService extends AbstractSearchService
      * @param string $identityId
      * @return null|array
      */
-    public function findOneByIdentityId($identityId)
+    public function findOneByIdentityId(string $identityId)
     {
         return $this->raCandidateRepository->findOneByIdentityId($identityId);
     }
 
     /**
      * Set the RA candidates USE RA(A) institutions on the Identity he is going to promote.
+     * @return non-empty-array[]
      */
-    public function setUseRaInstitutionsOnRaCandidate(InstitutionAuthorizationContext $actor, array $raCandidate)
+    public function setUseRaInstitutionsOnRaCandidate(InstitutionAuthorizationContext $actor, array $raCandidate): array
     {
         $result = [];
         foreach ($actor->getInstitutions() as $raInstitution) {

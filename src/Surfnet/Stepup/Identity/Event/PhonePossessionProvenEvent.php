@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -30,11 +29,12 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -46,12 +46,12 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
+     * @var PhoneNumber
      */
     public $phoneNumber;
 
@@ -61,7 +61,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     public $emailVerificationRequired;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
+     * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -71,17 +71,17 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     public $emailVerificationNonce;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -123,7 +123,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -179,7 +179,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
             ->withSecondFactorIdentifier($this->phoneNumber, new SecondFactorType('sms'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email       = $sensitiveData->getEmail();
         $this->commonName  = $sensitiveData->getCommonName();

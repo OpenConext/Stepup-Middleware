@@ -22,10 +22,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class StepupProvider
 {
-    /**
-     * @var string
-     */
-    private $provider;
+    private string $provider;
 
     public function __construct($provider)
     {
@@ -44,12 +41,12 @@ final class StepupProvider
         return $this->provider;
     }
 
-    public function equals(StepupProvider $other)
+    public function equals(StepupProvider $other): bool
     {
         return $this->provider === $other->provider;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->provider;
     }

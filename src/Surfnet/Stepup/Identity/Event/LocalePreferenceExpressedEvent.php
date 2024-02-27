@@ -26,7 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'institution',
         'preferred_locale',
@@ -49,7 +49,7 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Sender;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -34,38 +35,23 @@ final class EmailVerificationMailService
      */
     private $translator;
 
-    /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
 
-    /**
-     * @var string
-     */
-    private $emailVerificationUrlTemplate;
+    private string $emailVerificationUrlTemplate;
 
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
+    private string $fallbackLocale;
 
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
+
+    private Sender $sender;
+
+    private string $selfServiceUrl;
 
     /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,

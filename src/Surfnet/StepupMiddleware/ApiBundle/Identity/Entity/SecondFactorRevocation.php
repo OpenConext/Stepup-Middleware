@@ -19,6 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository;
 
 #[ORM\Table(name: 'second_factor_revocation')]
@@ -34,7 +36,7 @@ class SecondFactorRevocation
     public $id;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     #[ORM\Column(type: 'institution')]
     public $institution;
@@ -52,7 +54,7 @@ class SecondFactorRevocation
     public $revokedBy;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     #[ORM\Column(type: 'stepup_datetime')]
     public $recordedOn;

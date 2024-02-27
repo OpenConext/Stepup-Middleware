@@ -103,7 +103,7 @@ class RaListing implements JsonSerializable
         Location $location,
         ContactInformation $contactInformation,
         Institution $raInstitution
-    ) {
+    ): self {
         if (!is_string($identityId)) {
             throw InvalidArgumentException::invalidType('string', 'id', $identityId);
         }

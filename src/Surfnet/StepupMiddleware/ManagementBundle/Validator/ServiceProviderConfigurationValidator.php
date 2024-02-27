@@ -23,7 +23,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
-    public function validate(array $configuration, $propertyPath)
+    public function validate(array $configuration, $propertyPath): void
     {
         Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
 
@@ -97,7 +97,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateStringValue($configuration, $name, $propertyPath)
+    private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
@@ -107,7 +107,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateStringValues($configuration, $name, $propertyPath)
+    private function validateStringValues(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::isArray($configuration[$name], 'value must be an array', $propertyPath . '.' . $name);
         Assertion::allString($configuration[$name], 'value must be an array of strings', $propertyPath . '.' . $name);
@@ -118,7 +118,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateBooleanValue($configuration, $name, $propertyPath)
+    private function validateBooleanValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
@@ -127,7 +127,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param array  $configuration
      * @param string $propertyPath
      */
-    private function validateAssertionConsumerUrls($configuration, $propertyPath)
+    private function validateAssertionConsumerUrls(array $configuration, $propertyPath): void
     {
         $value = $configuration['acs'];
         $propertyPath = $propertyPath . '.acs';
@@ -141,7 +141,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param array  $configuration
      * @param string $propertyPath
      */
-    private function validateLoaDefinition($configuration, $propertyPath)
+    private function validateLoaDefinition(array $configuration, string $propertyPath): void
     {
         $value = $configuration['loa'];
         $path  = $propertyPath . '.loa';
@@ -163,7 +163,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param string $name
      * @param string $propertyPath
      */
-    private function validateListOfNameIdPatterns($configuration, $name, $propertyPath)
+    private function validateListOfNameIdPatterns(array $configuration, string $name, $propertyPath): void
     {
         $value = $configuration[$name];
         $propertyPath = $propertyPath . '.' . $name;
@@ -186,9 +186,9 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      * @param string $message
      * @param $propertyPath
      */
-    private function assertValidInstitutionIdentifiers(array $spLoaConfiguration, $message, $propertyPath)
+    private function assertValidInstitutionIdentifiers(array $spLoaConfiguration, string $message, string $propertyPath): void
     {
-        $assertLowerCase = function ($sho) {
+        $assertLowerCase = function ($sho): bool {
             return ($sho === strtolower($sho));
         };
 

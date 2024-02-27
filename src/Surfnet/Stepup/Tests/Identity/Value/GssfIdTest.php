@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\GssfId;
 
 class GssfIdTest extends UnitTest
@@ -30,9 +32,9 @@ class GssfIdTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new GssfId($invalidValue);
     }
@@ -41,7 +43,7 @@ class GssfIdTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_gssf_ids_with_the_same_value_are_equal()
+    public function two_gssf_ids_with_the_same_value_are_equal(): void
     {
         $gssf        = new GssfId('a');
         $theSame     = new GssfId(' a');
@@ -56,7 +58,7 @@ class GssfIdTest extends UnitTest
     /**
      * DataProvider for {@see a_gssf_od_cannot_be_created_with_anything_but_a_nonempty_string()}
      */
-    public function invalidValueProvider()
+    public function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],
@@ -64,7 +66,7 @@ class GssfIdTest extends UnitTest
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 }

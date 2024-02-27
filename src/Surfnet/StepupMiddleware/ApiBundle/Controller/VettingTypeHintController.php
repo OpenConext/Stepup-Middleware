@@ -38,15 +38,9 @@ use function sprintf;
 
 class VettingTypeHintController extends AbstractController
 {
-    /**
-     * @var VettingTypeHintService
-     */
-    private $service;
+    private VettingTypeHintService $service;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         VettingTypeHintService $vettingTypeHintService,
@@ -56,7 +50,7 @@ class VettingTypeHintController extends AbstractController
         $this->logger = $logger;
     }
 
-    public function getAction($institution)
+    public function getAction($institution): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get a vetting type hint for institution: %s', $institution));

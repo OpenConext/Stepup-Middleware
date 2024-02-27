@@ -23,26 +23,19 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class DBALEventHydrator
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private Connection $connection;
 
-    /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $payloadSerializer;
+    private SimpleInterfaceSerializer $payloadSerializer;
 
-    /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $metadataSerializer;
+    private SimpleInterfaceSerializer $metadataSerializer;
 
     /**
      * @var string
@@ -55,7 +48,7 @@ class DBALEventHydrator
     private $sensitiveDataTable;
 
     /**
-     * @var \Doctrine\DBAL\Driver\Statement
+     * @var Statement
      */
     private $loadStatement = null;
 
@@ -82,7 +75,7 @@ class DBALEventHydrator
 
     /**
      * @return string
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getCount()
     {
@@ -99,7 +92,7 @@ class DBALEventHydrator
      * @param int $offset
      * @return DomainEventStream
      */
-    public function getFromTill($limit, $offset)
+    public function getFromTill($limit, $offset): DomainEventStream
     {
         $statement = $this->prepareLoadStatement();
         $statement->bindValue('limit', $limit, PDO::PARAM_INT);
@@ -115,7 +108,7 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    public function fetchByEventTypes($eventTypes)
+    public function fetchByEventTypes($eventTypes): DomainEventStream
     {
         $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
 
@@ -142,7 +135,7 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    private function deserializeEvent($row)
+    private function deserializeEvent(array $row): DomainMessage
     {
         $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));
 

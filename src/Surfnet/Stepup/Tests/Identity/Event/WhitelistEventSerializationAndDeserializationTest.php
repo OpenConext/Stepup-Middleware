@@ -36,13 +36,13 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
      * @dataProvider eventProvider
      * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $class = get_class($event);
         $this->assertTrue($event == call_user_func([$class, 'deserialize'], $event->serialize()));
     }
 
-    public function eventProvider()
+    public function eventProvider(): array
     {
         return [
             'WhitelistCreatedEvent' => [

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -34,35 +35,23 @@ final class SecondFactorVettedMailService
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
 
-    /**
-     * @var Sender
-     */
-    private $sender;
+    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
+
+    private string $fallbackLocale;
+
+    private string $selfServiceUrl;
 
     /**
-     * @var string
-     */
-    private $fallbackLocale;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
@@ -86,7 +75,7 @@ final class SecondFactorVettedMailService
         Locale $locale,
         CommonName $commonName,
         Email $email
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.vetted_email.subject',
             ['%commonName%' => $commonName->getCommonName(), '%email%' => $email->getEmail()],

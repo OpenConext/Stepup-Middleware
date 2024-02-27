@@ -61,7 +61,7 @@ class RegisterSelfAssertedSecondFactorCommand extends AbstractCommand implements
     #[Assert\Type(type: 'string')]
     public $authoringRecoveryTokenId;
 
-    public function getIdentityId()
+    public function getIdentityId(): void
     {
         $this->identityId;
     }

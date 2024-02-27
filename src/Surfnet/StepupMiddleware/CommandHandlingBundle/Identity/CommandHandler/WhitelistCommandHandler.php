@@ -19,9 +19,11 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\SimpleCommandHandler;
+use Broadway\Domain\AggregateRoot;
 use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
+use Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Whitelist;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
@@ -31,9 +33,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhite
 class WhitelistCommandHandler extends SimpleCommandHandler
 {
     /**
-     * @var \Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository
+     * @var WhitelistRepository
      */
-    private $repository;
+    private RepositoryInterface $repository;
 
     /**
      * @param RepositoryInterface  $repository
@@ -46,7 +48,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     /**
      * @param ReplaceWhitelistCommand $command
      */
-    public function handleReplaceWhitelistCommand(ReplaceWhitelistCommand $command)
+    public function handleReplaceWhitelistCommand(ReplaceWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -59,7 +61,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     /**
      * @param AddToWhitelistCommand $command
      */
-    public function handleAddToWhitelistCommand(AddToWhitelistCommand $command)
+    public function handleAddToWhitelistCommand(AddToWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -72,7 +74,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     /**
      * @param RemoveFromWhitelistCommand $command
      */
-    public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command)
+    public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
 
@@ -85,7 +87,7 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     /**
      * @return Whitelist
      */
-    private function getWhitelist()
+    private function getWhitelist(): AggregateRoot|Whitelist
     {
         try {
             return $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
@@ -98,9 +100,9 @@ class WhitelistCommandHandler extends SimpleCommandHandler
      * @param array $institutions
      * @return Institution[]
      */
-    private function mapArrayToInstitutions(array $institutions)
+    private function mapArrayToInstitutions(array $institutions): array
     {
-        return array_map(function ($institutionName) {
+        return array_map(function ($institutionName): Institution {
             return new Institution($institutionName);
         }, $institutions);
     }

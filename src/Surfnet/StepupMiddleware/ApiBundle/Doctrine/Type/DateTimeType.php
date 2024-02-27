@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use DateTime as CoreDateTime;
 use DateTimeZone;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
@@ -36,7 +37,7 @@ class DateTimeType extends Type
      * @param array            $fieldDeclaration
      * @param AbstractPlatform $platform
      * @return string
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {

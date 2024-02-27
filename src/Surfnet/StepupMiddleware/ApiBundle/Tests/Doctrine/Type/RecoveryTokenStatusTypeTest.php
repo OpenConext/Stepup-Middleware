@@ -19,17 +19,19 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
+use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 class RecoveryTokenStatusTypeTest extends UnitTest
 {
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MySqlPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -44,7 +46,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
         $this->platform = new MySqlPlatform();
     }
 
-    public function invalidPhpValues()
+    public function invalidPhpValues(): array
     {
         return [
             'null' => [null],
@@ -52,7 +54,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
             'int' => [9],
             'float' => [9.1],
             'array' => [array()],
-            'object of a different type' => [new \stdClass],
+            'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
     }
@@ -64,15 +66,15 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      *
      * @param mixed $value
      */
-    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion($value)
+    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion($value): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $type = Type::getType(RecoveryTokenStatusType::NAME);
         $type->convertToDatabaseValue($value, $this->platform);
     }
 
-    public function validPhpValues()
+    public function validPhpValues(): array
     {
         return [
             'active' => [RecoveryTokenStatus::active(), 0],
@@ -89,13 +91,13 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      * @param mixed $phpValue
      * @param mixed $databaseValue
      */
-    public function a_valid_php_value_is_converted_to_a_sql_value($phpValue, $databaseValue)
+    public function a_valid_php_value_is_converted_to_a_sql_value(RecoveryTokenStatus $phpValue, int $databaseValue): void
     {
         $type = Type::getType(RecoveryTokenStatusType::NAME);
         $this->assertSame($databaseValue, $type->convertToDatabaseValue($phpValue, $this->platform));
     }
 
-    public function invalidDatabaseValues()
+    public function invalidDatabaseValues(): array
     {
         return [
             'null' => [null],
@@ -103,7 +105,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
             'int' => [9],
             'float' => [9.1],
             'array' => [array()],
-            'object of a different type' => [new \stdClass],
+            'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
     }
@@ -115,15 +117,15 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      *
      * @param mixed $input
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion($input)
+    public function an_invalid_database_value_causes_an_exception_upon_conversion($input): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $type = Type::getType(RecoveryTokenStatusType::NAME);
         $type->convertToPHPValue($input, $this->platform);
     }
 
-    public function validDatabaseValues()
+    public function validDatabaseValues(): array
     {
         return [
             'active' => ['0', RecoveryTokenStatus::active()],
@@ -140,7 +142,7 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      * @param int $databaseValue
      * @param mixed $phpValue
      */
-    public function a_valid_database_value_is_converted_to_a_sql_value($databaseValue, $phpValue)
+    public function a_valid_database_value_is_converted_to_a_sql_value(string $databaseValue, RecoveryTokenStatus $phpValue): void
     {
         $type = Type::getType(RecoveryTokenStatusType::NAME);
         $this->assertTrue($phpValue->equals($type->convertToPHPValue($databaseValue, $this->platform)));

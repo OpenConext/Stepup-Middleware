@@ -26,7 +26,7 @@ final class InstitutionRoleSet implements InstitutionRoleSetInterface
     /**
      * @var InstitutionRole[]
      */
-    private $institutionRoles;
+    private array $institutionRoles;
 
     public function __construct(array $institutionRoles)
     {

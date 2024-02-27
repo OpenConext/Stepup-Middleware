@@ -48,7 +48,7 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
     /**
      * @param InstitutionConfigurationOptions $institutionConfigurationOptions
      */
-    public function save(InstitutionConfigurationOptions $institutionConfigurationOptions)
+    public function save(InstitutionConfigurationOptions $institutionConfigurationOptions): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($institutionConfigurationOptions);
@@ -58,7 +58,7 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
     /**
      * @param Institution $institution
      */
-    public function removeConfigurationOptionsFor(Institution $institution)
+    public function removeConfigurationOptionsFor(Institution $institution): void
     {
         $this->createQueryBuilder('ico')
             ->delete()

@@ -92,7 +92,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
  */
 class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
     /**
      * @var AllowedSecondFactorListService|m\MockInterface
@@ -127,36 +127,33 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     /**
      * @var IdentityId
      */
-    private $id;
+    private IdentityId $id;
 
     /**
      * @var Institution
      */
-    private $institution;
+    private Institution $institution;
 
     /**
      * @var Email
      */
-    private $email;
+    private Email $email;
 
     /**
      * @var CommonName
      */
-    private $commonName;
+    private CommonName $commonName;
 
     /**
      * @var Locale
      */
-    private $preferredLocale;
+    private Locale $preferredLocale;
     /**
      * @var RecoveryTokenSecretHelper|m\MockInterface
      */
     private $recoveryTokenSecretHelper;
 
-    /**
-     * @var NameId
-     */
-    private $nameId;
+    private ?NameId $nameId = null;
 
     public function setUp(): void
     {
@@ -176,7 +173,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_code_possession_can_be_proven()
+    public function test_a_sms_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
@@ -211,7 +208,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_proven()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -227,7 +224,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
+            ->with(m::on(function ($unhashedSecret): bool {
                 $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
                 $hasExpectedSecret = $unhashedSecret->getSecret() === 'super-safe-secret';
                 return $isUnhashedSecret && $hasExpectedSecret;
@@ -255,7 +252,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven()
+    public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -274,7 +271,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $secret = new HashedSecret('secret-for-safe-keeping');
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
+            ->with(m::on(function ($unhashedSecret): bool {
                 $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
                 $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
                 return $isUnhashedSecret && $hasExpectedSecret;
@@ -318,7 +315,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_code_possession_can_not_be_proven_twice()
+    public function test_a_sms_recovery_code_possession_can_not_be_proven_twice(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
@@ -356,7 +353,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_only_one_safe_store_secret_allowed()
+    public function test_only_one_safe_store_secret_allowed(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -372,7 +369,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $secret = new HashedSecret('secret-for-safe-keeping');
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
+            ->with(m::on(function ($unhashedSecret): bool {
                 $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
                 $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
                 return $isUnhashedSecret && $hasExpectedSecret;
@@ -404,7 +401,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_token_possession_requires_institution_configuration_feature_enabled()
+    public function test_a_sms_recovery_token_possession_requires_institution_configuration_feature_enabled(): void
     {
         $identityCreatedEvent = $this->buildIdentityCreatedEvent();
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -442,7 +439,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -513,7 +510,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_token_can_be_registered_self_asserted()
+    public function test_a_token_can_be_registered_self_asserted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -597,7 +594,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_self_asserted_token_registration_requires_possession_of_recovery_token()
+    public function test_self_asserted_token_registration_requires_possession_of_recovery_token(): void
     {
         $madeUpRecoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -658,7 +655,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -700,7 +697,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sat_token_can_be_used_to_self_vet_a_token()
+    public function test_a_sat_token_can_be_used_to_self_vet_a_token(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -831,7 +828,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted()
+    public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -1038,7 +1035,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         );
     }
 
-    private function buildIdentityCreatedEvent()
+    private function buildIdentityCreatedEvent(): IdentityCreatedEvent
     {
         $this->nameId = new NameId(md5(__METHOD__));
 

@@ -34,46 +34,28 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements SerializableInterface
 {
-    /**
-     * @var CommonName|null
-     */
-    private $commonName;
+    private ?CommonName $commonName = null;
 
-    /**
-     * @var Email|null
-     */
-    private $email;
+    private ?Email $email = null;
 
-    /**
-     * @var SecondFactorIdentifier|null
-     */
-    private $secondFactorIdentifier;
+    private ?SecondFactorIdentifier $secondFactorIdentifier = null;
 
     /**
      * @var SecondFactorType|null
      */
     private $secondFactorType;
 
-    /**
-     * @var VettingType
-     */
-    private $vettingType;
+    private ?VettingType $vettingType = null;
 
-    /**
-     * @var RecoveryTokenType
-     */
-    private $recoveryTokenType;
+    private ?RecoveryTokenType $recoveryTokenType = null;
 
-    /**
-     * @var RecoveryTokenIdentifier
-     */
-    private $recoveryTokenIdentifier;
+    private ?RecoveryTokenIdentifier $recoveryTokenIdentifier = null;
 
     /**
      * @param CommonName $commonName
      * @return SensitiveData
      */
-    public function withCommonName(CommonName $commonName)
+    public function withCommonName(CommonName $commonName): static
     {
         $clone = clone $this;
         $clone->commonName = $commonName;
@@ -85,7 +67,7 @@ class SensitiveData implements SerializableInterface
      * @param Email $email
      * @return SensitiveData
      */
-    public function withEmail(Email $email)
+    public function withEmail(Email $email): static
     {
         $clone = clone $this;
         $clone->email = $email;
@@ -101,7 +83,7 @@ class SensitiveData implements SerializableInterface
     public function withSecondFactorIdentifier(
         SecondFactorIdentifier $secondFactorIdentifier,
         SecondFactorType $secondFactorType
-    ) {
+    ): static {
         $clone = clone $this;
         $clone->secondFactorType = $secondFactorType;
         $clone->secondFactorIdentifier = $secondFactorIdentifier;
@@ -133,7 +115,7 @@ class SensitiveData implements SerializableInterface
      *
      * @return SensitiveData
      */
-    public function forget()
+    public function forget(): self
     {
         $forgotten = new self();
         $forgotten->secondFactorType = $this->secondFactorType;

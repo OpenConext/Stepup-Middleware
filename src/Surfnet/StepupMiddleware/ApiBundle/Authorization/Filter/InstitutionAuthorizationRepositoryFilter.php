@@ -34,7 +34,7 @@ class InstitutionAuthorizationRepositoryFilter
         InstitutionAuthorizationContextInterface $authorizationContext,
         $institutionField,
         $authorizationAlias
-    ) {
+    ): void {
         // If actor is SRAA we don't need filtering
         if ($authorizationContext->isActorSraa()) {
             return;
@@ -63,7 +63,7 @@ class InstitutionAuthorizationRepositoryFilter
      * @param $name
      * @return string
      */
-    private function getParameterName($authorizationAlias, $name)
+    private function getParameterName($authorizationAlias, string $name): string
     {
         return "{$authorizationAlias}_{$name}";
     }

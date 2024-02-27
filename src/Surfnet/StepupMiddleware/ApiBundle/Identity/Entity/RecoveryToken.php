@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -28,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 #[ORM\Table]
 #[ORM\Index(name: 'idx_recovery_method_type', columns: ['type'])]
 #[ORM\Entity(repositoryClass: RecoveryTokenRepository::class)]
-class RecoveryToken implements \JsonSerializable
+class RecoveryToken implements JsonSerializable
 {
     /**
      * @var string

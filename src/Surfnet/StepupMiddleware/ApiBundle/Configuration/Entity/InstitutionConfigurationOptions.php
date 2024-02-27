@@ -91,7 +91,7 @@ class InstitutionConfigurationOptions
         SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
         SelfAssertedTokensOption $selfAssertedTokensOption
-    ) {
+    ): self {
         $options = new self;
 
         $options->institution                     = $institution;

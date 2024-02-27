@@ -26,6 +26,7 @@ use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
@@ -44,6 +45,7 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
@@ -91,7 +93,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_identity_can_be_forgotten()
+    public function an_identity_can_be_forgotten(): void
     {
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
@@ -150,10 +152,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_identity_may_not_be_forgotten_twice()
+    public function an_identity_may_not_be_forgotten_twice(): void
     {
         $this->expectExceptionMessage("Operation on this Identity is not allowed: it has been forgotten");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
@@ -210,10 +212,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_ra_cannot_be_forgotten()
+    public function an_ra_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
@@ -278,10 +280,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_raa_cannot_be_forgotten()
+    public function an_raa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
@@ -346,10 +348,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_sraa_cannae_be_forgotten()
+    public function an_sraa_cannae_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an SRAA");
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $identityId  = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');

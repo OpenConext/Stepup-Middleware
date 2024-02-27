@@ -36,12 +36,9 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
     /**
      * @var EventStoreInterface
      */
-    private $decoratedEventStore;
+    private EventStoreInterface $decoratedEventStore;
 
-    /**
-     * @var SensitiveDataMessageRepository
-     */
-    private $sensitiveDataMessageRepository;
+    private SensitiveDataMessageRepository $sensitiveDataMessageRepository;
 
     /**
      * @param EventStoreInterface $decoratedEventStore
@@ -112,7 +109,7 @@ final class SensitiveDataEventStoreDecorator implements EventStoreInterface
     /**
      * @param DomainEventStreamInterface $stream
      */
-    public function assertIdentityAggregate(DomainEventStreamInterface $stream)
+    public function assertIdentityAggregate(DomainEventStreamInterface $stream): void
     {
         foreach ($stream as $message) {
             if (!$message->getPayload() instanceof IdentityEvent) {

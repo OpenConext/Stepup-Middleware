@@ -27,9 +27,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
 {
-    private $deprovisionService;
+    private DeprovisionServiceInterface $deprovisionService;
 
-    private $formatHelper;
+    private UserDataFormatterInterface $formatHelper;
 
     public function __construct(
         DeprovisionServiceInterface $deprovisionService,

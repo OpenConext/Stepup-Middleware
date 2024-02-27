@@ -29,10 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class SensitiveDataMessageRepository
 {
-    /**
-     * @var Connection
-     */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -45,7 +42,7 @@ class SensitiveDataMessageRepository
      * @param IdentityId $identityId
      * @return SensitiveDataMessageStream
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): SensitiveDataMessageStream
     {
         $sql = 'SELECT identity_id, playhead, sensitive_data
                 FROM event_stream_sensitive_data
@@ -53,7 +50,7 @@ class SensitiveDataMessageRepository
                 ORDER BY playhead ASC';
 
         $rows = $this->connection->fetchAll($sql, ['identity_id' => (string) $identityId]);
-        $messages = array_map(function (array $row) use ($identityId) {
+        $messages = array_map(function (array $row) use ($identityId): SensitiveDataMessage {
             return new SensitiveDataMessage(
                 $identityId,
                 (int) $row['playhead'],
@@ -68,7 +65,7 @@ class SensitiveDataMessageRepository
      * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    public function append(SensitiveDataMessageStream $sensitiveDataMessageStream): void
     {
         $this->connection->beginTransaction();
 
@@ -92,7 +89,7 @@ class SensitiveDataMessageRepository
      * @param SensitiveDataMessageStream $sensitiveDataMessageStream
      * @return void
      */
-    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream)
+    public function modify(SensitiveDataMessageStream $sensitiveDataMessageStream): void
     {
         $this->connection->beginTransaction();
 

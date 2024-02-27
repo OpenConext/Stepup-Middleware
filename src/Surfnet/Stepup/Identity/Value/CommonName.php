@@ -23,15 +23,12 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class CommonName implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $commonName;
+    private string $commonName;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('—');
     }
@@ -56,12 +53,12 @@ final class CommonName implements JsonSerializable
         return $this->commonName;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->commonName;
     }
 
-    public function equals(CommonName $other)
+    public function equals(CommonName $other): bool
     {
         return $this->commonName === $other->commonName;
     }

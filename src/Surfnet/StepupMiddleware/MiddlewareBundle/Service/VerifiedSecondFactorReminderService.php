@@ -31,25 +31,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\VerifiedTokenInformation;
  */
 class VerifiedSecondFactorReminderService
 {
-    /**
-     * @var VerifiedSecondFactorRepository
-     */
-    private $verifiedRepository;
+    private VerifiedSecondFactorRepository $verifiedRepository;
 
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
+    private IdentityRepository $identityRepository;
 
-    /**
-     * @var VerifiedSecondFactorReminderMailService
-     */
-    private $mailService;
+    private VerifiedSecondFactorReminderMailService $mailService;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @param VerifiedSecondFactorRepository $verifiedRepository
@@ -73,7 +61,7 @@ class VerifiedSecondFactorReminderService
      * @param DateTime $date
      * @param bool $dryRun
      */
-    public function sendReminders(DateTime $date, $dryRun)
+    public function sendReminders(DateTime $date, $dryRun): void
     {
         $this->logger->info(
             sprintf(
@@ -124,7 +112,7 @@ class VerifiedSecondFactorReminderService
      * @param DateTime $date
      * @return VerifiedTokenInformation[]
      */
-    private function buildCollection(DateTime $date)
+    private function buildCollection(DateTime $date): array
     {
         $collection = [];
 

@@ -34,7 +34,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     /**
      * @var VerifiedSecondFactorReminderService
      */
-    private $service;
+    private VerifiedSecondFactorReminderService $service;
 
     /**
      * @var VerifiedSecondFactorReminderMailService|Mock
@@ -71,7 +71,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         );
     }
 
-    public function test_no_token_reminders_sent()
+    public function test_no_token_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -95,7 +95,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent()
+    public function test_one_token_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -150,7 +150,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent_failing_mailer()
+    public function test_one_token_reminders_sent_failing_mailer(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -200,7 +200,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_multiple_tokens_reminders_sent()
+    public function test_multiple_tokens_reminders_sent(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -239,7 +239,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Mockery::pattern('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(m::pattern('/^Message successfully sent to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
             ->times(9);
 
         $this->logger
@@ -252,7 +252,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_missing_identity()
+    public function test_missing_identity(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -290,7 +290,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_one_token_reminders_sent_dry_run()
+    public function test_one_token_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -334,7 +334,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_multiple_tokens_reminders_sent_dry_run()
+    public function test_multiple_tokens_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -367,7 +367,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->with(\Mockery::pattern('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
+            ->with(m::pattern('/^Message successfully sent in dry run mode to "mail@example\d.org" with token id "fa125c7c-c9ee-11e7-800\d-00000000000\d" of type "yubikey"/'))
             ->times(9);
 
         $this->logger
@@ -380,7 +380,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->assertInstanceOf(VerifiedSecondFactorReminderService::class, $this->service);
     }
 
-    public function test_no_token_reminders_sent_dry_run()
+    public function test_no_token_reminders_sent_dry_run(): void
     {
         $date = new DateTime('2018-01-01');
 
@@ -409,7 +409,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
      * @param DateTime $requestedAt
      * @return VerifiedSecondFactor[]
      */
-    private function buildVerifiedSecondFactors($numberOfResults, DateTime $requestedAt)
+    private function buildVerifiedSecondFactors(int $numberOfResults, DateTime $requestedAt): array
     {
         $collection = [];
         for ($i=1; $i<=$numberOfResults; $i++) {
@@ -430,7 +430,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
      * @param VerifiedSecondFactor $token
      * @return Identity
      */
-    private function buildIdentity(VerifiedSecondFactor $token)
+    private function buildIdentity(VerifiedSecondFactor $token): Identity
     {
         $identity = new Identity();
         $identity->id = $token->identityId;

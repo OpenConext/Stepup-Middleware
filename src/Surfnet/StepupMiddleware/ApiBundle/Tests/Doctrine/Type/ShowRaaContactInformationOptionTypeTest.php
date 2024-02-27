@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
@@ -28,9 +29,9 @@ use function is_numeric;
 class ShowRaaContactInformationOptionTypeTest extends UnitTest
 {
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MySqlPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -52,7 +53,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationInstitution = Type::getType(ShowRaaContactInformationOptionType::NAME);
 
@@ -68,9 +69,9 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
      * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_show_raa_contact_information_option_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_show_raa_contact_information_option_or_null($incorrectValue): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(ShowRaaContactInformationOptionType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -80,7 +81,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationInstitution = Type::getType(ShowRaaContactInformationOptionType::NAME);
 
@@ -96,7 +97,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationInstitution = Type::getType(ShowRaaContactInformationOptionType::NAME);
 
@@ -109,7 +110,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_show_raa_contact_information_option_value_object()
+    public function a_non_null_value_is_converted_to_a_show_raa_contact_information_option_value_object(): void
     {
         $configurationInstitution = Type::getType(ShowRaaContactInformationOptionType::NAME);
 

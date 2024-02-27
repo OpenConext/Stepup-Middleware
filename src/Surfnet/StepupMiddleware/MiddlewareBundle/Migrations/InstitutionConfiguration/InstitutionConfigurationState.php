@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration;
 
+use Generator;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
@@ -28,7 +29,7 @@ final class InstitutionConfigurationState
     /**
      * @var MappedInstitutionConfiguration[]
      */
-    private $mappedInstitutionConfigurations;
+    private array $mappedInstitutionConfigurations;
 
     /**
      * @param ConfiguredInstitution[]           $configuredInstitutions
@@ -40,7 +41,7 @@ final class InstitutionConfigurationState
         $configuredInstitutions,
         $institutionConfigurationOptions,
         $raLocations
-    ) {
+    ): self {
         $optionInstitutions = array_map(function (InstitutionConfigurationOptions $options) {
             return $options->institution->getInstitution();
         }, $institutionConfigurationOptions);
@@ -89,7 +90,7 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
     public function inferRemovalCommands()
     {
@@ -99,7 +100,7 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
     public function inferCreateCommands()
     {
@@ -109,7 +110,7 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
     public function inferReconfigureCommands()
     {
@@ -119,7 +120,7 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
     public function inferAddRaLocationCommands()
     {

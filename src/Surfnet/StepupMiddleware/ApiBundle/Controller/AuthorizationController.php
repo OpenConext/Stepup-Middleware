@@ -25,14 +25,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AuthorizationController extends AbstractController
 {
-    /**
-     * @var AuthorizationService
-     */
-    private $authorizationService;
+    private AuthorizationService $authorizationService;
 
-    /**
-     * @param AuthorizationService $authorizationService
-     */
     public function __construct(AuthorizationService $authorizationService)
     {
         $this->authorizationService = $authorizationService;

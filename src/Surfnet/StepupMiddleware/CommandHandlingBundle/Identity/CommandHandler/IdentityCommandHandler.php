@@ -86,50 +86,25 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
      */
-    private $eventSourcedRepository;
+    private RepositoryInterface $eventSourcedRepository;
 
-    /**
-     * @var IdentityRepository
-     */
-    private $identityProjectionRepository;
+    private IdentityRepository $identityProjectionRepository;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Entity\ConfigurableSettings
-     */
-    private $configurableSettings;
+    private ConfigurableSettings $configurableSettings;
 
-    /**
-     * @var AllowedSecondFactorListService
-     */
-    private $allowedSecondFactorListService;
+    private AllowedSecondFactorListService $allowedSecondFactorListService;
 
-    /** @var SecondFactorTypeService */
-    private $secondFactorTypeService;
+    private SecondFactorTypeService $secondFactorTypeService;
 
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
-    /**
-     * @var LoaResolutionService
-     */
-    private $loaResolutionService;
+    private LoaResolutionService $loaResolutionService;
 
-    /**
-     * @var SecondFactorProvePossessionHelper
-     */
-    private $provePossessionHelper;
+    private SecondFactorProvePossessionHelper $provePossessionHelper;
 
-    /**
-     * @var RecoveryTokenSecretHelper
-     */
-    private $recoveryTokenSecretHelper;
+    private RecoveryTokenSecretHelper $recoveryTokenSecretHelper;
 
-    /**
-     * @var RegistrationMailService
-     */
-    private $registrationMailService;
+    private RegistrationMailService $registrationMailService;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -158,7 +133,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->registrationMailService = $registrationMailService;
     }
 
-    public function handleCreateIdentityCommand(CreateIdentityCommand $command)
+    public function handleCreateIdentityCommand(CreateIdentityCommand $command): void
     {
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
@@ -175,7 +150,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleUpdateIdentityCommand(UpdateIdentityCommand $command)
+    public function handleUpdateIdentityCommand(UpdateIdentityCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->id));
@@ -188,7 +163,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
 
     public function handleBootstrapIdentityWithYubikeySecondFactorCommand(
         BootstrapIdentityWithYubikeySecondFactorCommand $command
-    ) {
+    ): void {
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
 
@@ -223,7 +198,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command)
+    public function handleProveYubikeyPossessionCommand(ProveYubikeyPossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -249,7 +224,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @param ProvePhonePossessionCommand $command
      */
-    public function handleProvePhonePossessionCommand(ProvePhonePossessionCommand $command)
+    public function handleProvePhonePossessionCommand(ProvePhonePossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -276,7 +251,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @param ProveGssfPossessionCommand $command
      */
-    public function handleProveGssfPossessionCommand(ProveGssfPossessionCommand $command)
+    public function handleProveGssfPossessionCommand(ProveGssfPossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -303,7 +278,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleProveU2fDevicePossessionCommand(ProveU2fDevicePossessionCommand $command)
+    public function handleProveU2fDevicePossessionCommand(ProveU2fDevicePossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -330,7 +305,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @param VerifyEmailCommand $command
      */
-    public function handleVerifyEmailCommand(VerifyEmailCommand $command)
+    public function handleVerifyEmailCommand(VerifyEmailCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -341,7 +316,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     }
 
 
-    public function handleProvePhoneRecoveryTokenPossessionCommand(ProvePhoneRecoveryTokenPossessionCommand $command)
+    public function handleProvePhoneRecoveryTokenPossessionCommand(ProvePhoneRecoveryTokenPossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -355,7 +330,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handlePromiseSafeStoreSecretTokenPossessionCommand(PromiseSafeStoreSecretTokenPossessionCommand $command)
+    public function handlePromiseSafeStoreSecretTokenPossessionCommand(PromiseSafeStoreSecretTokenPossessionCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -370,7 +345,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleVetSecondFactorCommand(VetSecondFactorCommand $command)
+    public function handleVetSecondFactorCommand(VetSecondFactorCommand $command): void
     {
         /** @var IdentityApi $authority */
         $authority = $this->eventSourcedRepository->load(new IdentityId($command->authorityId));
@@ -400,7 +375,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($registrant);
     }
 
-    public function handleRegisterSelfAssertedSecondFactorCommand(RegisterSelfAssertedSecondFactorCommand $command)
+    public function handleRegisterSelfAssertedSecondFactorCommand(RegisterSelfAssertedSecondFactorCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -418,7 +393,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleSelfVetSecondFactorCommand(SelfVetSecondFactorCommand $command)
+    public function handleSelfVetSecondFactorCommand(SelfVetSecondFactorCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -462,7 +437,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleMigrateVettedSecondFactorCommand(MigrateVettedSecondFactorCommand $command)
+    public function handleMigrateVettedSecondFactorCommand(MigrateVettedSecondFactorCommand $command): void
     {
         /** @var IdentityApi $sourceIdentity */
         /** @var IdentityApi $targetIdentity */
@@ -489,7 +464,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($targetIdentity);
     }
 
-    public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command)
+    public function handleRevokeOwnSecondFactorCommand(RevokeOwnSecondFactorCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -498,7 +473,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command)
+    public function handleRevokeRegistrantsSecondFactorCommand(RevokeRegistrantsSecondFactorCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -510,7 +485,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleRevokeOwnRecoveryTokenCommand(RevokeOwnRecoveryTokenCommand $command)
+    public function handleRevokeOwnRecoveryTokenCommand(RevokeOwnRecoveryTokenCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -519,7 +494,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleRevokeRegistrantsRecoveryTokenCommand(RevokeRegistrantsRecoveryTokenCommand $command)
+    public function handleRevokeRegistrantsRecoveryTokenCommand(RevokeRegistrantsRecoveryTokenCommand $command): void
     {
         /** @var IdentityApi $identity */
         $identity = $this->eventSourcedRepository->load(new IdentityId($command->identityId));
@@ -531,12 +506,12 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $this->eventSourcedRepository->save($identity);
     }
 
-    public function handleSendSecondFactorRegistrationEmailCommand(SendSecondFactorRegistrationEmailCommand $command)
+    public function handleSendSecondFactorRegistrationEmailCommand(SendSecondFactorRegistrationEmailCommand $command): void
     {
         $this->registrationMailService->send($command->identityId, $command->secondFactorId);
     }
 
-    public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command)
+    public function handleExpressLocalePreferenceCommand(ExpressLocalePreferenceCommand $command): void
     {
         $preferredLocale = new Locale($command->preferredLocale);
         $this->assertIsValidLocale($preferredLocale);
@@ -551,7 +526,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @param Locale $locale
      */
-    private function assertIsValidLocale(Locale $locale)
+    private function assertIsValidLocale(Locale $locale): void
     {
         if (!$this->configurableSettings->isSupportedLocale($locale)) {
             throw new UnsupportedLocaleException(
@@ -560,7 +535,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         }
     }
 
-    private function assertSecondFactorIsAllowedFor(SecondFactorType $secondFactor, Institution $institution)
+    private function assertSecondFactorIsAllowedFor(SecondFactorType $secondFactor, Institution $institution): void
     {
         $allowedSecondFactorList = $this->allowedSecondFactorListService->getAllowedSecondFactorListFor(
             new ConfigurationInstitution($institution->getInstitution())
@@ -575,7 +550,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         }
     }
 
-    public function assertSelfAssertedTokensEnabled(Institution $institution)
+    public function assertSelfAssertedTokensEnabled(Institution $institution): void
     {
         $configurationInstitution = new ConfigurationInstitution(
             (string) $institution

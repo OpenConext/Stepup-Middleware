@@ -23,15 +23,9 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class GatewayConfigurationValidator implements ConfigurationValidatorInterface
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Validator\IdentityProviderConfigurationValidator
-     */
-    private $identityProviderConfigurationValidator;
+    private IdentityProviderConfigurationValidator $identityProviderConfigurationValidator;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigurationValidator
-     */
-    private $serviceProviderConfigurationValidator;
+    private ServiceProviderConfigurationValidator $serviceProviderConfigurationValidator;
 
     public function __construct(
         IdentityProviderConfigurationValidator $identityProviderConfigurationValidator,
@@ -45,7 +39,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
      * @param array  $gatewayConfiguration
      * @param string $propertyPath
      */
-    public function validate(array $gatewayConfiguration, $propertyPath)
+    public function validate(array $gatewayConfiguration, $propertyPath): void
     {
         StepupAssert::keysMatch(
             $gatewayConfiguration,
@@ -64,7 +58,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         );
     }
 
-    private function validateIdentityProviders($identityProviders, $propertyPath)
+    private function validateIdentityProviders($identityProviders, string $propertyPath): void
     {
         Assertion::isArray(
             $identityProviders,
@@ -80,7 +74,7 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         }
     }
 
-    private function validateServiceProviders($serviceProviders, $propertyPath)
+    private function validateServiceProviders($serviceProviders, string $propertyPath): void
     {
         Assertion::isArray(
             $serviceProviders,

@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class SensitiveDataTest extends TestCase
 {
-    public function sensitiveDataToSerialise()
+    public function sensitiveDataToSerialise(): array
     {
         return [
             'None' => [
@@ -110,7 +110,7 @@ class SensitiveDataTest extends TestCase
     public function it_serialises_and_deserialises(
         SensitiveData $sensitiveData,
         array $getterExpectations
-    ) {
+    ): void {
         $sensitiveData = SensitiveData::deserialize(json_decode(json_encode($sensitiveData->serialize()), true));
 
         foreach ($getterExpectations as $data => $expectedValue) {

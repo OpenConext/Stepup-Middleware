@@ -29,15 +29,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizingStage implements Stage
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     /**
      * @param LoggerInterface               $logger
@@ -49,7 +43,7 @@ class AuthorizingStage implements Stage
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function process(Command $command)
+    public function process(Command $command): Command
     {
         $this->logger->debug(sprintf('Processing authorization for command "%s"', $command));
 
@@ -95,7 +89,7 @@ class AuthorizingStage implements Stage
      * @param array $rolesToCheck
      * @return bool
      */
-    private function clientHasAtLeastOneRole(array $rolesToCheck)
+    private function clientHasAtLeastOneRole(array $rolesToCheck): bool
     {
         foreach ($rolesToCheck as $role) {
             if ($this->authorizationChecker->isGranted([$role])) {

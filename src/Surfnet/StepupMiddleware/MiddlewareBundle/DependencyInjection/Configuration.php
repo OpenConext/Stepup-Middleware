@@ -34,7 +34,7 @@ class Configuration implements ConfigurationInterface
                     ->info('The amount of seconds after which the email verification url/code expires')
                     ->defaultValue(3600)
                     ->validate()
-                        ->ifTrue(function ($seconds) {
+                        ->ifTrue(function ($seconds): bool {
                             return !is_int($seconds) || $seconds < 1;
                         })
                         ->thenInvalid(

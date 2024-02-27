@@ -26,7 +26,7 @@ final class InstitutionConfigurationId implements JsonSerializable
 {
     const UUID_NAMESPACE = '09876543-abcd-0987-abcd-098765432109';
 
-    private $institutionConfigurationId;
+    private string $institutionConfigurationId;
 
     /**
      * @deprecated To be removed in next release; use normalizedFrom method to account for case-(in)sensitivity issues
@@ -34,7 +34,7 @@ final class InstitutionConfigurationId implements JsonSerializable
      * @param Institution $institution
      * @return InstitutionConfigurationId
      */
-    public static function from(Institution $institution)
+    public static function from(Institution $institution): self
     {
         return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
     }
@@ -43,7 +43,7 @@ final class InstitutionConfigurationId implements JsonSerializable
      * @param Institution $institution
      * @return InstitutionConfigurationId
      */
-    public static function normalizedFrom(Institution $institution)
+    public static function normalizedFrom(Institution $institution): self
     {
         return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
     }
@@ -73,7 +73,7 @@ final class InstitutionConfigurationId implements JsonSerializable
      * @param InstitutionConfigurationId $otherInstitutionConfigurationId
      * @return bool
      */
-    public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId)
+    public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId): bool
     {
         return $this->institutionConfigurationId === $otherInstitutionConfigurationId->institutionConfigurationId;
     }
@@ -86,7 +86,7 @@ final class InstitutionConfigurationId implements JsonSerializable
         return $this->institutionConfigurationId;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->institutionConfigurationId;
     }

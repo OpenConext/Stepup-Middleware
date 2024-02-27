@@ -41,7 +41,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -51,27 +51,27 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
+     * @var RecoveryTokenId
      */
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\HashableSecret
+     * @var HashableSecret
      */
     public $secret;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -93,7 +93,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -131,7 +131,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -139,7 +139,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
             ->withRecoveryTokenSecret($this->secret, RecoveryTokenType::safeStore());
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

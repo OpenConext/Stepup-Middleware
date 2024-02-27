@@ -27,17 +27,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MetadataParamConverter implements ParamConverterInterface
 {
-    /**
-     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
-     */
-    private $validator;
+    private ValidatorInterface $validator;
 
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
     }
 
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): void
     {
         $data = json_decode($request->getContent());
 
@@ -58,7 +55,7 @@ class MetadataParamConverter implements ParamConverterInterface
         $request->attributes->set('metadata', $metadata);
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'metadata'
             && $configuration->getClass() === 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata';
@@ -68,7 +65,7 @@ class MetadataParamConverter implements ParamConverterInterface
      * @param mixed $data
      * @throws BadCommandRequestException
      */
-    private function assertIsValidMetadataStructure($data)
+    private function assertIsValidMetadataStructure($data): void
     {
         if (!is_object($data)) {
             $type = gettype($data);

@@ -25,15 +25,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStage implements Stage
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private ValidatorInterface $validator;
 
     /**
      * @param LoggerInterface    $logger
@@ -45,7 +39,7 @@ class ValidationStage implements Stage
         $this->validator = $validator;
     }
 
-    public function process(Command $command)
+    public function process(Command $command): Command
     {
         $this->logger->debug(sprintf('Processing validation for "%s"', $command));
 

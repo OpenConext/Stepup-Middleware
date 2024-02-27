@@ -26,14 +26,11 @@ use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemp
 #[ORM\Entity(repositoryClass: EmailTemplateRepository::class)]
 class EmailTemplate
 {
-    /**
-     *
-     * @var string
-     */
+    
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column]
-    private $id;
+    private ?string $id = null;
 
     /**
      * @var string
@@ -53,7 +50,7 @@ class EmailTemplate
     #[ORM\Column(type: 'text')]
     private $htmlContent;
 
-    public static function create($name, $locale, $htmlContent)
+    public static function create($name, $locale, $htmlContent): self
     {
         $self = new self();
         $self->id = (string) Uuid::uuid4();

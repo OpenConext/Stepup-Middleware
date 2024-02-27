@@ -24,15 +24,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class Profile implements JsonSerializable
 {
-    /**
-     * @var Identity
-     */
-    private $identity;
+    private Identity $identity;
 
-    /**
-     * @var AuthorizedInstitutionCollection
-     */
-    private $authorizedInstitutionCollection;
+    private AuthorizedInstitutionCollection $authorizedInstitutionCollection;
 
     /**
      * @var bool

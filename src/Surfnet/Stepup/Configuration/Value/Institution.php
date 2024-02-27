@@ -23,10 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class Institution implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $institution;
+    private string $institution;
 
     /**
      * @param string $institution may not be an empty string
@@ -52,12 +49,12 @@ final class Institution implements JsonSerializable
      * @param Institution $otherInstitution
      * @return bool
      */
-    public function equals(Institution $otherInstitution)
+    public function equals(Institution $otherInstitution): bool
     {
         return $this->institution === $otherInstitution->institution;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->institution;
     }

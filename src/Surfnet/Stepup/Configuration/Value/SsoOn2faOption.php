@@ -24,10 +24,7 @@ use JsonSerializable;
 
 final class SsoOn2faOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $ssoOn2faOption;
+    private bool $ssoOn2faOption;
 
     public static function getDefault(): self
     {

@@ -30,7 +30,7 @@ class DispatchStageTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_dispatches_commands()
+    public function it_dispatches_commands(): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $commandBus = m::mock(CommandBus::class)->makePartial()

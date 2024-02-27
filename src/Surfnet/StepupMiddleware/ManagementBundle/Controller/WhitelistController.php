@@ -42,12 +42,9 @@ class WhitelistController extends AbstractController
     /**
      * @return TransactionAwarePipeline
      */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
+    private WhitelistService $whitelistService;
 
     public function __construct(TransactionAwarePipeline $pipeline, WhitelistService $whitelistService)
     {
@@ -88,7 +85,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function showWhitelistAction()
+    public function showWhitelistAction(): JsonResponse
     {
         $entries = $this->whitelistService->getAllEntries();
 
@@ -100,7 +97,7 @@ class WhitelistController extends AbstractController
      * @param Command $command
      * @return JsonResponse
      */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, Command $command): JsonResponse
     {
         try {
             $this->pipeline->process($command);

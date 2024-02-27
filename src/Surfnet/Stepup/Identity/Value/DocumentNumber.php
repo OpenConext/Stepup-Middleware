@@ -23,15 +23,12 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class DocumentNumber implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $documentNumber;
+    private string $documentNumber;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('—');
     }
@@ -56,12 +53,12 @@ final class DocumentNumber implements JsonSerializable
         return $this->documentNumber;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->documentNumber;
     }
 
-    public function equals(DocumentNumber $other)
+    public function equals(DocumentNumber $other): bool
     {
         return $this->documentNumber === $other->documentNumber;
     }

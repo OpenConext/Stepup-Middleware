@@ -21,7 +21,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_MockObject_MockObject;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution as InstitutionValue;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -32,17 +34,17 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
     /**
      * @var QueryBuilder
      */
-    private $queryBuilder;
+    private QueryBuilder $queryBuilder;
 
     /**
      * @var EntityManager
      */
-    private $entityManager;
+    private MockObject $entityManager;
 
     /**
-     * @var InstitutionAuthorizationContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var InstitutionAuthorizationContextInterface|PHPUnit_Framework_MockObject_MockObject
      */
-    private $mockedAuthorizationContext;
+    private MockObject $mockedAuthorizationContext;
 
     public function setUp(): void
     {
@@ -60,7 +62,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
      * @test
      * @group domain
      */
-    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context()
+    public function a_querybuilder_object_is_filtered_with_an_institution_authorization_context(): void
     {
         $this->mockedAuthorizationContext->method('getInstitutions')
             ->willReturn(new InstitutionCollection([

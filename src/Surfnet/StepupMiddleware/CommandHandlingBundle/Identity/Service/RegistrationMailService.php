@@ -45,57 +45,30 @@ class RegistrationMailService
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
 
-    /**
-     * @var Sender
-     */
-    private $sender;
+    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
 
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
+    private string $fallbackLocale;
 
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
+    private string $selfServiceUrl;
 
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
+    private SecondFactorService $secondFactorService;
 
-    /**
-     * @var RaLocationService
-     */
-    private $raLocationsService;
+    private RaLocationService $raLocationsService;
 
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
+    private RaListingService $raListingService;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -130,7 +103,7 @@ class RegistrationMailService
         $this->logger = $logger;
     }
 
-    public function send(string $identityId, string $secondFactorId)
+    public function send(string $identityId, string $secondFactorId): void
     {
         $this->logger->notice(sprintf('Start processing of a registration email for %s', $identityId));
         $identity = $this->identityService->find($identityId);
@@ -172,7 +145,7 @@ class RegistrationMailService
             return;
         }
 
-        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
+        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra): bool {
             return !$ra->isRaa();
         });
         $this->logger->notice(
@@ -197,7 +170,7 @@ class RegistrationMailService
         string $registrationCode,
         DateTime $expirationDate,
         array $ras
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
@@ -247,7 +220,7 @@ class RegistrationMailService
         string $registrationCode,
         DateTime $expirationDate,
         array $raLocations
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],

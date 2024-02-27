@@ -34,7 +34,7 @@ class EventCollectionTest extends TestCase
      * @dataProvider emptyOrNonStringProvider
      * @param $emptyOrNonString
      */
-    public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings($emptyOrNonString)
+    public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings(bool|int|string|stdClass|array|null $emptyOrNonString): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid argument type: "non-empty string" expected');
@@ -46,7 +46,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function an_event_collection_must_contain_event_names_that_are_existing_class_names()
+    public function an_event_collection_must_contain_event_names_that_are_existing_class_names(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');
@@ -60,7 +60,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function an_event_collection_contains_given_event_names()
+    public function an_event_collection_contains_given_event_names(): void
     {
         $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class]);
 
@@ -74,7 +74,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function event_names_can_be_retrieved_from_an_event_collection()
+    public function event_names_can_be_retrieved_from_an_event_collection(): void
     {
         $eventNames = [NewConfigurationCreatedEvent::class];
         $eventCollection = new EventCollection($eventNames);
@@ -92,7 +92,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function an_event_collection_does_not_contain_given_event_names()
+    public function an_event_collection_does_not_contain_given_event_names(): void
     {
         $eventCollection = new EventCollection([SecondFactorVettedEvent::class]);
 
@@ -106,7 +106,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function a_subset_of_events_can_be_selected_from_an_event_collection()
+    public function a_subset_of_events_can_be_selected_from_an_event_collection(): void
     {
         $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
 
@@ -122,7 +122,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function a_subset_containing_events_not_present_in_the_event_collection_cannot_be_selected()
+    public function a_subset_containing_events_not_present_in_the_event_collection_cannot_be_selected(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Subset of event names contains event names not present in collection');
@@ -135,7 +135,7 @@ class EventCollectionTest extends TestCase
      * @test
      * @group event-replay
      */
-    public function events_in_an_event_collection_can_be_formatted_as_event_stream_compatible_event_types()
+    public function events_in_an_event_collection_can_be_formatted_as_event_stream_compatible_event_types(): void
     {
         $eventCollection = new EventCollection([NewConfigurationCreatedEvent::class, SecondFactorVettedEvent::class]);
 
@@ -152,7 +152,7 @@ class EventCollectionTest extends TestCase
         );
     }
 
-    public function emptyOrNonStringProvider()
+    public function emptyOrNonStringProvider(): array
     {
         return [
             'null' => [null],

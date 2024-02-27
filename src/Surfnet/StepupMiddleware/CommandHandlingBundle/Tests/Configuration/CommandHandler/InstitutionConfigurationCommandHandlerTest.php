@@ -23,6 +23,7 @@ use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
@@ -54,6 +55,7 @@ use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
@@ -70,7 +72,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_institution_configuration_is_created_when_there_is_none_for_a_given_institution()
+    public function an_institution_configuration_is_created_when_there_is_none_for_a_given_institution(): void
     {
         $command              = new CreateInstitutionConfigurationCommand();
         $command->institution = 'An institution';
@@ -131,9 +133,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution()
+    public function an_institution_configuration_cannot_be_created_when_there_already_is_one_for_a_given_institution(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Cannot rebuild InstitutionConfiguration as it has not been destroyed');
 
         $command                     = new CreateInstitutionConfigurationCommand();
@@ -189,7 +191,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function institution_configuration_options_are_not_changed_if_their_given_value_is_not_different_from_their_current_value()
+    public function institution_configuration_options_are_not_changed_if_their_given_value_is_not_different_from_their_current_value(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
@@ -261,7 +263,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
@@ -343,7 +345,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
@@ -421,7 +423,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function allowed_second_factor_list_is_changed_if_its_values_are_different_than_the_current_list()
+    public function allowed_second_factor_list_is_changed_if_its_values_are_different_than_the_current_list(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
@@ -504,7 +506,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function allowed_second_factor_list_is_not_changed_if_its_values_are_the_same_as_the_current_list()
+    public function allowed_second_factor_list_is_not_changed_if_its_values_are_the_same_as_the_current_list(): void
     {
         $secondFactorsToAllow = ['sms', 'yubikey'];
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
@@ -580,7 +582,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_ra_location_can_be_added_to_an_existing_institution_configuration()
+    public function an_ra_location_can_be_added_to_an_existing_institution_configuration(): void
     {
         $command                     = new AddRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -631,9 +633,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function the_same_ra_location_cannot_be_added_twice()
+    public function the_same_ra_location_cannot_be_added_twice(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('already present');
 
         $command                     = new AddRaLocationCommand();
@@ -683,7 +685,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_ra_location_can_be_renamed()
+    public function an_ra_location_can_be_renamed(): void
     {
         $originalRaLocationName = new RaLocationName('An old RA location name');
 
@@ -741,7 +743,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_ra_location_cannot_be_changed_if_it_is_not_present_within_an_institution_configuration()
+    public function an_ra_location_cannot_be_changed_if_it_is_not_present_within_an_institution_configuration(): void
     {
         $this->expectException('Surfnet\Stepup\Exception\DomainException');
         $this->expectExceptionMessage('not present');
@@ -785,9 +787,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_ra_location_cannot_be_changed_if_its_institution_configuration_cannot_be_found()
+    public function an_ra_location_cannot_be_changed_if_its_institution_configuration_cannot_be_found(): void
     {
-        $this->expectException(\Broadway\Repository\AggregateNotFoundException::class);
+        $this->expectException(AggregateNotFoundException::class);
         $this->expectExceptionMessage('not found');
 
         $command                     = new ChangeRaLocationCommand();
@@ -830,7 +832,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_ra_location_can_be_relocated()
+    public function an_ra_location_can_be_relocated(): void
     {
         $originalLocation= new Location('An old location');
 
@@ -889,7 +891,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_ra_locations_contact_information_can_be_changed()
+    public function an_ra_locations_contact_information_can_be_changed(): void
     {
         $originalContactInformation= new ContactInformation('Old contact information');
 
@@ -948,7 +950,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function the_self_vet_option_can_be_changed()
+    public function the_self_vet_option_can_be_changed(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::normalizedFrom($institution);
@@ -1026,9 +1028,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found()
+    public function an_ra_location_cannot_be_removed_if_its_institution_configuration_cannot_be_found(): void
     {
-        $this->expectException(\Broadway\Repository\AggregateNotFoundException::class);
+        $this->expectException(AggregateNotFoundException::class);
         $this->expectExceptionMessage('not found');
 
         $command                     = new RemoveRaLocationCommand();
@@ -1068,9 +1070,9 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_ra_location_cannot_be_removed_if_it_is_not_present_within_an_institution_configuration()
+    public function an_ra_location_cannot_be_removed_if_it_is_not_present_within_an_institution_configuration(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('not present');
 
         $command                     = new RemoveRaLocationCommand();
@@ -1110,7 +1112,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_ra_location_can_be_removed()
+    public function an_ra_location_can_be_removed(): void
     {
         $command                     = new RemoveRaLocationCommand();
         $command->raLocationId       = self::uuid();
@@ -1163,7 +1165,7 @@ class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group institution-configuration
      */
-    public function an_institution_configuration_with_unnormalized_institution_configuration_id_can_be_removed()
+    public function an_institution_configuration_with_unnormalized_institution_configuration_id_can_be_removed(): void
     {
         $command               = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
         $command->institution  = 'Babelfish Inc.';

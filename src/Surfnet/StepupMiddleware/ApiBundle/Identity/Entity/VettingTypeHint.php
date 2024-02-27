@@ -19,11 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
 
 #[ORM\Entity(repositoryClass: VettingTypeHintRepository::class)]
-class VettingTypeHint implements \JsonSerializable
+class VettingTypeHint implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\Column(length: 36)]

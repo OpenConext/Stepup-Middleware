@@ -26,7 +26,7 @@ final class InstitutionRole implements JsonSerializable
     const ROLE_USE_RAA = 'use_raa';
     const ROLE_SELECT_RAA = 'select_raa';
 
-    private static $validRoles = [
+    private static array $validRoles = [
         self::ROLE_USE_RA,
         self::ROLE_USE_RAA,
         self::ROLE_SELECT_RAA,
@@ -53,7 +53,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function useRa()
+    public static function useRa(): self
     {
         return new self(self::ROLE_USE_RA);
     }
@@ -61,7 +61,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function useRaa()
+    public static function useRaa(): self
     {
         return new self(self::ROLE_USE_RAA);
     }
@@ -69,7 +69,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function selectRaa()
+    public static function selectRaa(): self
     {
         return new self(self::ROLE_SELECT_RAA);
     }
@@ -78,7 +78,7 @@ final class InstitutionRole implements JsonSerializable
      * @param InstitutionRole $role
      * @return bool
      */
-    public function equals(InstitutionRole $role)
+    public function equals(InstitutionRole $role): bool
     {
         return $this->type == $role->getType();
     }
@@ -99,7 +99,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->type;
     }

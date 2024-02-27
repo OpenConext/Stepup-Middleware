@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
@@ -37,20 +38,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
  */
 class SecondFactorService extends AbstractSearchService
 {
-    /**
-     * @var UnverifiedSecondFactorRepository
-     */
-    private $unverifiedRepository;
+    private UnverifiedSecondFactorRepository $unverifiedRepository;
 
-    /**
-     * @var VerifiedSecondFactorRepository
-     */
-    private $verifiedRepository;
+    private VerifiedSecondFactorRepository $verifiedRepository;
 
-    /**
-     * @var VettedSecondFactorRepository
-     */
-    private $vettedRepository;
+    private VettedSecondFactorRepository $vettedRepository;
 
     /**
      * @param UnverifiedSecondFactorRepository $unverifiedRepository
@@ -69,7 +61,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param UnverifiedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query)
     {
@@ -82,7 +74,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param VerifiedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
     {
@@ -96,7 +88,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param VerifiedSecondFactorOfIdentityQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query)
     {
@@ -109,7 +101,7 @@ class SecondFactorService extends AbstractSearchService
 
     /**
      * @param VettedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function searchVettedSecondFactors(VettedSecondFactorQuery $query)
     {
@@ -124,7 +116,7 @@ class SecondFactorService extends AbstractSearchService
      * @param SecondFactorId $id
      * @return null|UnverifiedSecondFactor
      */
-    public function findUnverified(SecondFactorId $id)
+    public function findUnverified(SecondFactorId $id): ?UnverifiedSecondFactor
     {
         return $this->unverifiedRepository->find($id);
     }
@@ -134,7 +126,7 @@ class SecondFactorService extends AbstractSearchService
      * @param SecondFactorId $id
      * @return null|VerifiedSecondFactor
      */
-    public function findVerified(SecondFactorId $id)
+    public function findVerified(SecondFactorId $id): ?VerifiedSecondFactor
     {
         return $this->verifiedRepository->find($id);
     }
@@ -144,7 +136,7 @@ class SecondFactorService extends AbstractSearchService
      * @param SecondFactorId $id
      * @return null|VettedSecondFactor
      */
-    public function findVetted(SecondFactorId $id)
+    public function findVetted(SecondFactorId $id): ?VettedSecondFactor
     {
         return $this->vettedRepository->find($id);
     }

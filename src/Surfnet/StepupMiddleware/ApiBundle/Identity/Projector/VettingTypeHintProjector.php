@@ -32,17 +32,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintReposi
  */
 class VettingTypeHintProjector extends Projector
 {
-    /**
-     * @var VettingTypeHintRepository
-     */
-    private $vettingTypeHintRepository;
+    private VettingTypeHintRepository $vettingTypeHintRepository;
 
     public function __construct(VettingTypeHintRepository $vettingTypeHintRepository)
     {
         $this->vettingTypeHintRepository = $vettingTypeHintRepository;
     }
 
-    public function applyVettingTypeHintsSavedEvent(VettingTypeHintsSavedEvent $event)
+    public function applyVettingTypeHintsSavedEvent(VettingTypeHintsSavedEvent $event): void
     {
         $entity = $this->vettingTypeHintRepository->find($event->institution);
         if (!$entity) {

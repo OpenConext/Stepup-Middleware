@@ -18,11 +18,11 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
-use IteratorAggregate;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionSetTest extends UnitTest
 {
@@ -30,7 +30,7 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function the_set_is_built_out_of_institution_vos()
+    public function the_set_is_built_out_of_institution_vos(): void
     {
         $institutionA = new Institution('a');
         $institutionB = new Institution('b');
@@ -44,10 +44,10 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function duplicate_entries_are_not_allowed()
+    public function duplicate_entries_are_not_allowed(): void
     {
         $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('b');
@@ -59,10 +59,10 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function duplicate_entries_are_not_allowed_case_insensitive()
+    public function duplicate_entries_are_not_allowed_case_insensitive(): void
     {
         $this->expectExceptionMessage("Duplicate entries are not allowed in the InstitutionSet");
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $institutionB = new Institution('b');
         $institutionBDupe = new Institution('B');
@@ -74,10 +74,10 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function only_institutions_can_be_present_in_set()
+    public function only_institutions_can_be_present_in_set(): void
     {
         $this->expectExceptionMessage("Invalid argument type: \"Surfnet\Stepup\Configuration\Value\Institution\" expected, \"Surfnet\Stepup\Configuration\Value\Location\" given for \"institutions\"");
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $institution = new Institution('b');
         $location = new Location('Foobar');
@@ -89,7 +89,7 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function factory_method_can_build_from_empty_array()
+    public function factory_method_can_build_from_empty_array(): void
     {
         $input = [];
         $set = InstitutionSet::create($input);
@@ -100,7 +100,7 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function factory_method_can_build_from_array_of_string()
+    public function factory_method_can_build_from_array_of_string(): void
     {
         $input = [
             new Institution('a'),
@@ -125,9 +125,9 @@ class InstitutionSetTest extends UnitTest
      *
      * @param array $invalid
      */
-    public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid)
+    public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         InstitutionSet::create($invalid);
     }
@@ -136,7 +136,7 @@ class InstitutionSetTest extends UnitTest
      * @test
      * @group domain
      */
-    public function sets_can_be_compared()
+    public function sets_can_be_compared(): void
     {
         $input = [
             new Institution('a'),
@@ -149,7 +149,7 @@ class InstitutionSetTest extends UnitTest
         $this->assertTrue($set->equals($secondSet));
     }
 
-    public function dirtyInstitutionListProvider()
+    public function dirtyInstitutionListProvider(): array
     {
         return [
             'numeric_entry' => [['a', 1, 'b']],

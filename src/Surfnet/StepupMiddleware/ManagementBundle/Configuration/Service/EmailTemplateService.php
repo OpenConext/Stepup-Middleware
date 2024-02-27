@@ -26,10 +26,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemp
 
 final class EmailTemplateService implements CommandHandlingEmailTemplateService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
-     */
-    private $repository;
+    private EmailTemplateRepository $repository;
 
     public function __construct(
         EmailTemplateRepository $repository
@@ -43,7 +40,7 @@ final class EmailTemplateService implements CommandHandlingEmailTemplateService
      * @param string $fallbackLocale
      * @return null|EmailTemplate
      */
-    public function findByName($name, $preferredLocale, $fallbackLocale)
+    public function findByName($name, $preferredLocale, $fallbackLocale): ?EmailTemplate
     {
         try {
             $emailTemplateEntity = $this->repository->findOneByName($name, $preferredLocale, $fallbackLocale);

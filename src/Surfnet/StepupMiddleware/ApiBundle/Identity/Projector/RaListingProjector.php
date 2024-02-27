@@ -44,15 +44,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
  */
 class RaListingProjector extends Projector
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
+    private RaListingRepository $raListingRepository;
 
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
+    private IdentityRepository $identityRepository;
 
     public function __construct(RaListingRepository $raListingRepository, IdentityRepository $identityRepository)
     {
@@ -64,7 +58,7 @@ class RaListingProjector extends Projector
      * @param IdentityAccreditedAsRaForInstitutionEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
+    public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event): void
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
 
@@ -86,7 +80,7 @@ class RaListingProjector extends Projector
      * @param IdentityAccreditedAsRaaForInstitutionEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event)
+    public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event): void
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
 
@@ -106,7 +100,7 @@ class RaListingProjector extends Projector
 
     public function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
         RegistrationAuthorityInformationAmendedForInstitutionEvent $event
-    ) {
+    ): void {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
 
@@ -123,7 +117,7 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event)
+    public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event): void
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
@@ -133,7 +127,7 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event)
+    public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event): void
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
@@ -143,7 +137,7 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event)
+    public function applyRegistrationAuthorityRetractedForInstitutionEvent(RegistrationAuthorityRetractedForInstitutionEvent $event): void
     {
         $this->raListingRepository->removeByIdentityIdAndRaInstitution($event->identityId, $event->raInstitution);
     }
@@ -160,7 +154,7 @@ class RaListingProjector extends Projector
      * @param IdentityAccreditedAsRaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event): void
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
 
@@ -184,7 +178,7 @@ class RaListingProjector extends Projector
      * @param IdentityAccreditedAsRaaEvent $event
      * @return void
      */
-    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event): void
     {
         $identity = $this->identityRepository->find((string) $event->identityId);
 
@@ -209,7 +203,7 @@ class RaListingProjector extends Projector
      */
     public function applyRegistrationAuthorityInformationAmendedEvent(
         RegistrationAuthorityInformationAmendedEvent $event
-    ) {
+    ): void {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution($event->identityId, $event->identityInstitution);
 
@@ -231,7 +225,7 @@ class RaListingProjector extends Projector
      *
      * @param AppointedAsRaEvent $event
      */
-    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    public function applyAppointedAsRaEvent(AppointedAsRaEvent $event): void
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
@@ -246,7 +240,7 @@ class RaListingProjector extends Projector
      *
      * @param AppointedAsRaaEvent $event
      */
-    public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event): void
     {
         /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
@@ -261,7 +255,7 @@ class RaListingProjector extends Projector
      *
      * @param RegistrationAuthorityRetractedEvent $event
      */
-    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    public function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event): void
     {
         $this->raListingRepository->removeByIdentityIdAndInstitution($event->identityId, $event->identityInstitution);
     }

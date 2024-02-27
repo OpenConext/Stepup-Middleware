@@ -74,7 +74,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
  */
 class SecondFactorRevocationTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
     protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
     {
@@ -106,7 +106,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_identity_can_revoke_its_own_unverified_second_factor()
+    public function an_identity_can_revoke_its_own_unverified_second_factor(): void
     {
         $command                 = new RevokeOwnSecondFactorCommand();
         $command->identityId     = '42';
@@ -162,7 +162,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_identity_can_revoke_its_own_verified_second_factor()
+    public function an_identity_can_revoke_its_own_verified_second_factor(): void
     {
         $command                 = new RevokeOwnSecondFactorCommand();
         $command->identityId     = '42';
@@ -230,7 +230,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_identity_can_revoke_its_own_vetted_second_factor()
+    public function an_identity_can_revoke_its_own_vetted_second_factor(): void
     {
         $command                 = new RevokeOwnSecondFactorCommand();
         $command->identityId     = '42';
@@ -316,7 +316,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_registration_authority_can_revoke_an_unverified_second_factor()
+    public function a_registration_authority_can_revoke_an_unverified_second_factor(): void
     {
         $command                 = new RevokeRegistrantsSecondFactorCommand();
         $command->authorityId    = static::uuid();
@@ -402,7 +402,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_registration_authority_can_revoke_a_verified_second_factor()
+    public function a_registration_authority_can_revoke_a_verified_second_factor(): void
     {
         $command                 = new RevokeRegistrantsSecondFactorCommand();
         $command->authorityId    = static::uuid();
@@ -501,7 +501,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_registration_authority_can_revoke_a_vetted_second_factor()
+    public function a_registration_authority_can_revoke_a_vetted_second_factor(): void
     {
         $command                 = new RevokeRegistrantsSecondFactorCommand();
         $command->authorityId    = static::uuid();
@@ -618,7 +618,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_registration_authority_can_revoke_a_possession_proved_skipped_vetted_second_factor()
+    public function a_registration_authority_can_revoke_a_possession_proved_skipped_vetted_second_factor(): void
     {
         $command                 = new RevokeRegistrantsSecondFactorCommand();
         $command->authorityId    = static::uuid();
@@ -734,7 +734,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_registration_authority_can_revoke_one_of_multiple_vetted_second_factors()
+    public function a_registration_authority_can_revoke_one_of_multiple_vetted_second_factors(): void
     {
         $command                  = new RevokeRegistrantsSecondFactorCommand();
         $command->authorityId     = static::uuid();

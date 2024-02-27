@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_identifier',
@@ -40,22 +40,22 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\IdentityId
+     * @var IdentityId
      */
     public $authorityId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
@@ -75,7 +75,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -121,7 +121,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
     }

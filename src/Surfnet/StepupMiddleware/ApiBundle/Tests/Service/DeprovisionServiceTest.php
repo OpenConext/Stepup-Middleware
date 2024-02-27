@@ -38,7 +38,7 @@ class DeprovisionServiceTest extends TestCase
     /**
      * @var DeprovisionService
      */
-    private $deprovisionService;
+    private DeprovisionService $deprovisionService;
 
     /**
      * @var m\LegacyMockInterface|m\MockInterface|Pipeline
@@ -65,7 +65,7 @@ class DeprovisionServiceTest extends TestCase
         $this->deprovisionService = new DeprovisionService($this->pipeline, $this->eventRepo, $this->apiRepo, $logger);
     }
 
-    public function test_it_can_be_created()
+    public function test_it_can_be_created(): void
     {
         $this->assertInstanceOf(DeprovisionService::class, $this->deprovisionService);
     }
@@ -73,7 +73,7 @@ class DeprovisionServiceTest extends TestCase
     /**
      * @group api-bundle
      */
-    public function test_it_deals_with_non_exisiting_collab_user_id()
+    public function test_it_deals_with_non_exisiting_collab_user_id(): void
     {
         $this->apiRepo
             ->shouldReceive('findOneByNameId')
@@ -87,7 +87,7 @@ class DeprovisionServiceTest extends TestCase
     /**
      * @group api-bundle
      */
-    public function test_it_can_return_data()
+    public function test_it_can_return_data(): void
     {
         $identity = m::mock(Identity::class);
         $identity->id = '0bf0b464-a5de-11ec-b909-0242ac120002';
@@ -105,7 +105,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertEquals($data['status'], 'OK');
     }
 
-    public function test_deprovision_does_not_deprovision_when_user_is_not_found()
+    public function test_deprovision_does_not_deprovision_when_user_is_not_found(): void
     {
         $this->apiRepo
             ->shouldReceive('findOneByNameId')
@@ -118,7 +118,7 @@ class DeprovisionServiceTest extends TestCase
         $this->assertNull($data);
     }
 
-    public function test_deprovision_method_performs_the_right_to_be_forgotten_command()
+    public function test_deprovision_method_performs_the_right_to_be_forgotten_command(): void
     {
         $identity = m::mock(Identity::class);
         $identity->id = '0bf0b464-a5de-11ec-b909-0242ac120002';
@@ -130,7 +130,7 @@ class DeprovisionServiceTest extends TestCase
             ->andReturn($identity);
         $this->pipeline
             ->shouldReceive('process')
-            ->withArgs(function(ForgetIdentityCommand $command){
+            ->withArgs(function(ForgetIdentityCommand $command): bool{
                 $this->assertEquals($command->nameId, 'urn:collab:person:example.com:maynard_keenan');
                 $this->assertEquals($command->institution, 'tool');
                 return true;

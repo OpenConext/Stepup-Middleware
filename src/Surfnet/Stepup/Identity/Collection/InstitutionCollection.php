@@ -27,7 +27,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 final class InstitutionCollection implements IteratorAggregate, JsonSerializable, SerializableInterface
 {
-    private $elements = [];
+    private array $elements = [];
 
     public function __construct(array $institutions = [])
     {
@@ -36,7 +36,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
         }
     }
 
-    public function contains(Institution $institution)
+    public function contains(Institution $institution): bool
     {
         return in_array($institution, $this->elements);
     }
@@ -47,7 +47,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
      * @param Institution $institution
      * @throws RuntimeException when the institution already exists in this collection
      */
-    public function add(Institution $institution)
+    public function add(Institution $institution): void
     {
         if (in_array($institution, $this->elements)) {
             throw new RuntimeException(sprintf(
@@ -64,7 +64,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
      *
      * @param InstitutionCollection $institutionCollection
      */
-    public function addAllFrom(InstitutionCollection $institutionCollection)
+    public function addAllFrom(InstitutionCollection $institutionCollection): void
     {
         foreach ($institutionCollection as $institution) {
             $this->add($institution);
@@ -77,7 +77,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
      * @param Institution $institution
      * @throws RuntimeException when the institution to remove is not in this collection
      */
-    public function remove(Institution $institution)
+    public function remove(Institution $institution): void
     {
         if (!in_array($institution, $this->elements)) {
             throw new RuntimeException(sprintf(
@@ -86,7 +86,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
             ));
         }
 
-        $elements = array_filter($this->elements, function ($inst) use ($institution) {
+        $elements = array_filter($this->elements, function ($inst) use ($institution): bool {
             return !$institution->equals($inst);
         });
         $this->elements = $elements;
@@ -97,7 +97,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
      *
      * @param InstitutionCollection $institutionCollection
      */
-    public function removeAllIn(InstitutionCollection $institutionCollection)
+    public function removeAllIn(InstitutionCollection $institutionCollection): void
     {
         foreach ($institutionCollection as $institution) {
             $this->remove($institution);
@@ -111,7 +111,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
 
     public static function deserialize(array $data)
     {
-        $institutions = array_map(function ($institution) {
+        $institutions = array_map(function ($institution): Institution {
             return new Institution($institution);
         }, $data);
 
@@ -120,7 +120,7 @@ final class InstitutionCollection implements IteratorAggregate, JsonSerializable
 
     public function serialize(): array
     {
-        return array_map(function (Institution $institution) {
+        return array_map(function (Institution $institution): string {
             return (string) $institution;
         }, $this->elements);
     }

@@ -25,17 +25,14 @@ class OnPremiseVettingType implements VettingType
      */
     protected $type = VettingType::TYPE_ON_PREMISE;
 
-    /**
-     * @var DocumentNumber
-     */
-    private $documentNumber;
+    private DocumentNumber $documentNumber;
 
     public function __construct(DocumentNumber $documentNumber)
     {
         $this->documentNumber = $documentNumber;
     }
 
-    public static function deserialize($data)
+    public static function deserialize(array $data): self
     {
         $documentNumber = new DocumentNumber($data['document_number']);
         return new self($documentNumber);

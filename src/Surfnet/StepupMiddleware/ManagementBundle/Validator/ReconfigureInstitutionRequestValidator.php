@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -30,33 +31,25 @@ use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 {
-    /**
-     * @var ConfiguredInstitutionService
-     */
-    private $configuredInstitutionsService;
+    private ConfiguredInstitutionService $configuredInstitutionsService;
 
     /**
      * @var string[] internal cache, access through getConfiguredInstitutions()
      */
-    private $configuredInstitutions;
+    private ?array $configuredInstitutions = null;
 
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
+    private SecondFactorTypeService $secondFactorTypeService;
 
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
+    private WhitelistService $whitelistService;
 
     /**
      * @var string[] internal cache, access through getWhitelistedInstitutions()
      */
-    private $whitelistedInstitutions;
+    private ?array $whitelistedInstitutions = null;
 
     public function __construct(
         ConfiguredInstitutionService $configuredInstitutionsService,
@@ -68,9 +61,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         $this->whitelistService = $whitelistService;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        /** @var \Symfony\Component\Validator\Violation\ConstraintViolationBuilder|false $violation */
+        /** @var ConstraintViolationBuilder|false $violation */
         $violation = false;
 
         try {
@@ -88,7 +81,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
-    public function validateRoot(array $configuration)
+    public function validateRoot(array $configuration): void
     {
         Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         $this->validateInstitutionsExist(array_keys($configuration));
@@ -101,7 +94,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     /**
      * @param array $institutions
      */
-    public function validateInstitutionsExist(array $institutions)
+    public function validateInstitutionsExist(array $institutions): void
     {
         $configuredInstitutions = $this->getConfiguredInstitutions();
 
@@ -114,7 +107,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
-    public function validateInstitutionConfigurationOptions(array $options, string $institution)
+    public function validateInstitutionConfigurationOptions(array $options, string $institution): void
     {
         $propertyPath = sprintf('Institution(%s)', $institution);
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
@@ -244,7 +237,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
 
         $this->whitelistedInstitutions = array_map(
-            function (WhitelistEntry $whitelistEntry) {
+            function (WhitelistEntry $whitelistEntry): string {
                 return (string)$whitelistEntry->institution;
             },
             $this->whitelistService->getAllEntries()->toArray()
@@ -258,10 +251,10 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      * @param $configuredInstitutions
      * @return string[]
      */
-    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions)
+    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions): array
     {
         $normalizedConfiguredInstitutions = array_map(
-            function ($institution) {
+            function ($institution): string {
                 return strtolower($institution);
             },
             $configuredInstitutions
@@ -269,7 +262,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         return array_filter(
             $institutions,
-            function ($institution) use ($normalizedConfiguredInstitutions) {
+            function ($institution) use ($normalizedConfiguredInstitutions): bool {
                 $normalizedInstitution = strtolower($institution);
 
                 return !in_array($normalizedInstitution, $normalizedConfiguredInstitutions);
@@ -286,9 +279,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      * @param $authorizationSettings
      * @param $institution
      * @param $propertyPath
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
-    private function validateAuthorizationSettings($authorizationSettings, $institution, $propertyPath)
+    private function validateAuthorizationSettings(array $authorizationSettings, string $institution, string $propertyPath): void
     {
         $acceptedOptions = [
             'use_ra',

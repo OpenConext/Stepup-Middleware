@@ -29,6 +29,7 @@ use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\RecoveryTokenSecretHelper;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
@@ -72,6 +73,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as IdentityProjectionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\SecondFactorNotAllowedException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
@@ -96,7 +98,7 @@ use function md5;
  */
 class IdentityCommandHandlerTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
     /**
      * @var AllowedSecondFactorListService|m\MockInterface
@@ -179,7 +181,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_can_be_bootstrapped_with_a_yubikey_second_factor()
+    public function an_identity_can_be_bootstrapped_with_a_yubikey_second_factor(): void
     {
         $command                  = new BootstrapIdentityWithYubikeySecondFactorCommand();
         $command->identityId      = 'ID-ID';
@@ -229,7 +231,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_cannot_be_bootstrapped_twice()
+    public function an_identity_cannot_be_bootstrapped_twice(): void
     {
         $command                  = new BootstrapIdentityWithYubikeySecondFactorCommand();
         $command->identityId      = 'ID-ID';
@@ -257,7 +259,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_yubikey_possession_can_be_proven()
+    public function a_yubikey_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -321,7 +323,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_yubikey_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution()
+    public function a_yubikey_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -370,9 +372,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function yubikey_possession_cannot_be_proven_twice()
+    public function yubikey_possession_cannot_be_proven_twice(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
@@ -430,7 +432,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_phone_possession_can_be_proven()
+    public function a_phone_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -494,7 +496,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_phone_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution()
+    public function a_phone_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -543,7 +545,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_gssf_possession_can_be_proven()
+    public function a_gssf_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -621,7 +623,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_gssf_possession_can_not_be_proven_if_the_second_factor_is_not_allowed_by_the_institution()
+    public function a_gssf_possession_can_not_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -674,7 +676,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_u2f_device_possession_can_be_proven()
+    public function a_u2f_device_possession_can_be_proven(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -738,7 +740,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_u2f_device_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution()
+    public function a_u2f_device_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -786,9 +788,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function phone_possession_cannot_be_proven_twice()
+    public function phone_possession_cannot_be_proven_twice(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
@@ -845,9 +847,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function cannot_prove_possession_of_arbitrary_second_factor_type_twice()
+    public function cannot_prove_possession_of_arbitrary_second_factor_type_twice(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
         $id                = new IdentityId(self::uuid());
@@ -906,7 +908,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_unverified_second_factors_email_can_be_verified()
+    public function an_unverified_second_factors_email_can_be_verified(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -974,9 +976,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_verified_second_factors_email_cannot_be_verified()
+    public function a_verified_second_factors_email_cannot_be_verified(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Cannot verify second factor, no unverified second factor can be verified using the given nonce');
 
         $id                     = new IdentityId(self::uuid());
@@ -1038,9 +1040,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function cannot_verify_an_email_after_the_verification_window_has_closed()
+    public function cannot_verify_an_email_after_the_verification_window_has_closed(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Cannot verify second factor, the verification window is closed.');
 
         $id = new IdentityId(self::uuid());
@@ -1090,7 +1092,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function it_can_create_a_new_identity()
+    public function it_can_create_a_new_identity(): void
     {
         $createCommand = new CreateIdentityCommand();
         $createCommand->UUID = '1';
@@ -1129,7 +1131,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_identity_can_be_updated()
+    public function an_identity_can_be_updated(): void
     {
         $id                = new IdentityId('42');
         $institution       = new Institution('A Corp.');
@@ -1164,7 +1166,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function an_identity_can_be_updated_twice_only_emitting_events_when_changed()
+    public function an_identity_can_be_updated_twice_only_emitting_events_when_changed(): void
     {
         $id                = new IdentityId('42');
         $institution       = new Institution('A Corp.');
@@ -1200,7 +1202,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_second_factor_can_be_vetted()
+    public function a_second_factor_can_be_vetted(): void
     {
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
@@ -1315,10 +1317,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_second_factor_cannot_be_vetted_without_a_secure_enough_vetted_second_factor()
+    public function a_second_factor_cannot_be_vetted_without_a_secure_enough_vetted_second_factor(): void
     {
         $this->expectExceptionMessage("Authority does not have the required LoA");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
@@ -1459,7 +1461,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_second_factor_can_be_vetted_without_a_physical_proven_possession()
+    public function a_second_factor_can_be_vetted_without_a_physical_proven_possession(): void
     {
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
@@ -1574,10 +1576,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @test
      * @group command-handler
      */
-    public function a_second_factor_cannot_be_vetted_without_physical_prove_of_possession_when_not_configured()
+    public function a_second_factor_cannot_be_vetted_without_physical_prove_of_possession_when_not_configured(): void
     {
         $this->expectExceptionMessage("The possession of registrants second factor with ID 'ISFID' of type 'yubikey' has to be physically proven");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $command                         = new VetSecondFactorCommand();
         $command->authorityId            = 'AID';
@@ -1724,7 +1726,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_can_express_its_locale_preference()
+    public function an_identity_can_express_its_locale_preference(): void
     {
         $command                  = new ExpressLocalePreferenceCommand();
         $command->identityId      = $this->uuid();
@@ -1756,7 +1758,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_can_send_registration_mail()
+    public function an_identity_can_send_registration_mail(): void
     {
         $command = new SendSecondFactorRegistrationEmailCommand();
         $command->identityId = self::uuid();
@@ -1790,10 +1792,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_cannot_express_a_preference_for_an_unsupported_locale()
+    public function an_identity_cannot_express_a_preference_for_an_unsupported_locale(): void
     {
         $this->expectExceptionMessage("Given locale \"fi_FI\" is not a supported locale");
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\UnsupportedLocaleException::class);
+        $this->expectException(UnsupportedLocaleException::class);
 
         $command                  = new ExpressLocalePreferenceCommand();
         $command->identityId      = $this->uuid();
@@ -1822,7 +1824,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function an_identity_can_express_its_locale_preference_more_than_one_time()
+    public function an_identity_can_express_its_locale_preference_more_than_one_time(): void
     {
         $command                  = new ExpressLocalePreferenceCommand();
         $command->identityId      = $this->uuid();
@@ -1856,7 +1858,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function a_second_factor_can_be_self_vetted()
+    public function a_second_factor_can_be_self_vetted(): void
     {
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = '+31 (0) 612345678';
@@ -1985,7 +1987,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      *
      * @todo remove this test once we drop BC support for SelfService 3.5
      */
-    public function a_second_factor_can_be_self_vetted_using_old_authoringSecondFactorIdentifier_command_property()
+    public function a_second_factor_can_be_self_vetted_using_old_authoringSecondFactorIdentifier_command_property(): void
     {
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = '+31 (0) 612345678';

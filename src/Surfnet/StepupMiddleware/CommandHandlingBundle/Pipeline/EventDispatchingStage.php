@@ -24,15 +24,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 
 class EventDispatchingStage implements Stage
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var BufferedEventBus
-     */
-    private $bufferedEventBus;
+    private BufferedEventBus $bufferedEventBus;
 
     public function __construct(LoggerInterface $logger, BufferedEventBus $bufferedEventBus)
     {
@@ -40,7 +34,7 @@ class EventDispatchingStage implements Stage
         $this->bufferedEventBus = $bufferedEventBus;
     }
 
-    public function process(Command $command)
+    public function process(Command $command): Command
     {
         $this->logger->debug(sprintf('Dispatching Events for "%s"', $command));
 

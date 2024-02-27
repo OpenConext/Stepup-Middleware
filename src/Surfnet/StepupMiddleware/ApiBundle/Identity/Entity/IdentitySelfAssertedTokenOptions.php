@@ -60,7 +60,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
         IdentityId $identityId,
         bool $possessedToken,
         bool $possessedSelfAssertedToken
-    ) {
+    ): self {
         $identitySelfAssertedTokenOptions = new self();
 
         $identitySelfAssertedTokenOptions->identityId = $identityId;

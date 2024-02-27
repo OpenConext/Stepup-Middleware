@@ -25,7 +25,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
     ];
@@ -37,7 +37,7 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
         parent::__construct($identityId, $identityInstitution);
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;

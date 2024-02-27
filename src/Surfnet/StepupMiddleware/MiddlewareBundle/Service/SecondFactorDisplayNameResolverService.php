@@ -22,10 +22,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorDisplayNameResolverService
 {
-    /**
-     * @var array
-     */
-    private $secondFactors;
+    private array $secondFactors;
 
     /**
      * @param array $secondFactors

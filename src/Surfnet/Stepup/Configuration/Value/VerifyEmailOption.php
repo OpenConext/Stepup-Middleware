@@ -23,12 +23,9 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class VerifyEmailOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $verifyEmailOption;
+    private bool $verifyEmailOption;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(true);
     }
@@ -50,7 +47,7 @@ final class VerifyEmailOption implements JsonSerializable
      * @param VerifyEmailOption $other
      * @return bool
      */
-    public function equals(VerifyEmailOption $other)
+    public function equals(VerifyEmailOption $other): bool
     {
         return $this->verifyEmailOption === $other->verifyEmailOption;
     }

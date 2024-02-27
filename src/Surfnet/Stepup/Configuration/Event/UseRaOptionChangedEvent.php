@@ -33,7 +33,7 @@ final class UseRaOptionChangedEvent implements SerializableInterface
     ) {
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $institution = new Institution($data['institution']);
         return new self(

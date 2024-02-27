@@ -32,7 +32,7 @@ final class SelfAssertedTokensOptionChangedEvent implements SerializableInterfac
     ) {
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),

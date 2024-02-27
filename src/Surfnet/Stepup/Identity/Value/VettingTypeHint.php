@@ -31,7 +31,7 @@ class VettingTypeHint implements JsonSerializable
     ) {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'locale' => $this->locale,

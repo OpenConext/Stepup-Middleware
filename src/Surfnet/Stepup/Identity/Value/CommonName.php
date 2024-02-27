@@ -64,7 +64,7 @@ final class CommonName implements JsonSerializable, Stringable
         return $this->commonName === $other->commonName;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->commonName;
     }

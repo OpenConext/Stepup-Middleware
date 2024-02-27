@@ -87,7 +87,7 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         return $metadata;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
 

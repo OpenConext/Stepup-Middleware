@@ -68,7 +68,7 @@ class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightTo
     /**
      * @return mixed The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),

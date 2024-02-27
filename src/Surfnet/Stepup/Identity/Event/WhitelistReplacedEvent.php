@@ -36,7 +36,7 @@ class WhitelistReplacedEvent implements WhitelistEvent
      * @param array $data
      * @return WhitelistReplacedEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(InstitutionCollection::deserialize($data['whitelisted_institutions']));
     }

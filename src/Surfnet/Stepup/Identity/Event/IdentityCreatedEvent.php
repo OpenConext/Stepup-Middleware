@@ -85,7 +85,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): IdentityCreatedEvent
     {
         return new self(
             new IdentityId($data['id']),

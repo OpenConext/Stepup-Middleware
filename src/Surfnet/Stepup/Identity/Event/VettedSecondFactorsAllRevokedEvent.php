@@ -46,7 +46,7 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
         return $metadata;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         return new static(
             new IdentityId($data['identity_id']),

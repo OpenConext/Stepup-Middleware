@@ -141,7 +141,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // Events not having a vetting type (recorded pre 5.0) default the
         // vetting type to 'unknown'

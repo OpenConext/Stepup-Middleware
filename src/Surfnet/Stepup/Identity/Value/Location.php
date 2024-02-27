@@ -54,7 +54,7 @@ final class Location implements JsonSerializable, Stringable
         return $this->location;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->location;
     }

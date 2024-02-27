@@ -73,7 +73,7 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         return $this->allowlist;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),

@@ -123,7 +123,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // BC compatibility for event replay in test-environment only (2.8.0, fixed in 2.8.1)
         if (!isset($data['preferred_locale'])) {

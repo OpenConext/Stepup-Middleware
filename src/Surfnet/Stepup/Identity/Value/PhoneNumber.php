@@ -63,7 +63,7 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
         return $this->phoneNumber;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->phoneNumber;
     }

@@ -60,7 +60,7 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
         $this->recoveryTokenType = $recoveryTokenType;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         $recoveryTokenType = new RecoveryTokenType($data['recovery_token_type']);
 

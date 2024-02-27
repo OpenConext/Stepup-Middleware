@@ -64,7 +64,7 @@ final class DocumentNumber implements JsonSerializable, Stringable
         return $this->documentNumber === $other->documentNumber;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->documentNumber;
     }

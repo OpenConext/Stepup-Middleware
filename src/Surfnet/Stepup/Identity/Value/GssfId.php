@@ -53,7 +53,7 @@ final class GssfId implements SecondFactorIdentifier
         return $other instanceof self && $this->gssfId === $other->gssfId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->gssfId;
     }

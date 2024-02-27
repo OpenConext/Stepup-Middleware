@@ -70,7 +70,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         return $other instanceof self && $this->value === $other->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

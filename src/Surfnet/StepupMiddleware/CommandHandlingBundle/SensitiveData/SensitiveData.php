@@ -161,7 +161,7 @@ class SensitiveData implements SerializableInterface
         return $this->vettingType ?: new UnknownVettingType();
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): SensitiveData
     {
         $self = new self;
 

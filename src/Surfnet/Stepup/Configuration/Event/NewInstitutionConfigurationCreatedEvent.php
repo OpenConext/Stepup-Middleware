@@ -101,7 +101,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
         $this->selfAssertedTokensOption = $selfAssertedTokensOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['verify_email_option'])) {
             $data['verify_email_option'] = true;

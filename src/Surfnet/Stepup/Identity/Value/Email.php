@@ -73,7 +73,7 @@ final class Email implements JsonSerializable, Stringable
         return $this->email === $other->email;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->email;
     }

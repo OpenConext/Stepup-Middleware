@@ -42,7 +42,7 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new IdentityForgottenEvent(new IdentityId($data['identity_id']), new Institution($data['institution']));
     }

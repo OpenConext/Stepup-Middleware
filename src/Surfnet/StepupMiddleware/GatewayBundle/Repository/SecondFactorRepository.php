@@ -25,6 +25,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 
 class SecondFactorRepository extends EntityRepository
 {
+    public $_entityName;
     /**
      * @param SecondFactor $secondFactor
      */

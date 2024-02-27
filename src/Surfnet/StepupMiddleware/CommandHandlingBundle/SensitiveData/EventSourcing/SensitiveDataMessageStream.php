@@ -51,7 +51,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
             $this->setSensitiveData($domainMessage, $sensitiveDataMessage);
         }
 
-        if (count($sensitiveDataMap) > 0) {
+        if ($sensitiveDataMap !== []) {
             throw new SensitiveDataApplicationException(sprintf(
                 '%d sensitive data messages are still to be matched to events',
                 count($sensitiveDataMap)

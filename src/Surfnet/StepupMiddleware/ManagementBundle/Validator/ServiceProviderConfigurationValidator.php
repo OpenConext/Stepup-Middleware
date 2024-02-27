@@ -58,7 +58,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
             $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                join("', '", $requiredProperties)
+                implode("', '", $requiredProperties)
             ),
             $propertyPath
         );
@@ -130,7 +130,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
     private function validateAssertionConsumerUrls(array $configuration, $propertyPath): void
     {
         $value = $configuration['acs'];
-        $propertyPath = $propertyPath . '.acs';
+        $propertyPath .= '.acs';
 
         Assertion::isArray($value, 'must contain a non-empty array of strings', $propertyPath);
         Assertion::true(count($value) >= 1, 'array must contain at least one value', $propertyPath);

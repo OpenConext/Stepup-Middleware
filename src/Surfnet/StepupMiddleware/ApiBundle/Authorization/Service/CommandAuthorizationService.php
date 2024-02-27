@@ -21,6 +21,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -84,18 +85,13 @@ class CommandAuthorizationService
         if (!is_null($actorId) && $this->isSraa($actorId)) {
             return true;
         }
-
-        if ($this->whitelistService->isWhitelisted($institution->getInstitution())) {
-            return true;
-        }
-
-        return false;
+        return (bool) $this->whitelistService->isWhitelisted($institution->getInstitution());
     }
 
     public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool
     {
         $commandName = get_class($command);
-        $identityId = $actorId ? $actorId->getIdentityId() : null;
+        $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
 
         // Assert Self Service command could be executed
         if ($command instanceof SelfServiceExecutable) {
@@ -158,7 +154,7 @@ class CommandAuthorizationService
         Institution $actorInstitution = null
     ): bool {
         $commandName = get_class($command);
-        $identityId = $actorId ? $actorId->getIdentityId() : null;
+        $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
 
         $this->logger->notice('Running the mayRaCommandBeExecutedOnBehalfOf sequence');
         // Assert RA(A) specific authorizations
@@ -217,7 +213,7 @@ class CommandAuthorizationService
                 $roleRequirement = RegistrationAuthorityRole::ra();
                 // Use the institution of the identity (the user vetting or having his token revoked).
                 $identity = $this->identityService->find($command->identityId);
-                if (!$identity) {
+                if (!$identity instanceof Identity) {
                     $this->logDenyRA(
                         'Unable to find the identity of the user that is being vetted, or revoked',
                         $commandName,
@@ -278,11 +274,7 @@ class CommandAuthorizationService
         if (!$registrationAuthorityCredentials) {
             return false;
         }
-
-        if (!$registrationAuthorityCredentials->isSraa()) {
-            return false;
-        }
-        return true;
+        return $registrationAuthorityCredentials->isSraa();
     }
 
     private function logAllowSelfService(string $message, string $commandName, ?string $identityId): void

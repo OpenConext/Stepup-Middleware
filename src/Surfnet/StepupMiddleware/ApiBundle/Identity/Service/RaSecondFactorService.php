@@ -42,9 +42,7 @@ class RaSecondFactorService extends AbstractSearchService
     {
         $doctrineQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**

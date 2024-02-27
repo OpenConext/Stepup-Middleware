@@ -66,7 +66,7 @@ class IdentitySelfAssertedTokenOptionsProjector extends Projector
         $identitySelfAssertedTokenOptions = $this->repository->find($identityId);
         // Scenario 1: A new token is registered, we have no sat options yet,
         // create them. These are identities from the pre SAT era.
-        if (!$identitySelfAssertedTokenOptions) {
+        if (!$identitySelfAssertedTokenOptions instanceof IdentitySelfAssertedTokenOptions) {
             $identitySelfAssertedTokenOptions = IdentitySelfAssertedTokenOptions::create(
                 $identityId,
                 true,

@@ -69,7 +69,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
      */
     public function isBlank(): bool
     {
-        return empty($this->allowedSecondFactors);
+        return $this->allowedSecondFactors === [];
     }
 
     /**

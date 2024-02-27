@@ -675,7 +675,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
         $secondFactor = $sourceIdentity->getVettedSecondFactorById($secondFactorId);
-        if (!$secondFactor) {
+        if (!$secondFactor instanceof VettedSecondFactor) {
             throw new DomainException("The second factor on the original identity can not be found");
         }
         $this->assertTokenNotAlreadyRegistered($secondFactor->getType(), $secondFactor->getIdentifier());
@@ -981,7 +981,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     {
         $this->assertNotForgotten();
 
-        if ($this->registrationAuthorities->count()) {
+        if ($this->registrationAuthorities->count() !== 0) {
             throw new DomainException('Cannot forget an identity that is currently accredited as an RA(A)');
         }
 

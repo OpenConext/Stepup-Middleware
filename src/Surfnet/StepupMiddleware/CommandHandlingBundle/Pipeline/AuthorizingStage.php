@@ -64,7 +64,7 @@ class AuthorizingStage implements Stage
             $allowedRoles[] = 'ROLE_DEPROVISION';
         }
 
-        if (empty($allowedRoles)) {
+        if ($allowedRoles === []) {
             $this->logger->debug(sprintf('No authorization required for command "%s"', $command));
 
             return $command;

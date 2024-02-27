@@ -66,6 +66,6 @@ class RecoveryTokenService extends AbstractSearchService
             ]
         );
 
-        return count($recoveryTokens) > 0;
+        return $recoveryTokens !== [];
     }
 }

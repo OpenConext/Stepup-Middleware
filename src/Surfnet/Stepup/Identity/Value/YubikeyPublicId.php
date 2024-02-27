@@ -44,7 +44,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
 
         // Numeric IDs must be left-padded with zeroes until eight characters. Longer IDs, up to twenty characters, may
         // not be padded.
-        if (!preg_match('~^[0-9]{8,20}$~', $value)) {
+        if (!preg_match('~^\d{8,20}$~', $value)) {
             throw new InvalidArgumentException('Given Yubikey public ID is not a string of 8 to 20 digits');
         }
         if ($value !== sprintf('%08s', ltrim($value, '0'))) {

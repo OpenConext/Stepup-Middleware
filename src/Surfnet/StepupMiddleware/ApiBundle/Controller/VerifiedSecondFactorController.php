@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
@@ -62,7 +63,7 @@ class VerifiedSecondFactorController extends AbstractController
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 
-        if ($secondFactor === null) {
+        if (!$secondFactor instanceof VerifiedSecondFactor) {
             throw new NotFoundHttpException(sprintf("Verified second factor '%s' does not exist", $id));
         }
 
@@ -116,7 +117,7 @@ class VerifiedSecondFactorController extends AbstractController
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 
-        if ($secondFactor === null) {
+        if (!$secondFactor instanceof VerifiedSecondFactor) {
             throw new NotFoundHttpException(sprintf("Verified second factor '%s' does not exist", $id));
         }
 

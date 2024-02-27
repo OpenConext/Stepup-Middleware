@@ -58,9 +58,7 @@ class RaListingService extends AbstractSearchService
     {
         $doctrineQuery = $this->raListingRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**

@@ -80,7 +80,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
         StepupAssert::keysMatch(
             $configuration,
             $acceptedProperties,
-            sprintf("Expected only properties '%s'", join(',', $acceptedProperties)),
+            sprintf("Expected only properties '%s'", implode(',', $acceptedProperties)),
             '(root)'
         );
 

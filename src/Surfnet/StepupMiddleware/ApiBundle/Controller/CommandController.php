@@ -141,8 +141,8 @@ class CommandController extends AbstractController
         // Be aware that these values could be null when executing commands where we shouldn't log in for
         // - CreateIdentityCommand
         // - UpdateIdentityCommand
-        $actorId = !is_null($metadata->actorId) ? new IdentityId($metadata->actorId) : null;
-        $actorInstitution = !is_null($metadata->actorInstitution) ? new Institution($metadata->actorInstitution) : null;
+        $actorId = is_null($metadata->actorId) ? null : new IdentityId($metadata->actorId);
+        $actorInstitution = is_null($metadata->actorInstitution) ? null : new Institution($metadata->actorInstitution);
 
         // The institution of an actor should be whitelisted or the actor should be SRAA
         // Be aware that the actor metadata is not always present, see self::resolveInstitution

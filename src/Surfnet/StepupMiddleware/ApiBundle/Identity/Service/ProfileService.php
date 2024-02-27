@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
@@ -62,7 +63,7 @@ class ProfileService extends AbstractSearchService
     public function createProfile($identityId): ?Profile
     {
         $identity = $this->identityService->find($identityId);
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return null;
         }
 

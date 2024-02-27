@@ -75,15 +75,11 @@ class VerifiedSecondFactorReminderService
 
         $tokenInformationCollection = $this->buildCollection($date);
 
-        if (!empty($tokenInformationCollection)) {
+        if ($tokenInformationCollection !== []) {
             $this->logger->info(sprintf('%d token reminder(s) will be sent', count($tokenInformationCollection)));
 
             foreach ($tokenInformationCollection as $tokenInformation) {
-                if (!$dryRun) {
-                    $numberSent = $this->mailService->sendReminder($tokenInformation);
-                } else {
-                    $numberSent = 1;
-                }
+                $numberSent = $dryRun ? 1 : $this->mailService->sendReminder($tokenInformation);
 
                 $this->logger->info(
                     sprintf(

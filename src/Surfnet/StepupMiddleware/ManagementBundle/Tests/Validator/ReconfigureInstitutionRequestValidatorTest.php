@@ -81,10 +81,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
         $builder = Mockery::mock(ConstraintViolationBuilderInterface::class);
         $builder->shouldReceive('addViolation')->with()->once();
-        $builder->shouldReceive('atPath')->with(self::spy($actualPropertyPath))->once();
+        $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
-        $context->shouldReceive('buildViolation')->with(self::spy($actualErrorMessage))->once()->andReturn($builder);
+        $context->shouldReceive('buildViolation')->with($this->spy($actualErrorMessage))->once()->andReturn($builder);
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);
@@ -134,7 +134,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         $builder->shouldReceive('addViolation')->with()->once();
 
         $context = Mockery::mock(ExecutionContextInterface::class);
-        $context->shouldReceive('buildViolation')->once()->with(self::spy($errorMessage))->andReturn($builder);
+        $context->shouldReceive('buildViolation')->once()->with($this->spy($errorMessage))->andReturn($builder);
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock
@@ -258,7 +258,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private static function spy(&$spy)
+    private function spy(&$spy)
     {
         return Mockery::on(
             function ($value) use (&$spy): bool {

@@ -90,7 +90,7 @@ class DeprovisionService implements DeprovisionServiceInterface
     private function getIdentityByNameId(string $collabPersonId): Identity
     {
         $user = $this->apiRepository->findOneByNameId($collabPersonId);
-        if (!$user) {
+        if (!$user instanceof Identity) {
             throw new UserNotFoundException(
                 sprintf(
                     'User identified by: %s was not found. Unable to provide deprovision data.',

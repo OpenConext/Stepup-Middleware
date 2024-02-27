@@ -188,11 +188,11 @@ class AuthorizationRepository extends ServiceEntityRepository
 
     private function getInstitutionRoleByRaRole(RegistrationAuthorityRole $role): string
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return AuthorityRole::ROLE_RA;
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return AuthorityRole::ROLE_RAA;
+        if ($role->equals(RegistrationAuthorityRole::ra())) {
+            return AuthorityRole::ROLE_RA;
+        }
+        if ($role->equals(RegistrationAuthorityRole::raa())) {
+            return AuthorityRole::ROLE_RAA;
         }
     }
 }

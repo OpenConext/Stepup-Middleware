@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -42,7 +43,7 @@ class VettedSecondFactorController extends AbstractController
 
         $secondFactor = $this->secondFactorService->findVetted(new SecondFactorId($id));
 
-        if ($secondFactor === null) {
+        if (!$secondFactor instanceof VettedSecondFactor) {
             throw new NotFoundHttpException(sprintf("Vetted second factor '%s' does not exist", $id));
         }
 

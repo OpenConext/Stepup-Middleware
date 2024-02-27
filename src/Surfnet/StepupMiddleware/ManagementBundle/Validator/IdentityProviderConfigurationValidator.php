@@ -42,7 +42,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
             $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                join("', '", $requiredProperties)
+                implode("', '", $requiredProperties)
             ),
             $propertyPath
         );

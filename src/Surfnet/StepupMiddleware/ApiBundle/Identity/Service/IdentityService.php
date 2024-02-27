@@ -76,9 +76,7 @@ class IdentityService extends AbstractSearchService
     {
         $searchQuery = $this->repository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($searchQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($searchQuery, $query);
     }
 
     /**
@@ -89,7 +87,7 @@ class IdentityService extends AbstractSearchService
     {
         $identity = $this->find($identityId);
 
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             return null;
         }
 
@@ -139,17 +137,17 @@ class IdentityService extends AbstractSearchService
         $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);
 
-        if (!empty($raListing)) {
+        if ($raListing !== []) {
             $credentials = RegistrationAuthorityCredentials::fromRaListings($raListing);
 
-            if ($sraa) {
+            if ($sraa !== null) {
                 $credentials = $credentials->grantSraa();
             }
 
             return $credentials;
         }
 
-        if ($sraa) {
+        if ($sraa !== null) {
             return RegistrationAuthorityCredentials::fromSraa($sraa, $identity);
         }
 
@@ -162,7 +160,7 @@ class IdentityService extends AbstractSearchService
     ): IdentitySelfAssertedTokenOptions {
         $options = $this->identitySelfAssertedTokensOptionsRepository->find($identity->id);
         // Backward compatibility for Identities from the pre SAT era
-        if (!$options) {
+        if (!$options instanceof IdentitySelfAssertedTokenOptions) {
             $options = new IdentitySelfAssertedTokenOptions();
             // Safe to say they did not have a SAT
             $options->possessedSelfAssertedToken = false;

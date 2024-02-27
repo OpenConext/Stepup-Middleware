@@ -39,8 +39,6 @@ class AuditLogService extends AbstractSearchService
     {
         $doctrineQuery = $this->repository->createSecondFactorSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 }

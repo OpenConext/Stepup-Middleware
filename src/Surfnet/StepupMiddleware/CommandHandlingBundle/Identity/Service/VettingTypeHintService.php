@@ -51,8 +51,7 @@ class VettingTypeHintService
             if ($this->unknownLocale($locale)) {
                 $this->logger->warning(
                     sprintf(
-                        'Received unsupported locale %s while processing the vetting type hints. ' .
-                        'Allowed locales are: %s.',
+                        'Received unsupported locale %s while processing the vetting type hints. Allowed locales are: %s.',
                         $locale,
                         implode(', ', $this->locales)
                     )

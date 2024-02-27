@@ -28,7 +28,7 @@ final class Assert
         $extraKeys = array_diff($keysOfValue, $keys);
         $missingKeys = array_diff($keys, $keysOfValue);
 
-        if (count($extraKeys) === 0 && count($missingKeys) === 0) {
+        if ($extraKeys === [] && $missingKeys === []) {
             return;
         }
 
@@ -53,7 +53,7 @@ final class Assert
         $keysOfValue = array_keys($value);
         $extraKeys = array_diff($keysOfValue, array_merge($optional, $required));
 
-        if (count($extraKeys) === 0) {
+        if ($extraKeys === []) {
             return;
         }
 

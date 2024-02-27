@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuthorizationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
@@ -93,7 +94,7 @@ class AuthorizationContextService
     private function isSraa(IdentityId $actorId): bool
     {
         $identity = $this->identityService->find((string)$actorId);
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             throw new InvalidArgumentException('The provided id is not associated with any known identity');
         }
         $sraa = $this->sraaService->findByNameId($identity->nameId);

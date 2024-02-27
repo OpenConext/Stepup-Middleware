@@ -55,7 +55,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         StepupAssert::keysMatch(
             $configuration,
             $templateNames,
-            sprintf("Expected only templates '%s'", join(',', $templateNames)),
+            sprintf("Expected only templates '%s'", implode(',', $templateNames)),
             $propertyPath
         );
 

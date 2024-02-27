@@ -66,7 +66,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         array_walk(
             $institutions,
             function ($institution, $key) use ($institutions): void {
-                if (!is_string($institution)  || strlen(trim($institution)) === 0) {
+                if (!is_string($institution)  || trim($institution) === '') {
                     throw InvalidArgumentException::invalidType(
                         'string',
                         'institutions',
@@ -185,12 +185,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
             },
             $institutions
         );
-
-        if (!in_array($institution->getInstitution(), $list)) {
-            return false;
-        }
-
-        return true;
+        return in_array($institution->getInstitution(), $list);
     }
 
     /**

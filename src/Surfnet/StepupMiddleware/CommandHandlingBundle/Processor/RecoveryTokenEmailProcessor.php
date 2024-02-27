@@ -23,6 +23,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService;
 
@@ -45,7 +46,7 @@ final class RecoveryTokenEmailProcessor extends Processor
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -63,7 +64,7 @@ final class RecoveryTokenEmailProcessor extends Processor
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -81,7 +82,7 @@ final class RecoveryTokenEmailProcessor extends Processor
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
         $this->mailService->sendCreated(
@@ -96,7 +97,7 @@ final class RecoveryTokenEmailProcessor extends Processor
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
         $this->mailService->sendCreated(

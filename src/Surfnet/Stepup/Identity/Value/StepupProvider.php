@@ -26,7 +26,7 @@ final class StepupProvider
 
     public function __construct($provider)
     {
-        if (!is_string($provider) || strlen(trim($provider)) === 0) {
+        if (!is_string($provider) || trim($provider) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'provider', $provider);
         }
 

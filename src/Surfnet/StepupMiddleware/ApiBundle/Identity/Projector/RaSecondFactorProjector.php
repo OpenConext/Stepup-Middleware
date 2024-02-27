@@ -74,7 +74,7 @@ class RaSecondFactorProjector extends Projector
     {
         $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
 
-        if (count($secondFactors) === 0) {
+        if ($secondFactors === []) {
             return;
         }
 
@@ -91,7 +91,7 @@ class RaSecondFactorProjector extends Projector
     {
         $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
 
-        if (count($secondFactors) === 0) {
+        if ($secondFactors === []) {
             return;
         }
 
@@ -257,7 +257,7 @@ class RaSecondFactorProjector extends Projector
             $documentNumber
         );
 
-        if ($status !== null) {
+        if ($status instanceof SecondFactorStatus) {
             $secondFactor->status = $status;
         }
 

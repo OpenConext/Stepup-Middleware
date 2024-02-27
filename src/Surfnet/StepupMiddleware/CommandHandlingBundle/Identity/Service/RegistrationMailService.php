@@ -42,6 +42,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class RegistrationMailService
 {
+    public $institutionConfigurationOptionsService;
     /**
      * @var Mailer
      */

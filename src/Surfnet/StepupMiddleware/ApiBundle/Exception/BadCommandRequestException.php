@@ -38,7 +38,7 @@ class BadCommandRequestException extends RuntimeException
     public static function withViolations($message, ConstraintViolationListInterface $violations): self
     {
         $violationStrings = self::convertViolationsToStrings($violations);
-        $message = sprintf('%s (%s)', $message, join('; ', $violationStrings));
+        $message = sprintf('%s (%s)', $message, implode('; ', $violationStrings));
 
         return new self($violationStrings, $message);
     }

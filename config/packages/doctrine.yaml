@@ -127,19 +127,19 @@ doctrine:
                 mappings:
                     api_identity:
                         mapping: true
-                        type: annotation
+                        type: attribute
                         dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ApiBundle/Identity"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Identity
                         is_bundle: false
                     api_configuration:
                         mapping: true
-                        type: annotation
+                        type: attribute
                         dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ApiBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ApiBundle\Configuration
                         is_bundle: false
                     management_configuration:
                         mapping: true
-                        type: annotation
+                        type: attribute
                         dir: "%kernel.project_dir%/src/Surfnet/StepupMiddleware/ManagementBundle/Configuration"
                         prefix: Surfnet\StepupMiddleware\ManagementBundle\Configuration
                         is_bundle: false
@@ -147,9 +147,9 @@ doctrine:
                 connection: gateway
                 naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
                 mappings:
-                    SurfnetStepupMiddlewareGatewayBundle:
+                    Surfnet\StepupMiddleware\GatewayBundle\SurfnetStepupMiddlewareGatewayBundle:
                         mapping: true
-                        type: annotation
+                        type: attribute
                         is_bundle: true
             deploy:
                 connection: deploy

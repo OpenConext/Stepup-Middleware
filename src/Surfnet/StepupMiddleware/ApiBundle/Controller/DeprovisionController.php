@@ -45,7 +45,7 @@ class DeprovisionController extends AbstractController
         $errors = [];
         try {
             $userData = $this->deprovisionService->readUserData($collabPersonId);
-            if (!empty($userData)) {
+            if ($userData !== []) {
                 $this->deprovisionService->deprovision($collabPersonId);
             }
         } catch (DomainException $e) {

@@ -71,7 +71,7 @@ class VerifiedTokenInformation
 
     public static function fromEntity(VerifiedSecondFactor $token, Identity $identity): self
     {
-        $tokenInformation = new self(
+        return new self(
             (string) $identity->email,
             $token->id,
             $token->type,
@@ -81,8 +81,6 @@ class VerifiedTokenInformation
             $identity->institution,
             $token->registrationCode
         );
-
-        return $tokenInformation;
     }
 
     public function getEmail()

@@ -59,7 +59,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
      * @param array $data
      * @return IdentityRenamedEvent The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),

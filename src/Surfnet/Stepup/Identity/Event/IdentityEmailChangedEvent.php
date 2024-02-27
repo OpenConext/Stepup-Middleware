@@ -59,7 +59,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
      * @param array $data
      * @return IdentityEmailChangedEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),

@@ -122,7 +122,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;

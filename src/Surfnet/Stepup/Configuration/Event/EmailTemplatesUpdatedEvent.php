@@ -36,7 +36,7 @@ class EmailTemplatesUpdatedEvent extends ConfigurationEvent
         $this->emailTemplates = $emailTemplates;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['email_templates']);
     }

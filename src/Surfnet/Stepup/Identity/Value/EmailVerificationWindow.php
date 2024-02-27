@@ -84,7 +84,7 @@ final readonly class EmailVerificationWindow implements SerializableInterface, S
         return $this->start == $other->start && $this->end == $other->end;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new EmailVerificationWindow(
             DateTime::fromString($data['start']),

@@ -81,7 +81,7 @@ final class RegistrationAuthorityRole implements SerializableInterface, Stringab
         return $this->role === self::ROLE_RAA;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->role;
     }

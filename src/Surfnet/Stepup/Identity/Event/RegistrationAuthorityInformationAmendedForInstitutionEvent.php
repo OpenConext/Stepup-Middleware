@@ -91,7 +91,7 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),

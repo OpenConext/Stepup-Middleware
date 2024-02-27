@@ -139,7 +139,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(

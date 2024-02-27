@@ -126,7 +126,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;

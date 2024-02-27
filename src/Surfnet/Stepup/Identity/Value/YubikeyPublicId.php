@@ -77,7 +77,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $other instanceof self && $this->value === $other->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

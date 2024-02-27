@@ -42,7 +42,7 @@ class InstitutionListing implements JsonSerializable
         return $instance;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return ['name' => $this->institution];
     }

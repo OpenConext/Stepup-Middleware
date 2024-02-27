@@ -121,7 +121,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return new ArrayIterator($this->allowedSecondFactors);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->allowedSecondFactors;
     }

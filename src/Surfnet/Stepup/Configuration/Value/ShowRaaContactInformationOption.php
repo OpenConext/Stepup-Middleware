@@ -59,7 +59,7 @@ final class ShowRaaContactInformationOption implements JsonSerializable
         return $this->showRaaContactInformationOption;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): bool
     {
         return $this->showRaaContactInformationOption;
     }

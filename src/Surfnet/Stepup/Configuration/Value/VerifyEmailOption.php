@@ -59,7 +59,7 @@ final class VerifyEmailOption implements JsonSerializable
         return $this->verifyEmailOption;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): bool
     {
         return $this->verifyEmailOption;
     }

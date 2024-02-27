@@ -38,7 +38,7 @@ class WhitelistEntry implements JsonSerializable
         return $instance;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->institution;
     }

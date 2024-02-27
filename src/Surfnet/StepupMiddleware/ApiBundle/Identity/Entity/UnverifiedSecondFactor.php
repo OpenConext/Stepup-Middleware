@@ -58,7 +58,7 @@ class UnverifiedSecondFactor implements JsonSerializable
     #[ORM\Column(length: 32)]
     public $verificationNonce;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mockery as m;
 use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
@@ -473,7 +474,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')
@@ -509,7 +510,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor, $vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')
@@ -546,7 +547,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_ON_PREMISE;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor, $vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')

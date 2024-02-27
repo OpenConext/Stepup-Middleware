@@ -207,7 +207,7 @@ class AuditLogEntry implements JsonSerializable
     #[ORM\Column(type: 'stepup_datetime')]
     public $recordedOn;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'actor_id' => $this->actorId,

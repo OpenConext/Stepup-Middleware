@@ -89,7 +89,7 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
         return $this->institutionConfigurationId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->institutionConfigurationId;
     }

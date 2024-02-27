@@ -105,7 +105,7 @@ class RaSecondFactor implements JsonSerializable
         $this->status = SecondFactorStatus::unverified();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

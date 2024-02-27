@@ -1,11 +1,13 @@
 services:
   _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
     bind:
       $numberOfTokensPerIdentity: '%number_of_tokens_per_identity%'
 
   Surfnet\StepupMiddleware\ApiBundle\:
     resource: '../../*'
-    autowire: true
     exclude: '../../{DependencyInjection,Entity,Repository,Migrations,Tests,Controller}'
 
   # The ManagementBundle controllers are available as a service

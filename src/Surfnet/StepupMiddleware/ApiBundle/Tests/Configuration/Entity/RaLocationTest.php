@@ -31,7 +31,7 @@ class RaLocationTest extends TestCase
      * @test
      * @group entity
      */
-    public function an_ra_location_is_correctly_serialized_to_json()
+    public function an_ra_location_is_correctly_serialized_to_json(): void
     {
         $deserializedRaLocation = [
             'id'                  => 'An id',

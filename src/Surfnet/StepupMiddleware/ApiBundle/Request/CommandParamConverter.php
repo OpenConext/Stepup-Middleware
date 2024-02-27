@@ -30,7 +30,7 @@ class CommandParamConverter implements ParamConverterInterface
      * The line above could be removed in newer releases were dynamic imports are allowed
      * @see https://github.com/phpmd/phpmd/issues/673
      */
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): void
     {
         $data = json_decode($request->getContent(), true);
 
@@ -55,7 +55,7 @@ class CommandParamConverter implements ParamConverterInterface
         $request->attributes->set('command', $command);
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'command'
             && $configuration->getClass() === 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command';
@@ -65,7 +65,7 @@ class CommandParamConverter implements ParamConverterInterface
      * @param mixed $data
      * @throws BadCommandRequestException
      */
-    private function assertIsValidCommandStructure($data)
+    private function assertIsValidCommandStructure($data): void
     {
         if (!is_array($data)) {
             $type = gettype($data);

@@ -32,14 +32,14 @@ final class RaLocationController extends AbstractController
     /**
      * @return RaLocationService
      */
-    private $raLocationService;
+    private RaLocationService $raLocationService;
 
     public function __construct(RaLocationService $raLocationService)
     {
         $this->raLocationService = $raLocationService;
     }
 
-    public function searchAction(Request $request, Institution $institution)
+    public function searchAction(Request $request, Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -54,7 +54,7 @@ final class RaLocationController extends AbstractController
         return new JsonCollectionResponse($count, 1, $count, $raLocations);
     }
 
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

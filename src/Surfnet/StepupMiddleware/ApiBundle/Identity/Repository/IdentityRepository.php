@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -30,10 +31,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class IdentityRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
@@ -41,7 +39,7 @@ class IdentityRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null): ?Identity
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?Identity
     {
         /** @var Identity|null $identity */
         $identity = parent::find($id);
@@ -52,7 +50,7 @@ class IdentityRepository extends ServiceEntityRepository
     /**
      * @param Identity $identity
      */
-    public function save(Identity $identity)
+    public function save(Identity $identity): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($identity);
@@ -61,11 +59,11 @@ class IdentityRepository extends ServiceEntityRepository
 
     /**
      * @param IdentityQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
     public function createSearchQuery(
         IdentityQuery $query
-    ) {
+    ): Query {
         $queryBuilder = $this->createQueryBuilder('i');
 
         if ($query->institution) {
@@ -116,7 +114,7 @@ class IdentityRepository extends ServiceEntityRepository
      *
      * @return bool
      */
-    public function hasIdentityWithNameIdAndInstitution(NameId $nameId, Institution $institution)
+    public function hasIdentityWithNameIdAndInstitution(NameId $nameId, Institution $institution): bool
     {
         $identityCount = $this->createQueryBuilder('i')
             ->select('COUNT(i.id)')
@@ -151,7 +149,7 @@ class IdentityRepository extends ServiceEntityRepository
         return $this->findOneBy(['nameId' => $nameId]);
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'i')

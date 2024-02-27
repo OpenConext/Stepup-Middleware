@@ -29,7 +29,7 @@ final class SensitiveDataServiceTest extends TestCase
      * @test
      * @group sensitive-data
      */
-    public function it_can_forget_sensitive_data_in_a_stream()
+    public function it_can_forget_sensitive_data_in_a_stream(): void
     {
         $identityId = new IdentityId('A');
 

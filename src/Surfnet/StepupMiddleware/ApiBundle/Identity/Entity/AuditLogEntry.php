@@ -20,6 +20,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\LogicException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
@@ -40,7 +43,7 @@ class AuditLogEntry implements JsonSerializable
      *
      * @var string[]
      */
-    private $eventActionMap = [
+    private array $eventActionMap = [
         'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent' => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent'   => 'revoked_by_ra',
         'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent'     => 'revoked_by_ra',
@@ -93,13 +96,13 @@ class AuditLogEntry implements JsonSerializable
     public $actorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name', nullable: true)]
     public $actorCommonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution|null
+     * @var Institution|null
      */
     #[ORM\Column(type: 'institution', nullable: true)]
     public $actorInstitution;
@@ -122,7 +125,7 @@ class AuditLogEntry implements JsonSerializable
     public $identityId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     #[ORM\Column(type: 'institution')]
     public $identityInstitution;
@@ -164,7 +167,7 @@ class AuditLogEntry implements JsonSerializable
     public $event;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     #[ORM\Column(type: 'stepup_datetime')]
     public $recordedOn;

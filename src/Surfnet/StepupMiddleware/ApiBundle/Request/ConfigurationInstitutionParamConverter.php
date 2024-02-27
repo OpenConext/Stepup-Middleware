@@ -28,12 +28,12 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 {
     const INSTITUTION = 'institution';
 
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): void
     {
         $request->attributes->set(self::INSTITUTION, new Institution($this->getInstitutionFromRequest($request)));
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === self::INSTITUTION
             && $configuration->getClass() === 'Surfnet\Stepup\Configuration\Value\Institution';

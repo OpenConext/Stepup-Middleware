@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class ForgettableEventsTest extends TestCase
 {
@@ -26,7 +27,7 @@ final class ForgettableEventsTest extends TestCase
      * @test
      * @group domain
      */
-    public function certain_events_are_forgettable_events_and_others_are_not()
+    public function certain_events_are_forgettable_events_and_others_are_not(): void
     {
         $forgettableEventFqcns = [
             'Surfnet\Stepup\Identity\Event\CompliedWithRevocationEvent',
@@ -80,16 +81,16 @@ final class ForgettableEventsTest extends TestCase
     /**
      * @return string[]
      */
-    private function getConcreteIdentityEventFqcns()
+    private function getConcreteIdentityEventFqcns(): array
     {
         return array_filter(
             array_map(
-                function ($file) {
+                function ($file): ?string {
                     $fqcn       = sprintf(
                         'Surfnet\Stepup\Identity\Event\%s',
                         preg_replace('/\\..+?$/', '', basename($file))
                     );
-                    $reflection = new \ReflectionClass($fqcn);
+                    $reflection = new ReflectionClass($fqcn);
                     return $reflection->isInstantiable() ? $fqcn : null;
                 },
                 glob(__DIR__ . '/../../../Identity/Event/*Event.php')

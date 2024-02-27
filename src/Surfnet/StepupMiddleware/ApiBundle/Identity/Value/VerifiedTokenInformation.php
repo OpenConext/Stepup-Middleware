@@ -69,7 +69,7 @@ class VerifiedTokenInformation
         $this->registrationCode = $registrationCode;
     }
 
-    public static function fromEntity(VerifiedSecondFactor $token, Identity $identity)
+    public static function fromEntity(VerifiedSecondFactor $token, Identity $identity): self
     {
         $tokenInformation = new self(
             (string) $identity->email,

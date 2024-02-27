@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -34,7 +35,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -46,14 +47,14 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
      * The Yubikey's public ID.
      *
-     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
+     * @var YubikeyPublicId
      */
     public $yubikeyPublicId;
 
@@ -63,12 +64,12 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     public $emailVerificationRequired;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $emailVerificationRequestedAt;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
+     * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
@@ -78,17 +79,17 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     public $emailVerificationNonce;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -130,7 +131,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
         $this->preferredLocale           = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -186,7 +187,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
             ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
-use \Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 
 final class InstitutionCollection
 {
@@ -32,7 +32,7 @@ final class InstitutionCollection
     /**
      * @param Institution $institution
      */
-    public function set(Institution $institution)
+    public function set(Institution $institution): void
     {
         $this->institutions[(string)$institution] = $institution;
     }
@@ -40,7 +40,7 @@ final class InstitutionCollection
     /**
      * @param Institutions $institutions
      */
-    public function update(Institutions $institutions)
+    public function update(Institutions $institutions): void
     {
         foreach ($institutions as $institution) {
             $this->institutions[(string)$institutions] = $institution;
@@ -60,7 +60,7 @@ final class InstitutionCollection
      * @param Institution $institution
      * @return Institution
      */
-    public function exists(Institution $institution)
+    public function exists(Institution $institution): bool
     {
         return array_key_exists((string)$institution, $this->institutions);
     }
@@ -68,7 +68,7 @@ final class InstitutionCollection
     /**
      * @param Institution $institution
      */
-    public function remove(Institution $institution)
+    public function remove(Institution $institution): void
     {
         unset($this->institutions[(string)$institution]);
     }
@@ -76,7 +76,7 @@ final class InstitutionCollection
     /**
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->institutions);
     }

@@ -38,25 +38,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
  */
 class AuthorizationService
 {
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationService;
 
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
+    private SecondFactorService $secondFactorService;
 
-    /**
-     * @var RecoveryTokenService
-     */
-    private $recoveryTokenService;
+    private RecoveryTokenService $recoveryTokenService;
 
     public function __construct(
         IdentityService $identityService,

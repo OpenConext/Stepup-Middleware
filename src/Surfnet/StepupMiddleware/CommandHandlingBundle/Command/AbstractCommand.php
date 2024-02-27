@@ -35,7 +35,7 @@ abstract class AbstractCommand implements Command
     #[Assert\Regex(pattern: '~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i')]
     public $UUID;
 
-    public function __toString()
+    public function __toString(): string
     {
         return get_class($this) . '[' . $this->UUID . ']';
     }

@@ -19,8 +19,10 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionConfigurationIdTest extends TestCase
 {
@@ -28,7 +30,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_institution_configuration_ids_created_for_the_different_institution_are_not_equal()
+    public function two_institution_configuration_ids_created_for_the_different_institution_are_not_equal(): void
     {
         $institutionConfigurationId = InstitutionConfigurationId::from(new Institution('An institution'));
         $different = InstitutionConfigurationId::from(new Institution('A different institution'));
@@ -43,9 +45,9 @@ class InstitutionConfigurationIdTest extends TestCase
      * @dataProvider nonStringOrEmptyStringProvider
      * @param $nonStringOrEmptyString
      */
-    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string($nonStringOrEmptyString)
+    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(string|int|float|StdClass|array $nonStringOrEmptyString): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new InstitutionConfigurationId($nonStringOrEmptyString);
     }
@@ -54,9 +56,9 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_uuid()
+    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_uuid(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $nonUuid = 'this-is-not-a-uuid';
 
@@ -67,7 +69,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_institution_configuration_ids_created_for_the_same_institution_are_equal()
+    public function two_institution_configuration_ids_created_for_the_same_institution_are_equal(): void
     {
         $institutionConfigurationId = InstitutionConfigurationId::from(new Institution('An institution'));
         $same = InstitutionConfigurationId::from(new Institution('An institution'));
@@ -79,7 +81,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function institution_configuration_ids_are_created_case_insensitively_from_institutions()
+    public function institution_configuration_ids_are_created_case_insensitively_from_institutions(): void
     {
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
         $lowerCaseInstitution = new Institution('an institution');
@@ -100,7 +102,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @test
      * @group domain
      */
-    public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_the_same()
+    public function normalized_institution_configuration_ids_and_unnormalized_institution_configuration_ids_are_the_same(): void
     {
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
 
@@ -115,7 +117,7 @@ class InstitutionConfigurationIdTest extends TestCase
     /**
      * dataprovider
      */
-    public function nonStringOrEmptyStringProvider()
+    public function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],
@@ -123,7 +125,7 @@ class InstitutionConfigurationIdTest extends TestCase
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 }

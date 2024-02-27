@@ -55,7 +55,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution()
+    public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution(): void
     {
         $expectedInstitution  = 'institution';
         $identityCreatedEvent = new IdentityCreatedEvent(
@@ -91,7 +91,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_an_already_configured_institution()
+    public function no_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_an_already_configured_institution(): void
     {
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
@@ -125,7 +125,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions()
+    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions(): void
     {
         $firstInstitution  = 'first institution';
         $secondInstitution = 'second institution';
@@ -166,7 +166,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_created()
+    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_created(): void
     {
         $alreadyPresentInstitution = 'already present';
         $newInstitution            = 'new';
@@ -211,7 +211,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions()
+    public function create_institution_configuration_commands_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions(): void
     {
         $firstInstitution  = 'first institution';
         $secondInstitution = 'second institution';
@@ -254,7 +254,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced()
+    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced(): void
     {
         $alreadyPresentInstitution = 'already present';
         $newInstitution            = 'new';
@@ -299,7 +299,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_created_when_non_configured_institutions_are_added_to_the_whitelist()
+    public function create_institution_configuration_commands_are_created_when_non_configured_institutions_are_added_to_the_whitelist(): void
     {
         $firstInstitution  = 'first institution';
         $secondInstitution = 'second institution';
@@ -342,7 +342,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist()
+    public function no_create_institution_configuration_command_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist(): void
     {
         $alreadyPresentInstitution = 'already present';
         $newInstitution            = 'new';

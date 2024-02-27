@@ -24,15 +24,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class DispatchStage implements Stage
 {
-    /**
-     * @var CommandBus
-     */
-    private $commandBus;
+    private CommandBus $commandBus;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @param LoggerInterface     $logger
@@ -44,7 +38,7 @@ class DispatchStage implements Stage
         $this->commandBus = $commandBus;
     }
 
-    public function process(Command $command)
+    public function process(Command $command): Command
     {
         $this->logger->debug(sprintf('Dispatching command "%s" for handling', $command));
 

@@ -41,7 +41,7 @@ class UnhashedSecret implements HashableSecret
      */
     private const ALGORITHM = PASSWORD_BCRYPT;
 
-    private $secret;
+    private string $secret;
 
     public function hashSecret(): Secret
     {

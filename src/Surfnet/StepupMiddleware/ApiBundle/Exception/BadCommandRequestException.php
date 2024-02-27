@@ -29,14 +29,13 @@ class BadCommandRequestException extends RuntimeException
     /**
      * @var string[]
      */
-    private $errors;
+    private array $errors;
 
     /**
      * @param string $message
-     * @param ConstraintViolationListInterface $violations
      * @return self
      */
-    public static function withViolations($message, ConstraintViolationListInterface $violations)
+    public static function withViolations($message, ConstraintViolationListInterface $violations): self
     {
         $violationStrings = self::convertViolationsToStrings($violations);
         $message = sprintf('%s (%s)', $message, join('; ', $violationStrings));
@@ -45,10 +44,9 @@ class BadCommandRequestException extends RuntimeException
     }
 
     /**
-     * @param ConstraintViolationListInterface $violations
      * @return string[]
      */
-    private static function convertViolationsToStrings(ConstraintViolationListInterface $violations)
+    private static function convertViolationsToStrings(ConstraintViolationListInterface $violations): array
     {
         $violationStrings = [];
 

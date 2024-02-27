@@ -48,7 +48,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @var RecoveryTokenEmailProcessor
      */
-    private $processor;
+    private RecoveryTokenEmailProcessor $processor;
     /**
      * @var Mockery\MockInterface|RecoveryTokenMailService
      */
@@ -71,7 +71,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_mails_when_complied_with_recovery_token_revocation()
+    public function test_mails_when_complied_with_recovery_token_revocation(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -103,7 +103,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_complied_with_recovery_token_revocation()
+    public function test_does_not_mail_when_identity_not_found_complied_with_recovery_token_revocation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -125,7 +125,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_recovery_token_revoked_by_identity()
+    public function test_it_mails_when_recovery_token_revoked_by_identity(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -156,7 +156,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_recovery_token_revocation()
+    public function test_does_not_mail_when_identity_not_found_recovery_token_revocation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -177,7 +177,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_sms_token_created()
+    public function test_it_mails_when_sms_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -208,7 +208,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_sms_creation()
+    public function test_does_not_mail_when_identity_not_found_sms_creation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -232,7 +232,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_safe_store_token_created()
+    public function test_it_mails_when_safe_store_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -263,7 +263,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_safe_store_creation()
+    public function test_does_not_mail_when_identity_not_found_safe_store_creation(): void
     {
         $this->identityService
             ->shouldReceive('find')

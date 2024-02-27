@@ -30,7 +30,7 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
      * {@inheritdoc} Since the priorities cannot be changed runtime but only through configuration, we're doing the
      * sorting based on priority here. A higher priority means the stage is added earlier.
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline');
         $stageDefinitions = $container->findTaggedServiceIds('pipeline.stage');

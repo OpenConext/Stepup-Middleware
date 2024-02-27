@@ -29,10 +29,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRe
 
 class InstitutionConfigurationProjector extends Projector
 {
-    /**
-     * @var InstitutionConfigurationRepository
-     */
-    private $repository;
+    private InstitutionConfigurationRepository $repository;
 
     /**
      * @param InstitutionConfigurationRepository $repository

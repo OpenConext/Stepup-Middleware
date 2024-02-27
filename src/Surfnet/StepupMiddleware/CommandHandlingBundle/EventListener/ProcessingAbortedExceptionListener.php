@@ -31,7 +31,7 @@ class ProcessingAbortedExceptionListener implements EventSubscriberInterface
         return [KernelEvents::EXCEPTION => 'onKernelException'];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $throwable = $event->getThrowable();
 

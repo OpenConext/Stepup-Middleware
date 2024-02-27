@@ -24,20 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 
 final class InstitutionConfigurationProvider
 {
-    /**
-     * @var ConfiguredInstitutionService
-     */
-    private $configuredInstitutionService;
+    private ConfiguredInstitutionService $configuredInstitutionService;
 
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
-    /**
-     * @var RaLocationService
-     */
-    private $raLocationService;
+    private RaLocationService $raLocationService;
 
     /**
      * @param ConfiguredInstitutionService           $configuredInstitutionService
@@ -54,7 +45,7 @@ final class InstitutionConfigurationProvider
         $this->raLocationService = $raLocationService;
     }
 
-    public function loadData()
+    public function loadData(): InstitutionConfigurationState
     {
         $configuredInstitutions = $this->configuredInstitutionService->getAll();
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService

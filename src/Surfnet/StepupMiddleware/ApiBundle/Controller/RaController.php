@@ -25,17 +25,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RaController extends AbstractController
 {
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
+    private RaListingService $raListingService;
 
     public function __construct(RaListingService $raListingService)
     {
         $this->raListingService = $raListingService;
     }
 
-    public function listAction(Institution $institution)
+    public function listAction(Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
 

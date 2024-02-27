@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -27,9 +28,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType;
 class ConfigurationLocationTypeTest extends UnitTest
 {
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MySqlPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -51,7 +52,7 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 
@@ -67,9 +68,9 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
      * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_location_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_location_or_null($incorrectValue): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(ConfigurationLocationType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -79,7 +80,7 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 
@@ -95,7 +96,7 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 
@@ -108,7 +109,7 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_configuration_location_value_object()
+    public function a_non_null_value_is_converted_to_a_configuration_location_value_object(): void
     {
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 
@@ -124,9 +125,9 @@ class ConfigurationLocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationLocation = Type::getType(ConfigurationLocationType::NAME);
 

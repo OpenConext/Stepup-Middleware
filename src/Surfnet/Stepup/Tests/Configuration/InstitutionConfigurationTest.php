@@ -30,6 +30,7 @@ use Surfnet\Stepup\Configuration\Event\UseRaOptionChangedEvent;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
@@ -38,7 +39,6 @@ use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
@@ -47,7 +47,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function use_ra_locations_option_is_set_to_false_by_default_upon_creation_of_an_institution_configuration()
+    public function use_ra_locations_option_is_set_to_false_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
@@ -107,7 +107,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function show_raa_contact_information_option_is_set_to_true_by_default_upon_creation_of_an_institution_configuration()
+    public function show_raa_contact_information_option_is_set_to_true_by_default_upon_creation_of_an_institution_configuration(): void
     {
         $institution                = new Institution('Institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
@@ -167,7 +167,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
+    public function use_ra_locations_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
@@ -195,7 +195,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $selfAssertedTokensOption
                 )
             ])
-            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($theSameUseRaLocationsOption) {
+            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($theSameUseRaLocationsOption): void {
                 $institutionConfiguration->configureUseRaLocationsOption($theSameUseRaLocationsOption);
             })
             ->then([]);
@@ -205,7 +205,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value()
+    public function show_raa_contact_information_option_is_not_changed_if_its_given_value_is_not_different_from_the_current_value(): void
     {
         $institution                             = new Institution('Institution');
         $institutionConfigurationId              = InstitutionConfigurationId::from($institution);
@@ -233,7 +233,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $selfAssertedTokensOption
                 )
             ])
-            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($sameShowRaaContactInformationOption) {
+            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($sameShowRaaContactInformationOption): void {
                 $institutionConfiguration->configureShowRaaContactInformationOption($sameShowRaaContactInformationOption);
             })
             ->then([]);
@@ -243,7 +243,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    public function use_ra_locations_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);
@@ -271,7 +271,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $selfAssertedTokensOption
                 )
             ])
-            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedUseRaLocationsOption) {
+            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedUseRaLocationsOption): void {
                 $institutionConfiguration->configureUseRaLocationsOption($expectedUseRaLocationsOption);
             })
             ->then([
@@ -287,7 +287,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value()
+    public function show_raa_contact_information_option_is_changed_if_its_given_value_is_different_from_the_current_value(): void
     {
         $institution                             = new Institution('Institution');
         $institutionConfigurationId              = InstitutionConfigurationId::from($institution);
@@ -315,7 +315,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
                     $selfAssertedTokensOption
                 )
             ])
-            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedShowRaaContactInformationOption) {
+            ->when(function (InstitutionConfiguration $institutionConfiguration) use ($expectedShowRaaContactInformationOption): void {
                 $institutionConfiguration->configureShowRaaContactInformationOption($expectedShowRaaContactInformationOption);
             })
             ->then([
@@ -331,7 +331,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
      * @test
      * @group aggregate
      */
-    public function test_the_setting_of_fga_options_on_an_institution_configuration()
+    public function test_the_setting_of_fga_options_on_an_institution_configuration(): void
     {
         $institution                     = new Institution('Institution');
         $institutionConfigurationId      = InstitutionConfigurationId::from($institution);

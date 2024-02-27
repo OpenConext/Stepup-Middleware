@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Location;
@@ -27,9 +28,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType;
 class LocationTypeTest extends UnitTest
 {
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MySqlPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -51,7 +52,7 @@ class LocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $location = Type::getType(LocationType::NAME);
 
@@ -64,7 +65,7 @@ class LocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $location = Type::getType(LocationType::NAME);
 
@@ -80,7 +81,7 @@ class LocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $location = Type::getType(LocationType::NAME);
 
@@ -93,7 +94,7 @@ class LocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_location_value_object()
+    public function a_non_null_value_is_converted_to_a_location_value_object(): void
     {
         $location = Type::getType(LocationType::NAME);
 
@@ -109,9 +110,9 @@ class LocationTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $location = Type::getType(LocationType::NAME);
 

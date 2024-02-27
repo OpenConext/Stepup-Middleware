@@ -23,10 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class Locale implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $locale;
+    private string $locale;
 
     /**
      * @param string $locale
@@ -44,7 +41,7 @@ final class Locale implements JsonSerializable
      * @param self $other
      * @return bool
      */
-    public function equals(Locale $other)
+    public function equals(Locale $other): bool
     {
         return $this == $other;
     }
@@ -65,7 +62,7 @@ final class Locale implements JsonSerializable
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->locale;
     }

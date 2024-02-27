@@ -25,25 +25,13 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class RaLocation
 {
-    /**
-     * @var RaLocationId
-     */
-    private $id;
+    private RaLocationId $id;
 
-    /**
-     * @var RaLocationName
-     */
-    private $name;
+    private RaLocationName $name;
 
-    /**
-     * @var Location
-     */
-    private $location;
+    private Location $location;
 
-    /**
-     * @var ContactInformation
-     */
-    private $contactInformation;
+    private ContactInformation $contactInformation;
 
     /**
      * @param RaLocationId $id
@@ -57,7 +45,7 @@ class RaLocation
         RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation
-    ) {
+    ): self {
         return new self($id, $name, $location, $contactInformation);
     }
 
@@ -76,7 +64,7 @@ class RaLocation
     /**
      * @param RaLocationName $name
      */
-    public function rename(RaLocationName $name)
+    public function rename(RaLocationName $name): void
     {
         $this->name = $name;
     }
@@ -84,7 +72,7 @@ class RaLocation
     /**
      * @param Location $location
      */
-    public function relocate(Location $location)
+    public function relocate(Location $location): void
     {
         $this->location = $location;
     }
@@ -92,7 +80,7 @@ class RaLocation
     /**
      * @param ContactInformation $contactInformation
      */
-    public function changeContactInformation(ContactInformation $contactInformation)
+    public function changeContactInformation(ContactInformation $contactInformation): void
     {
         $this->contactInformation = $contactInformation;
     }

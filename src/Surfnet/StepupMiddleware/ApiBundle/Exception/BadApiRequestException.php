@@ -26,7 +26,7 @@ class BadApiRequestException extends RuntimeException
     /**
      * @var string[]
      */
-    private $errors;
+    private array $errors;
 
     /**
      * @param string[] $errors

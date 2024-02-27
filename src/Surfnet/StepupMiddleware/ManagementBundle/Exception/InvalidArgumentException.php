@@ -27,7 +27,7 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
      *
      * @return self
      */
-    public static function invalidType($expected, $parameterName, $parameter)
+    public static function invalidType($expected, $parameterName, $parameter): self
     {
         $message = sprintf(
             'Invalid argument type: "%s" expected, "%s" given for "%s"',

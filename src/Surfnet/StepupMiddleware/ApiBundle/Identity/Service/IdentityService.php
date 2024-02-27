@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
@@ -37,25 +38,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
  */
 class IdentityService extends AbstractSearchService
 {
-    /**
-     * @var IdentityRepository
-     */
-    private $repository;
+    private IdentityRepository $repository;
 
-    /**
-     * @var IdentitySelfAssertedTokenOptionsRepository
-     */
-    private $identitySelfAssertedTokensOptionsRepository;
+    private IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokensOptionsRepository;
 
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
+    private RaListingRepository $raListingRepository;
 
-    /**
-     * @var SraaRepository
-     */
-    private $sraaRepository;
+    private SraaRepository $sraaRepository;
 
     public function __construct(
         IdentityRepository $repository,
@@ -71,9 +60,9 @@ class IdentityService extends AbstractSearchService
 
     /**
      * @param string $id
-     * @return \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity|null
+     * @return Identity|null
      */
-    public function find($id)
+    public function find(mixed $id): ?Identity
     {
         return $this->repository->find($id);
     }
@@ -81,7 +70,7 @@ class IdentityService extends AbstractSearchService
     /**
      * @param IdentityQuery $query
      * @param InstitutionRoleSet $institutionRoles
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function search(IdentityQuery $query)
     {

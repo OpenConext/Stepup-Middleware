@@ -24,10 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 
 class InstitutionConfigurationOptionsService
 {
-    /**
-     * @var InstitutionConfigurationOptionsRepository
-     */
-    private $repository;
+    private InstitutionConfigurationOptionsRepository $repository;
 
     /**
      * @var int
@@ -49,7 +46,7 @@ class InstitutionConfigurationOptionsService
     /**
      * @return InstitutionConfigurationOptions[]
      */
-    public function findAllInstitutionConfigurationOptions()
+    public function findAllInstitutionConfigurationOptions(): array
     {
         return $this->repository->findAll();
     }

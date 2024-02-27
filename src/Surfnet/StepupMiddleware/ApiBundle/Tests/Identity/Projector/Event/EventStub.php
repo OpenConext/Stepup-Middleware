@@ -23,10 +23,7 @@ use Surfnet\Stepup\Identity\Event\AuditableEvent;
 
 final class EventStub implements AuditableEvent
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\AuditLog\Metadata
-     */
-    private $metadata;
+    private Metadata $metadata;
 
     public function __construct(Metadata $metadata)
     {

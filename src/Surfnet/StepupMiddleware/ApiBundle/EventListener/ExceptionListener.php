@@ -34,17 +34,14 @@ use Throwable;
  */
 class ExceptionListener
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $throwable = $event->getThrowable();
 
@@ -67,7 +64,7 @@ class ExceptionListener
         $event->setResponse($this->createJsonErrorResponse($throwable, $statusCode, $headers));
     }
 
-    private function logException(Throwable $throwable)
+    private function logException(Throwable $throwable): void
     {
         # As per \Symfony\Component\HttpKernel\EventListener\ExceptionListener#logException().
         $isCritical = !$throwable instanceof HttpExceptionInterface || $throwable->getStatusCode() >= 500;
@@ -85,7 +82,7 @@ class ExceptionListener
      * @param array $headers OPTIONAL
      * @return JsonResponse
      */
-    private function createJsonErrorResponse(Throwable $throwable, $statusCode, $headers = [])
+    private function createJsonErrorResponse(Throwable $throwable, int $statusCode, array $headers = []): JsonResponse
     {
         if ($throwable instanceof BadApiRequestException
             || $throwable instanceof BadCommandRequestException

@@ -37,7 +37,7 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
     /**
      * @var InstitutionCollection The collection of institutions currently on the whitelist
      */
-    private $whitelist;
+    private ?InstitutionCollection $whitelist = null;
 
     public function __construct()
     {
@@ -48,7 +48,7 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
         return self::WHITELIST_AGGREGATE_ID;
     }
 
-    public static function create(InstitutionCollection $institutionCollection)
+    public static function create(InstitutionCollection $institutionCollection): self
     {
         $whitelist = new self();
         $whitelist->apply(new WhitelistCreatedEvent($institutionCollection));
@@ -56,12 +56,12 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
         return $whitelist;
     }
 
-    public function replaceAll(InstitutionCollection $institutionCollection)
+    public function replaceAll(InstitutionCollection $institutionCollection): void
     {
         $this->apply(new WhitelistReplacedEvent($institutionCollection));
     }
 
-    public function add(InstitutionCollection $institutionCollection)
+    public function add(InstitutionCollection $institutionCollection): void
     {
         foreach ($institutionCollection as $institution) {
             if ($this->whitelist->contains($institution)) {
@@ -75,7 +75,7 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
         $this->apply(new InstitutionsAddedToWhitelistEvent($institutionCollection));
     }
 
-    public function remove(InstitutionCollection $institutionCollection)
+    public function remove(InstitutionCollection $institutionCollection): void
     {
         foreach ($institutionCollection as $institution) {
             if (!$this->whitelist->contains($institution)) {
@@ -89,24 +89,24 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
         $this->apply(new InstitutionsRemovedFromWhitelistEvent($institutionCollection));
     }
 
-    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event): void
     {
         $this->whitelist = new InstitutionCollection();
         $this->whitelist->addAllFrom($event->whitelistedInstitutions);
     }
 
-    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event): void
     {
         $this->whitelist = new InstitutionCollection();
         $this->whitelist->addAllFrom($event->whitelistedInstitutions);
     }
 
-    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event): void
     {
         $this->whitelist->addAllFrom($event->addedInstitutions);
     }
 
-    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
+    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event): void
     {
         $this->whitelist->removeAllIn($event->removedInstitutions);
     }

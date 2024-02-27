@@ -26,12 +26,9 @@ class StagedPipeline implements Pipeline
     /**
      * @var Stage[]
      */
-    private $stages = [];
+    private array $stages = [];
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -61,7 +58,7 @@ class StagedPipeline implements Pipeline
      *
      * @param Stage $stage
      */
-    public function addStage(Stage $stage)
+    public function addStage(Stage $stage): void
     {
         $this->stages[] = $stage;
     }

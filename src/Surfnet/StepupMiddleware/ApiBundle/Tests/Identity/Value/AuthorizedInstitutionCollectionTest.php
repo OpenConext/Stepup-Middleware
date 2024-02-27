@@ -28,7 +28,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
     /**
      * @test
      */
-    public function empty_collection()
+    public function empty_collection(): void
     {
         $collection = AuthorizedInstitutionCollection::from($this->buildInstitutionCollection([]), null);
         $this->assertEmpty($collection->getAuthorizations());
@@ -37,7 +37,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
     /**
      * @test
      */
-    public function retrieve_institutions()
+    public function retrieve_institutions(): void
     {
         $collection = AuthorizedInstitutionCollection::from(
             $this->buildInstitutionCollection(['a', 'b']),
@@ -54,7 +54,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
     /**
      * @test
      */
-    public function retrieve_institutions_only_raa()
+    public function retrieve_institutions_only_raa(): void
     {
         $collection = AuthorizedInstitutionCollection::from(
             $this->buildInstitutionCollection([]),
@@ -68,7 +68,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
     }
 
-    private function buildInstitutionCollection(array $institutions)
+    private function buildInstitutionCollection(array $institutions): InstitutionCollection
     {
         $institutionList = [];
         foreach ($institutions as $institution) {
@@ -77,7 +77,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         return new InstitutionCollection($institutionList);
     }
 
-    private function buildInstitution($name)
+    private function buildInstitution($name): Institution
     {
         return new Institution($name);
     }

@@ -39,20 +39,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class VerifiedSecondFactorController extends AbstractController
 {
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
+    private SecondFactorService $secondFactorService;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $institutionAuthorizationService;
+    private AuthorizationContextService $institutionAuthorizationService;
 
-    /**
-     * @var SecondFactorProvePossessionHelper
-     */
-    private $secondFactorProvePossessionHelper;
+    private SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper;
 
 
     public function __construct(
@@ -65,7 +56,7 @@ class VerifiedSecondFactorController extends AbstractController
         $this->secondFactorProvePossessionHelper = $secondFactorProvePossessionHelper;
     }
 
-    public function getAction($id)
+    public function getAction($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -119,7 +110,7 @@ class VerifiedSecondFactorController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function getCanSkipProvePossessionAction($id)
+    public function getCanSkipProvePossessionAction($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

@@ -26,10 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateC
 
 class ConfigurationCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var \Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository
-     */
-    private $repository;
+    private ConfigurationRepository $repository;
 
     /**
      * @param ConfigurationRepository     $repository
@@ -39,7 +36,7 @@ class ConfigurationCommandHandler extends SimpleCommandHandler
         $this->repository = $repository;
     }
 
-    public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command)
+    public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command): void
     {
         $configuration = $this->getConfiguration();
         if (!$configuration) {

@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'identity_institution',
         'email'
@@ -46,7 +46,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
         $this->email = $email;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -85,7 +85,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email = $sensitiveData->getEmail();
     }

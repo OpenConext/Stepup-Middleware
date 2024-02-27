@@ -27,7 +27,7 @@ class DBALConnectionHelper
     /**
      * @var Connection[]
      */
-    private $connections;
+    private array $connections;
 
     /**
      * @param Connection[] $connections
@@ -46,7 +46,7 @@ class DBALConnectionHelper
     /**
      * Start transaction on each connection
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         foreach ($this->connections as $connection) {
             $connection->beginTransaction();
@@ -56,7 +56,7 @@ class DBALConnectionHelper
     /**
      * Commit transaction on each connection
      */
-    public function commit()
+    public function commit(): void
     {
         foreach ($this->connections as $connection) {
             $connection->commit();
@@ -66,7 +66,7 @@ class DBALConnectionHelper
     /**
      * Roll back the transaction on each connection
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         foreach ($this->connections as $connection) {
             $connection->rollBack();

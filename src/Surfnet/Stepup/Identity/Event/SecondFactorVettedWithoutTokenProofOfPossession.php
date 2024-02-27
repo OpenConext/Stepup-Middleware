@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Identity\Event;
 
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -40,7 +41,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -54,42 +55,42 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
     public $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\DocumentNumber
+     * @var DocumentNumber
      */
     public $documentNumber;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -123,7 +124,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
         $this->vettingType = $vettingType;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -168,7 +169,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -177,7 +178,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
             ->withVettingType($this->vettingType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email          = $sensitiveData->getEmail();
         $this->commonName     = $sensitiveData->getCommonName();

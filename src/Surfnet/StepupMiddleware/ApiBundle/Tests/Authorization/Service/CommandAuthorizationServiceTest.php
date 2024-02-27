@@ -66,7 +66,7 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @var CommandAuthorizationService
      */
-    private $service;
+    private CommandAuthorizationService $service;
 
     public function setUp(): void
     {
@@ -85,7 +85,7 @@ class CommandAuthorizationServiceTest extends TestCase
         $this->service = $service;
     }
 
-    public function test_shared_ra_and_ss_commands_are_correctly_authorized()
+    public function test_shared_ra_and_ss_commands_are_correctly_authorized(): void
     {
         $actorId = new IdentityId('123');
         $actorInstitution = new Institution('institution');
@@ -114,7 +114,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function a_sraa_should_be_able_to_execute_all_commands($file, $command)
+    public function a_sraa_should_be_able_to_execute_all_commands($file, Command $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -142,7 +142,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_own_selfservice_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_own_selfservice_commands($file, $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -177,7 +177,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_configured_ra_commands($file, $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -225,7 +225,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role){
+                ->with($actorId, m::on(function($arg) use ($role): bool{
                     return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
@@ -242,7 +242,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands($file, $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -285,7 +285,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role){
+                ->with($actorId, m::on(function($arg) use ($role): bool{
                     return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
@@ -303,7 +303,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands($file, $command)
+    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands($file, $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -346,7 +346,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands($file, $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -393,7 +393,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role) {
+                ->with($actorId, m::on(function($arg) use ($role): bool {
                     return $arg == $role;
                 }))
                 ->andReturn($authorizationContext);
@@ -409,7 +409,7 @@ class CommandAuthorizationServiceTest extends TestCase
      *
      * @param mixed $value
      */
-    public function all_available_commands_should_be_tested()
+    public function all_available_commands_should_be_tested(): void
     {
         $tested = array (
             'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\AddRaLocationCommand',
@@ -463,7 +463,10 @@ class CommandAuthorizationServiceTest extends TestCase
     }
 
 
-    public function availableCommands()
+    /**
+     * @return string[][]|Command[][]
+     */
+    public function availableCommands(): array
     {
         $rootPath = realpath(__DIR__ . '/../../../../../../../src');
         $basePath = realPath($rootPath . '/Surfnet/StepupMiddleware/CommandHandlingBundle').'/*';

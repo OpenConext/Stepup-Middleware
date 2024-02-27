@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as UnitTest;
+use stdClass;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class LocationTest extends UnitTest
 {
@@ -30,9 +32,9 @@ class LocationTest extends UnitTest
      *
      * @param mixed $nonString
      */
-    public function it_cannot_be_created_with_anything_but_a_string($nonString)
+    public function it_cannot_be_created_with_anything_but_a_string(bool|int|float|stdClass|array|null $nonString): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Location($nonString);
     }
@@ -41,7 +43,7 @@ class LocationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_locations_with_the_same_value_are_equal()
+    public function two_locations_with_the_same_value_are_equal(): void
     {
         $location          = new Location('a');
         $theSame           = new Location('a');
@@ -56,7 +58,7 @@ class LocationTest extends UnitTest
     /**
      * dataprovider
      */
-    public function nonStringProvider()
+    public function nonStringProvider(): array
     {
         return [
             'null'         => [null],
@@ -64,7 +66,7 @@ class LocationTest extends UnitTest
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \stdClass()],
+            'object'       => [new stdClass()],
         ];
     }
 }

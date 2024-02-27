@@ -30,7 +30,7 @@ class WhitelistEntry implements JsonSerializable
     #[ORM\Column(type: 'institution')]
     public Institution $institution;
 
-    public static function createFrom(Institution $institution)
+    public static function createFrom(Institution $institution): self
     {
         $instance = new self();
         $instance->institution = $institution;

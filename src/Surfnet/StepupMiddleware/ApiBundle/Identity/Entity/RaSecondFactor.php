@@ -67,7 +67,7 @@ class RaSecondFactor implements JsonSerializable
     public $identityId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     #[ORM\Column(type: 'institution')]
     public $institution;
@@ -76,7 +76,7 @@ class RaSecondFactor implements JsonSerializable
      * The name of the registrant.
      *
      *
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name')]
     public $name;
@@ -85,7 +85,7 @@ class RaSecondFactor implements JsonSerializable
      * The e-mail of the registrant.
      *
      *
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     #[ORM\Column(type: 'stepup_email')]
     public $email;

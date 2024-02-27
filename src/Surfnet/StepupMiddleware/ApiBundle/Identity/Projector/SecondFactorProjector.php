@@ -53,20 +53,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
  */
 class SecondFactorProjector extends Projector
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository
-     */
-    private $unverifiedRepository;
+    private UnverifiedSecondFactorRepository $unverifiedRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository
-     */
-    private $verifiedRepository;
+    private VerifiedSecondFactorRepository $verifiedRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRepository
-     */
-    private $vettedRepository;
+    private VettedSecondFactorRepository $vettedRepository;
 
     public function __construct(
         UnverifiedSecondFactorRepository $unverifiedRepository,
@@ -78,7 +69,7 @@ class SecondFactorProjector extends Projector
         $this->vettedRepository = $vettedRepository;
     }
 
-    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
     {
         $secondFactor = new VettedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -89,7 +80,7 @@ class SecondFactorProjector extends Projector
         $this->vettedRepository->save($secondFactor);
     }
 
-    public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
         $secondFactor = new UnverifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -101,7 +92,7 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save($secondFactor);
     }
 
-    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = new VerifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -116,7 +107,7 @@ class SecondFactorProjector extends Projector
         $this->verifiedRepository->save($secondFactor);
     }
 
-    public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
         $secondFactor = new UnverifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -128,7 +119,7 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save($secondFactor);
     }
 
-    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = new VerifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -143,7 +134,7 @@ class SecondFactorProjector extends Projector
         $this->verifiedRepository->save($secondFactor);
     }
 
-    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
         $secondFactor = new UnverifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -155,7 +146,7 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->save($secondFactor);
     }
 
-    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = new VerifiedSecondFactor();
         $secondFactor->id = $event->secondFactorId->getSecondFactorId();
@@ -170,7 +161,7 @@ class SecondFactorProjector extends Projector
         $this->verifiedRepository->save($secondFactor);
     }
 
-    public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    public function applyEmailVerifiedEvent(EmailVerifiedEvent $event): void
     {
         $unverified = $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
@@ -188,7 +179,7 @@ class SecondFactorProjector extends Projector
         $this->unverifiedRepository->remove($unverified);
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
@@ -214,7 +205,7 @@ class SecondFactorProjector extends Projector
      * The original 'source' second factor is not yet removed. This is handled when the
      * old identity is cleaned up.
      */
-    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event): void
     {
         $vetted = new VettedSecondFactor();
         $vetted->id = $event->newSecondFactorId->getSecondFactorId();
@@ -226,7 +217,7 @@ class SecondFactorProjector extends Projector
         $this->vettedRepository->save($vetted);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
     {
         $verified = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
 

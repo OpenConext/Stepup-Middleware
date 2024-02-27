@@ -34,7 +34,7 @@ class SraaRepository extends ServiceEntityRepository
     /**
      * Removes all SRAA's from the database
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this
             ->getEntityManager()
@@ -49,7 +49,7 @@ class SraaRepository extends ServiceEntityRepository
      *
      * @param array $sraaList
      */
-    public function saveAll(array $sraaList)
+    public function saveAll(array $sraaList): void
     {
         $invalid = [];
         foreach ($sraaList as $index => $sraa) {
@@ -86,9 +86,9 @@ class SraaRepository extends ServiceEntityRepository
 
     /**
      * @param NameId $nameId
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa
+     * @return null|Sraa
      */
-    public function findByNameId(NameId $nameId)
+    public function findByNameId(NameId $nameId): ?object
     {
         return $this->findOneBy(['nameId' => (string) $nameId]);
     }
@@ -97,7 +97,7 @@ class SraaRepository extends ServiceEntityRepository
      * @param NameId $nameId
      * @return boolean
      */
-    public function contains(NameId $nameId)
+    public function contains(NameId $nameId): bool
     {
         return $this->findByNameId($nameId) !== null;
     }

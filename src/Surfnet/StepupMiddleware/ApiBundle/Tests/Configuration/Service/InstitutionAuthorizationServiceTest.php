@@ -31,7 +31,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
     /**
      * @var InstitutionAuthorizationService
      */
-    private $service;
+    private InstitutionAuthorizationService $service;
 
     /**
      * @var InstitutionAuthorizationRepository|Mock
@@ -51,7 +51,7 @@ class InstitutionAuthorizationServiceTest extends TestCase
      * Simulates the use case where an institution does have a specific institution config, but the token setting is
      * disabled.
      */
-    public function test_get_institution_options_from_service()
+    public function test_get_institution_options_from_service(): void
     {
         $institution = new Institution('surfnet.nl');
 
@@ -72,7 +72,10 @@ class InstitutionAuthorizationServiceTest extends TestCase
         $this->assertEquals(InstitutionRole::useRa(), $institutionOptions->getInstitutionRole());
     }
 
-    private function buildAuthorizations($expectedInstitutions)
+    /**
+     * @return mixed[]
+     */
+    private function buildAuthorizations(array $expectedInstitutions): array
     {
         $authorizations = [];
         foreach ($expectedInstitutions as $institution) {

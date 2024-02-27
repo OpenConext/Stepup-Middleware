@@ -19,18 +19,16 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing;
 
 use Broadway\Domain\DomainEventStream;
+use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata as BroadwayMetadata;
 use Broadway\EventSourcing\EventStreamDecorator;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 
 final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorator, MetadataEnricher
 {
-    /**
-     * @var Metadata|null
-     */
-    private $metadata;
+    private ?Metadata $metadata = null;
 
-    public function setMetadata(Metadata $metadata = null)
+    public function setMetadata(Metadata $metadata = null): void
     {
         $this->metadata = $metadata;
     }
@@ -47,7 +45,7 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
         $domainMessages = [];
 
         foreach ($eventStream as $domainMessage) {
-            /** @var \Broadway\Domain\DomainMessage $domainMessage */
+            /** @var DomainMessage $domainMessage */
             $domainMessages[] = $domainMessage->andMetadata(
                 new BroadwayMetadata([
                     'actorId'          => $this->metadata->actorId,

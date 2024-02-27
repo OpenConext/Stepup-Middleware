@@ -25,10 +25,7 @@ final class RecoveryTokenType
     const TYPE_SMS = 'sms';
     const TYPE_SAFE_STORE = 'safe-store';
 
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
     public function __construct($type)
     {
@@ -43,12 +40,12 @@ final class RecoveryTokenType
         $this->type = $type;
     }
 
-    public static function sms()
+    public static function sms(): RecoveryTokenType
     {
         return new RecoveryTokenType(self::TYPE_SMS);
     }
 
-    public static function safeStore()
+    public static function safeStore(): RecoveryTokenType
     {
         return new RecoveryTokenType(self::TYPE_SAFE_STORE);
     }
@@ -71,7 +68,7 @@ final class RecoveryTokenType
         return $this->type;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->type;
     }

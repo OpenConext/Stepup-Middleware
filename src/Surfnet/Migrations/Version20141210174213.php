@@ -12,10 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Version20141210174213 extends AbstractMigration implements ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ?ContainerInterface $container = null;
 
     public function up(Schema $schema): void
     {
@@ -47,7 +44,7 @@ class Version20141210174213 extends AbstractMigration implements ContainerAwareI
         return $this->container->getParameter('database_gateway_name');
     }
 
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

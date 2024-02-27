@@ -28,25 +28,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EventStreamReplayer
 {
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
+    private BufferedEventBus $eventBus;
 
-    /**
-     * @var DBALEventHydrator
-     */
-    private $eventHydrator;
+    private DBALEventHydrator $eventHydrator;
 
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
+    private DBALConnectionHelper $connectionHelper;
 
     /**
      * @var string[]
      */
-    private $middlewareTables = [
+    private array $middlewareTables = [
         'unverified_second_factor',
         'verified_second_factor',
         'vetted_second_factor',
@@ -66,7 +57,7 @@ class EventStreamReplayer
     /**
      * @var string[]
      */
-    private $gatewayTables = [
+    private array $gatewayTables = [
         'second_factor',
         'saml_entity',
         'whitelist_entry',
@@ -88,7 +79,7 @@ class EventStreamReplayer
         );
     }
 
-    public function replayEvents(OutputInterface $output, $increments)
+    public function replayEvents(OutputInterface $output, $increments): void
     {
         $preparationProgress = new ProgressBar($output, 3);
         $preparationProgress->setFormat('event_replay');
@@ -167,7 +158,7 @@ class EventStreamReplayer
         }
     }
 
-    private function wipeReadTables(OutputInterface $output)
+    private function wipeReadTables(OutputInterface $output): void
     {
         if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {
             $output->writeln('<info>Retrieving connections to wipe READ tables</info>');

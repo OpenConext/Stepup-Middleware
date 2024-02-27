@@ -33,15 +33,9 @@ use function sprintf;
 
 class RaCandidateController extends AbstractController
 {
-    /**
-     * @var RaCandidateService
-     */
-    private $raCandidateService;
+    private RaCandidateService $raCandidateService;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
+    private AuthorizationContextService $authorizationService;
 
     public function __construct(
         RaCandidateService $raCandidateService,
@@ -84,7 +78,7 @@ class RaCandidateController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

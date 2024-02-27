@@ -40,7 +40,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
      */
     private $configuration;
 
-    public static function create()
+    public static function create(): self
     {
         $configuration = new self();
         $configuration->apply(new NewConfigurationCreatedEvent(self::CONFIGURATION_ID));
@@ -48,7 +48,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         return $configuration;
     }
 
-    public function update($configurationAsJson)
+    public function update($configurationAsJson): void
     {
         $decodedConfiguration = JsonHelper::decode($configurationAsJson);
 
@@ -75,7 +75,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
         return self::CONFIGURATION_ID;
     }
 
-    public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event)
+    public function applyConfigurationUpdatedEvent(ConfigurationUpdatedEvent $event): void
     {
         $this->configuration = $event->newConfiguration;
     }

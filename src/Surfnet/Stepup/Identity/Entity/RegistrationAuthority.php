@@ -29,25 +29,13 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
  */
 final class RegistrationAuthority extends SimpleEventSourcedEntity
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole
-     */
-    private $role;
+    private ?RegistrationAuthorityRole $role = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Location
-     */
-    private $location;
+    private ?Location $location = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\ContactInformation
-     */
-    private $contactInformation;
+    private ?ContactInformation $contactInformation = null;
 
-    /**
-     * @var Institution
-     */
-    private $institution;
+    private ?Institution $institution = null;
 
     /**
      * @param RegistrationAuthorityRole $role
@@ -61,7 +49,7 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
         Location $location,
         ContactInformation $contactInformation,
         Institution $institution
-    ) {
+    ): self {
         $registrationAuthority                     = new self();
         $registrationAuthority->role               = $role;
         $registrationAuthority->location           = $location;
@@ -75,7 +63,7 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
      * @param Location           $location
      * @param ContactInformation $contactInformation
      */
-    public function amendInformation(Location $location, ContactInformation $contactInformation)
+    public function amendInformation(Location $location, ContactInformation $contactInformation): void
     {
         $this->location = $location;
         $this->contactInformation = $contactInformation;
@@ -85,7 +73,7 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
      * @param RegistrationAuthorityRole $role
      * @return void
      */
-    public function appointAs(RegistrationAuthorityRole $role)
+    public function appointAs(RegistrationAuthorityRole $role): void
     {
         $this->role = $role;
     }

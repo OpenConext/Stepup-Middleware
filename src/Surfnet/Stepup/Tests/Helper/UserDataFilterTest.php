@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\UserDataFilter;
@@ -40,14 +41,14 @@ class UserDataFilterTest extends TestCase
     /**
      * @dataProvider provideEvents
      */
-    public function test_filtering_is_applied_with_expected_result($event, $expectation)
+    public function test_filtering_is_applied_with_expected_result(IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event, array $expectation): void
     {
         $helper = new UserDataFilter();
         $data = $helper->filter($event);
         $this->assertSame($expectation, array_keys($data));
     }
 
-    public function provideEvents()
+    public function provideEvents(): Generator
     {
         $event = new IdentityCreatedEvent(
             new IdentityId("id"),

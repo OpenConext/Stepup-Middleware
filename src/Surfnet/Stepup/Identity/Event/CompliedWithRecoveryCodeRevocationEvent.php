@@ -39,7 +39,7 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
      * @var RecoveryTokenType
      */
     public $recoveryTokenType;
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_type',
@@ -73,7 +73,7 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
         );
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

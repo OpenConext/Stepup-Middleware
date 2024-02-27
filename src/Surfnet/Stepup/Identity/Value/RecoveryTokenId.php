@@ -23,10 +23,7 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class RecoveryTokenId implements Id
 {
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     public function __construct($value)
     {
@@ -45,12 +42,12 @@ final class RecoveryTokenId implements Id
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals(Id $other): bool
     {
         return $this == $other;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

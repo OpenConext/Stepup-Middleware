@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InstitutionParamConverter implements ParamConverterInterface
 {
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): void
     {
         $query = $request->query;
         $institution = $query->get('institution', false);
@@ -40,7 +40,7 @@ class InstitutionParamConverter implements ParamConverterInterface
         $request->attributes->set('institution', new Institution($institution));
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'institution'
             && $configuration->getClass() === 'Surfnet\Stepup\Identity\Value\Institution';

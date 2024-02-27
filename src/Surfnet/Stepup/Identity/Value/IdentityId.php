@@ -24,10 +24,7 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class IdentityId implements Id, JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     public function __construct($value)
     {
@@ -46,12 +43,12 @@ final class IdentityId implements Id, JsonSerializable
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals(Id $other): bool
     {
         return $this == $other;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

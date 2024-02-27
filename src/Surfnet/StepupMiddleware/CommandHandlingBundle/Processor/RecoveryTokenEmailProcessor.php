@@ -28,15 +28,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryToke
 
 final class RecoveryTokenEmailProcessor extends Processor
 {
-    /**
-     * @var RecoveryTokenMailService
-     */
-    private $mailService;
+    private RecoveryTokenMailService $mailService;
 
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
     public function __construct(
         RecoveryTokenMailService $recoveryTokenMailService,
@@ -48,7 +42,7 @@ final class RecoveryTokenEmailProcessor extends Processor
 
     public function handleCompliedWithRecoveryCodeRevocationEvent(
         CompliedWithRecoveryCodeRevocationEvent $event
-    ) {
+    ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
         if ($identity === null) {
@@ -65,7 +59,7 @@ final class RecoveryTokenEmailProcessor extends Processor
         );
     }
 
-    public function handleRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event)
+    public function handleRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event): void
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 

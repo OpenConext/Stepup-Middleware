@@ -20,8 +20,8 @@ namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
+use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -31,7 +31,7 @@ class SecondFactorCollectionTest extends UnitTest
      * @test
      * @group domain
      */
-    public function collection_can_return_second_factor_with_highest_loa()
+    public function collection_can_return_second_factor_with_highest_loa(): void
     {
         $collection = new SecondFactorCollection([
             $this->mockVettedSecondFactor('sms'),
@@ -50,7 +50,7 @@ class SecondFactorCollectionTest extends UnitTest
      * @param string $type
      * @return SecondFactor
      */
-    private function mockVettedSecondFactor($type)
+    private function mockVettedSecondFactor(string $type)
     {
         $mock = m::mock('\Surfnet\Stepup\Identity\Entity\SecondFactor');
         $mock->shouldReceive('getType')

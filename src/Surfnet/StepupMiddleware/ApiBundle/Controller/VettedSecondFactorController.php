@@ -29,17 +29,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VettedSecondFactorController extends AbstractController
 {
-    /**
-     * @var SecondFactorService
-     */
-    private $secondFactorService;
+    private SecondFactorService $secondFactorService;
 
     public function __construct(SecondFactorService $secondFactorService)
     {
         $this->secondFactorService = $secondFactorService;
     }
 
-    public function getAction($id)
+    public function getAction($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

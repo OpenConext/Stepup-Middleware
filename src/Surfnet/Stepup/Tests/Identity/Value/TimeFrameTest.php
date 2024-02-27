@@ -19,6 +19,8 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 
 class TimeFrameTest extends UnitTest
@@ -28,9 +30,9 @@ class TimeFrameTest extends UnitTest
      * @group        domain
      * @dataProvider invalidValueProvider
      */
-    public function it_cannot_be_given_an_non_positive_amount_of_seconds($invalidValue)
+    public function it_cannot_be_given_an_non_positive_amount_of_seconds(string|float|int|StdClass|array $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         TimeFrame::ofSeconds($invalidValue);
     }
@@ -39,7 +41,7 @@ class TimeFrameTest extends UnitTest
      * @test
      * @group domain
      */
-    public function to_string_output_matches_amount_of_seconds_as_string()
+    public function to_string_output_matches_amount_of_seconds_as_string(): void
     {
         $seconds = 1000;
 
@@ -55,7 +57,7 @@ class TimeFrameTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProvider()
+    public function invalidValueProvider(): array
     {
         return [
             'empty string' => [''],
@@ -64,7 +66,7 @@ class TimeFrameTest extends UnitTest
             'float'        => [2.718],
             'zero'         => [0],
             'negative int' => [-1],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 }

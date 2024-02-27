@@ -29,15 +29,12 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
  */
 final class ConfigurableSettings
 {
-    /**
-     * @var TimeFrame
-     */
-    private $emailVerificationTimeFrame;
+    private TimeFrame $emailVerificationTimeFrame;
 
     /**
      * @var Locale[]
      */
-    private $locales;
+    private array $locales;
 
     /**
      * @param TimeFrame $timeFrame
@@ -64,12 +61,12 @@ final class ConfigurableSettings
      * @param string[] $locales
      * @return ConfigurableSettings
      */
-    public static function create($emailVerificationTimeFrame, array $locales)
+    public static function create($emailVerificationTimeFrame, array $locales): self
     {
         return new self(
             TimeFrame::ofSeconds($emailVerificationTimeFrame),
             array_map(
-                function ($locale) {
+                function ($locale): Locale {
                     return new Locale($locale);
                 },
                 $locales
@@ -92,11 +89,11 @@ final class ConfigurableSettings
      * @param Locale $locale
      * @return bool
      */
-    public function isSupportedLocale(Locale $locale)
+    public function isSupportedLocale(Locale $locale): bool
     {
         return array_reduce(
             $this->locales,
-            function ($supported, Locale $supportedLocale) use ($locale) {
+            function ($supported, Locale $supportedLocale) use ($locale): bool {
                 return $supported || $supportedLocale->equals($locale);
             },
             false

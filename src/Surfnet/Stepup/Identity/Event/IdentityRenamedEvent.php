@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'institution',
         'common_name',
@@ -46,7 +46,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
         $this->commonName = $commonName;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -85,7 +85,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
             ->withCommonName($this->commonName);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->commonName = $sensitiveData->getCommonName();
     }

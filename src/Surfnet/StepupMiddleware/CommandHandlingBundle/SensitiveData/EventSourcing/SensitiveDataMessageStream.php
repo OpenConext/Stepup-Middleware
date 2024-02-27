@@ -27,10 +27,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
 class SensitiveDataMessageStream implements IteratorAggregate
 {
-    /**
-     * @var array
-     */
-    private $messages;
+    private array $messages;
 
     /**
      * @param SensitiveDataMessage[] $messages
@@ -40,7 +37,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
         $this->messages = $messages;
     }
 
-    public function applyToDomainEventStream(DomainEventStream $domainEventStream)
+    public function applyToDomainEventStream(DomainEventStream $domainEventStream): void
     {
         $sensitiveDataMap = $this->createSensitiveDataMap($this->messages);
 
@@ -62,7 +59,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
         }
     }
 
-    public function forget()
+    public function forget(): void
     {
         foreach ($this->messages as $message) {
             $message->forget();
@@ -78,7 +75,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
      * @param DomainMessage $domainMessage
      * @param SensitiveDataMessage|null $sensitiveDataMessage
      */
-    private function setSensitiveData(DomainMessage $domainMessage, SensitiveDataMessage $sensitiveDataMessage = null)
+    private function setSensitiveData(DomainMessage $domainMessage, SensitiveDataMessage $sensitiveDataMessage = null): void
     {
         $event = $domainMessage->getPayload();
         $eventIsForgettable = $event instanceof Forgettable;
@@ -118,7 +115,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
      * @param SensitiveDataMessage[] $messages
      * @return SensitiveDataMessage[] The same messages, but indexed by their playheads.
      */
-    private function createSensitiveDataMap(array $messages)
+    private function createSensitiveDataMap(array $messages): array
     {
         $map = [];
         foreach ($messages as $message) {

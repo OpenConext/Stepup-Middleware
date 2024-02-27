@@ -45,12 +45,12 @@ final class InstitutionSet
      * @param Institution[]
      * @return InstitutionSet
      */
-    public static function create(array $institutions)
+    public static function create(array $institutions): self
     {
         // Verify only institutions are collected in the set
         array_walk(
             $institutions,
-            function ($institution, $key) use ($institutions) {
+            function ($institution, $key) use ($institutions): void {
                 if (!$institution instanceof Institution) {
                     throw InvalidArgumentException::invalidType(
                         Institution::class,
@@ -64,7 +64,7 @@ final class InstitutionSet
         return new self($institutions);
     }
 
-    public function equals(InstitutionSet $other)
+    public function equals(InstitutionSet $other): bool
     {
         return $this->toScalarArray() === $other->toScalarArray();
     }
@@ -73,7 +73,7 @@ final class InstitutionSet
      * @param Institution $institution
      * @return bool
      */
-    public function isOption(Institution $institution)
+    public function isOption(Institution $institution): bool
     {
         return in_array($institution->getInstitution(), $this->institutions);
     }
@@ -86,7 +86,7 @@ final class InstitutionSet
         return $this->institutions;
     }
 
-    public function toScalarArray()
+    public function toScalarArray(): array
     {
         return array_map('strval', $this->institutions);
     }
@@ -95,9 +95,9 @@ final class InstitutionSet
      * @param Institution[] $institutions
      * @return Institution[]
      */
-    private function sort(array $institutions)
+    private function sort(array $institutions): array
     {
-        usort($institutions, function (Institution $a, Institution $b) {
+        usort($institutions, function (Institution $a, Institution $b): int {
             return strcmp($a->getInstitution(), $b->getInstitution());
         });
 

@@ -31,7 +31,7 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
      * @test
      * @group domain
      */
-    public function generates_identifiers_of_all_types()
+    public function generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),

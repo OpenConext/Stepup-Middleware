@@ -23,10 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class Location implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $location;
+    private string $location;
 
     /**
      * @param string $location
@@ -44,7 +41,7 @@ final class Location implements JsonSerializable
      * @param Location $otherLocation
      * @return bool
      */
-    public function equals(Location $otherLocation)
+    public function equals(Location $otherLocation): bool
     {
         return $this->location === $otherLocation->location;
     }
@@ -62,7 +59,7 @@ final class Location implements JsonSerializable
         return $this->location;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->location;
     }

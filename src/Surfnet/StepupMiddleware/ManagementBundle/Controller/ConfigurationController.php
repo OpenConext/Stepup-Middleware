@@ -32,7 +32,7 @@ class ConfigurationController extends AbstractController
     /**
      * @return TransactionAwarePipeline
      */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
     public function __construct(TransactionAwarePipeline $pipeline)
     {
@@ -53,7 +53,7 @@ class ConfigurationController extends AbstractController
      * @param Command $command
      * @return JsonResponse
      */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, Command $command): JsonResponse
     {
         $this->pipeline->process($command);
 

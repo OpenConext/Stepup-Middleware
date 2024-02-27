@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Mockery as m;
+use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
@@ -29,7 +30,10 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\ServiceProviderConfigura
 
 final class ConfigurationValidationTest extends TestCase
 {
-    public function invalidConfigurations()
+    /**
+     * @return mixed[][]
+     */
+    public function invalidConfigurations(): array
     {
         $dataSet = [];
 
@@ -51,7 +55,7 @@ final class ConfigurationValidationTest extends TestCase
      * @param array $configuration
      * @param string $expectedPropertyPath
      */
-    public function it_rejects_invalid_configuration($configuration, $expectedPropertyPath)
+    public function it_rejects_invalid_configuration($configuration, $expectedPropertyPath): void
     {
         $builder = m::mock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $builder->shouldReceive('addViolation')->with()->once();
@@ -80,12 +84,12 @@ final class ConfigurationValidationTest extends TestCase
 
     /**
      * @param mixed &$spy
-     * @return \Mockery\Matcher\MatcherAbstract
+     * @return MatcherAbstract
      */
     private static function spy(&$spy)
     {
         return m::on(
-            function ($value) use (&$spy) {
+            function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;

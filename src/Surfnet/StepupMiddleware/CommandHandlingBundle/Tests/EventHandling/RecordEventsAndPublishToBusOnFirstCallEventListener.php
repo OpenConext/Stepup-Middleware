@@ -25,25 +25,16 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 
 class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
 {
-    /**
-     * @var bool
-     */
-    private $firstEventHandled = false;
+    private bool $firstEventHandled = false;
 
-    /**
-     * @var BufferedEventBus
-     */
-    private $eventBus;
+    private BufferedEventBus $eventBus;
 
-    /**
-     * @var DomainEventStream
-     */
-    private $toPublish;
+    private DomainEventStream $toPublish;
 
     /**
      * @var DomainMessage[]
      */
-    private $recordedEvents = [];
+    private array $recordedEvents = [];
 
     /**
      * @param BufferedEventBus $eventBus

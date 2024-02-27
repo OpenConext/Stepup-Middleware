@@ -23,6 +23,7 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata as MessageMetadata;
 use DateTime as CoreDateTime;
 use Mockery as m;
+use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
@@ -39,9 +40,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub;
 
 final class AuditLogProjectorTest extends TestCase
 {
-    private static $actorCommonName = 'Actor CommonName';
+    private static string $actorCommonName = 'Actor CommonName';
 
-    public function auditable_events()
+    public function auditable_events(): array
     {
         return [
             'no actor, with second factor' => [
@@ -136,7 +137,7 @@ final class AuditLogProjectorTest extends TestCase
      * @param DomainMessage $message
      * @param AuditLogEntry $expectedEntry
      */
-    public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry)
+    public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry): void
     {
         $repository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository');
         $repository->shouldReceive('save')->once()->with(self::spy($actualEntry));
@@ -163,7 +164,8 @@ final class AuditLogProjectorTest extends TestCase
         SecondFactorId $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
         SecondFactorIdentifier $secondFactorIdentifier = null
-    ) {
+    ): Metadata
+    {
         $metadata = new Metadata();
         $metadata->identityId = $identityId;
         $metadata->identityInstitution = $institution;
@@ -175,17 +177,17 @@ final class AuditLogProjectorTest extends TestCase
     }
 
     private function createExpectedAuditLogEntry(
-        IdentityId $actorId = null,
-        Institution $actorInstitution = null,
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId = null,
+        IdentityId       $actorId = null,
+        Institution      $actorInstitution = null,
+        IdentityId       $identityId,
+        Institution      $identityInstitution,
+        SecondFactorId   $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
-        SecondFactorIdentifier $secondFactorIdentifier = null,
-        $event,
-        StepupDateTime $recordedOn,
-        $actorCommonName = null
-    ) {
+        ?YubikeyPublicId $secondFactorIdentifier = null,
+        string           $event,
+        StepupDateTime   $recordedOn,
+                         $actorCommonName = null
+    ): AuditLogEntry {
         $entry = new AuditLogEntry();
         $entry->actorId = $actorId ? (string) $actorId : null;
         $entry->actorInstitution = $actorInstitution ? (string) $actorInstitution : null;
@@ -203,12 +205,12 @@ final class AuditLogProjectorTest extends TestCase
 
     /**
      * @param mixed &$spy
-     * @return \Mockery\Matcher\MatcherAbstract
+     * @return MatcherAbstract
      */
     private static function spy(&$spy)
     {
         return m::on(
-            function ($value) use (&$spy) {
+            function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;

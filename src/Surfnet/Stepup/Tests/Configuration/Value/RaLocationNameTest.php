@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class RaLocationNameTest extends TestCase
 {
@@ -30,9 +32,9 @@ class RaLocationNameTest extends TestCase
      *
      * @param mixed $nonStringOrEmptyString
      */
-    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
+    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $nonStringOrEmptyString): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new RaLocationName($nonStringOrEmptyString);
     }
@@ -41,7 +43,7 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_names_with_the_same_values_are_equal()
+    public function two_ra_location_names_with_the_same_values_are_equal(): void
     {
         $raLocationName = new RaLocationName('a');
         $theSame      = new RaLocationName('a');
@@ -53,7 +55,7 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_names_with_different_values_are_not_equal()
+    public function two_ra_location_names_with_different_values_are_not_equal(): void
     {
         $raLocationName = new RaLocationName('a');
         $different    = new RaLocationName('A');
@@ -61,7 +63,7 @@ class RaLocationNameTest extends TestCase
         $this->assertFalse($raLocationName->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider()
+    public function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],
@@ -69,7 +71,7 @@ class RaLocationNameTest extends TestCase
             'array'        => [[]],
             'integer'      => [1],
             'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'object'       => [new StdClass()],
         ];
     }
 }

@@ -30,7 +30,7 @@ class EventDispatchingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function buffered_event_bus_flush_is_called_during_process()
+    public function buffered_event_bus_flush_is_called_during_process(): void
     {
         $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
         $eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus')
@@ -47,7 +47,7 @@ class EventDispatchingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function it_returns_the_same_command_as_it_processes_unmodified()
+    public function it_returns_the_same_command_as_it_processes_unmodified(): void
     {
         $command = new FixedUuidStubCommand();
         $uuid = $command->UUID;

@@ -30,7 +30,7 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, AllowedSecondFactor::class);
     }
 
-    public function save(AllowedSecondFactor $allowedSecondFactor)
+    public function save(AllowedSecondFactor $allowedSecondFactor): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($allowedSecondFactor);
@@ -51,7 +51,7 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function clearAllowedSecondFactorListFor(Institution $institution)
+    public function clearAllowedSecondFactorListFor(Institution $institution): void
     {
         $this->createQueryBuilder('asf')
             ->delete()

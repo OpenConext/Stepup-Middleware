@@ -28,7 +28,7 @@ class DateTimeHelper
      *
      * @param DateTime|null $now
      */
-    public static function setCurrentTime(DateTime $now = null)
+    public static function setCurrentTime(DateTime $now = null): void
     {
         $nowProperty = new ReflectionProperty('Surfnet\Stepup\DateTime\DateTime', 'now');
         $nowProperty->setAccessible(true);

@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -47,37 +47,37 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
     public $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     public $institution;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
+     * @var Locale
      */
     public $preferredLocale;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
+     * @var YubikeyPublicId
      */
     public $yubikeyPublicId;
 
@@ -102,7 +102,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         $this->yubikeyPublicId = $yubikeyPublicId;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -150,7 +150,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
             ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

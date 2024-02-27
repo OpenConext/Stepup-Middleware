@@ -19,7 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
+use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
 
 class CommandParamConverterTest extends TestCase
@@ -30,9 +33,9 @@ class CommandParamConverterTest extends TestCase
      * @dataProvider invalidCommandJsonStructures
      * @param string $commandJson
      */
-    public function it_validates_the_command_structure($commandJson)
+    public function it_validates_the_command_structure($commandJson): void
     {
-        $this->expectException(\Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException::class);
+        $this->expectException(BadCommandRequestException::class);
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
@@ -50,9 +53,9 @@ class CommandParamConverterTest extends TestCase
      * @param string $expectedCommandClass
      * @param string $commandName
      */
-    public function it_can_convert_command_name_notation($expectedCommandClass, $commandName)
+    public function it_can_convert_command_name_notation($expectedCommandClass, string $commandName): void
     {
-        $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new \stdClass]];
+        $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
@@ -72,9 +75,9 @@ class CommandParamConverterTest extends TestCase
      * @test
      * @group api-bundle
      */
-    public function it_sets_uuid()
+    public function it_sets_uuid(): void
     {
-        $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new \stdClass]];
+        $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
         $request = m::mock('Symfony\Component\HttpFoundation\Request')
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
@@ -94,7 +97,7 @@ class CommandParamConverterTest extends TestCase
      * @test
      * @group api-bundle
      */
-    public function it_sets_payload()
+    public function it_sets_payload(): void
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 
@@ -114,10 +117,10 @@ class CommandParamConverterTest extends TestCase
         $this->assertSame(['snakeCase' => true], $spiedPayload, 'Payload mismatch');
     }
 
-    public function invalidCommandJsonStructures()
+    public function invalidCommandJsonStructures(): array
     {
         return array_map(
-            function ($command) {
+            function ($command): array {
                 return [json_encode($command)];
             },
             [
@@ -125,7 +128,7 @@ class CommandParamConverterTest extends TestCase
                 'Body may not be integer' => 1,
                 'Body may not be float' => 1.1,
                 'Body may not be array' => [],
-                'Object must contain command property' => new \stdClass,
+                'Object must contain command property' => new stdClass,
                 'Command may not be null' => ['command' => null],
                 'Command may not be integer' => ['command' => 1],
                 'Command may not be float' => ['command' => 1.1],
@@ -141,7 +144,7 @@ class CommandParamConverterTest extends TestCase
         );
     }
 
-    public function convertibleCommandNames()
+    public function convertibleCommandNames(): array
     {
         return [
             'It can convert simple command notation with a namespace' => [
@@ -158,12 +161,12 @@ class CommandParamConverterTest extends TestCase
 
     /**
      * @param mixed &$spy
-     * @return \Mockery\Matcher\MatcherAbstract
+     * @return MatcherAbstract
      */
     private static function spy(&$spy)
     {
         return m::on(
-            function ($value) use (&$spy) {
+            function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;

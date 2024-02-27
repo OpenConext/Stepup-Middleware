@@ -22,12 +22,9 @@ use JsonSerializable;
 
 final class SelfAssertedTokensOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $allowed;
+    private bool $allowed;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }

@@ -24,10 +24,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class RaLocationId implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $raLocationId;
+    private string $raLocationId;
 
     /**
      * @param string $raLocationId
@@ -57,7 +54,7 @@ final class RaLocationId implements JsonSerializable
      * @param RaLocationId $otherRaLocationId
      * @return bool
      */
-    public function equals(RaLocationId $otherRaLocationId)
+    public function equals(RaLocationId $otherRaLocationId): bool
     {
         return $this->raLocationId === $otherRaLocationId->raLocationId;
     }
@@ -70,7 +67,7 @@ final class RaLocationId implements JsonSerializable
         return $this->raLocationId;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->raLocationId;
     }

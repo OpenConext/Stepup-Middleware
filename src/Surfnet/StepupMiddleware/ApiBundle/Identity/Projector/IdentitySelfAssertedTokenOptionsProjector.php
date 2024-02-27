@@ -29,10 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedT
 
 class IdentitySelfAssertedTokenOptionsProjector extends Projector
 {
-    /**
-     * @var IdentitySelfAssertedTokenOptionsRepository
-     */
-    private $repository;
+    private IdentitySelfAssertedTokenOptionsRepository $repository;
 
     public function __construct(IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokenOptionsRepository)
     {
@@ -43,7 +40,7 @@ class IdentitySelfAssertedTokenOptionsProjector extends Projector
      * Identity is created, we also create a set of
      * IdentitySelfAssertedTokenOptions.
      */
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $identitySelfAssertedTokenOptions = IdentitySelfAssertedTokenOptions::create(
             $event->identityId,
@@ -53,12 +50,12 @@ class IdentitySelfAssertedTokenOptionsProjector extends Projector
         $this->repository->save($identitySelfAssertedTokenOptions);
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $this->determinePossessionOfToken($event->vettingType, $event->identityId);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
     {
         $this->determinePossessionOfToken($event->vettingType, $event->identityId);
     }

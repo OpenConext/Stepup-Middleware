@@ -35,14 +35,8 @@ use function sprintf;
 
 final class MigrateSecondFactorCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
+    private BootstrapCommandService $bootstrapService;
+    private TransactionHelper $transactionHelper;
 
     public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
     {
@@ -51,7 +45,7 @@ final class MigrateSecondFactorCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Migrates the tokens of an identity to a new institution while preserving the old tokens')
@@ -69,7 +63,7 @@ final class MigrateSecondFactorCommand extends Command
             ->addArgument('email', InputArgument::OPTIONAL, 'The e-mail address of the identity to create');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $sourceNameId = new NameId($input->getArgument('old-name-id'));
         $targetNameId = new NameId($input->getArgument('new-name-id'));

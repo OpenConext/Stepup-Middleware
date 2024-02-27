@@ -34,15 +34,9 @@ use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
  */
 class InstitutionAuthorizationContext implements InstitutionAuthorizationContextInterface
 {
-    /**
-     * @var InstitutionCollection|null
-     */
-    private $institutions;
+    private ?InstitutionCollection $institutions;
 
-    /**
-     * @var bool
-     */
-    private $isSraa;
+    private bool $isSraa;
 
     public function __construct(
         InstitutionCollection $institutions = null,

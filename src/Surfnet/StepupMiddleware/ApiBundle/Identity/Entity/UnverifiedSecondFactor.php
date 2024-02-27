@@ -19,10 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\UnverifiedSecondFactorRepository;
 
 #[ORM\Entity(repositoryClass: UnverifiedSecondFactorRepository::class)]
-class UnverifiedSecondFactor implements \JsonSerializable
+class UnverifiedSecondFactor implements JsonSerializable
 {
     /**
      *

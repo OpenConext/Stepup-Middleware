@@ -30,7 +30,7 @@ class BufferedEventBus implements EventBusInterface
     /**
      * @var EventListenerInterface[]
      */
-    private $eventListeners = [];
+    private array $eventListeners = [];
 
     /**
      * @var DomainMessage[]
@@ -39,15 +39,10 @@ class BufferedEventBus implements EventBusInterface
 
     /**
      * Flag to ensure only one loop is publishing domain messages from the buffer.
-     *
-     * @var bool
      */
-    private $isFlushing = false;
+    private bool $isFlushing = false;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -69,7 +64,7 @@ class BufferedEventBus implements EventBusInterface
     /**
      * Flushes the buffered domain messages to all event listeners.
      */
-    public function flush()
+    public function flush(): void
     {
         if ($this->isFlushing) {
             // If already flushing, we're in a nested pipeline. This means that an event that is currently being

@@ -38,7 +38,7 @@ class AuditLogRepository extends ServiceEntityRepository
      *
      * @var string[]
      */
-    private static $secondFactorEvents = [
+    private static array $secondFactorEvents = [
         'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent',
         'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent',
         'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent',
@@ -78,7 +78,7 @@ class AuditLogRepository extends ServiceEntityRepository
      * @param SecondFactorAuditLogQuery $query
      * @return Query
      */
-    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query)
+    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query): Query
     {
         $queryBuilder = $this
             ->createQueryBuilder('al')
@@ -139,14 +139,14 @@ class AuditLogRepository extends ServiceEntityRepository
     /**
      * @param AuditLogEntry $entry
      */
-    public function save(AuditLogEntry $entry)
+    public function save(AuditLogEntry $entry): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($entry);
         $entityManager->flush();
     }
 
-    public function saveAll(array $entries)
+    public function saveAll(array $entries): void
     {
         $entityManager = $this->getEntityManager();
 

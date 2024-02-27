@@ -34,14 +34,9 @@ class AuthorizedInstitutionCollection
      *
      * @var string[]
      */
-    private $authorizations = [];
+    private array $authorizations = [];
 
-    /**
-     * @param InstitutionCollection $raInstitutions
-     * @param InstitutionCollection|null $raaInstitutions
-     * @return AuthorizedInstitutionCollection
-     */
-    public static function from(InstitutionCollection $raInstitutions, InstitutionCollection $raaInstitutions = null)
+    public static function from(InstitutionCollection $raInstitutions, ?InstitutionCollection $raaInstitutions = null): self
     {
         $collection = new self();
 

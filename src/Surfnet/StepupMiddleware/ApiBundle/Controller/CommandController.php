@@ -42,35 +42,20 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CommandController extends AbstractController
 {
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
+    private WhitelistService $whitelistService;
 
-    /**
-     * @var TransactionAwarePipeline
-     */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
-    /**
-     * @var MetadataEnricher
-     */
-    private $metadataEnricher;
+    private MetadataEnricher $metadataEnricher;
 
     /**
      * @var AuthorizationChecker
      */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var CommandAuthorizationService
-     */
-    private $commandAuthorizationService;
+    private CommandAuthorizationService $commandAuthorizationService;
 
 
     public function __construct(
@@ -89,7 +74,7 @@ class CommandController extends AbstractController
         $this->commandAuthorizationService = $commandAuthorizationService;
     }
 
-    public function handleAction(Command $command, Metadata $metadata, Request $request)
+    public function handleAction(Command $command, Metadata $metadata, Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));
@@ -126,7 +111,7 @@ class CommandController extends AbstractController
      * @param Metadata $metadata
      * @return Institution
      */
-    private function resolveInstitution(Command $command, Metadata $metadata)
+    private function resolveInstitution(Command $command, Metadata $metadata): Institution
     {
         if ($metadata->actorInstitution) {
             return new Institution($metadata->actorInstitution);
@@ -150,7 +135,7 @@ class CommandController extends AbstractController
      * @param Command $command
      * @param Metadata $metadata
      */
-    private function handleAuthorization(Command $command, Metadata $metadata)
+    private function handleAuthorization(Command $command, Metadata $metadata): void
     {
         // Get the actorId and actorInstitution from the metadata
         // Be aware that these values could be null when executing commands where we shouldn't log in for

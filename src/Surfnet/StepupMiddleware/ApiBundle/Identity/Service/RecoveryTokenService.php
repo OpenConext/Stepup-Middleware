@@ -29,10 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 class RecoveryTokenService extends AbstractSearchService
 {
-    /**
-     * @var RecoveryTokenRepository
-     */
-    private $recoveryTokenRepository;
+    private RecoveryTokenRepository $recoveryTokenRepository;
 
     public function __construct(RecoveryTokenRepository $recoveryTokenRepository)
     {

@@ -31,14 +31,8 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapIdentityCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
+    private BootstrapCommandService $bootstrapService;
+    private TransactionHelper $transactionHelper;
 
     public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
     {
@@ -47,7 +41,7 @@ final class BootstrapIdentityCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates an identity')
@@ -59,7 +53,7 @@ final class BootstrapIdentityCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->bootstrapService->setToken(
             new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS'])

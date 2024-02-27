@@ -50,7 +50,7 @@ final class HasInstitutionMatcher extends MatcherAbstract
         return false;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('<HasInstitutionMatcher($s)>', $this->_expected);
     }

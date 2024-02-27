@@ -70,7 +70,7 @@ class RaLocation implements JsonSerializable
         RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation
-    ) {
+    ): self {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
         }

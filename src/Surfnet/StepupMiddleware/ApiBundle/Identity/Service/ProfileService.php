@@ -27,20 +27,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 
 class ProfileService extends AbstractSearchService
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
+    private RaListingRepository $raListingRepository;
 
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
+    private AuthorizationContextService $authorizationService;
 
     public function __construct(
         RaListingRepository $raListingRepository,
@@ -68,7 +59,7 @@ class ProfileService extends AbstractSearchService
      * @param string $identityId
      * @return Profile|null
      */
-    public function createProfile($identityId)
+    public function createProfile($identityId): ?Profile
     {
         $identity = $this->identityService->find($identityId);
         if ($identity === null) {

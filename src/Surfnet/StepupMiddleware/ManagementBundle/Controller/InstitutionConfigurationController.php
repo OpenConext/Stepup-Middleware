@@ -49,37 +49,34 @@ final class InstitutionConfigurationController extends AbstractController
     /**
      * @return InstitutionConfigurationOptionsService
      */
-    private $institutionConfigurationOptionsService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
     /**
      * @return InstitutionAuthorizationService
      */
-    private $institutionAuthorizationService;
+    private InstitutionAuthorizationService $institutionAuthorizationService;
 
     /**
      * @return ValidatorInterface
      */
-    private $validator;
+    private ValidatorInterface $validator;
 
     /**
      * @return AllowedSecondFactorListService
      */
-    private $allowedSecondFactorListService;
+    private AllowedSecondFactorListService $allowedSecondFactorListService;
 
     /**
      * @return LoggerInterface
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * @return TransactionAwarePipeline
      */
-    private $pipeline;
+    private TransactionAwarePipeline $pipeline;
 
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
+    private DBALConnectionHelper $connectionHelper;
 
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
@@ -99,7 +96,7 @@ final class InstitutionConfigurationController extends AbstractController
         $this->connectionHelper = $dbalConnectionHelper;
     }
 
-    public function showAction()
+    public function showAction(): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -138,7 +135,7 @@ final class InstitutionConfigurationController extends AbstractController
         return new JsonResponse($overview);
     }
 
-    public function reconfigureAction(Request $request)
+    public function reconfigureAction(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -198,7 +195,7 @@ final class InstitutionConfigurationController extends AbstractController
      * @param Command[] $commands
      * @throws Exception
      */
-    private function handleCommands(array $commands)
+    private function handleCommands(array $commands): void
     {
         $connectionHelper = $this->connectionHelper;
 

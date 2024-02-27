@@ -27,10 +27,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
     const ROLE_RAA  = 2;
     const ROLE_SRAA = 3;
 
-    /**
-     * @var int
-     */
-    private $role;
+    private int $role;
 
     /**
      * @param string $role may not be an empty string
@@ -49,12 +46,12 @@ final class RegistrationAuthorityRole implements SerializableInterface
     /**
      * @SuppressWarnings(PHPMD.ShortMethodName) no use in lengthening a domain term for the sake of shutting up PHPMD
      */
-    public static function ra()
+    public static function ra(): self
     {
         return new self(self::ROLE_RA);
     }
 
-    public static function raa()
+    public static function raa(): self
     {
         return new self(self::ROLE_RAA);
     }
@@ -63,7 +60,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
      * @param RegistrationAuthorityRole $role
      * @return bool
      */
-    public function equals(RegistrationAuthorityRole $role)
+    public function equals(RegistrationAuthorityRole $role): bool
     {
         return $this->role === $role->role;
     }
@@ -71,7 +68,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
     /**
      * @return bool
      */
-    public function isRa()
+    public function isRa(): bool
     {
         return $this->role === self::ROLE_RA;
     }
@@ -79,7 +76,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
     /**
      * @return bool
      */
-    public function isRaa()
+    public function isRaa(): bool
     {
         return $this->role === self::ROLE_RAA;
     }
@@ -89,7 +86,7 @@ final class RegistrationAuthorityRole implements SerializableInterface
         return $this->role;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->role;
     }

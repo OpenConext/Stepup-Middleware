@@ -27,10 +27,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProfileController extends AbstractController
 {
-    /**
-     * @var ProfileService
-     */
-    private $profileService;
+    private ProfileService $profileService;
 
     public function __construct(
         ProfileService $profileService
@@ -38,7 +35,7 @@ class ProfileController extends AbstractController
         $this->profileService = $profileService;
     }
 
-    public function getAction(Request $request, $identityId)
+    public function getAction(Request $request, $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

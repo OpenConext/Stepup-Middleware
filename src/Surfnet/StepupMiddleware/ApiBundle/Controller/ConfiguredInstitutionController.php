@@ -24,17 +24,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConfiguredInstitutionController extends AbstractController
 {
-    /**
-     * @var ConfiguredInstitutionService
-     */
-    private $configuredInstitutionService;
+    private ConfiguredInstitutionService $configuredInstitutionService;
 
     public function __construct(ConfiguredInstitutionService $allListings)
     {
         $this->configuredInstitutionService = $allListings;
     }
 
-    public function collectionAction()
+    public function collectionAction(): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

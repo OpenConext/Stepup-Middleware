@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,34 +47,34 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
      * The Yubikey's public ID.
      *
-     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
+     * @var YubikeyPublicId
      */
     public $yubikeyPublicId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $registrationRequestedAt;
 
@@ -116,7 +116,7 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
         $this->registrationCode          = $registrationCode;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -171,7 +171,7 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
             ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
         $this->email = $sensitiveData->getEmail();

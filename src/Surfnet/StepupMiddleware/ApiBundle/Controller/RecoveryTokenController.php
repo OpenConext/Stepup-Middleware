@@ -38,20 +38,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class RecoveryTokenController extends AbstractController
 {
-    /**
-     * @var RecoveryTokenService
-     */
-    private $service;
+    private RecoveryTokenService $service;
 
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
+    private AuthorizationContextService $authorizationService;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         RecoveryTokenService $recoveryTokenServiceService,
@@ -63,7 +54,7 @@ class RecoveryTokenController extends AbstractController
         $this->logger = $logger;
     }
 
-    public function getAction($id)
+    public function getAction($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get recovery token: %s', $id));

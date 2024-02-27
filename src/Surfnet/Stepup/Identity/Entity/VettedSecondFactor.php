@@ -35,30 +35,18 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  */
 class VettedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
+
+    private ?SecondFactorId $id = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    private $id;
-
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
-    /**
-     * @var VettingType
-     */
-    private $vettingType;
+    private ?VettingType $vettingType = null;
 
     /**
      * @return VettedSecondFactor
@@ -69,7 +57,7 @@ class VettedSecondFactor extends AbstractSecondFactor
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
         VettingType $vettingType
-    ) {
+    ): self {
         $secondFactor = new self();
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
@@ -92,7 +80,7 @@ class VettedSecondFactor extends AbstractSecondFactor
         return $this->id;
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new VettedSecondFactorRevokedEvent(
@@ -105,7 +93,7 @@ class VettedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithVettedSecondFactorRevocationEvent(

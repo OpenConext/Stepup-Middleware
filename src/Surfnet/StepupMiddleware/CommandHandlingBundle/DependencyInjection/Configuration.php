@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->info('Configures the URL where registrants can verify e-mail address ownership.')
                     ->validate()
-                        ->ifTrue(function ($url) {
+                        ->ifTrue(function ($url): bool {
                             $parts = parse_url($url);
 
                             return empty($parts['scheme']) || empty($parts['host']) || empty($parts['path']);
@@ -50,7 +50,7 @@ class Configuration implements ConfigurationInterface
                     ->info('Configures the URL for Self Service.')
                     ->validate()
                         ->ifTrue(
-                            function ($url) {
+                            function ($url): bool {
                                 return filter_var($url, FILTER_VALIDATE_URL) === false;
                             }
                         )
@@ -64,7 +64,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('name')
                             ->isRequired()
                             ->validate()
-                                ->ifTrue(function ($name) {
+                                ->ifTrue(function ($name): bool {
                                     return !is_string($name) || empty($name);
                                 })
                                 ->thenInvalid("E-mail sender name must be non-empty string, got '%s'")
@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('email')
                             ->isRequired()
                             ->validate()
-                                ->ifTrue(function ($name) {
+                                ->ifTrue(function ($name): bool {
                                     return !is_string($name) || empty($name);
                                 })
                                 ->thenInvalid("E-mail sender e-mail must be non-empty string, got '%s'")

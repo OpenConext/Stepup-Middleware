@@ -34,7 +34,7 @@ class EmailVerificationWindowTest extends TestCase
      *
      * @runInSeparateProcess
      */
-    public function window_is_open_for_instructed_timeframe_after_given_time()
+    public function window_is_open_for_instructed_timeframe_after_given_time(): void
     {
         $startTime = new DateTime(new CoreDateTime('@1'));
         $timeFrame = TimeFrame::ofSeconds(3);
@@ -64,7 +64,7 @@ class EmailVerificationWindowTest extends TestCase
      *
      * @runInSeparateProcess
      */
-    public function a_window_is_considered_equal_when_the_start_and_end_are_the_same()
+    public function a_window_is_considered_equal_when_the_start_and_end_are_the_same(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
@@ -93,7 +93,7 @@ class EmailVerificationWindowTest extends TestCase
      *
      * @runInSeparateProcess
      */
-    public function the_window_correctly_calculates_the_end_datetime()
+    public function the_window_correctly_calculates_the_end_datetime(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10')));
@@ -118,7 +118,7 @@ class EmailVerificationWindowTest extends TestCase
      * @param string|null $startTimeOffset
      * @return EmailVerificationWindow
      */
-    private function newEmailVerificationWindow($timeFrameSeconds, $startTimeOffset = null)
+    private function newEmailVerificationWindow(int $timeFrameSeconds, $startTimeOffset = null)
     {
         $start = DateTime::now();
         if ($startTimeOffset) {

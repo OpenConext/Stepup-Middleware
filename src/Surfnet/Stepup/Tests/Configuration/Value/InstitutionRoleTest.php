@@ -19,11 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
-use Surfnet\Stepup\Configuration\Value\Institution;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Configuration\Value\InstitutionSet;
 use Surfnet\Stepup\Configuration\Value\SelectRaaOption;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionRoleTest extends TestCase
 {
@@ -32,9 +30,9 @@ class InstitutionRoleTest extends TestCase
      * @group domain
      * @dataProvider invalidConstructorArgumentsProvider
      */
-    public function invalid_types_are_rejected_during_construction($arguments)
+    public function invalid_types_are_rejected_during_construction(bool|string|int $arguments): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new InstitutionRole($arguments);
     }
 
@@ -43,7 +41,7 @@ class InstitutionRoleTest extends TestCase
      * @group domain
      * @dataProvider institutionTypeProvider
      */
-    public function institution_roles_can_be_created_by_type($type)
+    public function institution_roles_can_be_created_by_type(string $type): void
     {
         $role1 = new InstitutionRole($type);
         $role2 = new InstitutionRole($type);
@@ -52,7 +50,7 @@ class InstitutionRoleTest extends TestCase
         $this->assertTrue($role1->equals($role2));
     }
 
-    public function institutionTypeProvider()
+    public function institutionTypeProvider(): array
     {
         return [
             'use_ra' => ['use_ra'],
@@ -61,7 +59,7 @@ class InstitutionRoleTest extends TestCase
         ];
     }
 
-    public function invalidConstructorArgumentsProvider()
+    public function invalidConstructorArgumentsProvider(): array
     {
         return [
             'cant-be-boolean' => [false],

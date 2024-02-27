@@ -54,14 +54,14 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
     /**
      * @var RepositoryInterface
      */
-    private $repository;
+    private RepositoryInterface $repository;
 
     public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
-    public function handleCreateInstitutionConfigurationCommand(CreateInstitutionConfigurationCommand $command)
+    public function handleCreateInstitutionConfigurationCommand(CreateInstitutionConfigurationCommand $command): void
     {
         $institution = new Institution($command->institution);
         $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
@@ -82,10 +82,10 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 
     public function handleReconfigureInstitutionConfigurationOptionsCommand(
         ReconfigureInstitutionConfigurationOptionsCommand $command
-    ) {
+    ): void {
         $institution = new Institution($command->institution);
 
-        $allowedSecondFactors = array_map(function ($allowedSecondFactor) {
+        $allowedSecondFactors = array_map(function ($allowedSecondFactor): SecondFactorType {
             return new SecondFactorType($allowedSecondFactor);
         }, $command->allowedSecondFactors);
 
@@ -137,7 +137,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $this->repository->save($institutionConfiguration);
     }
 
-    public function handleAddRaLocationCommand(AddRaLocationCommand $command)
+    public function handleAddRaLocationCommand(AddRaLocationCommand $command): void
     {
         $institution = new Institution($command->institution);
 
@@ -152,7 +152,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $this->repository->save($institutionConfiguration);
     }
 
-    public function handleChangeRaLocationCommand(ChangeRaLocationCommand $command)
+    public function handleChangeRaLocationCommand(ChangeRaLocationCommand $command): void
     {
         $institution = new Institution($command->institution);
 
@@ -167,7 +167,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         $this->repository->save($institutionConfiguration);
     }
 
-    public function handleRemoveRaLocationCommand(RemoveRaLocationCommand $command)
+    public function handleRemoveRaLocationCommand(RemoveRaLocationCommand $command): void
     {
         $institution = new Institution($command->institution);
 
@@ -179,7 +179,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 
     public function handleRemoveInstitutionConfigurationByUnnormalizedIdCommand(
         RemoveInstitutionConfigurationByUnnormalizedIdCommand $command
-    ) {
+    ): void {
         $institution = new Institution($command->institution);
 
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);

@@ -20,24 +20,26 @@ namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
 
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ConfiguredInstitutionControllerTest extends WebTestCase
 {
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    private $client;
+    private KernelBrowser $client;
 
     /**
      * @var string[]
      */
-    private $accounts;
+    private array $accounts;
 
     /**
      * @var string
      */
-    private $endpoint;
+    private string $endpoint;
 
     private DatabaseToolCollection $databaseTool;
 
@@ -69,7 +71,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      *
      * @dataProvider invalidHttpMethodProvider
      */
-    public function only_get_requests_are_accepted($invalidHttpMethod)
+    public function only_get_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -91,7 +93,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      * @group api
      * @dataProvider notAllowedAccountsProvider
      */
-    public function no_access_for_not_allowed_account(string $account)
+    public function no_access_for_not_allowed_account(string $account): void
     {
         $this->client->request(
             'GET',
@@ -114,7 +116,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      * @test
      * @group api
      */
-    public function json_is_returned_from_the_api()
+    public function json_is_returned_from_the_api(): void
     {
         $this->client->request(
             'GET',
@@ -143,7 +145,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      * @group api
      * @dataProvider allowedAccountsProvider
      */
-    public function correct_institutions_are_returned(string $account)
+    public function correct_institutions_are_returned(string $account): void
     {
         $this->client->request(
             'GET',
@@ -167,7 +169,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
     /**
      * Dataprovider for only_get_requests_are_accepted
      */
-    public function invalidHttpMethodProvider()
+    public function invalidHttpMethodProvider(): array
     {
         return [
             'POST' => ['POST'],

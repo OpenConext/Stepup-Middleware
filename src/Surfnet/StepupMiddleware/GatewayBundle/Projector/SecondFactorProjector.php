@@ -34,10 +34,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 class SecondFactorProjector extends Projector
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
+    private SecondFactorRepository $repository;
 
     /**
      * @param SecondFactorRepository $repository
@@ -47,7 +44,7 @@ class SecondFactorProjector extends Projector
         $this->repository = $repository;
     }
 
-    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
@@ -63,7 +60,7 @@ class SecondFactorProjector extends Projector
         );
     }
 
-    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
@@ -79,7 +76,7 @@ class SecondFactorProjector extends Projector
         );
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
@@ -95,7 +92,7 @@ class SecondFactorProjector extends Projector
         );
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
     {
         $this->repository->save(
             new SecondFactor(

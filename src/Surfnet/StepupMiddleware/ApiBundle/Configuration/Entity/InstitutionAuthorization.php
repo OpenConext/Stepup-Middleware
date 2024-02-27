@@ -62,7 +62,7 @@ class InstitutionAuthorization
         Institution $institution,
         Institution $institutionRelation,
         InstitutionRole $institutionRole
-    ) {
+    ): self {
         $options = new self;
 
         $options->institution = $institution;

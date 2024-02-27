@@ -18,9 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
-use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -28,7 +25,10 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
@@ -39,7 +39,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -49,27 +49,27 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
+     * @var RecoveryTokenId
      */
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
+     * @var PhoneNumber
      */
     public $phoneNumber;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -91,7 +91,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -128,7 +128,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -136,7 +136,7 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
             ->withRecoveryTokenSecret($this->phoneNumber, RecoveryTokenType::sms());
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

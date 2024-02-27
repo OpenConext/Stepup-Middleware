@@ -19,17 +19,19 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType;
 
 class DocumentNumberTypeTest extends UnitTest
 {
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MySqlPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -48,7 +50,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -61,7 +63,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_normal_document_number_is_converted_to_a_database_value()
+    public function a_normal_document_number_is_converted_to_a_database_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -76,7 +78,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -92,9 +94,9 @@ class DocumentNumberTypeTest extends UnitTest
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
      * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_document_number_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_document_number_or_null($incorrectValue): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(DocumentNumberType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -104,7 +106,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_stepup_document_number_object()
+    public function a_non_null_value_is_converted_to_the_stepup_document_number_object(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -119,9 +121,9 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $type = Type::getType(DocumentNumberType::NAME);
 

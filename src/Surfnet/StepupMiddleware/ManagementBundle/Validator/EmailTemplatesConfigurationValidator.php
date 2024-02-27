@@ -24,10 +24,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 final class EmailTemplatesConfigurationValidator implements ConfigurationValidatorInterface
 {
-    /**
-     * @var string
-     */
-    private $requiredLocale;
+    private string $requiredLocale;
 
     /**
      * @param string $requiredLocale
@@ -41,7 +38,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         $this->requiredLocale = $requiredLocale;
     }
 
-    public function validate(array $configuration, $propertyPath)
+    public function validate(array $configuration, $propertyPath): void
     {
         $templateNames = [
             'confirm_email',

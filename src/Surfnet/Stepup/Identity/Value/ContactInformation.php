@@ -23,10 +23,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class ContactInformation implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $contactInformation;
+    private string $contactInformation;
 
     /**
      * @param string $contactInformation
@@ -44,7 +41,7 @@ final class ContactInformation implements JsonSerializable
      * @param ContactInformation $otherContactInformation
      * @return bool
      */
-    public function equals(ContactInformation $otherContactInformation)
+    public function equals(ContactInformation $otherContactInformation): bool
     {
         return $this->contactInformation === $otherContactInformation->contactInformation;
     }
@@ -62,7 +59,7 @@ final class ContactInformation implements JsonSerializable
         return $this->contactInformation;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->contactInformation;
     }

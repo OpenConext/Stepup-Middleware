@@ -30,7 +30,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -75,7 +75,7 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         $this->raInstitution = $raInstitution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -116,7 +116,7 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email      = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

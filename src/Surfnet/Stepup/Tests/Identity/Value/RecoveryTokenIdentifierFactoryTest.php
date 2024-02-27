@@ -30,7 +30,7 @@ final class RecoveryTokenIdentifierFactoryTest extends TestCase
     /**
      * @group domain
      */
-    public function test_generates_identifiers_of_all_types()
+    public function test_generates_identifiers_of_all_types(): void
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),

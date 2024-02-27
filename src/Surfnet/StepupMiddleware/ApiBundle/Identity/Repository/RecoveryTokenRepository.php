@@ -32,10 +32,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(
         ManagerRegistry $registry,
@@ -62,7 +59,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function createSearchQuery(RecoveryTokenQuery $query)
+    public function createSearchQuery(RecoveryTokenQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('rt');
 

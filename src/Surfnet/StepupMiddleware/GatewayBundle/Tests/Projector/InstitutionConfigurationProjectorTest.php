@@ -35,7 +35,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    private $projector;
+    private InstitutionConfigurationProjector $projector;
 
     private $repository;
     protected function setUp(): void
@@ -46,7 +46,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->projector = $projector;
     }
 
-    public function test_create_row_when_non_existent()
+    public function test_create_row_when_non_existent(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
@@ -54,13 +54,13 @@ class InstitutionConfigurationProjectorTest extends TestCase
             new SsoOn2faOption(true)
         );
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn(null);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration){
+        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration): bool{
             return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
         });
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }
-    public function test_updates_existing_row()
+    public function test_updates_existing_row(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
@@ -70,7 +70,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $configuration = new InstitutionConfiguration('institution-a.nl', false);
 
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn($configuration);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration){
+        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration): bool{
             return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
         });
 

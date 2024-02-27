@@ -42,42 +42,24 @@ class VerifiedSecondFactorReminderMailService
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
 
-    /**
-     * @var Sender
-     */
-    private $sender;
+    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
 
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
-    /**
-     * @var RaListingService
-     */
-    private $raListingService;
+    private RaListingService $raListingService;
 
-    /**
-     * @var RaLocationService
-     */
-    private $raLocationService;
+    private RaLocationService $raLocationService;
 
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
+    private string $fallbackLocale;
 
     public function __construct(
         Mailer $mailer,
@@ -133,7 +115,7 @@ class VerifiedSecondFactorReminderMailService
             );
         }
 
-        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra) {
+        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra): bool {
             return !$ra->isRaa();
         });
 
@@ -163,7 +145,7 @@ class VerifiedSecondFactorReminderMailService
         $requestedAt,
         $registrationCode,
         $raLocations
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
@@ -202,7 +184,7 @@ class VerifiedSecondFactorReminderMailService
         $requestedAt,
         $registrationCode,
         array $ras
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],

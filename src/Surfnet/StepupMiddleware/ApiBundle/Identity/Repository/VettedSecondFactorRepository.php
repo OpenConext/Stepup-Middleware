@@ -32,7 +32,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, VettedSecondFactor::class);
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null): ?VettedSecondFactor
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?VettedSecondFactor
     {
         /** @var VettedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -44,7 +44,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
      * @param VettedSecondFactorQuery $query
      * @return Query
      */
-    public function createSearchQuery(VettedSecondFactorQuery $query)
+    public function createSearchQuery(VettedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
@@ -57,7 +57,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'sf')
@@ -70,13 +70,13 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
     /**
      * @param VettedSecondFactor $secondFactor
      */
-    public function save(VettedSecondFactor $secondFactor)
+    public function save(VettedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
 
-    public function remove(VettedSecondFactor $secondFactor)
+    public function remove(VettedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();

@@ -34,11 +34,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityRepository extends EventSourcingRepository
 {
-    protected $events;
+    protected EventStoreInterface $events;
 
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    private $userDataFilter;
+    private UserDataFilterInterface $userDataFilter;
 
     /**
      * @param EventStreamDecorator[] $eventStreamDecorators

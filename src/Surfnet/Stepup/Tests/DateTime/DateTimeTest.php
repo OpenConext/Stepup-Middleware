@@ -34,7 +34,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function the_configured_format_is_what_is_needed_for_correct_application_behavior()
+    public function the_configured_format_is_what_is_needed_for_correct_application_behavior(): void
     {
         $this->assertEquals('Y-m-d\\TH:i:sP', DateTime::FORMAT);
     }
@@ -46,7 +46,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function to_string_returns_the_time_in_the_correct_format()
+    public function to_string_returns_the_time_in_the_correct_format(): void
     {
         $coreDateTimeObject = new CoreDateTime('@1000');
         $ourDateTimeObject  = new DateTime(new CoreDateTime('@1000'));
@@ -58,7 +58,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function add_returns_a_different_object_that_has_the_interval_added()
+    public function add_returns_a_different_object_that_has_the_interval_added(): void
     {
         $base     = new DateTime(new CoreDateTime('@1000'));
         $interval = new DateInterval('PT1S');
@@ -73,7 +73,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function sub_returns_a_different_object_that_has_the_interval_substracted()
+    public function sub_returns_a_different_object_that_has_the_interval_substracted(): void
     {
         $base     = new DateTime(new CoreDateTime('@1000'));
         $interval = new DateInterval('PT1S');
@@ -88,7 +88,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_before_works_with_exclusive_comparison()
+    public function comes_before_works_with_exclusive_comparison(): void
     {
         $base   = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
@@ -104,7 +104,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_before_or_is_equal_works_with_inclusive_comparison()
+    public function comes_before_or_is_equal_works_with_inclusive_comparison(): void
     {
         $base   = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
@@ -120,7 +120,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_after_works_with_exclusive_comparison()
+    public function comes_after_works_with_exclusive_comparison(): void
     {
         $base   = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
@@ -136,7 +136,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_after_or_is_equal_works_with_inclusive_comparison()
+    public function comes_after_or_is_equal_works_with_inclusive_comparison(): void
     {
         $base   = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));

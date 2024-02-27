@@ -40,35 +40,20 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  */
 class UnverifiedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
+
+    private ?SecondFactorId $id = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    private $id;
-
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     private $secondFactorIdentifier;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
-     */
-    private $verificationWindow;
+    private ?EmailVerificationWindow $verificationWindow = null;
 
-    /**
-     * @var string
-     */
-    private $verificationNonce;
+    private ?string $verificationNonce = null;
 
     /**
      * @param SecondFactorId          $id
@@ -86,7 +71,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         $secondFactorIdentifier,
         EmailVerificationWindow $emailVerificationWindow,
         $verificationNonce
-    ) {
+    ): self {
         if (!is_string($verificationNonce)) {
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
         }
@@ -122,7 +107,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
      * @param string $verificationNonce
      * @return bool
      */
-    public function hasNonce($verificationNonce)
+    public function hasNonce($verificationNonce): bool
     {
         return $this->verificationNonce === $verificationNonce;
     }
@@ -135,7 +120,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         return $this->verificationWindow->isOpen();
     }
 
-    public function verifyEmail()
+    public function verifyEmail(): void
     {
         $this->apply(
             new EmailVerifiedEvent(
@@ -153,7 +138,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new UnverifiedSecondFactorRevokedEvent(
@@ -166,7 +151,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithUnverifiedSecondFactorRevocationEvent(
@@ -185,7 +170,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
      * @param string   $registrationCode
      * @return VerifiedSecondFactor
      */
-    public function asVerified($registrationRequestedAt, $registrationCode)
+    public function asVerified(DateTime $registrationRequestedAt, $registrationCode)
     {
         return VerifiedSecondFactor::create(
             $this->id,

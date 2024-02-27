@@ -24,15 +24,9 @@ use Exception;
 
 final class TransactionAwareEventDispatcher implements EventDispatcher
 {
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
+    private EventDispatcher $eventDispatcher;
 
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
+    private DBALConnectionHelper $connectionHelper;
 
     public function __construct(DBALConnectionHelper $connectionHelper, EventDispatcher $eventDispatcher)
     {
@@ -40,12 +34,12 @@ final class TransactionAwareEventDispatcher implements EventDispatcher
         $this->eventDispatcher  = $eventDispatcher;
     }
 
-    public function registerProjector(ProjectorInterface $projector)
+    public function registerProjector(ProjectorInterface $projector): void
     {
         $this->eventDispatcher->registerProjector($projector);
     }
 
-    public function dispatch(DomainEventStreamInterface $events)
+    public function dispatch(DomainEventStreamInterface $events): void
     {
         $this->connectionHelper->beginTransaction();
 

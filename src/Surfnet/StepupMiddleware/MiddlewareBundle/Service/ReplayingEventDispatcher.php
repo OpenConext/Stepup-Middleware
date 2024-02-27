@@ -26,17 +26,17 @@ final class ReplayingEventDispatcher implements EventDispatcher
     /**
      * @var ProjectorInterface[]
      */
-    private $projectors;
+    private ?array $projectors = null;
 
     /**
      * @param ProjectorInterface $projector
      */
-    public function registerProjector(ProjectorInterface $projector)
+    public function registerProjector(ProjectorInterface $projector): void
     {
         $this->projectors[] = $projector;
     }
 
-    public function dispatch(DomainEventStreamInterface $events)
+    public function dispatch(DomainEventStreamInterface $events): void
     {
         foreach ($events as $event) {
             foreach ($this->projectors as $projector) {

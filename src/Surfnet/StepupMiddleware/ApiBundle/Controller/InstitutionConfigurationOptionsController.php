@@ -29,20 +29,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class InstitutionConfigurationOptionsController extends AbstractController
 {
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
+    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
     /**
      * @return InstitutionAuthorizationService
      */
-    private $institutionAuthorizationService;
+    private InstitutionAuthorizationService $institutionAuthorizationService;
 
-    /**
-     * @var AllowedSecondFactorListService
-     */
-    private $allowedSecondFactorListService;
+    private AllowedSecondFactorListService $allowedSecondFactorListService;
 
     public function __construct(
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
@@ -54,7 +48,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
         $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
-    public function getForInstitutionAction($institutionName)
+    public function getForInstitutionAction($institutionName): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 

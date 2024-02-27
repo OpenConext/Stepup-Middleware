@@ -30,10 +30,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ReplayEventsCommand extends Command
 {
-    /**
-     * @var EventStreamReplayer
-     */
-    private $replayer;
+    private EventStreamReplayer $replayer;
 
     public function __construct(EventStreamReplayer $eventStreamReplayer)
     {

@@ -32,14 +32,8 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapSmsSecondFactorCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
+    private BootstrapCommandService $bootstrapService;
+    private TransactionHelper $transactionHelper;
 
     public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
     {
@@ -48,7 +42,7 @@ final class BootstrapSmsSecondFactorCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates a SMS second factor for a specified user')
@@ -67,7 +61,7 @@ final class BootstrapSmsSecondFactorCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $registrationStatus = $input->getArgument('registration-status');
         $this->bootstrapService->validRegistrationStatus($registrationStatus);

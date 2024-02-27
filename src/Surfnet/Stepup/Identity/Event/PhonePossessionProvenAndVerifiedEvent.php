@@ -34,7 +34,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,32 +47,32 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
+     * @var PhoneNumber
      */
     public $phoneNumber;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $registrationRequestedAt;
 
@@ -114,7 +114,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         $this->registrationCode = $registrationCode;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata                         = new Metadata();
         $metadata->identityId             = $this->identityId;
@@ -169,7 +169,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
             ->withSecondFactorIdentifier($this->phoneNumber, new SecondFactorType('sms'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
         $this->email = $sensitiveData->getEmail();

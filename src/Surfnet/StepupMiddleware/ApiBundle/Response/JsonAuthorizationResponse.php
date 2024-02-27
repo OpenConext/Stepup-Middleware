@@ -39,7 +39,7 @@ class JsonAuthorizationResponse extends JsonResponse
         parent::__construct($data, 200);
     }
 
-    public static function from(AuthorizationDecision $decision)
+    public static function from(AuthorizationDecision $decision): self
     {
         return new self($decision->getCode(), $decision->getErrorMessages());
     }

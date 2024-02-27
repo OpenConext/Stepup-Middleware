@@ -28,10 +28,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\WhitelistEntryRepository;
 
 class WhitelistProjector extends Projector
 {
-    /**
-     * @var WhitelistEntryRepository
-     */
-    private $whitelistEntryRepository;
+    private WhitelistEntryRepository $whitelistEntryRepository;
 
     /**
      * @param WhitelistEntryRepository $whitelistRepository

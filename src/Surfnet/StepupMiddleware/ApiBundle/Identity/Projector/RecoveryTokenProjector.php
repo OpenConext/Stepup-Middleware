@@ -34,10 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
  */
 class RecoveryTokenProjector extends Projector
 {
-    /**
-     * @var RecoveryTokenRepository
-     */
-    private $recoveryTokenRepository;
+    private RecoveryTokenRepository $recoveryTokenRepository;
 
     public function __construct(
         RecoveryTokenRepository $recoveryMethodRepository
@@ -45,7 +42,7 @@ class RecoveryTokenProjector extends Projector
         $this->recoveryTokenRepository = $recoveryMethodRepository;
     }
 
-    public function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
+    public function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event): void
     {
         $recoveryToken = new RecoveryToken();
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();
@@ -60,7 +57,7 @@ class RecoveryTokenProjector extends Projector
         $this->recoveryTokenRepository->save($recoveryToken);
     }
 
-    public function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event)
+    public function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event): void
     {
         $recoveryToken = new RecoveryToken();
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();

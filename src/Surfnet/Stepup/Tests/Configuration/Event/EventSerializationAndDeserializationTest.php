@@ -65,7 +65,7 @@ class EventSerializationAndDeserializationTest extends TestCase
      *
      * @dataProvider institutionConfigurationEventsProvider
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $unserializedEvent)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $unserializedEvent): void
     {
         $serializedEvent = $unserializedEvent->serialize();
 
@@ -77,7 +77,7 @@ class EventSerializationAndDeserializationTest extends TestCase
     /**
      * @return SerializableInterface[]
      */
-    public function institutionConfigurationEventsProvider()
+    public function institutionConfigurationEventsProvider(): array
     {
         $institution = new Institution('A test institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);

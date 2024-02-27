@@ -22,20 +22,11 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class InstitutionAuthorizationOption implements JsonSerializable
 {
-    /**
-     * @var InstitutionRole
-     */
-    private $institutionRole;
+    private InstitutionRole $institutionRole;
 
-    /**
-     * @var InstitutionSet
-     */
-    private $institutionSet;
+    private InstitutionSet $institutionSet;
 
-    /**
-     * @var boolean
-     */
-    private $isDefault;
+    private bool $isDefault;
 
     /**
      * If the default is set to true then the object will use the old default behaviour. That behaviour is that it
@@ -74,7 +65,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
 
         array_walk(
             $institutions,
-            function ($institution, $key) use ($institutions) {
+            function ($institution, $key) use ($institutions): void {
                 if (!is_string($institution)  || strlen(trim($institution)) === 0) {
                     throw InvalidArgumentException::invalidType(
                         'string',
@@ -101,7 +92,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * @param Institution[] $institutions
      * @return InstitutionAuthorizationOption
      */
-    public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions)
+    public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions): self
     {
         if (count($institutions) == 1 && current($institutions)->getInstitution() === $institution->getInstitution()) {
             return new self($role, InstitutionSet::create([]), true);
@@ -114,7 +105,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function getDefault(InstitutionRole $role)
+    public static function getDefault(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), true);
     }
@@ -124,7 +115,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function getEmpty(InstitutionRole $role)
+    public static function getEmpty(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), false);
     }
@@ -141,7 +132,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * @param InstitutionAuthorizationOption $option
      * @return bool
      */
-    public function equals(InstitutionAuthorizationOption $option)
+    public function equals(InstitutionAuthorizationOption $option): bool
     {
         return
             $this->institutionRole->equals($option->getInstitutionRole()) &&
@@ -185,7 +176,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * @param Institution $default
      * @return bool
      */
-    public function hasInstitution(Institution $institution, Institution $default)
+    public function hasInstitution(Institution $institution, Institution $default): bool
     {
         $institutions = $this->getInstitutions($default);
         $list = array_map(

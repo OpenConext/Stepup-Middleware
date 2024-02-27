@@ -20,12 +20,13 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
-use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
-use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Configuration\Value\RaLocationList;
+use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Exception\LogicException;
 
 class RaLocationListTest extends TestCase
 {
@@ -33,9 +34,9 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_list_does_not_allow_ra_locations_with_the_same_ra_location_id_upon_creation()
+    public function an_ra_location_list_does_not_allow_ra_locations_with_the_same_ra_location_id_upon_creation(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot add');
 
         $raLocations = $this->getRaLocationsArray();
@@ -49,9 +50,9 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_list_does_not_allow_adding_ra_locations_with_an_ra_location_id_that_is_already_present()
+    public function an_ra_location_list_does_not_allow_adding_ra_locations_with_an_ra_location_id_that_is_already_present(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot add');
 
         $raLocations = $this->getRaLocationsArray();
@@ -65,7 +66,7 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_list_is_created_from_ra_locations()
+    public function an_ra_location_list_is_created_from_ra_locations(): void
     {
         $raLocations = $this->getRaLocationsArray();
 
@@ -79,7 +80,7 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_list_has_an_ra_location_with_a_given_ra_location_id()
+    public function an_ra_location_list_has_an_ra_location_with_a_given_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
         $expectedRaLocationIdToBePresent = $raLocations[0]->getId();
@@ -93,7 +94,7 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_list_does_not_have_ra_locations_with_a_non_present_ra_location_id()
+    public function an_ra_location_list_does_not_have_ra_locations_with_a_non_present_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
         $expectedRaLocationIdNotToBePresent = new RaLocationId((string) Uuid::uuid4());
@@ -107,7 +108,7 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_is_added_to_an_ra_location_list()
+    public function an_ra_location_is_added_to_an_ra_location_list(): void
     {
         $raLocations = $this->getRaLocationsArray();
 
@@ -123,7 +124,7 @@ class RaLocationListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_ra_location_is_removed_from_an_ra_location_list_by_its_ra_location_id()
+    public function an_ra_location_is_removed_from_an_ra_location_list_by_its_ra_location_id(): void
     {
         $raLocations = $this->getRaLocationsArray();
         $raLocationToRemove = $raLocations[0];
@@ -137,7 +138,7 @@ class RaLocationListTest extends TestCase
         $this->assertEquals($expectOnlyTheSecondRaLocation, $raLocationListAsArray);
     }
 
-    protected function getRaLocationsArray()
+    protected function getRaLocationsArray(): array
     {
         return [
             RaLocation::create(

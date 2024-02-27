@@ -30,7 +30,7 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
     /**
      * @var Institution
      */
-    private $institution;
+    private Institution $institution;
 
     public function setUp(): void
     {
@@ -41,7 +41,7 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_array_initialized_with_authorizations_should_return_valid_institutions_per_role()
+    public function an_array_initialized_with_authorizations_should_return_valid_institutions_per_role(): void
     {
         $testData = [
             ['inst ', 'inst', 'use_ra'],
@@ -71,7 +71,7 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_array_initialized_with_no_authorizations_should_return_valid_institutions_per_role()
+    public function an_array_initialized_with_no_authorizations_should_return_valid_institutions_per_role(): void
     {
         $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations($this->institution, []);
 

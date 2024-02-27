@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 
 class YubikeyPublicIdTest extends UnitTest
@@ -27,7 +28,7 @@ class YubikeyPublicIdTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_yubikey_public_ids_with_the_same_value_are_equal()
+    public function two_yubikey_public_ids_with_the_same_value_are_equal(): void
     {
         $id          = new YubikeyPublicId('00001234');
         $theSame     = new YubikeyPublicId('00001234');
@@ -39,7 +40,7 @@ class YubikeyPublicIdTest extends UnitTest
         $this->assertFalse($id->equals($unknown));
     }
 
-    public function invalidFormatProvider()
+    public function invalidFormatProvider(): array
     {
         return [
             '7-character unpadded ID'           => ['1906381'],
@@ -60,14 +61,14 @@ class YubikeyPublicIdTest extends UnitTest
      *
      * @param mixed $invalidFormat
      */
-    public function it_cannot_be_constructed_with_an_invalid_format($invalidFormat)
+    public function it_cannot_be_constructed_with_an_invalid_format(string $invalidFormat): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new YubikeyPublicId($invalidFormat);
     }
 
-    public function validFormatProvider()
+    public function validFormatProvider(): array
     {
         return [
             '8-character ID'  => ['01906381'],
@@ -85,7 +86,7 @@ class YubikeyPublicIdTest extends UnitTest
      *
      * @param string $validFormat
      */
-    public function its_value_matches_its_input_value($validFormat)
+    public function its_value_matches_its_input_value(string $validFormat): void
     {
         $id = new YubikeyPublicId($validFormat);
 

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -41,40 +42,25 @@ final class SecondFactorRevocationMailService
     /**
      * @var Mailer
      */
-    private $mailer;
+    private Mailer $mailer;
 
-    /**
-     * @var Sender
-     */
-    private $sender;
+    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
+
+    private string $fallbackLocale;
+
+    private string $selfServiceUrl;
+
+    private SecondFactorDisplayNameResolverService $displayNameResolver;
 
     /**
-     * @var string
-     */
-    private $fallbackLocale;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @var \Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService
-     */
-    private $displayNameResolver;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
         Mailer $mailer,
@@ -106,7 +92,7 @@ final class SecondFactorRevocationMailService
         Email $email,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
@@ -151,7 +137,7 @@ final class SecondFactorRevocationMailService
         Email $email,
         SecondFactorType $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier
-    ) {
+    ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [

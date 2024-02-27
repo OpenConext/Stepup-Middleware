@@ -35,7 +35,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
      * @param string $fallbackLocale
      * @return EmailTemplate|null
      */
-    public function findOneByName($name, $preferredLocale, $fallbackLocale)
+    public function findOneByName(mixed $name, mixed $preferredLocale, mixed $fallbackLocale)
     {
         return $this
             ->createQueryBuilder('tpl')
@@ -62,7 +62,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
      * removed from the IdentityMap. This to prevent issues when replaying the events, where
      * deleting them with a delete query would cause errors due to templates not being found.
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $templates = $this->findAll();
         $em = $this->getEntityManager();
@@ -76,7 +76,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
         unset($templates);
     }
 
-    public function save(EmailTemplate $template)
+    public function save(EmailTemplate $template): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($template);

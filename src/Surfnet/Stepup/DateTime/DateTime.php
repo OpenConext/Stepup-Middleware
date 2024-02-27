@@ -41,10 +41,7 @@ class DateTime
      */
     private static $now;
 
-    /**
-     * @var CoreDateTime
-     */
-    private $dateTime;
+    private CoreDateTime $dateTime;
 
     /**
      * @return self
@@ -58,7 +55,7 @@ class DateTime
      * @param string $string A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
      * @return self
      */
-    public static function fromString($string)
+    public static function fromString($string): self
     {
         if (!is_string($string)) {
             InvalidArgumentException::invalidType('string', 'dateTime', $string);
@@ -85,7 +82,7 @@ class DateTime
      * @param DateInterval $interval
      * @return DateTime
      */
-    public function add(DateInterval $interval)
+    public function add(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->add($interval);
@@ -97,7 +94,7 @@ class DateTime
      * @param DateInterval $interval
      * @return DateTime
      */
-    public function sub(DateInterval $interval)
+    public function sub(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->sub($interval);
@@ -108,7 +105,7 @@ class DateTime
     /**
      * @return DateTime
      */
-    public function endOfDay()
+    public function endOfDay(): self
     {
         $dateTime = clone $this->dateTime;
         $dateTime->setTime(23, 59, 59);
@@ -120,7 +117,7 @@ class DateTime
      * @param DateTime $dateTime
      * @return boolean
      */
-    public function comesBefore(DateTime $dateTime)
+    public function comesBefore(DateTime $dateTime): bool
     {
         return $this->dateTime < $dateTime->dateTime;
     }
@@ -129,7 +126,7 @@ class DateTime
      * @param DateTime $dateTime
      * @return boolean
      */
-    public function comesBeforeOrIsEqual(DateTime $dateTime)
+    public function comesBeforeOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime <= $dateTime->dateTime;
     }
@@ -138,7 +135,7 @@ class DateTime
      * @param DateTime $dateTime
      * @return boolean
      */
-    public function comesAfter(DateTime $dateTime)
+    public function comesAfter(DateTime $dateTime): bool
     {
         return $this->dateTime > $dateTime->dateTime;
     }
@@ -147,7 +144,7 @@ class DateTime
      * @param DateTime $dateTime
      * @return boolean
      */
-    public function comesAfterOrIsEqual(DateTime $dateTime)
+    public function comesAfterOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime >= $dateTime->dateTime;
     }
@@ -173,7 +170,7 @@ class DateTime
     /**
      * @return string An ISO 8601 representation of this DateTime.
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format(self::FORMAT);
     }

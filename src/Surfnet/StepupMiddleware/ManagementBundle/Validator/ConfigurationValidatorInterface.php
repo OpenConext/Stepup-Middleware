@@ -18,13 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
+use Assert\InvalidArgumentException;
+
 interface ConfigurationValidatorInterface
 {
     /**
      * @param array $configuration
      * @param string $propertyPath
      * @return void
-     * @throws \Assert\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function validate(array $configuration, $propertyPath);
 }

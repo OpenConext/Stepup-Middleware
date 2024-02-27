@@ -27,7 +27,7 @@ class SamlEntityRepository extends EntityRepository
      *
      * @param array $newSamlEntities
      */
-    public function replaceAllSps(array $newSamlEntities)
+    public function replaceAllSps(array $newSamlEntities): void
     {
         $this->replaceAllOfType(SamlEntity::TYPE_SP, $newSamlEntities);
     }
@@ -37,7 +37,7 @@ class SamlEntityRepository extends EntityRepository
      *
      * @param array $newSamlEntities
      */
-    public function replaceAllIdps(array $newSamlEntities)
+    public function replaceAllIdps(array $newSamlEntities): void
     {
         $this->replaceAllOfType(SamlEntity::TYPE_IDP, $newSamlEntities);
     }
@@ -50,7 +50,7 @@ class SamlEntityRepository extends EntityRepository
      * @param string $type
      * @param array $newSamlEntities
      */
-    private function replaceAllOfType($type, array $newSamlEntities)
+    private function replaceAllOfType(string $type, array $newSamlEntities): void
     {
         $entityManager = $this->getEntityManager();
         $counter = 0;
@@ -74,7 +74,7 @@ class SamlEntityRepository extends EntityRepository
      *
      * @param string $type
      */
-    private function removeAllOfType($type)
+    private function removeAllOfType($type): void
     {
         $this
             ->getEntityManager()

@@ -37,7 +37,7 @@ class ConfiguredInstitution
      * @param Institution $institution
      * @return ConfiguredInstitution
      */
-    public static function createFrom(Institution $institution)
+    public static function createFrom(Institution $institution): self
     {
         $configuredInstitution = new self;
         $configuredInstitution->institution = $institution;
@@ -45,7 +45,7 @@ class ConfiguredInstitution
         return $configuredInstitution;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return ['institution' => $this->institution];
     }

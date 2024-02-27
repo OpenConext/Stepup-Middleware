@@ -25,6 +25,8 @@ use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepositor
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
+use Surfnet\Stepup\Identity\Api\Identity;
+use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -44,18 +46,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeH
 class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 {
     /**
-     * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
+     * @var IdentityRepository
      */
-    private $repository;
-    /**
-     * @var InstitutionConfigurationRepository
-     */
-    private $institutionConfigurationRepository;
+    private RepositoryInterface $repository;
+    private InstitutionConfigurationRepository $institutionConfigurationRepository;
 
     /**
      * @var VettingTypeHintService;
      */
-    private $vettingTypeHintService;
+    private VettingTypeHintService $vettingTypeHintService;
 
     public function __construct(
         RepositoryInterface $repository,
@@ -67,9 +66,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->vettingTypeHintService = $hintService;
     }
 
-    public function handleAccreditIdentityCommand(AccreditIdentityCommand $command)
+    public function handleAccreditIdentityCommand(AccreditIdentityCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->raInstitution));
@@ -87,9 +86,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleAmendRegistrationAuthorityInformationCommand(AmendRegistrationAuthorityInformationCommand $command)
+    public function handleAmendRegistrationAuthorityInformationCommand(AmendRegistrationAuthorityInformationCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->amendRegistrationAuthorityInformation(
@@ -101,9 +100,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleAppointRoleCommand(AppointRoleCommand $command)
+    public function handleAppointRoleCommand(AppointRoleCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $institutionConfiguration = $this->loadInstitutionConfigurationFor(new Institution($command->raInstitution));
@@ -115,9 +114,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command)
+    public function handleRetractRegistrationAuthorityCommand(RetractRegistrationAuthorityCommand $command): void
     {
-        /** @var \Surfnet\Stepup\Identity\Api\Identity $identity */
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
 
         $identity->retractRegistrationAuthority(new Institution($command->raInstitution));
@@ -125,7 +124,7 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
         $this->repository->save($identity);
     }
 
-    public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command)
+    public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command): void
     {
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $collection = $this->vettingTypeHintService->collectionFrom($command->hints);
@@ -141,7 +140,7 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
      * @param string $commandId
      * @return RegistrationAuthorityRole
      */
-    private function assertValidRoleAndConvertIfValid($role, $commandId)
+    private function assertValidRoleAndConvertIfValid($role, $commandId): RegistrationAuthorityRole
     {
         if ($role === 'ra') {
             return new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA);

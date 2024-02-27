@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Surfnet\Stepup\Exception\RuntimeException;
@@ -32,10 +33,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RaSecondFactorRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
@@ -43,7 +41,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null): ?RaSecondFactor
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?RaSecondFactor
     {
         /** @var RaSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -55,7 +53,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @param string $identityId
      * @return RaSecondFactor[]
      */
-    public function findByIdentityId($identityId)
+    public function findByIdentityId($identityId): array
     {
         return parent::findBy(['identityId' => $identityId]);
     }
@@ -65,7 +63,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @param string $institution
      * @return RaSecondFactor[]
      */
-    public function findByInstitution($institution)
+    public function findByInstitution($institution): array
     {
         return parent::findBy(['institution' => $institution]);
     }
@@ -77,9 +75,9 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      *
      * @param RaSecondFactorQuery $query
      * @return Query
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
-    public function createSearchQuery(RaSecondFactorQuery $query)
+    public function createSearchQuery(RaSecondFactorQuery $query): Query
     {
         $queryBuilder = $this
             ->createQueryBuilder('sf');
@@ -157,9 +155,9 @@ class RaSecondFactorRepository extends ServiceEntityRepository
 
     /**
      * @param RaSecondFactorQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaSecondFactorQuery $query)
+    public function createOptionsQuery(RaSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf')
             ->select('sf.institution')
@@ -181,7 +179,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @param IdentityId $identityId
      * @return void
      */
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'rasf')
@@ -191,7 +189,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function save(RaSecondFactor $secondFactor)
+    public function save(RaSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
@@ -200,7 +198,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     /**
      * @param RaSecondFactor[] $secondFactors
      */
-    public function saveAll(array $secondFactors)
+    public function saveAll(array $secondFactors): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -211,7 +209,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId)
+    public function updateStatusByIdentityIdToForgotten(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->update($this->_entityName, 'rasf')

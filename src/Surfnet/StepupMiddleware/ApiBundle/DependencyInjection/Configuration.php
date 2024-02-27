@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('http_basic_realm')
                     ->defaultValue('Secure Gateway API')
                     ->validate()
-                        ->ifTrue(function ($realm) {
+                        ->ifTrue(function ($realm): bool {
                             return !is_string($realm) || empty($realm);
                         })
                         ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")

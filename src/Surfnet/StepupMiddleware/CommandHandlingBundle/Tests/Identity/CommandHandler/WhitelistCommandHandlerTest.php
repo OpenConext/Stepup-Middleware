@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
@@ -55,7 +56,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function when_the_whitelist_does_not_exist_yet_it_is_created()
+    public function when_the_whitelist_does_not_exist_yet_it_is_created(): void
     {
         $command               = new ReplaceWhitelistCommand();
         $command->institutions = ['Replace A', 'Replace B', 'Replace C'];
@@ -74,7 +75,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function the_whitelist_can_be_fully_replaced()
+    public function the_whitelist_can_be_fully_replaced(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
@@ -98,7 +99,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist()
+    public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
@@ -121,10 +122,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_on_the_whitelist_may_not_be_added_again()
+    public function an_institution_on_the_whitelist_may_not_be_added_again(): void
     {
         $this->expectExceptionMessage("Cannot add institution \"already exists\" as it is already whitelisted");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Already Exists']);
 
@@ -142,7 +143,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist()
+    public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'On the whitelist']);
 
@@ -165,10 +166,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed()
+    public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed(): void
     {
         $this->expectExceptionMessage("Cannot remove institution \"not on the whitelist\" as it is not whitelisted");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
         $command = new RemoveFromWhitelistCommand();
@@ -185,9 +186,9 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @param array $institutions
      * @return array
      */
-    private function mapStringValuesToInstitutions(array $institutions)
+    private function mapStringValuesToInstitutions(array $institutions): array
     {
-        return array_map(function ($institution) {
+        return array_map(function ($institution): Institution {
             return new Institution($institution);
         }, $institutions);
     }

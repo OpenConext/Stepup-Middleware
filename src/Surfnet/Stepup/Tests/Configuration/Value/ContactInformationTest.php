@@ -19,7 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class ContactInformationTest extends UnitTest
 {
@@ -30,9 +32,9 @@ class ContactInformationTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new ContactInformation($invalidValue);
     }
 
@@ -40,7 +42,7 @@ class ContactInformationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_instances_with_the_same_value_are_equal()
+    public function two_instances_with_the_same_value_are_equal(): void
     {
         $contactInformation = new ContactInformation('a');
         $theSame            = new ContactInformation('a');
@@ -55,13 +57,13 @@ class ContactInformationTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProvider()
+    public function invalidValueProvider(): array
     {
         return [
             'array'   => [[]],
             'integer' => [1],
             'float'   => [1.2],
-            'object'  => [new \StdClass()],
+            'object'  => [new StdClass()],
         ];
     }
 }

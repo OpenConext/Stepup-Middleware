@@ -42,7 +42,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_remove_institution_configuration_command()
+    public function infers_the_correct_remove_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
@@ -72,7 +72,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_create_institution_configuration_command()
+    public function infers_the_correct_create_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = UseRaLocationsOption::getDefault();
@@ -102,7 +102,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function infers_the_correct_reconfigure_institution_configuration_command()
+    public function infers_the_correct_reconfigure_institution_configuration_command(): void
     {
         $institution = new Institution('Babelfish Inc.');
         $useRaLocationsOption = new UseRaLocationsOption(true);
@@ -136,7 +136,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function no_ra_locations_means_no_add_ra_location_command()
+    public function no_ra_locations_means_no_add_ra_location_command(): void
     {
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
@@ -165,7 +165,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function a_single_ra_location_means_a_single_correct_add_ra_location_command()
+    public function a_single_ra_location_means_a_single_correct_add_ra_location_command(): void
     {
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
@@ -204,7 +204,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
      * @test
      * @group middleware-migration
      */
-    public function multiple_ra_locations_mean_multiple_correct_add_ra_location_commands()
+    public function multiple_ra_locations_mean_multiple_correct_add_ra_location_commands(): void
     {
         $institution                     = new Institution('Babelfish Inc.');
         $useRaLocationsOption            = new UseRaLocationsOption(true);
@@ -250,7 +250,7 @@ class MappedInstitutionConfigurationTest extends UnitTest
         AddRaLocationCommand $command,
         Institution $institution,
         RaLocation $raLocation
-    ) {
+    ): void {
         $this->assertEquals($institution->getInstitution(), $command->institution);
         $this->assertEquals($raLocation->id, $command->raLocationId);
         $this->assertEquals($raLocation->name->getRaLocationName(), $command->raLocationName);

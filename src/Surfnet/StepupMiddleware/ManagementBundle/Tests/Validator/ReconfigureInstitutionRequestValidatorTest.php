@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
+use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
@@ -35,7 +36,10 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ReconfigureInstitutionRequestValidatorTest extends TestCase
 {
-    public function invalidReconfigureInstitutionRequests()
+    /**
+     * @return mixed[][]
+     */
+    public function invalidReconfigureInstitutionRequests(): array
     {
         $dataSet = [];
 
@@ -62,8 +66,8 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     public function it_rejects_invalid_configuration(
         $reconfigureRequest,
         $expectedPropertyPath,
-        $expectErrorMessageToContain
-    ) {
+        string $expectErrorMessageToContain
+    ): void {
         $existingInstitution        = ConfiguredInstitution::createFrom(new Institution('surfnet.nl'));
         $anotherExistingInstitution = ConfiguredInstitution::createFrom(new Institution('another-organisation.test'));
 
@@ -118,7 +122,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @test
      * @group validator
      */
-    public function reconfigure_institution_request_cannot_contain_institutions_that_do_not_exist()
+    public function reconfigure_institution_request_cannot_contain_institutions_that_do_not_exist(): void
     {
         $existingInstitutions = [];
         $nonExistentInstitution = 'non-existing.organisation.test';
@@ -158,7 +162,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @test
      * @group validator
      */
-    public function validation_for_existing_institutions_is_done_case_insensitively()
+    public function validation_for_existing_institutions_is_done_case_insensitively(): void
     {
         $existingInstitutions = [ConfiguredInstitution::createFrom(new Institution('surfnet.nl'))];
         $differentlyCasedButSameInstitution = 'Surfnet.nl';
@@ -207,7 +211,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @test
      * @group validator
      */
-    public function valid_reconfigure_institution_requests_do_not_cause_any_violations()
+    public function valid_reconfigure_institution_requests_do_not_cause_any_violations(): void
     {
         $institution = 'surfnet.nl';
         $validRequest = [
@@ -252,12 +256,12 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
 
     /**
      * @param mixed &$spy
-     * @return \Mockery\Matcher\MatcherAbstract
+     * @return MatcherAbstract
      */
     private static function spy(&$spy)
     {
         return Mockery::on(
-            function ($value) use (&$spy) {
+            function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;

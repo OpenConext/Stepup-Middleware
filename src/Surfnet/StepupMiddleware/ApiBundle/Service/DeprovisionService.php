@@ -31,25 +31,16 @@ use function sprintf;
 
 class DeprovisionService implements DeprovisionServiceInterface
 {
-    /**
-     * @var Pipeline
-     */
-    private $pipeline;
+    private Pipeline $pipeline;
 
-    /**
-     * @var IdentityRepository
-     */
-    private $eventSourcingRepository;
+    private IdentityRepository $eventSourcingRepository;
 
     /**
      * @var ApiIdentityRepository
      */
-    private $apiRepository;
+    private ApiIdentityRepository $apiRepository;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         Pipeline              $pipeline,

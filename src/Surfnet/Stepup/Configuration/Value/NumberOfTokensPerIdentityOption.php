@@ -30,7 +30,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
      */
     private $numberOfTokensPerIdentity;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(self::DISABLED);
     }
@@ -52,7 +52,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
      * @param NumberOfTokensPerIdentityOption $other
      * @return bool
      */
-    public function equals(NumberOfTokensPerIdentityOption $other)
+    public function equals(NumberOfTokensPerIdentityOption $other): bool
     {
         return $this->numberOfTokensPerIdentity === $other->numberOfTokensPerIdentity;
     }
@@ -60,7 +60,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->numberOfTokensPerIdentity > self::DISABLED;
     }

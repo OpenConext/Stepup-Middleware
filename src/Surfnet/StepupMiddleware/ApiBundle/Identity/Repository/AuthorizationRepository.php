@@ -39,10 +39,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class AuthorizationRepository extends ServiceEntityRepository
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
@@ -127,7 +124,7 @@ class AuthorizationRepository extends ServiceEntityRepository
      * Finds the institutions that have the Select RAA authorization based on
      * the institution of the specified identity.
      */
-    public function getInstitutionsForSelectRaaRole(IdentityId $actorId)
+    public function getInstitutionsForSelectRaaRole(IdentityId $actorId): InstitutionCollection
     {
         $qb = $this->_em->createQueryBuilder()
             ->select("ci.institution")
@@ -167,14 +164,11 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     private function getAllowedInstitutionRoles(RegistrationAuthorityRole $role): array
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return [InstitutionRole::ROLE_USE_RA];
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return [InstitutionRole::ROLE_USE_RAA];
-            default:
-                return [];
-        }
+        return match (true) {
+            $role->equals(RegistrationAuthorityRole::ra()) => [InstitutionRole::ROLE_USE_RA],
+            $role->equals(RegistrationAuthorityRole::raa()) => [InstitutionRole::ROLE_USE_RAA],
+            default => [],
+        };
     }
 
     /**
@@ -185,14 +179,11 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     private function getAllowedIdentityRoles(RegistrationAuthorityRole $role): array
     {
-        switch (true) {
-            case $role->equals(RegistrationAuthorityRole::ra()):
-                return [AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA];
-            case $role->equals(RegistrationAuthorityRole::raa()):
-                return [AuthorityRole::ROLE_RAA];
-            default:
-                return [];
-        }
+        return match (true) {
+            $role->equals(RegistrationAuthorityRole::ra()) => [AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA],
+            $role->equals(RegistrationAuthorityRole::raa()) => [AuthorityRole::ROLE_RAA],
+            default => [],
+        };
     }
 
     private function getInstitutionRoleByRaRole(RegistrationAuthorityRole $role): string

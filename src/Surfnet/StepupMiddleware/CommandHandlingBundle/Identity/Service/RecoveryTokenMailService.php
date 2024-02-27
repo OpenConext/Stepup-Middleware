@@ -38,40 +38,22 @@ use function str_replace;
  */
 class RecoveryTokenMailService
 {
-    /**
-     * @var Mailer
-     */
-    private $mailer;
+    private Mailer $mailer;
 
-    /**
-     * @var Sender
-     */
-    private $sender;
+    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    /**
-     * @var EmailTemplateService
-     */
-    private $emailTemplateService;
+    private EmailTemplateService $emailTemplateService;
 
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
+    private string $fallbackLocale;
 
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
+    private string $selfServiceUrl;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         Mailer $mailer,
@@ -100,7 +82,7 @@ class RecoveryTokenMailService
         RecoveryTokenType $recoveryTokenType,
         RecoveryTokenId $tokenId,
         bool $revokedByRa
-    ) {
+    ): void {
         $this->logger->notice(
             sprintf('Sending a recovery token revoked mail message for token type %s', $recoveryTokenType)
         );
@@ -155,7 +137,7 @@ class RecoveryTokenMailService
         $this->mailer->send($message);
     }
 
-    public function sendCreated(Locale $locale, CommonName $commonName, Email $email)
+    public function sendCreated(Locale $locale, CommonName $commonName, Email $email): void
     {
         $this->logger->notice('Sending a recovery token created mail message');
 

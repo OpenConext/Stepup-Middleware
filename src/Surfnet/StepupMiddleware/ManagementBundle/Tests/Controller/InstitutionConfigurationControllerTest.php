@@ -19,14 +19,16 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class InstitutionConfigurationControllerTest extends WebTestCase
 {
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    private $client;
+    private KernelBrowser $client;
 
     /**
      * @var string
@@ -60,7 +62,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required_for_reconfiguring_institution_configuration_options()
+    public function authorization_is_required_for_reconfiguring_institution_configuration_options(): void
     {
         $this->client->request(
             'POST',
@@ -81,7 +83,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function readonly_user_cannot_reconfigure_institution_configuration_options()
+    public function readonly_user_cannot_reconfigure_institution_configuration_options(): void
     {
         $this->client->request(
             'POST',
@@ -104,7 +106,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required_for_querying_institution_configuration_options()
+    public function authorization_is_required_for_querying_institution_configuration_options(): void
     {
         $this->client->request(
             'GET',
@@ -125,7 +127,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function requests_with_invalid_content_are_bad_requests()
+    public function requests_with_invalid_content_are_bad_requests(): void
     {
         $this->client->request(
             'POST',
@@ -151,7 +153,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @dataProvider invalidHttpMethodProvider
      * @param $invalidHttpMethod
      */
-    public function only_post_and_get_requests_are_accepted($invalidHttpMethod)
+    public function only_post_and_get_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -172,7 +174,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function a_get_request_without_content_is_valid()
+    public function a_get_request_without_content_is_valid(): void
     {
         $this->client->request(
             'GET',
@@ -195,7 +197,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function json_is_returned_from_the_institution_configuration_api()
+    public function json_is_returned_from_the_institution_configuration_api(): void
     {
         $this->client->request(
             'POST',
@@ -222,7 +224,7 @@ class InstitutionConfigurationControllerTest extends WebTestCase
     /**
      * Dataprovider for only_post_and_get_requests_are_accepted
      */
-    public function invalidHttpMethodProvider()
+    public function invalidHttpMethodProvider(): array
     {
         return [
             'DELETE'  => ['DELETE'],

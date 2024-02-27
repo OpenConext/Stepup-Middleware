@@ -31,15 +31,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
 {
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $configuredInstitutionRepository;
+    private ConfiguredInstitutionRepository $configuredInstitutionRepository;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * The container needs to be called during runtime in order to prevent a circular reference
@@ -56,7 +50,7 @@ final class InstitutionConfigurationProcessor extends Processor
         $this->container                       = $container;
     }
 
-    public function handleIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function handleIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $institution = new Institution($event->identityInstitution->getInstitution());
 
@@ -67,7 +61,7 @@ final class InstitutionConfigurationProcessor extends Processor
         $this->createConfigurationFor($institution);
     }
 
-    public function handleWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    public function handleWhitelistCreatedEvent(WhitelistCreatedEvent $event): void
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -80,7 +74,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function handleWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    public function handleWhitelistReplacedEvent(WhitelistReplacedEvent $event): void
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -93,7 +87,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function handleInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    public function handleInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event): void
     {
         foreach ($event->addedInstitutions as $addedInstitution) {
             $institution = new Institution($addedInstitution->getInstitution());
@@ -109,7 +103,7 @@ final class InstitutionConfigurationProcessor extends Processor
     /**
      * @param Institution $institution
      */
-    private function createConfigurationFor(Institution $institution)
+    private function createConfigurationFor(Institution $institution): void
     {
         $command              = new CreateInstitutionConfigurationCommand();
         $command->UUID        = (string) Uuid::uuid4();

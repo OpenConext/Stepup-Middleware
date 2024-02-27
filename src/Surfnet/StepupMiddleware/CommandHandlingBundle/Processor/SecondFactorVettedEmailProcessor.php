@@ -25,22 +25,19 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactor
 
 final class SecondFactorVettedEmailProcessor extends Processor
 {
-    /**
-     * @var SecondFactorVettedMailService
-     */
-    private $secondFactorVettedMailService;
+    private SecondFactorVettedMailService $secondFactorVettedMailService;
 
     public function __construct(SecondFactorVettedMailService $secondFactorVettedMailService)
     {
         $this->secondFactorVettedMailService = $secondFactorVettedMailService;
     }
 
-    public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
     }
 
-    public function handleSecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
+    public function handleSecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
     {
         $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
     }

@@ -28,13 +28,13 @@ class InstitutionListing implements JsonSerializable
 {
     /**
      *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     #[ORM\Id]
     #[ORM\Column(type: 'institution')]
     public $institution;
 
-    public static function createFrom(Institution $institution)
+    public static function createFrom(Institution $institution): self
     {
         $instance = new self();
         $instance->institution = $institution;

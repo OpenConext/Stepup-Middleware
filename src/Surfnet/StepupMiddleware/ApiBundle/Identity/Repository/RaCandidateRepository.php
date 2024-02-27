@@ -19,7 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
@@ -36,10 +38,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class RaCandidateRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
+    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
 
     public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
     {
@@ -49,9 +48,9 @@ class RaCandidateRepository extends ServiceEntityRepository
 
     /**
      * @param RaCandidateQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createSearchQuery(RaCandidateQuery $query)
+    public function createSearchQuery(RaCandidateQuery $query): Query
     {
         $queryBuilder = $this->getBaseQuery();
 
@@ -109,9 +108,9 @@ class RaCandidateRepository extends ServiceEntityRepository
 
     /**
      * @param RaCandidateQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaCandidateQuery $query)
+    public function createOptionsQuery(RaCandidateQuery $query): Query
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select('a.institution')
@@ -148,7 +147,7 @@ class RaCandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     private function getBaseQuery()
     {

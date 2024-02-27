@@ -32,25 +32,16 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\Sensiti
 
 final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\EventSourcing\IdentityRepository
-     */
-    private $repository;
+    private IdentityRepository $repository;
 
     /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository
+     * @var ApiIdentityRepository
      */
-    private $apiIdentityRepository;
+    private ApiIdentityRepository $apiIdentityRepository;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService
-     */
-    private $sensitiveDataService;
+    private SensitiveDataService $sensitiveDataService;
 
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository
-     */
-    private $sraaRepository;
+    private SraaRepository $sraaRepository;
 
     /**
      * @param IdentityRepository    $repository
@@ -70,7 +61,7 @@ final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
         $this->sraaRepository        = $sraaRepository;
     }
 
-    public function handleForgetIdentityCommand(ForgetIdentityCommand $command)
+    public function handleForgetIdentityCommand(ForgetIdentityCommand $command): void
     {
         $nameId = new NameId($command->nameId);
 

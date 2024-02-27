@@ -19,14 +19,16 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ConfigurationControllerTest extends WebTestCase
 {
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    private $client;
+    private KernelBrowser $client;
 
     /**
      * @var string
@@ -61,7 +63,7 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function requests_with_invalid_content_are_bad_requests()
+    public function requests_with_invalid_content_are_bad_requests(): void
     {
         $this->client->request(
             'POST',
@@ -84,7 +86,7 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function authorization_is_required()
+    public function authorization_is_required(): void
     {
         $this->client->request(
             'POST',
@@ -105,7 +107,7 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function readonly_user_cannot_modify_configuration()
+    public function readonly_user_cannot_modify_configuration(): void
     {
         $this->client->request(
             'POST',
@@ -130,7 +132,7 @@ class ConfigurationControllerTest extends WebTestCase
      *
      * @dataProvider invalidHttpMethodProvider
      */
-    public function only_post_requests_are_accepted($invalidHttpMethod)
+    public function only_post_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -151,7 +153,7 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function json_is_returned_from_the_configuration_api()
+    public function json_is_returned_from_the_configuration_api(): void
     {
         $this->client->request(
             'POST',
@@ -178,7 +180,7 @@ class ConfigurationControllerTest extends WebTestCase
     /**
      * Dataprovider for only_post_requests_are_accepted
      */
-    public function invalidHttpMethodProvider()
+    public function invalidHttpMethodProvider(): array
     {
         return [
             'GET' => ['GET'],

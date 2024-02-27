@@ -28,19 +28,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends AbstractController
 {
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
+    private IdentityService $identityService;
 
-    /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
+    private InstitutionRoleSet $roleRequirements;
 
     public function __construct(
         IdentityService $identityService
@@ -52,7 +47,7 @@ class IdentityController extends AbstractController
         );
     }
 
-    public function getAction($id)
+    public function getAction($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -83,9 +78,9 @@ class IdentityController extends AbstractController
 
     /**
      * @param string $identityId
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function getRegistrationAuthorityCredentialsAction($identityId)
+    public function getRegistrationAuthorityCredentialsAction($identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

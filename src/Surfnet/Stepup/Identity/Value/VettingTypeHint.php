@@ -22,16 +22,12 @@ use JsonSerializable;
 
 class VettingTypeHint implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $locale;
+    private string $locale;
 
     /**
      * The hint text is nullable
-     * @var string
      */
-    private $hint;
+    private ?string $hint;
 
     public function __construct(string $locale, ?string $hint)
     {

@@ -31,7 +31,7 @@ class DateTimeHelperTest extends TestCase
      * @test
      * @group testing
      */
-    public function it_mocks_now()
+    public function it_mocks_now(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
@@ -42,7 +42,7 @@ class DateTimeHelperTest extends TestCase
      * @test
      * @group testing
      */
-    public function it_can_be_disabled_in_the_same_process()
+    public function it_can_be_disabled_in_the_same_process(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
         $this->assertEquals(new DateTime(new CoreDateTime('@12345')), DateTime::now());
@@ -57,7 +57,7 @@ class DateTimeHelperTest extends TestCase
      * @test
      * @group testing
      */
-    public function it_works_with_separate_processes()
+    public function it_works_with_separate_processes(): void
     {
         // The stub value has been removed.
         // Deliberately assigned temporary variable due to microsecond precision in PHP 7.1

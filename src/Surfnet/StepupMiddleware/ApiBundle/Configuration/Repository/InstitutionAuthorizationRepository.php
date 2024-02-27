@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -80,9 +81,9 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     /**
      * @param Institution $institution
      * @param InstitutionAuthorizationOption $institutionOption
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      */
-    public function saveInstitutionOption(Institution $institution, InstitutionAuthorizationOption $institutionOption)
+    public function saveInstitutionOption(Institution $institution, InstitutionAuthorizationOption $institutionOption): void
     {
         $institutionAuthorizations = [];
 
@@ -100,9 +101,9 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     /**
      * @param Institution $institution
      * @param InstitutionAuthorizationOption $institutionOption
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      */
-    public function clearInstitutionOption(Institution $institution)
+    public function clearInstitutionOption(Institution $institution): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -119,9 +120,9 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
 
     /**
      * @param Institution $institution
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      */
-    public function setDefaultInstitutionOption(Institution $institution)
+    public function setDefaultInstitutionOption(Institution $institution): void
     {
         $this->saveInstitutionOption(
             $institution,
@@ -141,9 +142,9 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
      * @param Institution $institution
      * @param InstitutionRole $role
      * @param InstitutionAuthorization[] $institutionAuthorizations
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      */
-    private function save(Institution $institution, InstitutionRole $role, array $institutionAuthorizations)
+    private function save(Institution $institution, InstitutionRole $role, array $institutionAuthorizations): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -158,7 +159,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
      * @param Institution $institution
      * @param InstitutionRole $role
      */
-    private function clearOldAuthorizations(EntityManager $entityManager, Institution $institution, InstitutionRole $role)
+    private function clearOldAuthorizations(EntityManager $entityManager, Institution $institution, InstitutionRole $role): void
     {
         $entityManager->createQuery(
             'DELETE '.InstitutionAuthorization::class.' ia
@@ -174,7 +175,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
      * @param InstitutionRole $role
      * @param InstitutionAuthorization[] $institutionAuthorizations
      */
-    private function addNewAuthorizations(EntityManager $entityManager, InstitutionRole $role, array $institutionAuthorizations)
+    private function addNewAuthorizations(EntityManager $entityManager, InstitutionRole $role, array $institutionAuthorizations): void
     {
         foreach ($institutionAuthorizations as $institutionAuthorization) {
             if ($institutionAuthorization->institutionRole === $role) {

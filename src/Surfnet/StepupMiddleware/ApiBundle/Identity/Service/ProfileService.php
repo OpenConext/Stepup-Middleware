@@ -28,20 +28,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 
 class ProfileService extends AbstractSearchService
 {
-    private RaListingRepository $raListingRepository;
-
-    private IdentityService $identityService;
-
-    private AuthorizationContextService $authorizationService;
-
     public function __construct(
-        RaListingRepository $raListingRepository,
-        IdentityService $identityService,
-        AuthorizationContextService $institutionAuthorizationService
+        private readonly RaListingRepository $raListingRepository,
+        private readonly IdentityService $identityService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raListingRepository = $raListingRepository;
-        $this->identityService = $identityService;
-        $this->authorizationService = $institutionAuthorizationService;
     }
 
     /**
@@ -69,23 +60,23 @@ class ProfileService extends AbstractSearchService
 
         $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $authorizations = AuthorizedInstitutionCollection::from(
             $authorizationContextRa->getInstitutions(),
-            $authorizationContextRaa->getInstitutions()
+            $authorizationContextRaa->getInstitutions(),
         );
 
         return new Profile(
             $identity,
             $authorizations,
-            $authorizationContextRa->isActorSraa()
+            $authorizationContextRa->isActorSraa(),
         );
     }
 }

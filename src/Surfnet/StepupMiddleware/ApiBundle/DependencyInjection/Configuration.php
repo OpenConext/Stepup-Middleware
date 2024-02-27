@@ -30,15 +30,13 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('http_basic_realm')
-                    ->defaultValue('Secure Gateway API')
-                    ->validate()
-                        ->ifTrue(function ($realm): bool {
-                            return !is_string($realm) || empty($realm);
-                        })
-                        ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")
-                    ->end()
-                ->end()
+            ->scalarNode('http_basic_realm')
+            ->defaultValue('Secure Gateway API')
+            ->validate()
+            ->ifTrue(fn($realm): bool => !is_string($realm) || empty($realm))
+            ->thenInvalid("Invalid HTTP Basic realm '%s'. Must be string and non-empty.")
+            ->end()
+            ->end()
             ->end();
 
         return $treeBuilder;

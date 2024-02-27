@@ -38,24 +38,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
  */
 class AuthorizationService
 {
-    private IdentityService $identityService;
-
-    private InstitutionConfigurationOptionsService $institutionConfigurationService;
-
-    private SecondFactorService $secondFactorService;
-
-    private RecoveryTokenService $recoveryTokenService;
-
     public function __construct(
-        IdentityService $identityService,
-        InstitutionConfigurationOptionsService $institutionConfigurationService,
-        SecondFactorService $secondFactorService,
-        RecoveryTokenService $recoveryTokenService
+        private readonly IdentityService $identityService,
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationService,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly RecoveryTokenService $recoveryTokenService,
     ) {
-        $this->identityService = $identityService;
-        $this->institutionConfigurationService = $institutionConfigurationService;
-        $this->secondFactorService = $secondFactorService;
-        $this->recoveryTokenService = $recoveryTokenService;
     }
 
     /**
@@ -76,18 +64,22 @@ class AuthorizationService
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
         if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
-            return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
+            return $this->deny(
+                'Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled',
+            );
         }
 
         if (!$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
-            return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
+            return $this->deny(
+                sprintf('Institution "%s", does not allow self-asserted tokens', (string)$identity->institution),
+            );
         }
 
         $hasVettedSecondFactorToken = $this->secondFactorService->hasVettedByIdentity($identityId);
 
         $options = $this->identityService->getSelfAssertedTokenRegistrationOptions(
             $identity,
-            $hasVettedSecondFactorToken
+            $hasVettedSecondFactorToken,
         );
 
         if ($hasVettedSecondFactorToken) {
@@ -98,7 +90,9 @@ class AuthorizationService
         // registered token was a SAT.
         $hadOtherTokenType = $options->possessedSelfAssertedToken === false && $options->possessedToken === true;
         if ($hadOtherTokenType) {
-            return $this->deny('Identity never possessed a self-asserted token, but did/does possess one of the other types');
+            return $this->deny(
+                'Identity never possessed a self-asserted token, but did/does possess one of the other types',
+            );
         }
         // The Identity is not allowed to do a SAT when he had a RT, but lost it. And also currently has no SF
         $hasActiveRecoveryToken = $this->recoveryTokenService->identityHasActiveRecoveryToken($identity);
@@ -125,11 +119,15 @@ class AuthorizationService
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
         if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
-            return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
+            return $this->deny(
+                'Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled',
+            );
         }
 
         if (!$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
-            return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
+            return $this->deny(
+                sprintf('Institution "%s", does not allow self-asserted tokens', (string)$identity->institution),
+            );
         }
 
         $query = new VettedSecondFactorQuery();
@@ -161,20 +159,26 @@ class AuthorizationService
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
         if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
-            return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
+            return $this->deny(
+                'Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled',
+            );
         }
 
         if (!$institutionConfiguration->selfAssertedTokensOption->isEnabled()) {
-            return $this->deny(sprintf('Institution "%s", does not allow self-asserted tokens', (string) $identity->institution));
+            return $this->deny(
+                sprintf('Institution "%s", does not allow self-asserted tokens', (string)$identity->institution),
+            );
         }
 
         // Only allow CRUD actions on recovery tokens when the identity previously registered a SAT
         $options = $this->identityService->getSelfAssertedTokenRegistrationOptions(
             $identity,
-            $this->secondFactorService->hasVettedByIdentity($identityId)
+            $this->secondFactorService->hasVettedByIdentity($identityId),
         );
         if ($options->possessedSelfAssertedToken === false) {
-            return $this->deny('Identity never possessed a self-asserted token, deny access to recovery token CRUD actions');
+            return $this->deny(
+                'Identity never possessed a self-asserted token, deny access to recovery token CRUD actions',
+            );
         }
 
         return $this->allow();
@@ -183,7 +187,7 @@ class AuthorizationService
     private function findInstitutionConfiguration(Identity $identity): ?InstitutionConfigurationOptions
     {
         $institution = new Institution((string)$identity->institution);
-        return  $this->institutionConfigurationService
+        return $this->institutionConfigurationService
             ->findInstitutionConfigurationOptionsFor($institution);
     }
 

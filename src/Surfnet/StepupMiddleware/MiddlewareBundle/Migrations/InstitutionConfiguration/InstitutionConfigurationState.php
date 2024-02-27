@@ -24,27 +24,23 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigura
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\RuntimeException;
 
-final class InstitutionConfigurationState
+final readonly class InstitutionConfigurationState
 {
     /**
-     * @var MappedInstitutionConfiguration[]
-     */
-    private array $mappedInstitutionConfigurations;
-
-    /**
-     * @param ConfiguredInstitution[]           $configuredInstitutions
+     * @param ConfiguredInstitution[] $configuredInstitutions
      * @param InstitutionConfigurationOptions[] $institutionConfigurationOptions
-     * @param RaLocation[]                      $raLocations
+     * @param RaLocation[] $raLocations
      * @return InstitutionConfigurationState
      */
     public static function load(
         $configuredInstitutions,
         $institutionConfigurationOptions,
-        $raLocations
+        $raLocations,
     ): self {
-        $optionInstitutions = array_map(function (InstitutionConfigurationOptions $options) {
-            return $options->institution->getInstitution();
-        }, $institutionConfigurationOptions);
+        $optionInstitutions = array_map(
+            fn(InstitutionConfigurationOptions $options) => $options->institution->getInstitution(),
+            $institutionConfigurationOptions,
+        );
         $mappedConfigurationOptions = array_combine($optionInstitutions, $institutionConfigurationOptions);
 
         $mappedRaLocations = [];
@@ -57,15 +53,17 @@ final class InstitutionConfigurationState
         foreach ($configuredInstitutions as $institution) {
             $institutionName = $institution->institution->getInstitution();
             if (!array_key_exists($institutionName, $mappedConfigurationOptions)) {
-                throw new RuntimeException(sprintf(
-                    'Institution "%s" has been configured, but does not have options.',
-                    $institutionName
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Institution "%s" has been configured, but does not have options.',
+                        $institutionName,
+                    ),
+                );
             }
 
             /** @var InstitutionConfigurationOptions $options */
             $options = $mappedConfigurationOptions[$institutionName];
-            $locations = isset($mappedRaLocations[$institutionName]) ? $mappedRaLocations[$institutionName] : [];
+            $locations = $mappedRaLocations[$institutionName] ?? [];
 
             $mappedInstitutionConfigurations[] = new MappedInstitutionConfiguration(
                 $institution->institution,
@@ -74,7 +72,7 @@ final class InstitutionConfigurationState
                 $options->verifyEmailOption,
                 $options->selfVetOption,
                 $options->numberOfTokensPerIdentityOption,
-                $locations
+                $locations,
             );
         }
 
@@ -84,9 +82,8 @@ final class InstitutionConfigurationState
     /**
      * @param MappedInstitutionConfiguration[] $mappedInstitutionConfigurations
      */
-    private function __construct(array $mappedInstitutionConfigurations)
+    private function __construct(private array $mappedInstitutionConfigurations)
     {
-        $this->mappedInstitutionConfigurations = $mappedInstitutionConfigurations;
     }
 
     /**

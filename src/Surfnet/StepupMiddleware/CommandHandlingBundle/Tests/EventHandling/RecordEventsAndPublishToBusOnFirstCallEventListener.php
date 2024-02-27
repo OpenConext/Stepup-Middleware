@@ -27,23 +27,15 @@ class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListen
 {
     private bool $firstEventHandled = false;
 
-    private BufferedEventBus $eventBus;
-
-    private DomainEventStream $toPublish;
-
     /**
      * @var DomainMessage[]
      */
     private array $recordedEvents = [];
 
-    /**
-     * @param BufferedEventBus $eventBus
-     * @param DomainEventStream $toPublish
-     */
-    public function __construct(BufferedEventBus $eventBus, DomainEventStream $toPublish)
-    {
-        $this->eventBus  = $eventBus;
-        $this->toPublish = $toPublish;
+    public function __construct(
+        private readonly BufferedEventBus $eventBus,
+        private readonly DomainEventStream $toPublish,
+    ) {
     }
 
     /**

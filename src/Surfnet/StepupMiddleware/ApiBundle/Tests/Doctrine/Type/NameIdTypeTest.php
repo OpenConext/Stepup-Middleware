@@ -37,7 +37,7 @@ class NameIdTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(NameIdType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType');
+        Type::addType(NameIdType::NAME, NameIdType::class);
     }
 
     public function setUp(): void
@@ -67,7 +67,7 @@ class NameIdTypeTest extends UnitTest
         $nameId = Type::getType(NameIdType::NAME);
 
         $expected = md5('someNameId');
-        $input  = new NameId($expected);
+        $input = new NameId($expected);
         $output = $nameId->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -99,7 +99,7 @@ class NameIdTypeTest extends UnitTest
 
         $output = $nameId->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\NameId', $output);
+        $this->assertInstanceOf(NameId::class, $output);
         $this->assertEquals(new NameId($input), $output);
     }
 

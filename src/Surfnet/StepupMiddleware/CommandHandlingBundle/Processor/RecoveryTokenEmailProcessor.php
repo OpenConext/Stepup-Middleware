@@ -29,20 +29,14 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryToke
 
 final class RecoveryTokenEmailProcessor extends Processor
 {
-    private RecoveryTokenMailService $mailService;
-
-    private IdentityService $identityService;
-
     public function __construct(
-        RecoveryTokenMailService $recoveryTokenMailService,
-        IdentityService $identityService
+        private readonly RecoveryTokenMailService $mailService,
+        private readonly IdentityService $identityService,
     ) {
-        $this->mailService = $recoveryTokenMailService;
-        $this->identityService = $identityService;
     }
 
     public function handleCompliedWithRecoveryCodeRevocationEvent(
-        CompliedWithRecoveryCodeRevocationEvent $event
+        CompliedWithRecoveryCodeRevocationEvent $event,
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
@@ -56,7 +50,7 @@ final class RecoveryTokenEmailProcessor extends Processor
             $identity->email,
             $event->recoveryTokenType,
             $event->recoveryTokenId,
-            true
+            true,
         );
     }
 
@@ -74,7 +68,7 @@ final class RecoveryTokenEmailProcessor extends Processor
             $identity->email,
             $event->recoveryTokenType,
             $event->recoveryTokenId,
-            false
+            false,
         );
     }
 
@@ -88,12 +82,12 @@ final class RecoveryTokenEmailProcessor extends Processor
         $this->mailService->sendCreated(
             $identity->preferredLocale,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
     public function handleSafeStoreSecretRecoveryTokenPossessionPromisedEvent(
-        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event,
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
@@ -103,7 +97,7 @@ final class RecoveryTokenEmailProcessor extends Processor
         $this->mailService->sendCreated(
             $identity->preferredLocale,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 }

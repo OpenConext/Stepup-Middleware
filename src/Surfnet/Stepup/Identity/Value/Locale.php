@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Locale implements JsonSerializable
+final class Locale implements JsonSerializable, Stringable
 {
-    private string $locale;
+    private readonly string $locale;
 
     /**
      * @param string $locale
@@ -38,7 +39,6 @@ final class Locale implements JsonSerializable
     }
 
     /**
-     * @param self $other
      * @return bool
      */
     public function equals(Locale $other): bool

@@ -31,12 +31,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class ReplayEventsCommand extends Command
 {
     protected static $defaultName = 'middleware:event:replay';
-    private EventStreamReplayer $replayer;
 
-    public function __construct(EventStreamReplayer $eventStreamReplayer)
+    public function __construct(private readonly EventStreamReplayer $replayer)
     {
         parent::__construct();
-        $this->replayer = $eventStreamReplayer;
     }
 
     protected function configure()
@@ -44,14 +42,14 @@ class ReplayEventsCommand extends Command
         $this
             ->setDescription(
                 'Wipes all read models and repopulates the tables from the event store. Use the 
-                --no-interaction option to perform the event replay without the additional confirmation question.'
+                --no-interaction option to perform the event replay without the additional confirmation question.',
             )
             ->addOption(
                 'increments',
                 'i',
                 InputOption::VALUE_REQUIRED,
                 'The amount of events that are replayed at once (repeated until all events are replayed)',
-                1000
+                1000,
             );
     }
 
@@ -67,15 +65,17 @@ class ReplayEventsCommand extends Command
         $noInteraction = $input->getOption('no-interaction');
 
         if (!in_array($environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
-            $output->writeln($formatter->formatBlock(
-                [
-                    '',
-                    'This command may only be executed using env "dev_event_replay", "prod_event_replay", or 
+            $output->writeln(
+                $formatter->formatBlock(
+                    [
+                        '',
+                        'This command may only be executed using env "dev_event_replay", "prod_event_replay", or 
                     "smoketest_event_replay"',
-                    ''
-                ],
-                'error'
-            ));
+                        '',
+                    ],
+                    'error',
+                ),
+            );
 
             return;
         }
@@ -85,8 +85,8 @@ class ReplayEventsCommand extends Command
         if ($environment === 'prod_event_replay') {
             $wantToRunOnProd = new ConfirmationQuestion(
                 '<question>You have selected to run this on production. Have you disabled all access to the production '
-                .'environment? (y/N)</question>',
-                false
+                . 'environment? (y/N)</question>',
+                false,
             );
 
             if (!$interrogator->ask($input, $output, $wantToRunOnProd)) {
@@ -101,8 +101,8 @@ class ReplayEventsCommand extends Command
             $output->writeln(
                 $formatter->formatBlock(
                     sprintf('Increments must be a positive integer, "%s" given', $input->getOption('increments')),
-                    'error'
-                )
+                    'error',
+                ),
             );
 
             return;
@@ -130,7 +130,7 @@ QUESTION;
 
         $output->writeln(['', $formatter->formatBlock('Starting Event Replay', 'info')]);
         $output->writeln(
-            $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment')
+            $formatter->formatBlock(' >> If it is interrupted it must be rerun till completed', 'comment'),
         );
 
         $this->replayer->replayEvents($output, $increments);

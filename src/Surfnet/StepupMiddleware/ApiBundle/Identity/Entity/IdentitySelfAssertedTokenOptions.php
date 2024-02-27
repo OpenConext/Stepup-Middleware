@@ -59,7 +59,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
     public static function create(
         IdentityId $identityId,
         bool $possessedToken,
-        bool $possessedSelfAssertedToken
+        bool $possessedSelfAssertedToken,
     ): self {
         $identitySelfAssertedTokenOptions = new self();
 
@@ -72,7 +72,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'identity_id' => (string) $this->identityId,
+            'identity_id' => (string)$this->identityId,
             'possessed_self_asserted_token' => $this->possessedSelfAssertedToken,
             'possessed_token' => $this->possessedToken,
         ];

@@ -35,45 +35,26 @@ final class EmailVerificationMailService
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
-
-    private string $emailVerificationUrlTemplate;
-
-    private string $fallbackLocale;
-
-    /**
-     * @var Mailer
-     */
-    private Mailer $mailer;
-
-    private Sender $sender;
-
-    private string $selfServiceUrl;
+    private readonly string $emailVerificationUrlTemplate;
 
     /**
      * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
         string $emailVerificationUrlTemplate,
-        EmailTemplateService $emailTemplateService,
-        string $fallbackLocale,
-        string $selfServiceUrl
+        private readonly EmailTemplateService $emailTemplateService,
+        private readonly string $fallbackLocale,
+        private readonly string $selfServiceUrl,
     ) {
         Assertion::string(
             $emailVerificationUrlTemplate,
-            'Email verification URL template "%s" expected to be string, type %s given'
+            'Email verification URL template "%s" expected to be string, type %s given',
         );
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
-        $this->emailTemplateService = $emailTemplateService;
-        $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
     }
 
     /**
@@ -83,19 +64,19 @@ final class EmailVerificationMailService
         string $locale,
         string $commonName,
         string $email,
-        string $verificationNonce
+        string $verificationNonce,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.email_verification_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $verificationUrl = str_replace(
             '{nonce}',
             urlencode($verificationNonce),
-            $this->emailVerificationUrlTemplate
+            $this->emailVerificationUrlTemplate,
         );
 
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
@@ -105,7 +86,7 @@ final class EmailVerificationMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
 
         $parameters = [

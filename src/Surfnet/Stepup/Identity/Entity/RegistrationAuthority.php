@@ -38,31 +38,23 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
     private ?Institution $institution = null;
 
     /**
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param Institution $institution
      * @return RegistrationAuthority
      */
     public static function accreditWith(
         RegistrationAuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $institution
+        Institution $institution,
     ): self {
-        $registrationAuthority                     = new self();
-        $registrationAuthority->role               = $role;
-        $registrationAuthority->location           = $location;
+        $registrationAuthority = new self();
+        $registrationAuthority->role = $role;
+        $registrationAuthority->location = $location;
         $registrationAuthority->contactInformation = $contactInformation;
-        $registrationAuthority->institution        = $institution;
+        $registrationAuthority->institution = $institution;
 
         return $registrationAuthority;
     }
 
-    /**
-     * @param Location           $location
-     * @param ContactInformation $contactInformation
-     */
     public function amendInformation(Location $location, ContactInformation $contactInformation): void
     {
         $this->location = $location;
@@ -70,7 +62,6 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
     }
 
     /**
-     * @param RegistrationAuthorityRole $role
      * @return void
      */
     public function appointAs(RegistrationAuthorityRole $role): void
@@ -79,7 +70,6 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
     }
 
     /**
-     * @param RegistrationAuthorityRole $role
      * @return bool
      */
     public function isAppointedAs(RegistrationAuthorityRole $role)

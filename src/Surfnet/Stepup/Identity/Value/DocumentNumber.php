@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class DocumentNumber implements JsonSerializable
+final class DocumentNumber implements JsonSerializable, Stringable
 {
-    private string $documentNumber;
+    private readonly string $documentNumber;
 
     /**
      * @return self

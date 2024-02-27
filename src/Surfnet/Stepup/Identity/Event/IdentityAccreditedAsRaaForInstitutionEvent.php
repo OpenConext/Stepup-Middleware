@@ -36,7 +36,7 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
         'registration_authority_role',
         'location',
         'contact_information',
-        'ra_institution'
+        'ra_institution',
     ];
 
     /**
@@ -79,23 +79,23 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
         RegistrationAuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $raInstitution
+        Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId                    = $nameId;
+        $this->nameId = $nameId;
         $this->registrationAuthorityRole = $role;
-        $this->location                  = $location;
-        $this->contactInformation        = $contactInformation;
-        $this->raInstitution             = $raInstitution;
+        $this->location = $location;
+        $this->contactInformation = $contactInformation;
+        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->raInstitution       = $this->raInstitution;
+        $metadata->raInstitution = $this->raInstitution;
 
         return $metadata;
     }
@@ -109,7 +109,7 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
             new ContactInformation($data['contact_information']),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
@@ -119,13 +119,13 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'name_id'                     => (string) $this->nameId,
-            'institution'                 => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'institution' => (string)$this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
-            'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation,
-            'ra_institution'              => (string) $this->raInstitution,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 

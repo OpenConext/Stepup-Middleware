@@ -32,7 +32,7 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
     /**
      * There can ever be only one whitelist, so using a fixed UUIDv4
      */
-    const WHITELIST_AGGREGATE_ID = '125ccee5-d650-437a-a0b0-6bf17c8188fa';
+    public const WHITELIST_AGGREGATE_ID = '125ccee5-d650-437a-a0b0-6bf17c8188fa';
 
     /**
      * @var InstitutionCollection The collection of institutions currently on the whitelist
@@ -65,10 +65,12 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
     {
         foreach ($institutionCollection as $institution) {
             if ($this->whitelist->contains($institution)) {
-                throw new DomainException(sprintf(
-                    'Cannot add institution "%s" as it is already whitelisted',
-                    $institution
-                ));
+                throw new DomainException(
+                    sprintf(
+                        'Cannot add institution "%s" as it is already whitelisted',
+                        $institution,
+                    ),
+                );
             }
         }
 
@@ -79,10 +81,12 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
     {
         foreach ($institutionCollection as $institution) {
             if (!$this->whitelist->contains($institution)) {
-                throw new DomainException(sprintf(
-                    'Cannot remove institution "%s" as it is not whitelisted',
-                    $institution
-                ));
+                throw new DomainException(
+                    sprintf(
+                        'Cannot remove institution "%s" as it is not whitelisted',
+                        $institution,
+                    ),
+                );
             }
         }
 

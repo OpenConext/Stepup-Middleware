@@ -27,7 +27,7 @@ class SraaUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $sraaList
+     * @param array $sraaList
      */
     public function __construct($configurationId, array $sraaList)
     {

@@ -94,7 +94,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
 
-        return (bool) $count;
+        return (bool)$count;
     }
 
     /**

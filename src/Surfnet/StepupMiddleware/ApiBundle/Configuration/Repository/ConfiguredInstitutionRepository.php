@@ -30,9 +30,6 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
         parent::__construct($registry, ConfiguredInstitution::class);
     }
 
-    /**
-     * @param ConfiguredInstitution $configuredInstitution
-     */
     public function save(ConfiguredInstitution $configuredInstitution): void
     {
         $entityManager = $this->getEntityManager();
@@ -41,7 +38,6 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return bool
      */
     public function hasConfigurationFor(Institution $institution): bool
@@ -56,9 +52,6 @@ class ConfiguredInstitutionRepository extends ServiceEntityRepository
         return $result !== null;
     }
 
-    /**
-     * @param Institution $institution
-     */
     public function removeConfigurationFor(Institution $institution): void
     {
         $this->createQueryBuilder('ci')

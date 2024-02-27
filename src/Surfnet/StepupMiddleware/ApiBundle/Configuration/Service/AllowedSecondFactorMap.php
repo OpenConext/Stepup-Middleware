@@ -47,10 +47,6 @@ final class AllowedSecondFactorMap
         return $allowedSecondFactorMap;
     }
 
-    /**
-     * @param Institution $institution
-     * @return AllowedSecondFactorList
-     */
     public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
         $institution = strtolower($institution->getInstitution());
@@ -62,7 +58,6 @@ final class AllowedSecondFactorMap
     }
 
     /**
-     * @param AllowedSecondFactor $allowedSecondFactor
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function add(AllowedSecondFactor $allowedSecondFactor): void

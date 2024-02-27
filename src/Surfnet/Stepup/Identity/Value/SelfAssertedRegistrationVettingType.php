@@ -25,11 +25,8 @@ class SelfAssertedRegistrationVettingType implements VettingType
      */
     protected $type = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
-    protected RecoveryTokenId $authoringRecoveryToken;
-
-    public function __construct(RecoveryTokenId $recoveryTokenId)
+    public function __construct(protected RecoveryTokenId $authoringRecoveryToken)
     {
-        $this->authoringRecoveryToken = $recoveryTokenId;
     }
 
     public static function deserialize(array $data): self

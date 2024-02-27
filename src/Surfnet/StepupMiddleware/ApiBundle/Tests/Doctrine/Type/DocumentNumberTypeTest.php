@@ -38,7 +38,7 @@ class DocumentNumberTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(DocumentNumberType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType');
+        Type::addType(DocumentNumberType::NAME, DocumentNumberType::class);
     }
 
     public function setUp(): void
@@ -113,7 +113,7 @@ class DocumentNumberTypeTest extends UnitTest
         $input = '12345';
         $output = $type->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\DocumentNumber', $output);
+        $this->assertInstanceOf(DocumentNumber::class, $output);
         $this->assertTrue((new DocumentNumber($input))->equals($output));
     }
 

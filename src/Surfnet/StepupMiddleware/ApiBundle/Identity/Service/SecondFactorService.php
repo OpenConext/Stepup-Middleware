@@ -38,29 +38,14 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
  */
 class SecondFactorService extends AbstractSearchService
 {
-    private UnverifiedSecondFactorRepository $unverifiedRepository;
-
-    private VerifiedSecondFactorRepository $verifiedRepository;
-
-    private VettedSecondFactorRepository $vettedRepository;
-
-    /**
-     * @param UnverifiedSecondFactorRepository $unverifiedRepository
-     * @param VerifiedSecondFactorRepository $verifiedRepository
-     * @param VettedSecondFactorRepository $vettedRepository
-     */
     public function __construct(
-        UnverifiedSecondFactorRepository $unverifiedRepository,
-        VerifiedSecondFactorRepository $verifiedRepository,
-        VettedSecondFactorRepository $vettedRepository
+        private readonly UnverifiedSecondFactorRepository $unverifiedRepository,
+        private readonly VerifiedSecondFactorRepository $verifiedRepository,
+        private readonly VettedSecondFactorRepository $vettedRepository,
     ) {
-        $this->unverifiedRepository = $unverifiedRepository;
-        $this->verifiedRepository = $verifiedRepository;
-        $this->vettedRepository = $vettedRepository;
     }
 
     /**
-     * @param UnverifiedSecondFactorQuery $query
      * @return Pagerfanta
      */
     public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query)
@@ -71,7 +56,6 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param VerifiedSecondFactorQuery $query
      * @return Pagerfanta
      */
     public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
@@ -83,7 +67,6 @@ class SecondFactorService extends AbstractSearchService
 
 
     /**
-     * @param VerifiedSecondFactorOfIdentityQuery $query
      * @return Pagerfanta
      */
     public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query)
@@ -94,7 +77,6 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param VettedSecondFactorQuery $query
      * @return Pagerfanta
      */
     public function searchVettedSecondFactors(VettedSecondFactorQuery $query)
@@ -105,7 +87,6 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @param SecondFactorId $id
      * @return null|UnverifiedSecondFactor
      */
     public function findUnverified(SecondFactorId $id): ?UnverifiedSecondFactor
@@ -115,7 +96,6 @@ class SecondFactorService extends AbstractSearchService
 
 
     /**
-     * @param SecondFactorId $id
      * @return null|VerifiedSecondFactor
      */
     public function findVerified(SecondFactorId $id): ?VerifiedSecondFactor
@@ -125,7 +105,6 @@ class SecondFactorService extends AbstractSearchService
 
 
     /**
-     * @param SecondFactorId $id
      * @return null|VettedSecondFactor
      */
     public function findVetted(SecondFactorId $id): ?VettedSecondFactor
@@ -135,7 +114,7 @@ class SecondFactorService extends AbstractSearchService
 
     public function hasVettedByIdentity(IdentityId $id): bool
     {
-        $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string) $id]);
+        $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string)$id]);
         return $vettedSecondFactors !== [];
     }
 }

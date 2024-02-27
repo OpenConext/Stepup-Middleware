@@ -25,11 +25,9 @@ use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemp
 
 final class EmailTemplatesProjector extends Projector
 {
-    private EmailTemplateRepository $repository;
-
-    public function __construct(EmailTemplateRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly EmailTemplateRepository $repository,
+    ) {
     }
 
     public function applyEmailTemplatesUpdatedEvent(EmailTemplatesUpdatedEvent $event): void

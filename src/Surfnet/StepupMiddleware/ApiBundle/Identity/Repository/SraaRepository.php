@@ -39,15 +39,13 @@ class SraaRepository extends ServiceEntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa'
+                'DELETE FROM Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa',
             )
             ->execute();
     }
 
     /**
      * Saves all SRAAs to the database, using inserts only
-     *
-     * @param array $sraaList
      */
     public function saveAll(array $sraaList): void
     {
@@ -63,15 +61,15 @@ class SraaRepository extends ServiceEntityRepository
             foreach ($invalid as $index => $value) {
                 $invalidIndications[] = sprintf(
                     '"%s" at index "%d"',
-                    is_object($value) ? get_class($value) : gettype($value)
+                    get_debug_type($value),
                 );
             }
 
             throw new InvalidArgumentException(
                 sprintf(
                     'Expected array of Raa Objects, got %s',
-                    implode(', ', $invalidIndications)
-                )
+                    implode(', ', $invalidIndications),
+                ),
             );
         }
 
@@ -85,16 +83,14 @@ class SraaRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param NameId $nameId
      * @return null|Sraa
      */
     public function findByNameId(NameId $nameId): ?object
     {
-        return $this->findOneBy(['nameId' => (string) $nameId]);
+        return $this->findOneBy(['nameId' => (string)$nameId]);
     }
 
     /**
-     * @param NameId $nameId
      * @return boolean
      */
     public function contains(NameId $nameId): bool

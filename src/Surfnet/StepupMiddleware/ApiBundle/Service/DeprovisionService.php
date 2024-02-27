@@ -27,31 +27,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
+
 use function sprintf;
 
 class DeprovisionService implements DeprovisionServiceInterface
 {
-    private Pipeline $pipeline;
-
-    private IdentityRepository $eventSourcingRepository;
-
-    /**
-     * @var ApiIdentityRepository
-     */
-    private ApiIdentityRepository $apiRepository;
-
-    private LoggerInterface $logger;
-
     public function __construct(
-        Pipeline              $pipeline,
-        IdentityRepository    $eventSourcingRepository,
-        ApiIdentityRepository $apiRepository,
-        LoggerInterface       $logger
+        private readonly Pipeline $pipeline,
+        private readonly IdentityRepository $eventSourcingRepository,
+        private readonly ApiIdentityRepository $apiRepository,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->pipeline = $pipeline;
-        $this->eventSourcingRepository = $eventSourcingRepository;
-        $this->apiRepository = $apiRepository;
-        $this->logger = $logger;
     }
 
     public function readUserData(string $collabPersonId): array
@@ -62,7 +48,7 @@ class DeprovisionService implements DeprovisionServiceInterface
             return $this->eventSourcingRepository->obtainInformation(new IdentityId($identity->id));
         } catch (UserNotFoundException $e) {
             $this->logger->notice(
-                $e->getMessage()
+                $e->getMessage(),
             );
             return [];
         }
@@ -75,7 +61,7 @@ class DeprovisionService implements DeprovisionServiceInterface
             $user = $this->getIdentityByNameId($collabPersonId);
         } catch (UserNotFoundException $e) {
             $this->logger->notice(
-                $e->getMessage()
+                $e->getMessage(),
             );
             return;
         }
@@ -94,8 +80,8 @@ class DeprovisionService implements DeprovisionServiceInterface
             throw new UserNotFoundException(
                 sprintf(
                     'User identified by: %s was not found. Unable to provide deprovision data.',
-                    $collabPersonId
-                )
+                    $collabPersonId,
+                ),
             );
         }
         return $user;

@@ -30,14 +30,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VettedSecondFactorController extends AbstractController
 {
-    private SecondFactorService $secondFactorService;
-
-    public function __construct(SecondFactorService $secondFactorService)
-    {
-        $this->secondFactorService = $secondFactorService;
+    public function __construct(
+        private readonly SecondFactorService $secondFactorService,
+    ) {
     }
 
-    public function getAction($id): JsonResponse
+    public function get($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -54,9 +52,9 @@ class VettedSecondFactorController extends AbstractController
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
-        $query             = new VettedSecondFactorQuery();
+        $query = new VettedSecondFactorQuery();
         $query->identityId = $request->get('identityId');
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query->pageNumber = (int)$request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchVettedSecondFactors($query);
 

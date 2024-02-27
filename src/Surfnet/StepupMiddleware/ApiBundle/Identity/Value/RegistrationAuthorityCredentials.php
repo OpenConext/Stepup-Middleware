@@ -31,11 +31,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 class RegistrationAuthorityCredentials implements JsonSerializable
 {
     /**
-     * @var string
-     */
-    private $identityId;
-
-    /**
      * @var Institution
      */
     private $institution;
@@ -56,41 +51,16 @@ class RegistrationAuthorityCredentials implements JsonSerializable
     private $contactInformation;
 
     /**
-     * @var bool
-     */
-    private $isRa;
-
-    /**
-     * @var bool
-     */
-    private $isRaa;
-
-    /**
-     * @var bool
-     */
-    private $isSraa;
-
-    /**
      * @param string $identityId
-     * @param bool   $isRa
-     * @param bool   $isRaa
-     * @param bool   $isSraa
+     * @param bool $isRa
+     * @param bool $isRaa
+     * @param bool $isSraa
      */
-    private function __construct(
-        $identityId,
-        $isRa,
-        $isRaa,
-        $isSraa
-    ) {
-        $this->identityId = $identityId;
-        $this->isRa = $isRa;
-        $this->isRaa = $isRaa;
-        $this->isSraa = $isSraa;
+    private function __construct(private $identityId, private $isRa, private $isRaa, private $isSraa)
+    {
     }
 
     /**
-     * @param Sraa     $sraa
-     * @param Identity $identity
      * @return RegistrationAuthorityCredentials
      */
     public static function fromSraa(Sraa $sraa, Identity $identity): self
@@ -127,7 +97,7 @@ class RegistrationAuthorityCredentials implements JsonSerializable
             $raListingCredentials->identityId,
             $isRa,
             $isRaa,
-            false
+            false,
         );
 
         $credentials->institution = $raListingCredentials->institution;
@@ -140,7 +110,6 @@ class RegistrationAuthorityCredentials implements JsonSerializable
 
 
     /**
-     * @param RaListing $raListing
      * @return RegistrationAuthorityCredentials
      */
     public static function fromRaListing(RaListing $raListing): self
@@ -149,12 +118,12 @@ class RegistrationAuthorityCredentials implements JsonSerializable
             $raListing->identityId,
             $raListing->role->equals(AuthorityRole::ra()),
             $raListing->role->equals(AuthorityRole::raa()),
-            false
+            false,
         );
 
-        $credentials->institution        = $raListing->institution;
-        $credentials->commonName         = $raListing->commonName;
-        $credentials->location           = $raListing->location;
+        $credentials->institution = $raListing->institution;
+        $credentials->commonName = $raListing->commonName;
+        $credentials->location = $raListing->location;
         $credentials->contactInformation = $raListing->contactInformation;
 
         return $credentials;
@@ -182,7 +151,6 @@ class RegistrationAuthorityCredentials implements JsonSerializable
     }
 
     /**
-     * @param RegistrationAuthorityCredentials $other
      * @return bool
      */
     public function equals(RegistrationAuthorityCredentials $other): bool
@@ -195,14 +163,14 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         return [
             'id' => $this->identityId,
             'attributes' => [
-                'institution'         => $this->institution,
-                'common_name'         => $this->commonName,
-                'location'            => $this->location,
+                'institution' => $this->institution,
+                'common_name' => $this->commonName,
+                'location' => $this->location,
                 'contact_information' => $this->contactInformation,
-                'is_ra'               => ($this->isRa || $this->isSraa),
-                'is_raa'              => ($this->isRaa || $this->isSraa),
-                'is_sraa'             => $this->isSraa,
-            ]
+                'is_ra' => ($this->isRa || $this->isSraa),
+                'is_raa' => ($this->isRaa || $this->isSraa),
+                'is_sraa' => $this->isSraa,
+            ],
         ];
     }
 

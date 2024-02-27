@@ -60,11 +60,6 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     private ?string $registrationCode = null;
 
     /**
-     * @param SecondFactorId $id
-     * @param Identity $identity
-     * @param SecondFactorType $type
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      * @return self
      */
@@ -74,7 +69,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         SecondFactorType $type,
         SecondFactorIdentifier $secondFactorIdentifier,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        $registrationCode,
     ): self {
         if (!is_string($registrationCode)) {
             throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
@@ -105,12 +100,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     /**
      * @param string $registrationCode
-     * @param SecondFactorIdentifier $secondFactorIdentifier
      * @return bool
      */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier): bool
-    {
-        return strcasecmp($registrationCode, $this->registrationCode) === 0
+    public function hasRegistrationCodeAndIdentifier(
+        $registrationCode,
+        SecondFactorIdentifier $secondFactorIdentifier,
+    ): bool {
+        return strcasecmp($registrationCode, (string)$this->registrationCode) === 0
             && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
     }
 
@@ -122,7 +118,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         return !DateTime::now()->comesAfter(
             $this->registrationRequestedAt
                 ->add(new DateInterval('P14D'))
-                ->endOfDay()
+                ->endOfDay(),
         );
     }
 
@@ -140,8 +136,8 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                     $this->identity->getCommonName(),
                     $this->identity->getEmail(),
                     $this->identity->getPreferredLocale(),
-                    $type
-                )
+                    $type,
+                ),
             );
             return;
         }
@@ -157,8 +153,8 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
                 $this->identity->getPreferredLocale(),
-                $type
-            )
+                $type,
+            ),
         );
     }
 
@@ -170,8 +166,8 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
@@ -184,8 +180,8 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
@@ -199,7 +195,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
             $this->identity,
             $this->type,
             $this->secondFactorIdentifier,
-            $vettingType
+            $vettingType,
         );
     }
 
@@ -210,7 +206,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
 
     protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }

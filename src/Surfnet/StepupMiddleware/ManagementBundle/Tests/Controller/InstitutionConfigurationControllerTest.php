@@ -71,10 +71,10 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
@@ -92,12 +92,12 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'apireader',
-                'PHP_AUTH_PW'   => $this->passwordRo,
+                'PHP_AUTH_PW' => $this->passwordRo,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -115,10 +115,10 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
@@ -136,12 +136,12 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password
+                'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode(['non-existing.organisation.test' => []])
+            json_encode(['non-existing.organisation.test' => []]),
         );
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
@@ -162,10 +162,10 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -183,12 +183,12 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password
+                'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
@@ -206,19 +206,19 @@ class InstitutionConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password
+                'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertTrue(
             $this->client->getResponse()->headers->contains(
                 'Content-Type',
-                'application/json'
-            )
+                'application/json',
+            ),
         );
     }
 
@@ -228,8 +228,8 @@ class InstitutionConfigurationControllerTest extends WebTestCase
     public function invalidHttpMethodProvider(): array
     {
         return [
-            'DELETE'  => ['DELETE'],
-            'PUT'     => ['PUT'],
+            'DELETE' => ['DELETE'],
+            'PUT' => ['PUT'],
             'OPTIONS' => ['OPTIONS'],
         ];
     }

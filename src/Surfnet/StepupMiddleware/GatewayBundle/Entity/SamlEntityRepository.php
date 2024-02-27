@@ -24,8 +24,6 @@ class SamlEntityRepository extends EntityRepository
 {
     /**
      * Replace all configured service provider SamlEntities with the new SamlEntities.
-     *
-     * @param array $newSamlEntities
      */
     public function replaceAllSps(array $newSamlEntities): void
     {
@@ -34,8 +32,6 @@ class SamlEntityRepository extends EntityRepository
 
     /**
      * Replace all configured identity provider SamlEntities with the new SamlEntities.
-     *
-     * @param array $newSamlEntities
      */
     public function replaceAllIdps(array $newSamlEntities): void
     {
@@ -46,9 +42,6 @@ class SamlEntityRepository extends EntityRepository
      * Replace all configured SamlEntities with the new SamlEntities.
      *
      * Will be updated later, see https://www.pivotaltracker.com/story/show/83532704
-     *
-     * @param string $type
-     * @param array $newSamlEntities
      */
     private function replaceAllOfType(string $type, array $newSamlEntities): void
     {
@@ -79,7 +72,7 @@ class SamlEntityRepository extends EntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type'
+                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type',
             )
             ->execute(['type' => $type]);
     }

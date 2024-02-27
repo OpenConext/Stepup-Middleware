@@ -25,24 +25,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAutho
 
 class InstitutionAuthorizationService
 {
-    private InstitutionAuthorizationRepository $repository;
-
-    /**
-     * @param InstitutionAuthorizationRepository $repository
-     */
-    public function __construct(
-        InstitutionAuthorizationRepository $repository
-    ) {
-        $this->repository = $repository;
+    public function __construct(private readonly InstitutionAuthorizationRepository $repository)
+    {
     }
 
     /**
-     * @param Institution $institution
-     * @param InstitutionRole $role
      * @return InstitutionAuthorizationOption
      */
-    public function findAuthorizationsByRoleFor(Institution $institution, InstitutionRole $role): InstitutionAuthorizationOption
-    {
+    public function findAuthorizationsByRoleFor(
+        Institution $institution,
+        InstitutionRole $role,
+    ): InstitutionAuthorizationOption {
         $authorizations = $this->repository->findAuthorizationOptionsForInstitutionByRole($institution, $role);
 
         $institutions = [];
@@ -54,7 +47,6 @@ class InstitutionAuthorizationService
     }
 
     /**
-     * @param Institution $institution
      * @return InstitutionAuthorizationOptionMap
      */
     public function findAuthorizationsFor(Institution $institution)

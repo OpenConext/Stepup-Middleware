@@ -40,47 +40,31 @@ use Symfony\Component\Translation\TranslatorInterface;
 final class SecondFactorRevocationMailService
 {
     /**
-     * @var Mailer
-     */
-    private Mailer $mailer;
-
-    private Sender $sender;
-
-    /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
+    private readonly string $fallbackLocale;
 
-    private string $fallbackLocale;
-
-    private string $selfServiceUrl;
-
-    private SecondFactorDisplayNameResolverService $displayNameResolver;
+    private readonly string $selfServiceUrl;
 
     /**
      * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         string $selfServiceUrl,
-        SecondFactorDisplayNameResolverService $displayNameResolver
+        private readonly SecondFactorDisplayNameResolverService $displayNameResolver,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         Assertion::string($selfServiceUrl, 'Self Service URL "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
-        $this->displayNameResolver = $displayNameResolver;
     }
 
     /**
@@ -91,21 +75,21 @@ final class SecondFactorRevocationMailService
         CommonName $commonName,
         Email $email,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier,
     ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType),
             ],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_revoked',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [
@@ -136,21 +120,21 @@ final class SecondFactorRevocationMailService
         CommonName $commonName,
         Email $email,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier,
     ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType),
             ],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_revoked',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
         $parameters = [
             'isRevokedByRa' => false,

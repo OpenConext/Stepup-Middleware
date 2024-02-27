@@ -96,7 +96,7 @@ class InstitutionCollectionTest extends UnitTest
      */
     public function an_institution_in_the_collection_can_be_removed(): void
     {
-        $institutions  = $this->getInstitutions();
+        $institutions = $this->getInstitutions();
         $inCollection = $institutions[0];
 
         $institutionCollection = new InstitutionCollection($institutions);

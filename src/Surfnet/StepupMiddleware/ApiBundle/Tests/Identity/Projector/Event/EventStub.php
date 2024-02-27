@@ -21,13 +21,11 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Event\AuditableEvent;
 
-final class EventStub implements AuditableEvent
+final readonly class EventStub implements AuditableEvent
 {
-    private Metadata $metadata;
-
-    public function __construct(Metadata $metadata)
-    {
-        $this->metadata = $metadata;
+    public function __construct(
+        private Metadata $metadata,
+    ) {
     }
 
     public function getAuditLogMetadata()

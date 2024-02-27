@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
@@ -40,24 +39,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class VerifiedSecondFactorController extends AbstractController
 {
-    private SecondFactorService $secondFactorService;
-
-    private AuthorizationContextService $institutionAuthorizationService;
-
-    private SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper;
-
-
     public function __construct(
-        SecondFactorService $secondFactorService,
-        AuthorizationContextService $authorizationService,
-        SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper
+        private readonly SecondFactorService $secondFactorService,
+        private readonly AuthorizationContextService $institutionAuthorizationService,
+        private readonly SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
     ) {
-        $this->secondFactorService = $secondFactorService;
-        $this->institutionAuthorizationService = $authorizationService;
-        $this->secondFactorProvePossessionHelper = $secondFactorProvePossessionHelper;
     }
 
-    public function getAction($id): JsonResponse
+    public function get($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -87,10 +76,10 @@ class VerifiedSecondFactorController extends AbstractController
         }
 
         $query->registrationCode = $request->get('registrationCode');
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query->pageNumber = (int)$request->get('p', 1);
         $query->authorizationContext = $this->institutionAuthorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactors($query);
@@ -104,7 +93,7 @@ class VerifiedSecondFactorController extends AbstractController
         $query = new VerifiedSecondFactorOfIdentityQuery();
 
         $query->identityId = new IdentityId($request->get('identityId'));
-        $query->pageNumber = (int) $request->get('p', 1);
+        $query->pageNumber = (int)$request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchVerifiedSecondFactorsOfIdentity($query);
 

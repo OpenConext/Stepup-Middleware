@@ -35,28 +35,28 @@ final class SecondFactorIdentifierFactoryTest extends TestCase
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 12345678')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('sms'), '+31 (0) 12345678'),
         );
         $this->assertEquals(
             new YubikeyPublicId('08189273'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), '08189273')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('yubikey'), '08189273'),
         );
         $this->assertEquals(
             new GssfId('urn:abcd-efgh-ijkl'),
-            SecondFactorIdentifierFactory::forType(new SecondFactorType('tiqr'), 'urn:abcd-efgh-ijkl')
+            SecondFactorIdentifierFactory::forType(new SecondFactorType('tiqr'), 'urn:abcd-efgh-ijkl'),
         );
 
         $this->assertEquals(
             PhoneNumber::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('sms'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('sms')),
         );
         $this->assertEquals(
             YubikeyPublicId::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('yubikey'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('yubikey')),
         );
         $this->assertEquals(
             GssfId::unknown(),
-            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('tiqr'))
+            SecondFactorIdentifierFactory::unknownForType(new SecondFactorType('tiqr')),
         );
     }
 }

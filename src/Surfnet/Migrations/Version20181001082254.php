@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -24,12 +24,12 @@ class Version20181001082254 extends AbstractMigration
         foreach ($authorizationRoles as $roleType) {
             $this->addSql(
                 "INSERT IGNORE INTO institution_authorization(institution, institution_relation, institution_role)
-                SELECT institution, institution, '{$roleType}' FROM institution_configuration_options;"
+                SELECT institution, institution, '{$roleType}' FROM institution_configuration_options;",
             );
 
             $this->addSql(
                 "INSERT IGNORE INTO institution_authorization(institution, institution_relation, institution_role)
-                SELECT institution, institution, '{$roleType}' FROM whitelist_entry;"
+                SELECT institution, institution, '{$roleType}' FROM whitelist_entry;",
             );
         }
     }

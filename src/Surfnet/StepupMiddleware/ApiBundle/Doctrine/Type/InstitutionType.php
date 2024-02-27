@@ -21,15 +21,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 /**
  * Custom Type for the Institution Value Object
  */
 class InstitutionType extends Type
 {
-    const NAME = 'institution';
+    public const NAME = 'institution';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -42,7 +42,7 @@ class InstitutionType extends Type
             return $value;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -57,7 +57,7 @@ class InstitutionType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

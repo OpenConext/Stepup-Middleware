@@ -29,18 +29,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizingStage implements Stage
 {
-    private LoggerInterface $logger;
-
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    /**
-     * @param LoggerInterface               $logger
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
-    public function __construct(LoggerInterface $logger, AuthorizationCheckerInterface $authorizationChecker)
-    {
-        $this->logger = $logger;
-        $this->authorizationChecker = $authorizationChecker;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+    ) {
     }
 
     public function process(Command $command): Command
@@ -71,11 +63,13 @@ class AuthorizingStage implements Stage
         }
 
         if (!$this->clientHasAtLeastOneRole($allowedRoles)) {
-            $this->logger->error(sprintf(
-                'Client is not authorized to execute command "%s", it does not have (one of) the required role(s) "%s"',
-                $command,
-                implode(', ', $allowedRoles)
-            ));
+            $this->logger->error(
+                sprintf(
+                    'Client is not authorized to execute command "%s", it does not have (one of) the required role(s) "%s"',
+                    $command,
+                    implode(', ', $allowedRoles),
+                ),
+            );
 
             throw new ForbiddenException(sprintf('Processing of Command "%s" is forbidden.', $command));
         }
@@ -86,7 +80,6 @@ class AuthorizingStage implements Stage
     }
 
     /**
-     * @param array $rolesToCheck
      * @return bool
      */
     private function clientHasAtLeastOneRole(array $rolesToCheck): bool

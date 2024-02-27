@@ -23,15 +23,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class JsonCollectionResponse extends JsonResponse
 {
-    public static function fromPaginator(Pagerfanta $paginator, $filters = array()): self
+    public static function fromPaginator(Pagerfanta $paginator, $filters = []): self
     {
         return new self(
             $paginator->getNbResults(),
             $paginator->getCurrentPage(),
             $paginator->getMaxPerPage(),
-            (array) $paginator->getCurrentPageResults(),
-            array(),
-            $filters
+            (array)$paginator->getCurrentPageResults(),
+            [],
+            $filters,
         );
     }
 
@@ -43,17 +43,13 @@ class JsonCollectionResponse extends JsonResponse
      * @param array $headers
      * @param array $filters
      */
-    public function __construct($totalItems, $page, $pageSize, array $collection, array $headers = array(), $filters = array())
+    public function __construct($totalItems, $page, $pageSize, array $collection, array $headers = [], $filters = [])
     {
-        $data = array(
-            'collection' => array(
-                'total_items' => $totalItems,
-                'page'        => $page,
-                'page_size'   => $pageSize,
-            ),
-            'items'      => $collection,
-            'filters'    => $filters,
-        );
+        $data = [
+            'collection' => ['total_items' => $totalItems, 'page' => $page, 'page_size' => $pageSize],
+            'items' => $collection,
+            'filters' => $filters,
+        ];
 
         parent::__construct($data, 200, $headers);
     }

@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
-final class RecoveryTokenStatus
-{
-    private string $status;
+use Stringable;
 
+final readonly class RecoveryTokenStatus implements Stringable
+{
     public static function active(): self
     {
         return new self('active');
@@ -42,9 +42,8 @@ final class RecoveryTokenStatus
         return in_array($status, ['active', 'revoked', 'forgotten']);
     }
 
-    private function __construct(string $status)
+    private function __construct(private string $status)
     {
-        $this->status = $status;
     }
 
     public function equals(RecoveryTokenStatus $other): bool

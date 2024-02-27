@@ -40,55 +40,33 @@ use Symfony\Component\Translation\TranslatorInterface;
 class VerifiedSecondFactorReminderMailService
 {
     /**
-     * @var Mailer
-     */
-    private Mailer $mailer;
-
-    private Sender $sender;
-
-    /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
-
-    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
-
-    private RaListingService $raListingService;
-
-    private RaLocationService $raLocationService;
-
-    private string $fallbackLocale;
+    private readonly string $fallbackLocale;
 
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        RaListingService $raListingService,
-        RaLocationService $raLocationService,
-        string $fallbackLocale
+        private readonly EmailTemplateService $emailTemplateService,
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private readonly RaListingService $raListingService,
+        private readonly RaLocationService $raLocationService,
+        string $fallbackLocale,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->raListingService = $raListingService;
-        $this->raLocationService = $raLocationService;
         $this->fallbackLocale = $fallbackLocale;
     }
 
     /**
-     * @param VerifiedTokenInformation $tokenInformation
      * @return int
      */
     public function sendReminder(VerifiedTokenInformation $tokenInformation)
     {
-        $institution = new Institution((string) $tokenInformation->getInstitution());
+        $institution = new Institution((string)$tokenInformation->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
         if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
@@ -98,7 +76,7 @@ class VerifiedSecondFactorReminderMailService
                 $tokenInformation->getEmail(),
                 $tokenInformation->getRequestedAt(),
                 $tokenInformation->getRegistrationCode(),
-                $this->raLocationService->listRaLocationsFor($institution)
+                $this->raLocationService->listRaLocationsFor($institution),
             );
         }
 
@@ -111,13 +89,11 @@ class VerifiedSecondFactorReminderMailService
                 $tokenInformation->getEmail(),
                 $tokenInformation->getRequestedAt(),
                 $tokenInformation->getRegistrationCode(),
-                $ras
+                $ras,
             );
         }
 
-        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra): bool {
-            return !$ra->isRaa();
-        });
+        $rasWithoutRaas = array_filter($ras, fn(RegistrationAuthorityCredentials $ra): bool => !$ra->isRaa());
 
         return $this->sendReminderWithRas(
             $tokenInformation->getPreferredLocale(),
@@ -125,7 +101,7 @@ class VerifiedSecondFactorReminderMailService
             $tokenInformation->getEmail(),
             $tokenInformation->getRequestedAt(),
             $tokenInformation->getRegistrationCode(),
-            $rasWithoutRaas
+            $rasWithoutRaas,
         );
     }
 
@@ -144,19 +120,19 @@ class VerifiedSecondFactorReminderMailService
         $email,
         $requestedAt,
         $registrationCode,
-        $raLocations
+        $raLocations,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_verification_reminder_with_ra_locations',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [
@@ -183,19 +159,19 @@ class VerifiedSecondFactorReminderMailService
         $email,
         $requestedAt,
         $registrationCode,
-        array $ras
+        array $ras,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_verification_reminder_with_ras',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [

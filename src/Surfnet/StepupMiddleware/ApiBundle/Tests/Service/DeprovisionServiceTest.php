@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\UserNotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionService;
@@ -130,7 +129,7 @@ class DeprovisionServiceTest extends TestCase
             ->andReturn($identity);
         $this->pipeline
             ->shouldReceive('process')
-            ->withArgs(function(ForgetIdentityCommand $command): bool{
+            ->withArgs(function (ForgetIdentityCommand $command): bool {
                 $this->assertEquals($command->nameId, 'urn:collab:person:example.com:maynard_keenan');
                 $this->assertEquals($command->institution, 'tool');
                 return true;

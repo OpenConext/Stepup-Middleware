@@ -150,8 +150,10 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      * @param Institution $institution
      * @return InstitutionConfiguration
      */
-    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution): self
-    {
+    public static function create(
+        InstitutionConfigurationId $institutionConfigurationId,
+        Institution $institution,
+    ): self {
         $institutionConfiguration = new self;
         $institutionConfiguration->apply(
             new NewInstitutionConfigurationCreatedEvent(
@@ -163,34 +165,36 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 NumberOfTokensPerIdentityOption::getDefault(),
                 SsoOn2faOption::getDefault(),
                 SelfVetOption::getDefault(),
-                SelfAssertedTokensOption::getDefault()
-            )
+                SelfAssertedTokensOption::getDefault(),
+            ),
         );
-        $institutionConfiguration->apply(new AllowedSecondFactorListUpdatedEvent(
-            $institutionConfigurationId,
-            $institution,
-            AllowedSecondFactorList::blank()
-        ));
+        $institutionConfiguration->apply(
+            new AllowedSecondFactorListUpdatedEvent(
+                $institutionConfigurationId,
+                $institution,
+                AllowedSecondFactorList::blank(),
+            ),
+        );
         $institutionConfiguration->apply(
             new UseRaOptionChangedEvent(
                 $institutionConfigurationId,
                 $institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa()),
+            ),
         );
         $institutionConfiguration->apply(
             new UseRaaOptionChangedEvent(
                 $institutionConfigurationId,
                 $institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa()),
+            ),
         );
         $institutionConfiguration->apply(
             new SelectRaaOptionChangedEvent(
                 $institutionConfigurationId,
                 $institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa()),
+            ),
         );
 
         return $institutionConfiguration;
@@ -215,34 +219,36 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
                 SelfVetOption::getDefault(),
-                SelfAssertedTokensOption::getDefault()
-            )
+                SelfAssertedTokensOption::getDefault(),
+            ),
         );
-        $this->apply(new AllowedSecondFactorListUpdatedEvent(
-            $this->institutionConfigurationId,
-            $this->institution,
-            AllowedSecondFactorList::blank()
-        ));
+        $this->apply(
+            new AllowedSecondFactorListUpdatedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                AllowedSecondFactorList::blank(),
+            ),
+        );
         $this->apply(
             new UseRaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa()),
+            ),
         );
         $this->apply(
             new UseRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa()),
+            ),
         );
         $this->apply(
             new SelectRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa())
-            )
+                InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa()),
+            ),
         );
 
         return $this;
@@ -262,13 +268,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new UseRaLocationsOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $useRaLocationsOption
-            )
+                $useRaLocationsOption,
+            ),
         );
     }
 
-    public function configureShowRaaContactInformationOption(ShowRaaContactInformationOption $showRaaContactInformationOption): void
-    {
+    public function configureShowRaaContactInformationOption(
+        ShowRaaContactInformationOption $showRaaContactInformationOption,
+    ): void {
         if ($this->showRaaContactInformationOption->equals($showRaaContactInformationOption)) {
             return;
         }
@@ -277,8 +284,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new ShowRaaContactInformationOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $showRaaContactInformationOption
-            )
+                $showRaaContactInformationOption,
+            ),
         );
     }
 
@@ -292,13 +299,13 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new VerifyEmailOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $verifyEmailOption
-            )
+                $verifyEmailOption,
+            ),
         );
     }
 
     public function configureNumberOfTokensPerIdentityOption(
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
+        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
     ): void {
         if ($this->numberOfTokensPerIdentityOption->equals($numberOfTokensPerIdentityOption)) {
             return;
@@ -308,8 +315,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new NumberOfTokensPerIdentityOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $numberOfTokensPerIdentityOption
-            )
+                $numberOfTokensPerIdentityOption,
+            ),
         );
     }
 
@@ -323,8 +330,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new SelfVetOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $selfVetOption
-            )
+                $selfVetOption,
+            ),
         );
     }
 
@@ -340,8 +347,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new SelfAssertedTokensOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $selfAssertedTokensOption
-            )
+                $selfAssertedTokensOption,
+            ),
         );
     }
 
@@ -355,8 +362,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new SsoOn2faOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $ssoOn2faOption
-            )
+                $ssoOn2faOption,
+            ),
         );
     }
 
@@ -372,8 +379,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new UseRaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $useRaOption
-            )
+                $useRaOption,
+            ),
         );
     }
 
@@ -389,8 +396,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new UseRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $useRaaOption
-            )
+                $useRaaOption,
+            ),
         );
     }
 
@@ -406,8 +413,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new SelectRaaOptionChangedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $selectRaaOption
-            )
+                $selectRaaOption,
+            ),
         );
     }
 
@@ -424,8 +431,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
             new AllowedSecondFactorListUpdatedEvent(
                 $this->institutionConfigurationId,
                 $this->institution,
-                $allowedSecondFactorList
-            )
+                $allowedSecondFactorList,
+            ),
         );
     }
 
@@ -439,25 +446,29 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ): void {
         if ($this->raLocations->containsWithId($raLocationId)) {
-            throw new DomainException(sprintf(
-                'Cannot add RaLocation with RaLocationId "%s" to RaLocations of InstitutionConfiguration "%s":'
-                . ' it is already present',
-                $raLocationId,
-                $this->getAggregateRootId()
-            ));
+            throw new DomainException(
+                sprintf(
+                    'Cannot add RaLocation with RaLocationId "%s" to RaLocations of InstitutionConfiguration "%s":'
+                    . ' it is already present',
+                    $raLocationId,
+                    $this->getAggregateRootId(),
+                ),
+            );
         }
 
-        $this->apply(new RaLocationAddedEvent(
-            $this->institutionConfigurationId,
-            $this->institution,
-            $raLocationId,
-            $raLocationName,
-            $location,
-            $contactInformation
-        ));
+        $this->apply(
+            new RaLocationAddedEvent(
+                $this->institutionConfigurationId,
+                $this->institution,
+                $raLocationId,
+                $raLocationName,
+                $location,
+                $contactInformation,
+            ),
+        );
     }
 
     /**
@@ -470,27 +481,29 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ): void {
         if (!$this->raLocations->containsWithId($raLocationId)) {
-            throw new DomainException(sprintf(
-                'Cannot change RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
-                . ' it is not present',
-                $raLocationId,
-                $this->getAggregateRootId()
-            ));
+            throw new DomainException(
+                sprintf(
+                    'Cannot change RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
+                    . ' it is not present',
+                    $raLocationId,
+                    $this->getAggregateRootId(),
+                ),
+            );
         }
 
         $raLocation = $this->raLocations->getById($raLocationId);
 
         if (!$raLocation->getName()->equals($raLocationName)) {
             $this->apply(
-                new RaLocationRenamedEvent($this->institutionConfigurationId, $raLocationId, $raLocationName)
+                new RaLocationRenamedEvent($this->institutionConfigurationId, $raLocationId, $raLocationName),
             );
         }
         if (!$raLocation->getLocation()->equals($location)) {
             $this->apply(
-                new RaLocationRelocatedEvent($this->institutionConfigurationId, $raLocationId, $location)
+                new RaLocationRelocatedEvent($this->institutionConfigurationId, $raLocationId, $location),
             );
         }
         if (!$raLocation->getContactInformation()->equals($contactInformation)) {
@@ -498,8 +511,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 new RaLocationContactInformationChangedEvent(
                     $this->institutionConfigurationId,
                     $raLocationId,
-                    $contactInformation
-                )
+                    $contactInformation,
+                ),
             );
         }
     }
@@ -510,12 +523,14 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     public function removeRaLocation(RaLocationId $raLocationId): void
     {
         if (!$this->raLocations->containsWithId($raLocationId)) {
-            throw new DomainException(sprintf(
-                'Cannot remove RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
-                . ' it is not present',
-                $raLocationId,
-                $this->getAggregateRootId()
-            ));
+            throw new DomainException(
+                sprintf(
+                    'Cannot remove RaLocation with RaLocationId "%s" in RaLocations of InstitutionConfiguration "%s":'
+                    . ' it is not present',
+                    $raLocationId,
+                    $this->getAggregateRootId(),
+                ),
+            );
         }
 
         $this->apply(new RaLocationRemovedEvent($this->institutionConfigurationId, $raLocationId));
@@ -537,7 +552,6 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * Check if role from institution is allowed to accredit roles
      *
-     * @param Institution $institution
      * @return bool
      */
     public function isInstitutionAllowedToAccreditRoles(Institution $institution)
@@ -553,17 +567,17 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
     {
-        $this->institutionConfigurationId      = $event->institutionConfigurationId;
-        $this->institution                     = $event->institution;
-        $this->useRaLocationsOption            = $event->useRaLocationsOption;
+        $this->institutionConfigurationId = $event->institutionConfigurationId;
+        $this->institution = $event->institution;
+        $this->useRaLocationsOption = $event->useRaLocationsOption;
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
-        $this->verifyEmailOption               = $event->verifyEmailOption;
+        $this->verifyEmailOption = $event->verifyEmailOption;
         $this->selfVetOption = $event->selfVetOption;
         $this->ssoOn2faOption = $event->ssoOn2faOption;
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
-        $this->raLocations                     = new RaLocationList([]);
-        $this->isMarkedAsDestroyed             = false;
+        $this->raLocations = new RaLocationList([]);
+        $this->isMarkedAsDestroyed = false;
     }
 
     /**
@@ -575,8 +589,6 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      * the fields where null'ed (removed from configuration).
      *
      * This also applies for applyUseRaaOptionChangedEvent & applySelectRaaOptionChangedEvent
-     *
-     * @param UseRaOptionChangedEvent $event
      */
     protected function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
     {
@@ -599,37 +611,37 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     }
 
     protected function applyShowRaaContactInformationOptionChangedEvent(
-        ShowRaaContactInformationOptionChangedEvent $event
+        ShowRaaContactInformationOptionChangedEvent $event,
     ) {
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
     }
 
     protected function applyVerifyEmailOptionChangedEvent(
-        VerifyEmailOptionChangedEvent $event
+        VerifyEmailOptionChangedEvent $event,
     ) {
         $this->verifyEmailOption = $event->verifyEmailOption;
     }
 
     protected function applySelfVetOptionChangedEvent(
-        SelfVetOptionChangedEvent $event
+        SelfVetOptionChangedEvent $event,
     ) {
         $this->selfVetOption = $event->selfVetOption;
     }
 
     protected function applySelfAssertedTokensOptionChangedEvent(
-        SelfAssertedTokensOptionChangedEvent $event
+        SelfAssertedTokensOptionChangedEvent $event,
     ) {
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
     }
 
     protected function applySsoOn2faOptionChangedEvent(
-        SsoOn2faOptionChangedEvent $event
+        SsoOn2faOptionChangedEvent $event,
     ) {
         $this->ssoOn2faOption = $event->ssoOn2faOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(
-        NumberOfTokensPerIdentityOptionChangedEvent $event
+        NumberOfTokensPerIdentityOptionChangedEvent $event,
     ) {
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
     }
@@ -646,8 +658,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 $event->raLocationId,
                 $event->raLocationName,
                 $event->location,
-                $event->contactInformation
-            )
+                $event->contactInformation,
+            ),
         );
     }
 
@@ -676,21 +688,20 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @param InstitutionConfigurationRemovedEvent $event
      */
     protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
     {
         // reset all configuration to defaults. This way, should it be rebuild, it seems like it is new again
-        $this->raLocations                     = new RaLocationList([]);
-        $this->useRaLocationsOption            = UseRaLocationsOption::getDefault();
+        $this->raLocations = new RaLocationList([]);
+        $this->useRaLocationsOption = UseRaLocationsOption::getDefault();
         $this->showRaaContactInformationOption = ShowRaaContactInformationOption::getDefault();
-        $this->verifyEmailOption               = VerifyEmailOption::getDefault();
+        $this->verifyEmailOption = VerifyEmailOption::getDefault();
         $this->numberOfTokensPerIdentityOption = NumberOfTokensPerIdentityOption::getDefault();
-        $this->allowedSecondFactorList         = AllowedSecondFactorList::blank();
+        $this->allowedSecondFactorList = AllowedSecondFactorList::blank();
         $this->useRaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRa());
         $this->useRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::useRaa());
         $this->selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
-        $this->isMarkedAsDestroyed             = true;
+        $this->isMarkedAsDestroyed = true;
     }
 }

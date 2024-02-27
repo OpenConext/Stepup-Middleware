@@ -18,13 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
-final class SecondFactorStatus
-{
-    /**
-     * @var string
-     */
-    private $status;
+use Stringable;
 
+final class SecondFactorStatus implements Stringable
+{
     public static function unverified(): self
     {
         return new self('unverified');
@@ -62,13 +59,11 @@ final class SecondFactorStatus
     /**
      * @param string $status
      */
-    private function __construct($status)
+    private function __construct(private $status)
     {
-        $this->status = $status;
     }
 
     /**
-     * @param SecondFactorStatus $other
      * @return bool
      */
     public function equals(SecondFactorStatus $other): bool

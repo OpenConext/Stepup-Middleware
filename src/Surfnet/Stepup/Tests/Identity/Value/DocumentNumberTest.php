@@ -45,9 +45,9 @@ class DocumentNumberTest extends UnitTest
     public function two_document_numbers_with_the_same_value_are_equal(): void
     {
         $commonName = new DocumentNumber('John Doe');
-        $theSame    = new DocumentNumber('John Doe');
-        $different  = new DocumentNumber('Jane Doe');
-        $unknown    = DocumentNumber::unknown();
+        $theSame = new DocumentNumber('John Doe');
+        $different = new DocumentNumber('Jane Doe');
+        $unknown = DocumentNumber::unknown();
 
         $this->assertTrue($commonName->equals($theSame));
         $this->assertFalse($commonName->equals($different));
@@ -61,10 +61,10 @@ class DocumentNumberTest extends UnitTest
     {
         return [
             'empty string' => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

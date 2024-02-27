@@ -41,7 +41,6 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param UnverifiedSecondFactorQuery $query
      * @return Query
      */
     public function createSearchQuery(UnverifiedSecondFactorQuery $query): Query
@@ -51,7 +50,7 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         if ($query->verificationNonce) {
@@ -72,9 +71,6 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @param UnverifiedSecondFactor $secondFactor
-     */
     public function save(UnverifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);

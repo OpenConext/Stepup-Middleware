@@ -18,9 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-
 interface InstitutionRoleSetInterface
 {
     public function getRoles();

@@ -33,12 +33,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RaSecondFactorRepository extends ServiceEntityRepository
 {
-    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, RaSecondFactor::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     public function find(mixed $id, $lockMode = null, $lockVersion = null): ?RaSecondFactor
@@ -73,7 +72,6 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      *                                               below complex or hard to maintain.
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @param RaSecondFactorQuery $query
      * @return Query
      * @throws DBALException
      */
@@ -88,7 +86,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'sf.institution',
-            'iac'
+            'iac',
         );
 
         if ($query->name) {
@@ -116,10 +114,12 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         if ($query->status) {
             $stringStatus = $query->status;
             if (!SecondFactorStatus::isValidStatus($stringStatus)) {
-                throw new RuntimeException(sprintf(
-                    'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
-                    is_object($stringStatus) ? get_class($stringStatus) : (string) $stringStatus
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
+                        is_object($stringStatus) ? $stringStatus::class : (string)$stringStatus,
+                    ),
+                );
             }
 
             // we need to resolve the string value to database value using the correct doctrine type. Normally this is
@@ -130,31 +130,24 @@ class RaSecondFactorRepository extends ServiceEntityRepository
 
             $databaseValue = $doctrineType->convertToDatabaseValue(
                 $secondFactorStatus,
-                $this->getEntityManager()->getConnection()->getDatabasePlatform()
+                $this->getEntityManager()->getConnection()->getDatabasePlatform(),
             );
 
             $queryBuilder->andWhere('sf.status = :status')->setParameter('status', $databaseValue);
         }
 
-        switch ($query->orderBy) {
-            case 'name':
-            case 'type':
-            case 'secondFactorId':
-            case 'email':
-            case 'institution':
-            case 'status':
-                $queryBuilder->orderBy(
-                    sprintf('sf.%s', $query->orderBy),
-                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
-                );
-                break;
-        }
+        match ($query->orderBy) {
+            'name', 'type', 'secondFactorId', 'email', 'institution', 'status' => $queryBuilder->orderBy(
+                sprintf('sf.%s', $query->orderBy),
+                $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
+            ),
+            default => $queryBuilder->getQuery(),
+        };
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param RaSecondFactorQuery $query
      * @return Query
      */
     public function createOptionsQuery(RaSecondFactorQuery $query): Query
@@ -169,14 +162,13 @@ class RaSecondFactorRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'sf.institution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param IdentityId $identityId
      * @return void
      */
     public function removeByIdentityId(IdentityId $identityId): void

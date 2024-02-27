@@ -32,14 +32,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
-    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
-
     public function __construct(
         ManagerRegistry $registry,
-        InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
     ) {
         parent::__construct($registry, RecoveryToken::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     public function save(RecoveryToken $entry): void
@@ -70,7 +67,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 $queryBuilder,
                 $query->authorizationContext,
                 'rt.institution',
-                'iac'
+                'iac',
             );
         }
         if ($query->identityId) {
@@ -86,10 +83,12 @@ class RecoveryTokenRepository extends ServiceEntityRepository
         if ($query->status) {
             $stringStatus = $query->status;
             if (!RecoveryTokenStatus::isValidStatus($stringStatus)) {
-                throw new RuntimeException(sprintf(
-                    'Received invalid status "%s" in RecoveryTokenRepository::createSearchQuery',
-                    is_object($stringStatus) ? get_class($stringStatus) : (string) $stringStatus
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Received invalid status "%s" in RecoveryTokenRepository::createSearchQuery',
+                        is_object($stringStatus) ? $stringStatus::class : (string)$stringStatus,
+                    ),
+                );
             }
 
             // we need to resolve the string value to database value using the correct doctrine type. Normally this is
@@ -100,7 +99,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
 
             $databaseValue = $doctrineType->convertToDatabaseValue(
                 $secondFactorStatus,
-                $this->getEntityManager()->getConnection()->getDatabasePlatform()
+                $this->getEntityManager()->getConnection()->getDatabasePlatform(),
             );
 
             $queryBuilder->andWhere('rt.status = :status')->setParameter('status', $databaseValue);
@@ -120,18 +119,13 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 ->andWhere('rt.institution = :institution')
                 ->setParameter('institution', $query->institution);
         }
-        switch ($query->orderBy) {
-            case 'name':
-            case 'type':
-            case 'email':
-            case 'institution':
-            case 'status':
-                $queryBuilder->orderBy(
-                    sprintf('rt.%s', $query->orderBy),
-                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
-                );
-                break;
-        }
+        match ($query->orderBy) {
+            'name', 'type', 'email', 'institution', 'status' => $queryBuilder->orderBy(
+                sprintf('rt.%s', $query->orderBy),
+                $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
+            ),
+            default => $queryBuilder->getQuery(),
+        };
 
         return $queryBuilder->getQuery();
     }
@@ -149,7 +143,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 $queryBuilder,
                 $query->authorizationContext,
                 'sf.institution',
-                'iac'
+                'iac',
             );
         }
         return $queryBuilder->getQuery();

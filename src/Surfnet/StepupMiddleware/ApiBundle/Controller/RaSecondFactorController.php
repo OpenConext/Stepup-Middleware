@@ -30,16 +30,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaSecondFactorController extends AbstractController
 {
-    private RaSecondFactorService $raSecondFactorService;
-
-    private AuthorizationContextService $authorizationService;
-
     public function __construct(
-        RaSecondFactorService $raSecondFactorService,
-        AuthorizationContextService $authorizationService
+        private readonly RaSecondFactorService $raSecondFactorService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raSecondFactorService = $raSecondFactorService;
-        $this->authorizationService = $authorizationService;
     }
 
     public function collection(Request $request)
@@ -67,7 +61,6 @@ final class RaSecondFactorController extends AbstractController
     }
 
     /**
-     * @param Request $request
      * @return RaSecondFactorQuery
      */
     private function buildRaSecondFactorQuery(Request $request): RaSecondFactorQuery
@@ -86,7 +79,7 @@ final class RaSecondFactorController extends AbstractController
         $query->orderDirection = $request->get('orderDirection');
         $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         return $query;

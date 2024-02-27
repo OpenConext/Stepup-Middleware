@@ -19,62 +19,33 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration;
 
 use Ramsey\Uuid\Uuid;
+use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
-use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
 
-final class MappedInstitutionConfiguration
+final readonly class MappedInstitutionConfiguration
 {
-    private Institution $institution;
-
-    private ShowRaaContactInformationOption $showRaaContactInformationOption;
-
-    private UseRaLocationsOption $useRaLocationsOption;
-
-    private VerifyEmailOption $verifyEmailOption;
-
-    private SelfVetOption $selfVetOption;
-
-    private NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
-
     /**
-     * @var RaLocation[]
-     */
-    private array $raLocations;
-
-    /**
-     * @param Institution $institution
-     * @param UseRaLocationsOption $useRaLocationsOption
-     * @param ShowRaaContactInformationOption $showRaaContactInformationOption
-     * @param VerifyEmailOption $verifyEmailOption
      * @param SelfVetOption $setVetOption
-     * @param NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption
      * @param RaLocation[] $raLocations
      */
     public function __construct(
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption,
-        VerifyEmailOption $verifyEmailOption,
-        SelfVetOption $selfVetOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        array $raLocations
+        private Institution $institution,
+        private UseRaLocationsOption $useRaLocationsOption,
+        private ShowRaaContactInformationOption $showRaaContactInformationOption,
+        private VerifyEmailOption $verifyEmailOption,
+        private SelfVetOption $selfVetOption,
+        private NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        private array $raLocations,
     ) {
-        $this->institution                     = $institution;
-        $this->useRaLocationsOption            = $useRaLocationsOption;
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $this->verifyEmailOption               = $verifyEmailOption;
-        $this->selfVetOption                   = $selfVetOption;
-        $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
-        $this->raLocations                     = $raLocations;
     }
 
     /**
@@ -82,8 +53,8 @@ final class MappedInstitutionConfiguration
      */
     public function inferRemoveInstitutionConfigurationByIdCommand(): RemoveInstitutionConfigurationByUnnormalizedIdCommand
     {
-        $command              = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
-        $command->UUID        = (string) Uuid::uuid4();
+        $command = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institution = $this->institution->getInstitution();
 
         return $command;
@@ -94,8 +65,8 @@ final class MappedInstitutionConfiguration
      */
     public function inferCreateInstitutionConfigurationCommand(): CreateInstitutionConfigurationCommand
     {
-        $command              = new CreateInstitutionConfigurationCommand();
-        $command->UUID        = (string) Uuid::uuid4();
+        $command = new CreateInstitutionConfigurationCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institution = $this->institution->getInstitution();
 
         return $command;
@@ -106,14 +77,15 @@ final class MappedInstitutionConfiguration
      */
     public function inferReconfigureInstitutionConfigurationCommand(): ReconfigureInstitutionConfigurationOptionsCommand
     {
-        $command                                  = new ReconfigureInstitutionConfigurationOptionsCommand();
-        $command->UUID                            = (string) Uuid::uuid4();
-        $command->institution                     = $this->institution->getInstitution();
-        $command->useRaLocationsOption            = $this->useRaLocationsOption->isEnabled();
+        $command = new ReconfigureInstitutionConfigurationOptionsCommand();
+        $command->UUID = (string)Uuid::uuid4();
+        $command->institution = $this->institution->getInstitution();
+        $command->useRaLocationsOption = $this->useRaLocationsOption->isEnabled();
         $command->showRaaContactInformationOption = $this->showRaaContactInformationOption->isEnabled();
-        $command->verifyEmailOption               = $this->verifyEmailOption->isEnabled();
-        $command->selfVetOption= $this->selfVetOption->isEnabled();
-        $command->numberOfTokensPerIdentityOption = $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
+        $command->verifyEmailOption = $this->verifyEmailOption->isEnabled();
+        $command->selfVetOption = $this->selfVetOption->isEnabled();
+        $command->numberOfTokensPerIdentityOption = $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(
+        );
 
         return $command;
     }
@@ -127,13 +99,13 @@ final class MappedInstitutionConfiguration
         $institution = $this->institution->getInstitution();
 
         foreach ($this->raLocations as $raLocation) {
-            $command                     = new AddRaLocationCommand();
-            $command->UUID               = (string) Uuid::uuid4();
-            $command->institution        = $institution;
-            $command->raLocationId       = $raLocation->id ;
-            $command->raLocationName     = $raLocation->name->getRaLocationName();
+            $command = new AddRaLocationCommand();
+            $command->UUID = (string)Uuid::uuid4();
+            $command->institution = $institution;
+            $command->raLocationId = $raLocation->id;
+            $command->raLocationName = $raLocation->name->getRaLocationName();
             $command->contactInformation = $raLocation->contactInformation->getContactInformation();
-            $command->location           = $raLocation->location->getLocation();
+            $command->location = $raLocation->location->getLocation();
 
             $commands[] = $command;
         }

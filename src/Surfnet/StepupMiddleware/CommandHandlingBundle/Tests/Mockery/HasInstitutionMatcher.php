@@ -27,7 +27,7 @@ final class HasInstitutionMatcher extends MatcherAbstract
     {
         if (!is_string($expected)) {
             throw new RuntimeException(
-                sprintf('In order to use the %s, a string should be given.', self::class)
+                sprintf('In order to use the %s, a string should be given.', self::class),
             );
         }
 

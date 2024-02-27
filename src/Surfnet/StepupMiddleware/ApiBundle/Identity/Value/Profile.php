@@ -19,34 +19,19 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use JsonSerializable;
-use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class Profile implements JsonSerializable
 {
-    private Identity $identity;
-
-    private AuthorizedInstitutionCollection $authorizedInstitutionCollection;
-
     /**
-     * @var bool
-     */
-    private $isSraa;
-
-    /**
-     * @param Identity $identity
-     * @param AuthorizedInstitutionCollection $authorizedInstitutionCollection
      *
      * @param bool $isSraa
      */
     public function __construct(
-        Identity $identity,
-        AuthorizedInstitutionCollection $authorizedInstitutionCollection,
-        $isSraa
+        private readonly Identity $identity,
+        private readonly AuthorizedInstitutionCollection $authorizedInstitutionCollection,
+        private $isSraa,
     ) {
-        $this->identity = $identity;
-        $this->authorizedInstitutionCollection = $authorizedInstitutionCollection;
-        $this->isSraa = $isSraa;
     }
 
     public function jsonSerialize()

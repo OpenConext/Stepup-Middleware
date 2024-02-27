@@ -39,7 +39,7 @@ class DateTimeTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(DateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType');
+        Type::addType(DateTimeType::NAME, DateTimeType::class);
     }
 
     public function setUp(): void
@@ -96,13 +96,13 @@ class DateTimeTypeTest extends UnitTest
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
-        $databaseValue    = '2015-02-17 10:48:22';
-        $actualDateTime   = $dateTime->convertToPHPValue($databaseValue, $this->platform);
+        $databaseValue = '2015-02-17 10:48:22';
+        $actualDateTime = $dateTime->convertToPHPValue($databaseValue, $this->platform);
         $expectedDateTime = new DateTime(
-            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC'))
+            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC')),
         );
 
-        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $actualDateTime);
+        $this->assertInstanceOf(DateTime::class, $actualDateTime);
         $this->assertEquals($expectedDateTime, $actualDateTime);
     }
 

@@ -32,7 +32,7 @@ class CommonNameTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function the_common_name_address_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
+    public function the_common_name_address_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue,): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -46,9 +46,9 @@ class CommonNameTest extends UnitTest
     public function two_common_names_with_the_same_value_are_equal(): void
     {
         $commonName = new CommonName('John Doe');
-        $theSame    = new CommonName('John Doe');
-        $different  = new CommonName('Jane Doe');
-        $unknown    = CommonName::unknown();
+        $theSame = new CommonName('John Doe');
+        $different = new CommonName('Jane Doe');
+        $unknown = CommonName::unknown();
 
         $this->assertTrue($commonName->equals($theSame));
         $this->assertFalse($commonName->equals($different));
@@ -63,10 +63,10 @@ class CommonNameTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

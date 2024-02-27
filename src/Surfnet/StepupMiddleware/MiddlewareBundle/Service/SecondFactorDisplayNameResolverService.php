@@ -22,23 +22,15 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class SecondFactorDisplayNameResolverService
 {
-    private array $secondFactors;
-
-    /**
-     * @param array $secondFactors
-     */
-    public function __construct(array $secondFactors)
+    public function __construct(private array $secondFactors)
     {
-        $this->secondFactors = $secondFactors;
     }
 
     /**
-     * @param SecondFactorType $secondFactorType
-     *
      * @return string
      */
     public function resolveByType(SecondFactorType $secondFactorType): string
     {
-        return $this->secondFactors[(string) $secondFactorType] ?? ucfirst((string) $secondFactorType);
+        return $this->secondFactors[(string)$secondFactorType] ?? ucfirst((string)$secondFactorType);
     }
 }

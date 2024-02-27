@@ -25,6 +25,7 @@ use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -36,7 +37,6 @@ use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
@@ -51,14 +51,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveR
  */
 class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var RepositoryInterface
-     */
-    private RepositoryInterface $repository;
-
-    public function __construct(RepositoryInterface $repository)
+    public function __construct(private readonly RepositoryInterface $repository)
     {
-        $this->repository = $repository;
     }
 
     public function handleCreateInstitutionConfigurationCommand(CreateInstitutionConfigurationCommand $command): void
@@ -69,11 +63,11 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
         try {
             /** @var InstitutionConfiguration $institutionConfiguration */
             $institutionConfiguration = $this->repository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
+                $institutionConfigurationId->getInstitutionConfigurationId(),
             );
 
             $institutionConfiguration->rebuild();
-        } catch (AggregateNotFoundException $exception) {
+        } catch (AggregateNotFoundException) {
             $institutionConfiguration = InstitutionConfiguration::create($institutionConfigurationId, $institution);
         }
 
@@ -81,45 +75,52 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
     }
 
     public function handleReconfigureInstitutionConfigurationOptionsCommand(
-        ReconfigureInstitutionConfigurationOptionsCommand $command
+        ReconfigureInstitutionConfigurationOptionsCommand $command,
     ): void {
         $institution = new Institution($command->institution);
 
-        $allowedSecondFactors = array_map(function ($allowedSecondFactor): SecondFactorType {
-            return new SecondFactorType($allowedSecondFactor);
-        }, $command->allowedSecondFactors);
+        $allowedSecondFactors = array_map(
+            fn($allowedSecondFactor): SecondFactorType => new SecondFactorType($allowedSecondFactor),
+            $command->allowedSecondFactors,
+        );
 
 
         $institutionConfiguration = $this->loadInstitutionConfigurationFor($institution);
         $institutionConfiguration->configureUseRaLocationsOption(
-            new UseRaLocationsOption($command->useRaLocationsOption)
+            new UseRaLocationsOption($command->useRaLocationsOption),
         );
         $institutionConfiguration->configureVerifyEmailOption(
-            new VerifyEmailOption($command->verifyEmailOption)
+            new VerifyEmailOption($command->verifyEmailOption),
         );
         $institutionConfiguration->configureNumberOfTokensPerIdentityOption(
-            new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption)
+            new NumberOfTokensPerIdentityOption($command->numberOfTokensPerIdentityOption),
         );
         $institutionConfiguration->configureShowRaaContactInformationOption(
-            new ShowRaaContactInformationOption($command->showRaaContactInformationOption)
+            new ShowRaaContactInformationOption($command->showRaaContactInformationOption),
         );
 
         // Configure the authorization options on the aggregate
-        $institutionConfiguration->updateUseRaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
-            InstitutionRole::useRa(),
-            $command->useRaOption
-        ));
-        $institutionConfiguration->updateUseRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
-            InstitutionRole::useRaa(),
-            $command->useRaaOption
-        ));
-        $institutionConfiguration->updateSelectRaaOption(InstitutionAuthorizationOption::fromInstitutionConfig(
-            InstitutionRole::selectRaa(),
-            $command->selectRaaOption
-        ));
+        $institutionConfiguration->updateUseRaOption(
+            InstitutionAuthorizationOption::fromInstitutionConfig(
+                InstitutionRole::useRa(),
+                $command->useRaOption,
+            ),
+        );
+        $institutionConfiguration->updateUseRaaOption(
+            InstitutionAuthorizationOption::fromInstitutionConfig(
+                InstitutionRole::useRaa(),
+                $command->useRaaOption,
+            ),
+        );
+        $institutionConfiguration->updateSelectRaaOption(
+            InstitutionAuthorizationOption::fromInstitutionConfig(
+                InstitutionRole::selectRaa(),
+                $command->selectRaaOption,
+            ),
+        );
 
         $institutionConfiguration->updateAllowedSecondFactorList(
-            AllowedSecondFactorList::ofTypes($allowedSecondFactors)
+            AllowedSecondFactorList::ofTypes($allowedSecondFactors),
         );
 
         // Handle optional options
@@ -131,7 +132,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
 
         $satOption = $command->selfAssertedTokensOption ?? SelfAssertedTokensOption::getDefault()->isEnabled();
         $institutionConfiguration->configureSelfAssertedTokensOption(
-            new SelfAssertedTokensOption($satOption)
+            new SelfAssertedTokensOption($satOption),
         );
 
         $this->repository->save($institutionConfiguration);
@@ -146,7 +147,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
             new RaLocationId($command->raLocationId),
             new RaLocationName($command->raLocationName),
             new Location($command->location),
-            new ContactInformation($command->contactInformation)
+            new ContactInformation($command->contactInformation),
         );
 
         $this->repository->save($institutionConfiguration);
@@ -161,7 +162,7 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
             new RaLocationId($command->raLocationId),
             new RaLocationName($command->raLocationName),
             new Location($command->location),
-            new ContactInformation($command->contactInformation)
+            new ContactInformation($command->contactInformation),
         );
 
         $this->repository->save($institutionConfiguration);
@@ -178,13 +179,13 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
     }
 
     public function handleRemoveInstitutionConfigurationByUnnormalizedIdCommand(
-        RemoveInstitutionConfigurationByUnnormalizedIdCommand $command
+        RemoveInstitutionConfigurationByUnnormalizedIdCommand $command,
     ): void {
         $institution = new Institution($command->institution);
 
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
         $institutionConfiguration = $this->repository->load(
-            $institutionConfigurationId->getInstitutionConfigurationId()
+            $institutionConfigurationId->getInstitutionConfigurationId(),
         );
         $institutionConfiguration->destroy();
 
@@ -192,22 +193,21 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
     }
 
     /**
+     * @return InstitutionConfiguration
      * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
      *
-     * @param Institution $institution
-     * @return InstitutionConfiguration
      */
     private function loadInstitutionConfigurationFor(Institution $institution)
     {
         try {
             $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
             $institutionConfiguration = $this->repository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
+                $institutionConfigurationId->getInstitutionConfigurationId(),
             );
-        } catch (AggregateNotFoundException $exception) {
+        } catch (AggregateNotFoundException) {
             $institutionConfigurationId = InstitutionConfigurationId::from($institution);
             $institutionConfiguration = $this->repository->load(
-                $institutionConfigurationId->getInstitutionConfigurationId()
+                $institutionConfigurationId->getInstitutionConfigurationId(),
             );
         }
 

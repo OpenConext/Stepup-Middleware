@@ -104,27 +104,27 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale,
-        VettingType $vettingType
+        VettingType $vettingType,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId                 = $nameId;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorType       = $secondFactorType;
+        $this->nameId = $nameId;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->commonName             = $commonName;
-        $this->email                  = $email;
-        $this->preferredLocale        = $preferredLocale;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
         $this->vettingType = $vettingType;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
         $metadata->vettingType = $this->vettingType;
 
@@ -144,7 +144,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale']),
-            new UnknownVettingType()
+            new UnknownVettingType(),
         );
     }
 
@@ -154,12 +154,12 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
     public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'name_id'                  => (string) $this->nameId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'second_factor_id'         => (string) $this->secondFactorId,
-            'second_factor_type'       => (string) $this->secondFactorType,
-            'preferred_locale'         => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -174,8 +174,8 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email          = $sensitiveData->getEmail();
-        $this->commonName     = $sensitiveData->getCommonName();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->vettingType = $sensitiveData->getVettingType();
     }

@@ -28,6 +28,6 @@ abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
      */
     protected static function uuid(): string
     {
-        return (string) Uuid::uuid4();
+        return (string)Uuid::uuid4();
     }
 }

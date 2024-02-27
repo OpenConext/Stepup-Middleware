@@ -45,13 +45,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class EmailVerifiedSecondFactorRemindersCommand extends Command
 {
     protected static $defaultName = 'middleware:cron:email-reminder';
-    private TransactionAwarePipeline $pipeline;
-
-    private BufferedEventBus $eventBus;
-
-    private DBALConnectionHelper $connection;
-
-    private LoggerInterface $logger;
 
     protected function configure(): void
     {
@@ -61,26 +54,22 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
                 'dry-run',
                 null,
                 InputOption::VALUE_NONE,
-                'Run in dry mode, not sending any email'
+                'Run in dry mode, not sending any email',
             )
             ->addOption(
                 'date',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7'
+                'The date (Y-m-d) that should be used for sending reminder email messages, defaults to TODAY - 7',
             );
     }
 
     public function __construct(
-        TransactionAwarePipeline $pipeline,
-        BufferedEventBus $eventBus,
-        DBALConnectionHelper $connection,
-        LoggerInterface $logger
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly BufferedEventBus $eventBus,
+        private readonly DBALConnectionHelper $connection,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->pipeline = $pipeline;
-        $this->eventBus = $eventBus;
-        $this->connection = $connection;
-        $this->logger = $logger;
         parent::__construct();
     }
 
@@ -127,7 +116,11 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
     {
         if ($input->hasOption('date')) {
             $date = $input->getOption('date');
-            Assertion::nullOrDate($date, 'Y-m-d', 'Expected date to be a string and formatted in the Y-m-d date format');
+            Assertion::nullOrDate(
+                $date,
+                'Y-m-d',
+                'Expected date to be a string and formatted in the Y-m-d date format',
+            );
         }
 
         if ($input->hasOption('dry-run')) {

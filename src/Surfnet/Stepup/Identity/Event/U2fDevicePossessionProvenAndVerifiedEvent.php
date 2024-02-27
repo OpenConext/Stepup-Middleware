@@ -35,7 +35,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 /**
  * @deprecated Built in U2F support is dropped from StepUp, this Event was not removed to support event replay
  */
-class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
     private array $allowlist = [
         'identity_id',
@@ -80,11 +83,6 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     public $registrationRequestedAt;
 
     /**
-     * @var string
-     */
-    public $registrationCode;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
@@ -104,7 +102,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         Email $email,
         Locale $locale,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        public $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -114,16 +112,15 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         $this->email = $email;
         $this->preferredLocale = $locale;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->registrationCode = $registrationCode;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->keyHandle;
 
         return $metadata;
@@ -145,7 +142,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
             Email::unknown(),
             new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
-            (string) $data['registration_code']
+            (string)$data['registration_code'],
         );
     }
 
@@ -155,12 +152,12 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'registration_requested_at'   => (string) $this->registrationRequestedAt,
-            'registration_code'           => $this->registrationCode,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -174,9 +171,9 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->keyHandle   = $sensitiveData->getSecondFactorIdentifier();
-        $this->email       = $sensitiveData->getEmail();
-        $this->commonName  = $sensitiveData->getCommonName();
+        $this->keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
     }
 
     public function obtainUserData(): array

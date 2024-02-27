@@ -61,9 +61,9 @@ class UnverifiedSecondFactor implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'                       => $this->id,
-            'type'                     => $this->type,
-            'second_factor_identifier' => $this->secondFactorIdentifier
+            'id' => $this->id,
+            'type' => $this->type,
+            'second_factor_identifier' => $this->secondFactorIdentifier,
         ];
     }
 }

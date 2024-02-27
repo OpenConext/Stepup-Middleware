@@ -39,7 +39,7 @@ class LocationTypeTest extends UnitTest
     {
         Type::addType(
             LocationType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocationType'
+            LocationType::class,
         );
     }
 
@@ -70,8 +70,8 @@ class LocationTypeTest extends UnitTest
         $location = Type::getType(LocationType::NAME);
 
         $expected = 'Somewhere behind you';
-        $input    = new Location($expected);
-        $output   = $location->convertToDatabaseValue($input, $this->platform);
+        $input = new Location($expected);
+        $output = $location->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -102,7 +102,7 @@ class LocationTypeTest extends UnitTest
 
         $output = $location->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Location', $output);
+        $this->assertInstanceOf(Location::class, $output);
         $this->assertEquals(new Location($input), $output);
     }
 

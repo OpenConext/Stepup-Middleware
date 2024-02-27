@@ -25,11 +25,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RaController extends AbstractController
 {
-    private RaListingService $raListingService;
-
-    public function __construct(RaListingService $raListingService)
-    {
-        $this->raListingService = $raListingService;
+    public function __construct(
+        private readonly RaListingService $raListingService,
+    ) {
     }
 
     public function list(Institution $institution): JsonCollectionResponse

@@ -38,16 +38,14 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 class RaCandidateRepository extends ServiceEntityRepository
 {
-    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, RaCandidate::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
-     * @param RaCandidateQuery $query
      * @return Query
      */
     public function createSearchQuery(RaCandidateQuery $query): Query
@@ -62,7 +60,7 @@ class RaCandidateRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'i.institution',
-            'iac'
+            'iac',
         );
 
         if ($query->institution) {
@@ -107,7 +105,6 @@ class RaCandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param RaCandidateQuery $query
      * @return Query
      */
     public function createOptionsQuery(RaCandidateQuery $query): Query
@@ -125,7 +122,7 @@ class RaCandidateRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'a.institution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
@@ -153,14 +150,16 @@ class RaCandidateRepository extends ServiceEntityRepository
     {
         // Base query to get all allowed ra candidates
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
-            ->select('i.id as identity_id, i.institution, i.commonName as common_name, i.email, i.nameId AS name_id, a.institution AS ra_institution')
+            ->select(
+                'i.id as identity_id, i.institution, i.commonName as common_name, i.email, i.nameId AS name_id, a.institution AS ra_institution',
+            )
             ->from(VettedSecondFactor::class, 'vsf')
             ->innerJoin(Identity::class, 'i', Join::WITH, "vsf.identityId = i.id")
             ->innerJoin(
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
-                "a.institutionRole = 'select_raa' AND a.institutionRelation = i.institution"
+                "a.institutionRole = 'select_raa' AND a.institutionRelation = i.institution",
             );
 
         // Filter out candidates who are already ra

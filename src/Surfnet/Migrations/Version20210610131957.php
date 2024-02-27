@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+
 use function json_decode;
 use function json_encode;
 
@@ -30,7 +32,7 @@ SQL;
         AND playhead = :playhead;
 SQL;
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // Do not show warning on migrations.
         $this->addSql('# Updating entities.');
@@ -57,12 +59,12 @@ SQL;
                     'payload' => $payload,
                     'uuid' => $uuid,
                     'playhead' => $playhead,
-                ]
+                ],
             );
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // This migration can not be undone.
     }

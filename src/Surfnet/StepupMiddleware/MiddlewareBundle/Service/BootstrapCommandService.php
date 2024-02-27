@@ -49,35 +49,18 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class BootstrapCommandService
 {
-    private Pipeline $pipeline;
-    private TokenStorageInterface $tokenStorage;
-    private MetadataEnricher $enricher;
-    private IdentityRepository $identityRepository;
-    private UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository;
-    private VerifiedSecondFactorRepository $verifiedSecondFactorRepository;
-    private InstitutionConfigurationOptionsRepository $institutionConfigurationRepository;
-    private VettedSecondFactorRepository $vettedSecondFactorRepository;
-
     private array $validRegistrationStatuses = ['unverified', 'verified', 'vetted'];
 
     public function __construct(
-        Pipeline $pipeline,
-        MetadataEnricher $enricher,
-        TokenStorageInterface $tokenStorage,
-        IdentityRepository $identityRepository,
-        UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
-        VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
-        VettedSecondFactorRepository $vettedSecondFactorRepository,
-        InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository
+        private readonly Pipeline $pipeline,
+        private readonly MetadataEnricher $enricher,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly IdentityRepository $identityRepository,
+        private readonly UnverifiedSecondFactorRepository $unverifiedSecondFactorRepository,
+        private readonly VerifiedSecondFactorRepository $verifiedSecondFactorRepository,
+        private readonly VettedSecondFactorRepository $vettedSecondFactorRepository,
+        private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationRepository,
     ) {
-        $this->pipeline = $pipeline;
-        $this->enricher = $enricher;
-        $this->tokenStorage = $tokenStorage;
-        $this->identityRepository = $identityRepository;
-        $this->unverifiedSecondFactorRepository = $unverifiedSecondFactorRepository;
-        $this->verifiedSecondFactorRepository = $verifiedSecondFactorRepository;
-        $this->institutionConfigurationRepository = $institutionConfigurationOptionsRepository;
-        $this->vettedSecondFactorRepository = $vettedSecondFactorRepository;
     }
 
     public function setToken(TokenInterface $token): void
@@ -95,15 +78,17 @@ class BootstrapCommandService
                 sprintf(
                     'Invalid argument provided for the "registration-status" argument. One of: %s is expected. Received: "%s"',
                     implode(', ', $this->validRegistrationStatuses),
-                    $registrationStatus
-                )
+                    $registrationStatus,
+                ),
             );
         }
     }
 
     public function requiresMailVerification(string $institution)
     {
-        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(new ConfigurationInstitution($institution));
+        $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(
+            new ConfigurationInstitution($institution),
+        );
         if ($configuration) {
             return $configuration->verifyEmailOption->isEnabled();
         }
@@ -115,14 +100,14 @@ class BootstrapCommandService
         string $actorId,
         Identity $identity,
         string $secondFactorId,
-        string $secondFactorIdentifier
-    ) :void {
+        string $secondFactorIdentifier,
+    ): void {
         $verifiedSecondFactor = $this->verifiedSecondFactorRepository->findOneBy(
-            ['identityId' => $identity->id, 'type' => $tokenType]
+            ['identityId' => $identity->id, 'type' => $tokenType],
         );
 
         $command = new VetSecondFactorCommand();
-        $command->UUID = (string) Uuid::uuid4();
+        $command->UUID = (string)Uuid::uuid4();
         $command->authorityId = $actorId;
         $command->identityId = $identity->id;
         $command->secondFactorId = $secondFactorId;
@@ -136,8 +121,6 @@ class BootstrapCommandService
     }
 
     /**
-     * @param Institution $institution
-     * @param NameId $nameId
      * @param $commonName
      * @param $email
      * @param $preferredLocale
@@ -148,9 +131,8 @@ class BootstrapCommandService
         NameId $nameId,
         $commonName,
         $email,
-        $preferredLocale
-    ): CreateIdentityCommand
-    {
+        $preferredLocale,
+    ): CreateIdentityCommand {
         $command = new CreateIdentityCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->id = (string)Uuid::uuid4();
@@ -202,7 +184,7 @@ class BootstrapCommandService
     public function verifyEmail(Identity $identity, string $tokenType): void
     {
         $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
-            ['identityId' => $identity->id, 'type' => $tokenType]
+            ['identityId' => $identity->id, 'type' => $tokenType],
         );
 
         $command = new VerifyEmailCommand();
@@ -213,8 +195,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function migrateVettedSecondFactor(Identity $sourceIdentity, Identity $targetIdentity, VettedSecondFactor $vettedSecondFactor): void
-    {
+    public function migrateVettedSecondFactor(
+        Identity $sourceIdentity,
+        Identity $targetIdentity,
+        VettedSecondFactor $vettedSecondFactor,
+    ): void {
         $command = new CommandHandlingMigrateSecondFactorCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->sourceIdentityId = $sourceIdentity->id;
@@ -257,7 +242,6 @@ class BootstrapCommandService
     }
 
     /**
-     * @param Identity $identity
      * @return array|VettedSecondFactor[]
      */
     public function getVettedSecondFactorsFromIdentity(Identity $identity): array

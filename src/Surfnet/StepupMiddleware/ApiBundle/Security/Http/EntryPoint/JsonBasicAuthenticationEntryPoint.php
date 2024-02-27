@@ -29,11 +29,8 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
-    private $realmName;
-
-    public function __construct($realmName)
+    public function __construct(private $realmName)
     {
-        $this->realmName = $realmName;
     }
 
     /**
@@ -47,7 +44,7 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
         return new JsonResponse(
             ['errors' => [$error]],
             Response::HTTP_UNAUTHORIZED,
-            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)]
+            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)],
         );
     }
 }

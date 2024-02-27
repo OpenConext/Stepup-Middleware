@@ -27,16 +27,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
 {
-    private DeprovisionServiceInterface $deprovisionService;
-
-    private UserDataFormatterInterface $formatHelper;
-
     public function __construct(
-        DeprovisionServiceInterface $deprovisionService,
-        UserDataFormatterInterface $formatHelper
+        private readonly DeprovisionServiceInterface $deprovisionService,
+        private readonly UserDataFormatterInterface $formatHelper,
     ) {
-        $this->deprovisionService = $deprovisionService;
-        $this->formatHelper = $formatHelper;
     }
 
     public function deprovision(string $collabPersonId): JsonResponse
@@ -48,7 +42,7 @@ class DeprovisionController extends AbstractController
             if ($userData !== []) {
                 $this->deprovisionService->deprovision($collabPersonId);
             }
-        } catch (DomainException $e) {
+        } catch (DomainException) {
             // On domain exceptions, like when the identity is forgotten, we return OK, with empty data
             // just so the deprovision run does not end prematurely. At this point, no other domain exceptions
             // are thrown.

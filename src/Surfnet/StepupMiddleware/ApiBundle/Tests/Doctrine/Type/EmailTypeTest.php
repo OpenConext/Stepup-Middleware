@@ -37,7 +37,7 @@ class EmailTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(EmailType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\EmailType');
+        Type::addType(EmailType::NAME, EmailType::class);
     }
 
     public function setUp(): void
@@ -66,7 +66,7 @@ class EmailTypeTest extends UnitTest
     {
         $email = Type::getType(EmailType::NAME);
 
-        $input  = new Email('arthur@babelfish.invalid');
+        $input = new Email('arthur@babelfish.invalid');
         $output = $email->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -98,7 +98,7 @@ class EmailTypeTest extends UnitTest
 
         $output = $email->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Email', $output);
+        $this->assertInstanceOf(Email::class, $output);
         $this->assertEquals(new Email($input), $output);
     }
 

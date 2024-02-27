@@ -25,18 +25,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStage implements Stage
 {
-    private LoggerInterface $logger;
-
-    private ValidatorInterface $validator;
-
-    /**
-     * @param LoggerInterface    $logger
-     * @param ValidatorInterface $validator
-     */
-    public function __construct(LoggerInterface $logger, ValidatorInterface $validator)
-    {
-        $this->logger = $logger;
-        $this->validator = $validator;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly ValidatorInterface $validator,
+    ) {
     }
 
     public function process(Command $command): Command

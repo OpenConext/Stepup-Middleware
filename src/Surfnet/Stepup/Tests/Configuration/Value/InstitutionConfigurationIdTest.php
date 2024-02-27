@@ -45,8 +45,9 @@ class InstitutionConfigurationIdTest extends TestCase
      * @dataProvider nonStringOrEmptyStringProvider
      * @param $nonStringOrEmptyString
      */
-    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(string|int|float|StdClass|array $nonStringOrEmptyString): void
-    {
+    public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(
+        string|int|float|StdClass|array $nonStringOrEmptyString,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new InstitutionConfigurationId($nonStringOrEmptyString);
@@ -94,7 +95,7 @@ class InstitutionConfigurationIdTest extends TestCase
         $this->assertTrue(
             $isSameId,
             'An InstitutionConfigurationId based on an institution with mixed casing'
-            . 'should match an InstitutionConfigurationId based on the same institution in lower case'
+            . 'should match an InstitutionConfigurationId based on the same institution in lower case',
         );
     }
 
@@ -107,7 +108,7 @@ class InstitutionConfigurationIdTest extends TestCase
         $mixedCaseInstitution = new Institution('An InStItUtIoN');
 
         $unnormalizedInstitutionConfigurationId = InstitutionConfigurationId::from($mixedCaseInstitution);
-        $normalizedInstitutionConfigurationId   = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
+        $normalizedInstitutionConfigurationId = InstitutionConfigurationId::normalizedFrom($mixedCaseInstitution);
 
         $isSameId = $unnormalizedInstitutionConfigurationId->equals($normalizedInstitutionConfigurationId);
 
@@ -122,10 +123,10 @@ class InstitutionConfigurationIdTest extends TestCase
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

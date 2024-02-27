@@ -56,19 +56,9 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     public $phoneNumber;
 
     /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
      * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
-
-    /**
-     * @var string
-     */
-    public $emailVerificationNonce;
 
     /**
      * @var CommonName
@@ -104,20 +94,18 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         PhoneNumber $phoneNumber,
-        $emailVerificationRequired,
+        public $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
+        public $emailVerificationNonce,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
         $this->phoneNumber = $phoneNumber;
-        $this->emailVerificationRequired = $emailVerificationRequired;
         $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
@@ -125,11 +113,11 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->phoneNumber;
 
         return $metadata;
@@ -151,7 +139,7 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -161,13 +149,13 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     public function serialize(): array
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'email_verification_required' => (bool)$this->emailVerificationRequired,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'  => (string) $this->emailVerificationNonce,
-            'preferred_locale'          => (string) $this->preferredLocale,
+            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -181,8 +169,8 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email       = $sensitiveData->getEmail();
-        $this->commonName  = $sensitiveData->getCommonName();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
         $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
     }
 

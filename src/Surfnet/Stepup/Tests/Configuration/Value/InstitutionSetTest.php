@@ -76,7 +76,9 @@ class InstitutionSetTest extends UnitTest
      */
     public function only_institutions_can_be_present_in_set(): void
     {
-        $this->expectExceptionMessage("Invalid argument type: \"Surfnet\Stepup\Configuration\Value\Institution\" expected, \"Surfnet\Stepup\Configuration\Value\Location\" given for \"institutions\"");
+        $this->expectExceptionMessage(
+            "Invalid argument type: \"Surfnet\Stepup\Configuration\Value\Institution\" expected, \"Surfnet\Stepup\Configuration\Value\Location\" given for \"institutions\"",
+        );
         $this->expectException(InvalidArgumentException::class);
 
         $institution = new Institution('b');
@@ -106,12 +108,12 @@ class InstitutionSetTest extends UnitTest
             new Institution('a'),
             new Institution('b'),
             new Institution('c'),
-            new Institution('d')
+            new Institution('d'),
         ];
         $set = InstitutionSet::create($input);
         $this->assertEquals(
             $input,
-            $set->toScalarArray()
+            $set->toScalarArray(),
         );
     }
 
@@ -122,8 +124,6 @@ class InstitutionSetTest extends UnitTest
      * @group domain
      * @dataProvider dirtyInstitutionListProvider
      *
-     *
-     * @param array $invalid
      */
     public function factory_method_can_build_from_array_of_string_and_rejects_invalid_types(array $invalid): void
     {
@@ -142,7 +142,7 @@ class InstitutionSetTest extends UnitTest
             new Institution('a'),
             new Institution('b'),
             new Institution('c'),
-            new Institution('d')
+            new Institution('d'),
         ];
         $set = InstitutionSet::create($input);
         $secondSet = InstitutionSet::create($input);

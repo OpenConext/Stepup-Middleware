@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -27,7 +27,10 @@ class Version20150522163053 extends AbstractMigration implements ContainerAwareI
         $gatewaySchema = $this->getGatewaySchema();
 
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql(sprintf('ALTER TABLE %s.saml_entity ADD id VARCHAR(36) DEFAULT NULL', $gatewaySchema));
         $this->addSql(sprintf('UPDATE %s.saml_entity SET id = UUID() WHERE id IS NULL', $gatewaySchema));
@@ -44,7 +47,10 @@ class Version20150522163053 extends AbstractMigration implements ContainerAwareI
         $gatewaySchema = $this->getGatewaySchema();
 
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf(
+            $this->connection->getDatabasePlatform()->getName() != 'mysql',
+            'Migration can only be executed safely on \'mysql\'.',
+        );
 
         $this->addSql(sprintf('ALTER TABLE %s.saml_entity DROP PRIMARY KEY', $gatewaySchema));
         $this->addSql(sprintf('ALTER TABLE %s.saml_entity DROP id', $gatewaySchema));

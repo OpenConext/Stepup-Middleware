@@ -39,7 +39,7 @@ class SelfVetOptionTypeTest extends UnitTest
     {
         Type::addType(
             SelfVetOptionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType'
+            \Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SelfVetOptionType::class,
         );
     }
 
@@ -85,8 +85,8 @@ class SelfVetOptionTypeTest extends UnitTest
         $configurationInstitution = Type::getType(SelfVetOptionType::NAME);
 
         $expected = true;
-        $input    = new SelfVetOption($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new SelfVetOption($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -117,7 +117,7 @@ class SelfVetOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\SelfVetOption', $output);
+        $this->assertInstanceOf(\Surfnet\Stepup\Configuration\Value\SelfVetOption::class, $output);
         $this->assertEquals(new SelfVetOption($input), $output);
     }
 }

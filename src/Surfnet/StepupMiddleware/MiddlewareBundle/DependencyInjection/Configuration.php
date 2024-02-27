@@ -29,29 +29,27 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
-                ->arrayNode('second_factors_display_name')->isRequired()->scalarPrototype()->end()->end()
-                ->scalarNode('email_verification_window')
-                    ->info('The amount of seconds after which the email verification url/code expires')
-                    ->defaultValue(3600)
-                    ->validate()
-                        ->ifTrue(function ($seconds): bool {
-                            return !is_int($seconds) || $seconds < 1;
-                        })
-                        ->thenInvalid(
-                            'The email verification window must be a positive integer'
-                        )
-                    ->end()
-                ->end()
-                ->arrayNode('enabled_generic_second_factors')
-                    ->isRequired()
-                    ->prototype('array')
-                    ->children()
-                        ->scalarNode('loa')
-                            ->isRequired()
-                            ->info('The lao level of the Gssf')
-                        ->end()
-                    ->end()
-                ->end()
+            ->arrayNode('second_factors_display_name')->isRequired()->scalarPrototype()->end()->end()
+            ->scalarNode('email_verification_window')
+            ->info('The amount of seconds after which the email verification url/code expires')
+            ->defaultValue(3600)
+            ->validate()
+            ->ifTrue(fn($seconds): bool => !is_int($seconds) || $seconds < 1)
+            ->thenInvalid(
+                'The email verification window must be a positive integer',
+            )
+            ->end()
+            ->end()
+            ->arrayNode('enabled_generic_second_factors')
+            ->isRequired()
+            ->prototype('array')
+            ->children()
+            ->scalarNode('loa')
+            ->isRequired()
+            ->info('The lao level of the Gssf')
+            ->end()
+            ->end()
+            ->end()
             ->end();
 
         return $treeBuilder;

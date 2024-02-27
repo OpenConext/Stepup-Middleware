@@ -32,8 +32,9 @@ class GssfIdTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $invalidValue): void
-    {
+    public function a_gssf_id_cannot_be_created_with_anything_but_a_nonempty_string(
+        string|int|float|StdClass|array $invalidValue,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new GssfId($invalidValue);
@@ -45,10 +46,10 @@ class GssfIdTest extends UnitTest
      */
     public function two_gssf_ids_with_the_same_value_are_equal(): void
     {
-        $gssf        = new GssfId('a');
-        $theSame     = new GssfId(' a');
-        $different   = new GssfId('A');
-        $unknown     = GssfId::unknown();
+        $gssf = new GssfId('a');
+        $theSame = new GssfId(' a');
+        $different = new GssfId('A');
+        $unknown = GssfId::unknown();
 
         $this->assertTrue($gssf->equals($theSame));
         $this->assertFalse($gssf->equals($different));
@@ -63,10 +64,10 @@ class GssfIdTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

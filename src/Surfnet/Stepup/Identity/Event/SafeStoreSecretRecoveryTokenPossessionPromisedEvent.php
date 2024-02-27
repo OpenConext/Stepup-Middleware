@@ -39,7 +39,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  * This event is recorded when the user promised it stored the password
  * (displayed only once to the user) in a safe location.
  */
-class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
+class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements
+    Forgettable,
+    RightToObtainDataInterface
 {
     private array $allowlist = [
         'identity_id',
@@ -82,7 +84,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         RecoveryTokenIdentifier $secret,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -99,7 +101,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
         // In the audit log we do not show the secret (hashed)
-        $metadata->recoveryTokenId = (string) SafeStore::hidden();
+        $metadata->recoveryTokenId = (string)SafeStore::hidden();
         $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
         return $metadata;
     }
@@ -113,7 +115,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
             SafeStore::unknown(),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -123,11 +125,11 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'recovery_token_id' => (string) $this->recoveryTokenId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'recovery_token_id' => (string)$this->recoveryTokenId,
             'recovery_token_type' => RecoveryTokenType::TYPE_SAFE_STORE,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

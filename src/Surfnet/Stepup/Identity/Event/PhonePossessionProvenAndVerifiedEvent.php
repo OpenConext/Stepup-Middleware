@@ -32,7 +32,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
     private array $allowlist = [
         'identity_id',
@@ -77,11 +80,6 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
     public $registrationRequestedAt;
 
     /**
-     * @var string
-     */
-    public $registrationCode;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
@@ -101,7 +99,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         Email $email,
         Locale $locale,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        public $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -111,16 +109,15 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         $this->email = $email;
         $this->preferredLocale = $locale;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->registrationCode = $registrationCode;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->phoneNumber;
 
         return $metadata;
@@ -142,7 +139,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
             Email::unknown(),
             new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
-            (string) $data['registration_code']
+            (string)$data['registration_code'],
         );
     }
 
@@ -152,12 +149,12 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
     public function serialize(): array
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'registration_requested_at'   => (string) $this->registrationRequestedAt,
-            'registration_code'           => $this->registrationCode,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

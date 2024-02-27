@@ -29,29 +29,26 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
 
 class RaListingService extends AbstractSearchService
 {
-    private RaListingRepository $raListingRepository;
-
-    public function __construct(RaListingRepository $raListingRepository)
+    public function __construct(private readonly RaListingRepository $raListingRepository)
     {
-        $this->raListingRepository = $raListingRepository;
     }
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $raInstitution
-     * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|RaListing
      */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
         Institution $raInstitution,
-        InstitutionAuthorizationContextInterface $authorizationContext
+        InstitutionAuthorizationContextInterface $authorizationContext,
     ) {
-        return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext($identityId, $raInstitution, $authorizationContext);
+        return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext(
+            $identityId,
+            $raInstitution,
+            $authorizationContext,
+        );
     }
 
     /**
-     * @param RaListingQuery $query
      * @return Pagerfanta
      */
     public function search(RaListingQuery $query)
@@ -62,7 +59,6 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @param RaListingQuery $query
      * @return array
      */
     public function getFilterOptions(RaListingQuery $query)
@@ -71,7 +67,6 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @param Institution $institution
      * @return RegistrationAuthorityCredentials[]
      */
     public function listRegistrationAuthoritiesFor(Institution $institution)
@@ -79,9 +74,7 @@ class RaListingService extends AbstractSearchService
         $raListings = $this->raListingRepository->listRasFor($institution);
 
         return $raListings
-            ->map(function (RaListing $raListing) {
-                return RegistrationAuthorityCredentials::fromRaListing($raListing);
-            })
+            ->map(fn(RaListing $raListing) => RegistrationAuthorityCredentials::fromRaListing($raListing))
             ->toArray();
     }
 }

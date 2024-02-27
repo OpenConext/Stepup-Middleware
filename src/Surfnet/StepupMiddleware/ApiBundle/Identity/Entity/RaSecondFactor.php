@@ -41,32 +41,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 class RaSecondFactor implements JsonSerializable
 {
     /**
-     *
-     * @var string The second factor's ID (UUID).
-     */
-    #[ORM\Id]
-    #[ORM\Column(length: 36)]
-    public $id;
-
-    /**
-     * @var string
-     */
-    #[ORM\Column(length: 16)]
-    public $type;
-
-    /**
-     * @var string The ID of the specific instance of second factor type (ie. phone number, Yubikey public ID).
-     */
-    #[ORM\Column(length: 255)]
-    public $secondFactorId;
-
-    /**
-     * @var string
-     */
-    #[ORM\Column(length: 36)]
-    public $identityId;
-
-    /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
@@ -107,25 +81,23 @@ class RaSecondFactor implements JsonSerializable
      * @param string $type
      * @param string $secondFactorId
      * @param string $identityId
-     * @param Institution $institution
-     * @param CommonName $name
-     * @param Email $email
      * @param DocumentNumber|null $documentNumber
      */
     public function __construct(
-        $id,
-        $type,
-        $secondFactorId,
-        $identityId,
+        #[ORM\Id]
+        #[ORM\Column(length: 36)]
+        public $id,
+        #[ORM\Column(length: 16)]
+        public $type,
+        #[ORM\Column(length: 255)]
+        public $secondFactorId,
+        #[ORM\Column(length: 36)]
+        public $identityId,
         Institution $institution,
         CommonName $name,
         Email $email,
-        DocumentNumber $documentNumber = null
+        DocumentNumber $documentNumber = null,
     ) {
-        $this->id = $id;
-        $this->type = $type;
-        $this->secondFactorId = $secondFactorId;
-        $this->identityId = $identityId;
         $this->institution = $institution;
         $this->name = $name;
         $this->email = $email;
@@ -136,15 +108,15 @@ class RaSecondFactor implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'               => $this->id,
-            'type'             => $this->type,
+            'id' => $this->id,
+            'type' => $this->type,
             'second_factor_id' => $this->secondFactorId,
-            'status'           => (string) $this->status,
-            'identity_id'      => $this->identityId,
-            'name'             => $this->name,
-            'document_number'  => $this->documentNumber,
-            'email'            => $this->email,
-            'institution'      => $this->institution,
+            'status' => (string)$this->status,
+            'identity_id' => $this->identityId,
+            'name' => $this->name,
+            'document_number' => $this->documentNumber,
+            'email' => $this->email,
+            'institution' => $this->institution,
         ];
     }
 }

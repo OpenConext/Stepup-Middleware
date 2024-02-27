@@ -21,15 +21,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * Custom Type for the Location Value Object for the Configuration domain
  */
 class ConfigurationLocationType extends Type
 {
-    const NAME = 'stepup_configuration_location';
+    public const NAME = 'stepup_configuration_location';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -46,9 +46,9 @@ class ConfigurationLocationType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal location of type %s '%s', expected a Location instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -67,7 +67,7 @@ class ConfigurationLocationType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

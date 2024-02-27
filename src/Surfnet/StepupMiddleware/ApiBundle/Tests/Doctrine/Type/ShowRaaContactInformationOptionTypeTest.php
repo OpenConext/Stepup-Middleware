@@ -24,6 +24,7 @@ use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType;
+
 use function is_numeric;
 
 class ShowRaaContactInformationOptionTypeTest extends UnitTest
@@ -40,7 +41,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
     {
         Type::addType(
             ShowRaaContactInformationOptionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ShowRaaContactInformationOptionType'
+            ShowRaaContactInformationOptionType::class,
         );
     }
 
@@ -69,8 +70,9 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
      * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_show_raa_contact_information_option_or_null($incorrectValue): void
-    {
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_show_raa_contact_information_option_or_null(
+        $incorrectValue,
+    ): void {
         $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(ShowRaaContactInformationOptionType::NAME);
@@ -86,8 +88,8 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
         $configurationInstitution = Type::getType(ShowRaaContactInformationOptionType::NAME);
 
         $expected = true;
-        $input    = new ShowRaaContactInformationOption($expected);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new ShowRaaContactInformationOption($expected);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -118,7 +120,7 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption', $output);
+        $this->assertInstanceOf(ShowRaaContactInformationOption::class, $output);
         $this->assertEquals(new ShowRaaContactInformationOption($input), $output);
     }
 }

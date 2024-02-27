@@ -38,6 +38,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
     private InstitutionConfigurationProjector $projector;
 
     private $repository;
+
     protected function setUp(): void
     {
         $repository = m::mock(InstitutionConfigurationRepository::class);
@@ -51,28 +52,31 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
-            new SsoOn2faOption(true)
+            new SsoOn2faOption(true),
         );
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn(null);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration): bool{
-            return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
-        });
+        $this->repository->shouldReceive('save')->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+        );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }
+
     public function test_updates_existing_row(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
-            new SsoOn2faOption(true)
+            new SsoOn2faOption(true),
         );
         $configuration = new InstitutionConfiguration('institution-a.nl', false);
 
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn($configuration);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration): bool{
-            return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
-        });
+        $this->repository->shouldReceive('save')->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+        );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }

@@ -32,11 +32,11 @@ class ConfiguredInstitutionTest extends TestCase
     {
         $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];
         $configuredInstitution = ConfiguredInstitution::createFrom(
-            new Institution($deserializedConfiguredInstitution['institution'])
+            new Institution($deserializedConfiguredInstitution['institution']),
         );
 
         $expectedSerializedConfiguredInstitution = json_encode($deserializedConfiguredInstitution);
-        $actualSerializedConfiguredInstitution   = json_encode($configuredInstitution);
+        $actualSerializedConfiguredInstitution = json_encode($configuredInstitution);
 
         $this->assertSame($expectedSerializedConfiguredInstitution, $actualSerializedConfiguredInstitution);
     }

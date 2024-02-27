@@ -25,11 +25,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
 class ConfiguredInstitutionService
 {
-    private ConfiguredInstitutionRepository $repository;
-
-    public function __construct(ConfiguredInstitutionRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly ConfiguredInstitutionRepository $repository,
+    ) {
     }
 
     /**

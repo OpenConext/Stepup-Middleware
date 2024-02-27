@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;

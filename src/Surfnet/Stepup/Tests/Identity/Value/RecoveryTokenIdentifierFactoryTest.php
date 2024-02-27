@@ -34,20 +34,20 @@ final class RecoveryTokenIdentifierFactoryTest extends TestCase
     {
         $this->assertEquals(
             new PhoneNumber('+31 (0) 12345678'),
-            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678')
+            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::sms(), '+31 (0) 12345678'),
         );
         $this->assertEquals(
             new SafeStore(new HashedSecret('super-secret')),
-            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret')
+            RecoveryTokenIdentifierFactory::forType(RecoveryTokenType::safeStore(), 'super-secret'),
         );
 
         $this->assertEquals(
             PhoneNumber::unknown(),
-            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::sms())
+            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::sms()),
         );
         $this->assertEquals(
             SafeStore::unknown(),
-            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::safeStore())
+            RecoveryTokenIdentifierFactory::unknownForType(RecoveryTokenType::safeStore()),
         );
     }
 }

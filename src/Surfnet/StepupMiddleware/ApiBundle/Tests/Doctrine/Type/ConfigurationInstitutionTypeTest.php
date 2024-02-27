@@ -39,7 +39,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
     {
         Type::addType(
             ConfigurationInstitutionType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationInstitutionType'
+            ConfigurationInstitutionType::class,
         );
     }
 
@@ -70,7 +70,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
      */
     public function a_value_can_only_be_converted_to_sql_if_it_is_an_institution_or_null($incorrectValue): void
     {
-        $this->expectException('Doctrine\DBAL\Types\ConversionException');
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(ConfigurationInstitutionType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -86,8 +86,8 @@ class ConfigurationInstitutionTypeTest extends UnitTest
 
         $input = 'An institution';
         $expected = 'an institution';
-        $input    = new Institution($input);
-        $output   = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
+        $input = new Institution($input);
+        $output = $configurationInstitution->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -118,7 +118,7 @@ class ConfigurationInstitutionTypeTest extends UnitTest
 
         $output = $configurationInstitution->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\Institution', $output);
+        $this->assertInstanceOf(Institution::class, $output);
         $this->assertEquals(new Institution($input), $output);
     }
 

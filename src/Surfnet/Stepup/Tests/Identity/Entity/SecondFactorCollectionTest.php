@@ -39,7 +39,7 @@ class SecondFactorCollectionTest extends UnitTest
         ]);
 
         $secondFactor = $collection->getSecondFactorWithHighestLoa(
-            new SecondFactorTypeService([])
+            new SecondFactorTypeService([]),
         );
 
         $this->assertNotNull($secondFactor, 'Collection should have returned a second factor object');
@@ -47,12 +47,11 @@ class SecondFactorCollectionTest extends UnitTest
     }
 
     /**
-     * @param string $type
      * @return SecondFactor
      */
     private function mockVettedSecondFactor(string $type)
     {
-        $mock = m::mock('\Surfnet\Stepup\Identity\Entity\SecondFactor');
+        $mock = m::mock(SecondFactor::class);
         $mock->shouldReceive('getType')
             ->andReturn(new SecondFactorType($type));
 

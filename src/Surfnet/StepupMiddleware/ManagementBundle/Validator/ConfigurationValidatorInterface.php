@@ -23,7 +23,6 @@ use Assert\InvalidArgumentException;
 interface ConfigurationValidatorInterface
 {
     /**
-     * @param array $configuration
      * @param string $propertyPath
      * @return void
      * @throws InvalidArgumentException

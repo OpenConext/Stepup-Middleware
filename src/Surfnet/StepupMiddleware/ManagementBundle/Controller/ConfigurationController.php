@@ -29,28 +29,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ConfigurationController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private TransactionAwarePipeline $pipeline;
-
-    public function __construct(TransactionAwarePipeline $pipeline)
-    {
-        $this->pipeline = $pipeline;
+    public function __construct(
+        private readonly TransactionAwarePipeline $pipeline,
+    ) {
     }
 
     public function update(Request $request)
     {
-        $command                = new UpdateConfigurationCommand();
-        $command->UUID          = (string) Uuid::uuid4();
+        $command = new UpdateConfigurationCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->configuration = $request->getContent();
 
         return $this->handleCommand($request, $command);
     }
 
     /**
-     * @param Request $request
-     * @param Command $command
      * @return JsonResponse
      */
     private function handleCommand(Request $request, Command $command): JsonResponse
@@ -60,9 +53,9 @@ class ConfigurationController extends AbstractController
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
 
         return new JsonResponse([
-            'status'       => 'OK',
+            'status' => 'OK',
             'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
         ]);
     }
 }

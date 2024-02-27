@@ -26,11 +26,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstit
 
 final class ConfiguredInstitutionProjector extends Projector
 {
-    private ConfiguredInstitutionRepository $configuredInstitutionRepository;
-
-    public function __construct(ConfiguredInstitutionRepository $configuredInstitutionRepository)
-    {
-        $this->configuredInstitutionRepository = $configuredInstitutionRepository;
+    public function __construct(
+        private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
+    ) {
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void

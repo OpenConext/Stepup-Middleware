@@ -38,24 +38,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
  */
 class IdentityService extends AbstractSearchService
 {
-    private IdentityRepository $repository;
-
-    private IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokensOptionsRepository;
-
-    private RaListingRepository $raListingRepository;
-
-    private SraaRepository $sraaRepository;
-
     public function __construct(
-        IdentityRepository $repository,
-        IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokenOptionsRepository,
-        RaListingRepository $raListingRepository,
-        SraaRepository $sraaRepository
+        private readonly IdentityRepository $repository,
+        private readonly IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokensOptionsRepository,
+        private readonly RaListingRepository $raListingRepository,
+        private readonly SraaRepository $sraaRepository,
     ) {
-        $this->repository = $repository;
-        $this->identitySelfAssertedTokensOptionsRepository = $identitySelfAssertedTokenOptionsRepository;
-        $this->raListingRepository = $raListingRepository;
-        $this->sraaRepository = $sraaRepository;
     }
 
     /**
@@ -68,7 +56,6 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param IdentityQuery $query
      * @param InstitutionRoleSet $institutionRoles
      * @return Pagerfanta
      */
@@ -80,7 +67,7 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param  string $identityId
+     * @param string $identityId
      * @return null|RegistrationAuthorityCredentials
      */
     public function findRegistrationAuthorityCredentialsOf($identityId)
@@ -95,8 +82,6 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param NameId $nameId
-     * @param Institution $institution
      * @return RegistrationAuthorityCredentials|null
      */
     public function findRegistrationAuthorityCredentialsByNameIdAndInstitution(NameId $nameId, Institution $institution)
@@ -115,11 +100,13 @@ class IdentityService extends AbstractSearchService
         }
 
         if ($identityCount > 1) {
-            throw new RuntimeException(sprintf(
-                'Found more than one identity matching NameID "%s" within institution "%s"',
-                $nameId->getNameId(),
-                $institution->getInstitution()
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Found more than one identity matching NameID "%s" within institution "%s"',
+                    $nameId->getNameId(),
+                    $institution->getInstitution(),
+                ),
+            );
         }
 
         /** @var Identity $identity */
@@ -129,7 +116,6 @@ class IdentityService extends AbstractSearchService
     }
 
     /**
-     * @param Identity $identity
      * @return null|RegistrationAuthorityCredentials
      */
     private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
@@ -156,7 +142,7 @@ class IdentityService extends AbstractSearchService
 
     public function getSelfAssertedTokenRegistrationOptions(
         Identity $identity,
-        bool $hasVettedSecondFactor
+        bool $hasVettedSecondFactor,
     ): IdentitySelfAssertedTokenOptions {
         $options = $this->identitySelfAssertedTokensOptionsRepository->find($identity->id);
         // Backward compatibility for Identities from the pre SAT era

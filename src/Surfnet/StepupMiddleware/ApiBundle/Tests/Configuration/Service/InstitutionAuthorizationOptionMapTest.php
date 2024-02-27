@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
-
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -57,14 +56,36 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
 
         $institutionAuthorizations = [];
         foreach ($testData as $data) {
-            $institutionAuthorizations[] = InstitutionAuthorization::create(new Institution($data[0]), new Institution($data[1]), new InstitutionRole($data[2]));
+            $institutionAuthorizations[] = InstitutionAuthorization::create(
+                new Institution($data[0]),
+                new Institution($data[1]),
+                new InstitutionRole($data[2]),
+            );
         }
 
-        $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations($this->institution, $institutionAuthorizations);
+        $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations(
+            $this->institution,
+            $institutionAuthorizations,
+        );
 
-        $this->assertEquals(['inst','insta','instb'], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->getInstitutions($this->institution));
-        $this->assertEquals(['insta','instb'], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->getInstitutions($this->institution));
-        $this->assertEquals(['insta'], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->getInstitutions($this->institution));
+        $this->assertEquals(
+            ['inst', 'insta', 'instb'],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->getInstitutions(
+                $this->institution,
+            )
+        );
+        $this->assertEquals(
+            ['insta', 'instb'],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->getInstitutions(
+                $this->institution,
+            )
+        );
+        $this->assertEquals(
+            ['insta'],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->getInstitutions(
+                $this->institution,
+            )
+        );
     }
 
     /**
@@ -73,10 +94,28 @@ class InstitutionAuthorizationOptionMapTest extends TestCase
      */
     public function an_array_initialized_with_no_authorizations_should_return_valid_institutions_per_role(): void
     {
-        $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations($this->institution, []);
+        $institutionAuthorizationMap = InstitutionAuthorizationOptionMap::fromInstitutionAuthorizations(
+            $this->institution,
+            [],
+        );
 
-        $this->assertEquals([], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->getInstitutions($this->institution));
-        $this->assertEquals([], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->getInstitutions($this->institution));
-        $this->assertEquals([], $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->getInstitutions($this->institution));
+        $this->assertEquals(
+            [],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->getInstitutions(
+                $this->institution,
+            )
+        );
+        $this->assertEquals(
+            [],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->getInstitutions(
+                $this->institution,
+            )
+        );
+        $this->assertEquals(
+            [],
+            $institutionAuthorizationMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->getInstitutions(
+                $this->institution,
+            )
+        );
     }
 }

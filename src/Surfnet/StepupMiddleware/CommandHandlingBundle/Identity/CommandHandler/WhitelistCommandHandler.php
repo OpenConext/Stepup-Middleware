@@ -23,7 +23,6 @@ use Broadway\Domain\AggregateRoot;
 use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
-use Surfnet\Stepup\Identity\EventSourcing\WhitelistRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Whitelist;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
@@ -32,22 +31,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhite
 
 class WhitelistCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var WhitelistRepository
-     */
-    private RepositoryInterface $repository;
-
-    /**
-     * @param RepositoryInterface  $repository
-     */
-    public function __construct(RepositoryInterface $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly RepositoryInterface $repository,
+    ) {
     }
 
-    /**
-     * @param ReplaceWhitelistCommand $command
-     */
     public function handleReplaceWhitelistCommand(ReplaceWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
@@ -58,9 +46,6 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @param AddToWhitelistCommand $command
-     */
     public function handleAddToWhitelistCommand(AddToWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
@@ -71,9 +56,6 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @param RemoveFromWhitelistCommand $command
-     */
     public function handleRemoveFromWhitelistCommand(RemoveFromWhitelistCommand $command): void
     {
         $whitelist = $this->getWhitelist();
@@ -91,19 +73,16 @@ class WhitelistCommandHandler extends SimpleCommandHandler
     {
         try {
             return $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
-        } catch (AggregateNotFoundException $e) {
+        } catch (AggregateNotFoundException) {
             return Whitelist::create(new InstitutionCollection());
         }
     }
 
     /**
-     * @param array $institutions
      * @return Institution[]
      */
     private function mapArrayToInstitutions(array $institutions): array
     {
-        return array_map(function ($institutionName): Institution {
-            return new Institution($institutionName);
-        }, $institutions);
+        return array_map(fn($institutionName): Institution => new Institution($institutionName), $institutions);
     }
 }

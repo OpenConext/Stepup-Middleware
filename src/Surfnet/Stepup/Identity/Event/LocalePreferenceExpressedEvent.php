@@ -38,9 +38,9 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
     public $preferredLocale;
 
     /**
-     * @param IdentityId  $id
+     * @param IdentityId $id
      * @param Institution $institution
-     * @param Locale      $preferredLocale
+     * @param Locale $preferredLocale
      */
     public function __construct(IdentityId $id, Institution $institution, Locale $preferredLocale)
     {
@@ -67,7 +67,7 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -77,9 +77,9 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

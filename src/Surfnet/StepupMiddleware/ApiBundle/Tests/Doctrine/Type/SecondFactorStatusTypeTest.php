@@ -38,7 +38,7 @@ class SecondFactorStatusTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(SecondFactorStatusType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType');
+        Type::addType(SecondFactorStatusType::NAME, SecondFactorStatusType::class);
     }
 
     public function setUp(): void
@@ -53,7 +53,7 @@ class SecondFactorStatusTypeTest extends UnitTest
             'string' => ['string'],
             'int' => [9],
             'float' => [9.1],
-            'array' => [array()],
+            'array' => [[]],
             'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
@@ -63,10 +63,8 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidPhpValues
      * @group doctrine
-     *
-     * @param mixed $value
      */
-    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion($value): void
+    public function an_invalid_php_value_is_not_accepted_in_to_sql_conversion(mixed $value): void
     {
         $this->expectException(ConversionException::class);
 
@@ -89,11 +87,8 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validPhpValues
      * @group doctrine
-     *
-     * @param mixed $phpValue
-     * @param int $databaseValue
      */
-    public function a_valid_php_value_is_converted_to_a_sql_value($phpValue, int $databaseValue): void
+    public function a_valid_php_value_is_converted_to_a_sql_value(mixed $phpValue, int $databaseValue): void
     {
         $type = Type::getType(SecondFactorStatusType::NAME);
         $this->assertSame($databaseValue, $type->convertToDatabaseValue($phpValue, $this->platform));
@@ -106,7 +101,7 @@ class SecondFactorStatusTypeTest extends UnitTest
             'invalid string' => ['string'],
             'int' => [9],
             'float' => [9.1],
-            'array' => [array()],
+            'array' => [[]],
             'object of a different type' => [new stdClass],
             'resource' => [fopen('php://memory', 'w')],
         ];
@@ -116,10 +111,8 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider invalidDatabaseValues
      * @group doctrine
-     *
-     * @param mixed $input
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion($input): void
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(mixed $input): void
     {
         $this->expectException(ConversionException::class);
 
@@ -142,11 +135,8 @@ class SecondFactorStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validDatabaseValues
      * @group doctrine
-     *
-     * @param int $databaseValue
-     * @param mixed $phpValue
      */
-    public function a_valid_database_value_is_converted_to_a_sql_value(string $databaseValue, $phpValue): void
+    public function a_valid_database_value_is_converted_to_a_sql_value(string $databaseValue, mixed $phpValue): void
     {
         $type = Type::getType(SecondFactorStatusType::NAME);
         $this->assertTrue($phpValue->equals($type->convertToPHPValue($databaseValue, $this->platform)));

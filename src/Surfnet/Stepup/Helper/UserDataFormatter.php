@@ -19,11 +19,8 @@ namespace Surfnet\Stepup\Helper;
 
 class UserDataFormatter implements UserDataFormatterInterface
 {
-    private string $applicationName;
-
-    public function __construct(string $applicationName)
+    public function __construct(private readonly string $applicationName)
     {
-        $this->applicationName = $applicationName;
     }
 
     public function format(array $userData, array $errors): array
@@ -32,8 +29,8 @@ class UserDataFormatter implements UserDataFormatterInterface
         foreach ($userData as $name => $event) {
             $name = explode('-', $name)[1];
             $data[] = [
-                'name'  => $name,
-                'value' => $event
+                'name' => $name,
+                'value' => $event,
             ];
         }
         return $this->formatResponse($data, $errors);
@@ -43,8 +40,8 @@ class UserDataFormatter implements UserDataFormatterInterface
     {
         $status = 'OK';
         $data = [
-            'name'    => $this->applicationName,
-            'data'    => $userData,
+            'name' => $this->applicationName,
+            'data' => $userData,
         ];
 
         if (!empty($errors)) {

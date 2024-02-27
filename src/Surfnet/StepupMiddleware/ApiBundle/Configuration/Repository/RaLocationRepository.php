@@ -34,7 +34,6 @@ class RaLocationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param RaLocationQuery $query
      * @return null|RaLocation[]
      */
     public function search(RaLocationQuery $query)
@@ -43,12 +42,12 @@ class RaLocationRepository extends ServiceEntityRepository
             throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
         }
 
-        $orderBy        = 'rl.'.$query->orderBy;
+        $orderBy = 'rl.' . $query->orderBy;
         $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
 
         return $this->getEntityManager()->createQueryBuilder()
             ->select('rl')
-            ->from('Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation', 'rl')
+            ->from(RaLocation::class, 'rl')
             ->where('rl.institution = :institution')
             ->setParameter('institution', $query->institution->getInstitution())
             ->orderBy($orderBy, $orderDirection)
@@ -57,7 +56,6 @@ class RaLocationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return RaLocation[]
      */
     public function findByRaLocationId(RaLocationId $raLocationId)
@@ -69,9 +67,6 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
     public function save(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
@@ -79,9 +74,6 @@ class RaLocationRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
     public function remove(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
@@ -90,7 +82,6 @@ class RaLocationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return RaLocation[]
      */
     public function findByInstitution(Institution $institution)
@@ -102,9 +93,6 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param Institution $institution
-     */
     public function removeRaLocationsFor(Institution $institution): void
     {
         $this->createQueryBuilder('rl')

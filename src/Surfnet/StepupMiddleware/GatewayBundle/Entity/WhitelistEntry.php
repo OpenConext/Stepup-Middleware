@@ -31,7 +31,7 @@ class WhitelistEntry
 
     public static function createFrom(Institution $institution): self
     {
-        $instance  = new self();
+        $instance = new self();
         $instance->institution = $institution;
 
         return $instance;

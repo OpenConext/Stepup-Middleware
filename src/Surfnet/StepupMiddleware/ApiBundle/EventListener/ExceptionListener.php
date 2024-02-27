@@ -34,11 +34,9 @@ use Throwable;
  */
 class ExceptionListener
 {
-    private LoggerInterface $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function onKernelException(ExceptionEvent $event): void
@@ -52,9 +50,9 @@ class ExceptionListener
             $headers = $throwable->getHeaders();
         } else {
             $statusCode = $throwable instanceof BadApiRequestException
-                    || $throwable instanceof BadCommandRequestException
-                    || $throwable instanceof DomainException
-                    || $throwable instanceof AggregateNotFoundException
+            || $throwable instanceof BadCommandRequestException
+            || $throwable instanceof DomainException
+            || $throwable instanceof AggregateNotFoundException
                 ? 400
                 : 500;
 
@@ -78,7 +76,6 @@ class ExceptionListener
 
     /**
      * @param Throwable $exception
-     * @param int $statusCode
      * @param array $headers OPTIONAL
      * @return JsonResponse
      */
@@ -90,7 +87,7 @@ class ExceptionListener
         ) {
             $errors = $throwable->getErrors();
         } else {
-            $errors = [sprintf('%s: %s', get_class($throwable), $throwable->getMessage())];
+            $errors = [sprintf('%s: %s', $throwable::class, $throwable->getMessage())];
         }
 
         return new JsonResponse(['errors' => $errors], $statusCode, $headers);

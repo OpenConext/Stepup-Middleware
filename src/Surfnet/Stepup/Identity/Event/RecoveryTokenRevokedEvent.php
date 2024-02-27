@@ -47,7 +47,7 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
         IdentityId $identityId,
         Institution $identityInstitution,
         RecoveryTokenId $recoveryTokenId,
-        RecoveryTokenType $recoveryTokenType
+        RecoveryTokenType $recoveryTokenType,
     ) {
         parent::__construct($identityId, $identityInstitution);
         $this->recoveryTokenId = $recoveryTokenId;
@@ -62,7 +62,7 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new RecoveryTokenId($data['recovery_token_id']),
-            $recoveryTokenType
+            $recoveryTokenType,
         );
     }
 

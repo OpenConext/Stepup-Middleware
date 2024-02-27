@@ -24,6 +24,9 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
+use Symfony\Component\HttpFoundation\Request;
 
 class CommandParamConverterTest extends TestCase
 {
@@ -37,7 +40,7 @@ class CommandParamConverterTest extends TestCase
     {
         $this->expectException(BadCommandRequestException::class);
 
-        $request = m::mock('Symfony\Component\HttpFoundation\Request')
+        $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
             ->getMock();
         $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
@@ -51,13 +54,12 @@ class CommandParamConverterTest extends TestCase
      * @group api-bundle
      * @dataProvider convertibleCommandNames
      * @param string $expectedCommandClass
-     * @param string $commandName
      */
     public function it_can_convert_command_name_notation($expectedCommandClass, string $commandName): void
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
-        $request = m::mock('Symfony\Component\HttpFoundation\Request')
+        $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
@@ -79,7 +81,7 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
-        $request = m::mock('Symfony\Component\HttpFoundation\Request')
+        $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
@@ -101,7 +103,7 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 
-        $request = m::mock('Symfony\Component\HttpFoundation\Request')
+        $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
@@ -112,7 +114,7 @@ class CommandParamConverterTest extends TestCase
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
 
-        $spiedPayload = (array) $spiedCommand;
+        $spiedPayload = (array)$spiedCommand;
         unset($spiedPayload['UUID']);
         $this->assertSame(['snakeCase' => true], $spiedPayload, 'Payload mismatch');
     }
@@ -120,9 +122,7 @@ class CommandParamConverterTest extends TestCase
     public function invalidCommandJsonStructures(): array
     {
         return array_map(
-            function ($command): array {
-                return [json_encode($command)];
-            },
+            fn($command): array => [json_encode($command)],
             [
                 'Body may not be null' => null,
                 'Body may not be integer' => 1,
@@ -140,7 +140,7 @@ class CommandParamConverterTest extends TestCase
                 'Command payload may not be integer' => ['command' => ['payload' => 1]],
                 'Command payload may not be float' => ['command' => ['payload' => 1.1]],
                 'Command payload may not be array' => ['command' => ['payload' => []]],
-            ]
+            ],
         );
     }
 
@@ -148,29 +148,31 @@ class CommandParamConverterTest extends TestCase
     {
         return [
             'It can convert simple command notation with a namespace' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand', 'Root:FooBar',
+                FooBarCommand::class,
+                'Root:FooBar',
             ],
             'It can convert simple command notation with a namespace with trailing backslash' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand', 'Root:FooBar',
+                FooBarCommand::class,
+                'Root:FooBar',
             ],
             'It can convert namespaced command notation with a namespace' => [
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand', 'Root:Ns.Quux',
+                QuuxCommand::class,
+                'Root:Ns.Quux',
             ],
         ];
     }
 
     /**
-     * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private function spy(&$spy)
+    private function spy(mixed &$spy)
     {
         return m::on(
             function ($value) use (&$spy): bool {
                 $spy = $value;
 
                 return true;
-            }
+            },
         );
     }
 }

@@ -29,23 +29,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class InstitutionConfigurationOptionsController extends AbstractController
 {
-    private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
-
-    /**
-     * @return InstitutionAuthorizationService
-     */
-    private InstitutionAuthorizationService $institutionAuthorizationService;
-
-    private AllowedSecondFactorListService $allowedSecondFactorListService;
-
     public function __construct(
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        InstitutionAuthorizationService $institutionAuthorizationService,
-        AllowedSecondFactorListService $allowedSecondFactorListService
+        private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private readonly InstitutionAuthorizationService $institutionAuthorizationService,
+        private readonly AllowedSecondFactorListService $allowedSecondFactorListService,
     ) {
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->institutionAuthorizationService = $institutionAuthorizationService;
-        $this->allowedSecondFactorListService = $allowedSecondFactorListService;
     }
 
     public function getForInstitution($institutionName): JsonResponse
@@ -64,7 +52,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
 
         if ($institutionConfigurationOptions === null) {
             throw new NotFoundHttpException(
-                sprintf('No institution configuration options found for institution "%s"', $institution)
+                sprintf('No institution configuration options found for institution "%s"', $institution),
             );
         }
 
@@ -77,18 +65,24 @@ final class InstitutionConfigurationOptionsController extends AbstractController
             ->findAuthorizationsFor($institution);
 
         return new JsonResponse([
-            'institution'                  => $institutionConfigurationOptions->institution,
-            'use_ra_locations'             => $institutionConfigurationOptions->useRaLocationsOption,
+            'institution' => $institutionConfigurationOptions->institution,
+            'use_ra_locations' => $institutionConfigurationOptions->useRaLocationsOption,
             'show_raa_contact_information' => $institutionConfigurationOptions->showRaaContactInformationOption,
-            'verify_email'                 => $institutionConfigurationOptions->verifyEmailOption,
+            'verify_email' => $institutionConfigurationOptions->verifyEmailOption,
             'sso_on_2fa' => $institutionConfigurationOptions->ssoOn2faOption,
             'self_vet' => $institutionConfigurationOptions->selfVetOption,
             'allow_self_asserted_tokens' => $institutionConfigurationOptions->selfAssertedTokensOption,
             'number_of_tokens_per_identity' => $numberOfTokensPerIdentity,
-            'allowed_second_factors'       => $allowedSecondFactorList,
-            'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRa())->jsonSerialize(),
-            'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::useRaa())->jsonSerialize(),
-            'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(InstitutionRole::selectRaa())->jsonSerialize(),
+            'allowed_second_factors' => $allowedSecondFactorList,
+            'use_ra' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::useRa(),
+            )->jsonSerialize(),
+            'use_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::useRaa(),
+            )->jsonSerialize(),
+            'select_raa' => $institutionConfigurationOptionsMap->getAuthorizationOptionsByRole(
+                InstitutionRole::selectRaa(),
+            )->jsonSerialize(),
         ]);
     }
 }

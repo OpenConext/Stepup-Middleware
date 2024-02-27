@@ -32,13 +32,10 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapSmsSecondFactorCommand extends Command
 {
-    private BootstrapCommandService $bootstrapService;
-    private TransactionHelper $transactionHelper;
-
-    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
-    {
-        $this->bootstrapService = $bootstrapService;
-        $this->transactionHelper = $transactionHelper;
+    public function __construct(
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly TransactionHelper $transactionHelper,
+    ) {
         parent::__construct();
     }
 
@@ -51,12 +48,12 @@ final class BootstrapSmsSecondFactorCommand extends Command
             ->addArgument(
                 'phone-number',
                 InputArgument::REQUIRED,
-                'The phone number of the user should be formatted like "+31 (0) 612345678"'
+                'The phone number of the user should be formatted like "+31 (0) 612345678"',
             )
             ->addArgument(
                 'registration-status',
                 InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted'
+                'Valid arguments: unverified, verified, vetted',
             )
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
@@ -67,7 +64,7 @@ final class BootstrapSmsSecondFactorCommand extends Command
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
         $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
+            new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA']),
         );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
@@ -81,14 +78,16 @@ final class BootstrapSmsSecondFactorCommand extends Command
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" does not exist, create it first.</error>',
                     $nameId->getNameId(),
-                    $institution->getInstitution()
-                )
+                    $institution->getInstitution(),
+                ),
             );
 
             return;
         }
         $identity = $this->bootstrapService->getIdentity($nameId, $institution);
-        $output->writeln(sprintf('<comment>Adding a %s SMS token for %s</comment>', $registrationStatus, $identity->commonName));
+        $output->writeln(
+            sprintf('<comment>Adding a %s SMS token for %s</comment>', $registrationStatus, $identity->commonName),
+        );
         $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
@@ -119,7 +118,7 @@ final class BootstrapSmsSecondFactorCommand extends Command
                         $actorId,
                         $identity,
                         $secondFactorId,
-                        $phoneNumber
+                        $phoneNumber,
                     );
                     break;
             }
@@ -128,8 +127,8 @@ final class BootstrapSmsSecondFactorCommand extends Command
             $output->writeln(
                 sprintf(
                     '<error>An Error occurred when trying to bootstrap the SMS token: "%s"</error>',
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             $this->transactionHelper->rollback();
             throw $e;
@@ -137,8 +136,8 @@ final class BootstrapSmsSecondFactorCommand extends Command
         $output->writeln(
             sprintf(
                 '<info>Successfully registered a SMS token with UUID %s</info>',
-                $secondFactorId
-            )
+                $secondFactorId,
+            ),
         );
     }
 }

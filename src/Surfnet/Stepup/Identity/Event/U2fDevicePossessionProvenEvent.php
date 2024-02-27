@@ -59,19 +59,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public $keyHandle;
 
     /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
      * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
-
-    /**
-     * @var string
-     */
-    public $emailVerificationNonce;
 
     /**
      * @var CommonName
@@ -107,20 +97,18 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
-        $emailVerificationRequired,
+        public $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
+        public $emailVerificationNonce,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
         $this->keyHandle = $keyHandle;
-        $this->emailVerificationRequired = $emailVerificationRequired;
         $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
@@ -128,11 +116,11 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->keyHandle;
 
         return $metadata;
@@ -154,7 +142,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -164,13 +152,13 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
-            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -184,9 +172,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email       = $sensitiveData->getEmail();
-        $this->commonName  = $sensitiveData->getCommonName();
-        $this->keyHandle   = $sensitiveData->getSecondFactorIdentifier();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
+        $this->keyHandle = $sensitiveData->getSecondFactorIdentifier();
     }
 
     public function obtainUserData(): array

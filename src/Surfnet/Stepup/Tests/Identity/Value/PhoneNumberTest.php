@@ -32,8 +32,9 @@ class PhoneNumberTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function a_phone_number_cannot_be_created_with_anything_but_a_nonempty_string(string|int|float|StdClass|array $invalidValue): void
-    {
+    public function a_phone_number_cannot_be_created_with_anything_but_a_nonempty_string(
+        string|int|float|StdClass|array $invalidValue,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new PhoneNumber($invalidValue);
@@ -45,10 +46,10 @@ class PhoneNumberTest extends UnitTest
      */
     public function two_phone_numbers_with_the_same_value_are_equal(): void
     {
-        $one         = new PhoneNumber('+31 (0) 12345678');
-        $theSame     = new PhoneNumber('+31 (0) 12345678');
-        $different   = new PhoneNumber('+31 (0) 87654321');
-        $unknown     = PhoneNumber::unknown();
+        $one = new PhoneNumber('+31 (0) 12345678');
+        $theSame = new PhoneNumber('+31 (0) 12345678');
+        $different = new PhoneNumber('+31 (0) 87654321');
+        $unknown = PhoneNumber::unknown();
 
         $this->assertTrue($one->equals($theSame));
         $this->assertFalse($one->equals($different));
@@ -63,10 +64,10 @@ class PhoneNumberTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

@@ -22,7 +22,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class GssfId implements SecondFactorIdentifier
 {
-    private string $gssfId;
+    private readonly string $gssfId;
 
     public static function unknown(): self
     {

@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
@@ -30,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class InstitutionRoleType extends Type
 {
-    const NAME = 'stepup_institution_role';
+    public const NAME = 'stepup_institution_role';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -47,9 +46,9 @@ class InstitutionRoleType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal location of type %s '%s', expected a InstitutionRole instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -68,7 +67,7 @@ class InstitutionRoleType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

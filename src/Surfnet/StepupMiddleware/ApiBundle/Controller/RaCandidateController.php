@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
@@ -29,24 +28,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use function sprintf;
 
 class RaCandidateController extends AbstractController
 {
-    private RaCandidateService $raCandidateService;
-
-    private AuthorizationContextService $authorizationService;
-
     public function __construct(
-        RaCandidateService $raCandidateService,
-        AuthorizationContextService $authorizationService
+        private readonly RaCandidateService $raCandidateService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raCandidateService = $raCandidateService;
-        $this->authorizationService = $authorizationService;
     }
 
     /**
-     * @param Request $request
      * @return JsonCollectionResponse
      */
     public function search(Request $request)
@@ -55,16 +48,16 @@ class RaCandidateController extends AbstractController
 
         $actorId = new IdentityId($request->get('actorId'));
 
-        $query                    = new RaCandidateQuery();
-        $query->institution       = $request->get('institution');
-        $query->commonName        = $request->get('commonName');
-        $query->email             = $request->get('email');
+        $query = new RaCandidateQuery();
+        $query->institution = $request->get('institution');
+        $query->commonName = $request->get('commonName');
+        $query->email = $request->get('email');
         $query->secondFactorTypes = $request->get('secondFactorTypes');
-        $query->raInstitution     = $request->get('raInstitution');
-        $query->pageNumber        = (int) $request->get('p', 1);
+        $query->raInstitution = $request->get('raInstitution');
+        $query->pageNumber = (int)$request->get('p', 1);
 
         $query->authorizationContext = $this->authorizationService->buildSelectRaaInstitutionAuthorizationContext(
-            $actorId
+            $actorId,
         );
 
         $paginator = $this->raCandidateService->search($query);
@@ -75,10 +68,9 @@ class RaCandidateController extends AbstractController
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function getAction(Request $request): JsonResponse
+    public function get(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -88,7 +80,7 @@ class RaCandidateController extends AbstractController
 
         $authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
             $actorId,
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         $raCandidate = $this->raCandidateService->findOneByIdentityId($identityId);

@@ -22,7 +22,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class YubikeyPublicId implements SecondFactorIdentifier
 {
-    const UNKNOWN = '—';
+    public const UNKNOWN = '—';
 
     private string $value;
 
@@ -49,7 +49,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         }
         if ($value !== sprintf('%08s', ltrim($value, '0'))) {
             throw new InvalidArgumentException(
-                'Given Yubikey public ID is longer than 8 digits, yet left-padded with zeroes'
+                'Given Yubikey public ID is longer than 8 digits, yet left-padded with zeroes',
             );
         }
 

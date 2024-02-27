@@ -25,7 +25,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 final class U2fKeyHandle implements SecondFactorIdentifier
 {
-    const UNKNOWN = '—';
+    public const UNKNOWN = '—';
 
     private string $value;
 

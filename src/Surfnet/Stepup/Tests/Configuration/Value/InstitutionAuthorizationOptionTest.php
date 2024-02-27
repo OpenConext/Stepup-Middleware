@@ -59,7 +59,10 @@ class InstitutionAuthorizationOptionTest extends TestCase
     public function institution_entries_default_is_own_institution(): void
     {
         $useRaOption1 = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, null);
-        $useRaOption2 = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, [$this->institution->getInstitution()]);
+        $useRaOption2 = InstitutionAuthorizationOption::fromInstitutionConfig(
+            $this->institutionRole,
+            [$this->institution->getInstitution()],
+        );
         $this->assertEquals([$this->institution], $useRaOption1->getInstitutions($this->institution));
         $this->assertEquals([$this->institution], $useRaOption2->getInstitutions($this->institution));
     }
@@ -69,10 +72,16 @@ class InstitutionAuthorizationOptionTest extends TestCase
      * @group domain
      * @dataProvider institutionSetComparisonProvider
      */
-    public function institution_option_instances_can_be_compared(bool $expectation, ?array $configurationA, ?array $configurationB): void
-    {
+    public function institution_option_instances_can_be_compared(
+        bool $expectation,
+        ?array $configurationA,
+        ?array $configurationB,
+    ): void {
         $useRaOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $configurationA);
-        $secondInstitutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $configurationB);
+        $secondInstitutionOption = InstitutionAuthorizationOption::fromInstitutionConfig(
+            $this->institutionRole,
+            $configurationB,
+        );
         $this->assertEquals($expectation, $useRaOption->equals($secondInstitutionOption));
     }
 
@@ -82,7 +91,10 @@ class InstitutionAuthorizationOptionTest extends TestCase
      */
     public function can_be_retrieved_json_serializable(): void
     {
-        $institutionOption = InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, ['z', 'y', 'x']);
+        $institutionOption = InstitutionAuthorizationOption::fromInstitutionConfig(
+            $this->institutionRole,
+            ['z', 'y', 'x'],
+        );
         $this->assertEquals(['x', 'y', 'z'], $institutionOption->jsonSerialize());
     }
 
@@ -107,6 +119,7 @@ class InstitutionAuthorizationOptionTest extends TestCase
 
         InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $arguments);
     }
+
     /**
      * @test
      * @group domain
@@ -116,7 +129,11 @@ class InstitutionAuthorizationOptionTest extends TestCase
         $institutions = [
             $this->institution,
         ];
-        $option = InstitutionAuthorizationOption::fromInstitutions(InstitutionRole::useRa(), $this->institution, $institutions);
+        $option = InstitutionAuthorizationOption::fromInstitutions(
+            InstitutionRole::useRa(),
+            $this->institution,
+            $institutions,
+        );
 
         $this->assertEquals([$this->institution], $option->getInstitutions($this->institution));
         $this->assertEquals(true, $option->isDefault());
@@ -129,7 +146,10 @@ class InstitutionAuthorizationOptionTest extends TestCase
      */
     public function the_default_value_is_given_institution(): void
     {
-        $this->assertEquals([$this->institution], InstitutionAuthorizationOption::getDefault($this->institutionRole)->getInstitutions($this->institution));
+        $this->assertEquals(
+            [$this->institution],
+            InstitutionAuthorizationOption::getDefault($this->institutionRole)->getInstitutions($this->institution)
+        );
     }
 
     /**
@@ -138,7 +158,10 @@ class InstitutionAuthorizationOptionTest extends TestCase
      */
     public function the_empty_value_is_no_value(): void
     {
-        $this->assertEquals([], InstitutionAuthorizationOption::getEmpty($this->institutionRole)->getInstitutions($this->institution));
+        $this->assertEquals(
+            [],
+            InstitutionAuthorizationOption::getEmpty($this->institutionRole)->getInstitutions($this->institution)
+        );
     }
 
     /**
@@ -155,8 +178,11 @@ class InstitutionAuthorizationOptionTest extends TestCase
      * @group domain
      * @dataProvider institutionHasInstitutionProvider
      */
-    public function the_has_institution_method_should_check_for_institutions(bool $expectation, array $institutionList, string $institution): void
-    {
+    public function the_has_institution_method_should_check_for_institutions(
+        bool $expectation,
+        array $institutionList,
+        string $institution,
+    ): void {
         $institution = new Institution($institution);
         $list = [];
         foreach ($institutionList as $inst) {

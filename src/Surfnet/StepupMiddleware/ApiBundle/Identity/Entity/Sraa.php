@@ -25,12 +25,10 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 #[ORM\Entity(repositoryClass: SraaRepository::class)]
 class Sraa
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'stepup_name_id', length: 200)]
-    public NameId $nameId;
-
-    public function __construct(NameId $nameId)
-    {
-        $this->nameId = $nameId;
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\Column(type: 'stepup_name_id', length: 200)]
+        public NameId $nameId,
+    ) {
     }
 }

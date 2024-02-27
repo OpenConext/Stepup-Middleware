@@ -41,7 +41,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
     {
         $collection = AuthorizedInstitutionCollection::from(
             $this->buildInstitutionCollection(['a', 'b']),
-            $this->buildInstitutionCollection(['a', 'b'])
+            $this->buildInstitutionCollection(['a', 'b']),
         );
 
         $this->assertCount(2, $collection->getAuthorizations());
@@ -58,7 +58,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
     {
         $collection = AuthorizedInstitutionCollection::from(
             $this->buildInstitutionCollection([]),
-            $this->buildInstitutionCollection(['a', 'b'])
+            $this->buildInstitutionCollection(['a', 'b']),
         );
 
         $this->assertCount(2, $collection->getAuthorizations());

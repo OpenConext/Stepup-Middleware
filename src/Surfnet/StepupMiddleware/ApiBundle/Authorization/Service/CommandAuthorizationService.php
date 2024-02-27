@@ -30,7 +30,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
@@ -57,25 +56,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFac
  */
 class CommandAuthorizationService
 {
-    private WhitelistService $whitelistService;
-    private IdentityService $identityService;
-    private AuthorizationContextService $authorizationContextService;
-    private LoggerInterface $logger;
-
     public function __construct(
-        WhitelistService $whitelistService,
-        IdentityService $identityService,
-        LoggerInterface $logger,
-        AuthorizationContextService $authorizationContextService
+        private readonly WhitelistService $whitelistService,
+        private readonly IdentityService $identityService,
+        private readonly LoggerInterface $logger,
+        private readonly AuthorizationContextService $authorizationContextService,
     ) {
-        $this->logger = $logger;
-        $this->authorizationContextService = $authorizationContextService;
-        $this->whitelistService = $whitelistService;
-        $this->identityService = $identityService;
     }
 
     /**
-     * @param Institution $institution
      * @param IdentityId|null $actorId
      * @return bool
      */
@@ -85,12 +74,12 @@ class CommandAuthorizationService
         if (!is_null($actorId) && $this->isSraa($actorId)) {
             return true;
         }
-        return (bool) $this->whitelistService->isWhitelisted($institution->getInstitution());
+        return (bool)$this->whitelistService->isWhitelisted($institution->getInstitution());
     }
 
     public function maySelfServiceCommandBeExecutedOnBehalfOf(Command $command, IdentityId $actorId = null): bool
     {
-        $commandName = get_class($command);
+        $commandName = $command::class;
         $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
 
         // Assert Self Service command could be executed
@@ -102,7 +91,7 @@ class CommandAuthorizationService
                 $this->logAllowSelfService(
                     'SRAA user is always allowed to record SelfService commands',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return true;
             }
@@ -112,7 +101,7 @@ class CommandAuthorizationService
                 $this->logAllowSelfService(
                     'Allowing execution of a SelfAsserted command',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return true;
             }
@@ -125,7 +114,7 @@ class CommandAuthorizationService
                 $this->logAllowSelfService(
                     'Allowing execution of a CreateIdentityCommand or UpdateIdentityCommand command',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return true;
             }
@@ -135,7 +124,7 @@ class CommandAuthorizationService
                 $this->logDenySelfService(
                     'The actor identity id does not match that of the identity id that was recorded in the command',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return false;
             }
@@ -151,9 +140,9 @@ class CommandAuthorizationService
     public function mayRaCommandBeExecutedOnBehalfOf(
         Command $command,
         IdentityId $actorId = null,
-        Institution $actorInstitution = null
+        Institution $actorInstitution = null,
     ): bool {
-        $commandName = get_class($command);
+        $commandName = $command::class;
         $identityId = $actorId instanceof IdentityId ? $actorId->getIdentityId() : null;
 
         $this->logger->notice('Running the mayRaCommandBeExecutedOnBehalfOf sequence');
@@ -166,7 +155,7 @@ class CommandAuthorizationService
                 $this->logAllowRa(
                     'RA(A) is always allowed to perform the ExpressLocalePreferenceCommand',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return true;
             }
@@ -176,7 +165,7 @@ class CommandAuthorizationService
                 $this->logDenyRA(
                     'ActorId and/or actorInstitution is missing in mayRaCommandBeExecutedOnBehalfOf',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return false;
             }
@@ -186,7 +175,7 @@ class CommandAuthorizationService
                 $this->logAllowRa(
                     'SRAA is always allowed to execute RA commands',
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return true;
             }
@@ -209,7 +198,9 @@ class CommandAuthorizationService
                 $command instanceof RevokeRegistrantsSecondFactorCommand ||
                 $command instanceof RevokeRegistrantsRecoveryTokenCommand
             ) {
-                $this->logger->notice('VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role');
+                $this->logger->notice(
+                    'VetSecondFactorCommand and RevokeRegistrantsSecondFactorCommand require a RA role',
+                );
                 $roleRequirement = RegistrationAuthorityRole::ra();
                 // Use the institution of the identity (the user vetting or having his token revoked).
                 $identity = $this->identityService->find($command->identityId);
@@ -217,7 +208,7 @@ class CommandAuthorizationService
                     $this->logDenyRA(
                         'Unable to find the identity of the user that is being vetted, or revoked',
                         $commandName,
-                        $identityId
+                        $identityId,
                     );
                     return false;
                 }
@@ -225,22 +216,22 @@ class CommandAuthorizationService
                     sprintf(
                         'Changed RA institution (before %s) to identity institution: %s',
                         $raInstitution,
-                        $identity->institution->getInstitution()
-                    )
+                        $identity->institution->getInstitution(),
+                    ),
                 );
                 $raInstitution = $identity->institution->getInstitution();
             }
 
             $authorizationContext = $this->authorizationContextService->buildInstitutionAuthorizationContext(
                 $actorId,
-                $roleRequirement
+                $roleRequirement,
             );
 
             $this->logger->notice(
                 sprintf(
                     'Identity is authorized RA(A) role in institutions: %s',
-                    implode(',', $authorizationContext->getInstitutions()->serialize())
-                )
+                    implode(',', $authorizationContext->getInstitutions()->serialize()),
+                ),
             );
 
             if (!$authorizationContext->getInstitutions()->contains(new Institution($raInstitution))) {
@@ -248,10 +239,10 @@ class CommandAuthorizationService
                     sprintf(
                         'Identity is not RA(A) for the specified RA institution, "%s". Allowed institutions: "%s"',
                         $raInstitution,
-                        implode(',', $authorizationContext->getInstitutions()->serialize())
+                        implode(',', $authorizationContext->getInstitutions()->serialize()),
                     ),
                     $commandName,
-                    $identityId
+                    $identityId,
                 );
                 return false;
             }
@@ -259,7 +250,7 @@ class CommandAuthorizationService
         $this->logAllowRa(
             'Allowed',
             $commandName,
-            $identityId
+            $identityId,
         );
         return true;
     }
@@ -270,7 +261,9 @@ class CommandAuthorizationService
             return false;
         }
 
-        $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf($actorId->getIdentityId());
+        $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf(
+            $actorId->getIdentityId(),
+        );
         if (!$registrationAuthorityCredentials) {
             return false;
         }
@@ -288,8 +281,8 @@ class CommandAuthorizationService
                 'Allowing SelfService command %s for identity %s. With message "%s"',
                 $commandName,
                 $identityId,
-                $message
-            )
+                $message,
+            ),
         );
     }
 
@@ -303,8 +296,8 @@ class CommandAuthorizationService
                 'Denying SelfService command %s for identity %s. With message "%s"',
                 $commandName,
                 $identityId,
-                $message
-            )
+                $message,
+            ),
         );
     }
 
@@ -318,8 +311,8 @@ class CommandAuthorizationService
                 'Allowing RA command %s for identity %s. With message "%s"',
                 $commandName,
                 $identityId,
-                $message
-            )
+                $message,
+            ),
         );
     }
 
@@ -333,8 +326,8 @@ class CommandAuthorizationService
                 'Denying RA command %s for identity %s. With message "%s"',
                 $commandName,
                 $identityId,
-                $message
-            )
+                $message,
+            ),
         );
     }
 }

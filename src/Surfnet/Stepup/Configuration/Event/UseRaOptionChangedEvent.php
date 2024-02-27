@@ -26,29 +26,11 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 
 final class UseRaOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    public $useRaOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        InstitutionAuthorizationOption $useRaOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public InstitutionAuthorizationOption $useRaOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->useRaOption = $useRaOption;
     }
 
     public static function deserialize(array $data)
@@ -57,7 +39,7 @@ final class UseRaOptionChangedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             $institution,
-            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $data['use_ra_option'])
+            InstitutionAuthorizationOption::fromInstitutionConfig(InstitutionRole::useRa(), $data['use_ra_option']),
         );
     }
 

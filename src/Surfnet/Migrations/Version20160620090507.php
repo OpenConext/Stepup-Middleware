@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 
 class Version20160620090507 extends AbstractMigration
 {
@@ -21,6 +21,5 @@ class Version20160620090507 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE unverified_second_factor ADD verification_nonce_valid_until DATETIME');
-
     }
 }

@@ -25,7 +25,6 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType;
 
-
 class NumberOfTokensPerIdentityTypeTest extends UnitTest
 {
     /**
@@ -40,7 +39,7 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
     {
         Type::addType(
             NumberOfTokensPerIdentityType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NumberOfTokensPerIdentityType'
+            NumberOfTokensPerIdentityType::class,
         );
     }
 
@@ -86,8 +85,8 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
         $numberOfTokensPerIdentity = Type::getType(NumberOfTokensPerIdentityType::NAME);
 
         $expected = 4;
-        $input    = new NumberOfTokensPerIdentityOption($expected);
-        $output   = $numberOfTokensPerIdentity->convertToDatabaseValue($input, $this->platform);
+        $input = new NumberOfTokensPerIdentityOption($expected);
+        $output = $numberOfTokensPerIdentity->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_numeric($output));
         $this->assertEquals($expected, $output);
@@ -118,7 +117,7 @@ class NumberOfTokensPerIdentityTypeTest extends UnitTest
 
         $output = $numberOfTokensPerIdentity->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption', $output);
+        $this->assertInstanceOf(NumberOfTokensPerIdentityOption::class, $output);
         $this->assertEquals(new NumberOfTokensPerIdentityOption(2), $output);
     }
 }

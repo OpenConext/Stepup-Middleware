@@ -25,6 +25,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 class InstitutionParamConverterTest extends UnitTest
 {
@@ -40,7 +41,7 @@ class InstitutionParamConverterTest extends UnitTest
 
     public function setUp(): void
     {
-        $this->request = m::mock('Symfony\Component\HttpFoundation\Request');
+        $this->request = m::mock(Request::class);
         $this->paramConverterConfig = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
     }
 
@@ -83,7 +84,7 @@ class InstitutionParamConverterTest extends UnitTest
 
     private function mockQuery(bool|string $returnValue)
     {
-        $query = m::mock('Symfony\Component\HttpFoundation\ParameterBag');
+        $query = m::mock(ParameterBag::class);
         $query
             ->shouldReceive('get')
             ->once()

@@ -33,8 +33,9 @@ class ShowRaaContactInformationOptionTest extends TestCase
      *
      * @param mixed $nonBooleanProvider
      */
-    public function show_raa_contact_information_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider): void
-    {
+    public function show_raa_contact_information_option_can_only_be_boolean(
+        string|int|float|StdClass|array $nonBooleanProvider,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
 
         new ShowRaaContactInformationOption($nonBooleanProvider);
@@ -50,7 +51,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $option = true;
 
         $showRaaContactInformationOption = new ShowRaaContactInformationOption($option);
-        $theSame              = new ShowRaaContactInformationOption($option);
+        $theSame = new ShowRaaContactInformationOption($option);
 
         $this->assertTrue($showRaaContactInformationOption->equals($theSame));
     }
@@ -63,7 +64,7 @@ class ShowRaaContactInformationOptionTest extends TestCase
     public function two_show_raa_contact_information_options_with_different_values_are_not_equal(): void
     {
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-        $different            = new ShowRaaContactInformationOption(false);
+        $different = new ShowRaaContactInformationOption(false);
 
         $this->assertFalse($showRaaContactInformationOption->equals($different));
     }
@@ -84,11 +85,11 @@ class ShowRaaContactInformationOptionTest extends TestCase
     public function nonBooleanProvider(): array
     {
         return [
-            'string'       => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new StdClass()],
+            'string' => [''],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

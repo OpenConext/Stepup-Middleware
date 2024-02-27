@@ -33,7 +33,7 @@ class UserDataFormatterTest extends TestCase
                 ['name' => 'name2', 'value' => 'some-value-2'],
                 ['name' => 'name3', 'value' => 'some-value-3'],
             ],
-            'name' => 'Stepup-Middleware'
+            'name' => 'Stepup-Middleware',
         ];
 
         $inputData = [
@@ -55,19 +55,20 @@ class UserDataFormatterTest extends TestCase
             ],
             'name' => 'Stepup-Middleware',
             'message' => [
-                'The application is teetering on the edge of catastrophe!'
-            ]
+                'The application is teetering on the edge of catastrophe!',
+            ],
         ];
 
         $inputData = [
             'foobar-name1' => 'some-value-1',
         ];
 
-        $this->assertEquals($expected,
+        $this->assertEquals(
+            $expected,
             $formatter->format(
                 $inputData,
-                ['The application is teetering on the edge of catastrophe!']
-            )
+                ['The application is teetering on the edge of catastrophe!'],
+            ),
         );
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Surfnet\Migrations;
 
-use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -48,7 +48,7 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         $this->addSql('UPDATE ra_location SET institution=LOWER(institution)');
 
         // Convert all GW institutions to lowercase
-        $gatewaySchema  = $this->getGatewaySchema();
+        $gatewaySchema = $this->getGatewaySchema();
         $this->addSql(sprintf('UPDATE %s.whitelist_entry SET institution=LOWER(institution)', $gatewaySchema));
         $this->addSql(sprintf('UPDATE %s.second_factor SET institution=LOWER(institution)', $gatewaySchema));
     }

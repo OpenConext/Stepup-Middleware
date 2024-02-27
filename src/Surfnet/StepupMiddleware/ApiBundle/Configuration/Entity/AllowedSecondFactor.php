@@ -46,15 +46,10 @@ class AllowedSecondFactor
     {
     }
 
-    /**
-     * @param Institution $institution
-     * @param SecondFactorType $secondFactorType
-     * @return AllowedSecondFactor
-     */
     public static function createFrom(Institution $institution, SecondFactorType $secondFactorType): self
     {
-        $allowedSecondFactor                   = new self;
-        $allowedSecondFactor->institution      = $institution;
+        $allowedSecondFactor = new self;
+        $allowedSecondFactor->institution = $institution;
         $allowedSecondFactor->secondFactorType = $secondFactorType;
 
         return $allowedSecondFactor;

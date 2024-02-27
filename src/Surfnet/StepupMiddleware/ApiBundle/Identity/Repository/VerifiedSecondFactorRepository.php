@@ -30,12 +30,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class VerifiedSecondFactorRepository extends ServiceEntityRepository
 {
-    private InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, VerifiedSecondFactor::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     public function find(mixed $id, $lockMode = null, $lockVersion = null): ?VerifiedSecondFactor
@@ -47,7 +46,6 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param DateTime $requestedAt
      * @return VerifiedSecondFactor[]
      */
     public function findByDate(DateTime $requestedAt)
@@ -68,7 +66,6 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param VerifiedSecondFactorQuery $query
      * @return Query
      */
     public function createSearchQuery(VerifiedSecondFactorQuery $query): Query
@@ -78,13 +75,13 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         if ($query->secondFactorId) {
             $queryBuilder
                 ->andWhere('sf.id = :secondFactorId')
-                ->setParameter('secondFactorId', (string) $query->secondFactorId);
+                ->setParameter('secondFactorId', (string)$query->secondFactorId);
         }
 
         if (is_string($query->registrationCode)) {
@@ -99,14 +96,13 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'sf.institution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param VerifiedSecondFactorOfIdentityQuery $query
      * @return Query
      */
     public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query): Query
@@ -115,7 +111,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
 
         $queryBuilder
             ->andWhere('sf.identityId = :identityId')
-            ->setParameter('identityId', (string) $query->identityId);
+            ->setParameter('identityId', (string)$query->identityId);
 
         return $queryBuilder->getQuery();
     }
@@ -130,9 +126,6 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @param VerifiedSecondFactor $secondFactor
-     */
     public function save(VerifiedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);

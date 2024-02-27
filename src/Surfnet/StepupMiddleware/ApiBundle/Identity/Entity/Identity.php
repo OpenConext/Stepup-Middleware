@@ -71,6 +71,7 @@ class Identity implements JsonSerializable
      */
     #[ORM\Column(type: 'stepup_locale')]
     public $preferredLocale;
+    public null $possessedSelfAssertedToken;
 
     public static function create(
         string $id,
@@ -78,7 +79,7 @@ class Identity implements JsonSerializable
         NameId $nameId,
         Email $email,
         CommonName $commonName,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ): self {
         $identity = new self();
 

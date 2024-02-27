@@ -27,17 +27,12 @@ final class RegistrationAuthorityCollection
      */
     private array $registrationAuthorities = [];
 
-    /**
-     * @param Institution $institution
-     * @param RegistrationAuthority $registrationAuthority
-     */
     public function set(Institution $institution, RegistrationAuthority $registrationAuthority): void
     {
         $this->registrationAuthorities[(string)$institution] = $registrationAuthority;
     }
 
     /**
-     * @param Institution $institution
      * @return RegistrationAuthority
      */
     public function get(Institution $institution)
@@ -46,7 +41,6 @@ final class RegistrationAuthorityCollection
     }
 
     /**
-     * @param Institution $institution
      * @return RegistrationAuthority
      */
     public function exists(Institution $institution): bool
@@ -54,9 +48,6 @@ final class RegistrationAuthorityCollection
         return array_key_exists((string)$institution, $this->registrationAuthorities);
     }
 
-    /**
-     * @param Institution $institution
-     */
     public function remove(Institution $institution): void
     {
         unset($this->registrationAuthorities[(string)$institution]);

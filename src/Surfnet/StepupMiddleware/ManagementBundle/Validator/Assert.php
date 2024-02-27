@@ -37,12 +37,17 @@ final class Assert
             0,
             $propertyPath,
             $value,
-            ['expected' => $keys, 'actual' => $keysOfValue]
+            ['expected' => $keys, 'actual' => $keysOfValue],
         );
     }
 
-    public static function requiredAndOptionalOptions(array $value, array $required, array $optional, $message = null, $propertyPath = null): void
-    {
+    public static function requiredAndOptionalOptions(
+        array $value,
+        array $required,
+        array $optional,
+        $message = null,
+        $propertyPath = null,
+    ): void {
         // Filter out the optional items from the value array
         $requiredValueSet = array_diff_key($value, array_flip($optional));
 
@@ -62,7 +67,7 @@ final class Assert
             0,
             $propertyPath,
             $value,
-            ['expected' => $optional, 'actual' => $keysOfValue]
+            ['expected' => $optional, 'actual' => $keysOfValue],
         );
     }
 }

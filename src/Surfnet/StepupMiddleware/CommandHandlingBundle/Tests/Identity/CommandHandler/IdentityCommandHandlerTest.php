@@ -41,8 +41,8 @@ use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\U2fDevicePossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenEvent;
 use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
@@ -63,7 +63,6 @@ use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
-use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -91,6 +90,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
+
 use function md5;
 
 /**
@@ -143,8 +143,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         parent::setUp();
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
@@ -162,7 +164,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory,
                 m::mock(UserDataFilterInterface::class),
-                $logger
+                $logger,
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
@@ -172,7 +174,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $this->configService,
             $this->loaResolutionService,
             m::mock(RecoveryTokenSecretHelper::class),
-            $this->registrationMailService
+            $this->registrationMailService,
         );
     }
 
@@ -183,14 +185,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_be_bootstrapped_with_a_yubikey_second_factor(): void
     {
-        $command                  = new BootstrapIdentityWithYubikeySecondFactorCommand();
-        $command->identityId      = 'ID-ID';
-        $command->nameId          = 'N-ID';
-        $command->institution     = 'Institution';
-        $command->commonName      = 'Enrique';
-        $command->email           = 'foo@domain.invalid';
+        $command = new BootstrapIdentityWithYubikeySecondFactorCommand();
+        $command->identityId = 'ID-ID';
+        $command->nameId = 'N-ID';
+        $command->institution = 'Institution';
+        $command->commonName = 'Enrique';
+        $command->email = 'foo@domain.invalid';
         $command->preferredLocale = 'nl_NL';
-        $command->secondFactorId  = 'SF-ID';
+        $command->secondFactorId = 'SF-ID';
         $command->yubikeyPublicId = '93193884';
 
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(false);
@@ -211,7 +213,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new NameId('N-ID'),
                     new CommonName($command->commonName),
                     new Email($command->email),
-                    new Locale('nl_NL')
+                    new Locale('nl_NL'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -221,8 +223,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new Email($command->email),
                     new Locale('nl_NL'),
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('93193884')
-                )
+                    new YubikeyPublicId('93193884'),
+                ),
             ]);
     }
 
@@ -233,14 +235,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_cannot_be_bootstrapped_twice(): void
     {
-        $command                  = new BootstrapIdentityWithYubikeySecondFactorCommand();
-        $command->identityId      = 'ID-ID';
-        $command->nameId          = 'N-ID';
-        $command->institution     = 'Institution';
-        $command->commonName      = 'Enrique';
-        $command->email           = 'foo@domain.invalid';
+        $command = new BootstrapIdentityWithYubikeySecondFactorCommand();
+        $command->identityId = 'ID-ID';
+        $command->nameId = 'N-ID';
+        $command->institution = 'Institution';
+        $command->commonName = 'Enrique';
+        $command->email = 'foo@domain.invalid';
         $command->preferredLocale = 'nl_NL';
-        $command->secondFactorId  = 'SF-ID';
+        $command->secondFactorId = 'SF-ID';
         $command->yubikeyPublicId = '93193884';
 
         $this->identityProjectionRepository->shouldReceive('hasIdentityWithNameIdAndInstitution')->andReturn(true);
@@ -268,19 +270,19 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $pubId             = new YubikeyPublicId('00028278');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $pubId = new YubikeyPublicId('00028278');
 
-        $command                  = new ProveYubikeyPossessionCommand();
-        $command->identityId      = (string) $id;
-        $command->secondFactorId  = (string) $secFacId;
-        $command->yubikeyPublicId = (string) $pubId;
+        $command = new ProveYubikeyPossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->yubikeyPublicId = (string)$pubId;
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
@@ -290,14 +292,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([
                 new YubikeyPossessionProvenEvent(
@@ -308,13 +312,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ]);
     }
 
@@ -332,19 +336,19 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $pubId             = new YubikeyPublicId('00028278');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $pubId = new YubikeyPublicId('00028278');
 
-        $command                  = new ProveYubikeyPossessionCommand();
-        $command->identityId      = (string) $id;
-        $command->secondFactorId  = (string) $secFacId;
-        $command->yubikeyPublicId = (string) $pubId;
+        $command = new ProveYubikeyPossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->yubikeyPublicId = (string)$pubId;
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
@@ -357,14 +361,16 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command);
     }
 
@@ -377,14 +383,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId1         = new SecondFactorId(self::uuid());
-        $pubId1            = new YubikeyPublicId('00028278');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId1 = new SecondFactorId(self::uuid());
+        $pubId1 = new YubikeyPublicId('00028278');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -392,10 +398,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(1);
 
-        $command                  = new ProveYubikeyPossessionCommand();
-        $command->identityId      = (string) $id;
-        $command->secondFactorId  = (string) $secFacId1;
-        $command->yubikeyPublicId = (string) $pubId1;
+        $command = new ProveYubikeyPossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId1;
+        $command->yubikeyPublicId = (string)$pubId1;
 
         $this->scenario
             ->withAggregateId($id)
@@ -406,7 +412,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
@@ -416,13 +422,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -441,14 +447,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $phoneNumber       = new PhoneNumber('+31 (0) 612345678');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $phoneNumber = new PhoneNumber('+31 (0) 612345678');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -456,21 +462,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
-        $command                 = new ProvePhonePossessionCommand();
-        $command->identityId     = (string) $id;
-        $command->secondFactorId = (string) $secFacId;
-        $command->phoneNumber    = (string) $phoneNumber;
+        $command = new ProvePhonePossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->phoneNumber = (string)$phoneNumber;
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([
                 new PhonePossessionProvenEvent(
@@ -481,13 +489,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ]);
     }
 
@@ -505,14 +513,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $phoneNumber       = new PhoneNumber('+31 (0) 612345678');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $phoneNumber = new PhoneNumber('+31 (0) 612345678');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -521,21 +529,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(SecondFactorNotAllowedException::class);
         $this->expectExceptionMessage('does not support second factor');
 
-        $command                 = new ProvePhonePossessionCommand();
-        $command->identityId     = (string) $id;
-        $command->secondFactorId = (string) $secFacId;
-        $command->phoneNumber    = (string) $phoneNumber;
+        $command = new ProvePhonePossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->phoneNumber = (string)$phoneNumber;
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([]);
     }
@@ -556,15 +566,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn($nonce);
 
-        $identityId        = new IdentityId(self::uuid());
-        $institution       = new Institution('Surfnet');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secondFactorId    = new SecondFactorId(self::uuid());
-        $stepupProvider    = new StepupProvider('tiqr');
-        $gssfId            = new GssfId('_' . md5('Surfnet'));
+        $identityId = new IdentityId(self::uuid());
+        $institution = new Institution('Surfnet');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $stepupProvider = new StepupProvider('tiqr');
+        $gssfId = new GssfId('_' . md5('Surfnet'));
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -574,28 +584,30 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                         new SecondFactorType('biometric'),
                         new SecondFactorType('tiqr'),
                         new SecondFactorType('anotherGssp'),
-                    ]
-                )
+                    ],
+                ),
             );
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
-        $command                 = new ProveGssfPossessionCommand();
-        $command->identityId     = (string) $identityId;
-        $command->secondFactorId = (string) $secondFactorId;
-        $command->stepupProvider = (string) $stepupProvider;
-        $command->gssfId         = (string) $gssfId;
+        $command = new ProveGssfPossessionCommand();
+        $command->identityId = (string)$identityId;
+        $command->secondFactorId = (string)$secondFactorId;
+        $command->stepupProvider = (string)$stepupProvider;
+        $command->gssfId = (string)$gssfId;
 
         $this->scenario
             ->withAggregateId($identityId)
-            ->given([new IdentityCreatedEvent(
-                $identityId,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([
                 new GssfPossessionProvenEvent(
@@ -607,13 +619,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     $nonce,
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ]);
     }
 
@@ -634,15 +646,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn($nonce);
 
-        $identityId        = new IdentityId(self::uuid());
-        $institution       = new Institution('Surfnet');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secondFactorId    = new SecondFactorId(self::uuid());
-        $stepupProvider    = new StepupProvider('tiqr');
-        $gssfId            = new GssfId('_' . md5('Surfnet'));
+        $identityId = new IdentityId(self::uuid());
+        $institution = new Institution('Surfnet');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secondFactorId = new SecondFactorId(self::uuid());
+        $stepupProvider = new StepupProvider('tiqr');
+        $gssfId = new GssfId('_' . md5('Surfnet'));
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -651,22 +663,24 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(SecondFactorNotAllowedException::class);
         $this->expectExceptionMessage('does not support second factor');
 
-        $command                 = new ProveGssfPossessionCommand();
-        $command->identityId     = (string) $identityId;
-        $command->secondFactorId = (string) $secondFactorId;
-        $command->stepupProvider = (string) $stepupProvider;
-        $command->gssfId         = (string) $gssfId;
+        $command = new ProveGssfPossessionCommand();
+        $command->identityId = (string)$identityId;
+        $command->secondFactorId = (string)$secondFactorId;
+        $command->stepupProvider = (string)$stepupProvider;
+        $command->gssfId = (string)$gssfId;
 
         $this->scenario
             ->withAggregateId($identityId)
-            ->given([new IdentityCreatedEvent(
-                $identityId,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $identityId,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([]);
     }
@@ -685,14 +699,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $keyHandle         = new U2fKeyHandle('DMUV_wX');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $keyHandle = new U2fKeyHandle('DMUV_wX');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -700,21 +714,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(2);
 
-        $command                 = new ProveU2fDevicePossessionCommand();
-        $command->identityId     = (string) $id;
-        $command->secondFactorId = (string) $secFacId;
-        $command->keyHandle      = $keyHandle->getValue();
+        $command = new ProveU2fDevicePossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->keyHandle = $keyHandle->getValue();
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([
                 new U2fDevicePossessionProvenEvent(
@@ -725,13 +741,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ]);
     }
 
@@ -749,14 +765,14 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId          = new SecondFactorId(self::uuid());
-        $keyHandle         = new U2fKeyHandle('DMUV_wX');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId = new SecondFactorId(self::uuid());
+        $keyHandle = new U2fKeyHandle('DMUV_wX');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -765,21 +781,23 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(SecondFactorNotAllowedException::class);
         $this->expectExceptionMessage('does not support second factor');
 
-        $command                 = new ProveU2fDevicePossessionCommand();
-        $command->identityId     = (string) $id;
-        $command->secondFactorId = (string) $secFacId;
-        $command->keyHandle      = $keyHandle->getValue();
+        $command = new ProveU2fDevicePossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId;
+        $command->keyHandle = $keyHandle->getValue();
 
         $this->scenario
             ->withAggregateId($id)
-            ->given([new IdentityCreatedEvent(
-                $id,
-                $institution,
-                $nameId,
-                $commonName,
-                $email,
-                $preferredLocale
-            )])
+            ->given([
+                new IdentityCreatedEvent(
+                    $id,
+                    $institution,
+                    $nameId,
+                    $commonName,
+                    $email,
+                    $preferredLocale,
+                ),
+            ])
             ->when($command)
             ->then([]);
     }
@@ -793,19 +811,19 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId1         = new SecondFactorId(self::uuid());
-        $phoneNumber1      = new PhoneNumber('+31 (0) 612345678');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId1 = new SecondFactorId(self::uuid());
+        $phoneNumber1 = new PhoneNumber('+31 (0) 612345678');
 
-        $command                 = new ProvePhonePossessionCommand();
-        $command->identityId     = (string) $id;
-        $command->secondFactorId = (string) $secFacId1;
-        $command->phoneNumber    = (string) $phoneNumber1;
+        $command = new ProvePhonePossessionCommand();
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId1;
+        $command->phoneNumber = (string)$phoneNumber1;
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -822,7 +840,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new PhonePossessionProvenEvent(
                     $id,
@@ -832,13 +850,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -852,15 +870,15 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('more than 1 token(s)');
 
-        $id                = new IdentityId(self::uuid());
-        $institution       = new Institution('A Corp.');
-        $nameId            = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
-        $secFacId1         = new SecondFactorId(self::uuid());
-        $publicId          = new YubikeyPublicId('00028278');
-        $phoneNumber       = new PhoneNumber('+31 (0) 676543210');
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secFacId1 = new SecondFactorId(self::uuid());
+        $publicId = new YubikeyPublicId('00028278');
+        $phoneNumber = new PhoneNumber('+31 (0) 676543210');
 
         $this->allowedSecondFactorListServiceMock
             ->shouldReceive('getAllowedSecondFactorListFor')
@@ -869,9 +887,9 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(1);
 
         $command = new ProvePhonePossessionCommand();
-        $command->identityId = (string) $id;
-        $command->secondFactorId = (string) $secFacId1;
-        $command->phoneNumber = (string) $phoneNumber;
+        $command->identityId = (string)$id;
+        $command->secondFactorId = (string)$secFacId1;
+        $command->phoneNumber = (string)$phoneNumber;
 
         $this->scenario
             ->withAggregateId($id)
@@ -882,7 +900,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
@@ -892,13 +910,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -915,17 +933,17 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
             ->shouldReceive('generate')->once()->andReturn('regcode');
 
-        $id                     = new IdentityId(self::uuid());
-        $institution            = new Institution('A Corp.');
-        $nameId                 = new NameId(md5(__METHOD__));
-        $email                  = new Email('info@domain.invalid');
-        $commonName             = new CommonName('Henk Westbroek');
-        $preferredLocale        = new Locale('en_GB');
-        $secondFactorId         = new SecondFactorId(self::uuid());
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secondFactorId = new SecondFactorId(self::uuid());
         $secondFactorIdentifier = new YubikeyPublicId('00028278');
 
-        $command                    = new VerifyEmailCommand();
-        $command->identityId        = (string) $id;
+        $command = new VerifyEmailCommand();
+        $command->identityId = (string)$id;
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -937,7 +955,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
@@ -947,13 +965,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command)
             ->then([
@@ -967,8 +985,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'regcode',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ]);
     }
 
@@ -979,19 +997,21 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     public function a_verified_second_factors_email_cannot_be_verified(): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('Cannot verify second factor, no unverified second factor can be verified using the given nonce');
+        $this->expectExceptionMessage(
+            'Cannot verify second factor, no unverified second factor can be verified using the given nonce',
+        );
 
-        $id                     = new IdentityId(self::uuid());
-        $institution            = new Institution('A Corp.');
-        $nameId                 = new NameId(md5(__METHOD__));
-        $email                  = new Email('info@domain.invalid');
-        $commonName             = new CommonName('Henk Westbroek');
-        $preferredLocale        = new Locale('en_GB');
-        $secondFactorId         = new SecondFactorId(self::uuid());
+        $id = new IdentityId(self::uuid());
+        $institution = new Institution('A Corp.');
+        $nameId = new NameId(md5(__METHOD__));
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
+        $secondFactorId = new SecondFactorId(self::uuid());
         $secondFactorIdentifier = new YubikeyPublicId('00028278');
 
         $command = new VerifyEmailCommand();
-        $command->identityId = (string) $id;
+        $command->identityId = (string)$id;
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -1003,7 +1023,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
@@ -1013,12 +1033,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new EmailVerifiedEvent(
                     $id,
@@ -1030,8 +1050,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'regcode',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -1050,12 +1070,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $publicId = new YubikeyPublicId('00028278');
         $institution = new Institution('A Corp.');
         $nameId = new NameId(md5(__METHOD__));
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
-        $preferredLocale   = new Locale('en_GB');
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
+        $preferredLocale = new Locale('en_GB');
 
         $command = new VerifyEmailCommand();
-        $command->identityId = (string) $id;
+        $command->identityId = (string)$id;
         $command->verificationNonce = 'nonce';
 
         $this->scenario
@@ -1067,7 +1087,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $preferredLocale
+                    $preferredLocale,
                 ),
                 new YubikeyPossessionProvenEvent(
                     $id,
@@ -1077,13 +1097,13 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        new DateTime(new CoreDateTime('-2 days'))
+                        new DateTime(new CoreDateTime('-2 days')),
                     ),
                     'nonce',
                     $commonName,
                     $email,
-                    $preferredLocale
-                )
+                    $preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -1103,12 +1123,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $createCommand->email = 'a@domain.invalid';
         $createCommand->commonName = 'foobar';
 
-        $identityId                = new IdentityId($createCommand->id);
-        $identityInstitution       = new Institution($createCommand->institution);
-        $identityNameId            = new NameId($createCommand->nameId);
-        $identityEmail             = new Email($createCommand->email);
-        $identityCommonName        = new CommonName($createCommand->commonName);
-        $identityPreferredLocale   = new Locale($createCommand->preferredLocale);
+        $identityId = new IdentityId($createCommand->id);
+        $identityInstitution = new Institution($createCommand->institution);
+        $identityNameId = new NameId($createCommand->nameId);
+        $identityEmail = new Email($createCommand->email);
+        $identityCommonName = new CommonName($createCommand->commonName);
+        $identityPreferredLocale = new Locale($createCommand->preferredLocale);
 
         $createdEvent = new IdentityCreatedEvent(
             $identityId,
@@ -1116,7 +1136,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             $identityNameId,
             $identityCommonName,
             $identityEmail,
-            $identityPreferredLocale
+            $identityPreferredLocale,
         );
 
         $this->scenario
@@ -1133,10 +1153,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_be_updated(): void
     {
-        $id                = new IdentityId('42');
-        $institution       = new Institution('A Corp.');
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
+        $id = new IdentityId('42');
+        $institution = new Institution('A Corp.');
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
 
         $createdEvent = new IdentityCreatedEvent(
             $id,
@@ -1144,12 +1164,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             new NameId('3'),
             $commonName,
             $email,
-            new Locale('de_DE')
+            new Locale('de_DE'),
         );
 
-        $updateCommand             = new UpdateIdentityCommand();
-        $updateCommand->id         = $id->getIdentityId();
-        $updateCommand->email      = 'new-email@domain.invalid';
+        $updateCommand = new UpdateIdentityCommand();
+        $updateCommand->id = $id->getIdentityId();
+        $updateCommand->email = 'new-email@domain.invalid';
         $updateCommand->commonName = 'Henk Hendriksen';
 
         $this->scenario
@@ -1158,7 +1178,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($updateCommand)
             ->then([
                 new IdentityRenamedEvent($id, $institution, new CommonName($updateCommand->commonName)),
-                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email))
+                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email)),
             ]);
     }
 
@@ -1168,10 +1188,10 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_be_updated_twice_only_emitting_events_when_changed(): void
     {
-        $id                = new IdentityId('42');
-        $institution       = new Institution('A Corp.');
-        $email             = new Email('info@domain.invalid');
-        $commonName        = new CommonName('Henk Westbroek');
+        $id = new IdentityId('42');
+        $institution = new Institution('A Corp.');
+        $email = new Email('info@domain.invalid');
+        $commonName = new CommonName('Henk Westbroek');
 
         $createdEvent = new IdentityCreatedEvent(
             $id,
@@ -1179,12 +1199,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             new NameId('3'),
             $commonName,
             $email,
-            new Locale('de_DE')
+            new Locale('de_DE'),
         );
 
-        $updateCommand             = new UpdateIdentityCommand();
-        $updateCommand->id         = $id->getIdentityId();
-        $updateCommand->email      = 'new-email@domain.invalid';
+        $updateCommand = new UpdateIdentityCommand();
+        $updateCommand->id = $id->getIdentityId();
+        $updateCommand->email = 'new-email@domain.invalid';
         $updateCommand->commonName = 'Henk Hendriksen';
 
         $this->scenario
@@ -1194,7 +1214,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
             ->when($updateCommand)
             ->then([
                 new IdentityRenamedEvent($id, $institution, new CommonName($updateCommand->commonName)),
-                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email))
+                new IdentityEmailChangedEvent($id, $institution, new Email($updateCommand->email)),
             ]);
     }
 
@@ -1204,30 +1224,30 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_second_factor_can_be_vetted(): void
     {
-        $command                         = new VetSecondFactorCommand();
-        $command->authorityId            = 'AID';
-        $command->identityId             = 'IID';
-        $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
-        $command->secondFactorType       = 'yubikey';
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorType = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
-        $command->identityVerified       = true;
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
         $command->provePossessionSkipped = false;
 
-        $authorityId                = new IdentityId($command->authorityId);
-        $authorityNameId            = new NameId($this->uuid());
-        $authorityInstitution       = new Institution('Wazoo');
-        $authorityEmail             = new Email('info@domain.invalid');
-        $authorityCommonName        = new CommonName('Henk Westbroek');
+        $authorityId = new IdentityId($command->authorityId);
+        $authorityNameId = new NameId($this->uuid());
+        $authorityInstitution = new Institution('Wazoo');
+        $authorityEmail = new Email('info@domain.invalid');
+        $authorityCommonName = new CommonName('Henk Westbroek');
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@domain.invalid');
-        $registrantCommonName        = new CommonName('Reginald Waterloo');
-        $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantEmail = new Email('reg@domain.invalid');
+        $registrantCommonName = new CommonName('Reginald Waterloo');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantSecFacIdentifier = new YubikeyPublicId('00028278');
 
         $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(true);
 
@@ -1245,7 +1265,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityNameId,
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
@@ -1255,8 +1275,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId($this->uuid()),
-                    new YubikeyPublicId('00000012')
-                )
+                    new YubikeyPublicId('00000012'),
+                ),
             ])
             ->withAggregateId($registrantId)
             ->given([
@@ -1266,7 +1286,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -1276,12 +1296,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1293,7 +1313,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1308,7 +1328,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('NH9392')),
                 ),
             ]);
     }
@@ -1322,31 +1342,31 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectExceptionMessage("Authority does not have the required LoA");
         $this->expectException(DomainException::class);
 
-        $command                         = new VetSecondFactorCommand();
-        $command->authorityId            = 'AID';
-        $command->identityId             = 'IID';
-        $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
-        $command->secondFactorType       = 'yubikey';
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorType = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
-        $command->identityVerified       = true;
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
 
-        $authorityId                = new IdentityId($command->authorityId);
-        $authorityInstitution       = new Institution('Wazoo');
-        $authorityNameId            = new NameId($this->uuid());
-        $authorityEmail             = new Email('info@domain.invalid');
-        $authorityCommonName        = new CommonName('Henk Westbroek');
-        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
-        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+        $authorityId = new IdentityId($command->authorityId);
+        $authorityInstitution = new Institution('Wazoo');
+        $authorityNameId = new NameId($this->uuid());
+        $authorityEmail = new Email('info@domain.invalid');
+        $authorityCommonName = new CommonName('Henk Westbroek');
+        $authorityPhoneSfId = new SecondFactorId($this->uuid());
+        $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678');
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@domain.invalid');
-        $registrantCommonName        = new CommonName('Reginald Waterloo');
-        $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantPubId             = new YubikeyPublicId('00028278');
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantEmail = new Email('reg@domain.invalid');
+        $registrantCommonName = new CommonName('Reginald Waterloo');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantPubId = new YubikeyPublicId('00028278');
 
         $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(false);
 
@@ -1359,7 +1379,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityNameId,
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new PhonePossessionProvenEvent(
                     $authorityId,
@@ -1369,12 +1389,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $authorityId,
@@ -1386,7 +1406,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'regcode',
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $authorityId,
@@ -1398,8 +1418,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
-                )
+                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81')),
+                ),
             ])
             ->withAggregateId($registrantId)
             ->given([
@@ -1409,7 +1429,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -1419,12 +1439,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1436,7 +1456,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1451,7 +1471,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('NH9392')),
                 ),
             ]);
     }
@@ -1463,30 +1483,30 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_second_factor_can_be_vetted_without_a_physical_proven_possession(): void
     {
-        $command                         = new VetSecondFactorCommand();
-        $command->authorityId            = 'AID';
-        $command->identityId             = 'IID';
-        $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
-        $command->secondFactorType       = 'yubikey';
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorType = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
-        $command->identityVerified       = true;
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
         $command->provePossessionSkipped = true;
 
-        $authorityId                = new IdentityId($command->authorityId);
-        $authorityNameId            = new NameId($this->uuid());
-        $authorityInstitution       = new Institution('Wazoo');
-        $authorityEmail             = new Email('info@domain.invalid');
-        $authorityCommonName        = new CommonName('Henk Westbroek');
+        $authorityId = new IdentityId($command->authorityId);
+        $authorityNameId = new NameId($this->uuid());
+        $authorityInstitution = new Institution('Wazoo');
+        $authorityEmail = new Email('info@domain.invalid');
+        $authorityCommonName = new CommonName('Henk Westbroek');
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@domain.invalid');
-        $registrantCommonName        = new CommonName('Reginald Waterloo');
-        $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantSecFacIdentifier  = new YubikeyPublicId('00028278');
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantEmail = new Email('reg@domain.invalid');
+        $registrantCommonName = new CommonName('Reginald Waterloo');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantSecFacIdentifier = new YubikeyPublicId('00028278');
 
         $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(true);
 
@@ -1504,7 +1524,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityNameId,
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
@@ -1514,8 +1534,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId($this->uuid()),
-                    new YubikeyPublicId('00000012')
-                )
+                    new YubikeyPublicId('00000012'),
+                ),
             ])
             ->withAggregateId($registrantId)
             ->given([
@@ -1525,7 +1545,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -1535,12 +1555,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1552,7 +1572,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1567,7 +1587,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NH9392'))
+                    new OnPremiseVettingType(new DocumentNumber('NH9392')),
                 ),
             ]);
     }
@@ -1578,35 +1598,37 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function a_second_factor_cannot_be_vetted_without_physical_prove_of_possession_when_not_configured(): void
     {
-        $this->expectExceptionMessage("The possession of registrants second factor with ID 'ISFID' of type 'yubikey' has to be physically proven");
+        $this->expectExceptionMessage(
+            "The possession of registrants second factor with ID 'ISFID' of type 'yubikey' has to be physically proven",
+        );
         $this->expectException(DomainException::class);
 
-        $command                         = new VetSecondFactorCommand();
-        $command->authorityId            = 'AID';
-        $command->identityId             = 'IID';
-        $command->secondFactorId         = 'ISFID';
-        $command->registrationCode       = 'REGCODE';
-        $command->secondFactorType       = 'yubikey';
+        $command = new VetSecondFactorCommand();
+        $command->authorityId = 'AID';
+        $command->identityId = 'IID';
+        $command->secondFactorId = 'ISFID';
+        $command->registrationCode = 'REGCODE';
+        $command->secondFactorType = 'yubikey';
         $command->secondFactorIdentifier = '00028278';
-        $command->documentNumber         = 'NH9392';
-        $command->identityVerified       = true;
+        $command->documentNumber = 'NH9392';
+        $command->identityVerified = true;
         $command->provePossessionSkipped = true;
 
-        $authorityId                = new IdentityId($command->authorityId);
-        $authorityInstitution       = new Institution('Wazoo');
-        $authorityNameId            = new NameId($this->uuid());
-        $authorityEmail             = new Email('info@domain.invalid');
-        $authorityCommonName        = new CommonName('Henk Westbroek');
-        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
-        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+        $authorityId = new IdentityId($command->authorityId);
+        $authorityInstitution = new Institution('Wazoo');
+        $authorityNameId = new NameId($this->uuid());
+        $authorityEmail = new Email('info@domain.invalid');
+        $authorityCommonName = new CommonName('Henk Westbroek');
+        $authorityPhoneSfId = new SecondFactorId($this->uuid());
+        $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678');
 
-        $registrantId                = new IdentityId($command->identityId);
-        $registrantInstitution       = new Institution('A Corp.');
-        $registrantNameId            = new NameId('3');
-        $registrantEmail             = new Email('reg@domain.invalid');
-        $registrantCommonName        = new CommonName('Reginald Waterloo');
-        $registrantSecFacId          = new SecondFactorId('ISFID');
-        $registrantPubId             = new YubikeyPublicId('00028278');
+        $registrantId = new IdentityId($command->identityId);
+        $registrantInstitution = new Institution('A Corp.');
+        $registrantNameId = new NameId('3');
+        $registrantEmail = new Email('reg@domain.invalid');
+        $registrantCommonName = new CommonName('Reginald Waterloo');
+        $registrantSecFacId = new SecondFactorId('ISFID');
+        $registrantPubId = new YubikeyPublicId('00028278');
 
         $this->secondFactorTypeService->shouldReceive('hasEqualOrLowerLoaComparedTo')->andReturn(true);
 
@@ -1624,7 +1646,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityNameId,
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new PhonePossessionProvenEvent(
                     $authorityId,
@@ -1634,12 +1656,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $authorityId,
@@ -1651,7 +1673,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'regcode',
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $authorityId,
@@ -1663,8 +1685,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityCommonName,
                     $authorityEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81'))
-                )
+                    new OnPremiseVettingType(new DocumentNumber('NG-RB-81')),
+                ),
             ])
             ->withAggregateId($registrantId)
             ->given([
@@ -1674,7 +1696,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -1684,12 +1706,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1701,7 +1723,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1716,7 +1738,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('123456'))
+                    new OnPremiseVettingType(new DocumentNumber('123456')),
                 ),
             ]);
     }
@@ -1728,11 +1750,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_express_its_locale_preference(): void
     {
-        $command                  = new ExpressLocalePreferenceCommand();
-        $command->identityId      = $this->uuid();
+        $command = new ExpressLocalePreferenceCommand();
+        $command->identityId = $this->uuid();
         $command->preferredLocale = 'nl_NL';
 
-        $identityId  = new IdentityId($command->identityId);
+        $identityId = new IdentityId($command->identityId);
         $institution = new Institution('Institution');
 
         $this->scenario
@@ -1744,7 +1766,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new NameId('N-ID'),
                     new CommonName('Matti Vanhanen'),
                     new Email('m.vanhanen@domain.invalid'),
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1764,7 +1786,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->identityId = self::uuid();
         $command->secondFactorId = 'second-factor-id';
 
-        $identityId  = new IdentityId($command->identityId);
+        $identityId = new IdentityId($command->identityId);
         $institution = new Institution('Institution');
 
         $this->registrationMailService
@@ -1780,7 +1802,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new NameId('N-ID'),
                     new CommonName('Matti Vanhanen'),
                     new Email('m.vanhanen@domain.invalid'),
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1797,11 +1819,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $this->expectExceptionMessage("Given locale \"fi_FI\" is not a supported locale");
         $this->expectException(UnsupportedLocaleException::class);
 
-        $command                  = new ExpressLocalePreferenceCommand();
-        $command->identityId      = $this->uuid();
+        $command = new ExpressLocalePreferenceCommand();
+        $command->identityId = $this->uuid();
         $command->preferredLocale = 'fi_FI';
 
-        $identityId  = new IdentityId($command->identityId);
+        $identityId = new IdentityId($command->identityId);
         $institution = new Institution('Institution');
 
         $this->scenario
@@ -1813,7 +1835,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new NameId('N-ID'),
                     new CommonName('Matti Vanhanen'),
                     new Email('m.vanhanen@domain.invalid'),
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command);
@@ -1826,11 +1848,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
      */
     public function an_identity_can_express_its_locale_preference_more_than_one_time(): void
     {
-        $command                  = new ExpressLocalePreferenceCommand();
-        $command->identityId      = $this->uuid();
+        $command = new ExpressLocalePreferenceCommand();
+        $command->identityId = $this->uuid();
         $command->preferredLocale = 'nl_NL';
 
-        $identityId  = new IdentityId($command->identityId);
+        $identityId = new IdentityId($command->identityId);
         $institution = new Institution('Institution');
 
         $this->scenario
@@ -1842,7 +1864,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     new NameId('N-ID'),
                     new CommonName('Matti Vanhanen'),
                     new Email('m.vanhanen@domain.invalid'),
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1867,8 +1889,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authoringSecondFactorLoa = "loa-3";
         $command->secondFactorType = 'sms';
 
-        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
-        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+        $authorityPhoneSfId = new SecondFactorId($this->uuid());
+        $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678');
 
         $registrantId = new IdentityId($command->identityId);
         $registrantInstitution = new Institution('Institution');
@@ -1892,7 +1914,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -1902,12 +1924,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1919,7 +1941,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $command->registrationCode,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $registrantId,
@@ -1931,7 +1953,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('123456'))
+                    new OnPremiseVettingType(new DocumentNumber('123456')),
                 ),
                 // The next token is vetted using the other token
                 new PhonePossessionProvenEvent(
@@ -1942,12 +1964,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -1959,7 +1981,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -1975,7 +1997,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new SelfVetVettingType($loa)
+                    new SelfVetVettingType($loa),
                 ),
             ]);
     }
@@ -1996,8 +2018,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->authoringSecondFactorIdentifier = "loa-3";
         $command->secondFactorType = 'sms';
 
-        $authorityPhoneSfId         = new SecondFactorId($this->uuid());
-        $authorityPhoneNo           = new PhoneNumber('+31 (0) 612345678');
+        $authorityPhoneSfId = new SecondFactorId($this->uuid());
+        $authorityPhoneNo = new PhoneNumber('+31 (0) 612345678');
 
         $registrantId = new IdentityId($command->identityId);
         $registrantInstitution = new Institution('Institution');
@@ -2021,7 +2043,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantNameId,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeyPossessionProvenEvent(
                     $registrantId,
@@ -2031,12 +2053,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -2048,7 +2070,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $command->registrationCode,
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $registrantId,
@@ -2060,7 +2082,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new OnPremiseVettingType(new DocumentNumber('123456'))
+                    new OnPremiseVettingType(new DocumentNumber('123456')),
                 ),
                 // The next token is vetted using the other token
                 new PhonePossessionProvenEvent(
@@ -2071,12 +2093,12 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $registrantId,
@@ -2088,7 +2110,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     'REGCODE',
                     $registrantCommonName,
                     $registrantEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -2104,7 +2126,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantCommonName,
                     $registrantEmail,
                     new Locale('en_GB'),
-                    new SelfVetVettingType($loa)
+                    new SelfVetVettingType($loa),
                 ),
             ]);
     }

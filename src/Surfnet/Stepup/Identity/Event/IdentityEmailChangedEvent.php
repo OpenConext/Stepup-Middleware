@@ -31,7 +31,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
     private array $allowlist = [
         'id',
         'identity_institution',
-        'email'
+        'email',
     ];
 
     /**
@@ -64,7 +64,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            Email::unknown()
+            Email::unknown(),
         );
     }
 
@@ -74,8 +74,8 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
         ];
     }
 

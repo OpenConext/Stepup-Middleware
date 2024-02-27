@@ -29,7 +29,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class ConfigurationInstitutionType extends Type
 {
-    const NAME = 'stepup_configuration_institution';
+    public const NAME = 'stepup_configuration_institution';
 
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
@@ -46,9 +46,9 @@ class ConfigurationInstitutionType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal institution of type %s '%s', expected an Institution instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -67,7 +67,7 @@ class ConfigurationInstitutionType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);

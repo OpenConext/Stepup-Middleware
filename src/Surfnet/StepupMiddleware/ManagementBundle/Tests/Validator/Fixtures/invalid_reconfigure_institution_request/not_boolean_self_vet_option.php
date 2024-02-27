@@ -27,6 +27,6 @@ return [
             'self_vet' => 'yes',
             'number_of_tokens_per_identity' => 1,
             'allowed_second_factors' => [],
-        ]
-    ]
+        ],
+    ],
 ];

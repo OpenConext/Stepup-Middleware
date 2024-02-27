@@ -27,29 +27,11 @@ use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 
 final class SsoOn2faOptionChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var SsoOn2faOption
-     */
-    public $ssoOn2faOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        SsoOn2faOption $ssoOn2faOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public SsoOn2faOption $ssoOn2faOption,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->ssoOn2faOption = $ssoOn2faOption;
     }
 
     public static function deserialize(array $data): self
@@ -57,7 +39,7 @@ final class SsoOn2faOptionChangedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            new SsoOn2faOption($data['sso_on_2fa_option'])
+            new SsoOn2faOption($data['sso_on_2fa_option']),
         );
     }
 

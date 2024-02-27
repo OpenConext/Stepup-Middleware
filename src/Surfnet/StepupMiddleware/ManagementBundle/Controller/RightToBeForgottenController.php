@@ -38,17 +38,13 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
  */
 class RightToBeForgottenController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private TransactionAwarePipeline $pipeline;
-
-    private IdentityService $identityService;
-
-    public function __construct(TransactionAwarePipeline $pipeline, IdentityService $identityService)
-    {
-        $this->pipeline = $pipeline;
-        $this->identityService = $identityService;
+    public function __construct(
+        /**
+         * @return TransactionAwarePipeline
+         */
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly IdentityService $identityService,
+    ) {
     }
 
     public function forgetIdentity(Request $request)
@@ -68,16 +64,14 @@ class RightToBeForgottenController extends AbstractController
         $this->assertMayForget(new NameId($payload['name_id']), new Institution($payload['institution']));
 
         $command = new ForgetIdentityCommand();
-        $command->UUID        = (string) Uuid::uuid4();
-        $command->nameId      = $payload['name_id'];
+        $command->UUID = (string)Uuid::uuid4();
+        $command->nameId = $payload['name_id'];
         $command->institution = $payload['institution'];
 
         return $this->handleCommand($request, $command);
     }
 
     /**
-     * @param Request $request
-     * @param Command $command
      * @return JsonResponse
      */
     private function handleCommand(Request $request, Command $command): JsonResponse
@@ -87,15 +81,13 @@ class RightToBeForgottenController extends AbstractController
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
 
         return new JsonResponse([
-            'status'       => 'OK',
+            'status' => 'OK',
             'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
         ]);
     }
 
     /**
-     * @param NameId      $nameId
-     * @param Institution $institution
      * @throws ConflictHttpException
      */
     private function assertMayForget(NameId $nameId, Institution $institution): void
@@ -110,15 +102,17 @@ class RightToBeForgottenController extends AbstractController
         if ($credentials->isSraa()) {
             throw new ConflictHttpException(
                 'Identity is currently configured to act as an SRAA. ' .
-                'Remove its NameID from the configuration and try again.'
+                'Remove its NameID from the configuration and try again.',
             );
         }
 
         $role = $credentials->isRaa() ? 'RAA' : 'RA';
 
-        throw new ConflictHttpException(sprintf(
-            'Identity is currently accredited as an %s. Retract the accreditation and try again.',
-            $role
-        ));
+        throw new ConflictHttpException(
+            sprintf(
+                'Identity is currently accredited as an %s. Retract the accreditation and try again.',
+                $role,
+            ),
+        );
     }
 }

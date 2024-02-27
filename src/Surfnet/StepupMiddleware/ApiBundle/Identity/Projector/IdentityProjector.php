@@ -21,7 +21,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Projector;
 use Broadway\ReadModel\Projector;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\IdentityEmailChangedEvent;
-use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\IdentityRenamedEvent;
 use Surfnet\Stepup\Identity\Event\LocalePreferenceExpressedEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
@@ -32,28 +31,28 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 
 class IdentityProjector extends Projector
 {
-    private IdentityRepository $identityRepository;
-
-    public function __construct(IdentityRepository $identityRepository)
-    {
-        $this->identityRepository = $identityRepository;
+    public function __construct(
+        private readonly IdentityRepository $identityRepository,
+    ) {
     }
 
     public function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
-        $this->identityRepository->save(Identity::create(
-            (string) $event->identityId,
-            $event->identityInstitution,
-            $event->nameId,
-            $event->email,
-            $event->commonName,
-            $event->preferredLocale
-        ));
+        $this->identityRepository->save(
+            Identity::create(
+                (string)$event->identityId,
+                $event->identityInstitution,
+                $event->nameId,
+                $event->email,
+                $event->commonName,
+                $event->preferredLocale,
+            ),
+        );
     }
 
     public function applyIdentityRenamedEvent(IdentityRenamedEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
         $identity->commonName = $event->commonName;
 
         $this->identityRepository->save($identity);
@@ -61,7 +60,7 @@ class IdentityProjector extends Projector
 
     public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
         $identity->email = $event->email;
 
         $this->identityRepository->save($identity);
@@ -69,7 +68,7 @@ class IdentityProjector extends Projector
 
     public function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
         $identity->preferredLocale = $event->preferredLocale;
 
         $this->identityRepository->save($identity);
@@ -77,12 +76,13 @@ class IdentityProjector extends Projector
 
     public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
-        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string)$event->identityId);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
-    {
-        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string) $event->identityId);
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
+        $this->determinePossessionOfSelfAssertedToken($event->vettingType, (string)$event->identityId);
     }
 
     private function determinePossessionOfSelfAssertedToken(VettingType $vettingType, string $identityId): void

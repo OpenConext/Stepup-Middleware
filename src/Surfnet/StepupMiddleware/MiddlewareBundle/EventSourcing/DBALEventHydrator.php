@@ -31,46 +31,22 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class DBALEventHydrator
 {
-    private Connection $connection;
-
-    private SimpleInterfaceSerializer $payloadSerializer;
-
-    private SimpleInterfaceSerializer $metadataSerializer;
-
-    /**
-     * @var string
-     */
-    private $eventStreamTableName;
-
-    /**
-     * @var string
-     */
-    private $sensitiveDataTable;
-
     /**
      * @var Statement
      */
     private $loadStatement = null;
 
     /**
-     * @param Connection          $connection
-     * @param SimpleInterfaceSerializer $payloadSerializer
-     * @param SimpleInterfaceSerializer $metadataSerializer
-     * @param string              $eventStreamTable
-     * @param string              $sensitiveDataTable
+     * @param string $eventStreamTableName
+     * @param string $sensitiveDataTable
      */
     public function __construct(
-        Connection $connection,
-        SimpleInterfaceSerializer $payloadSerializer,
-        SimpleInterfaceSerializer $metadataSerializer,
-        $eventStreamTable,
-        $sensitiveDataTable
+        private readonly Connection $connection,
+        private readonly SimpleInterfaceSerializer $payloadSerializer,
+        private readonly SimpleInterfaceSerializer $metadataSerializer,
+        private $eventStreamTableName,
+        private $sensitiveDataTable,
     ) {
-        $this->connection         = $connection;
-        $this->payloadSerializer  = $payloadSerializer;
-        $this->metadataSerializer = $metadataSerializer;
-        $this->eventStreamTableName = $eventStreamTable;
-        $this->sensitiveDataTable = $sensitiveDataTable;
     }
 
     /**
@@ -100,7 +76,7 @@ class DBALEventHydrator
 
         $statement->execute();
 
-        $events = array();
+        $events = [];
         while ($row = $statement->fetch()) {
             $events[] = $this->deserializeEvent($row);
         }
@@ -121,13 +97,13 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 WHERE %es%.type IN ($eventTypePlaceholders)
-                ORDER BY recorded_on, playhead ASC"
+                ORDER BY recorded_on, playhead ASC",
         );
 
         $statement = $this->connection->prepare($query);
         $statement->execute($eventTypes);
 
-        $events = array();
+        $events = [];
         while ($row = $statement->fetch()) {
             $events[] = $this->deserializeEvent($row);
         }
@@ -137,18 +113,18 @@ class DBALEventHydrator
 
     private function deserializeEvent(array $row): DomainMessage
     {
-        $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));
+        $event = $this->payloadSerializer->deserialize(json_decode((string)$row['payload'], true));
 
         if ($event instanceof Forgettable) {
-            $event->setSensitiveData(SensitiveData::deserialize(json_decode($row['sensitive_data'], true)));
+            $event->setSensitiveData(SensitiveData::deserialize(json_decode((string)$row['sensitive_data'], true)));
         }
 
         return new DomainMessage(
             $row['uuid'],
             $row['playhead'],
-            $this->metadataSerializer->deserialize(json_decode($row['metadata'], true)),
+            $this->metadataSerializer->deserialize(json_decode((string)$row['metadata'], true)),
             $event,
-            DateTime::fromString($row['recorded_on'])
+            DateTime::fromString($row['recorded_on']),
         );
     }
 
@@ -164,7 +140,7 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 ORDER BY recorded_on ASC
-                LIMIT :limit OFFSET :offset'
+                LIMIT :limit OFFSET :offset',
             );
 
             $this->loadStatement = $this->connection->prepare($query);

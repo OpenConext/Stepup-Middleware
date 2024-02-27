@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -25,7 +26,6 @@ use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table]
 #[ORM\Index(name: 'idx_ra_location_institution', columns: ['institution'])]
@@ -69,7 +69,7 @@ class RaLocation implements JsonSerializable
         Institution $institution,
         RaLocationName $name,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ): self {
         if (!is_string($id)) {
             throw InvalidArgumentException::invalidType('string', 'id', $id);
@@ -77,10 +77,10 @@ class RaLocation implements JsonSerializable
 
         $raLocation = new self;
 
-        $raLocation->id                 = $id;
-        $raLocation->institution        = $institution;
-        $raLocation->name               = $name;
-        $raLocation->location           = $location;
+        $raLocation->id = $id;
+        $raLocation->institution = $institution;
+        $raLocation->name = $name;
+        $raLocation->location = $location;
         $raLocation->contactInformation = $contactInformation;
 
         return $raLocation;
@@ -89,10 +89,10 @@ class RaLocation implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'id'                  => $this->id,
-            'institution'         => $this->institution,
-            'name'                => $this->name,
-            'location'            => $this->location,
+            'id' => $this->id,
+            'institution' => $this->institution,
+            'name' => $this->name,
+            'location' => $this->location,
             'contact_information' => $this->contactInformation,
         ];
     }

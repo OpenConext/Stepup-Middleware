@@ -19,11 +19,12 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class CommonName implements JsonSerializable
+final class CommonName implements JsonSerializable, Stringable
 {
-    private string $commonName;
+    private readonly string $commonName;
 
     /**
      * @return self

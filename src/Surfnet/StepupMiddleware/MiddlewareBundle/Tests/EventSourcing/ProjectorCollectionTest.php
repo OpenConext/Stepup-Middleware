@@ -35,7 +35,7 @@ class ProjectorCollectionTest extends TestCase
      */
     public function projectors_can_be_added_to_a_projector_collection_during_runtime(): void
     {
-        $sraaProjector      = new SraaProjector(m::mock(SraaRepository::class));
+        $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
         $whitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
 
         $projectorCollection = new ProjectorCollection;
@@ -44,11 +44,11 @@ class ProjectorCollectionTest extends TestCase
 
         $this->assertTrue(
             $projectorCollection->contains($sraaProjector),
-            'ProjectorCollection should have contained added SraaProjector but it did not'
+            'ProjectorCollection should have contained added SraaProjector but it did not',
         );
         $this->assertTrue(
             $projectorCollection->contains($whitelistProjector),
-            'ProjectorCollection should have contained added WhitelistProjector but it did not'
+            'ProjectorCollection should have contained added WhitelistProjector but it did not',
         );
     }
 
@@ -58,7 +58,7 @@ class ProjectorCollectionTest extends TestCase
      */
     public function projector_names_can_be_retrieved_from_a_projector_collection(): void
     {
-        $sraaProjector      = new SraaProjector(m::mock(SraaRepository::class));
+        $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
         $whitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
 
         $projectorCollection = new ProjectorCollection;
@@ -66,12 +66,12 @@ class ProjectorCollectionTest extends TestCase
         $projectorCollection->add($whitelistProjector);
 
         $expectedProjectorNames = [SraaProjector::class, WhitelistProjector::class];
-        $actualProjectorNames   = $projectorCollection->getProjectorNames();
+        $actualProjectorNames = $projectorCollection->getProjectorNames();
 
         $this->assertSame(
             $expectedProjectorNames,
             $actualProjectorNames,
-            'Projector names cannot be retrieved correctly from a ProjectorCollection'
+            'Projector names cannot be retrieved correctly from a ProjectorCollection',
         );
     }
 
@@ -81,22 +81,22 @@ class ProjectorCollectionTest extends TestCase
      */
     public function a_subset_of_projectors_can_be_selected_from_a_projector_collection(): void
     {
-        $sraaProjector      = new SraaProjector( m::mock(SraaRepository::class));
+        $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
         $whitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
 
         $projectorCollection = new ProjectorCollection;
         $projectorCollection->add($sraaProjector);
         $projectorCollection->add($whitelistProjector);
 
-        $projectorSelection = $projectorCollection->selectByNames([get_class($sraaProjector)]);
+        $projectorSelection = $projectorCollection->selectByNames([$sraaProjector::class]);
 
         $this->assertTrue(
             $projectorSelection->contains($sraaProjector),
-            'Subset of ProjectorCollection should contain SraaProjector but it did not'
+            'Subset of ProjectorCollection should contain SraaProjector but it did not',
         );
         $this->assertFalse(
             $projectorSelection->contains($whitelistProjector),
-            'Subset of ProjectorCollection should contain WhitelistProjector but it did not'
+            'Subset of ProjectorCollection should contain WhitelistProjector but it did not',
         );
     }
 
@@ -109,12 +109,12 @@ class ProjectorCollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('not present in the collection');
 
-        $sraaProjector                = new SraaProjector( m::mock(SraaRepository::class));
+        $sraaProjector = new SraaProjector(m::mock(SraaRepository::class));
         $nonPresentWhitelistProjector = new WhitelistProjector(m::mock(WhitelistEntryRepository::class));
 
         $projectorCollection = new ProjectorCollection;
         $projectorCollection->add($sraaProjector);
 
-        $projectorCollection->selectByNames([get_class($nonPresentWhitelistProjector)]);
+        $projectorCollection->selectByNames([$nonPresentWhitelistProjector::class]);
     }
 }

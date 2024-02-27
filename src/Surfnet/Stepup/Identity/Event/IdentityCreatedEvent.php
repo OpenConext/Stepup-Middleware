@@ -37,7 +37,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         'name_id',
         'preferred_locale',
         'common_name',
-        'email'
+        'email',
     ];
 
     /**
@@ -66,7 +66,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($id, $institution);
 
@@ -93,7 +93,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
             new NameId($data['name_id']),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -103,10 +103,10 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
     public function serialize(): array
     {
         return [
-            'id'                  => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'preferred_locale'    => (string) $this->preferredLocale,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -119,7 +119,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
 

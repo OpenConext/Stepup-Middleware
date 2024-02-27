@@ -79,7 +79,7 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
         SecondFactorId $secondFactorId,
         SecondFactorId $targetSecondFactorId,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier,
     ) {
         parent::__construct($identityId, $institution);
 
@@ -112,7 +112,7 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
             new SecondFactorId($data['second_factor_id']),
             new SecondFactorId($data['target_second_factor_id']),
             $secondFactorType,
-            SecondFactorIdentifierFactory::unknownForType($secondFactorType)
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
         );
     }
 
@@ -127,7 +127,7 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
             'second_factor_id' => (string)$this->secondFactorId,
             'target_institution' => (string)$this->targetInstitution,
             'target_second_factor_id' => (string)$this->targetSecondFactorId,
-            'second_factor_type' => (string) $this->secondFactorType,
+            'second_factor_type' => (string)$this->secondFactorType,
         ];
     }
 

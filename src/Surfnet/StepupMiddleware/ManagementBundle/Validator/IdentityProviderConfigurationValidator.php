@@ -30,7 +30,7 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
         $requiredProperties = [
             'entity_id',
             'loa',
-            'use_pdp'
+            'use_pdp',
         ];
 
         if (empty($configuration['use_pdp'])) {
@@ -42,9 +42,9 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
             $requiredProperties,
             sprintf(
                 "The following properties must be present: '%s'; other properties are not supported",
-                implode("', '", $requiredProperties)
+                implode("', '", $requiredProperties),
             ),
-            $propertyPath
+            $propertyPath,
         );
 
         $this->validateStringValue($configuration, 'entity_id', $propertyPath);
@@ -52,37 +52,28 @@ class IdentityProviderConfigurationValidator implements ConfigurationValidatorIn
         $this->validateBooleanValue($configuration, 'use_pdp', $propertyPath);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
     private function validateStringValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::string($configuration[$name], 'value must be a string', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $name
-     * @param string $propertyPath
-     */
     private function validateBooleanValue(array $configuration, string $name, string $propertyPath): void
     {
         Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param array  $configuration
-     * @param string $propertyPath
-     */
     private function validateLoaDefinition(array $configuration, string $propertyPath): void
     {
         $value = $configuration['loa'];
-        $path  = $propertyPath . '.loa';
+        $path = $propertyPath . '.loa';
 
         Assertion::isArray($value, 'must be an object', $path);
-        Assertion::keyExists($value, '__default__', "must have the default loa set on the '__default__' property", $path);
+        Assertion::keyExists(
+            $value,
+            '__default__',
+            "must have the default loa set on the '__default__' property",
+            $path,
+        );
         Assertion::allString($value, 'all properties must contain strings as values', $path);
     }
 }

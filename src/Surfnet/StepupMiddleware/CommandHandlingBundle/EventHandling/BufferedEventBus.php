@@ -42,11 +42,9 @@ class BufferedEventBus implements EventBusInterface
      */
     private bool $isFlushing = false;
 
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
     }
 
     public function subscribe(EventListenerInterface $eventListener): void

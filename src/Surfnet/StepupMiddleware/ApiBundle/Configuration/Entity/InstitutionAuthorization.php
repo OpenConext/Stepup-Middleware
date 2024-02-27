@@ -53,15 +53,12 @@ class InstitutionAuthorization
     public $institutionRole;
 
     /**
-     * @param Institution $institution
-     * @param Institution $institutionRelation
-     * @param InstitutionRole $institutionRole
      * @return InstitutionAuthorization
      */
     public static function create(
         Institution $institution,
         Institution $institutionRelation,
-        InstitutionRole $institutionRole
+        InstitutionRole $institutionRole,
     ): self {
         $options = new self;
 

@@ -28,11 +28,8 @@ class StagedPipeline implements Pipeline
      */
     private array $stages = [];
 
-    private LoggerInterface $logger;
-
-    public function __construct(LoggerInterface $logger)
+    public function __construct(private readonly LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     public function process(Command $command)
@@ -40,11 +37,11 @@ class StagedPipeline implements Pipeline
         $this->logger->debug(sprintf('Processing "%s"', $command));
 
         foreach ($this->stages as $stage) {
-            $this->logger->debug(sprintf('Invoking stage "%s" for "%s"', get_class($stage), $command));
+            $this->logger->debug(sprintf('Invoking stage "%s" for "%s"', $stage::class, $command));
 
             $command = $stage->process($command);
 
-            $this->logger->debug(sprintf('Stage "%s" finished processing "%s"', get_class($stage), $command));
+            $this->logger->debug(sprintf('Stage "%s" finished processing "%s"', $stage::class, $command));
         }
 
         $this->logger->debug(sprintf('Done processing "%s" in StagedPipeline', $command));
@@ -55,8 +52,6 @@ class StagedPipeline implements Pipeline
     /**
      * Adds a strage to the pipeling. Sorting of the stages based on priority has already been done in the
      * \Surfnet\StepupMiddleware\CommandHandlingBundle\DependencyInjection\CompilerPass\AddPipelineStagesCompilerPass
-     *
-     * @param Stage $stage
      */
     public function addStage(Stage $stage): void
     {

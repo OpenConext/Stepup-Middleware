@@ -34,8 +34,9 @@ class EventCollectionTest extends TestCase
      * @dataProvider emptyOrNonStringProvider
      * @param $emptyOrNonString
      */
-    public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings(bool|int|string|stdClass|array|null $emptyOrNonString): void
-    {
+    public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings(
+        bool|int|string|stdClass|array|null $emptyOrNonString,
+    ): void {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid argument type: "non-empty string" expected');
 
@@ -66,7 +67,7 @@ class EventCollectionTest extends TestCase
 
         $this->assertTrue(
             $eventCollection->contains(NewConfigurationCreatedEvent::class),
-            'EventCollection should contain NewConfigurationCreatedEvent but it does not'
+            'EventCollection should contain NewConfigurationCreatedEvent but it does not',
         );
     }
 
@@ -84,7 +85,7 @@ class EventCollectionTest extends TestCase
         $this->assertSame(
             $eventNames,
             $actualEventNames,
-            'Event names cannot be correctly retrieved from an EventCollection'
+            'Event names cannot be correctly retrieved from an EventCollection',
         );
     }
 
@@ -98,7 +99,7 @@ class EventCollectionTest extends TestCase
 
         $this->assertFalse(
             $eventCollection->contains(NewConfigurationCreatedEvent::class),
-            'EventCollection should not contain NewConfigurationCreatedEvent but it does'
+            'EventCollection should not contain NewConfigurationCreatedEvent but it does',
         );
     }
 
@@ -114,7 +115,7 @@ class EventCollectionTest extends TestCase
 
         $this->assertTrue(
             $subset->contains(NewConfigurationCreatedEvent::class),
-            'EventCollection subset should contain NewConfigurationCreatedEvent but it did not'
+            'EventCollection subset should contain NewConfigurationCreatedEvent but it did not',
         );
     }
 
@@ -148,7 +149,7 @@ class EventCollectionTest extends TestCase
         $this->assertEquals(
             $expectedEventTypes,
             $actualEventTypes,
-            'The events in the event collection should have been formatted as event stream compatible event types but they have not'
+            'The events in the event collection should have been formatted as event stream compatible event types but they have not',
         );
     }
 
@@ -161,7 +162,7 @@ class EventCollectionTest extends TestCase
             'float' => [123],
             'empty string' => [''],
             'object' => [new stdClass()],
-            'array' => [[]]
+            'array' => [[]],
         ];
     }
 }

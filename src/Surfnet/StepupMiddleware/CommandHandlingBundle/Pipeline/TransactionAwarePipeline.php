@@ -25,38 +25,22 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class TransactionAwarePipeline implements Pipeline
 {
-    private Pipeline $innerPipeline;
-
-    private Connection $middlewareConnection;
-
-    private Connection $gatewayConnection;
-
-    private LoggerInterface $logger;
-
-    /**
-     * @param LoggerInterface $logger
-     * @param Pipeline        $innerPipeline
-     * @param Connection      $middlewareConnection
-     * @param Connection      $gatewayConnection
-     */
     public function __construct(
-        LoggerInterface $logger,
-        Pipeline $innerPipeline,
-        Connection $middlewareConnection,
-        Connection $gatewayConnection
+        private readonly LoggerInterface $logger,
+        private readonly Pipeline $innerPipeline,
+        private readonly Connection $middlewareConnection,
+        private readonly Connection $gatewayConnection,
     ) {
-        $this->logger               = $logger;
-        $this->innerPipeline        = $innerPipeline;
-        $this->middlewareConnection = $middlewareConnection;
-        $this->gatewayConnection    = $gatewayConnection;
     }
 
     public function process(Command $command)
     {
-        $this->logger->debug(sprintf(
-            'Starting Transaction in TransactionAwarePipeline for processing command "%s"',
-            $command
-        ));
+        $this->logger->debug(
+            sprintf(
+                'Starting Transaction in TransactionAwarePipeline for processing command "%s"',
+                $command,
+            ),
+        );
 
         $this->middlewareConnection->beginTransaction();
         $this->gatewayConnection->beginTransaction();
@@ -77,28 +61,30 @@ class TransactionAwarePipeline implements Pipeline
                     sprintf(
                         '[!!!] Critical Database Exception while processing command "%s": "%s"',
                         $command,
-                        $e->getMessage()
+                        $e->getMessage(),
                     ),
-                    ['exception' => $e]
+                    ['exception' => $e],
                 );
             } else {
                 $this->logger->error(
                     sprintf(
                         'Exception occurred while processing command "%s": "%s", rolling back transaction',
                         $command,
-                        $e->getMessage()
+                        $e->getMessage(),
                     ),
-                    ['exception' => $e]
+                    ['exception' => $e],
                 );
             }
 
             $this->middlewareConnection->rollBack();
             $this->gatewayConnection->rollBack();
 
-            $this->logger->debug(sprintf(
-                'Transaction for command "%s" rolled back, re-throwing exception',
-                $command
-            ));
+            $this->logger->debug(
+                sprintf(
+                    'Transaction for command "%s" rolled back, re-throwing exception',
+                    $command,
+                ),
+            );
 
             throw $e;
         }

@@ -32,7 +32,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
     private array $allowlist = [
         'identity_id',
@@ -79,20 +82,15 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
     public $registrationRequestedAt;
 
     /**
-     * @var string
-     */
-    public $registrationCode;
-
-    /**
-     * @param IdentityId              $identityId
-     * @param Institution             $institution
-     * @param SecondFactorId          $secondFactorId
-     * @param YubikeyPublicId         $yubikeyPublicId
-     * @param CommonName              $commonName
-     * @param Email                   $email
-     * @param Locale                  $locale
-     * @param DateTime                $registrationRequestedAt
-     * @param string                  $registrationCode
+     * @param IdentityId $identityId
+     * @param Institution $institution
+     * @param SecondFactorId $secondFactorId
+     * @param YubikeyPublicId $yubikeyPublicId
+     * @param CommonName $commonName
+     * @param Email $email
+     * @param Locale $locale
+     * @param DateTime $registrationRequestedAt
+     * @param string $registrationCode
      */
     public function __construct(
         IdentityId $identityId,
@@ -103,26 +101,25 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
         Email $email,
         Locale $locale,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        public $registrationCode,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->secondFactorId            = $secondFactorId;
-        $this->yubikeyPublicId           = $yubikeyPublicId;
-        $this->commonName                = $commonName;
-        $this->email                     = $email;
-        $this->preferredLocale           = $locale;
-        $this->registrationRequestedAt   = $registrationRequestedAt;
-        $this->registrationCode          = $registrationCode;
+        $this->secondFactorId = $secondFactorId;
+        $this->yubikeyPublicId = $yubikeyPublicId;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $locale;
+        $this->registrationRequestedAt = $registrationRequestedAt;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('yubikey');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
         $metadata->secondFactorIdentifier = $this->yubikeyPublicId;
 
         return $metadata;
@@ -144,7 +141,7 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
             Email::unknown(),
             new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
-            (string) $data['registration_code']
+            (string)$data['registration_code'],
         );
     }
 
@@ -154,12 +151,12 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements F
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'registration_requested_at'   => (string) $this->registrationRequestedAt,
-            'registration_code'           => $this->registrationCode,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

@@ -34,11 +34,10 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
      * @group        domain
      * @group        whitelist
      * @dataProvider eventProvider
-     * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event,): void
     {
-        $class = get_class($event);
+        $class = $event::class;
         $this->assertTrue($event == call_user_func([$class, 'deserialize'], $event->serialize()));
     }
 
@@ -46,16 +45,16 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
     {
         return [
             'WhitelistCreatedEvent' => [
-                new WhitelistCreatedEvent($this->getInstitutionCollection())
+                new WhitelistCreatedEvent($this->getInstitutionCollection()),
             ],
             'WhitelistReplacedEvent' => [
-                new WhitelistReplacedEvent($this->getInstitutionCollection())
+                new WhitelistReplacedEvent($this->getInstitutionCollection()),
             ],
             'InstitutionsAddedToWhitelistEvent' => [
-                new InstitutionsAddedToWhitelistEvent($this->getInstitutionCollection())
+                new InstitutionsAddedToWhitelistEvent($this->getInstitutionCollection()),
             ],
             'InstitutionsRemovedFromWhitelistEvent' => [
-                new InstitutionsRemovedFromWhitelistEvent($this->getInstitutionCollection())
+                new InstitutionsRemovedFromWhitelistEvent($this->getInstitutionCollection()),
             ],
         ];
     }

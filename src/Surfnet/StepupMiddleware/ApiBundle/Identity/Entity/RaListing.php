@@ -29,7 +29,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
-
 #[ORM\Table]
 #[ORM\Index(name: 'idx_ra_listing_institution', columns: ['institution'])]
 #[ORM\Index(name: 'idx_ra_listing_ra_institution', columns: ['ra_institution'])]
@@ -102,21 +101,21 @@ class RaListing implements JsonSerializable
         AuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $raInstitution
+        Institution $raInstitution,
     ): self {
         if (!is_string($identityId)) {
             throw InvalidArgumentException::invalidType('string', 'id', $identityId);
         }
 
-        $entry                     = new self();
-        $entry->identityId         = $identityId;
-        $entry->institution        = $institution;
-        $entry->commonName         = $commonName;
-        $entry->email              = $email;
-        $entry->role               = $role;
-        $entry->location           = $location;
+        $entry = new self();
+        $entry->identityId = $identityId;
+        $entry->institution = $institution;
+        $entry->commonName = $commonName;
+        $entry->email = $email;
+        $entry->role = $role;
+        $entry->location = $location;
         $entry->contactInformation = $contactInformation;
-        $entry->raInstitution      = $raInstitution;
+        $entry->raInstitution = $raInstitution;
 
         return $entry;
     }
@@ -124,14 +123,14 @@ class RaListing implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'identity_id'         => $this->identityId,
-            'institution'         => (string) $this->institution,
-            'ra_institution'      => (string) $this->raInstitution,
-            'common_name'         => (string) $this->commonName,
-            'email'               => (string) $this->email,
-            'role'                => (string) $this->role,
-            'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation,
+            'identity_id' => $this->identityId,
+            'institution' => (string)$this->institution,
+            'ra_institution' => (string)$this->raInstitution,
+            'common_name' => (string)$this->commonName,
+            'email' => (string)$this->email,
+            'role' => (string)$this->role,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 }

@@ -30,7 +30,7 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
         'identity_id',
         'institution',
         'name_id',
-        'ra_institution'
+        'ra_institution',
     ];
 
     /**
@@ -47,7 +47,7 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
         IdentityId $identityId,
         Institution $identityInstitution,
         NameId $nameId,
-        Institution $raInstitution
+        Institution $raInstitution,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -74,7 +74,7 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
@@ -84,10 +84,10 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
     public function serialize(): array
     {
         return [
-            'identity_id'    => (string) $this->identityId,
-            'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId,
-            'ra_institution' => (string) $this->raInstitution,
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 

@@ -45,10 +45,10 @@ class LocationTest extends UnitTest
      */
     public function two_locations_with_the_same_value_are_equal(): void
     {
-        $location          = new Location('a');
-        $theSame           = new Location('a');
+        $location = new Location('a');
+        $theSame = new Location('a');
         $theSameWithSpaces = new Location('  a ');
-        $different         = new Location('A');
+        $different = new Location('A');
 
         $this->assertTrue($location->equals($theSame));
         $this->assertTrue($location->equals($theSameWithSpaces));
@@ -61,12 +61,12 @@ class LocationTest extends UnitTest
     public function nonStringProvider(): array
     {
         return [
-            'null'         => [null],
-            'boolean'      => [false],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new stdClass()],
+            'null' => [null],
+            'boolean' => [false],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new stdClass()],
         ];
     }
 }

@@ -28,23 +28,23 @@ use Surfnet\Stepup\Identity\Whitelist;
 class WhitelistRepository extends EventSourcingRepository
 {
     /**
-     * @param EventStoreInterface             $eventStore
-     * @param EventBusInterface               $eventBus
-     * @param AggregateFactory       $aggregateFactory
+     * @param EventStoreInterface $eventStore
+     * @param EventBusInterface $eventBus
+     * @param AggregateFactory $aggregateFactory
      * @param EventStreamDecorator[] $eventStreamDecorators
      */
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
         AggregateFactory $aggregateFactory,
-        array $eventStreamDecorators = []
+        array $eventStreamDecorators = [],
     ) {
         parent::__construct(
             $eventStore,
             $eventBus,
             Whitelist::class,
             $aggregateFactory,
-            $eventStreamDecorators
+            $eventStreamDecorators,
         );
     }
 }

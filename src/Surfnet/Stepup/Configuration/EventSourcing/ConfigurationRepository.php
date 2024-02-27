@@ -29,7 +29,7 @@ class ConfigurationRepository extends EventSourcingRepository
     public function __construct(
         EventStoreInterface $eventStore,
         EventBusInterface $eventBus,
-        AggregateFactoryInterface $aggregateFactory
+        AggregateFactoryInterface $aggregateFactory,
     ) {
         parent::__construct($eventStore, $eventBus, Configuration::class, $aggregateFactory);
     }

@@ -29,37 +29,32 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class RaLocationController extends AbstractController
 {
-    /**
-     * @return RaLocationService
-     */
-    private RaLocationService $raLocationService;
-
-    public function __construct(RaLocationService $raLocationService)
-    {
-        $this->raLocationService = $raLocationService;
+    public function __construct(
+        private readonly RaLocationService $raLocationService,
+    ) {
     }
 
     public function search(Request $request, Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
-        $query                 = new RaLocationQuery();
-        $query->institution    = $institution;
-        $query->orderBy        = $request->get('orderBy', $query->orderBy);
+        $query = new RaLocationQuery();
+        $query->institution = $institution;
+        $query->orderBy = $request->get('orderBy', $query->orderBy);
         $query->orderDirection = $request->get('orderDirection', $query->orderDirection);
 
         $raLocations = $this->raLocationService->search($query);
-        $count       = count($raLocations);
+        $count = count($raLocations);
 
         return new JsonCollectionResponse($count, 1, $count, $raLocations);
     }
 
-    public function getAction(Request $request): JsonResponse
+    public function get(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $raLocationId = new RaLocationId($request->get('raLocationId'));
-        $raLocation   = $this->raLocationService->findByRaLocationId($raLocationId);
+        $raLocation = $this->raLocationService->findByRaLocationId($raLocationId);
 
         return new JsonResponse($raLocation);
     }

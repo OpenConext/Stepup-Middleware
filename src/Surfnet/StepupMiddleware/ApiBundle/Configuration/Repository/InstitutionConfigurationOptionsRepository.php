@@ -32,7 +32,6 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return InstitutionConfigurationOptions
      * @throws NonUniqueResultException
      */
@@ -45,9 +44,6 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param InstitutionConfigurationOptions $institutionConfigurationOptions
-     */
     public function save(InstitutionConfigurationOptions $institutionConfigurationOptions): void
     {
         $entityManager = $this->getEntityManager();
@@ -55,9 +51,6 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @param Institution $institution
-     */
     public function removeConfigurationOptionsFor(Institution $institution): void
     {
         $this->createQueryBuilder('ico')

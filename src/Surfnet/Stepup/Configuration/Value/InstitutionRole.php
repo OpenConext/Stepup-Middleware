@@ -18,13 +18,14 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionRole implements JsonSerializable
+final class InstitutionRole implements JsonSerializable, Stringable
 {
-    const ROLE_USE_RA = 'use_ra';
-    const ROLE_USE_RAA = 'use_raa';
-    const ROLE_SELECT_RAA = 'select_raa';
+    public const ROLE_USE_RA = 'use_ra';
+    public const ROLE_USE_RAA = 'use_raa';
+    public const ROLE_SELECT_RAA = 'select_raa';
 
     private static array $validRoles = [
         self::ROLE_USE_RA,
@@ -75,7 +76,6 @@ final class InstitutionRole implements JsonSerializable
     }
 
     /**
-     * @param InstitutionRole $role
      * @return bool
      */
     public function equals(InstitutionRole $role): bool

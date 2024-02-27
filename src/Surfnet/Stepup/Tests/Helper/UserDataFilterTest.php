@@ -41,8 +41,10 @@ class UserDataFilterTest extends TestCase
     /**
      * @dataProvider provideEvents
      */
-    public function test_filtering_is_applied_with_expected_result(IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event, array $expectation): void
-    {
+    public function test_filtering_is_applied_with_expected_result(
+        IdentityCreatedEvent|PhonePossessionProvenAndVerifiedEvent|AppointedAsRaaForInstitutionEvent|PhonePossessionProvenEvent $event,
+        array $expectation,
+    ): void {
         $helper = new UserDataFilter();
         $data = $helper->filter($event);
         $this->assertSame($expectation, array_keys($data));
@@ -56,7 +58,7 @@ class UserDataFilterTest extends TestCase
             new NameId("nameId"),
             new CommonName("commonName"),
             new Email("test@institution.nl"),
-            new Locale("nl_NL")
+            new Locale("nl_NL"),
         );
         $expectation = [
             'id',
@@ -77,7 +79,7 @@ class UserDataFilterTest extends TestCase
             new Email("test@example.com"),
             new Locale("nl_NL"),
             new DateTime(),
-            "Y3MWWNDR"
+            "Y3MWWNDR",
         );
         $expectation = [
             'identity_id',
@@ -96,7 +98,7 @@ class UserDataFilterTest extends TestCase
             new IdentityId("id"),
             new Institution("institution"),
             new NameId("nameId"),
-            new Institution("ra")
+            new Institution("ra"),
         );
         $expectation = [
             'identity_id',
@@ -116,7 +118,7 @@ class UserDataFilterTest extends TestCase
             "30c0fcb136bf324eea652d5b86c1a08c",
             new CommonName("commonname"),
             new Email("test@example.com"),
-            new Locale("nl_NL")
+            new Locale("nl_NL"),
         );
         $expectation = [
             'identity_id',
@@ -130,6 +132,4 @@ class UserDataFilterTest extends TestCase
         ];
         yield [$event, $expectation];
     }
-
-
 }

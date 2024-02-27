@@ -32,33 +32,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\Sensiti
 
 final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
 {
-    private IdentityRepository $repository;
-
-    /**
-     * @var ApiIdentityRepository
-     */
-    private ApiIdentityRepository $apiIdentityRepository;
-
-    private SensitiveDataService $sensitiveDataService;
-
-    private SraaRepository $sraaRepository;
-
-    /**
-     * @param IdentityRepository    $repository
-     * @param ApiIdentityRepository $apiIdentityRepository
-     * @param SensitiveDataService  $sensitiveDataService
-     * @param SraaRepository           $sraaRepository
-     */
     public function __construct(
-        IdentityRepository $repository,
-        ApiIdentityRepository $apiIdentityRepository,
-        SensitiveDataService $sensitiveDataService,
-        SraaRepository $sraaRepository
+        private readonly IdentityRepository $repository,
+        private readonly ApiIdentityRepository $apiIdentityRepository,
+        private readonly SensitiveDataService $sensitiveDataService,
+        private readonly SraaRepository $sraaRepository,
     ) {
-        $this->repository            = $repository;
-        $this->apiIdentityRepository = $apiIdentityRepository;
-        $this->sensitiveDataService  = $sensitiveDataService;
-        $this->sraaRepository        = $sraaRepository;
     }
 
     public function handleForgetIdentityCommand(ForgetIdentityCommand $command): void
@@ -71,7 +50,7 @@ final class RightToBeForgottenCommandHandler extends SimpleCommandHandler
 
         $apiIdentity = $this->apiIdentityRepository->findOneByNameIdAndInstitution(
             $nameId,
-            new Institution($command->institution)
+            new Institution($command->institution),
         );
         $identityId = new IdentityId($apiIdentity->id);
 

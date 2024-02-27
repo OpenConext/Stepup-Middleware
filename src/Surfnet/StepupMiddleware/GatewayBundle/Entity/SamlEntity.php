@@ -29,8 +29,8 @@ class SamlEntity
     /**
      * Constants denoting the type of SamlEntity. Also used in the gateway to make that distinction
      */
-    const TYPE_IDP = 'idp';
-    const TYPE_SP  = 'sp';
+    public const TYPE_IDP = 'idp';
+    public const TYPE_SP = 'sp';
 
     /**
      * @var string
@@ -39,40 +39,19 @@ class SamlEntity
     #[ORM\Column(length: 36)]
     public $id;
 
-    /**
-     * @var string
-     */
-    #[ORM\Column]
-    public $entityId;
-
-    /**
-     * @var string
-     */
-    #[ORM\Column]
-    public $type;
-
-    /**
-     * @var string the configuration as json string
-     */
-    #[ORM\Column(type: 'text')]
-    public $configuration;
-
-    /**
-     * @param string $entityId
-     * @param string $type
-     * @param string $configuration
-     */
-    private function __construct($entityId, $type, $configuration)
-    {
-        $this->id = (string) Uuid::uuid4();
-        $this->entityId = $entityId;
-        $this->type = $type;
-        $this->configuration = $configuration;
+    private function __construct(
+        #[ORM\Column]
+        public string $entityId,
+        #[ORM\Column]
+        public string $type,
+        #[ORM\Column(type: 'text')]
+        public string $configuration,
+    ) {
+        $this->id = (string)Uuid::uuid4();
     }
 
     /**
      * @param string $entityId
-     * @param array  $configuration
      * @return SamlEntity
      */
     public static function createServiceProvider($entityId, array $configuration): self
@@ -82,7 +61,6 @@ class SamlEntity
 
     /**
      * @param string $entityId
-     * @param array  $configuration
      * @return SamlEntity
      */
     public static function createIdentityProvider($entityId, array $configuration): self

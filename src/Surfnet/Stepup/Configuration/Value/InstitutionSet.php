@@ -55,10 +55,10 @@ final class InstitutionSet
                     throw InvalidArgumentException::invalidType(
                         Institution::class,
                         'institutions',
-                        $institutions[$key]
+                        $institutions[$key],
                     );
                 }
-            }
+            },
         );
 
         return new self($institutions);
@@ -70,7 +70,6 @@ final class InstitutionSet
     }
 
     /**
-     * @param Institution $institution
      * @return bool
      */
     public function isOption(Institution $institution): bool
@@ -97,9 +96,10 @@ final class InstitutionSet
      */
     private function sort(array $institutions): array
     {
-        usort($institutions, function (Institution $a, Institution $b): int {
-            return strcmp($a->getInstitution(), $b->getInstitution());
-        });
+        usort(
+            $institutions,
+            fn(Institution $a, Institution $b): int => strcmp($a->getInstitution(), $b->getInstitution()),
+        );
 
         return $institutions;
     }

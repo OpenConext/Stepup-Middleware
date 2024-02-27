@@ -40,10 +40,6 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         return $secondFactor;
     }
 
-    /**
-     * @param VettedSecondFactorQuery $query
-     * @return Query
-     */
     public function createSearchQuery(VettedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
@@ -51,7 +47,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         return $queryBuilder->getQuery();
@@ -67,9 +63,6 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @param VettedSecondFactor $secondFactor
-     */
     public function save(VettedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);

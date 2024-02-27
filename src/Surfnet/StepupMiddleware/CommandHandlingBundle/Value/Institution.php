@@ -18,11 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Value;
 
+use Stringable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
-final class Institution
+final class Institution implements Stringable
 {
-    private string $institution;
+    private readonly string $institution;
 
     /**
      * @param string $institution may not be an empty string
@@ -45,7 +46,6 @@ final class Institution
     }
 
     /**
-     * @param Institution $otherInstitution
      * @return bool
      */
     public function equals(Institution $otherInstitution): bool

@@ -69,13 +69,13 @@ class EmailVerificationWindowTest extends TestCase
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
 
-        $base                        = $this->newEmailVerificationWindow(3);
-        $same                        = $this->newEmailVerificationWindow(3);
-        $startsSameEndsEarlier       = $this->newEmailVerificationWindow(2);
-        $startsSameEndsLater         = $this->newEmailVerificationWindow(4);
-        $startsLater                 = $this->newEmailVerificationWindow(3, 'PT1S');
-        $startsLaterEndsAtSameTime   = $this->newEmailVerificationWindow(2, 'PT1S');
-        $startsEarlier               = $this->newEmailVerificationWindow(2, '-PT1S');
+        $base = $this->newEmailVerificationWindow(3);
+        $same = $this->newEmailVerificationWindow(3);
+        $startsSameEndsEarlier = $this->newEmailVerificationWindow(2);
+        $startsSameEndsLater = $this->newEmailVerificationWindow(4);
+        $startsLater = $this->newEmailVerificationWindow(3, 'PT1S');
+        $startsLaterEndsAtSameTime = $this->newEmailVerificationWindow(2, 'PT1S');
+        $startsEarlier = $this->newEmailVerificationWindow(2, '-PT1S');
         $startsEarlierEndsAtSameTime = $this->newEmailVerificationWindow(4, '-PT1S');
 
         $this->assertTrue($base->equals($same));
@@ -105,7 +105,7 @@ class EmailVerificationWindowTest extends TestCase
 
         $window = EmailVerificationWindow::createWindowFromTill(
             DateTime::now(),
-            DateTime::now()->add(new DateInterval('PT3S'))
+            DateTime::now()->add(new DateInterval('PT3S')),
         );
         $endTimeTwo = $window->openUntil();
         $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTimeTwo);
@@ -114,7 +114,6 @@ class EmailVerificationWindowTest extends TestCase
     /**
      * Helper method for easy EmailVerificationWindow creation
      *
-     * @param int         $timeFrameSeconds
      * @param string|null $startTimeOffset
      * @return EmailVerificationWindow
      */
@@ -132,7 +131,7 @@ class EmailVerificationWindowTest extends TestCase
 
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             TimeFrame::ofSeconds($timeFrameSeconds),
-            $start
+            $start,
         );
     }
 }

@@ -34,7 +34,7 @@ class HasInstitutionMatcherTest extends TestCase
      *
      * @dataProvider nonStringProvider
      */
-    public function has_institution_matcher_only_matches_against_strings(bool|int|float|stdClass|array|null $nonString): void
+    public function has_institution_matcher_only_matches_against_strings(bool|int|float|stdClass|array|null $nonString,): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -48,8 +48,9 @@ class HasInstitutionMatcherTest extends TestCase
      *
      * @dataProvider nonObjectProvider
      */
-    public function has_institution_matcher_only_matches_objects_against_a_given_institution(bool|int|float|string|array|null $nonObject): void
-    {
+    public function has_institution_matcher_only_matches_objects_against_a_given_institution(
+        bool|int|float|string|array|null $nonObject,
+    ): void {
         $institution = 'surfnet.nl';
 
         $hasInstitutionMatcher = new HasInstitutionMatcher($institution);
@@ -82,7 +83,7 @@ class HasInstitutionMatcherTest extends TestCase
      */
     public function has_institution_matcher_does_not_match_when_objects_accessed_institution_differs_from_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
         $differentInstitution = 'not-surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionAccessor($institution);
@@ -100,7 +101,7 @@ class HasInstitutionMatcherTest extends TestCase
      */
     public function has_institution_matcher_matches_when_objects_accessed_institution_is_the_same_as_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionAccessor($institution);
 
@@ -117,7 +118,7 @@ class HasInstitutionMatcherTest extends TestCase
      */
     public function has_institution_matcher_does_not_match_when_objects_institution_property_differs_from_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
         $differentInstitution = 'not-surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionProperty($institution);
@@ -148,24 +149,24 @@ class HasInstitutionMatcherTest extends TestCase
     public function nonStringProvider(): array
     {
         return [
-            'null'         => [null],
-            'array'        => [[]],
-            'boolean'      => [true],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new stdClass()],
+            'null' => [null],
+            'array' => [[]],
+            'boolean' => [true],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new stdClass()],
         ];
     }
 
     public function nonObjectProvider(): array
     {
         return [
-            'null'         => [null],
-            'array'        => [[]],
-            'boolean'      => [true],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'string'       => ['string'],
+            'null' => [null],
+            'array' => [[]],
+            'boolean' => [true],
+            'integer' => [1],
+            'float' => [1.2],
+            'string' => ['string'],
         ];
     }
 }

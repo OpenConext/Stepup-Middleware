@@ -24,7 +24,7 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class IdentityId implements Id, JsonSerializable
 {
-    private string $value;
+    private readonly string $value;
 
     public function __construct($value)
     {

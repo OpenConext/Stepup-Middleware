@@ -37,7 +37,7 @@ class LocaleTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(LocaleType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\LocaleType');
+        Type::addType(LocaleType::NAME, LocaleType::class);
     }
 
     public function setUp(): void
@@ -67,7 +67,7 @@ class LocaleTypeTest extends UnitTest
         $locale = Type::getType(LocaleType::NAME);
 
         $expected = 'en_GB';
-        $input  = new Locale('en_GB');
+        $input = new Locale('en_GB');
         $output = $locale->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -99,7 +99,7 @@ class LocaleTypeTest extends UnitTest
 
         $output = $locale->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\Locale', $output);
+        $this->assertInstanceOf(Locale::class, $output);
         $this->assertEquals(new Locale($input), $output);
     }
 

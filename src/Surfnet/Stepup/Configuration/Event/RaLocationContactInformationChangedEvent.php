@@ -43,11 +43,11 @@ class RaLocationContactInformationChangedEvent implements SerializableInterface
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,
         RaLocationId $raLocationId,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ) {
         $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->raLocationId               = $raLocationId;
-        $this->contactInformation         = $contactInformation;
+        $this->raLocationId = $raLocationId;
+        $this->contactInformation = $contactInformation;
     }
 
     public static function deserialize(array $data)
@@ -55,7 +55,7 @@ class RaLocationContactInformationChangedEvent implements SerializableInterface
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new RaLocationId($data['ra_location_id']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
@@ -63,8 +63,8 @@ class RaLocationContactInformationChangedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
-            'contact_information'          => $this->contactInformation->getContactInformation(),
+            'ra_location_id' => $this->raLocationId->getRaLocationId(),
+            'contact_information' => $this->contactInformation->getContactInformation(),
         ];
     }
 }

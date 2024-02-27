@@ -34,7 +34,7 @@ class AuthorityRoleTypeTest extends UnitTest
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(AuthorityRoleType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType');
+        Type::addType(AuthorityRoleType::NAME, AuthorityRoleType::class);
     }
 
     public function setUp(): void
@@ -63,7 +63,7 @@ class AuthorityRoleTypeTest extends UnitTest
     {
         $authorityRole = Type::getType(AuthorityRoleType::NAME);
 
-        $input  = AuthorityRole::raa();
+        $input = AuthorityRole::raa();
         $output = $authorityRole->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -95,7 +95,7 @@ class AuthorityRoleTypeTest extends UnitTest
 
         $output = $authorityRole->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole', $output);
+        $this->assertInstanceOf(AuthorityRole::class, $output);
         $this->assertEquals(new AuthorityRole($input), $output);
     }
 

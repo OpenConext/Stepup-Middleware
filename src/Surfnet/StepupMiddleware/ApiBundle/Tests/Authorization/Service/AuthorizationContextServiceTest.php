@@ -71,7 +71,7 @@ class AuthorizationContextServiceTest extends TestCase
             $sraaService,
             $identityService,
             $this->institutionRepo,
-            $authorizationRepository
+            $authorizationRepository,
         );
 
         $this->identityService = $identityService;
@@ -104,7 +104,7 @@ class AuthorizationContextServiceTest extends TestCase
             $arbitraryNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
 
         $identityId = new IdentityId($arbitraryId);
@@ -126,7 +126,7 @@ class AuthorizationContextServiceTest extends TestCase
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
-            $role
+            $role,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -157,7 +157,7 @@ class AuthorizationContextServiceTest extends TestCase
             $adminNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
         $sraa = m::mock(Sraa::class);
 
@@ -188,7 +188,7 @@ class AuthorizationContextServiceTest extends TestCase
 
         $context = $this->service->buildInstitutionAuthorizationContext(
             $identityId,
-            $role
+            $role,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -214,7 +214,7 @@ class AuthorizationContextServiceTest extends TestCase
             $arbitraryNameId,
             new Email('foo@bar.com'),
             new CommonName('Foobar'),
-            new Locale('en_GB')
+            new Locale('en_GB'),
         );
 
         $identityId = new IdentityId($arbitraryId);
@@ -235,7 +235,7 @@ class AuthorizationContextServiceTest extends TestCase
             ->andReturn($institutions);
 
         $context = $this->service->buildSelectRaaInstitutionAuthorizationContext(
-            $identityId
+            $identityId,
         );
 
         $this->assertEquals($institutions, $context->getInstitutions());
@@ -262,7 +262,7 @@ class AuthorizationContextServiceTest extends TestCase
 
         $this->service->buildInstitutionAuthorizationContext(
             new IdentityId($actorId),
-            $role
+            $role,
         );
     }
 }

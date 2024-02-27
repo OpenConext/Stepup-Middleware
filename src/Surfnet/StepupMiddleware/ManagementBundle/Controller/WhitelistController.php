@@ -39,25 +39,21 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class WhitelistController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private TransactionAwarePipeline $pipeline;
-
-    private WhitelistService $whitelistService;
-
-    public function __construct(TransactionAwarePipeline $pipeline, WhitelistService $whitelistService)
-    {
-        $this->pipeline = $pipeline;
-        $this->whitelistService = $whitelistService;
+    public function __construct(
+        /**
+         * @return TransactionAwarePipeline
+         */
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly WhitelistService $whitelistService,
+    ) {
     }
 
     public function replaceWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command               = new ReplaceWhitelistCommand();
-        $command->UUID         = (string) Uuid::uuid4();
+        $command = new ReplaceWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutions = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
@@ -67,8 +63,8 @@ class WhitelistController extends AbstractController
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command                        = new AddToWhitelistCommand();
-        $command->UUID                  = (string) Uuid::uuid4();
+        $command = new AddToWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutionsToBeAdded = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
@@ -78,8 +74,8 @@ class WhitelistController extends AbstractController
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command                          = new RemoveFromWhitelistCommand();
-        $command->UUID                    = (string) Uuid::uuid4();
+        $command = new RemoveFromWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutionsToBeRemoved = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
@@ -93,8 +89,6 @@ class WhitelistController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Command $command
      * @return JsonResponse
      */
     private function handleCommand(Request $request, Command $command): JsonResponse
@@ -104,21 +98,20 @@ class WhitelistController extends AbstractController
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),
-                $e
+                $e,
             );
         }
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
 
         return new JsonResponse([
-            'status'       => 'OK',
+            'status' => 'OK',
             'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
         ]);
     }
 
     /**
-     * @param Request $request
      * @return array
      */
     private function getInstitutionsFromBody(Request $request)
@@ -127,7 +120,7 @@ class WhitelistController extends AbstractController
 
         if (!isset($decoded['institutions']) || !is_array($decoded['institutions'])) {
             throw new BadRequestHttpException(
-                'Request must contain json object with property "institutions" containing an array of institutions'
+                'Request must contain json object with property "institutions" containing an array of institutions',
             );
         }
 

@@ -24,6 +24,7 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
+
 use function password_verify;
 
 class SafeStoreTest extends UnitTest

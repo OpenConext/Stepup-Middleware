@@ -25,16 +25,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AuthorizationController extends AbstractController
 {
-    private AuthorizationService $authorizationService;
-
-    public function __construct(AuthorizationService $authorizationService)
-    {
-        $this->authorizationService = $authorizationService;
+    public function __construct(
+        private readonly AuthorizationService $authorizationService,
+    ) {
     }
 
     public function mayRegisterSelfAssertedTokens(string $identityId)
     {
-        $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(new IdentityId($identityId));
+        $decision = $this->authorizationService->assertRegistrationOfSelfAssertedTokensIsAllowed(
+            new IdentityId($identityId),
+        );
         return JsonAuthorizationResponse::from($decision);
     }
 
@@ -46,7 +46,9 @@ class AuthorizationController extends AbstractController
 
     public function maySelfVetSelfAssertedToken(string $identityId)
     {
-        $decision = $this->authorizationService->assertSelfVetUsingSelfAssertedTokenIsAllowed(new IdentityId($identityId));
+        $decision = $this->authorizationService->assertSelfVetUsingSelfAssertedTokenIsAllowed(
+            new IdentityId($identityId),
+        );
         return JsonAuthorizationResponse::from($decision);
     }
 }

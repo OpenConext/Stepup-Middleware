@@ -43,65 +43,35 @@ use Symfony\Component\Translation\TranslatorInterface;
 class RegistrationMailService
 {
     public $institutionConfigurationOptionsService;
-    /**
-     * @var Mailer
-     */
-    private Mailer $mailer;
-
-    private Sender $sender;
 
     /**
      * @var TranslatorInterface
      */
     private $translator;
 
-    private EmailTemplateService $emailTemplateService;
-
-    private string $fallbackLocale;
-
-    private string $selfServiceUrl;
-
-    private IdentityService $identityService;
-
-    private SecondFactorService $secondFactorService;
-
-    private RaLocationService $raLocationsService;
-
-    private RaListingService $raListingService;
-
-    private LoggerInterface $logger;
+    private readonly string $fallbackLocale;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
         TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
-        string $selfServiceUrl,
+        private readonly string $selfServiceUrl,
         InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        IdentityService $identityService,
-        SecondFactorService $secondFactorService,
-        RaLocationService $raLocationService,
-        RaListingService $raListingService,
-        LoggerInterface $logger
+        private readonly IdentityService $identityService,
+        private readonly SecondFactorService $secondFactorService,
+        private readonly RaLocationService $raLocationsService,
+        private readonly RaListingService $raListingService,
+        private readonly LoggerInterface $logger,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
         $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
-        $this->selfServiceUrl = $selfServiceUrl;
         $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->identityService = $identityService;
-        $this->secondFactorService = $secondFactorService;
-        $this->raLocationsService = $raLocationService;
-        $this->raListingService = $raListingService;
-        $this->logger = $logger;
     }
 
     public function send(string $identityId, string $secondFactorId): void
@@ -122,9 +92,9 @@ class RegistrationMailService
                 $identity->email->getEmail(),
                 $verifiedSecondFactor->registrationCode,
                 $this->getExpirationDateOfRegistration(
-                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT)),
                 ),
-                $this->raLocationsService->listRaLocationsFor($institution)
+                $this->raLocationsService->listRaLocationsFor($institution),
             );
 
             return;
@@ -139,18 +109,16 @@ class RegistrationMailService
                 $identity->email->getEmail(),
                 $verifiedSecondFactor->registrationCode,
                 $this->getExpirationDateOfRegistration(
-                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                    DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT)),
                 ),
-                $ras
+                $ras,
             );
             return;
         }
 
-        $rasWithoutRaas = array_filter($ras, function (RegistrationAuthorityCredentials $ra): bool {
-            return !$ra->isRaa();
-        });
+        $rasWithoutRaas = array_filter($ras, fn(RegistrationAuthorityCredentials $ra): bool => !$ra->isRaa());
         $this->logger->notice(
-            'Sending a registration mail with ra contact information as there are no RAAs at this location'
+            'Sending a registration mail with ra contact information as there are no RAAs at this location',
         );
         $this->sendRegistrationEmailWithRas(
             $identity->preferredLocale->getLocale(),
@@ -158,9 +126,9 @@ class RegistrationMailService
             $identity->email->getEmail(),
             $verifiedSecondFactor->registrationCode,
             $this->getExpirationDateOfRegistration(
-                DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT))
+                DateTime::fromString($verifiedSecondFactor->registrationRequestedAt->format(DateTime::FORMAT)),
             ),
-            $rasWithoutRaas
+            $rasWithoutRaas,
         );
     }
 
@@ -170,19 +138,19 @@ class RegistrationMailService
         string $email,
         string $registrationCode,
         DateTime $expirationDate,
-        array $ras
+        array $ras,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'registration_code_with_ras',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
@@ -191,7 +159,7 @@ class RegistrationMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
         $parameters = [
             'templateString' => $emailTemplate->htmlContent,
@@ -220,19 +188,19 @@ class RegistrationMailService
         string $email,
         string $registrationCode,
         DateTime $expirationDate,
-        array $raLocations
+        array $raLocations,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
             ['%commonName%' => $commonName],
             'messages',
-            $locale
+            $locale,
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'registration_code_with_ra_locations',
             $locale,
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
         // In TemplatedEmail email is a reserved keyword, we also use it as a parameter that can be used in the mail
         // message, to prevent having to update all templates, and prevent a 500 error from the mailer, we perform a
@@ -240,7 +208,7 @@ class RegistrationMailService
         $emailTemplate->htmlContent = str_replace(
             '{email}',
             '{emailAddress}',
-            $emailTemplate->htmlContent
+            $emailTemplate->htmlContent,
         );
 
         $parameters = [
@@ -267,7 +235,7 @@ class RegistrationMailService
     private function getExpirationDateOfRegistration(DateTime $date)
     {
         return $date->add(
-            new DateInterval('P14D')
+            new DateInterval('P14D'),
         )->endOfDay();
     }
 }

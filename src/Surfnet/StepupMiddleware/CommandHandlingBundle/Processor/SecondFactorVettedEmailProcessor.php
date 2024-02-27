@@ -19,26 +19,32 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 
 use Broadway\Processor\Processor;
-use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorVettedMailService;
 
 final class SecondFactorVettedEmailProcessor extends Processor
 {
-    private SecondFactorVettedMailService $secondFactorVettedMailService;
-
-    public function __construct(SecondFactorVettedMailService $secondFactorVettedMailService)
+    public function __construct(private readonly SecondFactorVettedMailService $secondFactorVettedMailService)
     {
-        $this->secondFactorVettedMailService = $secondFactorVettedMailService;
     }
 
     public function handleSecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
-        $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+        $this->secondFactorVettedMailService->sendVettedEmail(
+            $event->preferredLocale,
+            $event->commonName,
+            $event->email,
+        );
     }
 
-    public function handleSecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event): void
-    {
-        $this->secondFactorVettedMailService->sendVettedEmail($event->preferredLocale, $event->commonName, $event->email);
+    public function handleSecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
+        $this->secondFactorVettedMailService->sendVettedEmail(
+            $event->preferredLocale,
+            $event->commonName,
+            $event->email,
+        );
     }
 }

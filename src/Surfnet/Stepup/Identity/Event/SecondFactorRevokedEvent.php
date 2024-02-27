@@ -59,22 +59,22 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
+        SecondFactorIdentifier $secondFactorIdentifier,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorType       = $secondFactorType;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
 
         return $metadata;
@@ -89,7 +89,7 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
             new Institution($data['identity_institution']),
             new SecondFactorId($data['second_factor_id']),
             $secondFactorType,
-            SecondFactorIdentifierFactory::unknownForType($secondFactorType)
+            SecondFactorIdentifierFactory::unknownForType($secondFactorType),
         );
     }
 
@@ -99,10 +99,10 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
     final public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'second_factor_id'         => (string) $this->secondFactorId,
-            'second_factor_type'       => (string) $this->secondFactorType,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'second_factor_type' => (string)$this->secondFactorType,
         ];
     }
 

@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('email_required_locale')->isRequired()->end()
+            ->scalarNode('email_required_locale')->isRequired()->end()
             ->end();
 
         return $treeBuilder;

@@ -32,6 +32,6 @@ return [
             "use_ra" => [],
             "use_raa" => "surfnet.nl",
             "select_raa" => ["surfnet.nl"],
-        ]
-    ]
+        ],
+    ],
 ];

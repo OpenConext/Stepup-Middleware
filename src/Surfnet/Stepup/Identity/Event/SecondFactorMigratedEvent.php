@@ -35,6 +35,7 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+
 use function array_key_exists;
 
 /**
@@ -55,8 +56,6 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         'common_name',
         'email',
     ];
-
-    private Institution $sourceInstitution;
 
     /**
      * @var NameId
@@ -108,7 +107,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         IdentityId $identityId,
         NameId $targetNameId,
         Institution $targetInstitution,
-        Institution $sourceInstitution,
+        private Institution $sourceInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
@@ -116,11 +115,9 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         VettingType $vettingType,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $targetInstitution);
-
-        $this->sourceInstitution = $sourceInstitution;
         $this->targetNameId = $targetNameId;
         $this->secondFactorId = $secondFactorId;
         $this->newSecondFactorId = $newSecondFactorId;
@@ -166,7 +163,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             $vettingType,
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -183,8 +180,8 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             'second_factor_id' => (string)$this->secondFactorId,
             'new_second_factor_id' => (string)$this->newSecondFactorId,
             'vetting_type' => $this->vettingType->jsonSerialize(),
-            'second_factor_type' => (string) $this->secondFactorType,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

@@ -32,16 +32,16 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
 
     final public function __construct(
         IdentityId $identityId,
-        Institution $identityInstitution
+        Institution $identityInstitution,
     ) {
         parent::__construct($identityId, $identityInstitution);
     }
 
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
@@ -50,7 +50,7 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
     {
         return new static(
             new IdentityId($data['identity_id']),
-            new Institution($data['identity_institution'])
+            new Institution($data['identity_institution']),
         );
     }
 
@@ -60,8 +60,8 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
     final public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'identity_institution'     => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
         ];
     }
 

@@ -29,21 +29,15 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRe
 
 class InstitutionConfigurationProjector extends Projector
 {
-    private InstitutionConfigurationRepository $repository;
-
-    /**
-     * @param InstitutionConfigurationRepository $repository
-     */
-    public function __construct(InstitutionConfigurationRepository $repository)
+    public function __construct(private readonly InstitutionConfigurationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     public function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void
     {
         $institutionConfiguration = new InstitutionConfiguration(
             (string)$event->institution,
-            $event->ssoOn2faOption->isEnabled()
+            $event->ssoOn2faOption->isEnabled(),
         );
 
         $this->repository->save($institutionConfiguration);
@@ -51,7 +45,7 @@ class InstitutionConfigurationProjector extends Projector
 
     public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event): void
     {
-        $institutionConfiguration = $this->repository->findByInstitution((string) $event->institution);
+        $institutionConfiguration = $this->repository->findByInstitution((string)$event->institution);
         if ($institutionConfiguration instanceof InstitutionConfiguration) {
             $institutionConfiguration->ssoOn2faEnabled = $event->ssoOn2faOption->isEnabled();
             $this->repository->save($institutionConfiguration);
@@ -62,7 +56,7 @@ class InstitutionConfigurationProjector extends Projector
         if (!$institutionConfiguration) {
             $institutionConfiguration = new InstitutionConfiguration(
                 (string)$event->institution,
-                $event->ssoOn2faOption->isEnabled()
+                $event->ssoOn2faOption->isEnabled(),
             );
             $this->repository->save($institutionConfiguration);
         }

@@ -35,8 +35,8 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
      */
     public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
@@ -54,7 +54,7 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
     {
         return [
             'identity_id' => $this->identityId,
-            'institution' => $this->identityInstitution
+            'institution' => $this->identityInstitution,
         ];
     }
 

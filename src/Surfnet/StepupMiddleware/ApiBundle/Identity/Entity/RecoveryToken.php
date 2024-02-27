@@ -79,7 +79,7 @@ class RecoveryToken implements JsonSerializable
     #[ORM\Column(length: 255)]
     public $recoveryMethodIdentifier;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

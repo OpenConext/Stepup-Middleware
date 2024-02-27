@@ -96,7 +96,7 @@ class RaCandidate implements JsonSerializable
         return $candidate;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'identity_id' => $this->identityId,

@@ -59,7 +59,7 @@ final class RaLocationName implements JsonSerializable, Stringable
         return $this->raLocationName;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->raLocationName;
     }

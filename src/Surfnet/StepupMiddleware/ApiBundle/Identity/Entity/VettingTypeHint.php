@@ -33,7 +33,7 @@ class VettingTypeHint implements JsonSerializable
     #[ORM\Column(type: 'stepup_vetting_type_hints')]
     public VettingTypeHintCollection $hints;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'institution' => $this->institution,

@@ -77,7 +77,7 @@ class VettedSecondFactor implements JsonSerializable
         return $this->vettingType;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

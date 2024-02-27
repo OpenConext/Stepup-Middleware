@@ -72,7 +72,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
         return $this->numberOfTokensPerIdentity;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): int
     {
         return $this->numberOfTokensPerIdentity;
     }

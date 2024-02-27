@@ -78,7 +78,7 @@ class VerifiedSecondFactor implements JsonSerializable
     #[ORM\Column(type: 'stepup_datetime')]
     public $registrationRequestedAt;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

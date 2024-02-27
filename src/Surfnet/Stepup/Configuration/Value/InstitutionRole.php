@@ -91,7 +91,7 @@ final class InstitutionRole implements JsonSerializable, Stringable
         return $this->type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->type;
     }

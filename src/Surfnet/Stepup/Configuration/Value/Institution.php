@@ -59,7 +59,7 @@ final class Institution implements JsonSerializable, Stringable
         return $this->institution;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->institution;
     }

@@ -62,7 +62,7 @@ final class UseRaLocationsOption implements JsonSerializable
         return $this->useRaLocationsOption;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): bool
     {
         return $this->useRaLocationsOption;
     }

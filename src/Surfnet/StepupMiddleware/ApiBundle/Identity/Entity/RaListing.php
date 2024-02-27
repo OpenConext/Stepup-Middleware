@@ -120,7 +120,7 @@ class RaListing implements JsonSerializable
         return $entry;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'identity_id' => $this->identityId,

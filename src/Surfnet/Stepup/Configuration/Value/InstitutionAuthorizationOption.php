@@ -180,7 +180,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         return $this->isDefault;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): ?array
     {
         if ($this->isDefault) {
             return null;

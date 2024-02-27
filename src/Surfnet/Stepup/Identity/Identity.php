@@ -508,6 +508,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     ): void {
         $this->assertNotForgotten();
 
+        /** The vetted second factor collection can determine highest loa based on the vetting type,
+         * the other can not (as the verified and unverified second factors do not have a vetting type)
+         * And the vetting type is used to determine if the LoA is diminished (in case of a self
+         * asserted token registration)
+         */
         /** @var VettedSecondFactor|null $secondFactorWithHighestLoa */
         $secondFactorWithHighestLoa = $this->vettedSecondFactors->getSecondFactorWithHighestLoa(
             $secondFactorTypeService,

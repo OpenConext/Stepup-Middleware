@@ -19,7 +19,12 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\Stepup\Exception\LogicException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
+
+use Surfnet\StepupBundle\Value\VettingType;
+
+use function array_pop;
 
 final class SecondFactorCollection extends ArrayCollection
 {
@@ -28,13 +33,23 @@ final class SecondFactorCollection extends ArrayCollection
      */
     public function getSecondFactorWithHighestLoa(SecondFactorTypeService $service)
     {
-        return array_reduce(
-            $this->toArray(),
-            fn(SecondFactor $carry, SecondFactor $item): SecondFactor => $service->hasEqualOrHigherLoaComparedTo(
-                $carry->getType(),
-                $item->getType(),
-            ) ? $carry : $item,
-            $this->first() ?: null,
-        );
+        // We can only get the highest loa'ed second factor when we have a collection of
+        // VettedSecondFactors. The because that is the only SF type that has a vetting
+        // type, which is required to determine the LoA. As a vetting type can change the
+        // LoA.
+        $items = $this->toArray();
+        if ($items !== [] && array_pop($items) instanceof VettedSecondFactor) {
+            return array_reduce(
+                $this->toArray(),
+                fn(VettedSecondFactor $carry, VettedSecondFactor $item): VettedSecondFactor => $service->hasEqualOrHigherLoaComparedTo(
+                    $carry->getType(),
+                    new VettingType($carry->vettingType()->type()),
+                    $item->getType(),
+                    new VettingType($item->vettingType()->type()),
+                ) ? $carry : $item,
+                $this->first() ?: null,
+            );
+        }
+        throw new LogicException('At this moment, only getting the highest loa SF is supported for a collection of Vetted second factors');
     }
 }

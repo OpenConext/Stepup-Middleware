@@ -22,6 +22,9 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
+use Surfnet\Stepup\Identity\Entity\VettedSecondFactor;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\OnPremiseVettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -51,9 +54,11 @@ class SecondFactorCollectionTest extends UnitTest
      */
     private function mockVettedSecondFactor(string $type)
     {
-        $mock = m::mock(SecondFactor::class);
+        $mock = m::mock(VettedSecondFactor::class);
         $mock->shouldReceive('getType')
             ->andReturn(new SecondFactorType($type));
+        $mock->shouldReceive('vettingType')
+            ->andReturn(new OnPremiseVettingType(new DocumentNumber('123123')));
 
         return $mock;
     }

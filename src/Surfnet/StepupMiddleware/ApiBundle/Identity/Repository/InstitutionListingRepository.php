@@ -19,9 +19,9 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @deprecated This could probably be removed and is only used in migrations

@@ -22,6 +22,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -29,7 +30,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RaSecondFactorRepository extends ServiceEntityRepository
 {

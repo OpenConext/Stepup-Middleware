@@ -50,7 +50,7 @@ final class InstitutionConfigurationId implements JsonSerializable
 
     public function __construct($institutionConfigurationId)
     {
-        if (!is_string($institutionConfigurationId) || strlen(trim($institutionConfigurationId)) === 0) {
+        if (!is_string($institutionConfigurationId) || trim($institutionConfigurationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'institutionConfigurationId',

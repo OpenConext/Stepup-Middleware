@@ -25,7 +25,6 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('surfnet_stepup_gateway_gateway');
-        return $treeBuilder;
+        return new TreeBuilder('surfnet_stepup_gateway_gateway');
     }
 }

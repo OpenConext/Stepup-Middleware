@@ -58,7 +58,7 @@ class RaLocationIdTest extends TestCase
      */
     public function two_ra_location_ids_with_the_same_values_are_equal(): void
     {
-        $uuid = self::uuid();
+        $uuid = $this->uuid();
 
         $raLocationId = new RaLocationId($uuid);
         $theSame      = new RaLocationId($uuid);
@@ -72,8 +72,8 @@ class RaLocationIdTest extends TestCase
      */
     public function two_ra_location_ids_with_different_values_are_not_equal(): void
     {
-        $raLocationId = new RaLocationId(self::uuid());
-        $different    = new RaLocationId(self::uuid());
+        $raLocationId = new RaLocationId($this->uuid());
+        $different    = new RaLocationId($this->uuid());
 
         $this->assertFalse($raLocationId->equals($different));
     }
@@ -90,7 +90,7 @@ class RaLocationIdTest extends TestCase
         ];
     }
 
-    private static function uuid(): string {
+    private function uuid(): string {
         return (string) Uuid::uuid4();
     }
 }

@@ -38,7 +38,7 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
         $aggregateIdentifier,
         DomainEventStream $eventStream
     ): DomainEventStream {
-        if (!$this->metadata) {
+        if (!$this->metadata instanceof Metadata) {
             return $eventStream;
         }
 

@@ -548,12 +548,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         if ($this->selectRaaOption == null) {
             return $this->institution->equals($institution);
         }
-
-        if ($this->selectRaaOption->hasInstitution($institution, $this->institution)) {
-            return true;
-        }
-
-        return false;
+        return $this->selectRaaOption->hasInstitution($institution, $this->institution);
     }
 
     protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)

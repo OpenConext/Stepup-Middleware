@@ -80,7 +80,7 @@ final class MigrateSecondFactorCommand extends Command
             $this->transactionHelper->beginTransaction();
 
             // Check if target identity should be created
-            if ($targetIdentity === null) {
+            if (!$targetIdentity instanceof Identity) {
                 $output->writeln(
                     sprintf('<info>Target with NameID %s does not exist, creating new identity</info>', $targetNameId)
                 );

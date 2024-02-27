@@ -43,7 +43,7 @@ class AuthorizedInstitutionCollection
         foreach ($raInstitutions as $institution) {
             $collection->authorizations[(string) $institution][] = (string) AuthorityRole::ROLE_RA;
         }
-        if ($raaInstitutions) {
+        if ($raaInstitutions instanceof InstitutionCollection) {
             foreach ($raaInstitutions as $institution) {
                 // Override existing lower role
                 if (isset($collection->authorizations[(string) $institution])

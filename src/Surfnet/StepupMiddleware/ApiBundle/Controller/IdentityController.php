@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -53,7 +54,7 @@ class IdentityController extends AbstractController
 
         $identity = $this->identityService->find($id);
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             throw new NotFoundHttpException(sprintf("Identity '%s' does not exist", $id));
         }
 

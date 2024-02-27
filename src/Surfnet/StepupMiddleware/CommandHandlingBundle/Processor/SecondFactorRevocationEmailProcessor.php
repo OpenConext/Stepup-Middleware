@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Processor;
 use Broadway\Processor\Processor;
 use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\SecondFactorRevokedEvent;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\SecondFactorRevocationMailService;
 
@@ -47,7 +48,7 @@ final class SecondFactorRevocationEmailProcessor extends Processor
     ): void {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 
@@ -64,7 +65,7 @@ final class SecondFactorRevocationEmailProcessor extends Processor
     {
         $identity = $this->identityService->find($event->identityId->getIdentityId());
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return;
         }
 

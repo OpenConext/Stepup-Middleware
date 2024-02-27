@@ -59,10 +59,10 @@ final class ConfigurationValidationTest extends TestCase
     {
         $builder = m::mock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $builder->shouldReceive('addViolation')->with()->once();
-        $builder->shouldReceive('atPath')->with(self::spy($actualPropertyPath))->once();
+        $builder->shouldReceive('atPath')->with($this->spy($actualPropertyPath))->once();
 
         $context = m::mock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-        $context->shouldReceive('buildViolation')->with(self::spy($errorMessage))->once()->andReturn($builder);
+        $context->shouldReceive('buildViolation')->with($this->spy($errorMessage))->once()->andReturn($builder);
 
         $validator = new ConfigurationStructureValidator(
             new GatewayConfigurationValidator(
@@ -86,7 +86,7 @@ final class ConfigurationValidationTest extends TestCase
      * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private static function spy(&$spy)
+    private function spy(&$spy)
     {
         return m::on(
             function ($value) use (&$spy): bool {

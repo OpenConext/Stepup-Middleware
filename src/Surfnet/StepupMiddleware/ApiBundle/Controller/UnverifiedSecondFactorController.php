@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -42,7 +43,7 @@ class UnverifiedSecondFactorController extends AbstractController
 
         $secondFactor = $this->secondFactorService->findUnverified(new SecondFactorId($id));
 
-        if ($secondFactor === null) {
+        if (!$secondFactor instanceof UnverifiedSecondFactor) {
             throw new NotFoundHttpException(sprintf("Unverified second factor '%s' does not exist", $id));
         }
 

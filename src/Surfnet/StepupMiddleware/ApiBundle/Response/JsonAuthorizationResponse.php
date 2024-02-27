@@ -32,7 +32,7 @@ class JsonAuthorizationResponse extends JsonResponse
         $data = [
             'code' => $code
         ];
-        if ($errors) {
+        if ($errors !== []) {
             $data['errors'] = $errors;
         }
         // Don't confuse the HTTP status code with the authorization status code

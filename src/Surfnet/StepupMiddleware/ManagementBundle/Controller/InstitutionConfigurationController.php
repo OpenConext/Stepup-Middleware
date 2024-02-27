@@ -147,7 +147,7 @@ final class InstitutionConfigurationController extends AbstractController
         }
 
         if (empty($configuration)) {
-            $this->logger->notice(sprintf('No institutions to reconfigure: empty configuration received'));
+            $this->logger->notice('No institutions to reconfigure: empty configuration received');
 
             return new JsonResponse([
                 'status'       => 'OK',

@@ -149,10 +149,10 @@ class SensitiveData implements SerializableInterface
 
     public function getRecoveryTokenIdentifier(): ?RecoveryTokenIdentifier
     {
-        if ($this->recoveryTokenIdentifier) {
+        if ($this->recoveryTokenIdentifier instanceof RecoveryTokenIdentifier) {
             return $this->recoveryTokenIdentifier;
         }
-        if ($this->recoveryTokenType) {
+        if ($this->recoveryTokenType instanceof RecoveryTokenType) {
             return RecoveryTokenIdentifierFactory::unknownForType($this->recoveryTokenType);
         }
         return null;
@@ -206,7 +206,7 @@ class SensitiveData implements SerializableInterface
 
     public function serialize(): array
     {
-        $vettingType = (!is_null($this->vettingType)) ? $this->vettingType->jsonSerialize() : null;
+        $vettingType = (is_null($this->vettingType)) ? null : $this->vettingType->jsonSerialize();
         return array_filter([
             'common_name'              => $this->commonName,
             'email'                    => $this->email,

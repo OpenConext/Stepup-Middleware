@@ -58,7 +58,7 @@ class SraaRepository extends ServiceEntityRepository
             }
         }
 
-        if (count($invalid)) {
+        if ($invalid !== []) {
             $invalidIndications = [];
             foreach ($invalid as $index => $value) {
                 $invalidIndications[] = sprintf(

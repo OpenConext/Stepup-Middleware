@@ -83,7 +83,7 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
-            ->shouldReceive('set')->with('command', self::spy($spiedCommand))
+            ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
         $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
@@ -105,7 +105,7 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
-            ->shouldReceive('set')->with('command', self::spy($spiedCommand))
+            ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
         $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
 
@@ -163,7 +163,7 @@ class CommandParamConverterTest extends TestCase
      * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private static function spy(&$spy)
+    private function spy(&$spy)
     {
         return m::on(
             function ($value) use (&$spy): bool {

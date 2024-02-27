@@ -80,19 +80,19 @@ class ReplaySpecificEventsCommand extends Command
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');
-            $output->writeln(!empty($availableEvents) ? $availableEvents : 'None.');
+            $output->writeln(empty($availableEvents) ? 'None.' : $availableEvents);
 
             return;
         }
 
         if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
             $output->writeln('<info>Events can be replayed for the following projectors:</info>');
-            $output->writeln(!empty($availableProjectors) ? $availableProjectors : 'None.');
+            $output->writeln($availableProjectors === [] ? 'None.' : $availableProjectors);
 
             return;
         }
 
-        if (count($availableProjectors) === 0) {
+        if ($availableProjectors === []) {
             $output->writeln('<error>There are no projectors configured to reply events for</error>');
 
             return;

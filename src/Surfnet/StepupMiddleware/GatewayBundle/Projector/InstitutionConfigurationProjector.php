@@ -52,7 +52,7 @@ class InstitutionConfigurationProjector extends Projector
     public function applySsoOn2faOptionChangedEvent(SsoOn2faOptionChangedEvent $event): void
     {
         $institutionConfiguration = $this->repository->findByInstitution((string) $event->institution);
-        if ($institutionConfiguration) {
+        if ($institutionConfiguration instanceof InstitutionConfiguration) {
             $institutionConfiguration->ssoOn2faEnabled = $event->ssoOn2faOption->isEnabled();
             $this->repository->save($institutionConfiguration);
             return;

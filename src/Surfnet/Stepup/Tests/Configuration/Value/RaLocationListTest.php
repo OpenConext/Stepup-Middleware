@@ -42,7 +42,7 @@ class RaLocationListTest extends TestCase
         $raLocations = $this->getRaLocationsArray();
         $existingRaLocation = $raLocations[0];
 
-        array_push($raLocations, $existingRaLocation);
+        $raLocations[] = $existingRaLocation;
         new RaLocationList($raLocations);
     }
 

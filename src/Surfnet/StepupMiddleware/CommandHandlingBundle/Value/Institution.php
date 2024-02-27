@@ -29,7 +29,7 @@ final class Institution
      */
     public function __construct($institution)
     {
-        if (!is_string($institution) || strlen(trim($institution)) === 0) {
+        if (!is_string($institution) || trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 

@@ -67,9 +67,7 @@ class SecondFactorService extends AbstractSearchService
     {
         $doctrineQuery = $this->unverifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
@@ -80,9 +78,7 @@ class SecondFactorService extends AbstractSearchService
     {
         $doctrineQuery = $this->verifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
 
@@ -94,9 +90,7 @@ class SecondFactorService extends AbstractSearchService
     {
         $doctrineQuery = $this->verifiedRepository->createSearchForIdentityQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
@@ -107,9 +101,7 @@ class SecondFactorService extends AbstractSearchService
     {
         $doctrineQuery = $this->vettedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
@@ -144,6 +136,6 @@ class SecondFactorService extends AbstractSearchService
     public function hasVettedByIdentity(IdentityId $id): bool
     {
         $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string) $id]);
-        return count($vettedSecondFactors) > 0;
+        return $vettedSecondFactors !== [];
     }
 }

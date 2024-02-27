@@ -29,20 +29,13 @@ use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
-use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
-use Surfnet\Stepup\Identity\Value\SecondFactorIdentifierFactory;
-use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use function get_class;
-use function is_null;
-use function property_exists;
-use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -97,7 +90,7 @@ class AuditLogProjector implements EventListener
         if (isset($metadata['actorId'])) {
             $actor = $this->identityRepository->find($metadata['actorId']);
 
-            if (!$actor) {
+            if (!$actor instanceof Identity) {
                 throw new RuntimeException(sprintf(
                     'Cannot create AuditLogEntry, given Actor Identity "%s" does not exist',
                     $metadata['actorId']

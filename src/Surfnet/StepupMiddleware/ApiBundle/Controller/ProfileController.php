@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\ProfileService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +47,7 @@ class ProfileController extends AbstractController
         }
 
         $profile = $this->profileService->createProfile($identityId);
-        if (!$profile) {
+        if (!$profile instanceof Profile) {
             throw new NotFoundHttpException("The profile cannot be created, the identity id did not match an identity.");
         }
         return new JsonResponse($profile);

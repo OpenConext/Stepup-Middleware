@@ -58,12 +58,11 @@ class ConfigurationController extends AbstractController
         $this->pipeline->process($command);
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response   = new JsonResponse([
+
+        return new JsonResponse([
             'status'       => 'OK',
             'processed_by' => $serverName,
             'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
         ]);
-
-        return $response;
     }
 }

@@ -47,8 +47,7 @@ class IdentityProjector extends Projector
             $event->nameId,
             $event->email,
             $event->commonName,
-            $event->preferredLocale,
-            false
+            $event->preferredLocale
         ));
     }
 
@@ -90,7 +89,7 @@ class IdentityProjector extends Projector
     {
         if ($vettingType->type() === VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
             $identity = $this->identityRepository->find($identityId);
-            if ($identity) {
+            if ($identity instanceof Identity) {
                 $identity->possessedSelfAssertedToken = true;
                 $this->identityRepository->save($identity);
             }

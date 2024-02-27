@@ -100,7 +100,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
         $nonExistentInstitutions = $this->determineNonExistentInstitutions($institutions, $configuredInstitutions);
 
-        if (!empty($nonExistentInstitutions)) {
+        if ($nonExistentInstitutions !== []) {
             throw new InvalidArgumentException(
                 sprintf('Cannot reconfigure non-existent institution(s): %s', implode(', ', $nonExistentInstitutions))
             );
@@ -133,8 +133,8 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             sprintf(
                 'Invalid option(s) for "%s". Required options: "%s"; Optional options: "%s"',
                 $institution,
-                join(', ', $requiredOptions),
-                join(', ', $optionalOptions)
+                implode(', ', $requiredOptions),
+                implode(', ', $optionalOptions)
             ),
             $propertyPath
         );
@@ -211,7 +211,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private function getConfiguredInstitutions()
     {
-        if (!empty($this->configuredInstitutions)) {
+        if ($this->configuredInstitutions !== null && $this->configuredInstitutions !== []) {
             return $this->configuredInstitutions;
         }
 
@@ -232,7 +232,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private function getWhitelistedInstitutions()
     {
-        if (!empty($this->whitelistedInstitutions)) {
+        if ($this->whitelistedInstitutions !== null && $this->whitelistedInstitutions !== []) {
             return $this->whitelistedInstitutions;
         }
 

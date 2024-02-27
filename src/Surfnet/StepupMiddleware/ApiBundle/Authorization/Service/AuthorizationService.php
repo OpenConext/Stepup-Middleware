@@ -70,12 +70,12 @@ class AuthorizationService
     public function assertRegistrationOfSelfAssertedTokensIsAllowed(IdentityId $identityId): AuthorizationDecision
     {
         $identity = $this->findIdentity($identityId);
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             return $this->deny('Identity not found');
         }
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
-        if (!$institutionConfiguration) {
+        if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
             return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
         }
 
@@ -119,12 +119,12 @@ class AuthorizationService
     public function assertSelfVetUsingSelfAssertedTokenIsAllowed(IdentityId $identityId): AuthorizationDecision
     {
         $identity = $this->findIdentity($identityId);
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             return $this->deny('Identity not found');
         }
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
-        if (!$institutionConfiguration) {
+        if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
             return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
         }
 
@@ -155,12 +155,12 @@ class AuthorizationService
     public function assertRecoveryTokensAreAllowed(IdentityId $identityId): AuthorizationDecision
     {
         $identity = $this->findIdentity($identityId);
-        if (!$identity) {
+        if (!$identity instanceof Identity) {
             return $this->deny('Identity not found');
         }
         $institutionConfiguration = $this->findInstitutionConfiguration($identity);
 
-        if (!$institutionConfiguration) {
+        if (!$institutionConfiguration instanceof InstitutionConfigurationOptions) {
             return $this->deny('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled');
         }
 

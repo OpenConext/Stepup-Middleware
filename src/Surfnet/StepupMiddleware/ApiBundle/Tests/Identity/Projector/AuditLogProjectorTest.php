@@ -60,15 +60,15 @@ final class AuditLogProjectorTest extends TestCase
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
-                    null,
-                    null,
                     new IdentityId('abcd'),
                     new Institution('efgh'),
+                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
+                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    null,
+                    null,
                     new SecondFactorId('ijkl'),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('99992222'),
-                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
+                    new YubikeyPublicId('99992222')
                 )
             ],
             'no actor, without second factor' => [
@@ -85,15 +85,15 @@ final class AuditLogProjectorTest extends TestCase
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
-                    null,
-                    null,
                     new IdentityId('abcd'),
                     new Institution('efgh'),
-                    null,
-                    null,
-                    null,
                     'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000'))
+                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
                 )
             ],
             'with actor, with second factor' => [
@@ -114,15 +114,15 @@ final class AuditLogProjectorTest extends TestCase
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000')
                 ),
                 $this->createExpectedAuditLogEntry(
-                    new IdentityId('0123'),
-                    new Institution('4567'),
                     new IdentityId('abcd'),
                     new Institution('efgh'),
+                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
+                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
+                    new IdentityId('0123'),
+                    new Institution('4567'),
                     new SecondFactorId('ijkl'),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('99992222'),
-                    'Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub',
-                    new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
                     self::$actorCommonName
                 )
             ],
@@ -140,7 +140,7 @@ final class AuditLogProjectorTest extends TestCase
     public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry): void
     {
         $repository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository');
-        $repository->shouldReceive('save')->once()->with(self::spy($actualEntry));
+        $repository->shouldReceive('save')->once()->with($this->spy($actualEntry));
 
         $identityRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository');
 
@@ -177,25 +177,25 @@ final class AuditLogProjectorTest extends TestCase
     }
 
     private function createExpectedAuditLogEntry(
-        IdentityId       $actorId = null,
-        Institution      $actorInstitution = null,
         IdentityId       $identityId,
         Institution      $identityInstitution,
+        string           $event,
+        StepupDateTime   $recordedOn,
+        IdentityId       $actorId = null,
+        Institution      $actorInstitution = null,
         SecondFactorId   $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
         ?YubikeyPublicId $secondFactorIdentifier = null,
-        string           $event,
-        StepupDateTime   $recordedOn,
                          $actorCommonName = null
     ): AuditLogEntry {
         $entry = new AuditLogEntry();
-        $entry->actorId = $actorId ? (string) $actorId : null;
-        $entry->actorInstitution = $actorInstitution ? (string) $actorInstitution : null;
+        $entry->actorId = $actorId instanceof IdentityId ? (string) $actorId : null;
+        $entry->actorInstitution = $actorInstitution instanceof Institution ? (string) $actorInstitution : null;
         $entry->identityId = (string) $identityId;
         $entry->identityInstitution = $identityInstitution;
-        $entry->secondFactorId = $secondFactorId ? (string) $secondFactorId : null;
-        $entry->secondFactorType = $secondFactorType ? (string) $secondFactorType : null;
-        $entry->secondFactorIdentifier = $secondFactorIdentifier ? (string) $secondFactorIdentifier : null;
+        $entry->secondFactorId = $secondFactorId instanceof SecondFactorId ? (string) $secondFactorId : null;
+        $entry->secondFactorType = $secondFactorType instanceof SecondFactorType ? (string) $secondFactorType : null;
+        $entry->secondFactorIdentifier = $secondFactorIdentifier instanceof YubikeyPublicId ? (string) $secondFactorIdentifier : null;
         $entry->event = $event;
         $entry->recordedOn = $recordedOn;
         $entry->actorCommonName = $actorCommonName;
@@ -207,7 +207,7 @@ final class AuditLogProjectorTest extends TestCase
      * @param mixed &$spy
      * @return MatcherAbstract
      */
-    private static function spy(&$spy)
+    private function spy(&$spy)
     {
         return m::on(
             function ($value) use (&$spy): bool {

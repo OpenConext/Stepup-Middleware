@@ -38,7 +38,7 @@ final class DocumentNumber implements JsonSerializable
      */
     public function __construct($documentNumber)
     {
-        if (!is_string($documentNumber) || empty($documentNumber)) {
+        if (!is_string($documentNumber) || ($documentNumber === '' || $documentNumber === '0')) {
             throw InvalidArgumentException::invalidType('non-empty string', 'documentNumber', $documentNumber);
         }
 

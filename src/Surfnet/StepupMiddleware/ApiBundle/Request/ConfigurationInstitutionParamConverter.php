@@ -48,14 +48,14 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
         $institution = $request->attributes->get(self::INSTITUTION, false);
         $request->attributes->remove(self::INSTITUTION);
 
-        if (is_string($institution) && !empty($institution)) {
+        if (is_string($institution) && ($institution !== '' && $institution !== '0')) {
             return $institution;
         }
 
         $institution = $request->query->get(self::INSTITUTION, false);
         $request->query->remove(self::INSTITUTION);
 
-        if (is_string($institution) && !empty($institution)) {
+        if (is_string($institution) && ($institution !== '' && $institution !== '0')) {
             return $institution;
         }
 

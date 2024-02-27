@@ -31,7 +31,7 @@ final class RaLocationId implements JsonSerializable
      */
     public function __construct($raLocationId)
     {
-        if (!is_string($raLocationId) || strlen(trim($raLocationId)) === 0) {
+        if (!is_string($raLocationId) || trim($raLocationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'raLocationId',

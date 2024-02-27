@@ -73,7 +73,7 @@ final class EventCollection implements IteratorAggregate
     {
         $nonAvailableEventNames = array_diff($subset, $this->eventNames);
 
-        if (!empty($nonAvailableEventNames)) {
+        if ($nonAvailableEventNames !== []) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Subset of event names contains event names not present in collection: %s',

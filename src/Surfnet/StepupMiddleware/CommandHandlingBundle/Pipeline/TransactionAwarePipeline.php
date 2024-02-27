@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Connection;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;

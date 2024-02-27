@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactorRevocation;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class SecondFactorRevocationRepository extends ServiceEntityRepository
 {

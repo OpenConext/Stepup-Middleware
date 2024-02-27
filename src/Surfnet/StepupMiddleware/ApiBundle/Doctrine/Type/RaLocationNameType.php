@@ -31,7 +31,7 @@ class RaLocationNameType extends Type
 {
     public const NAME = 'stepup_ra_location_name';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getVarcharTypeDeclarationSQL([]);
     }
@@ -55,7 +55,7 @@ class RaLocationNameType extends Type
         return $value->getRaLocationName();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?RaLocationName
     {
         if (is_null($value)) {
             return $value;
@@ -76,7 +76,7 @@ class RaLocationNameType extends Type
         return $raLocationName;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

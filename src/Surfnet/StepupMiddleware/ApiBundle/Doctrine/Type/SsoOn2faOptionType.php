@@ -31,12 +31,12 @@ class SsoOn2faOptionType extends Type
 {
     public const NAME = 'stepup_sso_on_2fa_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
             return $value;
@@ -56,7 +56,7 @@ class SsoOn2faOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SsoOn2faOption
     {
         if (is_null($value)) {
             return $value;
@@ -77,7 +77,7 @@ class SsoOn2faOptionType extends Type
         return $ssoOn2faOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

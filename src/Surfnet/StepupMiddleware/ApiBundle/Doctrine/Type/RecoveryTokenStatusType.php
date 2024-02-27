@@ -30,9 +30,9 @@ class RecoveryTokenStatusType extends Type
 {
     public const NAME = 'stepup_recovery_token_status';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     /**
@@ -85,7 +85,7 @@ class RecoveryTokenStatusType extends Type
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

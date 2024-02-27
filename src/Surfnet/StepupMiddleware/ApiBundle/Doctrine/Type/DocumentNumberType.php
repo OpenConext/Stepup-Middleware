@@ -32,14 +32,14 @@ class DocumentNumberType extends Type
     public const NAME = 'stepup_document_number';
 
     /**
-     * @param array $fieldDeclaration
+     * @param array $column
      * @param AbstractPlatform $platform
      * @return string
      * @throws DBALException
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
     /**
@@ -48,7 +48,7 @@ class DocumentNumberType extends Type
      * @return null|string
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return null;
@@ -73,7 +73,7 @@ class DocumentNumberType extends Type
      * @return null|DocumentNumber
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?DocumentNumber
     {
         if (is_null($value)) {
             return null;
@@ -82,7 +82,7 @@ class DocumentNumberType extends Type
         return new DocumentNumber($value);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

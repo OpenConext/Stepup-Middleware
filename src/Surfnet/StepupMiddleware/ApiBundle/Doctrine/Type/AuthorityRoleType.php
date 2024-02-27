@@ -31,16 +31,16 @@ class AuthorityRoleType extends Type
 {
     public const NAME = 'authority_role';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        if (!isset($fieldDeclaration['length'])) {
-            $fieldDeclaration['length'] = 20;
+        if (!isset($column['length'])) {
+            $column['length'] = 20;
         }
 
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return $value;
@@ -49,7 +49,7 @@ class AuthorityRoleType extends Type
         return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?AuthorityRole
     {
         if (is_null($value)) {
             return $value;
@@ -70,7 +70,7 @@ class AuthorityRoleType extends Type
         return $authorityRole;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

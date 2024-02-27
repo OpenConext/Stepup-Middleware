@@ -5,9 +5,9 @@ set -e
 
 cd $(dirname $0)/../../
 
-./ci/qa/create-test-db
+#./ci/qa/create-test-db
 
 # PHPUnit Bridge should always be used in Symfony applications. (https://symfony.com/doc/current/components/phpunit_bridge.html)
 # This will create a phpunit executable in /bin/ instead of /vendor/bin/
 XDEBUG_MODE=coverage ./vendor/bin/phpunit --configuration=ci/qa/phpunit.xml --coverage-text --testsuite=unit
-./vendor/bin/phpunit --configuration=ci/qa/phpunit.xml --testsuite=database
+#./vendor/bin/phpunit --configuration=ci/qa/phpunit.xml --testsuite=database

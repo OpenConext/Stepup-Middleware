@@ -31,9 +31,9 @@ class NumberOfTokensPerIdentityType extends Type
 {
     public const NAME = 'stepup_number_of_tokens_per_identity_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -56,7 +56,7 @@ class NumberOfTokensPerIdentityType extends Type
         return $value->getNumberOfTokensPerIdentity();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?NumberOfTokensPerIdentityOption
     {
         if (is_null($value)) {
             return $value;
@@ -77,7 +77,7 @@ class NumberOfTokensPerIdentityType extends Type
         return $numberOfTokensPerIdentityOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

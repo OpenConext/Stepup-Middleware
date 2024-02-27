@@ -31,9 +31,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 #[ORM\Entity(repositoryClass: RecoveryTokenRepository::class)]
 class RecoveryToken implements JsonSerializable
 {
-    /**
-     * @var string
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
     public $id;

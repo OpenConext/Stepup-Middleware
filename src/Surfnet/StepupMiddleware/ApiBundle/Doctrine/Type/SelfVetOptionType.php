@@ -31,12 +31,12 @@ class SelfVetOptionType extends Type
 {
     public const NAME = 'stepup_self_vet_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
             return $value;
@@ -56,7 +56,7 @@ class SelfVetOptionType extends Type
         return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfVetOption
     {
         if (is_null($value)) {
             return $value;
@@ -77,7 +77,7 @@ class SelfVetOptionType extends Type
         return $selfVetOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

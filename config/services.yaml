@@ -7,8 +7,49 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: false
 
   Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper:
     arguments:
       - "@surfnet_stepup.service.second_factor_type"
       - '%skip_prove_possession_second_factors%'
+
+  twig.extension.stringloader:
+    class: Twig\Extension\StringLoaderExtension
+    tags: [{ name: twig.extension }]
+
+  twig.extension.sandbox:
+    class: Twig\Extension\SandboxExtension
+    arguments: [ "@twig.extension.sandbox.policy" ]
+    tags: [{ name: twig.extension }]
+
+  twig.extension.sandbox.policy:
+    class: Twig\Sandbox\SecurityPolicy
+    arguments:
+      - [ if, else, elseif, for ] # Allowed tags
+      - [ escape, localizeddate ] # Allowed filters
+      - # Allowed methods
+        Surfnet\Stepup\Identity\Value\CommonName:
+          - __toString
+        Surfnet\Stepup\Configuration\Value\ContactInformation:
+          - __toString
+        Surfnet\Stepup\Configuration\Value\Location:
+          - __toString
+        Surfnet\Stepup\Configuration\Value\RaLocationName:
+          - __toString
+        Surfnet\Stepup\DateTime\DateTime:
+          - __toString
+        Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials:
+          - getCommonName
+          - getLocation
+          - getContactInformation
+        Surfnet\Stepup\Identity\Value\Location:
+          - __toString
+        Surfnet\Stepup\Identity\Value\ContactInformation:
+          - __toString
+      - # Allowed properties
+        Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation:
+          - name
+          - location
+          - contactInformation
+      - [] # Allowed functions

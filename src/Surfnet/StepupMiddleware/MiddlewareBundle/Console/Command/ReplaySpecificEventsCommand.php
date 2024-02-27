@@ -31,6 +31,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class ReplaySpecificEventsCommand extends Command
 {
+    protected static $defaultName = 'stepup:event:replay';
     const OPTION_LIST_EVENTS = 'list-events';
     const OPTION_LIST_PROJECTORS = 'list-projectors';
 
@@ -44,7 +45,6 @@ class ReplaySpecificEventsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('stepup:event:replay')
             ->setDescription('replay specified events for specified projectors')
             ->addOption(
                 self::OPTION_LIST_EVENTS,

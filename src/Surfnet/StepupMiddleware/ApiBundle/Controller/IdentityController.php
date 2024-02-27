@@ -61,7 +61,7 @@ class IdentityController extends AbstractController
         return new JsonResponse($identity);
     }
 
-    public function collectionAction(Request $request, Institution $institution)
+    public function collection(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -79,9 +79,8 @@ class IdentityController extends AbstractController
 
     /**
      * @param string $identityId
-     * @return Response
      */
-    public function getRegistrationAuthorityCredentialsAction($identityId): JsonResponse
+    public function getRegistrationAuthorityCredentials($identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

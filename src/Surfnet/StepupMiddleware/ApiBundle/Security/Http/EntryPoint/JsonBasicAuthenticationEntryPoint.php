@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
@@ -45,7 +46,7 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
 
         return new JsonResponse(
             ['errors' => [$error]],
-            401,
+            Response::HTTP_UNAUTHORIZED,
             ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)]
         );
     }

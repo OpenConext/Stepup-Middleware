@@ -20,8 +20,8 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Surfnet\Stepup\Exception\LogicException;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Exception\LogicException;
 
 final class RaLocationList implements IteratorAggregate
 {

@@ -23,6 +23,7 @@ use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ConfiguredInstitutionControllerTest extends WebTestCase
 {
@@ -85,7 +86,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('405', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -109,7 +110,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('403', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -161,7 +162,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
             json_encode([])
         );
 
-        $this->assertEquals('200', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $response = json_decode($this->client->getResponse()->getContent());
         $this->assertEquals([], $response);
     }

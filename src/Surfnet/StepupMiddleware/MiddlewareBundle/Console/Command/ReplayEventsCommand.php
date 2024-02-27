@@ -30,6 +30,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class ReplayEventsCommand extends Command
 {
+    protected static $defaultName = 'middleware:event:replay';
     private EventStreamReplayer $replayer;
 
     public function __construct(EventStreamReplayer $eventStreamReplayer)
@@ -41,7 +42,6 @@ class ReplayEventsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('middleware:event:replay')
             ->setDescription(
                 'Wipes all read models and repopulates the tables from the event store. Use the 
                 --no-interaction option to perform the event replay without the additional confirmation question.'

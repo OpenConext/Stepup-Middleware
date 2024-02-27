@@ -63,7 +63,7 @@ class VettingTypeHintController extends AbstractController
         return new JsonResponse($recoveryToken);
     }
 
-    public function collectionAction(Request $request)
+    public function collection(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()));

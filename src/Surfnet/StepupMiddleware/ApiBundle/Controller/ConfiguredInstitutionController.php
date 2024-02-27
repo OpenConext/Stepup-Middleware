@@ -31,7 +31,7 @@ class ConfiguredInstitutionController extends AbstractController
         $this->configuredInstitutionService = $allListings;
     }
 
-    public function collectionAction(): JsonResponse
+    public function collection(): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

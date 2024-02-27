@@ -21,25 +21,26 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Response;
 use Assert\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonAuthorizationResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class JsonAuthorizationResponseTest extends TestCase
 {
     public function test_happy_flow(): void {
         $response = new JsonAuthorizationResponse(200);
         $this->assertEquals('{"code":200}',$response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
     public function test_happy_flow_error_response(): void {
         $response = new JsonAuthorizationResponse(403);
         $this->assertEquals('{"code":403}',$response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
     public function test_happy_flow_error_response_with_error_message(): void {
         $response = new JsonAuthorizationResponse(403, ['Not allowed']);
         $this->assertEquals('{"code":403,"errors":["Not allowed"]}',$response->getContent());
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
     public function test_response_code_can_be_one_of_200_or_403(): void {

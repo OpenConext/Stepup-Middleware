@@ -19,9 +19,9 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
+use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
-use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;

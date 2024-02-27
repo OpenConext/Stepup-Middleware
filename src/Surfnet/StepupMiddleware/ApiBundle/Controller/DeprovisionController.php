@@ -39,7 +39,7 @@ class DeprovisionController extends AbstractController
         $this->formatHelper = $formatHelper;
     }
 
-    public function deprovisionAction(string $collabPersonId): JsonResponse
+    public function deprovision(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
         $errors = [];
@@ -61,7 +61,7 @@ class DeprovisionController extends AbstractController
         return new JsonResponse($this->formatHelper->format($userData, $errors));
     }
 
-    public function dryRunAction(string $collabPersonId): JsonResponse
+    public function dryRun(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
         $errors = [];

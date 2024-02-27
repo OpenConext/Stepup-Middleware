@@ -96,7 +96,7 @@ final class InstitutionConfigurationController extends AbstractController
         $this->connectionHelper = $dbalConnectionHelper;
     }
 
-    public function showAction(): JsonResponse
+    public function show(): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -135,7 +135,7 @@ final class InstitutionConfigurationController extends AbstractController
         return new JsonResponse($overview);
     }
 
-    public function reconfigureAction(Request $request): JsonResponse
+    public function reconfigure(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 

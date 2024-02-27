@@ -39,7 +39,7 @@ class ConfigurationController extends AbstractController
         $this->pipeline = $pipeline;
     }
 
-    public function updateAction(Request $request)
+    public function update(Request $request)
     {
         $command                = new UpdateConfigurationCommand();
         $command->UUID          = (string) Uuid::uuid4();

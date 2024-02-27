@@ -74,7 +74,7 @@ class CommandController extends AbstractController
         $this->commandAuthorizationService = $commandAuthorizationService;
     }
 
-    public function handleAction(Command $command, Metadata $metadata, Request $request): JsonResponse
+    public function handle(Command $command, Metadata $metadata, Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));

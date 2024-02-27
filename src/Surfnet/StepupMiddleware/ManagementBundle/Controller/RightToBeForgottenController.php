@@ -51,7 +51,7 @@ class RightToBeForgottenController extends AbstractController
         $this->identityService = $identityService;
     }
 
-    public function forgetIdentityAction(Request $request)
+    public function forgetIdentity(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 

@@ -19,8 +19,8 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
+use Surfnet\Stepup\Identity\Value\Institution;
 
 final class InstitutionCollection
 {

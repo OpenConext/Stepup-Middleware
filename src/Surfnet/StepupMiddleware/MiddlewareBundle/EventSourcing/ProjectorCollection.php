@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
 use ArrayIterator;
 use Broadway\EventHandling\EventListener as ProjectorInterface;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
@@ -77,7 +78,7 @@ final class ProjectorCollection implements IteratorAggregate
         return array_key_exists($projector::class, $this->projectors);
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->projectors);
     }

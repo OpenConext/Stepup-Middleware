@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Exception\LogicException;
@@ -103,7 +104,7 @@ final class RaLocationList implements IteratorAggregate
         );
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->raLocations);
     }

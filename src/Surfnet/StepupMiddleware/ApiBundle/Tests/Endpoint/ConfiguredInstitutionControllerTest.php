@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +42,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      */
     private string $endpoint;
 
-    private DatabaseToolCollection $databaseTool;
+    private ORMSqliteDatabaseTool $databaseTool;
 
     public function setUp(): void
     {

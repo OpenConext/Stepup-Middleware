@@ -24,6 +24,7 @@ use stdClass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionAccessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionProperty;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithoutInstitutionPropertyAndAccessor;
+use TypeError;
 
 class HasInstitutionMatcherTest extends TestCase
 {

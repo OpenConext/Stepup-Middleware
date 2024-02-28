@@ -2831,16 +2831,16 @@
         },
         {
             "name": "openconext/monitor-bundle",
-            "version": "4.1.1",
+            "version": "4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Monitor-bundle.git",
-                "reference": "02fe1c405ed6a782e9ca993511f002c3d299fe0b"
+                "reference": "9fad7f1c77c53fdc1fd4040a34ad4a4e0073f225"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/02fe1c405ed6a782e9ca993511f002c3d299fe0b",
-                "reference": "02fe1c405ed6a782e9ca993511f002c3d299fe0b",
+                "url": "https://api.github.com/repos/OpenConext/Monitor-bundle/zipball/9fad7f1c77c53fdc1fd4040a34ad4a4e0073f225",
+                "reference": "9fad7f1c77c53fdc1fd4040a34ad4a4e0073f225",
                 "shasum": ""
             },
             "require": {
@@ -2882,9 +2882,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Monitor-bundle/issues",
-                "source": "https://github.com/OpenConext/Monitor-bundle/tree/4.1.1"
+                "source": "https://github.com/OpenConext/Monitor-bundle/tree/4.1.2"
             },
-            "time": "2024-02-22T14:55:34+00:00"
+            "time": "2024-02-28T14:23:16+00:00"
         },
         {
             "name": "pagerfanta/pagerfanta",
@@ -3723,16 +3723,16 @@
         },
         {
             "name": "surfnet/stepup-bundle",
-            "version": "6.0.12",
+            "version": "6.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OpenConext/Stepup-bundle.git",
-                "reference": "1a1a14f17de55f5ac1b3076a078f194710528135"
+                "reference": "c555705d44d8a6c201adefb2e8f26cd61e2d9522"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/1a1a14f17de55f5ac1b3076a078f194710528135",
-                "reference": "1a1a14f17de55f5ac1b3076a078f194710528135",
+                "url": "https://api.github.com/repos/OpenConext/Stepup-bundle/zipball/c555705d44d8a6c201adefb2e8f26cd61e2d9522",
+                "reference": "c555705d44d8a6c201adefb2e8f26cd61e2d9522",
                 "shasum": ""
             },
             "require": {
@@ -3788,9 +3788,9 @@
             ],
             "support": {
                 "issues": "https://github.com/OpenConext/Stepup-bundle/issues",
-                "source": "https://github.com/OpenConext/Stepup-bundle/tree/6.0.12"
+                "source": "https://github.com/OpenConext/Stepup-bundle/tree/6.0.13"
             },
-            "time": "2024-02-08T08:35:20+00:00"
+            "time": "2024-02-28T14:43:12+00:00"
         },
         {
             "name": "surfnet/stepup-saml-bundle",

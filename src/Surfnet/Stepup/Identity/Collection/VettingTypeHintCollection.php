@@ -64,12 +64,12 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         $this->elements = $elements;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->elements;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $institutions = array_map(
             fn(array $hint): VettingTypeHint => new VettingTypeHint($hint['locale'], $hint['hint']),

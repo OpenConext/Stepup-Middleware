@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSour
 use ArrayIterator;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
@@ -63,7 +64,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
         }
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->messages);
     }

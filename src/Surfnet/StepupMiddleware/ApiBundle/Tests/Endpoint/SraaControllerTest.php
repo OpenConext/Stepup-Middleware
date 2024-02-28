@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;

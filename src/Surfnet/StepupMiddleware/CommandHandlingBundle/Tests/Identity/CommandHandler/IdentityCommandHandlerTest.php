@@ -111,7 +111,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     private $identityProjectionRepository;
 
     /**
-     * @var SecondFactorTypeService
+     * @var SecondFactorTypeService|m\MockInterface
      */
     private $secondFactorTypeService;
 

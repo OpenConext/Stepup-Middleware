@@ -36,7 +36,7 @@ class ConfigurationInstitutionType extends Type
         return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return $value;

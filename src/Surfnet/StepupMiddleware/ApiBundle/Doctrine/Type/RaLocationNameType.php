@@ -36,7 +36,7 @@ class RaLocationNameType extends Type
         return $platform->getVarcharTypeDeclarationSQL([]);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return $value;

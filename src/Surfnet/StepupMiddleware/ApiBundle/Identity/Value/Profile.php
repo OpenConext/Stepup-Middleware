@@ -34,7 +34,7 @@ class Profile implements JsonSerializable
     ) {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $profile = $this->identity->jsonSerialize();
         $profile["is_sraa"] = $this->isSraa;

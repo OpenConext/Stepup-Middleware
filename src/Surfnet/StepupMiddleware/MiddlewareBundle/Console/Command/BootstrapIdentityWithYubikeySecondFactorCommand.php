@@ -63,7 +63,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->bootstrapService->setToken(
             new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT']),

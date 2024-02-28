@@ -54,7 +54,7 @@ final class ContactInformation implements JsonSerializable, Stringable
         return $this->contactInformation;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->contactInformation;
     }

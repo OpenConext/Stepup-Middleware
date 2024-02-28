@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\EventStreamReplayer;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -27,24 +28,22 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpKernel\KernelInterface;
-
+#[AsCommand(
+    name: 'middleware:event:replay',
+    description: 'Wipes all read models and repopulates the tables from the event store. Use the 
+                --no-interaction option to perform the event replay without the additional confirmation question.'
+)]
 class ReplayEventsCommand extends Command
 {
-    protected static $defaultName = 'middleware:event:replay';
-
     public function __construct(private readonly EventStreamReplayer $replayer)
     {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setDescription(
-                'Wipes all read models and repopulates the tables from the event store. Use the 
-                --no-interaction option to perform the event replay without the additional confirmation question.',
-            )
-            ->addOption(
+             ->addOption(
                 'increments',
                 'i',
                 InputOption::VALUE_REQUIRED,
@@ -53,7 +52,7 @@ class ReplayEventsCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var KernelInterface $kernel */
         $kernel = $this->getApplication()->getKernel();
@@ -77,7 +76,7 @@ class ReplayEventsCommand extends Command
                 ),
             );
 
-            return;
+            return 1;
         }
 
         /** @var QuestionHelper $interrogator */
@@ -92,7 +91,7 @@ class ReplayEventsCommand extends Command
             if (!$interrogator->ask($input, $output, $wantToRunOnProd)) {
                 $output->writeln('<comment>Not starting the replay</comment>');
 
-                return;
+                return 1;
             }
         }
 
@@ -105,7 +104,7 @@ class ReplayEventsCommand extends Command
                 ),
             );
 
-            return;
+            return 1;
         }
 
         if (!$noInteraction) {
@@ -124,7 +123,7 @@ QUESTION;
             if (!$interrogator->ask($input, $output, $areYouSure)) {
                 $output->writeln('<comment>Replay cancelled!</comment>');
 
-                return;
+                return 1;
             }
         }
 
@@ -134,5 +133,6 @@ QUESTION;
         );
 
         $this->replayer->replayEvents($output, $increments);
+        return 0;
     }
 }

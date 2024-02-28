@@ -158,7 +158,7 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         return $other->jsonSerialize() === $this->jsonSerialize();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->identityId,

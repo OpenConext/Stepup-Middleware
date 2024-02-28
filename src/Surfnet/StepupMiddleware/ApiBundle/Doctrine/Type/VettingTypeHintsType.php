@@ -36,7 +36,7 @@ class VettingTypeHintsType extends Type
         return $platform->getJsonTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         return $value;
     }

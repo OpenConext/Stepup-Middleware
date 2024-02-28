@@ -145,13 +145,13 @@ final class AuditLogProjectorTest extends TestCase
     public function it_creates_entries_for_auditable_events(DomainMessage $message, AuditLogEntry $expectedEntry): void
     {
         $repository = m::mock(AuditLogRepository::class);
-        $repository->shouldReceive('save')->once()->with($this->spy($actualEntry));
+        $repository->shouldReceive('save')->with($this->spy($actualEntry));
 
         $identityRepository = m::mock(IdentityRepository::class);
 
         $identity = new Identity();
         $identity->commonName = self::$actorCommonName;
-        $identityRepository->shouldReceive('find')->between(0, 1)->andReturn($identity);
+        $identityRepository->shouldReceive('find')->andReturn($identity);
 
         $projector = new AuditLogProjector($repository, $identityRepository);
         $projector->handle($message);

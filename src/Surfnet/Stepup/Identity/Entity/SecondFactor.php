@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Entity;
 
 use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
@@ -28,6 +29,7 @@ interface SecondFactor
 
     public function hasTypeWithEqualOrLowerLoaComparedTo(
         SecondFactorType $type,
+        VettingType $vettingType,
         SecondFactorTypeService $service,
     ): bool;
 
@@ -36,4 +38,6 @@ interface SecondFactor
     public function getType(): SecondFactorType;
 
     public function getIdentifier(): SecondFactorIdentifier;
+
+    public function vettingType(): VettingType;
 }

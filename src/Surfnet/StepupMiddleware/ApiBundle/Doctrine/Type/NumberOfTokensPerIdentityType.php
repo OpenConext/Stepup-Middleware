@@ -36,7 +36,7 @@ class NumberOfTokensPerIdentityType extends Type
         return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return $value;

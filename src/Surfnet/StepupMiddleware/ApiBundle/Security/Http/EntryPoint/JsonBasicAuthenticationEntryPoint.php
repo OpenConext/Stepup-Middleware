@@ -36,7 +36,7 @@ class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInter
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $authExceptionMessage = $authException instanceof AuthenticationException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);

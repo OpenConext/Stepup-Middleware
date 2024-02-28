@@ -22,6 +22,7 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\EventCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\ProjectorCollection;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\PastEventsService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionAwareEventDispatcher;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,16 +30,18 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+#[AsCommand(
+    name: 'stepup:event:replay',
+    description: 'replay specified events for specified projectors'
+)]
 class ReplaySpecificEventsCommand extends Command
 {
-    protected static $defaultName = 'stepup:event:replay';
     public const OPTION_LIST_EVENTS = 'list-events';
     public const OPTION_LIST_PROJECTORS = 'list-projectors';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setDescription('replay specified events for specified projectors')
             ->addOption(
                 self::OPTION_LIST_EVENTS,
                 null,
@@ -62,7 +65,7 @@ class ReplaySpecificEventsCommand extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $availableEvents = $this->collection->getEventNames();
         $availableProjectors = $this->projectorCollection->getProjectorNames();
@@ -71,20 +74,20 @@ class ReplaySpecificEventsCommand extends Command
             $output->writeln('<info>The following events can be replayed:</info>');
             $output->writeln(empty($availableEvents) ? 'None.' : $availableEvents);
 
-            return;
+            return 0;
         }
 
         if ($input->getOption(self::OPTION_LIST_PROJECTORS)) {
             $output->writeln('<info>Events can be replayed for the following projectors:</info>');
             $output->writeln($availableProjectors === [] ? 'None.' : $availableProjectors);
 
-            return;
+            return 0;
         }
 
         if ($availableProjectors === []) {
             $output->writeln('<error>There are no projectors configured to reply events for</error>');
 
-            return;
+            return 1;
         }
 
         /** @var QuestionHelper $questionHelper */
@@ -118,5 +121,6 @@ class ReplaySpecificEventsCommand extends Command
 
         $output->writeln('<info>Dispatching events</info>');
         $this->eventDispatcher->dispatch($events);
+        return 0;
     }
 }

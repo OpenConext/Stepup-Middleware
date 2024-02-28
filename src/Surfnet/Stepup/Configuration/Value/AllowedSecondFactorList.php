@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use ArrayIterator;
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Iterator;
 use IteratorAggregate;
 use JsonSerializable;
 use Surfnet\StepupBundle\Value\SecondFactorType;
@@ -94,7 +95,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return true;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $secondFactorTypes = array_map(
             fn($secondFactorString): SecondFactorType => new SecondFactorType($secondFactorString),
@@ -116,7 +117,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         ];
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->allowedSecondFactors);
     }

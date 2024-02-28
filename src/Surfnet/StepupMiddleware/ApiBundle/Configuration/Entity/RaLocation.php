@@ -86,7 +86,7 @@ class RaLocation implements JsonSerializable
         return $raLocation;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,

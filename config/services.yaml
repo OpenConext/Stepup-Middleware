@@ -1,7 +1,7 @@
 # import legacy parameters.yaml so this could later on be refactored to utilize dotenv support
 imports:
-  - { resource: 'legacy/bundles.yaml' }
-  - { resource: 'legacy/parameters.yaml' }
+  - { resource: 'packages/bundles.yaml' }
+  - { resource: 'openconext/parameters.yaml' }
 
 services:
   _defaults:

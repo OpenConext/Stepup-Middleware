@@ -1,5 +1,5 @@
 framework:
-  test: ~
+  test: true
   profiler:
     collect: false
   php_errors:

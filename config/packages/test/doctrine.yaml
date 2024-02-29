@@ -4,7 +4,13 @@ doctrine:
     connections:
       middleware:
         url: "sqlite:///%kernel.project_dir%/var/middleware.db"
+        options:
+          1002: 0
       gateway:
         url: "sqlite:///%kernel.project_dir%/var/gateway.db"
+        options:
+          1002: 0
       deploy:
         url: "sqlite:///%kernel.project_dir%/var/deploy.db"
+        options:
+          1002: 0

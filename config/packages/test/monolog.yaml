@@ -1,12 +1,16 @@
 monolog:
     handlers:
-        # Handlers are merged in from config.yml and config_dev.yml. They cannot be disabled or removed. The practical
-        # solution is to assign them the `null` handler, which discards the records.
         prod-signaler:
-            type: "null"
+            type: fingers_crossed
+            action_level: ERROR
+            passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
+            handler: main_syslog
+            bubble: false # if we handle it, nothing else should
         main_syslog:
+            type: stream
+            path: "php://stderr"
+            formatter: surfnet_stepup.monolog.json_formatter
+        console:
             type: "null"
         main_logfile:
-            type: "null"
-        console:
             type: "null"

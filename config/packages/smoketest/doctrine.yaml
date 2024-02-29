@@ -7,13 +7,19 @@ doctrine:
         host: mariadb
         password: mw_deploy_secret
         user: mw_deploy_user
+        options:
+          1002: 0
       gateway:
         dbname: gateway_test
         host: mariadb
         password: mw_deploy_secret
         user: mw_deploy_user
+        options:
+          1002: 0
       deploy:
         dbname: middleware_test
         host: mariadb
         password: mw_deploy_secret
         user: mw_deploy_user
+        options:
+          1002: 0

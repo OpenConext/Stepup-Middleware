@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -26,6 +27,8 @@ use Surfnet\Stepup\Helper\JsonHelper;
 
 class JsonHelperTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group json

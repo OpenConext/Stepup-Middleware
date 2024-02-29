@@ -20,11 +20,14 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\CommandH
 
 use Broadway\Domain\DomainEventStream as DomainEventStreamInterface;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\Stepup\Identity\Event\IdentityEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
 final readonly class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterface
 {
+    use MockeryPHPUnitIntegration;
+
     public function __construct(
         private EventStoreInterface $decoratedEventStore,
     ) {

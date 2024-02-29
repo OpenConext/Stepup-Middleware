@@ -24,6 +24,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Broadway\Repository\AggregateNotFoundException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
@@ -68,6 +69,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group command-handler

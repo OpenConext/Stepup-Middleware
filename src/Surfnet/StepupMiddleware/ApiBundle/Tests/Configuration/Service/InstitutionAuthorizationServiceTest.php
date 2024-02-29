@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
@@ -28,6 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthoriz
 
 class InstitutionAuthorizationServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     /**
      * @var InstitutionAuthorizationService
      */

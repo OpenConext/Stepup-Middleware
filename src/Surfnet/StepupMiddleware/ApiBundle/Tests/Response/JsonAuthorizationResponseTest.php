@@ -19,12 +19,15 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Response;
 
 use Assert\InvalidArgumentException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonAuthorizationResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class JsonAuthorizationResponseTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function test_happy_flow(): void
     {
         $response = new JsonAuthorizationResponse(200);

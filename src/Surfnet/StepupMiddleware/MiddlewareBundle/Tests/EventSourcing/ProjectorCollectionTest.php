@@ -29,6 +29,7 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException
 
 class ProjectorCollectionTest extends TestCase
 {
+    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
     /**
      * @test
      * @group event-replay

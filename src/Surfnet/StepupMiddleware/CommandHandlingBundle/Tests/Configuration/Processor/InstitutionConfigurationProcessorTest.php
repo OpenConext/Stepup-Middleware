@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\Processor;
 
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -39,6 +40,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class InstitutionConfigurationProcessorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     private $pipelineMock;
 
     /**

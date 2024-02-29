@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use StdClass;
@@ -26,6 +27,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class RaLocationIdTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain

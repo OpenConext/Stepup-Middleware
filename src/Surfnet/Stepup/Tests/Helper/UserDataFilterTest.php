@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Helper;
 
 use Generator;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Helper\UserDataFilter;
@@ -38,6 +39,8 @@ use Surfnet\Stepup\Identity\Value\SecondFactorId;
 
 class UserDataFilterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @dataProvider provideEvents
      */

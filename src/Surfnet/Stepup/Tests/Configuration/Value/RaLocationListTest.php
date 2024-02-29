@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
@@ -30,6 +31,8 @@ use Surfnet\Stepup\Exception\LogicException;
 
 class RaLocationListTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

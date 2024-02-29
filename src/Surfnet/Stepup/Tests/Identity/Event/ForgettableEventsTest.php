@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Surfnet\Stepup\Identity\Event\CompliedWithRevocationEvent;
@@ -53,6 +54,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
 final class ForgettableEventsTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

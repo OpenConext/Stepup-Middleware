@@ -23,12 +23,15 @@ use DateTimeZone;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
 
 class DateTimeTypeTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var MySqlPlatform
      */

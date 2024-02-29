@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
@@ -59,6 +60,8 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EventSerializationAndDeserializationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

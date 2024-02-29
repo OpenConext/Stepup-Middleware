@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -29,6 +30,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InstitutionParamConverterTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var MockInterface
      */

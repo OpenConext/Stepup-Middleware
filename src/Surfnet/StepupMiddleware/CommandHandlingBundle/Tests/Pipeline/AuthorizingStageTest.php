@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
@@ -32,6 +33,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class AuthorizingStageTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var MockInterface mock of Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface
      */

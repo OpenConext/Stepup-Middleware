@@ -19,10 +19,13 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Ramsey\Uuid\Uuid;
 
 abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @return string
      */

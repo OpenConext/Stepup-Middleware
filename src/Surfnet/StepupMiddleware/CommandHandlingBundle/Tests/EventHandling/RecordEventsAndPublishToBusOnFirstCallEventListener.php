@@ -21,10 +21,12 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\EventHandling;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListener as EventListenerInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
 class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListenerInterface
 {
+    use MockeryPHPUnitIntegration;
     private bool $firstEventHandled = false;
 
     /**

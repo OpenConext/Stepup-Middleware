@@ -18,16 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionAccessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionProperty;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithoutInstitutionPropertyAndAccessor;
-use TypeError;
 
 class HasInstitutionMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group mockery

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Configuration;
 
 use Broadway\EventSourcing\Testing\AggregateRootScenarioTestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\InstitutionConfigurationRemovedEvent;
 use Surfnet\Stepup\Configuration\Event\NewInstitutionConfigurationCreatedEvent;
@@ -43,6 +44,8 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
 
 class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group aggregate

@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Entity\SecondFactor;
 use Surfnet\Stepup\Identity\Entity\SecondFactorCollection;
@@ -30,6 +31,8 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SecondFactorCollectionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

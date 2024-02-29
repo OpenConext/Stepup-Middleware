@@ -18,12 +18,14 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService;
 
 class SecondFactorDisplayNameResolverServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
 
     /**
      * @test

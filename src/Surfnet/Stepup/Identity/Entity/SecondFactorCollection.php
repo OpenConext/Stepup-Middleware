@@ -21,9 +21,7 @@ namespace Surfnet\Stepup\Identity\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Surfnet\Stepup\Exception\LogicException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
-
 use Surfnet\StepupBundle\Value\VettingType;
-
 use function array_pop;
 
 final class SecondFactorCollection extends ArrayCollection

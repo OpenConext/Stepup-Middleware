@@ -28,6 +28,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\HttpKernel\KernelInterface;
+
 #[AsCommand(
     name: 'middleware:event:replay',
     description: 'Wipes all read models and repopulates the tables from the event store. Use the 

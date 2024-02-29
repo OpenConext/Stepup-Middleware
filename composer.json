@@ -49,6 +49,7 @@
         "symfony/mailer": "6.4.*",
         "symfony/monolog-bundle": "^v3.9",
         "symfony/password-hasher": "6.4.*",
+        "symfony/runtime": "6.4.*",
         "symfony/security-bundle": "6.4.*",
         "symfony/translation": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
@@ -69,7 +70,6 @@
         "sebastian/phpcpd": "^6.0",
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/browser-kit": "6.4.*",
-        "symfony/dotenv": "6.4.*",
         "symfony/phpunit-bridge": "^6.4",
         "symfony/stopwatch": "6.4.*",
         "symfony/web-profiler-bundle": "6.4.*"
@@ -131,16 +131,15 @@
         "sort-packages": true
     },
     "extra": {
-        "symfony-app-dir": "app",
-        "symfony-var-dir": "var",
-        "symfony-bin-dir": "bin",
-        "symfony-web-dir": "web",
         "incenteev-parameters": {
-            "file": "config/legacy/parameters.yaml"
+            "file": "config/openconext/parameters.yaml"
         },
         "symfony": {
             "allow-contrib": false,
             "require": "6.4.*"
+        },
+        "runtime": {
+            "disable_dotenv": true
         },
         "src-dir": "src/Surfnet"
     }

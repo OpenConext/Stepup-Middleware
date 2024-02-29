@@ -3,7 +3,7 @@
 /web/app_dev.php
 /web/app_test.php
 /web/app_dev.php.dist
-/config/legacy/parameters.yaml
+/config/openconext/parameters.yaml
 /var/cache/*
 /var/logs/*
 !var/cache/.gitkeep

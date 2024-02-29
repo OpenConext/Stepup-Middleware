@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -25,6 +26,8 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class AllowedSecondFactorListTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

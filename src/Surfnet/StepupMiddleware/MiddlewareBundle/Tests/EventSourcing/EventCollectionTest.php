@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\EventSourcing;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use stdClass;
 use Surfnet\Stepup\Configuration\Event\NewConfigurationCreatedEvent;
@@ -27,6 +28,7 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException
 
 class EventCollectionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     /**
      * @test
      * @group event-replay

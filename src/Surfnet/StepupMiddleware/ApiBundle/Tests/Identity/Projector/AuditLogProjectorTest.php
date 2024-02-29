@@ -23,6 +23,7 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata as MessageMetadata;
 use DateTime as CoreDateTime;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
@@ -42,6 +43,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Tests\Identity\Projector\Event\EventStub;
 
 final class AuditLogProjectorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     private static string $actorCommonName = 'Actor CommonName';
 
     public function auditable_events(): array

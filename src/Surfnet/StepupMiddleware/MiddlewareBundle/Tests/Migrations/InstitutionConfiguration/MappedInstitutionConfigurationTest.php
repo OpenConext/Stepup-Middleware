@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Migrations\InstitutionConfiguration;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
@@ -38,6 +39,8 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguratio
 
 class MappedInstitutionConfigurationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group middleware-migration

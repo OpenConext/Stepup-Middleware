@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Value\HashedSecret;
 use Surfnet\Stepup\Identity\Value\PhoneNumber;
@@ -27,6 +28,8 @@ use Surfnet\Stepup\Identity\Value\SafeStore;
 
 final class RecoveryTokenIdentifierFactoryTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @group domain
      */

@@ -23,6 +23,7 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -34,6 +35,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 final class SensitiveDataMessageStreamTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public const EVENT_STREAM_A = 'A';
     public const EVENT_STREAM_B = 'B';
 

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
@@ -32,6 +33,8 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class ConfigurationValidationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @return mixed[][]
      */

@@ -38,6 +38,7 @@
         "openconext/monitor-bundle": "^4.1",
         "pagerfanta/pagerfanta": "^4.3",
         "ramsey/uuid": "^4.7",
+        "sensio/framework-extra-bundle": "*",
         "surfnet/stepup-bundle": "^6.0",
         "symfony/asset": "6.4.*",
         "symfony/expression-language": "6.4.*",
@@ -88,7 +89,7 @@
         "phpmd": "./ci/qa/phpmd",
         "phpcs": "./ci/qa/phpcs",
         "phpcpd": "./ci/qa/phpcpd",
-        "phpunit": "./ci/qa/phpunit",
+        "phpunit": "./ci/qa/phpunit --",
 
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use DateTime as CoreDateTime;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -75,6 +76,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class EventSerializationAndDeserializationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

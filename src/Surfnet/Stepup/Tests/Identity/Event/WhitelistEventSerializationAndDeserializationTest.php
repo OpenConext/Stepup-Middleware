@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -29,6 +30,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 class WhitelistEventSerializationAndDeserializationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain

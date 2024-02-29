@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Filter;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -30,6 +31,8 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class InstitutionAuthorizationRepositoryFilterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var QueryBuilder
      */

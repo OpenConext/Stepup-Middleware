@@ -19,6 +19,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 
 use DateTime;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -31,6 +32,8 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorRemind
 
 class VerifiedSecondFactorReminderServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var VerifiedSecondFactorReminderService
      */

@@ -5,7 +5,6 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-
 use function json_decode;
 use function json_encode;
 

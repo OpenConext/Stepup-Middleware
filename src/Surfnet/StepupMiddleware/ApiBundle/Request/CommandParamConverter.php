@@ -26,11 +26,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CommandParamConverter implements ParamConverterInterface
 {
-    /**
-     * @SuppressWarnings(PHPMD.MissingImport)
-     * The line above could be removed in newer releases were dynamic imports are allowed
-     * @see https://github.com/phpmd/phpmd/issues/673
-     */
     public function apply(Request $request, ParamConverter $configuration): void
     {
         $data = json_decode($request->getContent(), true);

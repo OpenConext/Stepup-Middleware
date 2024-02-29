@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Entity;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -27,6 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 
 class RaLocationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     /**
      * @test
      * @group entity

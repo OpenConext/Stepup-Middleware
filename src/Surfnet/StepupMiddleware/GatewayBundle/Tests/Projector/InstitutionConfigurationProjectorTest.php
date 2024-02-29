@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Surfnet\StepupMiddleware\GatewayBundle\Tests\Projector;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
@@ -33,7 +34,7 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRe
 
 class InstitutionConfigurationProjectorTest extends TestCase
 {
-    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
+    use MockeryPHPUnitIntegration;
 
     private InstitutionConfigurationProjector $projector;
 

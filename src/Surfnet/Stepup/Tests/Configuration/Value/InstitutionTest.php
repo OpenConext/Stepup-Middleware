@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use StdClass;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -25,6 +26,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class InstitutionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

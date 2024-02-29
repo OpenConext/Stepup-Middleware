@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -28,6 +29,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SraaControllerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var Client
      */

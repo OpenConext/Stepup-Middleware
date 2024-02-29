@@ -18,11 +18,14 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Helper\UserDataFormatter;
 
 class UserDataFormatterTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function test_data_is_formatted(): void
     {
         $formatter = new UserDataFormatter('Stepup-Middleware');

@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use stdClass;
 use Surfnet\Stepup\Configuration\Value\Location;
@@ -25,6 +26,8 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class LocationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain

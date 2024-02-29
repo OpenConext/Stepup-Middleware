@@ -21,12 +21,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class ConfiguredInstitutionControllerTest extends WebTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var Client
      */

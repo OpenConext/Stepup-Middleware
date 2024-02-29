@@ -25,11 +25,14 @@ use Broadway\Domain\Metadata;
 use Broadway\EventHandling\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
 class BufferedEventBusTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group event-handling

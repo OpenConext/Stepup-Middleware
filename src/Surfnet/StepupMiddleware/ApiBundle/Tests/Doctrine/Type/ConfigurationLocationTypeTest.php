@@ -21,12 +21,15 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\ConfigurationLocationType;
 
 class ConfigurationLocationTypeTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var MySqlPlatform
      */

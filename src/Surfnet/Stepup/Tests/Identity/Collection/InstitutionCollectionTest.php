@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Collection;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -25,6 +26,8 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 class InstitutionCollectionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -78,6 +79,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCo
 
 class CommandAuthorizationServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var WhitelistService|m\MockInterface
      */

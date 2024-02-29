@@ -18,10 +18,13 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 
 class AbstractCommandTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group command

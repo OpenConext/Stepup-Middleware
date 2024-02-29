@@ -90,7 +90,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
-
 use function md5;
 
 /**

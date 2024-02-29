@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Validator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -36,6 +37,8 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ReconfigureInstitutionRequestValidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @return mixed[][]
      */

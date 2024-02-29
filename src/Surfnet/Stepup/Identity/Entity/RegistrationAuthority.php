@@ -29,69 +29,47 @@ use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
  */
 final class RegistrationAuthority extends SimpleEventSourcedEntity
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole
-     */
-    private $role;
+    private ?RegistrationAuthorityRole $role = null;
+
+    private ?Location $location = null;
+
+    private ?ContactInformation $contactInformation = null;
+
+    private ?Institution $institution = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Location
-     */
-    private $location;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\ContactInformation
-     */
-    private $contactInformation;
-
-    /**
-     * @var Institution
-     */
-    private $institution;
-
-    /**
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param Institution $institution
      * @return RegistrationAuthority
      */
     public static function accreditWith(
         RegistrationAuthorityRole $role,
         Location $location,
         ContactInformation $contactInformation,
-        Institution $institution
-    ) {
-        $registrationAuthority                     = new self();
-        $registrationAuthority->role               = $role;
-        $registrationAuthority->location           = $location;
+        Institution $institution,
+    ): self {
+        $registrationAuthority = new self();
+        $registrationAuthority->role = $role;
+        $registrationAuthority->location = $location;
         $registrationAuthority->contactInformation = $contactInformation;
-        $registrationAuthority->institution        = $institution;
+        $registrationAuthority->institution = $institution;
 
         return $registrationAuthority;
     }
 
-    /**
-     * @param Location           $location
-     * @param ContactInformation $contactInformation
-     */
-    public function amendInformation(Location $location, ContactInformation $contactInformation)
+    public function amendInformation(Location $location, ContactInformation $contactInformation): void
     {
         $this->location = $location;
         $this->contactInformation = $contactInformation;
     }
 
     /**
-     * @param RegistrationAuthorityRole $role
      * @return void
      */
-    public function appointAs(RegistrationAuthorityRole $role)
+    public function appointAs(RegistrationAuthorityRole $role): void
     {
         $this->role = $role;
     }
 
     /**
-     * @param RegistrationAuthorityRole $role
      * @return bool
      */
     public function isAppointedAs(RegistrationAuthorityRole $role)

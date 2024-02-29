@@ -29,23 +29,23 @@ use Surfnet\Stepup\Identity\Value\ContactInformation;
  */
 class ContactInformationType extends Type
 {
-    const NAME = 'stepup_contact_information';
+    public const NAME = 'stepup_contact_information';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return $value;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ContactInformation
     {
         if (is_null($value)) {
             return $value;
@@ -57,7 +57,7 @@ class ContactInformationType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -66,7 +66,7 @@ class ContactInformationType extends Type
         return $contactInformation;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

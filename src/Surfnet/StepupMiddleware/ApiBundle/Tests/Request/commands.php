@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command
-{
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command {
+
     class FooBarCommand
     {
     }
 }
 
-namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns
-{
+namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns {
+
     class QuuxCommand
     {
     }

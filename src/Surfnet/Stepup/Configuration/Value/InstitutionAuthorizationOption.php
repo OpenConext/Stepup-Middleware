@@ -22,39 +22,24 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class InstitutionAuthorizationOption implements JsonSerializable
 {
-    /**
-     * @var InstitutionRole
-     */
-    private $institutionRole;
-
-    /**
-     * @var InstitutionSet
-     */
-    private $institutionSet;
-
-    /**
-     * @var boolean
-     */
-    private $isDefault;
+    private readonly bool $isDefault;
 
     /**
      * If the default is set to true then the object will use the old default behaviour. That behaviour is that it
      * will take the current institution into account when returning institutions.
      *
      * AbstractRoleOption constructor.
-     * @param InstitutionRole $role
-     * @param InstitutionSet $institutionSet
      * @param bool $isDefault
      */
-    private function __construct(InstitutionRole $role, InstitutionSet $institutionSet, $isDefault)
-    {
-        $this->institutionRole = $role;
-        $this->institutionSet = $institutionSet;
+    private function __construct(
+        private readonly InstitutionRole $institutionRole,
+        private readonly InstitutionSet $institutionSet,
+        $isDefault,
+    ) {
         $this->isDefault = (bool)$isDefault;
     }
 
     /**
-     * @param InstitutionRole $role
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
@@ -68,21 +53,21 @@ final class InstitutionAuthorizationOption implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'array',
                 'institutions',
-                $institutions
+                $institutions,
             );
         }
 
         array_walk(
             $institutions,
-            function ($institution, $key) use ($institutions) {
-                if (!is_string($institution)  || strlen(trim($institution)) === 0) {
+            function ($institution, $key) use ($institutions): void {
+                if (!is_string($institution) || trim($institution) === '') {
                     throw InvalidArgumentException::invalidType(
                         'string',
                         'institutions',
-                        $institutions[$key]
+                        $institutions[$key],
                     );
                 }
-            }
+            },
         );
 
         $set = [];
@@ -96,12 +81,10 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     }
 
     /**
-     * @param InstitutionRole $role
-     * @param Institution $institution
      * @param Institution[] $institutions
      * @return InstitutionAuthorizationOption
      */
-    public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions)
+    public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions): self
     {
         if (count($institutions) == 1 && current($institutions)->getInstitution() === $institution->getInstitution()) {
             return new self($role, InstitutionSet::create([]), true);
@@ -110,21 +93,19 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     }
 
     /**
-     * @param InstitutionRole $role
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function getDefault(InstitutionRole $role)
+    public static function getDefault(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), true);
     }
 
     /**
-     * @param InstitutionRole $role
      * @param string[]|null
      * @return InstitutionAuthorizationOption
      */
-    public static function getEmpty(InstitutionRole $role)
+    public static function getEmpty(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), false);
     }
@@ -138,10 +119,9 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     }
 
     /**
-     * @param InstitutionAuthorizationOption $option
      * @return bool
      */
-    public function equals(InstitutionAuthorizationOption $option)
+    public function equals(InstitutionAuthorizationOption $option): bool
     {
         return
             $this->institutionRole->equals($option->getInstitutionRole()) &&
@@ -169,7 +149,6 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * If the default is set to true then the object will use the old default behaviour. That behaviour is that it
      * will take the current institution into account and this method will return the current institution.
      *
-     * @param Institution $institution
      * @return Institution[]
      */
     public function getInstitutions(Institution $institution)
@@ -181,25 +160,16 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     }
 
     /**
-     * @param Institution $institution
-     * @param Institution $default
      * @return bool
      */
-    public function hasInstitution(Institution $institution, Institution $default)
+    public function hasInstitution(Institution $institution, Institution $default): bool
     {
         $institutions = $this->getInstitutions($default);
         $list = array_map(
-            function (Institution $institution) {
-                return $institution->getInstitution();
-            },
-            $institutions
+            fn(Institution $institution) => $institution->getInstitution(),
+            $institutions,
         );
-
-        if (!in_array($institution->getInstitution(), $list)) {
-            return false;
-        }
-
-        return true;
+        return in_array($institution->getInstitution(), $list);
     }
 
     /**
@@ -210,7 +180,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         return $this->isDefault;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): ?array
     {
         if ($this->isDefault) {
             return null;

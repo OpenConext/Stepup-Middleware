@@ -23,7 +23,6 @@ use Doctrine\ORM\EntityRepository;
 interface SpecificationInterface
 {
     /**
-     * @param  EntityRepository $entityRepository
      * @return mixed
      */
     public function apply(EntityRepository $entityRepository);

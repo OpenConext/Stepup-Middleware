@@ -26,18 +26,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\RaLocationReposi
 
 class RaLocationService
 {
-    /**
-     * @var RaLocationRepository
-     */
-    private $repository;
-
-    public function __construct(RaLocationRepository $repository)
+    public function __construct(private readonly RaLocationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
-     * @param RaLocationQuery $query
      * @return null|RaLocation[]
      */
     public function search(RaLocationQuery $query)
@@ -46,7 +39,6 @@ class RaLocationService
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return RaLocation[]
      */
     public function findByRaLocationId(RaLocationId $raLocationId)
@@ -56,7 +48,6 @@ class RaLocationService
 
 
     /**
-     * @param Institution $institution
      * @return RaLocation[]
      */
     public function listRaLocationsFor(Institution $institution)
@@ -67,7 +58,7 @@ class RaLocationService
     /**
      * @return RaLocation[]
      */
-    public function getAllRaLocations()
+    public function getAllRaLocations(): array
     {
         return $this->repository->findAll();
     }

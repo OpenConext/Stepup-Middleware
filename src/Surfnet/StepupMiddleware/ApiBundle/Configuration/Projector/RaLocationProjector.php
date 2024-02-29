@@ -32,30 +32,24 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
 class RaLocationProjector extends Projector
 {
-    /**
-     * @var RaLocationRepository
-     */
-    private $repository;
-
-    public function __construct(RaLocationRepository $repository)
+    public function __construct(private readonly RaLocationRepository $repository)
     {
-        $this->repository = $repository;
     }
 
-    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
+    public function applyRaLocationAddedEvent(RaLocationAddedEvent $event): void
     {
         $raLocation = RaLocation::create(
             $event->raLocationId->getRaLocationId(),
             $event->institution,
             $event->raLocationName,
             $event->location,
-            $event->contactInformation
+            $event->contactInformation,
         );
 
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
+    public function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -64,7 +58,7 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    public function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -73,7 +67,7 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    public function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
@@ -82,20 +76,19 @@ class RaLocationProjector extends Projector
         $this->repository->save($raLocation);
     }
 
-    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    public function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event): void
     {
         $raLocation = $this->fetchRaLocationById($event->raLocationId);
 
         $this->repository->remove($raLocation);
     }
 
-    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         $this->repository->removeRaLocationsFor($event->institution);
     }
 
     /**
-     * @param RaLocationId $raLocationId
      * @return RaLocation
      */
     private function fetchRaLocationById(RaLocationId $raLocationId)
@@ -104,13 +97,13 @@ class RaLocationProjector extends Projector
 
         if (is_null($raLocation)) {
             throw new RuntimeException(
-                'Tried to update an RA Locations contact information, but location could not be found'
+                'Tried to update an RA Locations contact information, but location could not be found',
             );
         }
 
         if (!$raLocation instanceof RaLocation) {
             throw new RuntimeException(
-                'Tried to update an RA Locations contact information, but location is of the wrong type'
+                'Tried to update an RA Locations contact information, but location is of the wrong type',
             );
         }
 

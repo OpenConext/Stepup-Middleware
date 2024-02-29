@@ -29,32 +29,26 @@ class RevokeRegistrantsRecoveryTokenCommand extends AbstractCommand implements R
 {
     /**
      * The ID of the identity that has the authority to issue the revocation of a registrant's second factor.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $authorityId;
 
     /**
      * The ID of an identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
      * The ID of a recovery token
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $recoveryTokenId;
 
     /**

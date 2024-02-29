@@ -23,14 +23,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class NumberOfTokensPerIdentityOption implements JsonSerializable
 {
-    const DISABLED = 0;
-    
+    public const DISABLED = 0;
+
     /**
      * @var int
      */
     private $numberOfTokensPerIdentity;
 
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(self::DISABLED);
     }
@@ -41,7 +41,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'integer',
                 'numberOfTokensPerIdentity',
-                $numberOfTokensPerIdentity
+                $numberOfTokensPerIdentity,
             );
         }
 
@@ -49,10 +49,9 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
     }
 
     /**
-     * @param NumberOfTokensPerIdentityOption $other
      * @return bool
      */
-    public function equals(NumberOfTokensPerIdentityOption $other)
+    public function equals(NumberOfTokensPerIdentityOption $other): bool
     {
         return $this->numberOfTokensPerIdentity === $other->numberOfTokensPerIdentity;
     }
@@ -60,7 +59,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
     /**
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->numberOfTokensPerIdentity > self::DISABLED;
     }
@@ -73,7 +72,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
         return $this->numberOfTokensPerIdentity;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): int
     {
         return $this->numberOfTokensPerIdentity;
     }

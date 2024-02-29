@@ -23,6 +23,8 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
@@ -30,59 +32,26 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 class DBALEventHydrator
 {
     /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $payloadSerializer;
-
-    /**
-     * @var SimpleInterfaceSerializer
-     */
-    private $metadataSerializer;
-
-    /**
-     * @var string
-     */
-    private $eventStreamTableName;
-
-    /**
-     * @var string
-     */
-    private $sensitiveDataTable;
-
-    /**
-     * @var \Doctrine\DBAL\Driver\Statement
+     * @var Statement
      */
     private $loadStatement = null;
 
     /**
-     * @param Connection          $connection
-     * @param SimpleInterfaceSerializer $payloadSerializer
-     * @param SimpleInterfaceSerializer $metadataSerializer
-     * @param string              $eventStreamTable
-     * @param string              $sensitiveDataTable
+     * @param string $eventStreamTableName
+     * @param string $sensitiveDataTable
      */
     public function __construct(
-        Connection $connection,
-        SimpleInterfaceSerializer $payloadSerializer,
-        SimpleInterfaceSerializer $metadataSerializer,
-        $eventStreamTable,
-        $sensitiveDataTable
+        private readonly Connection $connection,
+        private readonly SimpleInterfaceSerializer $payloadSerializer,
+        private readonly SimpleInterfaceSerializer $metadataSerializer,
+        private $eventStreamTableName,
+        private $sensitiveDataTable,
     ) {
-        $this->connection         = $connection;
-        $this->payloadSerializer  = $payloadSerializer;
-        $this->metadataSerializer = $metadataSerializer;
-        $this->eventStreamTableName = $eventStreamTable;
-        $this->sensitiveDataTable = $sensitiveDataTable;
     }
 
     /**
      * @return string
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function getCount()
     {
@@ -99,7 +68,7 @@ class DBALEventHydrator
      * @param int $offset
      * @return DomainEventStream
      */
-    public function getFromTill($limit, $offset)
+    public function getFromTill($limit, $offset): DomainEventStream
     {
         $statement = $this->prepareLoadStatement();
         $statement->bindValue('limit', $limit, PDO::PARAM_INT);
@@ -107,7 +76,7 @@ class DBALEventHydrator
 
         $statement->execute();
 
-        $events = array();
+        $events = [];
         while ($row = $statement->fetch()) {
             $events[] = $this->deserializeEvent($row);
         }
@@ -115,7 +84,7 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    public function fetchByEventTypes($eventTypes)
+    public function fetchByEventTypes($eventTypes): DomainEventStream
     {
         $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
 
@@ -128,13 +97,13 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 WHERE %es%.type IN ($eventTypePlaceholders)
-                ORDER BY recorded_on, playhead ASC"
+                ORDER BY recorded_on, playhead ASC",
         );
 
         $statement = $this->connection->prepare($query);
         $statement->execute($eventTypes);
 
-        $events = array();
+        $events = [];
         while ($row = $statement->fetch()) {
             $events[] = $this->deserializeEvent($row);
         }
@@ -142,20 +111,20 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    private function deserializeEvent($row)
+    private function deserializeEvent(array $row): DomainMessage
     {
-        $event = $this->payloadSerializer->deserialize(json_decode($row['payload'], true));
+        $event = $this->payloadSerializer->deserialize(json_decode((string)$row['payload'], true));
 
         if ($event instanceof Forgettable) {
-            $event->setSensitiveData(SensitiveData::deserialize(json_decode($row['sensitive_data'], true)));
+            $event->setSensitiveData(SensitiveData::deserialize(json_decode((string)$row['sensitive_data'], true)));
         }
 
         return new DomainMessage(
             $row['uuid'],
             $row['playhead'],
-            $this->metadataSerializer->deserialize(json_decode($row['metadata'], true)),
+            $this->metadataSerializer->deserialize(json_decode((string)$row['metadata'], true)),
             $event,
-            DateTime::fromString($row['recorded_on'])
+            DateTime::fromString($row['recorded_on']),
         );
     }
 
@@ -171,7 +140,7 @@ class DBALEventHydrator
                     ON %es%.uuid = %sd%.identity_id
                         AND %es%.playhead = %sd%.playhead
                 ORDER BY recorded_on ASC
-                LIMIT :limit OFFSET :offset'
+                LIMIT :limit OFFSET :offset',
             );
 
             $this->loadStatement = $this->connection->prepare($query);

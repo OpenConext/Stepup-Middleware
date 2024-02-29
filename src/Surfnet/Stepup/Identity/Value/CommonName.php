@@ -19,19 +19,17 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class CommonName implements JsonSerializable
+final class CommonName implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $commonName;
+    private readonly string $commonName;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('—');
     }
@@ -56,17 +54,17 @@ final class CommonName implements JsonSerializable
         return $this->commonName;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->commonName;
     }
 
-    public function equals(CommonName $other)
+    public function equals(CommonName $other): bool
     {
         return $this->commonName === $other->commonName;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->commonName;
     }

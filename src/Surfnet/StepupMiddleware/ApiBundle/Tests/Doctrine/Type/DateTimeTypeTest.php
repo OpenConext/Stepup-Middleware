@@ -20,37 +20,41 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
 use DateTime as CoreDateTime;
 use DateTimeZone;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
 
 class DateTimeTypeTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
+     * @var MySqlPlatform
      */
-    private $platform;
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(DateTimeType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType');
+        Type::addType(DateTimeType::NAME, DateTimeType::class);
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
@@ -63,7 +67,7 @@ class DateTimeTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
@@ -78,7 +82,7 @@ class DateTimeTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
@@ -91,17 +95,17 @@ class DateTimeTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_string_is_converted_to_the_stepup_datetime_object()
+    public function a_string_is_converted_to_the_stepup_datetime_object(): void
     {
         $dateTime = Type::getType(DateTimeType::NAME);
 
-        $databaseValue    = '2015-02-17 10:48:22';
-        $actualDateTime   = $dateTime->convertToPHPValue($databaseValue, $this->platform);
+        $databaseValue = '2015-02-17 10:48:22';
+        $actualDateTime = $dateTime->convertToPHPValue($databaseValue, $this->platform);
         $expectedDateTime = new DateTime(
-            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC'))
+            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC')),
         );
 
-        $this->assertInstanceOf('Surfnet\Stepup\DateTime\DateTime', $actualDateTime);
+        $this->assertInstanceOf(DateTime::class, $actualDateTime);
         $this->assertEquals($expectedDateTime, $actualDateTime);
     }
 
@@ -110,9 +114,9 @@ class DateTimeTypeTest extends UnitTest
      * @group doctrine
      *
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $dateTime = Type::getType(DateTimeType::NAME);
 

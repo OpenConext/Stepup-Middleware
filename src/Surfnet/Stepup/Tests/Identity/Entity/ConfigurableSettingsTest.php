@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Tests\Identity\Entity;
 
 use DateTime as CoreDateTime;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Entity\ConfigurableSettings;
@@ -27,11 +28,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class ConfigurableSettingsTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      */
-    public function a_new_email_verification_window_always_starts_now()
+    public function a_new_email_verification_window_always_starts_now(): void
     {
         $settings = ConfigurableSettings::create(3, []);
 
@@ -53,13 +56,13 @@ class ConfigurableSettingsTest extends UnitTest
         $this->assertTrue($secondWindow->isOpen());
     }
 
-    public function localeVerifications()
+    public function localeVerifications(): array
     {
         return [
-            'No app locales, false'                                => [false, 'nl_NL', []],
-            'English app locale, Dutch locale, false'              => [false, 'nl_NL', ['en_GB']],
-            'English, German app locales, Dutch locale, false'     => [false, 'nl_NL', ['en_GB', 'de_DE']],
-            'English, Dutch app locales, Dutch locale, true'       => [true,  'nl_NL', ['en_GB', 'nl_NL']],
+            'No app locales, false' => [false, 'nl_NL', []],
+            'English app locale, Dutch locale, false' => [false, 'nl_NL', ['en_GB']],
+            'English, German app locales, Dutch locale, false' => [false, 'nl_NL', ['en_GB', 'de_DE']],
+            'English, Dutch app locales, Dutch locale, true' => [true, 'nl_NL', ['en_GB', 'nl_NL']],
         ];
     }
 
@@ -67,12 +70,13 @@ class ConfigurableSettingsTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider localeVerifications
-     * @param boolean  $isValid
-     * @param string   $localeString
      * @param string[] $validLocaleStrings
      */
-    public function a_locale_can_be_verified_to_be_a_valid_locale($isValid, $localeString, array $validLocaleStrings)
-    {
+    public function a_locale_can_be_verified_to_be_a_valid_locale(
+        bool $isValid,
+        string $localeString,
+        array $validLocaleStrings,
+    ): void {
         $configuration = ConfigurableSettings::create(3, $validLocaleStrings);
 
         $this->assertEquals($isValid, $configuration->isSupportedLocale(new Locale($localeString)));

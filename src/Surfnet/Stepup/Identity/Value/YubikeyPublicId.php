@@ -22,14 +22,11 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class YubikeyPublicId implements SecondFactorIdentifier
 {
-    const UNKNOWN = '—';
+    public const UNKNOWN = '—';
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self(self::UNKNOWN);
     }
@@ -47,12 +44,12 @@ final class YubikeyPublicId implements SecondFactorIdentifier
 
         // Numeric IDs must be left-padded with zeroes until eight characters. Longer IDs, up to twenty characters, may
         // not be padded.
-        if (!preg_match('~^[0-9]{8,20}$~', $value)) {
+        if (!preg_match('~^\d{8,20}$~', $value)) {
             throw new InvalidArgumentException('Given Yubikey public ID is not a string of 8 to 20 digits');
         }
         if ($value !== sprintf('%08s', ltrim($value, '0'))) {
             throw new InvalidArgumentException(
-                'Given Yubikey public ID is longer than 8 digits, yet left-padded with zeroes'
+                'Given Yubikey public ID is longer than 8 digits, yet left-padded with zeroes',
             );
         }
 
@@ -70,7 +67,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -80,7 +77,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $other instanceof self && $this->value === $other->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

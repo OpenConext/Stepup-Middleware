@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 
 final class EmailTemplateRepository extends ServiceEntityRepository
@@ -35,7 +35,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
      * @param string $fallbackLocale
      * @return EmailTemplate|null
      */
-    public function findOneByName($name, $preferredLocale, $fallbackLocale)
+    public function findOneByName(mixed $name, mixed $preferredLocale, mixed $fallbackLocale)
     {
         return $this
             ->createQueryBuilder('tpl')
@@ -45,7 +45,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
                 'CASE WHEN tpl.locale = :preferredLocale THEN 2
                       WHEN tpl.locale = :fallbackLocale THEN 1
                       ELSE 0
-                 END AS HIDDEN localePreference'
+                 END AS HIDDEN localePreference',
             )
             ->setParameter('preferredLocale', $preferredLocale)
             ->setParameter('fallbackLocale', $fallbackLocale)
@@ -62,7 +62,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
      * removed from the IdentityMap. This to prevent issues when replaying the events, where
      * deleting them with a delete query would cause errors due to templates not being found.
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $templates = $this->findAll();
         $em = $this->getEntityManager();
@@ -76,7 +76,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
         unset($templates);
     }
 
-    public function save(EmailTemplate $template)
+    public function save(EmailTemplate $template): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($template);

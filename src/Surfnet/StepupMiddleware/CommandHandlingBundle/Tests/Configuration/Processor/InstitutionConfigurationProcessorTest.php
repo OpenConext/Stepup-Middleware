@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\Processor;
 
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
-use Surfnet\Stepup\Configuration\Value\Institution as ConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -40,6 +40,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class InstitutionConfigurationProcessorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     private $pipelineMock;
 
     /**
@@ -55,16 +57,16 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution()
+    public function a_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_a_non_configured_institution(): void
     {
-        $expectedInstitution  = 'institution';
+        $expectedInstitution = 'institution';
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
             new Institution($expectedInstitution),
             new NameId('Name Id'),
             new CommonName('Common name'),
             new Email('test@email.test'),
-            new Locale('Locale')
+            new Locale('Locale'),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -79,7 +81,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
 
@@ -91,7 +93,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_an_already_configured_institution()
+    public function no_create_institution_configuration_command_is_processed_when_an_identity_was_created_with_an_already_configured_institution(): void
     {
         $identityCreatedEvent = new IdentityCreatedEvent(
             new IdentityId('Id'),
@@ -99,7 +101,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
             new NameId('Name Id'),
             new CommonName('Common name'),
             new Email('test@email.test'),
-            new Locale('Locale')
+            new Locale('Locale'),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -113,7 +115,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
 
@@ -125,9 +127,9 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions()
+    public function create_institution_configuration_commands_are_processed_when_a_whitelist_was_created_containing_non_configured_institutions(): void
     {
-        $firstInstitution  = 'first institution';
+        $firstInstitution = 'first institution';
         $secondInstitution = 'second institution';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(
@@ -135,8 +137,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
                 [
                     new Institution($firstInstitution),
                     new Institution($secondInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -154,7 +156,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
 
@@ -166,18 +168,18 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_created()
+    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_created(): void
     {
         $alreadyPresentInstitution = 'already present';
-        $newInstitution            = 'new';
+        $newInstitution = 'new';
 
         $whitelistCreatedEvent = new WhitelistCreatedEvent(
             new InstitutionCollection(
                 [
                     new Institution($alreadyPresentInstitution),
                     new Institution($newInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -199,7 +201,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
 
@@ -211,9 +213,9 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions()
+    public function create_institution_configuration_commands_are_created_when_a_whitelist_was_replaced_containing_non_configured_institutions(): void
     {
-        $firstInstitution  = 'first institution';
+        $firstInstitution = 'first institution';
         $secondInstitution = 'second institution';
 
         $whitelistReplacedEvent = new WhitelistReplacedEvent(
@@ -221,8 +223,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
                 [
                     new Institution($firstInstitution),
                     new Institution($secondInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -242,7 +244,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistReplacedEvent);
 
@@ -254,18 +256,18 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced()
+    public function no_create_institution_configuration_command_is_processed_for_an_already_configured_institution_when_a_whitelist_was_replaced(): void
     {
         $alreadyPresentInstitution = 'already present';
-        $newInstitution            = 'new';
+        $newInstitution = 'new';
 
         $whitelistCreatedEvent = new WhitelistReplacedEvent(
             new InstitutionCollection(
                 [
                     new Institution($alreadyPresentInstitution),
                     new Institution($newInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -287,7 +289,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistCreatedEvent);
 
@@ -299,9 +301,9 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function create_institution_configuration_commands_are_created_when_non_configured_institutions_are_added_to_the_whitelist()
+    public function create_institution_configuration_commands_are_created_when_non_configured_institutions_are_added_to_the_whitelist(): void
     {
-        $firstInstitution  = 'first institution';
+        $firstInstitution = 'first institution';
         $secondInstitution = 'second institution';
 
         $institutionsAddedToWhitelistEvent = new InstitutionsAddedToWhitelistEvent(
@@ -309,8 +311,8 @@ class InstitutionConfigurationProcessorTest extends TestCase
                 [
                     new Institution($firstInstitution),
                     new Institution($secondInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -330,7 +332,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
 
@@ -342,18 +344,18 @@ class InstitutionConfigurationProcessorTest extends TestCase
      * @group processor
      * @group institution-configuration
      */
-    public function no_create_institution_configuration_command_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist()
+    public function no_create_institution_configuration_command_is_created_for_an_already_configured_institution_when_institutions_are_added_to_a_whitelist(): void
     {
         $alreadyPresentInstitution = 'already present';
-        $newInstitution            = 'new';
+        $newInstitution = 'new';
 
         $whitelistCreatedEvent = new InstitutionsAddedToWhitelistEvent(
             new InstitutionCollection(
                 [
                     new Institution($alreadyPresentInstitution),
                     new Institution($newInstitution),
-                ]
-            )
+                ],
+            ),
         );
 
         $repositoryMock = Mockery::mock(ConfiguredInstitutionRepository::class);
@@ -375,7 +377,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock()
+            $this->getContainerMock(),
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);
 

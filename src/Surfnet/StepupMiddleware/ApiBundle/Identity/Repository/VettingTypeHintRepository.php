@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettingTypeHint;
 
 class VettingTypeHintRepository extends ServiceEntityRepository

@@ -26,21 +26,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 {
-    const INSTITUTION = 'institution';
+    public const INSTITUTION = 'institution';
 
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): void
     {
         $request->attributes->set(self::INSTITUTION, new Institution($this->getInstitutionFromRequest($request)));
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === self::INSTITUTION
-            && $configuration->getClass() === 'Surfnet\Stepup\Configuration\Value\Institution';
+            && $configuration->getClass() === Institution::class;
     }
 
     /**
-     * @param Request $request
      * @return string
      */
     private function getInstitutionFromRequest(Request $request)
@@ -48,17 +47,17 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
         $institution = $request->attributes->get(self::INSTITUTION, false);
         $request->attributes->remove(self::INSTITUTION);
 
-        if (is_string($institution) && !empty($institution)) {
+        if (is_string($institution) && ($institution !== '' && $institution !== '0')) {
             return $institution;
         }
 
         $institution = $request->query->get(self::INSTITUTION, false);
         $request->query->remove(self::INSTITUTION);
 
-        if (is_string($institution) && !empty($institution)) {
+        if (is_string($institution) && ($institution !== '' && $institution !== '0')) {
             return $institution;
         }
 
-        throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters']);
+        throw new BadApiRequestException(['This API-call MUST include the institution in the path or query parameters'],);
     }
 }

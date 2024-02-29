@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
@@ -28,10 +29,12 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigur
 
 class InstitutionConfigurationOptionsServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var InstitutionConfigurationOptionsService
      */
-    private $service;
+    private InstitutionConfigurationOptionsService $service;
 
     /**
      * @var InstitutionConfigurationOptionsRepository|Mock
@@ -41,9 +44,8 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
     /**
      * A representation of the globally configured application setting for the numberOfTokensPerIdentity, this value
      * is configured in the parameters.yml under the moniker of 'number_of_tokens_per_identity'
-     * @var int
      */
-    private $numberOfTokensPerIdentityDefault = 13;
+    private int $numberOfTokensPerIdentityDefault = 13;
 
     public function setUp(): void
     {
@@ -51,11 +53,11 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
 
         $this->service = new InstitutionConfigurationOptionsService(
             $this->repository,
-            $this->numberOfTokensPerIdentityDefault
+            $this->numberOfTokensPerIdentityDefault,
         );
     }
 
-    public function test_get_max_number_of_tokens_for_with_available_institution_configuration()
+    public function test_get_max_number_of_tokens_for_with_available_institution_configuration(): void
     {
         $institution = new Institution('surfnet.nl');
 
@@ -75,7 +77,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
      * Simulates the use case where an institution does have a specific institution config, but the token setting is
      * disabled.
      */
-    public function test_get_max_number_of_tokens_for_with_default_institution_configuration_settings()
+    public function test_get_max_number_of_tokens_for_with_default_institution_configuration_settings(): void
     {
         $institution = new Institution('surfnet.nl');
 
@@ -97,7 +99,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
      * Simulates the use case where an institution does not have specific institution config, but defaults are used
      * instead.
      */
-    public function test_nullable_tokens_per_identity_options_in_institution_configuration_settings()
+    public function test_nullable_tokens_per_identity_options_in_institution_configuration_settings(): void
     {
         $institution = new Institution('surfnet.nl');
 
@@ -112,7 +114,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
         $this->assertEquals($expectedNumberOfTokens, $numberOfTokens);
     }
 
-    private function buildConfigurationOption($expectedNumberOfTokens)
+    private function buildConfigurationOption(int $expectedNumberOfTokens)
     {
         $numberOfTokensOptionMock = m::mock(NumberOfTokensPerIdentityOption::class);
         $numberOfTokensOptionMock

@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -25,6 +26,8 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class AllowedSecondFactorListTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
@@ -39,7 +42,7 @@ class AllowedSecondFactorListTest extends TestCase
         $this->assertCount(
             1,
             iterator_to_array($allowedSecondFactorList),
-            'The AllowedSecondFactorList should have deduplicated its second factors, but it did not'
+            'The AllowedSecondFactorList should have deduplicated its second factors, but it did not',
         );
     }
 
@@ -66,13 +69,13 @@ class AllowedSecondFactorListTest extends TestCase
     public function an_allowed_second_factor_list_contains_a_given_second_factor()
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
-        $allowedSecondFactor     = new SecondFactorType('sms');
+        $allowedSecondFactor = new SecondFactorType('sms');
 
         $containsSecondFactor = $allowedSecondFactorList->contains($allowedSecondFactor);
 
         $this->assertTrue(
             $containsSecondFactor,
-            'An allowed second factor list should contain a listed second factor but it does not'
+            'An allowed second factor list should contain a listed second factor but it does not',
         );
     }
 
@@ -83,13 +86,13 @@ class AllowedSecondFactorListTest extends TestCase
     public function an_allowed_second_factor_list_does_not_contain_a_given_second_factor()
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
-        $allowedSecondFactor     = new SecondFactorType('yubikey');
+        $allowedSecondFactor = new SecondFactorType('yubikey');
 
         $containsSecondFactor = $allowedSecondFactorList->contains($allowedSecondFactor);
 
         $this->assertFalse(
             $containsSecondFactor,
-            'An allowed second factor list should not contain a listed second factor but it does'
+            'An allowed second factor list should not contain a listed second factor but it does',
         );
     }
 
@@ -118,13 +121,13 @@ class AllowedSecondFactorListTest extends TestCase
     public function a_second_factor_on_the_allowed_second_factor_list_is_allowed()
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
-        $allowedSecondFactor     = new SecondFactorType('sms');
+        $allowedSecondFactor = new SecondFactorType('sms');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($allowedSecondFactor);
 
         $this->assertTrue(
             $isSecondFactorAllowed,
-            'An allowed second factor list should allow a listed second factor but it does not'
+            'An allowed second factor list should allow a listed second factor but it does not',
         );
     }
 
@@ -135,13 +138,13 @@ class AllowedSecondFactorListTest extends TestCase
     public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed()
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
-        $disallowedSecondFactor  = new SecondFactorType('yubikey');
+        $disallowedSecondFactor = new SecondFactorType('yubikey');
 
         $isSecondFactorAllowed = $allowedSecondFactorList->allows($disallowedSecondFactor);
 
         $this->assertFalse(
             $isSecondFactorAllowed,
-            'An allowed second factor list should not allow an unlisted second factor but it does not'
+            'An allowed second factor list should not allow an unlisted second factor but it does not',
         );
     }
 
@@ -153,9 +156,11 @@ class AllowedSecondFactorListTest extends TestCase
      * @param SecondFactorType[] $firstList
      * @param SecondFactorType[] $secondList
      */
-    public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(array $firstList, array $secondList)
-    {
-        $base  = AllowedSecondFactorList::ofTypes($firstList);
+    public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(
+        array $firstList,
+        array $secondList,
+    ) {
+        $base = AllowedSecondFactorList::ofTypes($firstList);
         $other = AllowedSecondFactorList::ofTypes($secondList);
 
         $this->assertFalse($base->equals($other));
@@ -169,9 +174,11 @@ class AllowedSecondFactorListTest extends TestCase
      * @param SecondFactorType[] $firstList
      * @param SecondFactorType[] $secondList
      */
-    public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(array $firstList, array $secondList)
-    {
-        $base  = AllowedSecondFactorList::ofTypes($firstList);
+    public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(
+        array $firstList,
+        array $secondList,
+    ) {
+        $base = AllowedSecondFactorList::ofTypes($firstList);
         $other = AllowedSecondFactorList::ofTypes($secondList);
 
         $this->assertTrue($base->equals($other));
@@ -182,11 +189,11 @@ class AllowedSecondFactorListTest extends TestCase
         return [
             'Different second factor types' => [
                 [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
-                [new SecondFactorType('yubikey'), new SecondFactorType('tiqr')]
+                [new SecondFactorType('yubikey'), new SecondFactorType('tiqr')],
             ],
             'First list contains second list' => [
                 [new SecondFactorType('sms'), new SecondFactorType('tiqr'), new SecondFactorType('yubikey')],
-                [new SecondFactorType('yubikey')]
+                [new SecondFactorType('yubikey')],
             ],
             'First list is empty' => [
                 [],
@@ -195,7 +202,7 @@ class AllowedSecondFactorListTest extends TestCase
             'Second list is empty' => [
                 [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
                 [],
-            ]
+            ],
         ];
     }
 
@@ -217,7 +224,7 @@ class AllowedSecondFactorListTest extends TestCase
             'Same second factor types, due to deduplication in first list' => [
                 [new SecondFactorType('sms'), new SecondFactorType('sms'), new SecondFactorType('tiqr')],
                 [new SecondFactorType('sms'), new SecondFactorType('tiqr')],
-            ]
+            ],
         ];
     }
 
@@ -227,9 +234,10 @@ class AllowedSecondFactorListTest extends TestCase
             'biometric' => ['loa' => 3],
             'tiqr' => ['loa' => 3],
         ]);
-        $secondFactorTypes = array_map(function ($availableSecondFactorType) {
-            return [new SecondFactorType($availableSecondFactorType)];
-        }, $service->getAvailableSecondFactorTypes());
+        $secondFactorTypes = array_map(
+            fn($availableSecondFactorType) => [new SecondFactorType($availableSecondFactorType)],
+            $service->getAvailableSecondFactorTypes(),
+        );
 
         return array_combine($service->getAvailableSecondFactorTypes(), $secondFactorTypes);
     }

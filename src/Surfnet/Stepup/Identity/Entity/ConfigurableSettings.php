@@ -30,32 +30,26 @@ use Surfnet\Stepup\Identity\Value\TimeFrame;
 final class ConfigurableSettings
 {
     /**
-     * @var TimeFrame
-     */
-    private $emailVerificationTimeFrame;
-
-    /**
      * @var Locale[]
      */
-    private $locales;
+    private readonly array $locales;
 
     /**
-     * @param TimeFrame $timeFrame
-     * @param Locale[]  $locales
+     * @param Locale[] $locales
      */
-    private function __construct(TimeFrame $timeFrame, array $locales)
-    {
+    private function __construct(
+        private readonly TimeFrame $emailVerificationTimeFrame,
+        array $locales,
+    ) {
         foreach ($locales as $index => $locale) {
             if (!$locale instanceof Locale) {
                 throw InvalidArgumentException::invalidType(
-                    'Surfnet\Stepup\Identity\Value\Locale',
+                    Locale::class,
                     sprintf('locales[%s]', $index),
-                    $locale
+                    $locale,
                 );
             }
         }
-
-        $this->emailVerificationTimeFrame = $timeFrame;
         $this->locales = $locales;
     }
 
@@ -64,16 +58,14 @@ final class ConfigurableSettings
      * @param string[] $locales
      * @return ConfigurableSettings
      */
-    public static function create($emailVerificationTimeFrame, array $locales)
+    public static function create($emailVerificationTimeFrame, array $locales): self
     {
         return new self(
             TimeFrame::ofSeconds($emailVerificationTimeFrame),
             array_map(
-                function ($locale) {
-                    return new Locale($locale);
-                },
-                $locales
-            )
+                fn($locale): Locale => new Locale($locale),
+                $locales,
+            ),
         );
     }
 
@@ -84,22 +76,19 @@ final class ConfigurableSettings
     {
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             $this->emailVerificationTimeFrame,
-            DateTime::now()
+            DateTime::now(),
         );
     }
 
     /**
-     * @param Locale $locale
      * @return bool
      */
-    public function isSupportedLocale(Locale $locale)
+    public function isSupportedLocale(Locale $locale): bool
     {
         return array_reduce(
             $this->locales,
-            function ($supported, Locale $supportedLocale) use ($locale) {
-                return $supported || $supportedLocale->equals($locale);
-            },
-            false
+            fn($supported, Locale $supportedLocale): bool => $supported || $supportedLocale->equals($locale),
+            false,
         );
     }
 }

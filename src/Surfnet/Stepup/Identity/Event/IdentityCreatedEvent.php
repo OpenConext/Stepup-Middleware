@@ -18,7 +18,6 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -27,17 +26,18 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'institution',
         'name_id',
         'preferred_locale',
         'common_name',
-        'email'
+        'email',
     ];
 
     /**
@@ -46,17 +46,17 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
     public $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
+     * @var Locale
      */
     public $preferredLocale;
 
@@ -66,7 +66,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($id, $institution);
 
@@ -76,7 +76,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -85,7 +85,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),
@@ -93,7 +93,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
             new NameId($data['name_id']),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -103,10 +103,10 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
     public function serialize(): array
     {
         return [
-            'id'                  => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'preferred_locale'    => (string) $this->preferredLocale,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -117,9 +117,9 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
 

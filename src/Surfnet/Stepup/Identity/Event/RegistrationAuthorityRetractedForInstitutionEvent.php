@@ -28,9 +28,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
+class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent implements
+    Forgettable,
+    RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -65,26 +67,26 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Institution $raInstitution
+        Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId     = $nameId;
+        $this->nameId = $nameId;
         $this->commonName = $commonName;
-        $this->email      = $email;
+        $this->email = $email;
         $this->raInstitution = $raInstitution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -92,7 +94,7 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
             new NameId($data['name_id']),
             CommonName::unknown(),
             Email::unknown(),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
@@ -102,10 +104,10 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
     public function serialize(): array
     {
         return [
-            'identity_id'          => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'name_id'              => (string) $this->nameId,
-            'ra_institution'       => (string) $this->raInstitution,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 
@@ -116,9 +118,9 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
 

@@ -26,32 +26,26 @@ class ProveYubikeyPossessionCommand extends AbstractCommand implements SelfServi
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
      * The ID of the second factor to create.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorId;
 
     /**
      * The Yubikey's public ID.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $yubikeyPublicId;
 
     /**

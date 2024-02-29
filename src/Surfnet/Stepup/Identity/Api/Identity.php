@@ -52,12 +52,6 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 interface Identity extends AggregateRoot
 {
     /**
-     * @param IdentityId $id
-     * @param Institution $institution
-     * @param NameId $nameId
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param Locale $preferredLocale
      * @return Identity
      */
     public static function create(
@@ -66,7 +60,7 @@ interface Identity extends AggregateRoot
         NameId $nameId,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     );
 
     /**
@@ -75,34 +69,27 @@ interface Identity extends AggregateRoot
     public function __construct();
 
     /**
-     * @param CommonName $commonName
      * @return void
      */
     public function rename(CommonName $commonName);
 
     /**
-     * @param Email $email
      * @return void
      */
     public function changeEmail(Email $email);
 
     /**
-     * @param SecondFactorId  $secondFactorId
-     * @param YubikeyPublicId $yubikeyPublicId
      * @param int $maxNumberOfTokens
      * @return void
      */
     public function bootstrapYubikeySecondFactor(
         SecondFactorId $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
-        $maxNumberOfTokens
+        $maxNumberOfTokens,
     );
 
     /**
-     * @param SecondFactorId          $secondFactorId
-     * @param YubikeyPublicId         $yubikeyPublicId
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param bool $emailVerificationRequired
      * @param int $maxNumberOfTokens
      * @return void
      */
@@ -111,14 +98,11 @@ interface Identity extends AggregateRoot
         YubikeyPublicId $yubikeyPublicId,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens
+        $maxNumberOfTokens,
     );
 
     /**
-     * @param SecondFactorId          $secondFactorId
-     * @param PhoneNumber             $phoneNumber
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param bool $emailVerificationRequired
      * @param int $maxNumberOfTokens
      * @return void
      */
@@ -127,15 +111,11 @@ interface Identity extends AggregateRoot
         PhoneNumber $phoneNumber,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens
+        $maxNumberOfTokens,
     );
 
     /**
-     * @param SecondFactorId          $secondFactorId
-     * @param StepupProvider          $provider
-     * @param GssfId                  $gssfId
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param bool $emailVerificationRequired
      * @parame int $maxNumberOfTokens
      * @return void
      */
@@ -145,14 +125,11 @@ interface Identity extends AggregateRoot
         GssfId $gssfId,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens
+        $maxNumberOfTokens,
     );
 
     /**
-     * @param SecondFactorId          $secondFactorId
-     * @param U2fKeyHandle            $keyHandle
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
+     * @param bool $emailVerificationRequired
      * @parame int $maxNumberOfTokens
      * @return void
      * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
@@ -162,7 +139,7 @@ interface Identity extends AggregateRoot
         U2fKeyHandle $keyHandle,
         $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens
+        $maxNumberOfTokens,
     );
 
     /**
@@ -174,15 +151,8 @@ interface Identity extends AggregateRoot
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param Identity $registrant
-     * @param SecondFactorId $registrantsSecondFactorId
-     * @param SecondFactorType $registrantsSecondFactorType
-     * @param SecondFactorIdentifier $registrantsSecondFactorIdentifier
      * @param string $registrationCode
-     * @param DocumentNumber $documentNumber
      * @param bool $identityVerified
-     * @param SecondFactorTypeService $secondFactorTypeService
-     * @param SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper
      * @param bool $provePossessionSkipped
      * @return void
      *
@@ -198,7 +168,7 @@ interface Identity extends AggregateRoot
         $identityVerified,
         SecondFactorTypeService $secondFactorTypeService,
         SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
-        $provePossessionSkipped
+        $provePossessionSkipped,
     );
 
     /**
@@ -216,13 +186,13 @@ interface Identity extends AggregateRoot
         Loa $authoringSecondFactorLoa,
         string $registrationCode,
         SecondFactorIdentifier $secondFactorIdentifier,
-        SecondFactorTypeService $secondFactorTypeService
+        SecondFactorTypeService $secondFactorTypeService,
     ): void;
 
     public function registerSelfAssertedSecondFactor(
         SecondFactorIdentifier $secondFactorIdentifier,
         SecondFactorTypeService $secondFactorTypeService,
-        RecoveryTokenId $recoveryTokenId
+        RecoveryTokenId $recoveryTokenId,
     ): void;
 
     /**
@@ -232,20 +202,16 @@ interface Identity extends AggregateRoot
         Identity $sourceIdentity,
         SecondFactorId $secondFactorId,
         string $targetSecondFactorId,
-        int $maxNumberOfTokens
+        int $maxNumberOfTokens,
     ): void;
 
     /**
      * Makes the identity comply with an authority's vetting of a verified second factor.
      *
-     * @param SecondFactorId         $secondFactorId
-     * @param SecondFactorType       $secondFactorType
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param string                 $registrationCode
-     * @param DocumentNumber         $documentNumber
-     * @param bool                   $provePossessionSkipped
-     * @throws DomainException
+     * @param string $registrationCode
+     * @param bool $provePossessionSkipped
      * @return void
+     * @throws DomainException
      */
     public function complyWithVettingOfSecondFactor(
         SecondFactorId $secondFactorId,
@@ -253,18 +219,15 @@ interface Identity extends AggregateRoot
         SecondFactorIdentifier $secondFactorIdentifier,
         $registrationCode,
         DocumentNumber $documentNumber,
-        $provePossessionSkipped
+        $provePossessionSkipped,
     );
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @return void
      */
     public function revokeSecondFactor(SecondFactorId $secondFactorId);
 
     /**
-     * @param SecondFactorId $secondFactorId
-     * @param IdentityId $authorityId
      * @return void
      */
     public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
@@ -281,11 +244,6 @@ interface Identity extends AggregateRoot
     public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void;
 
     /**
-     * @param RegistrationAuthorityRole $role
-     * @param Institution $institution
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
     public function accreditWith(
@@ -293,33 +251,33 @@ interface Identity extends AggregateRoot
         Institution $institution,
         Location $location,
         ContactInformation $contactInformation,
-        InstitutionConfiguration $institutionConfiguration
+        InstitutionConfiguration $institutionConfiguration,
     );
 
     /**
-     * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
-     * @param InstitutionConfiguration $institutionConfiguration
      * @return void
      */
-    public function appointAs(Institution $institution, RegistrationAuthorityRole $role, InstitutionConfiguration $institutionConfiguration);
+    public function appointAs(
+        Institution $institution,
+        RegistrationAuthorityRole $role,
+        InstitutionConfiguration $institutionConfiguration,
+    );
 
     /**
-     * @param Institution $institution
-     * @param Location $location
-     * @param ContactInformation $contactInformation
      * @return void
      */
-    public function amendRegistrationAuthorityInformation(Institution $institution, Location $location, ContactInformation $contactInformation);
+    public function amendRegistrationAuthorityInformation(
+        Institution $institution,
+        Location $location,
+        ContactInformation $contactInformation,
+    );
 
     /**
-     * @param Institution $institution
      * @return void
      */
     public function retractRegistrationAuthority(Institution $institution);
 
     /**
-     * @param Locale $preferredLocale
      * @return void
      */
     public function expressPreferredLocale(Locale $preferredLocale);
@@ -360,13 +318,11 @@ interface Identity extends AggregateRoot
     public function getPreferredLocale();
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @return VerifiedSecondFactor|null
      */
     public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
 
     /**
-     * @param SecondFactorId $secondFactorId
      * @return VettedSecondFactor|null
      */
     public function getVettedSecondFactorById(SecondFactorId $secondFactorId): ?VettedSecondFactor;
@@ -380,7 +336,10 @@ interface Identity extends AggregateRoot
     /**
      * Identity proved possession of a phone number by reproducing a secret sent to it via SMS
      */
-    public function provePossessionOfPhoneRecoveryToken(RecoveryTokenId $recoveryTokenId, PhoneNumber $phoneNumber): void;
+    public function provePossessionOfPhoneRecoveryToken(
+        RecoveryTokenId $recoveryTokenId,
+        PhoneNumber $phoneNumber,
+    ): void;
 
     /**
      * Identity promises it stored the once printed on screen password in a safe location

@@ -26,11 +26,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'hints',
-        'institution'
+        'institution',
     ];
 
     /**
@@ -47,14 +47,14 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         IdentityId $identityId,
         Institution $identityInstitution,
         VettingTypeHintCollection $hints,
-        Institution $institution
+        Institution $institution,
     ) {
         parent::__construct($identityId, $identityInstitution);
         $this->hints = $hints;
         $this->institution = $institution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -73,22 +73,23 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         return $this->allowlist;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             VettingTypeHintCollection::deserialize($data['hints']),
-            new Institution($data['institution'])
+            new Institution($data['institution']),
         );
     }
+
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
             'hints' => $this->hints->serialize(),
-            'institution' => (string) $this->institution,
+            'institution' => (string)$this->institution,
         ];
     }
 }

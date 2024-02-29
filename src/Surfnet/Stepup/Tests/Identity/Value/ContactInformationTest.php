@@ -18,11 +18,16 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 
 class ContactInformationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
@@ -30,9 +35,9 @@ class ContactInformationTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
+    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue,): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new ContactInformation($invalidValue);
     }
@@ -41,12 +46,12 @@ class ContactInformationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_instances_with_the_same_value_are_equal()
+    public function two_instances_with_the_same_value_are_equal(): void
     {
         $contactInformation = new ContactInformation('a');
-        $theSame            = new ContactInformation('a');
-        $theSameWithSpaces  = new ContactInformation('  a ');
-        $different          = new ContactInformation('A');
+        $theSame = new ContactInformation('a');
+        $theSameWithSpaces = new ContactInformation('  a ');
+        $different = new ContactInformation('A');
 
         $this->assertTrue($contactInformation->equals($theSame));
         $this->assertTrue($contactInformation->equals($theSameWithSpaces));
@@ -56,13 +61,13 @@ class ContactInformationTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProvider()
+    public function invalidValueProvider(): array
     {
         return [
-            'array'   => [[]],
+            'array' => [[]],
             'integer' => [1],
-            'float'   => [1.2],
-            'object'  => [new \StdClass()],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

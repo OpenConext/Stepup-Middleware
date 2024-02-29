@@ -22,6 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsRemovedFromWhitelistEvent;
@@ -41,10 +42,12 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
     /**
      * Shorthand for fixed Whitelist ID.
      */
-    const WID = Whitelist::WHITELIST_AGGREGATE_ID;
+    public const WID = Whitelist::WHITELIST_AGGREGATE_ID;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         return new WhitelistCommandHandler(new WhitelistRepository($eventStore, $eventBus, $aggregateFactory));
@@ -55,17 +58,17 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function when_the_whitelist_does_not_exist_yet_it_is_created()
+    public function when_the_whitelist_does_not_exist_yet_it_is_created(): void
     {
-        $command               = new ReplaceWhitelistCommand();
+        $command = new ReplaceWhitelistCommand();
         $command->institutions = ['Replace A', 'Replace B', 'Replace C'];
-        $institutions          = $this->mapStringValuesToInstitutions($command->institutions);
+        $institutions = $this->mapStringValuesToInstitutions($command->institutions);
 
         $this->scenario
             ->when($command)
             ->then([
                 new WhitelistCreatedEvent(new InstitutionCollection()),
-                new WhitelistReplacedEvent(new InstitutionCollection($institutions))
+                new WhitelistReplacedEvent(new InstitutionCollection($institutions)),
             ]);
     }
 
@@ -74,7 +77,7 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function the_whitelist_can_be_fully_replaced()
+    public function the_whitelist_can_be_fully_replaced(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
@@ -87,8 +90,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new WhitelistReplacedEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutions))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutions)),
+                ),
             ]);
     }
 
@@ -98,11 +101,11 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist()
+    public function an_institution_not_yet_on_the_whitelist_can_be_added_to_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
-        $command                        = new AddToWhitelistCommand();
+        $command = new AddToWhitelistCommand();
         $command->institutionsToBeAdded = ['Added Institution'];
 
         $this->scenario
@@ -111,8 +114,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new InstitutionsAddedToWhitelistEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeAdded))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeAdded)),
+                ),
             ]);
     }
 
@@ -121,14 +124,14 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_on_the_whitelist_may_not_be_added_again()
+    public function an_institution_on_the_whitelist_may_not_be_added_again(): void
     {
         $this->expectExceptionMessage("Cannot add institution \"already exists\" as it is already whitelisted");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Already Exists']);
 
-        $command                        = new AddToWhitelistCommand();
+        $command = new AddToWhitelistCommand();
         $command->institutionsToBeAdded = ['Already Exists'];
 
         $this->scenario
@@ -142,11 +145,11 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist()
+    public function an_institution_on_the_whitelist_can_be_removed_from_the_whitelist(): void
     {
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'On the whitelist']);
 
-        $command                          = new RemoveFromWhitelistCommand();
+        $command = new RemoveFromWhitelistCommand();
         $command->institutionsToBeRemoved = ['On the whitelist'];
 
         $this->scenario
@@ -155,8 +158,8 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
             ->when($command)
             ->then([
                 new InstitutionsRemovedFromWhitelistEvent(
-                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeRemoved))
-                )
+                    new InstitutionCollection($this->mapStringValuesToInstitutions($command->institutionsToBeRemoved)),
+                ),
             ]);
     }
 
@@ -165,10 +168,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group whitelist
      */
-    public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed()
+    public function an_institution_that_is_not_on_the_whitelist_cannot_be_removed(): void
     {
         $this->expectExceptionMessage("Cannot remove institution \"not on the whitelist\" as it is not whitelisted");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
         $initialInstitutions = $this->mapStringValuesToInstitutions(['Initial One', 'Initial Two']);
 
         $command = new RemoveFromWhitelistCommand();
@@ -182,13 +185,10 @@ class WhitelistCommandHandlerTest extends CommandHandlerTest
 
     /**
      * Helper function to quickly map String[] to Institution[]
-     * @param array $institutions
      * @return array
      */
-    private function mapStringValuesToInstitutions(array $institutions)
+    private function mapStringValuesToInstitutions(array $institutions): array
     {
-        return array_map(function ($institution) {
-            return new Institution($institution);
-        }, $institutions);
+        return array_map(fn($institution): Institution => new Institution($institution), $institutions);
     }
 }

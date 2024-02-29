@@ -24,10 +24,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 final class EmailTemplatesConfigurationValidator implements ConfigurationValidatorInterface
 {
-    /**
-     * @var string
-     */
-    private $requiredLocale;
+    private readonly string $requiredLocale;
 
     /**
      * @param string $requiredLocale
@@ -41,7 +38,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         $this->requiredLocale = $requiredLocale;
     }
 
-    public function validate(array $configuration, $propertyPath)
+    public function validate(array $configuration, $propertyPath): void
     {
         $templateNames = [
             'confirm_email',
@@ -58,15 +55,15 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         StepupAssert::keysMatch(
             $configuration,
             $templateNames,
-            sprintf("Expected only templates '%s'", join(',', $templateNames)),
-            $propertyPath
+            sprintf("Expected only templates '%s'", implode(',', $templateNames)),
+            $propertyPath,
         );
 
         foreach ($templateNames as $templateName) {
             Assertion::isArray(
                 $configuration[$templateName],
                 'Property "' . $templateName . '" must have an object as value',
-                $propertyPath
+                $propertyPath,
             );
 
             $templatePropertyPath = $propertyPath . '.' . $templateName;
@@ -75,7 +72,7 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
                 $configuration[$templateName],
                 $this->requiredLocale,
                 "Required property '" . $this->requiredLocale . "' is missing",
-                $templatePropertyPath
+                $templatePropertyPath,
             );
 
             foreach ($configuration[$templateName] as $locale => $template) {
@@ -83,12 +80,12 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
                 Assertion::string(
                     $locale,
                     'Locale must be string',
-                    $localePropertyPath
+                    $localePropertyPath,
                 );
                 Assertion::string(
                     $template,
                     "Property '" . $this->requiredLocale . "' must have a string as value",
-                    $localePropertyPath
+                    $localePropertyPath,
                 );
             }
         }

@@ -34,80 +34,72 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 class SecondFactorProjector extends Projector
 {
-    /**
-     * @var SecondFactorRepository
-     */
-    private $repository;
-
-    /**
-     * @param SecondFactorRepository $repository
-     */
-    public function __construct(SecondFactorRepository $repository)
+    public function __construct(private readonly SecondFactorRepository $repository)
     {
-        $this->repository = $repository;
     }
 
-    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
-                (string) $event->identityId,
-                (string) $event->nameId,
-                (string) $event->identityInstitution,
-                (string) $event->preferredLocale,
-                (string) $event->secondFactorId,
-                (string) $event->yubikeyPublicId,
+                (string)$event->identityId,
+                (string)$event->nameId,
+                (string)$event->identityInstitution,
+                (string)$event->preferredLocale,
+                (string)$event->secondFactorId,
+                (string)$event->yubikeyPublicId,
                 'yubikey',
-                true
-            )
+                true,
+            ),
         );
     }
 
-    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
-                (string) $event->identityId,
-                (string) $event->targetNameId,
-                (string) $event->identityInstitution,
-                (string) $event->preferredLocale,
-                (string) $event->newSecondFactorId,
+                (string)$event->identityId,
+                (string)$event->targetNameId,
+                (string)$event->identityInstitution,
+                (string)$event->preferredLocale,
+                (string)$event->newSecondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $this->isIdentityVetted($event->vettingType)
-            )
+                $this->isIdentityVetted($event->vettingType),
+            ),
         );
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $this->repository->save(
             new SecondFactor(
-                (string) $event->identityId,
-                (string) $event->nameId,
-                (string) $event->identityInstitution,
-                (string) $event->preferredLocale,
-                (string) $event->secondFactorId,
+                (string)$event->identityId,
+                (string)$event->nameId,
+                (string)$event->identityInstitution,
+                (string)$event->preferredLocale,
+                (string)$event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $this->isIdentityVetted($event->vettingType)
-            )
+                $this->isIdentityVetted($event->vettingType),
+            ),
         );
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
-    {
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
         $this->repository->save(
             new SecondFactor(
-                (string) $event->identityId,
-                (string) $event->nameId,
-                (string) $event->identityInstitution,
-                (string) $event->preferredLocale,
-                (string) $event->secondFactorId,
+                (string)$event->identityId,
+                (string)$event->nameId,
+                (string)$event->identityInstitution,
+                (string)$event->preferredLocale,
+                (string)$event->secondFactorId,
                 $event->secondFactorIdentifier,
                 $event->secondFactorType,
-                $this->isIdentityVetted($event->vettingType)
-            )
+                $this->isIdentityVetted($event->vettingType),
+            ),
         );
     }
 
@@ -121,25 +113,29 @@ class SecondFactorProjector extends Projector
         $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
 
         if ($secondFactor === null) {
-            throw new RuntimeException(sprintf(
-                'Expected to find a second factor having secondFactorId "%s", found none.',
-                $event->secondFactorId
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Expected to find a second factor having secondFactorId "%s", found none.',
+                    $event->secondFactorId,
+                ),
+            );
         }
 
         $this->repository->remove($secondFactor);
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
+        CompliedWithVettedSecondFactorRevocationEvent $event,
     ) {
         $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
 
         if ($secondFactor === null) {
-            throw new RuntimeException(sprintf(
-                'Expected to find a second factor having secondFactorId "%s", found none.',
-                $event->secondFactorId
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    'Expected to find a second factor having secondFactorId "%s", found none.',
+                    $event->secondFactorId,
+                ),
+            );
         }
 
         $this->repository->remove($secondFactor);
@@ -150,7 +146,7 @@ class SecondFactorProjector extends Projector
         $secondFactors = $this->repository->findByIdentityId($event->identityId);
 
         foreach ($secondFactors as $secondFactor) {
-            $secondFactor->displayLocale = (string) $event->preferredLocale;
+            $secondFactor->displayLocale = (string)$event->preferredLocale;
             $this->repository->save($secondFactor);
         }
     }

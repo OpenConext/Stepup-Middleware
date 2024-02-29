@@ -18,18 +18,16 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class StepupProvider
+final class StepupProvider implements Stringable
 {
-    /**
-     * @var string
-     */
-    private $provider;
+    private readonly string $provider;
 
     public function __construct($provider)
     {
-        if (!is_string($provider) || strlen(trim($provider)) === 0) {
+        if (!is_string($provider) || trim($provider) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'provider', $provider);
         }
 
@@ -44,12 +42,12 @@ final class StepupProvider
         return $this->provider;
     }
 
-    public function equals(StepupProvider $other)
+    public function equals(StepupProvider $other): bool
     {
         return $this->provider === $other->provider;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->provider;
     }

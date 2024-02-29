@@ -26,7 +26,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'institution',
         'preferred_locale',
@@ -38,9 +38,9 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
     public $preferredLocale;
 
     /**
-     * @param IdentityId  $id
+     * @param IdentityId $id
      * @param Institution $institution
-     * @param Locale      $preferredLocale
+     * @param Locale $preferredLocale
      */
     public function __construct(IdentityId $id, Institution $institution, Locale $preferredLocale)
     {
@@ -49,7 +49,7 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -62,12 +62,12 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
      * @param array $data
      * @return IdentityRenamedEvent The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -77,9 +77,9 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 

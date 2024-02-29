@@ -18,17 +18,21 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
-use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ConfigurationControllerTest extends WebTestCase
 {
-    use FixturesTrait;
+    use MockeryPHPUnitIntegration;
 
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    private $client;
+    private KernelBrowser $client;
 
     /**
      * @var string
@@ -40,8 +44,13 @@ class ConfigurationControllerTest extends WebTestCase
      */
     private $passwordRo;
 
+    private DatabaseToolCollection $databaseTool;
+
     public function setUp(): void
     {
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        // Initialises schema.
+        $this->databaseTool->loadFixtures([]);
         // Initialises schema.
         $this->loadFixtures([]);
         $this->client = static::createClient();
@@ -58,7 +67,7 @@ class ConfigurationControllerTest extends WebTestCase
      * @test
      * @group management
      */
-    public function requests_with_invalid_content_are_bad_requests()
+    public function requests_with_invalid_content_are_bad_requests(): void
     {
         $this->client->request(
             'POST',
@@ -66,22 +75,26 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password
+                'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertSame(400, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(
+            Response::HTTP_BAD_REQUEST,
+            $this->client->getResponse()->getStatusCode(),
+            $this->client->getResponse()->getContent(),
+        );
     }
 
     /**
      * @test
      * @group management
      */
-    public function authorization_is_required()
+    public function authorization_is_required(): void
     {
         $this->client->request(
             'POST',
@@ -89,20 +102,20 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('401', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @test
      * @group management
      */
-    public function readonly_user_cannot_modify_configuration()
+    public function readonly_user_cannot_modify_configuration(): void
     {
         $this->client->request(
             'POST',
@@ -110,15 +123,15 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'apireader',
-                'PHP_AUTH_PW'   => $this->passwordRo,
+                'PHP_AUTH_PW' => $this->passwordRo,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('403', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -127,7 +140,7 @@ class ConfigurationControllerTest extends WebTestCase
      *
      * @dataProvider invalidHttpMethodProvider
      */
-    public function only_post_requests_are_accepted($invalidHttpMethod)
+    public function only_post_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -135,20 +148,20 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('405', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @test
      * @group management
      */
-    public function json_is_returned_from_the_configuration_api()
+    public function json_is_returned_from_the_configuration_api(): void
     {
         $this->client->request(
             'POST',
@@ -156,33 +169,33 @@ class ConfigurationControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'management',
-                'PHP_AUTH_PW'   => $this->password,
+                'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertTrue(
             $this->client->getResponse()->headers->contains(
                 'Content-Type',
-                'application/json'
-            )
+                'application/json',
+            ),
         );
     }
 
     /**
      * Dataprovider for only_post_requests_are_accepted
      */
-    public function invalidHttpMethodProvider()
+    public function invalidHttpMethodProvider(): array
     {
         return [
             'GET' => ['GET'],
             'DELETE' => ['DELETE'],
             'HEAD' => ['HEAD'],
             'PUT' => ['PUT'],
-            'OPTIONS' => ['OPTIONS']
+            'OPTIONS' => ['OPTIONS'],
         ];
     }
 }

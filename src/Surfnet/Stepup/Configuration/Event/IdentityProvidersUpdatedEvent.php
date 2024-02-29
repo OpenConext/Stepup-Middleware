@@ -27,7 +27,7 @@ class IdentityProvidersUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $identityProviders
+     * @param array $identityProviders
      */
     public function __construct($configurationId, array $identityProviders)
     {
@@ -36,7 +36,7 @@ class IdentityProvidersUpdatedEvent extends ConfigurationEvent
         $this->identityProviders = $identityProviders;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['identity_providers']);
     }

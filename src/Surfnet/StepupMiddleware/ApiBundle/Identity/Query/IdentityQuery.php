@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Query;
 
+use Surfnet\Stepup\Identity\Value\Institution;
+
 class IdentityQuery extends AbstractQuery
 {
     /**
@@ -31,7 +33,7 @@ class IdentityQuery extends AbstractQuery
     public $commonName;
 
     /**
-     * @var string|\Surfnet\Stepup\Identity\Value\Institution
+     * @var string|Institution
      */
     public $institution;
 

@@ -33,7 +33,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'name_id',
@@ -61,41 +61,41 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         Institution $institution,
         NameId $nameId,
         CommonName $commonName,
-        Email $email
+        Email $email,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId     = $nameId;
+        $this->nameId = $nameId;
         $this->commonName = $commonName;
-        $this->email      = $email;
+        $this->email = $email;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new NameId($data['name_id']),
             CommonName::unknown(),
-            Email::unknown()
+            Email::unknown(),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'          => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'name_id'              => (string) $this->nameId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
         ];
     }
 
@@ -106,9 +106,9 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
             ->withEmail($this->email);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }
 

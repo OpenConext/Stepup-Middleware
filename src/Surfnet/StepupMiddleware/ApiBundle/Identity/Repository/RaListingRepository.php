@@ -20,7 +20,8 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -34,50 +35,43 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
  */
 class RaListingRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, RaListing::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
      * @param IdentityId $identityId The RA's identity id.
      * @return null|RaListing[]
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): array
     {
-        return parent::findBy(['identityId' => (string) $identityId]);
+        return parent::findBy(['identityId' => (string)$identityId]);
     }
 
     /**
      * @param IdentityId $identityId The RA's identity id.
-     * @param Institution $raInstitution
      * @return null|RaListing
      */
-    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): ?object
     {
         return parent::findOneBy([
-            'identityId' => (string) $identityId,
-            'raInstitution' => (string) $raInstitution,
+            'identityId' => (string)$identityId,
+            'raInstitution' => (string)$raInstitution,
         ]);
     }
 
 
     /**
      * @param IdentityId $identityId The RA's identity id.
-     * @param Institution $raInstitution
-     * @param InstitutionAuthorizationContextInterface $authorizationContext
      * @return null|RaListing
      */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
         Institution $raInstitution,
-        InstitutionAuthorizationContextInterface $authorizationContext
+        InstitutionAuthorizationContextInterface $authorizationContext,
     ) {
         $queryBuilder = $this->createQueryBuilder('r')
             ->where('r.identityId = :identityId')
@@ -94,7 +88,7 @@ class RaListingRepository extends ServiceEntityRepository
             $queryBuilder,
             $authorizationContext,
             'r.raInstitution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
@@ -102,18 +96,17 @@ class RaListingRepository extends ServiceEntityRepository
 
     /**
      * @param IdentityId $identityId The RA's identity id.
-     * @param Institution $institution
      * @return RaListing[]
      */
-    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): array
     {
         return parent::findBy([
-            'identityId' => (string) $identityId,
-            'institution' => (string) $institution,
+            'identityId' => (string)$identityId,
+            'institution' => (string)$institution,
         ]);
     }
 
-    public function save(RaListing $raListingEntry)
+    public function save(RaListing $raListingEntry): void
     {
         $this->getEntityManager()->persist($raListingEntry);
         $this->getEntityManager()->flush();
@@ -123,10 +116,9 @@ class RaListingRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
      * @SuppressWarnings(PHPMD.NPathComplexity)      below complex or hard to maintain.
      *
-     * @param RaListingQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createSearchQuery(RaListingQuery $query)
+    public function createSearchQuery(RaListingQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('r');
 
@@ -139,7 +131,7 @@ class RaListingRepository extends ServiceEntityRepository
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('r.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         if ($query->name) {
@@ -157,13 +149,13 @@ class RaListingRepository extends ServiceEntityRepository
         if ($query->role) {
             $queryBuilder
                 ->andWhere('r.role = :role')
-                ->setParameter('role', (string) $query->role);
+                ->setParameter('role', (string)$query->role);
         }
 
         if ($query->raInstitution) {
             $queryBuilder
                 ->andWhere('r.raInstitution = :raInstitution')
-                ->setParameter('raInstitution', (string) $query->raInstitution);
+                ->setParameter('raInstitution', (string)$query->raInstitution);
         }
 
         // Modify query to filter on authorization:
@@ -174,7 +166,7 @@ class RaListingRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'r.raInstitution',
-            'iac'
+            'iac',
         );
 
         if (!$query->orderBy) {
@@ -183,22 +175,18 @@ class RaListingRepository extends ServiceEntityRepository
 
         $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
 
-        switch ($query->orderBy) {
-            case 'commonName':
-                $queryBuilder->orderBy('r.commonName', $orderDirection);
-                break;
-            default:
-                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
-        }
+        match ($query->orderBy) {
+            'commonName' => $queryBuilder->orderBy('r.commonName', $orderDirection),
+            default => throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy)),
+        };
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param RaListingQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaListingQuery $query)
+    public function createOptionsQuery(RaListingQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('r')
             ->select('r.institution, r.raInstitution')
@@ -212,17 +200,16 @@ class RaListingRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'r.raInstitution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param Institution $raInstitution
      * @return ArrayCollection
      */
-    public function listRasFor(Institution $raInstitution)
+    public function listRasFor(Institution $raInstitution): ArrayCollection
     {
         $listings = $this->createQueryBuilder('rl')
             ->where('rl.raInstitution = :institution')
@@ -234,10 +221,9 @@ class RaListingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $identityId
      * @return void
      */
-    public function removeByIdentityId(IdentityId $identityId, Institution $institution)
+    public function removeByIdentityId(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
@@ -250,11 +236,9 @@ class RaListingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $raInstitution
      * @return void
      */
-    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution)
+    public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')
@@ -267,11 +251,9 @@ class RaListingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $institution
      * @return void
      */
-    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution)
+    public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'ral')

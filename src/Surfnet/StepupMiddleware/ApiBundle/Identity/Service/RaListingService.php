@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
@@ -28,45 +29,36 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCrede
 
 class RaListingService extends AbstractSearchService
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
-
-    public function __construct(RaListingRepository $raListingRepository)
+    public function __construct(private readonly RaListingRepository $raListingRepository)
     {
-        $this->raListingRepository = $raListingRepository;
     }
 
     /**
-     * @param IdentityId $identityId
-     * @param Institution $raInstitution
-     * @param InstitutionAuthorizationContextInterface $authorizationContext
-     * @return null|\Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing
+     * @return null|RaListing
      */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
         Institution $raInstitution,
-        InstitutionAuthorizationContextInterface $authorizationContext
+        InstitutionAuthorizationContextInterface $authorizationContext,
     ) {
-        return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext($identityId, $raInstitution, $authorizationContext);
+        return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext(
+            $identityId,
+            $raInstitution,
+            $authorizationContext,
+        );
     }
 
     /**
-     * @param RaListingQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta
      */
     public function search(RaListingQuery $query)
     {
         $doctrineQuery = $this->raListingRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
-     * @param RaListingQuery $query
      * @return array
      */
     public function getFilterOptions(RaListingQuery $query)
@@ -75,7 +67,6 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @param Institution $institution
      * @return RegistrationAuthorityCredentials[]
      */
     public function listRegistrationAuthoritiesFor(Institution $institution)
@@ -83,9 +74,7 @@ class RaListingService extends AbstractSearchService
         $raListings = $this->raListingRepository->listRasFor($institution);
 
         return $raListings
-            ->map(function (RaListing $raListing) {
-                return RegistrationAuthorityCredentials::fromRaListing($raListing);
-            })
+            ->map(fn(RaListing $raListing) => RegistrationAuthorityCredentials::fromRaListing($raListing))
             ->toArray();
     }
 }

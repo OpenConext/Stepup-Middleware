@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'institution',
         'name_id',
@@ -43,14 +43,14 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId
+        NameId $nameId,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->nameId = $nameId;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -62,12 +62,12 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
     /**
      * @return mixed The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
         );
     }
 
@@ -77,9 +77,9 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
     public function serialize(): array
     {
         return [
-            'identity_id'    => (string) $this->identityId,
-            'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
         ];
     }
 

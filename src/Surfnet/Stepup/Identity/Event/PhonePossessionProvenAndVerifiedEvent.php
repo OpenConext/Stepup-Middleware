@@ -32,9 +32,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
-class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements Forgettable, PossessionProvenAndVerified, RightToObtainDataInterface
+class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
+    Forgettable,
+    PossessionProvenAndVerified,
+    RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,39 +50,34 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\PhoneNumber
+     * @var PhoneNumber
      */
     public $phoneNumber;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
     /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
     public $registrationRequestedAt;
-
-    /**
-     * @var string
-     */
-    public $registrationCode;
 
     /**
      * @param IdentityId $identityId
@@ -101,7 +99,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         Email $email,
         Locale $locale,
         DateTime $registrationRequestedAt,
-        $registrationCode
+        public $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -111,22 +109,21 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
         $this->email = $email;
         $this->preferredLocale = $locale;
         $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->registrationCode = $registrationCode;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->phoneNumber;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // BC compatibility for event replay in test-environment only (2.8.0, fixed in 2.8.1)
         if (!isset($data['preferred_locale'])) {
@@ -142,7 +139,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
             Email::unknown(),
             new Locale($data['preferred_locale']),
             DateTime::fromString($data['registration_requested_at']),
-            (string) $data['registration_code']
+            (string)$data['registration_code'],
         );
     }
 
@@ -152,12 +149,12 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
     public function serialize(): array
     {
         return [
-            'identity_id'               => (string) $this->identityId,
-            'identity_institution'      => (string) $this->identityInstitution,
-            'second_factor_id'          => (string) $this->secondFactorId,
-            'registration_requested_at'   => (string) $this->registrationRequestedAt,
-            'registration_code'           => $this->registrationCode,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'registration_requested_at' => (string)$this->registrationRequestedAt,
+            'registration_code' => $this->registrationCode,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -169,7 +166,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements For
             ->withSecondFactorIdentifier($this->phoneNumber, new SecondFactorType('sms'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
         $this->email = $sensitiveData->getEmail();

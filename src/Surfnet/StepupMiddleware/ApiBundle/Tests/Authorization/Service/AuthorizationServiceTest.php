@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mockery as m;
 use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
@@ -62,7 +63,7 @@ class AuthorizationServiceTest extends TestCase
     /**
      * @var AuthorizationService
      */
-    private $service;
+    private AuthorizationService $service;
 
     protected function setUp(): void
     {
@@ -75,11 +76,11 @@ class AuthorizationServiceTest extends TestCase
             $this->identityService,
             $this->institutionConfigurationService,
             $this->secondFactorService,
-            $this->recoveryTokenService
+            $this->recoveryTokenService,
         );
     }
 
-    public function test_it_rejects_unknown_user()
+    public function test_it_rejects_unknown_user(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -93,7 +94,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEquals('Identity not found', reset($messages));
     }
 
-    public function test_it_rejects_unknown_institution_configuration()
+    public function test_it_rejects_unknown_institution_configuration(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Unknown institution');
@@ -112,10 +113,13 @@ class AuthorizationServiceTest extends TestCase
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(403, $decision->getCode());
-        $this->assertEquals('Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled', reset($messages));
+        $this->assertEquals(
+            'Institution configuration could not be found, unable to ascertain if self-asserted tokens feature is enabled',
+            reset($messages),
+        );
     }
 
-    public function test_it_rejects_disabled_self_asserted_tokens_feature_flag_on_institution()
+    public function test_it_rejects_disabled_self_asserted_tokens_feature_flag_on_institution(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -139,7 +143,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEquals('Institution "known institution", does not allow self-asserted tokens', reset($messages));
     }
 
-    public function test_it_rejects_when_identity_has_vetted_token()
+    public function test_it_rejects_when_identity_has_vetted_token(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -179,7 +183,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEquals('Identity already has a vetted second factor', reset($messages));
     }
 
-    public function test_it_rejects_when_identity_had_prior_non_sat_token()
+    public function test_it_rejects_when_identity_had_prior_non_sat_token(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -216,10 +220,13 @@ class AuthorizationServiceTest extends TestCase
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(403, $decision->getCode());
-        $this->assertEquals('Identity never possessed a self-asserted token, but did/does possess one of the other types', reset($messages));
+        $this->assertEquals(
+            'Identity never possessed a self-asserted token, but did/does possess one of the other types',
+            reset($messages),
+        );
     }
 
-    public function test_recovery_tokens_never_owned_a_sat_token_but_did_own_other_token_type()
+    public function test_recovery_tokens_never_owned_a_sat_token_but_did_own_other_token_type(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -256,10 +263,13 @@ class AuthorizationServiceTest extends TestCase
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(403, $decision->getCode());
-        $this->assertEquals('Identity never possessed a self-asserted token, deny access to recovery token CRUD actions', reset($messages));
+        $this->assertEquals(
+            'Identity never possessed a self-asserted token, deny access to recovery token CRUD actions',
+            reset($messages),
+        );
     }
 
-    public function test_you_cant_sat_when_you_lost_both_rt_and_sf_tokens()
+    public function test_you_cant_sat_when_you_lost_both_rt_and_sf_tokens(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -302,10 +312,13 @@ class AuthorizationServiceTest extends TestCase
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(403, $decision->getCode());
-        $this->assertEquals('Identity lost both Recovery and Second Factor token, SAT is not allowed', reset($messages));
+        $this->assertEquals(
+            'Identity lost both Recovery and Second Factor token, SAT is not allowed',
+            reset($messages),
+        );
     }
 
-    public function test_recovery_tokens_all_requirements_met()
+    public function test_recovery_tokens_all_requirements_met(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -345,7 +358,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-    public function test_it_allows_when_identity_meets_all_requirements()
+    public function test_it_allows_when_identity_meets_all_requirements(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -391,7 +404,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-    public function test_it_allows_when_identity_with_prior_sat_meets_all_requirements()
+    public function test_it_allows_when_identity_with_prior_sat_meets_all_requirements(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -437,7 +450,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-    public function test_it_allows_self_vetting_when_one_sat_present()
+    public function test_it_allows_self_vetting_when_one_sat_present(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -461,7 +474,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')
@@ -474,7 +487,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-    public function test_it_allows_self_vetting_when_multiple_sat_present()
+    public function test_it_allows_self_vetting_when_multiple_sat_present(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -497,7 +510,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor, $vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')
@@ -510,7 +523,7 @@ class AuthorizationServiceTest extends TestCase
         $this->assertEmpty($messages);
     }
 
-   public function test_it_denies_self_vetting_when_other_vetting_type()
+    public function test_it_denies_self_vetting_when_other_vetting_type(): void
     {
         $identity = new Identity();
         $identity->institution = new Institution('Known institution');
@@ -534,7 +547,7 @@ class AuthorizationServiceTest extends TestCase
         $vettedSecondFactor->vettingType = VettingType::TYPE_ON_PREMISE;
 
         $collection = m::mock(Pagerfanta::class);
-        $collection->shouldReceive('getIterator')->andReturn([$vettedSecondFactor, $vettedSecondFactor]);
+        $collection->shouldReceive('getIterator')->andReturn(new ArrayCollection([$vettedSecondFactor, $vettedSecondFactor]));
 
         $this->secondFactorService
             ->shouldReceive('searchVettedSecondFactors')
@@ -544,6 +557,9 @@ class AuthorizationServiceTest extends TestCase
         $messages = $decision->getErrorMessages();
 
         $this->assertEquals(403, $decision->getCode());
-        $this->assertEquals('Self-vetting using SAT is only allowed when only SAT tokens are in possession', reset($messages));
+        $this->assertEquals(
+            'Self-vetting using SAT is only allowed when only SAT tokens are in possession',
+            reset($messages),
+        );
     }
 }

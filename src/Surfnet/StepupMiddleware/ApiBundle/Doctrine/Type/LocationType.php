@@ -29,23 +29,23 @@ use Surfnet\Stepup\Identity\Value\Location;
  */
 class LocationType extends Type
 {
-    const NAME = 'stepup_location';
+    public const NAME = 'stepup_location';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
             return $value;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Location
     {
         if (is_null($value)) {
             return $value;
@@ -57,7 +57,7 @@ class LocationType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -66,7 +66,7 @@ class LocationType extends Type
         return $location;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

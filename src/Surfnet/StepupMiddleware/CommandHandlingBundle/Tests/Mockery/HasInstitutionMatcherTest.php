@@ -18,14 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Exception\RuntimeException;
 use PHPUnit\Framework\TestCase as TestCase;
+use stdClass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionAccessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionProperty;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithoutInstitutionPropertyAndAccessor;
 
 class HasInstitutionMatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group mockery
@@ -33,7 +37,7 @@ class HasInstitutionMatcherTest extends TestCase
      *
      * @dataProvider nonStringProvider
      */
-    public function has_institution_matcher_only_matches_against_strings($nonString)
+    public function has_institution_matcher_only_matches_against_strings(bool|int|float|stdClass|array|null $nonString,): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -47,8 +51,9 @@ class HasInstitutionMatcherTest extends TestCase
      *
      * @dataProvider nonObjectProvider
      */
-    public function has_institution_matcher_only_matches_objects_against_a_given_institution($nonObject)
-    {
+    public function has_institution_matcher_only_matches_objects_against_a_given_institution(
+        bool|int|float|string|array|null $nonObject,
+    ): void {
         $institution = 'surfnet.nl';
 
         $hasInstitutionMatcher = new HasInstitutionMatcher($institution);
@@ -62,7 +67,7 @@ class HasInstitutionMatcherTest extends TestCase
      * @group mockery
      * @group institution
      */
-    public function has_institution_matcher_does_not_match_when_object_has_no_institution_property_and_no_institution_accessor()
+    public function has_institution_matcher_does_not_match_when_object_has_no_institution_property_and_no_institution_accessor(): void
     {
         $institution = 'surfnet.nl';
 
@@ -79,9 +84,9 @@ class HasInstitutionMatcherTest extends TestCase
      * @group mockery
      * @group institution
      */
-    public function has_institution_matcher_does_not_match_when_objects_accessed_institution_differs_from_given_institution()
+    public function has_institution_matcher_does_not_match_when_objects_accessed_institution_differs_from_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
         $differentInstitution = 'not-surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionAccessor($institution);
@@ -97,9 +102,9 @@ class HasInstitutionMatcherTest extends TestCase
      * @group mockery
      * @group institution
      */
-    public function has_institution_matcher_matches_when_objects_accessed_institution_is_the_same_as_given_institution()
+    public function has_institution_matcher_matches_when_objects_accessed_institution_is_the_same_as_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionAccessor($institution);
 
@@ -114,9 +119,9 @@ class HasInstitutionMatcherTest extends TestCase
      * @group mockery
      * @group institution
      */
-    public function has_institution_matcher_does_not_match_when_objects_institution_property_differs_from_given_institution()
+    public function has_institution_matcher_does_not_match_when_objects_institution_property_differs_from_given_institution(): void
     {
-        $institution          = 'surfnet.nl';
+        $institution = 'surfnet.nl';
         $differentInstitution = 'not-surfnet.nl';
 
         $nonMatchingObject = new ObjectWithInstitutionProperty($institution);
@@ -132,7 +137,7 @@ class HasInstitutionMatcherTest extends TestCase
      * @group mockery
      * @group institution
      */
-    public function has_institution_matcher_matches_when_objects_institution_property_is_the_same_as_given_institution()
+    public function has_institution_matcher_matches_when_objects_institution_property_is_the_same_as_given_institution(): void
     {
         $institution = 'surfnet.nl';
 
@@ -144,27 +149,27 @@ class HasInstitutionMatcherTest extends TestCase
         $this->assertTrue($match);
     }
 
-    public function nonStringProvider()
+    public function nonStringProvider(): array
     {
         return [
-            'null'         => [null],
-            'array'        => [[]],
-            'boolean'      => [true],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \stdClass()],
+            'null' => [null],
+            'array' => [[]],
+            'boolean' => [true],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new stdClass()],
         ];
     }
 
-    public function nonObjectProvider()
+    public function nonObjectProvider(): array
     {
         return [
-            'null'         => [null],
-            'array'        => [[]],
-            'boolean'      => [true],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'string'       => ['string'],
+            'null' => [null],
+            'array' => [[]],
+            'boolean' => [true],
+            'integer' => [1],
+            'float' => [1.2],
+            'string' => ['string'],
         ];
     }
 }

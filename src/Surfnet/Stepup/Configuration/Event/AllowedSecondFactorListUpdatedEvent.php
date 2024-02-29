@@ -25,37 +25,19 @@ use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 
 final class AllowedSecondFactorListUpdatedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var AllowedSecondFactorList
-     */
-    public $allowedSecondFactorList;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        AllowedSecondFactorList $allowedSecondFactorList
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public AllowedSecondFactorList $allowedSecondFactorList,
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution                = $institution;
-        $this->allowedSecondFactorList    = $allowedSecondFactorList;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new Institution($data['institution']),
-            AllowedSecondFactorList::deserialize($data['allowed_second_factor_list'])
+            AllowedSecondFactorList::deserialize($data['allowed_second_factor_list']),
         );
     }
 
@@ -63,8 +45,8 @@ final class AllowedSecondFactorListUpdatedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution(),
-            'allowed_second_factor_list'   => $this->allowedSecondFactorList->serialize(),
+            'institution' => $this->institution->getInstitution(),
+            'allowed_second_factor_list' => $this->allowedSecondFactorList->serialize(),
         ];
     }
 }

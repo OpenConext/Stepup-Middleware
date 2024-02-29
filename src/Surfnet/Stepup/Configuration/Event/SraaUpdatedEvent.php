@@ -27,7 +27,7 @@ class SraaUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $sraaList
+     * @param array $sraaList
      */
     public function __construct($configurationId, array $sraaList)
     {
@@ -36,7 +36,7 @@ class SraaUpdatedEvent extends ConfigurationEvent
         $this->sraaList = $sraaList;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['sraa_list']);
     }

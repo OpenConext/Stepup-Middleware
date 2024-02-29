@@ -34,29 +34,26 @@ class AuthorizedInstitutionCollection
      *
      * @var string[]
      */
-    private $authorizations = [];
+    private array $authorizations = [];
 
-    /**
-     * @param InstitutionCollection $raInstitutions
-     * @param InstitutionCollection|null $raaInstitutions
-     * @return AuthorizedInstitutionCollection
-     */
-    public static function from(InstitutionCollection $raInstitutions, InstitutionCollection $raaInstitutions = null)
-    {
+    public static function from(
+        InstitutionCollection $raInstitutions,
+        ?InstitutionCollection $raaInstitutions = null,
+    ): self {
         $collection = new self();
 
         foreach ($raInstitutions as $institution) {
-            $collection->authorizations[(string) $institution][] = (string) AuthorityRole::ROLE_RA;
+            $collection->authorizations[(string)$institution][] = (string)AuthorityRole::ROLE_RA;
         }
-        if ($raaInstitutions) {
+        if ($raaInstitutions instanceof InstitutionCollection) {
             foreach ($raaInstitutions as $institution) {
                 // Override existing lower role
-                if (isset($collection->authorizations[(string) $institution])
-                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[(string) $institution])
+                if (isset($collection->authorizations[(string)$institution])
+                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[(string)$institution])
                 ) {
-                    $collection->authorizations[(string) $institution] = [];
+                    $collection->authorizations[(string)$institution] = [];
                 }
-                $collection->authorizations[(string) $institution][] = (string) AuthorityRole::ROLE_RAA;
+                $collection->authorizations[(string)$institution][] = (string)AuthorityRole::ROLE_RAA;
             }
         }
         return $collection;

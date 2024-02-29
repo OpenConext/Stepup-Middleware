@@ -27,7 +27,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 interface Pipeline
 {
     /**
-     * @param Command $command
      * @return Command
      */
     public function process(Command $command);

@@ -19,112 +19,63 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository;
 
 /**
  * WARNING: Any schema change made to this entity should also be applied to the Gateway SecondFactor entity!
  * @see Surfnet\StepupGateway\GatewayBundle\Entity\SecondFactor (in OpenConext/Stepup-Gateway project)
  *
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Repository\SecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_secondfactor_nameid", columns={"name_id"}),
- *      }
- * )
  * @SuppressWarnings(PHPMD.UnusedPrivateFields)
  */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_secondfactor_nameid', columns: ['name_id'])]
+#[ORM\Entity(repositoryClass: SecondFactorRepository::class)]
 class SecondFactor
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    private string $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
+     * @param string $identityId
+     * @param string $nameId
+     * @param string $institution
+     * @param string $displayLocale
+     * @param string $secondFactorId
+     * @param string $secondFactorType
+     * @param string $secondFactorIdentifier
      */
-    private $identityId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(length=200)
-     */
-    private $nameId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(length=200)
-     */
-    private $institution;
-
-    /**
-     * In which language to display any second factor verification screens.
-     *
-     * @var string
-     *
-     * @ORM\Column
-     */
-    public $displayLocale;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(length=36)
-     */
-    private $secondFactorId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(length=50)
-     */
-    private $secondFactorType;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(length=255)
-     */
-    private $secondFactorIdentifier;
-
-    /**
-     * This boolean indicates if the second factor token was vetted
-     * using one of the vetting types that are considered 'identity-vetted'.
-     * That in turn means if the owner of the second factor token has its
-     * identity vetted (verified) by a RA(A) at the service desk. This trickles
-     * down to the self-vet vetting type. As the token used for self vetting
-     * was RA vetted.
-     *
-     * @ORM\Column(type="boolean", options={"default":"1"})
-     */
-    private $identityVetted;
-
     public function __construct(
-        $identityId,
-        $nameId,
-        $institution,
-        $displayLocale,
-        $secondFactorId,
-        $secondFactorIdentifier,
-        $secondFactorType,
-        $identityVetted
+        #[ORM\Id]
+        #[ORM\Column(length: 36)]
+        private $identityId,
+        #[ORM\Column(length: 200)]
+        private $nameId,
+        #[ORM\Column(length: 200)]
+        private $institution,
+        /**
+         * In which language to display any second factor verification screens.
+         */
+        #[ORM\Column]
+        public $displayLocale,
+        #[ORM\Column(length: 36)]
+        private $secondFactorId,
+        #[ORM\Column(length: 255)]
+        private $secondFactorIdentifier,
+        #[ORM\Column(length: 50)]
+        private $secondFactorType,
+        /**
+         * This boolean indicates if the second factor token was vetted
+         * using one of the vetting types that are considered 'identity-vetted'.
+         * That in turn means if the owner of the second factor token has its
+         * identity vetted (verified) by a RA(A) at the service desk. This trickles
+         * down to the self-vet vetting type. As the token used for self vetting
+         * was RA vetted.
+         */
+        #[ORM\Column(type: 'boolean', options: ['default' => '1'])]
+        private $identityVetted,
     ) {
-        $this->id                     = (string) Uuid::uuid4();
-        $this->identityId             = $identityId;
-        $this->nameId                 = $nameId;
-        $this->institution            = $institution;
-        $this->displayLocale          = $displayLocale;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->secondFactorType = $secondFactorType;
-        $this->identityVetted = $identityVetted;
+        $this->id = (string)Uuid::uuid4();
     }
 }

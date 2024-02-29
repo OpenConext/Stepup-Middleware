@@ -18,21 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Value;
 
+use Stringable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
-final class Institution
+final class Institution implements Stringable
 {
-    /**
-     * @var string
-     */
-    private $institution;
+    private readonly string $institution;
 
     /**
      * @param string $institution may not be an empty string
      */
     public function __construct($institution)
     {
-        if (!is_string($institution) || strlen(trim($institution)) === 0) {
+        if (!is_string($institution) || trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 
@@ -48,15 +46,14 @@ final class Institution
     }
 
     /**
-     * @param Institution $otherInstitution
      * @return bool
      */
-    public function equals(Institution $otherInstitution)
+    public function equals(Institution $otherInstitution): bool
     {
         return $this->institution === $otherInstitution->institution;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->institution;
     }

@@ -39,7 +39,7 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
      * @var RecoveryTokenType
      */
     public $recoveryTokenType;
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_type',
@@ -47,11 +47,11 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
     ];
 
     final public function __construct(
-        IdentityId        $identityId,
-        Institution       $identityInstitution,
-        RecoveryTokenId   $recoveryTokenId,
+        IdentityId $identityId,
+        Institution $identityInstitution,
+        RecoveryTokenId $recoveryTokenId,
         RecoveryTokenType $recoveryTokenType,
-        IdentityId        $authorityId
+        IdentityId $authorityId,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -60,7 +60,7 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
         $this->recoveryTokenType = $recoveryTokenType;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         $recoveryTokenType = new RecoveryTokenType($data['recovery_token_type']);
 
@@ -69,11 +69,11 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
             new Institution($data['identity_institution']),
             new RecoveryTokenId($data['recovery_token_id']),
             $recoveryTokenType,
-            new IdentityId($data['authority_id'])
+            new IdentityId($data['authority_id']),
         );
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

@@ -26,6 +26,7 @@ use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFilterInterface;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
 use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
@@ -44,9 +45,13 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\RightToBeForgottenCommandHandler;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -61,13 +66,17 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
     /** @var MockInterface */
     private $sraaRepository;
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
-        $this->apiIdentityRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository');
-        $this->sensitiveDataService = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Service\SensitiveDataService');
-        $this->sraaRepository = m::mock('Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository');
+        $this->apiIdentityRepository = m::mock(
+            \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository::class,
+        );
+        $this->sensitiveDataService = m::mock(SensitiveDataService::class);
+        $this->sraaRepository = m::mock(SraaRepository::class);
 
         $logger = m::mock(LoggerInterface::class);
         $logger->shouldIgnoreMissing();
@@ -78,11 +87,11 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory,
                 m::mock(UserDataFilterInterface::class),
-                $logger
+                $logger,
             ),
             $this->apiIdentityRepository,
             $this->sensitiveDataService,
-            $this->sraaRepository
+            $this->sraaRepository,
         );
     }
 
@@ -91,20 +100,20 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_identity_can_be_forgotten()
+    public function an_identity_can_be_forgotten(): void
     {
-        $identityId  = new IdentityId('A');
+        $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
-        $nameId      = new NameId('urn:eeva-kuopio');
-        $commonName  = new CommonName('Eeva Kuopio');
-        $email       = new Email('e.kuopio@hy.fi');
-        $locale      = new Locale('fi_FI');;
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
 
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
             ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
-            ->andReturn((object) ['id' => $identityId->getIdentityId()]);
+            ->andReturn((object)['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
@@ -126,7 +135,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $locale
+                    $locale,
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -136,8 +145,8 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('01900473')
-                )
+                    new YubikeyPublicId('01900473'),
+                ),
             ])
             ->when($command)
             ->then([
@@ -150,23 +159,23 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_identity_may_not_be_forgotten_twice()
+    public function an_identity_may_not_be_forgotten_twice(): void
     {
         $this->expectExceptionMessage("Operation on this Identity is not allowed: it has been forgotten");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
-        $identityId  = new IdentityId('A');
+        $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
-        $nameId      = new NameId('urn:eeva-kuopio');
-        $commonName  = new CommonName('Eeva Kuopio');
-        $email       = new Email('e.kuopio@hy.fi');
-        $locale      = new Locale('fi_FI');;
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
 
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
             ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
-            ->andReturn((object) ['id' => $identityId->getIdentityId()]);
+            ->andReturn((object)['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
@@ -188,7 +197,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $locale
+                    $locale,
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -198,7 +207,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('01900473')
+                    new YubikeyPublicId('01900473'),
                 ),
                 new IdentityForgottenEvent($identityId, $institution),
             ])
@@ -210,23 +219,23 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_ra_cannot_be_forgotten()
+    public function an_ra_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
-        $identityId  = new IdentityId('A');
+        $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
-        $nameId      = new NameId('urn:eeva-kuopio');
-        $commonName  = new CommonName('Eeva Kuopio');
-        $email       = new Email('e.kuopio@hy.fi');
-        $locale      = new Locale('fi_FI');;
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
 
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
             ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
-            ->andReturn((object) ['id' => $identityId->getIdentityId()]);
+            ->andReturn((object)['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
@@ -248,7 +257,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $locale
+                    $locale,
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -258,7 +267,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('01900473')
+                    new YubikeyPublicId('01900473'),
                 ),
                 new IdentityAccreditedAsRaEvent(
                     $identityId,
@@ -267,7 +276,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('0x0392ff832'),
                     new ContactInformation('/dev/null'),
-                    $institution
+                    $institution,
                 ),
             ])
             ->when($command);
@@ -278,23 +287,23 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_raa_cannot_be_forgotten()
+    public function an_raa_cannot_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an RA(A)");
-        $this->expectException(\Surfnet\Stepup\Exception\DomainException::class);
+        $this->expectException(DomainException::class);
 
-        $identityId  = new IdentityId('A');
+        $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
-        $nameId      = new NameId('urn:eeva-kuopio');
-        $commonName  = new CommonName('Eeva Kuopio');
-        $email       = new Email('e.kuopio@hy.fi');
-        $locale      = new Locale('fi_FI');;
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
 
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
             ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
-            ->andReturn((object) ['id' => $identityId->getIdentityId()]);
+            ->andReturn((object)['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
@@ -316,7 +325,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $locale
+                    $locale,
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -326,7 +335,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('01900473')
+                    new YubikeyPublicId('01900473'),
                 ),
                 new IdentityAccreditedAsRaForInstitutionEvent(
                     $identityId,
@@ -335,7 +344,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('0x0392ff832'),
                     new ContactInformation('/dev/null'),
-                    $institution
+                    $institution,
                 ),
             ])
             ->when($command);
@@ -346,23 +355,23 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
      * @group command-handler
      * @group sensitive-data
      */
-    public function an_sraa_cannae_be_forgotten()
+    public function an_sraa_cannae_be_forgotten(): void
     {
         $this->expectExceptionMessage("Cannot forget an identity that is currently accredited as an SRAA");
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
-        $identityId  = new IdentityId('A');
+        $identityId = new IdentityId('A');
         $institution = new Institution('Helsingin Yliopisto');
-        $nameId      = new NameId('urn:eeva-kuopio');
-        $commonName  = new CommonName('Eeva Kuopio');
-        $email       = new Email('e.kuopio@hy.fi');
-        $locale      = new Locale('fi_FI');;
+        $nameId = new NameId('urn:eeva-kuopio');
+        $commonName = new CommonName('Eeva Kuopio');
+        $email = new Email('e.kuopio@hy.fi');
+        $locale = new Locale('fi_FI');
 
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
             ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
-            ->andReturn((object) ['id' => $identityId->getIdentityId()]);
+            ->andReturn((object)['id' => $identityId->getIdentityId()]);
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
@@ -384,7 +393,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $nameId,
                     $commonName,
                     $email,
-                    $locale
+                    $locale,
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $identityId,
@@ -394,8 +403,8 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     $email,
                     $locale,
                     new SecondFactorId('SF-ID'),
-                    new YubikeyPublicId('01900473')
-                )
+                    new YubikeyPublicId('01900473'),
+                ),
             ])
             ->when($command);
     }

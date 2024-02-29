@@ -33,7 +33,6 @@ use Surfnet\Stepup\Identity\Value\PhoneNumber;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
-use Surfnet\Stepup\Identity\Value\Secret;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
@@ -48,7 +47,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @var RecoveryTokenEmailProcessor
      */
-    private $processor;
+    private RecoveryTokenEmailProcessor $processor;
     /**
      * @var Mockery\MockInterface|RecoveryTokenMailService
      */
@@ -64,14 +63,14 @@ class RecoveryTokenEmailProcessorTest extends TestCase
         $this->identityService = Mockery::mock(IdentityService::class);
         $this->processor = new RecoveryTokenEmailProcessor(
             $this->mailService,
-            $this->identityService
+            $this->identityService,
         );
     }
 
     /**
      * @group processor
      */
-    public function test_mails_when_complied_with_recovery_token_revocation()
+    public function test_mails_when_complied_with_recovery_token_revocation(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -83,7 +82,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new Institution('Harderwijk University'),
             new RecoveryTokenId('r-t-id'),
             new RecoveryTokenType('safe-store'),
-            new IdentityId('ra-id')
+            new IdentityId('ra-id'),
         );
 
         $this->mailService
@@ -95,7 +94,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
                 $identity->email,
                 $event->recoveryTokenType,
                 $event->recoveryTokenId,
-                true
+                true,
             );
         $this->processor->handleCompliedWithRecoveryCodeRevocationEvent($event);
     }
@@ -103,7 +102,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_complied_with_recovery_token_revocation()
+    public function test_does_not_mail_when_identity_not_found_complied_with_recovery_token_revocation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -114,7 +113,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new Institution('Harderwijk University'),
             new RecoveryTokenId('r-t-id'),
             new RecoveryTokenType('safe-store'),
-            new IdentityId('ra-id')
+            new IdentityId('ra-id'),
         );
 
         $this->mailService
@@ -125,7 +124,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_recovery_token_revoked_by_identity()
+    public function test_it_mails_when_recovery_token_revoked_by_identity(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -136,7 +135,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new IdentityId('my-id'),
             new Institution('Harderwijk University'),
             new RecoveryTokenId('r-t-id'),
-            new RecoveryTokenType('safe-store')
+            new RecoveryTokenType('safe-store'),
         );
 
         $this->mailService
@@ -148,7 +147,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
                 $identity->email,
                 $event->recoveryTokenType,
                 $event->recoveryTokenId,
-                false
+                false,
             );
         $this->processor->handleRecoveryTokenRevokedEvent($event);
     }
@@ -156,7 +155,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_recovery_token_revocation()
+    public function test_does_not_mail_when_identity_not_found_recovery_token_revocation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -166,7 +165,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new IdentityId('my-not-found-id'),
             new Institution('Harderwijk University'),
             new RecoveryTokenId('r-t-id'),
-            new RecoveryTokenType('safe-store')
+            new RecoveryTokenType('safe-store'),
         );
 
         $this->mailService
@@ -177,7 +176,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_sms_token_created()
+    public function test_it_mails_when_sms_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -191,7 +190,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new PhoneNumber('+42 (0) 612345678'),
             $identity->commonName,
             $identity->email,
-            $identity->preferredLocale
+            $identity->preferredLocale,
         );
 
         $this->mailService
@@ -200,7 +199,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             ->with(
                 $identity->preferredLocale,
                 $identity->commonName,
-                $identity->email
+                $identity->email,
             );
         $this->processor->handlePhoneRecoveryTokenPossessionProvenEvent($event);
     }
@@ -208,7 +207,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_sms_creation()
+    public function test_does_not_mail_when_identity_not_found_sms_creation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -221,7 +220,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new PhoneNumber('+42 (0) 38473929281'),
             new CommonName('Jan de Wandelaar'),
             new Email('j.walker@example.com'),
-            new Locale('nl_NL')
+            new Locale('nl_NL'),
         );
 
         $this->mailService
@@ -232,7 +231,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_it_mails_when_safe_store_token_created()
+    public function test_it_mails_when_safe_store_token_created(): void
     {
         $identity = $this->returnABogusIdentity();
         $this->identityService
@@ -246,7 +245,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new SafeStore(new UnhashedSecret('super-secret')),
             $identity->commonName,
             $identity->email,
-            $identity->preferredLocale
+            $identity->preferredLocale,
         );
 
         $this->mailService
@@ -255,7 +254,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             ->with(
                 $identity->preferredLocale,
                 $identity->commonName,
-                $identity->email
+                $identity->email,
             );
         $this->processor->handleSafeStoreSecretRecoveryTokenPossessionPromisedEvent($event);
     }
@@ -263,7 +262,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
     /**
      * @group processor
      */
-    public function test_does_not_mail_when_identity_not_found_safe_store_creation()
+    public function test_does_not_mail_when_identity_not_found_safe_store_creation(): void
     {
         $this->identityService
             ->shouldReceive('find')
@@ -276,7 +275,7 @@ class RecoveryTokenEmailProcessorTest extends TestCase
             new SafeStore(new UnhashedSecret('super-secret')),
             new CommonName('Jan de Wandelaar'),
             new Email('j.walker@example.com'),
-            new Locale('nl_NL')
+            new Locale('nl_NL'),
         );
 
         $this->mailService

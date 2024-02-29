@@ -42,7 +42,7 @@ use function array_key_exists;
  */
 class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'source_institution',
         'target_name_id',
@@ -57,46 +57,41 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @var Institution
-     */
-    private $sourceInstitution;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
     public $targetNameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $newSecondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
+     * @var Locale
      */
     public $preferredLocale;
     /**
@@ -111,7 +106,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         IdentityId $identityId,
         NameId $targetNameId,
         Institution $targetInstitution,
-        Institution $sourceInstitution,
+        private Institution $sourceInstitution,
         SecondFactorId $secondFactorId,
         SecondFactorId $newSecondFactorId,
         SecondFactorType $secondFactorType,
@@ -119,11 +114,9 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         VettingType $vettingType,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $targetInstitution);
-
-        $this->sourceInstitution = $sourceInstitution;
         $this->targetNameId = $targetNameId;
         $this->secondFactorId = $secondFactorId;
         $this->newSecondFactorId = $newSecondFactorId;
@@ -135,7 +128,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -147,7 +140,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // Events not having a vetting type (recorded pre 5.0) default the
         // vetting type to 'unknown'
@@ -169,7 +162,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             $vettingType,
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -186,8 +179,8 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             'second_factor_id' => (string)$this->secondFactorId,
             'new_second_factor_id' => (string)$this->newSecondFactorId,
             'vetting_type' => $this->vettingType->jsonSerialize(),
-            'second_factor_type' => (string) $this->secondFactorType,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -200,7 +193,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();

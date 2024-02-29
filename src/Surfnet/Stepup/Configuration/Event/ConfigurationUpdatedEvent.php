@@ -43,21 +43,21 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
         $this->oldConfiguration = $oldConfiguration;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             $data['id'],
             $data['new_configuration'],
-            $data['old_configuration']
+            $data['old_configuration'],
         );
     }
 
     public function serialize(): array
     {
         return [
-            'id'                => $this->id,
+            'id' => $this->id,
             'new_configuration' => $this->newConfiguration,
-            'old_configuration' => $this->oldConfiguration
+            'old_configuration' => $this->oldConfiguration,
         ];
     }
 }

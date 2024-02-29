@@ -25,17 +25,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 final class U2fKeyHandle implements SecondFactorIdentifier
 {
-    const UNKNOWN = '—';
+    public const UNKNOWN = '—';
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     /**
      * @return static
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self(self::UNKNOWN);
     }
@@ -63,7 +60,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
@@ -73,7 +70,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         return $other instanceof self && $this->value === $other->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

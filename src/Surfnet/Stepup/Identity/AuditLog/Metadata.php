@@ -18,37 +18,44 @@
 
 namespace Surfnet\Stepup\Identity\AuditLog;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\VettingType;
+use Surfnet\StepupBundle\Value\SecondFactorType;
 
 final class Metadata
 {
     /**
-     * @var \Surfnet\Stepup\Identity\Value\IdentityId
+     * @var IdentityId
      */
     public $identityId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     public $identityInstitution;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
     public $raInstitution;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId|null
+     * @var SecondFactorId|null
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType|null
+     * @var SecondFactorType|null
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier|null
+     * @var SecondFactorIdentifier|null
      */
     public $secondFactorIdentifier;
 
@@ -56,12 +63,12 @@ final class Metadata
     public $vettingType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
+     * @var RecoveryTokenId
      */
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenType
+     * @var RecoveryTokenType
      */
     public $recoveryTokenType;
 }

@@ -25,8 +25,8 @@ use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
-use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
@@ -37,7 +37,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -49,42 +49,32 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\U2fKeyHandle
+     * @var U2fKeyHandle
      */
     public $keyHandle;
 
     /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
+     * @var EmailVerificationWindow
      */
     public $emailVerificationWindow;
 
     /**
-     * @var string
-     */
-    public $emailVerificationNonce;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -107,38 +97,36 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         Institution $identityInstitution,
         SecondFactorId $secondFactorId,
         U2fKeyHandle $keyHandle,
-        $emailVerificationRequired,
+        public $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
+        public $emailVerificationNonce,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
         $this->secondFactorId = $secondFactorId;
         $this->keyHandle = $keyHandle;
-        $this->emailVerificationRequired = $emailVerificationRequired;
         $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->emailVerificationNonce = $emailVerificationNonce;
         $this->commonName = $commonName;
         $this->email = $email;
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('sms');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('sms');
         $metadata->secondFactorIdentifier = $this->keyHandle;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;
@@ -154,7 +142,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -164,13 +152,13 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
-            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -182,11 +170,11 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             ->withSecondFactorIdentifier($this->keyHandle, new SecondFactorType('u2f'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email       = $sensitiveData->getEmail();
-        $this->commonName  = $sensitiveData->getCommonName();
-        $this->keyHandle   = $sensitiveData->getSecondFactorIdentifier();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
+        $this->keyHandle = $sensitiveData->getSecondFactorIdentifier();
     }
 
     public function obtainUserData(): array

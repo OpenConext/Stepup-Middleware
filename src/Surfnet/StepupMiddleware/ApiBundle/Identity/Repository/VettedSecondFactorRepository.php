@@ -19,8 +19,8 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
@@ -32,11 +32,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, VettedSecondFactor::class);
     }
 
-    /**
-     * @param string $id
-     * @return VettedSecondFactor|null
-     */
-    public function find($id, $lockMode = null, $lockVersion = null)
+    public function find(mixed $id, $lockMode = null, $lockVersion = null): ?VettedSecondFactor
     {
         /** @var VettedSecondFactor|null $secondFactor */
         $secondFactor = parent::find($id);
@@ -44,24 +40,20 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
         return $secondFactor;
     }
 
-    /**
-     * @param VettedSecondFactorQuery $query
-     * @return Query
-     */
-    public function createSearchQuery(VettedSecondFactorQuery $query)
+    public function createSearchQuery(VettedSecondFactorQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
         if ($query->identityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
-                ->setParameter('identityId', (string) $query->identityId);
+                ->setParameter('identityId', (string)$query->identityId);
         }
 
         return $queryBuilder->getQuery();
     }
 
-    public function removeByIdentityId(IdentityId $identityId)
+    public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
             ->delete($this->_entityName, 'sf')
@@ -71,16 +63,13 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @param VettedSecondFactor $secondFactor
-     */
-    public function save(VettedSecondFactor $secondFactor)
+    public function save(VettedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);
         $this->getEntityManager()->flush();
     }
 
-    public function remove(VettedSecondFactor $secondFactor)
+    public function remove(VettedSecondFactor $secondFactor): void
     {
         $this->getEntityManager()->remove($secondFactor);
         $this->getEntityManager()->flush();

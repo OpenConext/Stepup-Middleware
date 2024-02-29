@@ -29,22 +29,18 @@ class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServic
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
      * The ID of a verified or vetted second factor.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorId;
 
     /**

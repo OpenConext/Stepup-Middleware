@@ -36,7 +36,7 @@ class InstitutionsAddedToWhitelistEvent implements WhitelistEvent
      * @param array $data
      * @return InstitutionsAddedToWhitelistEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(InstitutionCollection::deserialize($data['added_institutions']));
     }

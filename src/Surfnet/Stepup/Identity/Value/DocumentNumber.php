@@ -19,19 +19,17 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class DocumentNumber implements JsonSerializable
+final class DocumentNumber implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $documentNumber;
+    private readonly string $documentNumber;
 
     /**
      * @return self
      */
-    public static function unknown()
+    public static function unknown(): self
     {
         return new self('—');
     }
@@ -41,7 +39,7 @@ final class DocumentNumber implements JsonSerializable
      */
     public function __construct($documentNumber)
     {
-        if (!is_string($documentNumber) || empty($documentNumber)) {
+        if (!is_string($documentNumber) || ($documentNumber === '' || $documentNumber === '0')) {
             throw InvalidArgumentException::invalidType('non-empty string', 'documentNumber', $documentNumber);
         }
 
@@ -56,17 +54,17 @@ final class DocumentNumber implements JsonSerializable
         return $this->documentNumber;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->documentNumber;
     }
 
-    public function equals(DocumentNumber $other)
+    public function equals(DocumentNumber $other): bool
     {
         return $this->documentNumber === $other->documentNumber;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->documentNumber;
     }

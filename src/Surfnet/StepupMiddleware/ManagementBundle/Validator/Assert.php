@@ -22,13 +22,13 @@ use Assert\InvalidArgumentException;
 
 final class Assert
 {
-    public static function keysMatch(array $value, array $keys, $message = null, $propertyPath = null)
+    public static function keysMatch(array $value, array $keys, $message = null, $propertyPath = null): void
     {
         $keysOfValue = array_keys($value);
         $extraKeys = array_diff($keysOfValue, $keys);
         $missingKeys = array_diff($keys, $keysOfValue);
 
-        if (count($extraKeys) === 0 && count($missingKeys) === 0) {
+        if ($extraKeys === [] && $missingKeys === []) {
             return;
         }
 
@@ -37,12 +37,17 @@ final class Assert
             0,
             $propertyPath,
             $value,
-            ['expected' => $keys, 'actual' => $keysOfValue]
+            ['expected' => $keys, 'actual' => $keysOfValue],
         );
     }
 
-    public static function requiredAndOptionalOptions(array $value, array $required, array $optional, $message = null, $propertyPath = null)
-    {
+    public static function requiredAndOptionalOptions(
+        array $value,
+        array $required,
+        array $optional,
+        $message = null,
+        $propertyPath = null,
+    ): void {
         // Filter out the optional items from the value array
         $requiredValueSet = array_diff_key($value, array_flip($optional));
 
@@ -53,7 +58,7 @@ final class Assert
         $keysOfValue = array_keys($value);
         $extraKeys = array_diff($keysOfValue, array_merge($optional, $required));
 
-        if (count($extraKeys) === 0) {
+        if ($extraKeys === []) {
             return;
         }
 
@@ -62,7 +67,7 @@ final class Assert
             0,
             $propertyPath,
             $value,
-            ['expected' => $optional, 'actual' => $keysOfValue]
+            ['expected' => $optional, 'actual' => $keysOfValue],
         );
     }
 }

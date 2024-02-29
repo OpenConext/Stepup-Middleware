@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'institution',
@@ -75,26 +75,26 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
         Institution $institution,
         RegistrationAuthorityRole $role,
         Location $location,
-        ContactInformation $contactInformation
+        ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId                    = $nameId;
+        $this->nameId = $nameId;
         $this->registrationAuthorityRole = $role;
-        $this->location                  = $location;
-        $this->contactInformation        = $contactInformation;
+        $this->location = $location;
+        $this->contactInformation = $contactInformation;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -102,19 +102,19 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
             new Institution($data['institution']),
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'name_id'                     => (string) $this->nameId,
-            'institution'                 => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'institution' => (string)$this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
-            'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 

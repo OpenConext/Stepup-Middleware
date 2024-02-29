@@ -20,21 +20,15 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
-final class SelfVetOption implements JsonSerializable
+final readonly class SelfVetOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $selfVetOption;
-
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }
 
-    public function __construct(bool $selfVetOption)
+    public function __construct(private bool $selfVetOption)
     {
-        $this->selfVetOption = $selfVetOption;
     }
 
     public function equals(SelfVetOption $other): bool

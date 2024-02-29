@@ -36,7 +36,7 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
      */
     public $recoveryTokenType;
 
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -47,14 +47,14 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
         IdentityId $identityId,
         Institution $identityInstitution,
         RecoveryTokenId $recoveryTokenId,
-        RecoveryTokenType $recoveryTokenType
+        RecoveryTokenType $recoveryTokenType,
     ) {
         parent::__construct($identityId, $identityInstitution);
         $this->recoveryTokenId = $recoveryTokenId;
         $this->recoveryTokenType = $recoveryTokenType;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         $recoveryTokenType = new RecoveryTokenType($data['recovery_token_type']);
 
@@ -62,11 +62,11 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new RecoveryTokenId($data['recovery_token_id']),
-            $recoveryTokenType
+            $recoveryTokenType,
         );
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;

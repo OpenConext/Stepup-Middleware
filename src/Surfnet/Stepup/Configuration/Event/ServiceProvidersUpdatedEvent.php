@@ -27,7 +27,7 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
 
     /**
      * @param string $configurationId
-     * @param array  $serviceProviders
+     * @param array $serviceProviders
      */
     public function __construct($configurationId, array $serviceProviders)
     {
@@ -39,7 +39,7 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
     /**
      * @return mixed The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['service_providers']);
     }

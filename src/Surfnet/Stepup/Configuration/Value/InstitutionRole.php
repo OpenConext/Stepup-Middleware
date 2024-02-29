@@ -18,15 +18,16 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionRole implements JsonSerializable
+final class InstitutionRole implements JsonSerializable, Stringable
 {
-    const ROLE_USE_RA = 'use_ra';
-    const ROLE_USE_RAA = 'use_raa';
-    const ROLE_SELECT_RAA = 'select_raa';
+    public const ROLE_USE_RA = 'use_ra';
+    public const ROLE_USE_RAA = 'use_raa';
+    public const ROLE_SELECT_RAA = 'select_raa';
 
-    private static $validRoles = [
+    private static array $validRoles = [
         self::ROLE_USE_RA,
         self::ROLE_USE_RAA,
         self::ROLE_SELECT_RAA,
@@ -53,7 +54,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function useRa()
+    public static function useRa(): self
     {
         return new self(self::ROLE_USE_RA);
     }
@@ -61,7 +62,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function useRaa()
+    public static function useRaa(): self
     {
         return new self(self::ROLE_USE_RAA);
     }
@@ -69,16 +70,15 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return InstitutionRole
      */
-    public static function selectRaa()
+    public static function selectRaa(): self
     {
         return new self(self::ROLE_SELECT_RAA);
     }
 
     /**
-     * @param InstitutionRole $role
      * @return bool
      */
-    public function equals(InstitutionRole $role)
+    public function equals(InstitutionRole $role): bool
     {
         return $this->type == $role->getType();
     }
@@ -91,7 +91,7 @@ final class InstitutionRole implements JsonSerializable
         return $this->type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->type;
     }
@@ -99,7 +99,7 @@ final class InstitutionRole implements JsonSerializable
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->type;
     }

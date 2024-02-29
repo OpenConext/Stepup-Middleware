@@ -19,8 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
@@ -36,22 +38,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
  */
 class RaCandidateRepository extends ServiceEntityRepository
 {
-    /**
-     * @var InstitutionAuthorizationRepositoryFilter
-     */
-    private $authorizationRepositoryFilter;
-
-    public function __construct(ManagerRegistry $registry, InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
+    ) {
         parent::__construct($registry, RaCandidate::class);
-        $this->authorizationRepositoryFilter = $authorizationRepositoryFilter;
     }
 
     /**
-     * @param RaCandidateQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createSearchQuery(RaCandidateQuery $query)
+    public function createSearchQuery(RaCandidateQuery $query): Query
     {
         $queryBuilder = $this->getBaseQuery();
 
@@ -63,7 +60,7 @@ class RaCandidateRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'i.institution',
-            'iac'
+            'iac',
         );
 
         if ($query->institution) {
@@ -108,10 +105,9 @@ class RaCandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param RaCandidateQuery $query
-     * @return \Doctrine\ORM\Query
+     * @return Query
      */
-    public function createOptionsQuery(RaCandidateQuery $query)
+    public function createOptionsQuery(RaCandidateQuery $query): Query
     {
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select('a.institution')
@@ -126,7 +122,7 @@ class RaCandidateRepository extends ServiceEntityRepository
             $queryBuilder,
             $query->authorizationContext,
             'a.institution',
-            'iac'
+            'iac',
         );
 
         return $queryBuilder->getQuery();
@@ -148,20 +144,22 @@ class RaCandidateRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
     private function getBaseQuery()
     {
         // Base query to get all allowed ra candidates
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()
-            ->select('i.id as identity_id, i.institution, i.commonName as common_name, i.email, i.nameId AS name_id, a.institution AS ra_institution')
+            ->select(
+                'i.id as identity_id, i.institution, i.commonName as common_name, i.email, i.nameId AS name_id, a.institution AS ra_institution',
+            )
             ->from(VettedSecondFactor::class, 'vsf')
             ->innerJoin(Identity::class, 'i', Join::WITH, "vsf.identityId = i.id")
             ->innerJoin(
                 InstitutionAuthorization::class,
                 'a',
                 Join::WITH,
-                "a.institutionRole = 'select_raa' AND a.institutionRelation = i.institution"
+                "a.institutionRole = 'select_raa' AND a.institutionRelation = i.institution",
             );
 
         // Filter out candidates who are already ra

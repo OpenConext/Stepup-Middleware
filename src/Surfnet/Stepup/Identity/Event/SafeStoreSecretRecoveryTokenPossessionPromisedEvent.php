@@ -18,19 +18,19 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\HashableSecret;
+use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
-use Surfnet\Stepup\Identity\AuditLog\Metadata;
-use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\IdentityId;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 /**
@@ -39,9 +39,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  * This event is recorded when the user promised it stored the password
  * (displayed only once to the user) in a safe location.
  */
-class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
+class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent implements
+    Forgettable,
+    RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -51,27 +53,27 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\RecoveryTokenId
+     * @var RecoveryTokenId
      */
     public $recoveryTokenId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\HashableSecret
+     * @var HashableSecret
      */
     public $secret;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -82,7 +84,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         RecoveryTokenIdentifier $secret,
         CommonName $commonName,
         Email $email,
-        Locale $preferredLocale
+        Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -93,18 +95,18 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
         // In the audit log we do not show the secret (hashed)
-        $metadata->recoveryTokenId = (string) SafeStore::hidden();
+        $metadata->recoveryTokenId = (string)SafeStore::hidden();
         $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -113,7 +115,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
             SafeStore::unknown(),
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
@@ -123,15 +125,15 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     public function serialize(): array
     {
         return [
-            'identity_id' => (string) $this->identityId,
-            'identity_institution' => (string) $this->identityInstitution,
-            'recovery_token_id' => (string) $this->recoveryTokenId,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'recovery_token_id' => (string)$this->recoveryTokenId,
             'recovery_token_type' => RecoveryTokenType::TYPE_SAFE_STORE,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -139,7 +141,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
             ->withRecoveryTokenSecret($this->secret, RecoveryTokenType::safeStore());
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();

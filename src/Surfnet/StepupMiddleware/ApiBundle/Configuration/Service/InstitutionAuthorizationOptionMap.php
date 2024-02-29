@@ -27,11 +27,10 @@ final class InstitutionAuthorizationOptionMap
     /**
      * @var InstitutionAuthorizationOption[]
      */
-    private $institutionOptions;
+    private array $institutionOptions = [];
 
     /**
      * InstitutionAuthorizationOptionMap constructor.
-     * @param Institution $institution
      * @param InstitutionAuthorization[] $institutionAuthorizations
      */
     private function __construct(Institution $institution, array $institutionAuthorizations)
@@ -51,27 +50,29 @@ final class InstitutionAuthorizationOptionMap
             }
             $institutions[$role->getType()][] = $authorization->institutionRelation;
         }
-
-        $this->institutionOptions = [];
         foreach ($roles as $role) {
-            $institutionAuthorizationOption = InstitutionAuthorizationOption::fromInstitutions($role, $institution, $institutions[$role->getType()]);
+            $institutionAuthorizationOption = InstitutionAuthorizationOption::fromInstitutions(
+                $role,
+                $institution,
+                $institutions[$role->getType()],
+            );
             $this->institutionOptions[$role->getType()] = $institutionAuthorizationOption;
         }
     }
 
     /**
-     * @param Institution $institution
      * @param InstitutionAuthorization[]|null
      * @return InstitutionAuthorizationOptionMap
      */
-    public static function fromInstitutionAuthorizations(Institution $institution, array $institutionAuthorizations)
-    {
+    public static function fromInstitutionAuthorizations(
+        Institution $institution,
+        array $institutionAuthorizations,
+    ): self {
         return new self($institution, $institutionAuthorizations);
     }
 
     /**
      * InstitutionAuthorizationOption
-     * @param InstitutionRole $role
      * @return InstitutionAuthorizationOption
      */
     public function getAuthorizationOptionsByRole(InstitutionRole $role)

@@ -25,75 +25,66 @@ use Symfony\Component\Validator\Constraints as Assert;
 class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $authorityId;
 
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $registrationCode;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorType;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $secondFactorIdentifier;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $documentNumber;
 
     /**
-     * @Assert\EqualTo(value=true)
-     *
      * @var boolean
      */
+    #[Assert\EqualTo(value: true)]
     public $identityVerified;
 
     /**
-     * @Assert\Type(type="bool")
-     *
      * @var boolean
      */
+    #[Assert\Type(type: 'bool')]
     public $provePossessionSkipped;
 
     /**

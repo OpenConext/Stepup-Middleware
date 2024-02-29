@@ -19,35 +19,21 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Collection\VettingTypeHintCollection;
-use Surfnet\Stepup\Identity\Value\CommonName;
-use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettingTypeHintRepository"
- * )
- */
-class VettingTypeHint implements \JsonSerializable
+#[ORM\Entity(repositoryClass: VettingTypeHintRepository::class)]
+class VettingTypeHint implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $institution;
 
-    /**
-     * @ORM\Column(type="stepup_vetting_type_hints")
-     *
-     * @var VettingTypeHintCollection
-     */
-    public $hints;
+    #[ORM\Column(type: 'stepup_vetting_type_hints')]
+    public VettingTypeHintCollection $hints;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'institution' => $this->institution,

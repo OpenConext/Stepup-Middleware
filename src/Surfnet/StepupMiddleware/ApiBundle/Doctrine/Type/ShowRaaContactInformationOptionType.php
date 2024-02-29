@@ -29,14 +29,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class ShowRaaContactInformationOptionType extends Type
 {
-    const NAME = 'stepup_show_raa_contact_information_option';
+    public const NAME = 'stepup_show_raa_contact_information_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getBooleanTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
             return $value;
@@ -46,16 +46,16 @@ class ShowRaaContactInformationOptionType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal location of type %s '%s', expected a ShowRaaContactInformationOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
-        return (int) $value->isEnabled();
+        return (int)$value->isEnabled();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ShowRaaContactInformationOption
     {
         if (is_null($value)) {
             return $value;
@@ -63,13 +63,13 @@ class ShowRaaContactInformationOptionType extends Type
 
         try {
             $showRaaContactInformationOption = new ShowRaaContactInformationOption(
-                $platform->convertFromBoolean($value)
+                $platform->convertFromBoolean($value),
             );
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -78,7 +78,7 @@ class ShowRaaContactInformationOptionType extends Type
         return $showRaaContactInformationOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

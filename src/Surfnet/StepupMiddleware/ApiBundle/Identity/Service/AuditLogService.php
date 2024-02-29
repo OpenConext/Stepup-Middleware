@@ -24,26 +24,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
 class AuditLogService extends AbstractSearchService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository
-     */
-    private $repository;
-
-    public function __construct(AuditLogRepository $repository)
+    public function __construct(private readonly AuditLogRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     /**
-     * @param SecondFactorAuditLogQuery $query
      * @return Pagerfanta
      */
     public function searchSecondFactorAuditLog(SecondFactorAuditLogQuery $query)
     {
         $doctrineQuery = $this->repository->createSecondFactorSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 }

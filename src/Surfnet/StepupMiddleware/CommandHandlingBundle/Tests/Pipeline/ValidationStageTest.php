@@ -18,24 +18,32 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
+use ArrayIterator;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationStageTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group pipeline
      */
-    public function it_validates_commands()
+    public function it_validates_commands(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')
+        $command = m::mock(Command::class);
+        $violations = m::mock(ConstraintViolationListInterface::class)
             ->shouldReceive('count')->with()->andReturn(0)
             ->getMock();
-        $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface')
+        $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 
@@ -48,16 +56,16 @@ class ValidationStageTest extends TestCase
      * @test
      * @group pipeline
      */
-    public function it_throws_an_exception_when_validation_fails()
+    public function it_throws_an_exception_when_validation_fails(): void
     {
-        $this->expectException(\Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException::class);
+        $this->expectException(InvalidCommandException::class);
 
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $violations = m::mock('Symfony\Component\Validator\ConstraintViolationListInterface')
+        $command = m::mock(Command::class);
+        $violations = m::mock(ConstraintViolationListInterface::class)
             ->shouldReceive('count')->with()->andReturn(1)
-            ->shouldReceive('getIterator')->with()->andReturn(new \ArrayIterator())
+            ->shouldReceive('getIterator')->with()->andReturn(new ArrayIterator())
             ->getMock();
-        $validator = m::mock('Symfony\Component\Validator\Validator\ValidatorInterface')
+        $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
 

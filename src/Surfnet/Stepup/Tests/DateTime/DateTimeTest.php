@@ -20,11 +20,14 @@ namespace Surfnet\Stepup\Tests\DateTime;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 
 class DateTimeTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Might seem a bit overdone, but we rely on this specific format in quite a bit of places. If the format changes
      * this might lead to some unforeseen errors. This ensures that if the format is changed, this test fails and
@@ -34,7 +37,7 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function the_configured_format_is_what_is_needed_for_correct_application_behavior()
+    public function the_configured_format_is_what_is_needed_for_correct_application_behavior(): void
     {
         $this->assertEquals('Y-m-d\\TH:i:sP', DateTime::FORMAT);
     }
@@ -46,21 +49,21 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function to_string_returns_the_time_in_the_correct_format()
+    public function to_string_returns_the_time_in_the_correct_format(): void
     {
         $coreDateTimeObject = new CoreDateTime('@1000');
-        $ourDateTimeObject  = new DateTime(new CoreDateTime('@1000'));
+        $ourDateTimeObject = new DateTime(new CoreDateTime('@1000'));
 
-        $this->assertEquals($coreDateTimeObject->format(DateTime::FORMAT), (string) $ourDateTimeObject);
+        $this->assertEquals($coreDateTimeObject->format(DateTime::FORMAT), (string)$ourDateTimeObject);
     }
 
     /**
      * @test
      * @group domain
      */
-    public function add_returns_a_different_object_that_has_the_interval_added()
+    public function add_returns_a_different_object_that_has_the_interval_added(): void
     {
-        $base     = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $interval = new DateInterval('PT1S');
 
         $result = $base->add($interval);
@@ -73,9 +76,9 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function sub_returns_a_different_object_that_has_the_interval_substracted()
+    public function sub_returns_a_different_object_that_has_the_interval_substracted(): void
     {
-        $base     = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $interval = new DateInterval('PT1S');
 
         $result = $base->sub($interval);
@@ -88,12 +91,12 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_before_works_with_exclusive_comparison()
+    public function comes_before_works_with_exclusive_comparison(): void
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $same = new DateTime(new CoreDateTime('@1000'));
+        $after = new DateTime(new CoreDateTime('@1001'));
 
         $this->assertTrue($before->comesBefore($base));
         $this->assertFalse($same->comesBefore($base));
@@ -104,12 +107,12 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_before_or_is_equal_works_with_inclusive_comparison()
+    public function comes_before_or_is_equal_works_with_inclusive_comparison(): void
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $same = new DateTime(new CoreDateTime('@1000'));
+        $after = new DateTime(new CoreDateTime('@1001'));
 
         $this->assertTrue($before->comesBeforeOrIsEqual($base));
         $this->assertTrue($same->comesBeforeOrIsEqual($base));
@@ -120,12 +123,12 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_after_works_with_exclusive_comparison()
+    public function comes_after_works_with_exclusive_comparison(): void
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $same = new DateTime(new CoreDateTime('@1000'));
+        $after = new DateTime(new CoreDateTime('@1001'));
 
         $this->assertFalse($before->comesAfter($base));
         $this->assertFalse($same->comesAfter($base));
@@ -136,12 +139,12 @@ class DateTimeTest extends UnitTest
      * @test
      * @group domain
      */
-    public function comes_after_or_is_equal_works_with_inclusive_comparison()
+    public function comes_after_or_is_equal_works_with_inclusive_comparison(): void
     {
-        $base   = new DateTime(new CoreDateTime('@1000'));
+        $base = new DateTime(new CoreDateTime('@1000'));
         $before = new DateTime(new CoreDateTime('@999'));
-        $same   = new DateTime(new CoreDateTime('@1000'));
-        $after  = new DateTime(new CoreDateTime('@1001'));
+        $same = new DateTime(new CoreDateTime('@1000'));
+        $after = new DateTime(new CoreDateTime('@1001'));
 
         $this->assertFalse($before->comesAfterOrIsEqual($base));
         $this->assertTrue($same->comesAfterOrIsEqual($base));

@@ -18,5 +18,5 @@
 
 return [
     'expectedPropertyPath' => '(root)',
-    'configuration'        => null
+    'configuration' => null,
 ];

@@ -24,7 +24,7 @@ class ValidReconfigureInstitutionsRequest extends Constraint
 {
     public $message = 'Invalid Reconfigure InstitutionConfiguration Structure';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'reconfigure_institution_configuration_structure_validator';
     }

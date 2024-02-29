@@ -21,51 +21,42 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class IdentityController extends Controller
+class IdentityController extends AbstractController
 {
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
-    /**
-     * @var InstitutionRoleSet
-     */
-    private $roleRequirements;
+    private readonly InstitutionRoleSet $roleRequirements;
 
     public function __construct(
-        IdentityService $identityService
+        private IdentityService $identityService,
     ) {
-        $this->identityService = $identityService;
-
         $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)]
+            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)],
         );
     }
 
-    public function getAction($id)
+    public function get($id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $identity = $this->identityService->find($id);
 
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             throw new NotFoundHttpException(sprintf("Identity '%s' does not exist", $id));
         }
 
         return new JsonResponse($identity);
     }
 
-    public function collectionAction(Request $request, Institution $institution)
+    public function collection(Request $request, Institution $institution)
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -83,9 +74,8 @@ class IdentityController extends Controller
 
     /**
      * @param string $identityId
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getRegistrationAuthorityCredentialsAction($identityId)
+    public function getRegistrationAuthorityCredentials($identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

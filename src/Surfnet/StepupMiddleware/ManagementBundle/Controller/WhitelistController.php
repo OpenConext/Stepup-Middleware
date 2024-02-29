@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhiteli
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -37,58 +37,51 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class WhitelistController extends Controller
+class WhitelistController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
-
-    public function __construct(TransactionAwarePipeline $pipeline, WhitelistService $whitelistService)
-    {
-        $this->pipeline = $pipeline;
-        $this->whitelistService = $whitelistService;
+    public function __construct(
+        /**
+         * @return TransactionAwarePipeline
+         */
+        private readonly TransactionAwarePipeline $pipeline,
+        private readonly WhitelistService $whitelistService,
+    ) {
     }
 
-    public function replaceWhitelistAction(Request $request)
+    public function replaceWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command               = new ReplaceWhitelistCommand();
-        $command->UUID         = (string) Uuid::uuid4();
+        $command = new ReplaceWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutions = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
     }
 
-    public function addToWhitelistAction(Request $request)
+    public function addToWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command                        = new AddToWhitelistCommand();
-        $command->UUID                  = (string) Uuid::uuid4();
+        $command = new AddToWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutionsToBeAdded = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
     }
 
-    public function removeFromWhitelistAction(Request $request)
+    public function removeFromWhitelist(Request $request)
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
-        $command                          = new RemoveFromWhitelistCommand();
-        $command->UUID                    = (string) Uuid::uuid4();
+        $command = new RemoveFromWhitelistCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institutionsToBeRemoved = $this->getInstitutionsFromBody($request);
 
         return $this->handleCommand($request, $command);
     }
 
-    public function showWhitelistAction()
+    public function showWhitelist(): JsonResponse
     {
         $entries = $this->whitelistService->getAllEntries();
 
@@ -96,33 +89,29 @@ class WhitelistController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param Command $command
      * @return JsonResponse
      */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, Command $command): JsonResponse
     {
         try {
             $this->pipeline->process($command);
         } catch (ForbiddenException $e) {
             throw new AccessDeniedHttpException(
                 sprintf('Processing of command "%s" is forbidden for this client', $command),
-                $e
+                $e,
             );
         }
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response   = new JsonResponse([
-            'status'       => 'OK',
-            'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601),
-        ]);
 
-        return $response;
+        return new JsonResponse([
+            'status' => 'OK',
+            'processed_by' => $serverName,
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
+        ]);
     }
 
     /**
-     * @param Request $request
      * @return array
      */
     private function getInstitutionsFromBody(Request $request)
@@ -131,7 +120,7 @@ class WhitelistController extends Controller
 
         if (!isset($decoded['institutions']) || !is_array($decoded['institutions'])) {
             throw new BadRequestHttpException(
-                'Request must contain json object with property "institutions" containing an array of institutions'
+                'Request must contain json object with property "institutions" containing an array of institutions',
             );
         }
 

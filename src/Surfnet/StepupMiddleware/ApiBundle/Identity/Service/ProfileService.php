@@ -21,35 +21,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 
 class ProfileService extends AbstractSearchService
 {
-    /**
-     * @var RaListingRepository
-     */
-    private $raListingRepository;
-
-    /**
-     * @var IdentityService
-     */
-    private $identityService;
-
-    /**
-     * @var AuthorizationContextService
-     */
-    private $authorizationService;
-
     public function __construct(
-        RaListingRepository $raListingRepository,
-        IdentityService $identityService,
-        AuthorizationContextService $institutionAuthorizationService
+        private readonly RaListingRepository $raListingRepository,
+        private readonly IdentityService $identityService,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
-        $this->raListingRepository = $raListingRepository;
-        $this->identityService = $identityService;
-        $this->authorizationService = $institutionAuthorizationService;
     }
 
     /**
@@ -68,32 +51,32 @@ class ProfileService extends AbstractSearchService
      * @param string $identityId
      * @return Profile|null
      */
-    public function createProfile($identityId)
+    public function createProfile($identityId): ?Profile
     {
         $identity = $this->identityService->find($identityId);
-        if ($identity === null) {
+        if (!$identity instanceof Identity) {
             return null;
         }
 
         $authorizationContextRa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            RegistrationAuthorityRole::ra()
+            RegistrationAuthorityRole::ra(),
         );
 
         $authorizationContextRaa = $this->authorizationService->buildInstitutionAuthorizationContext(
             new IdentityId($identityId),
-            RegistrationAuthorityRole::raa()
+            RegistrationAuthorityRole::raa(),
         );
 
         $authorizations = AuthorizedInstitutionCollection::from(
             $authorizationContextRa->getInstitutions(),
-            $authorizationContextRaa->getInstitutions()
+            $authorizationContextRaa->getInstitutions(),
         );
 
         return new Profile(
             $identity,
             $authorizations,
-            $authorizationContextRa->isActorSraa()
+            $authorizationContextRa->isActorSraa(),
         );
     }
 }

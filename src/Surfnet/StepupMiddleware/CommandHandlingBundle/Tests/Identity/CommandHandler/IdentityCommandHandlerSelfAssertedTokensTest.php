@@ -62,7 +62,6 @@ use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\SafeStore;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\Stepup\Identity\Value\SelfAssertedRegistrationVettingType;
-use Surfnet\Stepup\Identity\Value\SelfVetVettingType;
 use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\UnhashedSecret;
@@ -86,13 +85,12 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Ident
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RegistrationMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
-
 /**
  * @runTestsInSeparateProcesses
  */
 class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 {
-    private static $window = 3600;
+    private static int $window = 3600;
 
     /**
      * @var AllowedSecondFactorListService|m\MockInterface
@@ -127,36 +125,33 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     /**
      * @var IdentityId
      */
-    private $id;
+    private IdentityId $id;
 
     /**
      * @var Institution
      */
-    private $institution;
+    private Institution $institution;
 
     /**
      * @var Email
      */
-    private $email;
+    private Email $email;
 
     /**
      * @var CommonName
      */
-    private $commonName;
+    private CommonName $commonName;
 
     /**
      * @var Locale
      */
-    private $preferredLocale;
+    private Locale $preferredLocale;
     /**
      * @var RecoveryTokenSecretHelper|m\MockInterface
      */
     private $recoveryTokenSecretHelper;
 
-    /**
-     * @var NameId
-     */
-    private $nameId;
+    private ?NameId $nameId = null;
 
     public function setUp(): void
     {
@@ -176,7 +171,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_code_possession_can_be_proven()
+    public function test_a_sms_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
@@ -202,8 +197,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneNumber,
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ]);
     }
 
@@ -211,7 +206,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_proven()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -227,11 +222,13 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
-                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
-                $hasExpectedSecret = $unhashedSecret->getSecret() === 'super-safe-secret';
-                return $isUnhashedSecret && $hasExpectedSecret;
-            }))
+            ->with(
+                m::on(function ($unhashedSecret): bool {
+                    $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                    $hasExpectedSecret = $unhashedSecret->getSecret() === 'super-safe-secret';
+                    return $isUnhashedSecret && $hasExpectedSecret;
+                }),
+            )
             ->andReturn($secret);
 
         $this->scenario
@@ -246,8 +243,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ]);
     }
 
@@ -255,7 +252,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven()
+    public function test_a_safe_store_secret_and_phone_recovery_code_possession_can_be_proven(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -274,11 +271,13 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $secret = new HashedSecret('secret-for-safe-keeping');
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
-                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
-                $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
-                return $isUnhashedSecret && $hasExpectedSecret;
-            }))
+            ->with(
+                m::on(function ($unhashedSecret): bool {
+                    $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                    $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
+                    return $isUnhashedSecret && $hasExpectedSecret;
+                }),
+            )
             ->andReturn($secret);
 
         $confMock = m::mock(InstitutionConfigurationOptions::class);
@@ -297,8 +296,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command2)
             ->then([
@@ -309,8 +308,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneNumber,
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ]);
     }
 
@@ -318,7 +317,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_code_possession_can_not_be_proven_twice()
+    public function test_a_sms_recovery_code_possession_can_not_be_proven_twice(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $phoneNumber = new PhoneNumber('+31 (0) 612345678');
@@ -346,8 +345,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneNumber,
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -356,7 +355,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_only_one_safe_store_secret_allowed()
+    public function test_only_one_safe_store_secret_allowed(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -372,11 +371,13 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $secret = new HashedSecret('secret-for-safe-keeping');
         $this->recoveryTokenSecretHelper
             ->shouldReceive('hash')
-            ->with(m::on(function ($unhashedSecret) {
-                $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
-                $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
-                return $isUnhashedSecret && $hasExpectedSecret;
-            }))
+            ->with(
+                m::on(function ($unhashedSecret): bool {
+                    $isUnhashedSecret = $unhashedSecret instanceof UnhashedSecret;
+                    $hasExpectedSecret = $unhashedSecret->getSecret() === 'secret-for-safe-keeping';
+                    return $isUnhashedSecret && $hasExpectedSecret;
+                }),
+            )
             ->andReturn($secret);
 
         $this->expectException(DomainException::class);
@@ -394,8 +395,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -404,7 +405,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sms_recovery_token_possession_requires_institution_configuration_feature_enabled()
+    public function test_a_sms_recovery_token_possession_requires_institution_configuration_feature_enabled(): void
     {
         $identityCreatedEvent = $this->buildIdentityCreatedEvent();
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
@@ -419,7 +420,9 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $this->configService->shouldReceive('findInstitutionConfigurationOptionsFor')->andReturn($confMock);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Registration of self-asserted tokens is not allowed for this institution "a corp.".');
+        $this->expectExceptionMessage(
+            'Registration of self-asserted tokens is not allowed for this institution "a corp.".',
+        );
 
         $this->scenario
             ->withAggregateId($this->id)
@@ -432,8 +435,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneNumber,
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command);
     }
@@ -442,7 +445,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked_by_ra(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -471,7 +474,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $authorityNameId,
                     $authorityCommonName,
                     $authorityEmail,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new YubikeySecondFactorBootstrappedEvent(
                     $authorityId,
@@ -481,8 +484,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $authorityEmail,
                     new Locale('en_GB'),
                     new SecondFactorId(self::uuid()),
-                    new YubikeyPublicId('00000012')
-                )
+                    new YubikeyPublicId('00000012'),
+                ),
             ])
             ->withAggregateId($this->id)
             ->given([
@@ -494,8 +497,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command)
             ->then([
@@ -504,8 +507,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->institution,
                     $recoveryTokenId,
                     RecoveryTokenType::safeStore(),
-                    $authorityId
-                )
+                    $authorityId,
+                ),
             ]);
     }
 
@@ -513,7 +516,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_token_can_be_registered_self_asserted()
+    public function test_a_token_can_be_registered_self_asserted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -535,7 +538,6 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $expectedVettingType = new SelfAssertedRegistrationVettingType($recoveryTokenId);
 
         $this->scenario
-
             ->withAggregateId($this->id)
             ->given([
                 $this->buildIdentityCreatedEvent(),
@@ -547,12 +549,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -564,7 +566,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
                     $this->id,
@@ -573,8 +575,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command)
             ->then([
@@ -588,8 +590,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale,
-                    $expectedVettingType
-                )
+                    $expectedVettingType,
+                ),
             ]);
     }
 
@@ -597,7 +599,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_self_asserted_token_registration_requires_possession_of_recovery_token()
+    public function test_self_asserted_token_registration_requires_possession_of_recovery_token(): void
     {
         $madeUpRecoveryTokenId = new RecoveryTokenId(self::uuid());
 
@@ -618,7 +620,6 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('A recovery token is required to perform a self-asserted token registration');
         $this->scenario
-
             ->withAggregateId($this->id)
             ->given([
                 $this->buildIdentityCreatedEvent(),
@@ -630,12 +631,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -647,18 +648,17 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ])
-        ->when($command);
-
+            ->when($command);
     }
 
     /**
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked()
+    public function test_a_safe_store_secret_recovery_code_possession_can_be_revoked(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -682,8 +682,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
-                )
+                    $this->preferredLocale,
+                ),
             ])
             ->when($command)
             ->then([
@@ -691,8 +691,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->id,
                     $this->institution,
                     $recoveryTokenId,
-                    RecoveryTokenType::safeStore()
-                )
+                    RecoveryTokenType::safeStore(),
+                ),
             ]);
     }
 
@@ -700,7 +700,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_a_sat_token_can_be_used_to_self_vet_a_token()
+    public function test_a_sat_token_can_be_used_to_self_vet_a_token(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -716,8 +716,8 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
         $loa = new Loa(1.5, 'loa-self-asserted');
         $this->loaResolutionService->shouldReceive('getLoa')->with('loa-self-asserted')->andReturn($loa);
-        $phoneSfId         = new SecondFactorId($this->uuid());
-        $phoneIdentifier           = new PhoneNumber('+31 (0) 612345678');
+        $phoneSfId = new SecondFactorId($this->uuid());
+        $phoneIdentifier = new PhoneNumber('+31 (0) 612345678');
 
         $command = new SelfVetSecondFactorCommand();
         $command->secondFactorId = '+31 (0) 612345678';
@@ -740,12 +740,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -757,7 +757,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
                     $this->id,
@@ -766,7 +766,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
+                    $this->preferredLocale,
                 ),
                 new SecondFactorVettedWithoutTokenProofOfPossession(
                     $this->id,
@@ -778,7 +778,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale,
-                    $vettingType
+                    $vettingType,
                 ),
                 // The next token is self-vetted using the other SAT token
                 new PhonePossessionProvenEvent(
@@ -789,12 +789,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -806,7 +806,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command)
@@ -822,7 +822,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->commonName,
                     $this->email,
                     new Locale('en_GB'),
-                    new SelfAssertedRegistrationVettingType($recoveryTokenId)
+                    new SelfAssertedRegistrationVettingType($recoveryTokenId),
                 ),
             ]);
     }
@@ -831,7 +831,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      * @group command-handler
      * @runInSeparateProcess
      */
-    public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted()
+    public function test_sat_not_allowed_when_one_vetted_token_is_identity_vetted(): void
     {
         $recoveryTokenId = new RecoveryTokenId(self::uuid());
         $secret = m::mock(HashedSecret::class);
@@ -870,14 +870,16 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                         new SecondFactorType('tiqr'),
                         new SecondFactorType('yubikey'),
                         new SecondFactorType('sms'),
-                    ]
-                )
+                    ],
+                ),
             );
 
         $this->configService->shouldReceive('getMaxNumberOfTokensFor')->andReturn(5);
 
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('Not all tokens are self-asserted, it is not allowed to self-vet using the self-asserted token');
+        $this->expectExceptionMessage(
+            'Not all tokens are self-asserted, it is not allowed to self-vet using the self-asserted token',
+        );
 
         $this->scenario
             ->withAggregateId($this->id)
@@ -891,12 +893,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -908,7 +910,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SafeStoreSecretRecoveryTokenPossessionPromisedEvent(
                     $this->id,
@@ -917,7 +919,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     new SafeStore($secret),
                     $this->commonName,
                     $this->email,
-                    $this->preferredLocale
+                    $this->preferredLocale,
                 ),
                 new SecondFactorVettedWithoutTokenProofOfPossession(
                     $this->id,
@@ -929,7 +931,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale,
-                    $vettingType
+                    $vettingType,
                 ),
                 // The next token is ra-vetted
                 new PhonePossessionProvenEvent(
@@ -940,12 +942,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -957,7 +959,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new SecondFactorVettedEvent(
                     $this->id,
@@ -969,7 +971,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $this->commonName,
                     $this->email,
                     $this->preferredLocale,
-                    new OnPremiseVettingType(new DocumentNumber('123123'))
+                    new OnPremiseVettingType(new DocumentNumber('123123')),
                 ),
                 // The third token is an attempt to self-vet a token
                 new GssfPossessionProvenEvent(
@@ -981,12 +983,12 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
                         TimeFrame::ofSeconds(static::$window),
-                        DateTime::now()
+                        DateTime::now(),
                     ),
                     'nonce',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
                 new EmailVerifiedEvent(
                     $this->id,
@@ -998,14 +1000,16 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     'REGCODE',
                     $this->commonName,
                     $this->email,
-                    new Locale('en_GB')
+                    new Locale('en_GB'),
                 ),
             ])
             ->when($command);
     }
 
-    protected function createCommandHandler(EventStoreInterface $eventStore, EventBusInterface $eventBus): CommandHandler
-    {
+    protected function createCommandHandler(
+        EventStoreInterface $eventStore,
+        EventBusInterface $eventBus,
+    ): CommandHandler {
         $aggregateFactory = new PublicConstructorAggregateFactory();
 
         $this->identityProjectionRepository = m::mock(IdentityProjectionRepository::class);
@@ -1024,7 +1028,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                 $eventBus,
                 $aggregateFactory,
                 m::mock(UserDataFilterInterface::class),
-                $logger
+                $logger,
             ),
             $this->identityProjectionRepository,
             ConfigurableSettings::create(self::$window, ['nl_NL', 'en_GB']),
@@ -1034,11 +1038,11 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             $this->configService,
             $this->loaResolutionService,
             $this->recoveryTokenSecretHelper,
-            $registrationMailService
+            $registrationMailService,
         );
     }
 
-    private function buildIdentityCreatedEvent()
+    private function buildIdentityCreatedEvent(): IdentityCreatedEvent
     {
         $this->nameId = new NameId(md5(__METHOD__));
 
@@ -1048,7 +1052,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
             $this->nameId,
             $this->commonName,
             $this->email,
-            $this->preferredLocale
+            $this->preferredLocale,
         );
     }
 }

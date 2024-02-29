@@ -31,23 +31,14 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapIdentityCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
-
-    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
-    {
-        $this->bootstrapService = $bootstrapService;
-        $this->transactionHelper = $transactionHelper;
+    public function __construct(
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly TransactionHelper $transactionHelper,
+    ) {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates an identity')
@@ -59,10 +50,10 @@ final class BootstrapIdentityCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS'])
+            new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS']),
         );
 
         $nameId = new NameId($input->getArgument('name-id'));
@@ -81,28 +72,34 @@ final class BootstrapIdentityCommand extends Command
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" already exists</error>',
                     $nameId->getNameId(),
-                    $institution->getInstitution()
-                )
+                    $institution->getInstitution(),
+                ),
             );
             return;
         }
         try {
             $this->transactionHelper->beginTransaction();
             $output->writeln('<info>Creating a new identity</info>');
-            $identity = $this->bootstrapService->createIdentity($institution, $nameId, $commonName, $email, $preferredLocale);
+            $identity = $this->bootstrapService->createIdentity(
+                $institution,
+                $nameId,
+                $commonName,
+                $email,
+                $preferredLocale,
+            );
             $this->transactionHelper->finishTransaction();
         } catch (Exception $e) {
             $output->writeln(
                 sprintf(
                     '<error>An Error occurred when trying to bootstrap the identity: "%s"</error>',
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             $this->transactionHelper->rollback();
             throw $e;
         }
         $output->writeln(
-            sprintf('<info>Successfully created identity with UUID %s</info>', $identity->id)
+            sprintf('<info>Successfully created identity with UUID %s</info>', $identity->id),
         );
     }
 }

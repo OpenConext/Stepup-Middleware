@@ -16,33 +16,43 @@
  * limitations under the License.
  */
 
-namespace Surfnet\StepupMiddleware\AoiBundle\Tests\Endpoint;
+namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 
 use Generator;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class SraaControllerTest extends WebTestCase
 {
-    use FixturesTrait;
+    use MockeryPHPUnitIntegration;
 
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
-    private $client;
+    private KernelBrowser $client;
 
     /**
      * @var string[]
      */
-    private $accounts;
+    private array $accounts;
 
     /**
      * @var string
      */
-    private $endpoint;
+    private string $endpoint;
+
+    private DatabaseToolCollection $databaseTool;
 
     public function setUp(): void
     {
+        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        // Initialises schema.
+        $this->databaseTool->loadFixtures([]);
         // Initialises schema.
         $this->loadFixtures([]);
         $this->client = static::createClient();
@@ -67,7 +77,7 @@ class SraaControllerTest extends WebTestCase
      *
      * @dataProvider invalidHttpMethodProvider
      */
-    public function only_get_requests_are_accepted($invalidHttpMethod)
+    public function only_get_requests_are_accepted(string $invalidHttpMethod): void
     {
         $this->client->request(
             $invalidHttpMethod,
@@ -75,13 +85,13 @@ class SraaControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'  => 'application/json',
-                'CONTENT_TYPE' => 'application/json'
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('405', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -89,7 +99,7 @@ class SraaControllerTest extends WebTestCase
      * @group api
      * @dataProvider notAllowedAccountsProvider
      */
-    public function no_access_for_not_allowed_account(string $account)
+    public function no_access_for_not_allowed_account(string $account): void
     {
         $this->client->request(
             'GET',
@@ -97,22 +107,22 @@ class SraaControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => $account,
-                'PHP_AUTH_PW'   => $this->accounts[$account],
+                'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('403', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
     }
 
     /**
      * @test
      * @group api
      */
-    public function json_is_returned_from_the_api()
+    public function json_is_returned_from_the_api(): void
     {
         $this->client->request(
             'GET',
@@ -120,19 +130,19 @@ class SraaControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => 'ra',
-                'PHP_AUTH_PW'   => $this->accounts['ra'],
+                'PHP_AUTH_PW' => $this->accounts['ra'],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
         $this->assertTrue(
             $this->client->getResponse()->headers->contains(
                 'Content-Type',
-                'application/json'
-            )
+                'application/json',
+            ),
         );
     }
 
@@ -141,7 +151,7 @@ class SraaControllerTest extends WebTestCase
      * @group api
      * @dataProvider allowedAccountsProvider
      */
-    public function correct_institutions_are_returned(string $account)
+    public function correct_institutions_are_returned(string $account): void
     {
         $this->client->request(
             'GET',
@@ -149,15 +159,15 @@ class SraaControllerTest extends WebTestCase
             [],
             [],
             [
-                'HTTP_ACCEPT'   => 'application/json',
-                'CONTENT_TYPE'  => 'application/json',
+                'HTTP_ACCEPT' => 'application/json',
+                'CONTENT_TYPE' => 'application/json',
                 'PHP_AUTH_USER' => $account,
-                'PHP_AUTH_PW'   => $this->accounts[$account],
+                'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([])
+            json_encode([]),
         );
 
-        $this->assertEquals('200', $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $response = json_decode($this->client->getResponse()->getContent());
         $this->assertEquals([], $response);
     }
@@ -165,13 +175,13 @@ class SraaControllerTest extends WebTestCase
     /**
      * Dataprovider for only_get_requests_are_accepted
      */
-    public function invalidHttpMethodProvider()
+    public function invalidHttpMethodProvider(): array
     {
         return [
             'POST' => ['POST'],
             'DELETE' => ['DELETE'],
             'PUT' => ['PUT'],
-            'OPTIONS' => ['OPTIONS']
+            'OPTIONS' => ['OPTIONS'],
         ];
     }
 

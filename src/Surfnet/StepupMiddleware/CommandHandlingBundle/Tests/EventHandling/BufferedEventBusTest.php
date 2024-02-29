@@ -22,21 +22,25 @@ use Broadway\Domain\DateTime;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
+use Broadway\EventHandling\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
 class BufferedEventBusTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group event-handling
      */
-    public function it_buffers_events()
+    public function it_buffers_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
-        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
+        $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->never()
             ->getMock();
 
@@ -53,10 +57,10 @@ class BufferedEventBusTest extends TestCase
      * @test
      * @group event-handling
      */
-    public function it_flushes_events()
+    public function it_flushes_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
-        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
+        $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
@@ -75,10 +79,10 @@ class BufferedEventBusTest extends TestCase
      * @test
      * @group event-handling
      */
-    public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice()
+    public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice(): void
     {
-        $event    = $this->createDummyDomainMessage(null);
-        $listener = m::mock(\Broadway\EventHandling\EventListener::class)
+        $event = $this->createDummyDomainMessage(null);
+        $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
 
@@ -96,7 +100,7 @@ class BufferedEventBusTest extends TestCase
      * @test
      * @group event-handling
      */
-    public function an_event_caused_by_an_event_in_the_current_buffer_being_flushed_is_buffered_and_flushed_after_events_in_the_current_buffer()
+    public function an_event_caused_by_an_event_in_the_current_buffer_being_flushed_is_buffered_and_flushed_after_events_in_the_current_buffer(): void
     {
         $bus = new BufferedEventBus($this->getDummyEntityManager());
 
@@ -106,7 +110,7 @@ class BufferedEventBusTest extends TestCase
 
         $listener = new RecordEventsAndPublishToBusOnFirstCallEventListener(
             $bus,
-            new DomainEventStream([$eventCausedByFirstEvent])
+            new DomainEventStream([$eventCausedByFirstEvent]),
         );
 
         $bus->subscribe($listener);
@@ -123,7 +127,7 @@ class BufferedEventBusTest extends TestCase
      * @param mixed $payload
      * @return DomainMessage
      */
-    private function createDummyDomainMessage($payload)
+    private function createDummyDomainMessage(?string $payload): DomainMessage
     {
         return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
     }
@@ -133,4 +137,3 @@ class BufferedEventBusTest extends TestCase
         return m::mock(EntityManagerInterface::class)->shouldIgnoreMissing(true);
     }
 }
-

@@ -19,53 +19,41 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository"
- * )
- * @ORM\Table(
- *      name="email_templates",
- *      indexes={}
- * )
- */
+#[ORM\Table(name: 'email_templates')]
+#[ORM\Entity(repositoryClass: EmailTemplateRepository::class)]
 class EmailTemplate
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column
-     *
-     * @var string
-     */
-    private $id;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[ORM\Column]
+    private ?string $id = null;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     private $name;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     private $locale;
 
     /**
-     * @ORM\Column(type="text")
-     *
      * @var string
      */
+    #[ORM\Column(type: 'text')]
     private $htmlContent;
 
-    public static function create($name, $locale, $htmlContent)
+    public static function create($name, $locale, $htmlContent): self
     {
         $self = new self();
-        $self->id = (string) Uuid::uuid4();
+        $self->id = (string)Uuid::uuid4();
 
         $self->name = $name;
         $self->locale = $locale;

@@ -26,42 +26,34 @@ class MigrateVettedSecondFactorCommand extends AbstractCommand
 
     /**
      * The UUID of the source identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $sourceIdentityId;
 
     /**
      * The UUID of the target identity
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $targetIdentityId;
 
     /**
      * The source second factor UUID that is to be moved
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $sourceSecondFactorId;
 
 
     /**
      * The new destination second factor UUID
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $targetSecondFactorId;
 }

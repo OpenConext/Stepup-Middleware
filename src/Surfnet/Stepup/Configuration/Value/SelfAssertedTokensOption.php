@@ -20,21 +20,15 @@ namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
 
-final class SelfAssertedTokensOption implements JsonSerializable
+final readonly class SelfAssertedTokensOption implements JsonSerializable
 {
-    /**
-     * @var bool
-     */
-    private $allowed;
-
-    public static function getDefault()
+    public static function getDefault(): self
     {
         return new self(false);
     }
 
-    public function __construct(bool $selfAssertedTokensAllowed)
+    public function __construct(private bool $allowed)
     {
-        $this->allowed = $selfAssertedTokensAllowed;
     }
 
     public function equals(SelfAssertedTokensOption $other): bool

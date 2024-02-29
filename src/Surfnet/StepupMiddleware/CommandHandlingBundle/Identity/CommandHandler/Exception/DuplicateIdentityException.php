@@ -30,19 +30,17 @@ final class DuplicateIdentityException extends RuntimeException
     }
 
     /**
-     * @param NameId $nameId
-     * @param Institution $institution
      *
      * @return DuplicateIdentityException
      */
-    public static function forBootstrappingWithYubikeySecondFactor(NameId $nameId, Institution $institution)
+    public static function forBootstrappingWithYubikeySecondFactor(NameId $nameId, Institution $institution): self
     {
         return new self(
             sprintf(
                 'Trying to bootstrap a duplicate identity: an identity with name ID "%s" from institution "%s" already exists.',
                 $nameId->getNameId(),
-                $institution->getInstitution()
-            )
+                $institution->getInstitution(),
+            ),
         );
     }
 }

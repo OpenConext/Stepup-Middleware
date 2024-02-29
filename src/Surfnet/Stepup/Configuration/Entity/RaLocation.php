@@ -26,79 +26,41 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 class RaLocation
 {
     /**
-     * @var RaLocationId
-     */
-    private $id;
-
-    /**
-     * @var RaLocationName
-     */
-    private $name;
-
-    /**
-     * @var Location
-     */
-    private $location;
-
-    /**
-     * @var ContactInformation
-     */
-    private $contactInformation;
-
-    /**
-     * @param RaLocationId $id
-     * @param RaLocationName $name
-     * @param Location $location
-     * @param ContactInformation $contactInformation
      * @return RaLocation
      */
     public static function create(
         RaLocationId $id,
         RaLocationName $name,
         Location $location,
-        ContactInformation $contactInformation
-    ) {
+        ContactInformation $contactInformation,
+    ): self {
         return new self($id, $name, $location, $contactInformation);
     }
 
     private function __construct(
-        RaLocationId $id,
-        RaLocationName $name,
-        Location $location,
-        ContactInformation $contactInformation
+        private readonly RaLocationId $id,
+        private RaLocationName $name,
+        private Location $location,
+        private ContactInformation $contactInformation,
     ) {
-        $this->id                 = $id;
-        $this->name               = $name;
-        $this->location           = $location;
-        $this->contactInformation = $contactInformation;
     }
 
-    /**
-     * @param RaLocationName $name
-     */
-    public function rename(RaLocationName $name)
+    public function rename(RaLocationName $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @param Location $location
-     */
-    public function relocate(Location $location)
+    public function relocate(Location $location): void
     {
         $this->location = $location;
     }
 
-    /**
-     * @param ContactInformation $contactInformation
-     */
-    public function changeContactInformation(ContactInformation $contactInformation)
+    public function changeContactInformation(ContactInformation $contactInformation): void
     {
         $this->contactInformation = $contactInformation;
     }
 
     /**
-     * @param RaLocationId $otherId
      * @return bool
      */
     public function hasId(RaLocationId $otherId)

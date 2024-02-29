@@ -28,11 +28,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
  */
 class RecoveryTokenStatusType extends Type
 {
-    const NAME = 'stepup_recovery_token_status';
+    public const NAME = 'stepup_recovery_token_status';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
     /**
@@ -45,9 +45,9 @@ class RecoveryTokenStatusType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal recovery token status of type %s '%s', expected a RecoveryTokenStatus instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
@@ -59,7 +59,7 @@ class RecoveryTokenStatusType extends Type
             return 20;
         }
 
-        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string) $value));
+        throw new ConversionException(sprintf("Encountered inconvertible second factor status '%s'", (string)$value));
     }
 
     /**
@@ -79,13 +79,13 @@ class RecoveryTokenStatusType extends Type
         throw new ConversionException(
             sprintf(
                 "Encountered illegal recovery token status of type %s '%s', expected it to be one of [0,10,20]",
-                is_object($value) ? get_class($value) : gettype($value),
-                is_scalar($value) ? (string) $value : ''
-            )
+                get_debug_type($value),
+                is_scalar($value) ? (string)$value : '',
+            ),
         );
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

@@ -27,6 +27,6 @@ return [
             'sso_on_2fa' => -1,
             'number_of_tokens_per_identity' => 1,
             'allowed_second_factors' => [],
-        ]
-    ]
+        ],
+    ],
 ];

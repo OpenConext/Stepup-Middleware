@@ -25,14 +25,17 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddEventBusListenersCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.event_bus.buffered');
         $eventListenerDefinitions = $container->findTaggedServiceIds('event_bus.event_listener');
 
         // When replaying events, certain listeners should not be allowed to run again, for instance
         // when they are no longer relevant at the time of replaying (i.e. sending emails)
-        if (!in_array($container->getParameter('kernel.environment'), ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
+        if (!in_array(
+            $container->getParameter('kernel.environment'),
+            ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'],
+        )) {
             foreach (array_keys($eventListenerDefinitions) as $serviceId) {
                 $definition->addMethodCall('subscribe', [new Reference($serviceId)]);
             }
@@ -43,10 +46,12 @@ class AddEventBusListenersCompilerPass implements CompilerPassInterface
         foreach ($eventListenerDefinitions as $serviceId => $tags) {
             foreach ($tags as $attributes) {
                 if (!isset($attributes['disable_for_replay'])) {
-                    throw new LogicException(sprintf(
-                        'Cannot replay events: Expected option "disable_for_replay" to be set for service id "%s"',
-                        $serviceId
-                    ));
+                    throw new LogicException(
+                        sprintf(
+                            'Cannot replay events: Expected option "disable_for_replay" to be set for service id "%s"',
+                            $serviceId,
+                        ),
+                    );
                 }
 
                 if ($attributes['disable_for_replay']) {

@@ -29,14 +29,14 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class NumberOfTokensPerIdentityType extends Type
 {
-    const NAME = 'stepup_number_of_tokens_per_identity_option';
+    public const NAME = 'stepup_number_of_tokens_per_identity_option';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getIntegerTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return $value;
@@ -47,28 +47,28 @@ class NumberOfTokensPerIdentityType extends Type
                 sprintf(
                     "Encountered illegal number of tokens per identity %s '%s', expected a 
                     NumberOfTokensPerIdentityOption instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
         return $value->getNumberOfTokensPerIdentity();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?NumberOfTokensPerIdentityOption
     {
         if (is_null($value)) {
             return $value;
         }
 
         try {
-            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int) $value);
+            $numberOfTokensPerIdentityOption = new NumberOfTokensPerIdentityOption((int)$value);
         } catch (InvalidArgumentException $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -77,7 +77,7 @@ class NumberOfTokensPerIdentityType extends Type
         return $numberOfTokensPerIdentityOption;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

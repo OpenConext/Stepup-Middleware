@@ -25,19 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 class RetractRegistrationAuthorityCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
     public $raInstitution;
 
     /**

@@ -8,5 +8,5 @@ _profiler:
 
 JMSTranslationBundle_ui:
     resource: "@JMSTranslationBundle/Controller/"
-    type:     annotation
+    type:     attribute
     prefix:   /_trans

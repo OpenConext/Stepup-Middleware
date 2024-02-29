@@ -24,14 +24,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AddToWhitelistCommand extends AbstractCommand implements ManagementExecutable
 {
-    /**
-     * @Assert\Type(type="array")
-     * @Assert\All({
-     *      @Assert\NotBlank,
-     *      @Assert\Type("string")
-     * })
-     *
-     * @var array
-     */
-    public $institutionsToBeAdded;
+    #[Assert\Type(type: 'array')]
+    #[Assert\All([
+        new Assert\NotBlank(),
+        new Assert\Type("string"),
+    ])]
+    public array $institutionsToBeAdded;
 }

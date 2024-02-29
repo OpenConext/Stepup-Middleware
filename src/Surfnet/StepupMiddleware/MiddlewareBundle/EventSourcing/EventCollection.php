@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing;
 
 use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
@@ -27,7 +28,7 @@ final class EventCollection implements IteratorAggregate
     /**
      * @var string[]
      */
-    private $eventNames = [];
+    private array $eventNames = [];
 
     public function __construct(array $eventNames)
     {
@@ -37,10 +38,12 @@ final class EventCollection implements IteratorAggregate
             }
 
             if (!class_exists($eventName)) {
-                throw new InvalidArgumentException(sprintf(
-                    'Cannot create EventCollection: class "%s" does not exist',
-                    $eventName
-                ));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Cannot create EventCollection: class "%s" does not exist',
+                        $eventName,
+                    ),
+                );
             }
 
             $this->eventNames[] = $eventName;
@@ -55,30 +58,27 @@ final class EventCollection implements IteratorAggregate
         return $this->eventNames;
     }
 
-    public function formatAsEventStreamTypes()
+    public function formatAsEventStreamTypes(): array
     {
         return array_map(
-            function ($eventName) {
-                return strtr($eventName, '\\', '.');
-            },
-            $this->eventNames
+            fn($eventName): string => strtr($eventName, '\\', '.'),
+            $this->eventNames,
         );
     }
 
     /**
-     * @param array $subset
      * @return EventCollection
      */
-    public function select(array $subset)
+    public function select(array $subset): self
     {
         $nonAvailableEventNames = array_diff($subset, $this->eventNames);
 
-        if (!empty($nonAvailableEventNames)) {
+        if ($nonAvailableEventNames !== []) {
             throw new InvalidArgumentException(
                 sprintf(
                     'Subset of event names contains event names not present in collection: %s',
-                    implode(', ', $nonAvailableEventNames)
-                )
+                    implode(', ', $nonAvailableEventNames),
+                ),
             );
         }
 
@@ -89,12 +89,12 @@ final class EventCollection implements IteratorAggregate
      * @param $eventName
      * @return bool
      */
-    public function contains($eventName)
+    public function contains($eventName): bool
     {
         return in_array($eventName, $this->eventNames);
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->eventNames);
     }

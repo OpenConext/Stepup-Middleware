@@ -19,15 +19,18 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests;
 
 use Broadway\CommandHandling\Testing\CommandHandlerScenarioTestCase;
-use Rhumsaa\Uuid\Uuid;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Ramsey\Uuid\Uuid;
 
 abstract class CommandHandlerTest extends CommandHandlerScenarioTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @return string
      */
-    protected static function uuid()
+    protected static function uuid(): string
     {
-        return (string) Uuid::uuid4();
+        return (string)Uuid::uuid4();
     }
 }

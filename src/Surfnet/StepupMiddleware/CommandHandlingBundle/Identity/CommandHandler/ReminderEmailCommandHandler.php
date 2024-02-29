@@ -24,24 +24,16 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorRemind
 
 class ReminderEmailCommandHandler extends SimpleCommandHandler
 {
-    /**
-     * @var VerifiedSecondFactorReminderService
-     */
-    private $verifiedSecondFactorReminderService;
-
-    /**
-     * @param VerifiedSecondFactorReminderService $verifiedSecondFactorReminderService
-     */
-    public function __construct(VerifiedSecondFactorReminderService $verifiedSecondFactorReminderService)
-    {
-        $this->verifiedSecondFactorReminderService = $verifiedSecondFactorReminderService;
+    public function __construct(
+        private readonly VerifiedSecondFactorReminderService $verifiedSecondFactorReminderService,
+    ) {
     }
 
-    public function handleSendVerifiedSecondFactorRemindersCommand(SendVerifiedSecondFactorRemindersCommand $command)
+    public function handleSendVerifiedSecondFactorRemindersCommand(SendVerifiedSecondFactorRemindersCommand $command,): void
     {
         $this->verifiedSecondFactorReminderService->sendReminders(
             $command->requestedAt,
-            $command->dryRun
+            $command->dryRun,
         );
     }
 }

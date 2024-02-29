@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'id',
         'institution',
         'common_name',
@@ -46,7 +46,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
         $this->commonName = $commonName;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -59,12 +59,12 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
      * @param array $data
      * @return IdentityRenamedEvent The object instance
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            CommonName::unknown()
+            CommonName::unknown(),
         );
     }
 
@@ -74,8 +74,8 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
         ];
     }
 
@@ -85,7 +85,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
             ->withCommonName($this->commonName);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->commonName = $sensitiveData->getCommonName();
     }

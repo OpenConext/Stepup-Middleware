@@ -24,27 +24,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class DispatchStage implements Stage
 {
-    /**
-     * @var CommandBus
-     */
-    private $commandBus;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @param LoggerInterface     $logger
-     * @param CommandBus $commandBus
-     */
-    public function __construct(LoggerInterface $logger, CommandBus $commandBus)
-    {
-        $this->logger = $logger;
-        $this->commandBus = $commandBus;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly CommandBus $commandBus,
+    ) {
     }
 
-    public function process(Command $command)
+    public function process(Command $command): Command
     {
         $this->logger->debug(sprintf('Dispatching command "%s" for handling', $command));
 

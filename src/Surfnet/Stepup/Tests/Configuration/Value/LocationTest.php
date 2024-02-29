@@ -18,11 +18,16 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use stdClass;
 use Surfnet\Stepup\Configuration\Value\Location;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class LocationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
@@ -30,9 +35,9 @@ class LocationTest extends UnitTest
      *
      * @param mixed $nonString
      */
-    public function it_cannot_be_created_with_anything_but_a_string($nonString)
+    public function it_cannot_be_created_with_anything_but_a_string(bool|int|float|stdClass|array|null $nonString): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Location($nonString);
     }
@@ -41,12 +46,12 @@ class LocationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_locations_with_the_same_value_are_equal()
+    public function two_locations_with_the_same_value_are_equal(): void
     {
-        $location          = new Location('a');
-        $theSame           = new Location('a');
+        $location = new Location('a');
+        $theSame = new Location('a');
         $theSameWithSpaces = new Location('  a ');
-        $different         = new Location('A');
+        $different = new Location('A');
 
         $this->assertTrue($location->equals($theSame));
         $this->assertTrue($location->equals($theSameWithSpaces));
@@ -56,15 +61,15 @@ class LocationTest extends UnitTest
     /**
      * dataprovider
      */
-    public function nonStringProvider()
+    public function nonStringProvider(): array
     {
         return [
-            'null'         => [null],
-            'boolean'      => [false],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \stdClass()],
+            'null' => [null],
+            'boolean' => [false],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new stdClass()],
         ];
     }
 }

@@ -22,30 +22,20 @@ use Broadway\Domain\DomainEventStreamInterface;
 use Broadway\ReadModel\ProjectorInterface;
 use Exception;
 
-final class TransactionAwareEventDispatcher implements EventDispatcher
+final readonly class TransactionAwareEventDispatcher implements EventDispatcher
 {
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var DBALConnectionHelper
-     */
-    private $connectionHelper;
-
-    public function __construct(DBALConnectionHelper $connectionHelper, EventDispatcher $eventDispatcher)
-    {
-        $this->connectionHelper = $connectionHelper;
-        $this->eventDispatcher  = $eventDispatcher;
+    public function __construct(
+        private DBALConnectionHelper $connectionHelper,
+        private EventDispatcher $eventDispatcher,
+    ) {
     }
 
-    public function registerProjector(ProjectorInterface $projector)
+    public function registerProjector(ProjectorInterface $projector): void
     {
         $this->eventDispatcher->registerProjector($projector);
     }
 
-    public function dispatch(DomainEventStreamInterface $events)
+    public function dispatch(DomainEventStreamInterface $events): void
     {
         $this->connectionHelper->beginTransaction();
 

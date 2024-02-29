@@ -25,7 +25,7 @@ class JsonNotFoundResponse extends JsonResponse
     /**
      * @param array $headers
      */
-    public function __construct($headers = array())
+    public function __construct(array $headers = [])
     {
         parent::__construct(null, 404, $headers);
     }

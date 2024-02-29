@@ -23,17 +23,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\Sens
 
 class SensitiveDataService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Repository\SensitiveDataMessageRepository
-     */
-    private $sensitiveDataMessageRepository;
-
-    public function __construct(SensitiveDataMessageRepository $sensitiveDataMessageRepository)
+    public function __construct(private readonly SensitiveDataMessageRepository $sensitiveDataMessageRepository)
     {
-        $this->sensitiveDataMessageRepository = $sensitiveDataMessageRepository;
     }
 
-    public function forgetSensitiveData(IdentityId $identityId)
+    public function forgetSensitiveData(IdentityId $identityId): void
     {
         $sensitiveDataMessageStream = $this->sensitiveDataMessageRepository->findByIdentityId($identityId);
         $sensitiveDataMessageStream->forget();

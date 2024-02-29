@@ -29,37 +29,33 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedT
 
 class IdentitySelfAssertedTokenOptionsProjector extends Projector
 {
-    /**
-     * @var IdentitySelfAssertedTokenOptionsRepository
-     */
-    private $repository;
-
-    public function __construct(IdentitySelfAssertedTokenOptionsRepository $identitySelfAssertedTokenOptionsRepository)
-    {
-        $this->repository = $identitySelfAssertedTokenOptionsRepository;
+    public function __construct(
+        private readonly IdentitySelfAssertedTokenOptionsRepository $repository,
+    ) {
     }
 
     /**
      * Identity is created, we also create a set of
      * IdentitySelfAssertedTokenOptions.
      */
-    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $identitySelfAssertedTokenOptions = IdentitySelfAssertedTokenOptions::create(
             $event->identityId,
             false,
-            false
+            false,
         );
         $this->repository->save($identitySelfAssertedTokenOptions);
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $this->determinePossessionOfToken($event->vettingType, $event->identityId);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
-    {
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
         $this->determinePossessionOfToken($event->vettingType, $event->identityId);
     }
 
@@ -69,11 +65,11 @@ class IdentitySelfAssertedTokenOptionsProjector extends Projector
         $identitySelfAssertedTokenOptions = $this->repository->find($identityId);
         // Scenario 1: A new token is registered, we have no sat options yet,
         // create them. These are identities from the pre SAT era.
-        if (!$identitySelfAssertedTokenOptions) {
+        if (!$identitySelfAssertedTokenOptions instanceof IdentitySelfAssertedTokenOptions) {
             $identitySelfAssertedTokenOptions = IdentitySelfAssertedTokenOptions::create(
                 $identityId,
                 true,
-                $isSelfAssertedToken
+                $isSelfAssertedToken,
             );
             $this->repository->save($identitySelfAssertedTokenOptions);
             return;

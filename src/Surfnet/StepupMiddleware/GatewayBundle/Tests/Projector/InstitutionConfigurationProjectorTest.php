@@ -21,8 +21,9 @@ declare(strict_types=1);
 namespace Surfnet\StepupMiddleware\GatewayBundle\Tests\Projector;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
@@ -33,11 +34,12 @@ use Surfnet\StepupMiddleware\GatewayBundle\Repository\InstitutionConfigurationRe
 
 class InstitutionConfigurationProjectorTest extends TestCase
 {
-    use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
+    use MockeryPHPUnitIntegration;
 
-    private $projector;
+    private InstitutionConfigurationProjector $projector;
 
     private $repository;
+
     protected function setUp(): void
     {
         $repository = m::mock(InstitutionConfigurationRepository::class);
@@ -46,33 +48,36 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->projector = $projector;
     }
 
-    public function test_create_row_when_non_existent()
+    public function test_create_row_when_non_existent(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
-            new SsoOn2faOption(true)
+            new SsoOn2faOption(true),
         );
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn(null);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration){
-            return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
-        });
+        $this->repository->shouldReceive('save')->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+        );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }
-    public function test_updates_existing_row()
+
+    public function test_updates_existing_row(): void
     {
         $event = new SsoOn2faOptionChangedEvent(
             new InstitutionConfigurationId(Uuid::uuid4()->toString()),
             new Institution('institution-a.nl'),
-            new SsoOn2faOption(true)
+            new SsoOn2faOption(true),
         );
         $configuration = new InstitutionConfiguration('institution-a.nl', false);
 
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn($configuration);
-        $this->repository->shouldReceive('save')->withArgs(function(InstitutionConfiguration $configuration){
-            return $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true;
-        });
+        $this->repository->shouldReceive('save')->withArgs(
+            fn(InstitutionConfiguration $configuration,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+        );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
     }

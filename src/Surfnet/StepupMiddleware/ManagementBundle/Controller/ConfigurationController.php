@@ -19,51 +19,43 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class ConfigurationController extends Controller
+class ConfigurationController extends AbstractController
 {
-    /**
-     * @return TransactionAwarePipeline
-     */
-    private $pipeline;
-
-    public function __construct(TransactionAwarePipeline $pipeline)
-    {
-        $this->pipeline = $pipeline;
+    public function __construct(
+        private readonly TransactionAwarePipeline $pipeline,
+    ) {
     }
 
-    public function updateAction(Request $request)
+    public function update(Request $request)
     {
-        $command                = new UpdateConfigurationCommand();
-        $command->UUID          = (string) Uuid::uuid4();
+        $command = new UpdateConfigurationCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->configuration = $request->getContent();
 
         return $this->handleCommand($request, $command);
     }
 
     /**
-     * @param Request $request
-     * @param Command $command
      * @return JsonResponse
      */
-    private function handleCommand(Request $request, Command $command)
+    private function handleCommand(Request $request, Command $command): JsonResponse
     {
         $this->pipeline->process($command);
 
         $serverName = $request->server->get('SERVER_NAME') ?: $request->server->get('SERVER_ADDR');
-        $response   = new JsonResponse([
-            'status'       => 'OK',
-            'processed_by' => $serverName,
-            'applied_at'   => (new DateTime())->format(DateTime::ISO8601)
-        ]);
 
-        return $response;
+        return new JsonResponse([
+            'status' => 'OK',
+            'processed_by' => $serverName,
+            'applied_at' => (new DateTime())->format(DateTime::ISO8601),
+        ]);
     }
 }

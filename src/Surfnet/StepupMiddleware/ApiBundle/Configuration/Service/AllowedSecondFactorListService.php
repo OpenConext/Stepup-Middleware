@@ -26,29 +26,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstit
 
 class AllowedSecondFactorListService
 {
-    /**
-     * @var AllowedSecondFactorRepository
-     */
-    private $allowedSecondFactorRepository;
-
-    /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $configuredInstitutionRepository;
-
     public function __construct(
-        AllowedSecondFactorRepository $allowedSecondFactoryRepository,
-        ConfiguredInstitutionRepository $configuredInstitutionRepository
+        private readonly AllowedSecondFactorRepository $allowedSecondFactorRepository,
+        private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
     ) {
-        $this->allowedSecondFactorRepository   = $allowedSecondFactoryRepository;
-        $this->configuredInstitutionRepository = $configuredInstitutionRepository;
     }
 
-    public function getAllowedSecondFactorListFor(Institution $institution)
+    public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
-        $allowedSecondFactors = array_map(function (AllowedSecondFactor $allowedSecondFactor) {
-            return $allowedSecondFactor->secondFactorType;
-        }, $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution));
+        $allowedSecondFactors = array_map(
+            fn(AllowedSecondFactor $allowedSecondFactor) => $allowedSecondFactor->secondFactorType,
+            $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution),
+        );
 
         return AllowedSecondFactorList::ofTypes($allowedSecondFactors);
     }

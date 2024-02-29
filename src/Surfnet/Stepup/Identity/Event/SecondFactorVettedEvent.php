@@ -40,7 +40,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'identity_institution',
@@ -54,37 +54,37 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
+     * @var NameId
      */
     public $nameId;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorId
      */
     public $secondFactorId;
 
     /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
+     * @var SecondFactorType
      */
     public $secondFactorType;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
+     * @var SecondFactorIdentifier
      */
     public $secondFactorIdentifier;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
+     * @var CommonName
      */
     public $commonName;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
+     * @var Email
      */
     public $email;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
+     * @var Locale Eg. "en_GB"
      */
     public $preferredLocale;
 
@@ -104,34 +104,34 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale,
-        VettingType $vettingType
+        VettingType $vettingType,
     ) {
         parent::__construct($identityId, $institution);
 
-        $this->nameId                 = $nameId;
-        $this->secondFactorId         = $secondFactorId;
-        $this->secondFactorType       = $secondFactorType;
+        $this->nameId = $nameId;
+        $this->secondFactorId = $secondFactorId;
+        $this->secondFactorType = $secondFactorType;
         $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->commonName             = $commonName;
-        $this->email                  = $email;
-        $this->preferredLocale        = $preferredLocale;
+        $this->commonName = $commonName;
+        $this->email = $email;
+        $this->preferredLocale = $preferredLocale;
         $this->vettingType = $vettingType;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = $this->secondFactorType;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = $this->secondFactorType;
         $metadata->secondFactorIdentifier = $this->secondFactorIdentifier;
         $metadata->vettingType = $this->vettingType;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         $secondFactorType = new SecondFactorType($data['second_factor_type']);
         return new self(
@@ -144,7 +144,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
             CommonName::unknown(),
             Email::unknown(),
             new Locale($data['preferred_locale']),
-            new UnknownVettingType()
+            new UnknownVettingType(),
         );
     }
 
@@ -154,16 +154,16 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
     public function serialize(): array
     {
         return [
-            'identity_id'              => (string) $this->identityId,
-            'name_id'                  => (string) $this->nameId,
-            'identity_institution'     => (string) $this->identityInstitution,
-            'second_factor_id'         => (string) $this->secondFactorId,
-            'second_factor_type'       => (string) $this->secondFactorType,
-            'preferred_locale'         => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -172,10 +172,10 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
             ->withVettingType($this->vettingType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email          = $sensitiveData->getEmail();
-        $this->commonName     = $sensitiveData->getCommonName();
+        $this->email = $sensitiveData->getEmail();
+        $this->commonName = $sensitiveData->getCommonName();
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->vettingType = $sensitiveData->getVettingType();
     }

@@ -18,11 +18,16 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use StdClass;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 
 class DocumentNumberTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
@@ -30,9 +35,9 @@ class DocumentNumberTest extends UnitTest
      *
      * @param mixed $invalidValue
      */
-    public function the_document_number_must_be_a_non_empty_string($invalidValue)
+    public function the_document_number_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new DocumentNumber($invalidValue);
     }
 
@@ -40,12 +45,12 @@ class DocumentNumberTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_document_numbers_with_the_same_value_are_equal()
+    public function two_document_numbers_with_the_same_value_are_equal(): void
     {
         $commonName = new DocumentNumber('John Doe');
-        $theSame    = new DocumentNumber('John Doe');
-        $different  = new DocumentNumber('Jane Doe');
-        $unknown    = DocumentNumber::unknown();
+        $theSame = new DocumentNumber('John Doe');
+        $different = new DocumentNumber('Jane Doe');
+        $unknown = DocumentNumber::unknown();
 
         $this->assertTrue($commonName->equals($theSame));
         $this->assertFalse($commonName->equals($different));
@@ -55,14 +60,14 @@ class DocumentNumberTest extends UnitTest
     /**
      * provider for {@see the_document_number_address_must_be_a_non_empty_string()}
      */
-    public function invalidArgumentProvider()
+    public function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

@@ -18,81 +18,70 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository")
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_institution", columns={"institution"})
- *      }
- * )
- */
-class VerifiedSecondFactor implements \JsonSerializable
+#[ORM\Table]
+#[ORM\Index(name: 'idx_institution', columns: ['institution'])]
+#[ORM\Entity(repositoryClass: VerifiedSecondFactorRepository::class)]
+class VerifiedSecondFactor implements JsonSerializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
     public $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
+    #[ORM\Column(length: 36)]
     public $identityId;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     public $institution;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
+    #[ORM\Column]
     public $commonName;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
+    #[ORM\Column(length: 16)]
     public $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     *
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
+    #[ORM\Column(length: 255)]
     public $secondFactorIdentifier;
 
     /**
-     * @ORM\Column(length=8)
-     *
      * @var string
      */
+    #[ORM\Column(length: 8)]
     public $registrationCode;
 
     /**
-     * @ORM\Column(type="stepup_datetime")
-     *
-     * @var \DateTime
+     * @var DateTime
      */
+    #[ORM\Column(type: 'stepup_datetime')]
     public $registrationRequestedAt;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
             'second_factor_identifier' => $this->secondFactorIdentifier,
             'registration_code' => $this->registrationCode,

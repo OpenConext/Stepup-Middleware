@@ -18,25 +18,27 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Entity;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 
 class ConfiguredInstitutionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     /**
      * @test
      * @group entity
      */
-    public function a_configured_institution_is_correctly_serialized_to_json()
+    public function a_configured_institution_is_correctly_serialized_to_json(): void
     {
         $deserializedConfiguredInstitution = ['institution' => 'surfnet.nl'];
         $configuredInstitution = ConfiguredInstitution::createFrom(
-            new Institution($deserializedConfiguredInstitution['institution'])
+            new Institution($deserializedConfiguredInstitution['institution']),
         );
 
         $expectedSerializedConfiguredInstitution = json_encode($deserializedConfiguredInstitution);
-        $actualSerializedConfiguredInstitution   = json_encode($configuredInstitution);
+        $actualSerializedConfiguredInstitution = json_encode($configuredInstitution);
 
         $this->assertSame($expectedSerializedConfiguredInstitution, $actualSerializedConfiguredInstitution);
     }

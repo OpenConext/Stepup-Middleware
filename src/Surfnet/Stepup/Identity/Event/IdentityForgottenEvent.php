@@ -25,7 +25,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'institution',
     ];
@@ -33,16 +33,16 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
     /**
      * @return Metadata
      */
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new IdentityForgottenEvent(new IdentityId($data['identity_id']), new Institution($data['institution']));
     }
@@ -54,7 +54,7 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
     {
         return [
             'identity_id' => $this->identityId,
-            'institution' => $this->identityInstitution
+            'institution' => $this->identityInstitution,
         ];
     }
 

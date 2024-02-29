@@ -27,14 +27,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
 
 class AbstractSearchService
 {
-    /**
-     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $doctrineQuery
-     * @param AbstractQuery $query
-     * @param bool $fetchCollection
-     * @return Pagerfanta
-     */
-    protected function createPaginatorFrom($doctrineQuery, AbstractQuery $query, $fetchCollection = true)
-    {
+    protected function createPaginatorFrom(
+        $doctrineQuery,
+        AbstractQuery $query,
+        bool $fetchCollection = true,
+    ): Pagerfanta {
         $queryObject = $doctrineQuery;
         if ($doctrineQuery instanceof QueryBuilder) {
             $queryObject = $doctrineQuery->getQuery();
@@ -44,11 +41,11 @@ class AbstractSearchService
             throw InvalidArgumentException::invalidType(
                 'Doctrine\ORM\Query or Doctrine\ORM\QueryBuilder',
                 'searchQuery',
-                $doctrineQuery
+                $doctrineQuery,
             );
         }
 
-        $adapter   = new DoctrineORMAdapter($doctrineQuery, $fetchCollection);
+        $adapter = new DoctrineORMAdapter($doctrineQuery, $fetchCollection);
         $paginator = new Pagerfanta($adapter);
         $paginator->setMaxPerPage($query->itemsPerPage);
         $paginator->setCurrentPage($query->pageNumber);
@@ -57,11 +54,7 @@ class AbstractSearchService
         return $paginator;
     }
 
-    /**
-     * @param Query $doctrineQuery
-     * @return array
-     */
-    protected function getFilteredQueryOptions(Query $doctrineQuery)
+    protected function getFilteredQueryOptions(Query $doctrineQuery): array
     {
         $filters = [];
         $results = $doctrineQuery->getArrayResult();

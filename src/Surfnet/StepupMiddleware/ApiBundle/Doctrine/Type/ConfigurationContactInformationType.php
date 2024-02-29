@@ -21,22 +21,22 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 /**
  * Custom Type for the ContactInformation Value Object for the Configuration domain
  */
 class ConfigurationContactInformationType extends Type
 {
-    const NAME = 'stepup_configuration_contact_information';
+    public const NAME = 'stepup_configuration_contact_information';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
             return null;
@@ -46,16 +46,16 @@ class ConfigurationContactInformationType extends Type
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal contact information of type %s '%s', expected a ContactInformation instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
         return $value->getContactInformation();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?ContactInformation
     {
         if (is_null($value)) {
             return $value;
@@ -67,7 +67,7 @@ class ConfigurationContactInformationType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -76,7 +76,7 @@ class ConfigurationContactInformationType extends Type
         return $contactInformation;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 
@@ -30,7 +30,7 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
         parent::__construct($registry, AllowedSecondFactor::class);
     }
 
-    public function save(AllowedSecondFactor $allowedSecondFactor)
+    public function save(AllowedSecondFactor $allowedSecondFactor): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($allowedSecondFactor);
@@ -38,10 +38,9 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return AllowedSecondFactor[]
      */
-    public function getAllowedSecondFactorsFor(Institution $institution)
+    public function getAllowedSecondFactorsFor(Institution $institution): array
     {
         return $this->createQueryBuilder('asf')
             ->select()
@@ -51,7 +50,7 @@ final class AllowedSecondFactorRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function clearAllowedSecondFactorListFor(Institution $institution)
+    public function clearAllowedSecondFactorListFor(Institution $institution): void
     {
         $this->createQueryBuilder('asf')
             ->delete()

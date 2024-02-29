@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -30,47 +31,30 @@ use Surfnet\StepupMiddleware\ManagementBundle\Exception\InvalidArgumentException
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
 final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 {
     /**
-     * @var ConfiguredInstitutionService
-     */
-    private $configuredInstitutionsService;
-
-    /**
      * @var string[] internal cache, access through getConfiguredInstitutions()
      */
-    private $configuredInstitutions;
-
-    /**
-     * @var SecondFactorTypeService
-     */
-    private $secondFactorTypeService;
-
-    /**
-     * @var WhitelistService
-     */
-    private $whitelistService;
+    private ?array $configuredInstitutions = null;
 
     /**
      * @var string[] internal cache, access through getWhitelistedInstitutions()
      */
-    private $whitelistedInstitutions;
+    private ?array $whitelistedInstitutions = null;
 
     public function __construct(
-        ConfiguredInstitutionService $configuredInstitutionsService,
-        SecondFactorTypeService $secondFactorTypeService,
-        WhitelistService $whitelistService
+        private readonly ConfiguredInstitutionService $configuredInstitutionsService,
+        private readonly SecondFactorTypeService $secondFactorTypeService,
+        private readonly WhitelistService $whitelistService,
     ) {
-        $this->configuredInstitutionsService = $configuredInstitutionsService;
-        $this->secondFactorTypeService = $secondFactorTypeService;
-        $this->whitelistService = $whitelistService;
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        /** @var \Symfony\Component\Validator\Violation\ConstraintViolationBuilder|false $violation */
+        /** @var ConstraintViolationBuilder|false $violation */
         $violation = false;
 
         try {
@@ -88,7 +72,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
-    public function validateRoot(array $configuration)
+    public function validateRoot(array $configuration): void
     {
         Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         $this->validateInstitutionsExist(array_keys($configuration));
@@ -98,23 +82,20 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param array $institutions
-     */
-    public function validateInstitutionsExist(array $institutions)
+    public function validateInstitutionsExist(array $institutions): void
     {
         $configuredInstitutions = $this->getConfiguredInstitutions();
 
         $nonExistentInstitutions = $this->determineNonExistentInstitutions($institutions, $configuredInstitutions);
 
-        if (!empty($nonExistentInstitutions)) {
+        if ($nonExistentInstitutions !== []) {
             throw new InvalidArgumentException(
-                sprintf('Cannot reconfigure non-existent institution(s): %s', implode(', ', $nonExistentInstitutions))
+                sprintf('Cannot reconfigure non-existent institution(s): %s', implode(', ', $nonExistentInstitutions)),
             );
         }
     }
 
-    public function validateInstitutionConfigurationOptions(array $options, string $institution)
+    public function validateInstitutionConfigurationOptions(array $options, string $institution): void
     {
         $propertyPath = sprintf('Institution(%s)', $institution);
         Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
@@ -140,73 +121,73 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             sprintf(
                 'Invalid option(s) for "%s". Required options: "%s"; Optional options: "%s"',
                 $institution,
-                join(', ', $requiredOptions),
-                join(', ', $optionalOptions)
+                implode(', ', $requiredOptions),
+                implode(', ', $optionalOptions),
             ),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::boolean(
             $options['use_ra_locations'],
             sprintf('Option "use_ra_locations" for "%s" must be a boolean value', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::boolean(
             $options['show_raa_contact_information'],
             sprintf('Option "show_raa_contact_information" for "%s" must be a boolean value', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::boolean(
             $options['verify_email'],
             sprintf('Option "verify_email" for "%s" must be a boolean value', $institution),
-            $propertyPath
+            $propertyPath,
         );
         if (isset($options['self_vet'])) {
             Assertion::boolean(
                 $options['self_vet'],
                 sprintf('Option "self_vet" for "%s" must be a boolean value', $institution),
-                $propertyPath
+                $propertyPath,
             );
         }
         if (isset($options['sso_on_2fa'])) {
             Assertion::boolean(
                 $options['sso_on_2fa'],
                 sprintf('Option "sso_on_2fa" for "%s" must be a boolean value', $institution),
-                $propertyPath
+                $propertyPath,
             );
         }
         if (isset($options['allow_self_asserted_tokens'])) {
             Assertion::nullOrBoolean(
                 $options['allow_self_asserted_tokens'],
                 sprintf('Option "allow_self_asserted_tokens" for "%s" must be a boolean value', $institution),
-                $propertyPath
+                $propertyPath,
             );
         }
         Assertion::integer(
             $options['number_of_tokens_per_identity'],
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be an integer value', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::min(
             $options['number_of_tokens_per_identity'],
             0,
             sprintf('Option "number_of_tokens_per_identity" for "%s" must be greater than or equal to 0', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::isArray(
             $options['allowed_second_factors'],
             sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::allString(
             $options['allowed_second_factors'],
             sprintf('Option "allowed_second_factors" for "%s" must be an array of strings', $institution),
-            $propertyPath
+            $propertyPath,
         );
         Assertion::allInArray(
             $options['allowed_second_factors'],
             $this->secondFactorTypeService->getAvailableSecondFactorTypes(),
             'Option "allowed_second_factors" for "%s" must contain valid second factor types',
-            $propertyPath
+            $propertyPath,
         );
         $this->validateAuthorizationSettings($options, $institution, $propertyPath);
     }
@@ -218,15 +199,13 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private function getConfiguredInstitutions()
     {
-        if (!empty($this->configuredInstitutions)) {
+        if ($this->configuredInstitutions !== null && $this->configuredInstitutions !== []) {
             return $this->configuredInstitutions;
         }
 
         $this->configuredInstitutions = array_map(
-            function (ConfiguredInstitution $configuredInstitution) {
-                return $configuredInstitution->institution->getInstitution();
-            },
-            $this->configuredInstitutionsService->getAll()
+            fn(ConfiguredInstitution $configuredInstitution) => $configuredInstitution->institution->getInstitution(),
+            $this->configuredInstitutionsService->getAll(),
         );
 
         return $this->configuredInstitutions;
@@ -239,15 +218,13 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      */
     private function getWhitelistedInstitutions()
     {
-        if (!empty($this->whitelistedInstitutions)) {
+        if ($this->whitelistedInstitutions !== null && $this->whitelistedInstitutions !== []) {
             return $this->whitelistedInstitutions;
         }
 
         $this->whitelistedInstitutions = array_map(
-            function (WhitelistEntry $whitelistEntry) {
-                return (string)$whitelistEntry->institution;
-            },
-            $this->whitelistService->getAllEntries()->toArray()
+            fn(WhitelistEntry $whitelistEntry): string => (string)$whitelistEntry->institution,
+            $this->whitelistService->getAllEntries()->toArray(),
         );
 
         return $this->whitelistedInstitutions;
@@ -258,22 +235,20 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      * @param $configuredInstitutions
      * @return string[]
      */
-    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions)
+    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions): array
     {
         $normalizedConfiguredInstitutions = array_map(
-            function ($institution) {
-                return strtolower($institution);
-            },
-            $configuredInstitutions
+            fn($institution): string => strtolower((string)$institution),
+            $configuredInstitutions,
         );
 
         return array_filter(
             $institutions,
-            function ($institution) use ($normalizedConfiguredInstitutions) {
+            function ($institution) use ($normalizedConfiguredInstitutions): bool {
                 $normalizedInstitution = strtolower($institution);
 
                 return !in_array($normalizedInstitution, $normalizedConfiguredInstitutions);
-            }
+            },
         );
     }
 
@@ -286,10 +261,13 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      * @param $authorizationSettings
      * @param $institution
      * @param $propertyPath
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
-    private function validateAuthorizationSettings($authorizationSettings, $institution, $propertyPath)
-    {
+    private function validateAuthorizationSettings(
+        array $authorizationSettings,
+        string $institution,
+        string $propertyPath,
+    ): void {
         $acceptedOptions = [
             'use_ra',
             'use_raa',
@@ -307,9 +285,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                         'Option "%s" for "%s" must be an array of strings. ("%s") was passed.',
                         $optionName,
                         $institution,
-                        var_export($setting, true)
+                        var_export($setting, true),
                     ),
-                    $propertyPath
+                    $propertyPath,
                 );
 
                 // 2. The contents of the array must be empty or string
@@ -319,9 +297,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                         'All values of option "%s" should be of type string. ("%s") was passed.',
                         $optionName,
                         $institution,
-                        var_export($setting, true)
+                        var_export($setting, true),
                     ),
-                    $propertyPath
+                    $propertyPath,
                 );
 
                 // 3. The institutions that are used in the configuration, should be known, configured, institutions
@@ -332,9 +310,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                         'All values of option "%s" should be known institutions. ("%s") was passed.',
                         $optionName,
                         $institution,
-                        var_export($setting, true)
+                        var_export($setting, true),
                     ),
-                    $propertyPath
+                    $propertyPath,
                 );
             }
         }

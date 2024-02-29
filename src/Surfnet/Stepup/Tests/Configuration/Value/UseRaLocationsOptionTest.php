@@ -18,11 +18,16 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class UseRaLocationsOptionTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
@@ -31,9 +36,9 @@ class UseRaLocationsOptionTest extends TestCase
      *
      * @param mixed $nonBooleanProvider
      */
-    public function use_ra_locations_option_can_only_be_boolean($nonBooleanProvider)
+    public function use_ra_locations_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider,): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new UseRaLocationsOption($nonBooleanProvider);
     }
@@ -43,12 +48,12 @@ class UseRaLocationsOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_use_ra_location_options_with_the_same_values_are_equal()
+    public function two_use_ra_location_options_with_the_same_values_are_equal(): void
     {
         $option = true;
 
         $useRaLocationsOption = new UseRaLocationsOption($option);
-        $theSame              = new UseRaLocationsOption($option);
+        $theSame = new UseRaLocationsOption($option);
 
         $this->assertTrue($useRaLocationsOption->equals($theSame));
     }
@@ -58,10 +63,10 @@ class UseRaLocationsOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_use_ra_location_options_with_different_values_are_not_equal()
+    public function two_use_ra_location_options_with_different_values_are_not_equal(): void
     {
         $useRaLocationsOption = new UseRaLocationsOption(true);
-        $different            = new UseRaLocationsOption(false);
+        $different = new UseRaLocationsOption(false);
 
         $this->assertFalse($useRaLocationsOption->equals($different));
     }
@@ -71,22 +76,22 @@ class UseRaLocationsOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function default_value_is_false()
+    public function default_value_is_false(): void
     {
         $default = UseRaLocationsOption::getDefault();
-        $false   = new UseRaLocationsOption(false);
+        $false = new UseRaLocationsOption(false);
 
         $this->assertTrue($default->equals($false));
     }
 
-    public function nonBooleanProvider()
+    public function nonBooleanProvider(): array
     {
         return [
-            'string'       => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
+            'string' => [''],
+            'array' => [[]],
+            'integer' => [1],
+            'float' => [1.2],
+            'object' => [new StdClass()],
         ];
     }
 }

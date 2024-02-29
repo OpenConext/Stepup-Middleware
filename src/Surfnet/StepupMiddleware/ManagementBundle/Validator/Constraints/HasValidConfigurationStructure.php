@@ -27,7 +27,7 @@ class HasValidConfigurationStructure extends Constraint
 {
     public $message = 'Invalid Configuration Structure';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'configuration_structure_validator';
     }

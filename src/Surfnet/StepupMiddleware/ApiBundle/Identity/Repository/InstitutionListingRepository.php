@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\InstitutionListing;
 
@@ -34,13 +34,13 @@ class InstitutionListingRepository extends ServiceEntityRepository
         parent::__construct($registry, InstitutionListing::class);
     }
 
-    public function save(InstitutionListing $institution)
+    public function save(InstitutionListing $institution): void
     {
         $this->getEntityManager()->persist($institution);
         $this->getEntityManager()->flush();
     }
 
-    public function addIfNotExists(Institution $institution)
+    public function addIfNotExists(Institution $institution): void
     {
         $existsQuery = $this->createQueryBuilder('i')
             ->where('i.institution = :institution')

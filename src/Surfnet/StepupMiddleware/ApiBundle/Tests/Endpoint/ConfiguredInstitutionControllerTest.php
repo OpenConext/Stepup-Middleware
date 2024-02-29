@@ -49,11 +49,13 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
 
     public function setUp(): void
     {
+        self::ensureKernelShutdown();
+        $this->client = static::createClient();
+
         $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
 
-        $this->client = static::createClient();
 
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');
         $passwordRa = $this->client->getKernel()->getContainer()->getParameter('registration_authority_api_password');

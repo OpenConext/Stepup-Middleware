@@ -227,6 +227,6 @@ class RegistrationMailService
     {
         return $date->add(
             new DateInterval('P14D'),
-        )->endOfDay();
+        );
     }
 }

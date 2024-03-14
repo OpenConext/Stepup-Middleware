@@ -61,16 +61,13 @@ class VerifiedSecondFactorReminderMailService
         $this->fallbackLocale = $fallbackLocale;
     }
 
-    /**
-     * @return int
-     */
-    public function sendReminder(VerifiedTokenInformation $tokenInformation)
+    public function sendReminder(VerifiedTokenInformation $tokenInformation): void
     {
         $institution = new Institution((string)$tokenInformation->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
         if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
-            return $this->sendReminderWithInstitution(
+            $this->sendReminderWithInstitution(
                 $tokenInformation->getPreferredLocale(),
                 $tokenInformation->getCommonName(),
                 $tokenInformation->getEmail(),
@@ -78,12 +75,13 @@ class VerifiedSecondFactorReminderMailService
                 $tokenInformation->getRegistrationCode(),
                 $this->raLocationService->listRaLocationsFor($institution),
             );
+            return;
         }
 
         $ras = $this->raListingService->listRegistrationAuthoritiesFor($tokenInformation->getInstitution());
 
         if ($institutionConfigurationOptions->showRaaContactInformationOption->isEnabled()) {
-            return $this->sendReminderWithRas(
+            $this->sendReminderWithRas(
                 $tokenInformation->getPreferredLocale(),
                 $tokenInformation->getCommonName(),
                 $tokenInformation->getEmail(),
@@ -91,11 +89,12 @@ class VerifiedSecondFactorReminderMailService
                 $tokenInformation->getRegistrationCode(),
                 $ras,
             );
+            return;
         }
 
         $rasWithoutRaas = array_filter($ras, fn(RegistrationAuthorityCredentials $ra): bool => !$ra->isRaa());
 
-        return $this->sendReminderWithRas(
+        $this->sendReminderWithRas(
             $tokenInformation->getPreferredLocale(),
             $tokenInformation->getCommonName(),
             $tokenInformation->getEmail(),

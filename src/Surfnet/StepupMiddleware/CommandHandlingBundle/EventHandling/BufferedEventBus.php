@@ -23,7 +23,8 @@ use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventHandling\EventListener as EventListenerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\Exception;
+
 
 class BufferedEventBus implements EventBusInterface
 {
@@ -52,6 +53,9 @@ class BufferedEventBus implements EventBusInterface
         $this->eventListeners[] = $eventListener;
     }
 
+    /**
+     * @throws Exception
+     */
     public function publish(DomainEventStreamInterface $domainMessages): void
     {
         foreach ($domainMessages as $domainMessage) {

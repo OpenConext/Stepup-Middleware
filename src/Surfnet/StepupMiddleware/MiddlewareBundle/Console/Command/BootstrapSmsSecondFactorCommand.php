@@ -28,7 +28,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapSmsSecondFactorCommand extends Command
 {
@@ -63,9 +62,6 @@ final class BootstrapSmsSecondFactorCommand extends Command
         $registrationStatus = $input->getArgument('registration-status');
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-sms-token', 'cli', ['ROLE_SS', 'ROLE_RA']),
-        );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);

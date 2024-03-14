@@ -27,7 +27,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapIdentityCommand extends Command
 {
@@ -52,10 +51,6 @@ final class BootstrapIdentityCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-identity-with-sms-token', 'cli', ['ROLE_SS']),
-        );
-
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);

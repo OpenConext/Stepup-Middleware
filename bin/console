@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-use Surfnet\AzureMfa\Infrastructure\Kernel;
+use Surfnet\StepupMiddleware\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {

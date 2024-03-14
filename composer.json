@@ -6,10 +6,7 @@
         "psr-4": {
             "Surfnet\\Stepup\\": "src\\Surfnet\\Stepup",
             "Surfnet\\StepupMiddleware\\": "src\\Surfnet\\StepupMiddleware"
-        },
-        "classmap": [
-            "src/Kernel.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

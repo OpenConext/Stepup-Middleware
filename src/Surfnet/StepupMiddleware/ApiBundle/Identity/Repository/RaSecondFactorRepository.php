@@ -174,7 +174,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'rasf')
+            ->delete($this->getEntityName(), 'rasf')
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()
@@ -204,7 +204,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     public function updateStatusByIdentityIdToForgotten(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->update($this->_entityName, 'rasf')
+            ->update($this->getEntityName(), 'rasf')
             ->set('rasf.status', ":forgotten")
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())

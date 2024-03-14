@@ -50,6 +50,6 @@ final class HasInstitutionMatcher implements MatcherInterface
 
     public function __toString(): string
     {
-        return sprintf('<HasInstitutionMatcher($s)>', $this->expected);
+        return sprintf('<HasInstitutionMatcher(%s)>', $this->expected);
     }
 }

@@ -280,7 +280,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
             if (in_array($optionName, $acceptedOptions)) {
                 // 1. Value must be array
                 Assertion::isArray(
-                    $authorizationSettings[$optionName],
+                    $setting,
                     sprintf(
                         'Option "%s" for "%s" must be an array of strings. ("%s") was passed.',
                         $optionName,
@@ -292,9 +292,9 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
                 // 2. The contents of the array must be empty or string
                 Assertion::allString(
-                    $authorizationSettings[$optionName],
+                    $setting,
                     sprintf(
-                        'All values of option "%s" should be of type string. ("%s") was passed.',
+                        'All values of option "%s" for "%s" should be of type string. ("%s") was passed.',
                         $optionName,
                         $institution,
                         var_export($setting, true),
@@ -307,7 +307,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
                     $authorizationSettings[$optionName],
                     $whitelistedInstitutions,
                     sprintf(
-                        'All values of option "%s" should be known institutions. ("%s") was passed.',
+                        'All values of option "%s" for "%s" should be known institutions. ("%s") was passed.',
                         $optionName,
                         $institution,
                         var_export($setting, true),

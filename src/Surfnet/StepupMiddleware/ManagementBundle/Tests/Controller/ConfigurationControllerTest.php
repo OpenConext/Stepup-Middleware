@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +28,6 @@ class ConfigurationControllerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var Client
-     */
     private KernelBrowser $client;
 
     /**
@@ -52,7 +48,6 @@ class ConfigurationControllerTest extends WebTestCase
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.
-        $this->loadFixtures([]);
         $this->client = static::createClient();
         $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
         $this->passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');

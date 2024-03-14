@@ -110,6 +110,7 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
             $this->connection->rollBack();
             throw $e;
         }
+        return 0;
     }
 
     private function validateInput(InputInterface $input): void

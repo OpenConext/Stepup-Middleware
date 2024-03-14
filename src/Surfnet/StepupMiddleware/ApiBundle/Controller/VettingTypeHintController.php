@@ -22,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
@@ -36,6 +37,7 @@ class VettingTypeHintController extends AbstractController
     public function __construct(
         private readonly VettingTypeHintService $service,
         private readonly LoggerInterface $logger,
+        private readonly AuthorizationContextService $authorizationService,
     ) {
     }
 

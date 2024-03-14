@@ -152,7 +152,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     public function removeByIdentity(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'rt')
+            ->delete($this->getEntityName(), 'rt')
             ->where('rt.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()

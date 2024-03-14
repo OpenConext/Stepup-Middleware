@@ -276,7 +276,6 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('0x0392ff832'),
                     new ContactInformation('/dev/null'),
-                    $institution,
                 ),
             ])
             ->when($command);

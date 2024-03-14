@@ -114,5 +114,6 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
                 $command->secondFactorId,
             ),
         );
+        return 0;
     }
 }

@@ -28,20 +28,13 @@ final class RegistrationAuthorityRole implements SerializableInterface, Stringab
     public const ROLE_RAA = 2;
     public const ROLE_SRAA = 3;
 
-    private readonly int $role;
-
-    /**
-     * @param string $role may not be an empty string
-     */
-    public function __construct($role)
+    public function __construct(private readonly int $role)
     {
-        if (!is_int($role) || !in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
+        if (!in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
             throw new InvalidArgumentException(
                 'Invalid role given, role must be one of RegistrationAuthorityRole::[ROLE_RA|ROLE_RAA|ROLE_SRAA]',
             );
         }
-
-        $this->role = $role;
     }
 
     /**

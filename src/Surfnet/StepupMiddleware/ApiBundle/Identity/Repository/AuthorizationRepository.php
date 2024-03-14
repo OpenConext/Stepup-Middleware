@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
@@ -55,7 +56,7 @@ class AuthorizationRepository extends ServiceEntityRepository
     public function getInstitutionsForRole(RegistrationAuthorityRole $role, IdentityId $actorId): InstitutionCollection
     {
         $result = new InstitutionCollection();
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select("a.institution")
             ->from(ConfiguredInstitution::class, 'i')
             ->innerJoin(RaListing::class, 'r', Join::WITH, "i.institution = r.raInstitution")
@@ -90,7 +91,7 @@ class AuthorizationRepository extends ServiceEntityRepository
         // Also get the institutions that are linked to the user via the 'institution_relation' field.
         // Effectively getting the use_raa relation.
         // See https://www.pivotaltracker.com/story/show/181537313
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('ia.institution')
             ->from(InstitutionAuthorization::class, 'ia')
             // Filter the RA listing on the authorizations that apply for the RA(A) listed there
@@ -134,7 +135,7 @@ class AuthorizationRepository extends ServiceEntityRepository
      */
     public function getInstitutionsForSelectRaaRole(IdentityId $actorId): InstitutionCollection
     {
-        $qb = $this->_em->createQueryBuilder()
+        $qb = $this->getEntityManager()->createQueryBuilder()
             ->select("ci.institution")
             ->from(InstitutionAuthorization::class, 'ia')
             ->innerJoin(ConfiguredInstitution::class, 'ci', Join::WITH, 'ia.institutionRelation = ci.institution')
@@ -202,5 +203,12 @@ class AuthorizationRepository extends ServiceEntityRepository
         if ($role->equals(RegistrationAuthorityRole::raa())) {
             return AuthorityRole::ROLE_RAA;
         }
+
+        throw new RuntimeException(
+            sprintf(
+                'The role "%s did not match any of our supported AuthorityRoles (ra, raa)',
+                $role->jsonSerialize()
+            )
+        );
     }
 }

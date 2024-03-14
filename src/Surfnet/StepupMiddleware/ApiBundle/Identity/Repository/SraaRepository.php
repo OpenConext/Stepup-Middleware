@@ -62,6 +62,7 @@ class SraaRepository extends ServiceEntityRepository
                 $invalidIndications[] = sprintf(
                     '"%s" at index "%d"',
                     get_debug_type($value),
+                    $index
                 );
             }
 

@@ -143,7 +143,7 @@ class IdentityRepository extends ServiceEntityRepository
     public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'i')
+            ->delete($this->getEntityName(), 'i')
             ->where('i.id = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()

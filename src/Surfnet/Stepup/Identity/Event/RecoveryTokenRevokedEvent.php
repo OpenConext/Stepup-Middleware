@@ -21,7 +21,7 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\recoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 

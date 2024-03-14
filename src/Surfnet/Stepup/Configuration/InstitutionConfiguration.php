@@ -218,6 +218,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
                 ShowRaaContactInformationOption::getDefault(),
                 VerifyEmailOption::getDefault(),
                 NumberOfTokensPerIdentityOption::getDefault(),
+                SsoOn2faOption::getDefault(),
                 SelfVetOption::getDefault(),
                 SelfAssertedTokensOption::getDefault(),
             ),

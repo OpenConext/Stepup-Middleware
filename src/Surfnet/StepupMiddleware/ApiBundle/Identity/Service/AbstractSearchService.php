@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
@@ -45,7 +45,7 @@ class AbstractSearchService
             );
         }
 
-        $adapter = new DoctrineORMAdapter($doctrineQuery, $fetchCollection);
+        $adapter = new QueryAdapter($doctrineQuery, $fetchCollection);
         $paginator = new Pagerfanta($adapter);
         $paginator->setMaxPerPage($query->itemsPerPage);
         $paginator->setCurrentPage($query->pageNumber);

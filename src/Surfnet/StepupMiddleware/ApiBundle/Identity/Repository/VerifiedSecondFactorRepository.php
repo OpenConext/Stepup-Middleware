@@ -119,7 +119,7 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     public function removeByIdentityId(IdentityId $identityId): void
     {
         $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->_entityName, 'sf')
+            ->delete($this->getEntityName(), 'sf')
             ->where('sf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->getQuery()

@@ -106,7 +106,7 @@ final class ForgettableEventsTest extends TestCase
         foreach ($otherIdentityEventFqcns as $fqcn) {
             $this->assertFalse(
                 is_a($fqcn, $forgettableFqcn, true),
-                sprintf('%s is a Forgettable event, is this correct? Then add it to the list', $fqcn, $forgettableFqcn),
+                sprintf('%s is a Forgettable event, is this correct? Then add it to the list', $fqcn),
             );
         }
     }

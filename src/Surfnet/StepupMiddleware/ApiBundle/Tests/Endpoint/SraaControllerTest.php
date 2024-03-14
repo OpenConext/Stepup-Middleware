@@ -54,7 +54,6 @@ class SraaControllerTest extends WebTestCase
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.
-        $this->loadFixtures([]);
         $this->client = static::createClient();
 
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');

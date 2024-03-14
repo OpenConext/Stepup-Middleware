@@ -30,8 +30,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use function sprintf;
 
 final class MigrateSecondFactorCommand extends Command
 {
@@ -64,10 +62,6 @@ final class MigrateSecondFactorCommand extends Command
     {
         $sourceNameId = new NameId($input->getArgument('old-name-id'));
         $targetNameId = new NameId($input->getArgument('new-name-id'));
-
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA']),
-        );
 
         $output->writeln(sprintf('<comment>Starting token migration for %s</comment>', $sourceNameId));
         $sourceIdentity = $this->bootstrapService->getIdentityByNameId($sourceNameId);

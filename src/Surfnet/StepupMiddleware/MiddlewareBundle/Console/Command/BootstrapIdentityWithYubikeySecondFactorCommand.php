@@ -30,7 +30,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -65,10 +64,6 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA', 'ROLE_MANAGEMENT']),
-        );
-
         $nameId = new NameId($input->getArgument('name-id'));
         $institution = new Institution($input->getArgument('institution'));
 

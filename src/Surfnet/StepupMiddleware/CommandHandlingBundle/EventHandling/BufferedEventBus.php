@@ -24,6 +24,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventHandling\EventListener as EventListenerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\Exception;
+use Throwable;
 
 
 class BufferedEventBus implements EventBusInterface
@@ -54,7 +55,7 @@ class BufferedEventBus implements EventBusInterface
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
     public function publish(DomainEventStreamInterface $domainMessages): void
     {

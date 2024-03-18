@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Tests\Service;
 use DateTime;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\Mock;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -40,21 +40,22 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     private VerifiedSecondFactorReminderService $service;
 
     /**
-     * @var VerifiedSecondFactorReminderMailService|Mock
+     * @var VerifiedSecondFactorReminderMailService|MockInterface
+
      */
     private $mailService;
 
     /**
-     * @var LoggerInterface|Mock
+     * @var LoggerInterface|MockInterface
      */
     private $logger;
 
     /**
-     * @var VerifiedSecondFactorRepository|Mock
+     * @var VerifiedSecondFactorRepository|MockInterface
      */
     private $verifiedSecondFactorRepository;
     /**
-     * @var IdentityRepository|Mock
+     * @var IdentityRepository|MockInterface
      */
     private $identityRepository;
 
@@ -104,7 +105,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 
         $this->logger
             ->shouldReceive('info')
-            ->once()
+            ->times()
             ->with('Sending reminders for date: 2018-01-01. dry run mode is disabled');
 
         $tokens = $this->buildVerifiedSecondFactors(1, $date);

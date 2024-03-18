@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler;
 
 use Broadway\CommandHandling\SimpleCommandHandler;
+use Broadway\Domain\AggregateRoot;
 use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
@@ -43,13 +44,12 @@ class ConfigurationCommandHandler extends SimpleCommandHandler
         $this->repository->save($configuration);
     }
 
-    /**
-     * @return null|\Surfnet\Stepup\Configuration\Api\Configuration
-     */
-    private function getConfiguration()
+    private function getConfiguration(): ?Configuration
     {
         try {
-            return $this->repository->load(Configuration::CONFIGURATION_ID);
+            /** @var Configuration $configuration */
+            $configuration = $this->repository->load(Configuration::CONFIGURATION_ID);
+            return $configuration;
         } catch (AggregateNotFoundException) {
             return null;
         }

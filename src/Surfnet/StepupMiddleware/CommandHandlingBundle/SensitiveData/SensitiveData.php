@@ -50,9 +50,6 @@ class SensitiveData implements SerializableInterface
 
     private ?RecoveryTokenIdentifier $recoveryTokenIdentifier = null;
 
-    /**
-     * @return SensitiveData
-     */
     public function withCommonName(CommonName $commonName): static
     {
         $clone = clone $this;
@@ -61,9 +58,6 @@ class SensitiveData implements SerializableInterface
         return $clone;
     }
 
-    /**
-     * @return SensitiveData
-     */
     public function withEmail(Email $email): static
     {
         $clone = clone $this;
@@ -72,9 +66,6 @@ class SensitiveData implements SerializableInterface
         return $clone;
     }
 
-    /**
-     * @return SensitiveData
-     */
     public function withSecondFactorIdentifier(
         SecondFactorIdentifier $secondFactorIdentifier,
         SecondFactorType $secondFactorType,
@@ -107,8 +98,6 @@ class SensitiveData implements SerializableInterface
 
     /**
      * Returns an instance in which all sensitive data is forgotten.
-     *
-     * @return SensitiveData
      */
     public function forget(): self
     {
@@ -118,26 +107,17 @@ class SensitiveData implements SerializableInterface
         return $forgotten;
     }
 
-    /**
-     * @return CommonName
-     */
-    public function getCommonName()
+    public function getCommonName(): CommonName
     {
         return $this->commonName ?: CommonName::unknown();
     }
 
-    /**
-     * @return Email
-     */
-    public function getEmail()
+    public function getEmail(): Email
     {
         return $this->email ?: Email::unknown();
     }
 
-    /**
-     * @return SecondFactorIdentifier
-     */
-    public function getSecondFactorIdentifier()
+    public function getSecondFactorIdentifier(): SecondFactorIdentifier
     {
         return $this->secondFactorIdentifier ?: SecondFactorIdentifierFactory::unknownForType($this->secondFactorType);
     }
@@ -153,10 +133,7 @@ class SensitiveData implements SerializableInterface
         return null;
     }
 
-    /**
-     * @return VettingType
-     */
-    public function getVettingType()
+    public function getVettingType(): VettingType
     {
         return $this->vettingType ?: new UnknownVettingType();
     }

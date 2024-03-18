@@ -113,8 +113,7 @@ class DeprovisionServiceTest extends TestCase
             ->andReturnNull();
         $this->pipeline
             ->shouldNotHaveReceived('process');
-        $data = $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
-        $this->assertNull($data);
+        $this->deprovisionService->deprovision('urn:collab:person:example.com:maynard_keenan');
     }
 
     public function test_deprovision_method_performs_the_right_to_be_forgotten_command(): void

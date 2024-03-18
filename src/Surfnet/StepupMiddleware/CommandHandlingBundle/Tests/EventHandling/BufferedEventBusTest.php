@@ -41,7 +41,7 @@ class BufferedEventBusTest extends TestCase
     {
         $event = $this->createDummyDomainMessage(null);
         $listener = m::mock(EventListener::class)
-            ->shouldReceive('handle')->never()
+            ->shouldNotHaveReceived('handle')
             ->getMock();
 
         $bus = new BufferedEventBus($this->getDummyEntityManager());
@@ -124,7 +124,6 @@ class BufferedEventBusTest extends TestCase
     }
 
     /**
-     * @param mixed $payload
      * @return DomainMessage
      */
     private function createDummyDomainMessage(?string $payload): DomainMessage

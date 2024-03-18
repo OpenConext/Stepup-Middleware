@@ -28,11 +28,7 @@ class SensitiveDataMessage
 
     private readonly int $playhead;
 
-    /**
-     * @param IdentityId $identityId
-     * @param int $playhead The associated broadway domain message's playhead.
-     */
-    public function __construct(string $identityId, $playhead, private SensitiveData $sensitiveData)
+    public function __construct(IdentityId $identityId, int $playhead, private SensitiveData $sensitiveData)
     {
         if (!is_int($playhead)) {
             throw InvalidArgumentException::invalidType('int', 'playhead', $playhead);

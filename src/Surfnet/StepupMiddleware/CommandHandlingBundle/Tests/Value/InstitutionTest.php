@@ -31,8 +31,6 @@ class InstitutionTest extends UnitTest
     /**
      * @test
      * @dataProvider nonStringOrNonEmptyStringProvider
-     *
-     * @param mixed $invalidValue
      */
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
         string|int|float|StdClass|array $invalidValue,

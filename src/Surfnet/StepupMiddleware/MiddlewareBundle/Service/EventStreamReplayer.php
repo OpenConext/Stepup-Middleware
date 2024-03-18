@@ -109,7 +109,6 @@ class EventStreamReplayer
             $replayProgress->setMessage($defaultMessage);
 
             for ($count = 0; $count < $totalEvents; $count += $increments) {
-                /** @var DomainEventStream $eventStream */
                 $eventStream = $this->eventHydrator->getFromTill($increments, $count);
 
                 if ($output->getVerbosity() >= OutputInterface::VERBOSITY_DEBUG) {

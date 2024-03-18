@@ -183,7 +183,8 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
     ): void {
         $institution = new Institution($command->institution);
 
-        $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+        $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
+        /** @var InstitutionConfiguration $institutionConfiguration */
         $institutionConfiguration = $this->repository->load(
             $institutionConfigurationId->getInstitutionConfigurationId(),
         );
@@ -197,15 +198,17 @@ class InstitutionConfigurationCommandHandler extends SimpleCommandHandler
      * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
      *
      */
-    private function loadInstitutionConfigurationFor(Institution $institution)
+    private function loadInstitutionConfigurationFor(Institution $institution): InstitutionConfiguration
     {
         try {
             $institutionConfigurationId = InstitutionConfigurationId::normalizedFrom($institution);
+            /** @var InstitutionConfiguration $institutionConfiguration */
             $institutionConfiguration = $this->repository->load(
                 $institutionConfigurationId->getInstitutionConfigurationId(),
             );
         } catch (AggregateNotFoundException) {
             $institutionConfigurationId = InstitutionConfigurationId::from($institution);
+            /** @var InstitutionConfiguration $institutionConfiguration */
             $institutionConfiguration = $this->repository->load(
                 $institutionConfigurationId->getInstitutionConfigurationId(),
             );

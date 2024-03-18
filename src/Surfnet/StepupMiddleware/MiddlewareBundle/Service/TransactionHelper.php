@@ -18,15 +18,15 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\EventHandling\EventBus as EventBusInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
 final readonly class TransactionHelper
 {
     public function __construct(
         private Pipeline $pipeline,
-        private EventBusInterface $eventBus,
+        private BufferedEventBus $eventBus,
         private DBALConnectionHelper $connection,
     ) {
     }

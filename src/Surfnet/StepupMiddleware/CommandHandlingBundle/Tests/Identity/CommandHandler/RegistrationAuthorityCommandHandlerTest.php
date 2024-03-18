@@ -24,6 +24,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\EventSourcing\InstitutionConfigurationRepository;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
@@ -63,12 +64,12 @@ class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
 {
 
     /**
-     * @var InstitutionConfigurationRepository
+     * @var InstitutionConfigurationRepository|MockInterface
      */
     private $institutionConfigurationRepositoryMock;
 
     /**
-     * @var InstitutionConfiguration
+     * @var InstitutionConfiguration|MockInterface
      */
     private $institutionConfiguration;
 

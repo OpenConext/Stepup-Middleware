@@ -30,12 +30,12 @@ services:
       - { name: 'console.command', command: 'middleware:event:replay' }
     arguments:
       - "@middleware.event_replay.event_stream_replayer"
+      - "%app_env%"
 
   Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand:
     tags:
       - { name: 'console.command', command: 'middleware:bootstrap:identity-with-yubikey' }
     arguments:
-      - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService'
       - "@surfnet_stepup_middleware_api.repository.identity"
       - '@Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper'
 

@@ -35,8 +35,6 @@ class SensitiveDataMessageRepository
 
     /**
      * Finds all sensitive data records for a given Identity, ordered by playhead.
-     *
-     * @return SensitiveDataMessageStream
      */
     public function findByIdentityId(IdentityId $identityId): SensitiveDataMessageStream
     {
@@ -45,7 +43,7 @@ class SensitiveDataMessageRepository
                 WHERE identity_id = :identity_id
                 ORDER BY playhead ASC';
 
-        $rows = $this->connection->fetchAll($sql, ['identity_id' => (string)$identityId]);
+        $rows = $this->connection->fetchAllAssociative($sql, ['identity_id' => (string)$identityId]);
         $messages = array_map(fn(array $row): SensitiveDataMessage => new SensitiveDataMessage(
             $identityId,
             (int)$row['playhead'],

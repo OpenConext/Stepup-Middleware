@@ -115,6 +115,7 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
 
     public function handleSaveVettingTypeHintCommand(SaveVettingTypeHintCommand $command): void
     {
+        /** @var Identity $identity */
         $identity = $this->repository->load(new IdentityId($command->identityId));
         $collection = $this->vettingTypeHintService->collectionFrom($command->hints);
         $identity->saveVettingTypeHints(

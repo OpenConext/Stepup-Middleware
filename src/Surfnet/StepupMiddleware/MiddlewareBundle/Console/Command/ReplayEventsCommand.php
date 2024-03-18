@@ -27,7 +27,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AsCommand(
     name: 'middleware:event:replay',
@@ -36,8 +35,10 @@ use Symfony\Component\HttpKernel\KernelInterface;
 )]
 class ReplayEventsCommand extends Command
 {
-    public function __construct(private readonly EventStreamReplayer $replayer)
-    {
+    public function __construct(
+        private readonly EventStreamReplayer $replayer,
+        private readonly string $environment,
+    ) {
         parent::__construct();
     }
 
@@ -55,16 +56,13 @@ class ReplayEventsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var KernelInterface $kernel */
-        $kernel = $this->getApplication()->getKernel();
-        $environment = $kernel->getEnvironment();
         /** @var FormatterHelper $formatter */
         $formatter = $this->getHelper('formatter');
 
         // Be careful, when using the no-interaction option you will not get the confirmation question
         $noInteraction = $input->getOption('no-interaction');
 
-        if (!in_array($environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
+        if (!in_array($this->environment, ['dev_event_replay', 'prod_event_replay', 'smoketest_event_replay'])) {
             $output->writeln(
                 $formatter->formatBlock(
                     [
@@ -82,7 +80,7 @@ class ReplayEventsCommand extends Command
 
         /** @var QuestionHelper $interrogator */
         $interrogator = $this->getHelper('question');
-        if ($environment === 'prod_event_replay') {
+        if ($this->environment === 'prod_event_replay') {
             $wantToRunOnProd = new ConfirmationQuestion(
                 '<question>You have selected to run this on production. Have you disabled all access to the production '
                 . 'environment? (y/N)</question>',

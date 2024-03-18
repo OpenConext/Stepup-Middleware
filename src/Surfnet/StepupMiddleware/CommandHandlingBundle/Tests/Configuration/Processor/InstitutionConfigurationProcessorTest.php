@@ -44,9 +44,6 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
     private $pipelineMock;
 
-    /**
-     * @return Mockery\MockInterface
-     */
     public function setUp(): void
     {
         $this->pipelineMock = Mockery::mock(Pipeline::class);
@@ -110,8 +107,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
             ->andReturn(true);
 
         $this->pipelineMock
-            ->shouldReceive('process')
-            ->never();
+            ->shouldNotHaveReceived('process');
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,

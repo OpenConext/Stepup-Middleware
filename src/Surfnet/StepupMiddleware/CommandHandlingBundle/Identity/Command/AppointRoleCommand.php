@@ -25,7 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AppointRoleCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     *
      * @var string
      */
     #[Assert\NotBlank]
@@ -33,7 +32,6 @@ class AppointRoleCommand extends AbstractCommand implements RaExecutable
     public $identityId;
 
     /**
-     *
      * @var
      */
     #[Assert\NotBlank]
@@ -41,16 +39,12 @@ class AppointRoleCommand extends AbstractCommand implements RaExecutable
     public $role;
 
     /**
-     *
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
     public $raInstitution;
 
-    /**
-     * @inheritDoc
-     */
     public function getRaInstitution()
     {
         return $this->raInstitution;

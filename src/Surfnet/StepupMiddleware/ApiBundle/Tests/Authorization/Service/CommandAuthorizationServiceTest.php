@@ -151,8 +151,6 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
     public function a_sraa_should_be_able_to_execute_all_commands($file, Command $command): void
     {

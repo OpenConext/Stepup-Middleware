@@ -399,8 +399,8 @@ class IdentityCommandHandler extends SimpleCommandHandler
     public function handleMigrateVettedSecondFactorCommand(MigrateVettedSecondFactorCommand $command): void
     {
         /** @var IdentityApi $sourceIdentity */
-        /** @var IdentityApi $targetIdentity */
         $sourceIdentity = $this->eventSourcedRepository->load(new IdentityId($command->sourceIdentityId));
+        /** @var IdentityApi $targetIdentity */
         $targetIdentity = $this->eventSourcedRepository->load(new IdentityId($command->targetIdentityId));
 
         // Check if second factor type is allowed by destination institution

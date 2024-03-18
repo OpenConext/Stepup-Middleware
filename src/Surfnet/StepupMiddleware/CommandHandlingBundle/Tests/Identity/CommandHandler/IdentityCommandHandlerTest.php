@@ -26,6 +26,7 @@ use DateTime as CoreDateTime;
 use Hamcrest\Matchers;
 use Mockery as m;
 use Mockery\Mock;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -100,39 +101,39 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     private static int $window = 3600;
 
     /**
-     * @var AllowedSecondFactorListService|m\MockInterface
+     * @var AllowedSecondFactorListService|MockInterface
      */
     private $allowedSecondFactorListServiceMock;
 
     /**
-     * @var m\MockInterface|IdentityProjectionRepository
+     * @var MockInterface|IdentityProjectionRepository
      */
     private $identityProjectionRepository;
 
     /**
-     * @var SecondFactorTypeService|m\MockInterface
+     * @var SecondFactorTypeService|MockInterface
      */
     private $secondFactorTypeService;
 
     /**
-     * @var SecondFactorProvePossessionHelper|m\MockInterface
+     * @var SecondFactorProvePossessionHelper|MockInterface
      */
     private $secondFactorProvePossessionHelper;
 
     /**
-     * @var InstitutionConfigurationOptionsService $configService
+     * @var InstitutionConfigurationOptionsService|MockInterface $configService
      */
     private $configService;
 
     /**
-     * @var LoaResolutionService
+     * @var LoaResolutionService|MockInterface
      */
     private $loaResolutionService;
+
     /**
-     * @var RegistrationMailService|Mock
+     * @var RegistrationMailService|MockInterface
      */
     private $registrationMailService;
-
 
     public function setUp(): void
     {
@@ -310,7 +311,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $pubId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -420,7 +421,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $pubId1,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -487,7 +488,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $phoneNumber,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -617,7 +618,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $gssfId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     $nonce,
@@ -739,7 +740,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $keyHandle,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -848,7 +849,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $phoneNumber1,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -908,7 +909,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $publicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -963,7 +964,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1031,7 +1032,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1095,7 +1096,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $publicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         new DateTime(new CoreDateTime('-2 days')),
                     ),
                     'nonce',
@@ -1294,7 +1295,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1387,7 +1388,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneNo,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1437,7 +1438,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantPubId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1553,7 +1554,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecFacIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1654,7 +1655,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneNo,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1704,7 +1705,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantPubId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1922,7 +1923,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecPubId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -1962,7 +1963,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneNo,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -2051,7 +2052,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $registrantSecPubId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -2091,7 +2092,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
                     $authorityPhoneNo,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',

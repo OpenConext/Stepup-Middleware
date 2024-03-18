@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
@@ -46,21 +47,21 @@ class AuthorizationContextServiceTest extends TestCase
     private AuthorizationContextService $service;
 
     /**
-     * @var IdentityService|m\Mock
+     * @var IdentityService|MockInterface
      */
     private $identityService;
 
     /**
-     * @var SraaService|m\Mock
+     * @var SraaService|MockInterface
      */
     private $sraaService;
 
     /**
-     * @var AuthorizationRepository|m\Mock
+     * @var AuthorizationRepository|MockInterface
      */
     private $authorizationRepository;
     /**
-     * @var m\Mock&ConfiguredInstitutionRepository
+     * @var MockInterface|ConfiguredInstitutionRepository
      */
     private $institutionRepo;
 

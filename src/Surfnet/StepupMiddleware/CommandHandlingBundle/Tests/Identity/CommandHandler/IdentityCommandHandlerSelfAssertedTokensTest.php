@@ -23,6 +23,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
@@ -93,32 +94,32 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     private static int $window = 3600;
 
     /**
-     * @var AllowedSecondFactorListService|m\MockInterface
+     * @var AllowedSecondFactorListService|MockInterface
      */
     private $allowedSecondFactorListServiceMock;
 
     /**
-     * @var m\MockInterface|IdentityProjectionRepository
+     * @var MockInterface|IdentityProjectionRepository
      */
     private $identityProjectionRepository;
 
     /**
-     * @var SecondFactorTypeService|m\MockInterface
+     * @var SecondFactorTypeService|MockInterface
      */
     private $secondFactorTypeService;
 
     /**
-     * @var SecondFactorProvePossessionHelper|m\MockInterface
+     * @var SecondFactorProvePossessionHelper|MockInterface
      */
     private $secondFactorProvePossessionHelper;
 
     /**
-     * @var InstitutionConfigurationOptionsService $configService
+     * @var InstitutionConfigurationOptionsService|MockInterface
      */
     private $configService;
 
     /**
-     * @var LoaResolutionService
+     * @var LoaResolutionService|MockInterface
      */
     private $loaResolutionService;
 
@@ -147,7 +148,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
      */
     private Locale $preferredLocale;
     /**
-     * @var RecoveryTokenSecretHelper|m\MockInterface
+     * @var RecoveryTokenSecretHelper|MockInterface
      */
     private $recoveryTokenSecretHelper;
 
@@ -548,7 +549,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $yubikeyPublicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -630,7 +631,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $yubikeyPublicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -739,7 +740,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $yubikeyPublicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -788,7 +789,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -892,7 +893,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $yubikeyPublicId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -941,7 +942,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $phoneIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -982,7 +983,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
                     $gsspIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',

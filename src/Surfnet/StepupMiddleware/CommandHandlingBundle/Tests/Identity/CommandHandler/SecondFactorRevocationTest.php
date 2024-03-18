@@ -139,7 +139,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -195,7 +195,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -265,7 +265,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $secondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -378,7 +378,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -465,7 +465,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -564,7 +564,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -680,7 +680,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -802,7 +802,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -842,7 +842,7 @@ class SecondFactorRevocationTest extends CommandHandlerTest
                     $registrantSecondFactorIdentifier2,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',

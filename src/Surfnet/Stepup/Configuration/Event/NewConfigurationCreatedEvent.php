@@ -20,17 +20,11 @@ namespace Surfnet\Stepup\Configuration\Event;
 
 class NewConfigurationCreatedEvent extends ConfigurationEvent
 {
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self($data['id']);
     }
 
-    /**
-     * @return array
-     */
     public function serialize(): array
     {
         return ['id' => $this->id];

@@ -18,13 +18,12 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
-use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -55,8 +54,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
     }
 
     public function __construct(
-        private readonly BootstrapCommandService $bootstrapService,
-        private readonly ServiceEntityRepository $projectionRepository,
+        private readonly IdentityRepository $projectionRepository,
         private readonly TransactionHelper $transactionHelper,
     ) {
         parent::__construct();

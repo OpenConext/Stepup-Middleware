@@ -19,6 +19,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Assert\Assertion;
 use DateTime;
+use Exception;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
@@ -39,10 +40,7 @@ class VerifiedSecondFactorReminderService
     ) {
     }
 
-    /**
-     * @param bool $dryRun
-     */
-    public function sendReminders(DateTime $date, $dryRun): void
+    public function sendReminders(DateTime $date, bool $dryRun): void
     {
         $this->logger->info(
             sprintf(
@@ -60,7 +58,13 @@ class VerifiedSecondFactorReminderService
             $this->logger->info(sprintf('%d token reminder(s) will be sent', count($tokenInformationCollection)));
 
             foreach ($tokenInformationCollection as $tokenInformation) {
-                $numberSent = $dryRun ? 1 : $this->mailService->sendReminder($tokenInformation);
+                try {
+                    $this->mailService->sendReminder($tokenInformation);
+                    $wasSent = 1;
+                } catch (Exception) {
+                    $wasSent = 0;
+                }
+                $numberSent = $dryRun ? 1 : $wasSent;
 
                 $this->logger->info(
                     sprintf(

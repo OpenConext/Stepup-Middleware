@@ -60,7 +60,7 @@ class AuthorizingStageTest extends UnitTest
     public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
         $command = m::mock(Command::class);
-        $this->authorizationChecker->shouldReceive('isGranted')->never();
+        $this->authorizationChecker->shouldNotHaveReceived('isGranted');
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
 

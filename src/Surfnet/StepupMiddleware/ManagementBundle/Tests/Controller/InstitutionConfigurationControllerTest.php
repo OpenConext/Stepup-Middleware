@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +28,6 @@ class InstitutionConfigurationControllerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var Client
-     */
     private KernelBrowser $client;
 
     /**

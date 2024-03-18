@@ -183,10 +183,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
         ];
 
         $builder = Mockery::mock(ConstraintViolationBuilderInterface::class);
-        $builder->shouldReceive('addViolation')->never();
+        $builder->shouldNotHaveReceived('addViolation');
 
         $context = Mockery::mock(ExecutionContextInterface::class);
-        $context->shouldReceive('buildViolation')->never();
+        $context->shouldNotHaveReceived('buildViolation');
 
         $configuredInstitutionServiceMock = Mockery::mock(ConfiguredInstitutionService::class);
         $configuredInstitutionServiceMock
@@ -238,7 +238,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
             ->andReturn([$existingInstitution]);
 
         $context = Mockery::mock(ExecutionContextInterface::class);
-        $context->shouldReceive('buildViolation')->never();
+        $context->shouldNotHaveReceived('buildViolation');
 
         $secondFactorTypeServiceMock = Mockery::mock(SecondFactorTypeService::class);
         $secondFactorTypeServiceMock->shouldReceive('getAvailableSecondFactorTypes')->andReturn(['yubikey', 'sms']);

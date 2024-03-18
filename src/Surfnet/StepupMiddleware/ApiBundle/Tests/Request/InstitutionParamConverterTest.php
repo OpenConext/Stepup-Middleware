@@ -33,7 +33,7 @@ class InstitutionParamConverterTest extends UnitTest
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var MockInterface
+     * @var MockInterface&Request
      */
     private $request;
 

@@ -448,7 +448,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -556,7 +556,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',
@@ -652,7 +652,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     $targetYubikeySecFacId,
                     true,
                     EmailVerificationWindow::createFromTimeFrameStartingAt(
-                        TimeFrame::ofSeconds(static::$window),
+                        TimeFrame::ofSeconds(self::$window),
                         DateTime::now(),
                     ),
                     'nonce',

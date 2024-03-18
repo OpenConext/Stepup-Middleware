@@ -62,6 +62,7 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
+        /** @var Request&m\Mock $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();

@@ -23,7 +23,6 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
@@ -49,35 +48,27 @@ class DBALEventHydrator
     ) {
     }
 
-    /**
-     * @return string
-     * @throws DBALException
-     */
-    public function getCount()
+    public function getCount(): string
     {
         $statement = $this->connection->prepare('SELECT COUNT(1) AS cnt FROM ' . $this->eventStreamTableName);
-        $statement->execute();
+        $result = $statement->executeQuery();
 
-        $row = $statement->fetch();
+        $row = $result->fetchAssociative();
 
         return $row['cnt'];
     }
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     * @return DomainEventStream
-     */
-    public function getFromTill($limit, $offset): DomainEventStream
+    public function getFromTill(int $limit, int $offset): DomainEventStream
     {
         $statement = $this->prepareLoadStatement();
         $statement->bindValue('limit', $limit, PDO::PARAM_INT);
         $statement->bindValue('offset', $offset, PDO::PARAM_INT);
 
-        $statement->execute();
+        $result = $statement->executeQuery();
 
         $events = [];
-        while ($row = $statement->fetch()) {
+
+        while ($row = $result->fetchAssociative()) {
             $events[] = $this->deserializeEvent($row);
         }
 
@@ -101,10 +92,10 @@ class DBALEventHydrator
         );
 
         $statement = $this->connection->prepare($query);
-        $statement->execute($eventTypes);
+        $results = $statement->executeQuery($eventTypes);
 
         $events = [];
-        while ($row = $statement->fetch()) {
+        foreach ($results->fetchAssociative() as $row) {
             $events[] = $this->deserializeEvent($row);
         }
 

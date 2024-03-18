@@ -25,7 +25,6 @@ use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
@@ -33,10 +32,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveI
 
 final readonly class MappedInstitutionConfiguration
 {
-    /**
-     * @param SelfVetOption $setVetOption
-     * @param RaLocation[] $raLocations
-     */
     public function __construct(
         private Institution $institution,
         private UseRaLocationsOption $useRaLocationsOption,
@@ -48,9 +43,6 @@ final readonly class MappedInstitutionConfiguration
     ) {
     }
 
-    /**
-     * @return RemoveInstitutionConfigurationByUnnormalizedIdCommand
-     */
     public function inferRemoveInstitutionConfigurationByIdCommand(): RemoveInstitutionConfigurationByUnnormalizedIdCommand
     {
         $command = new RemoveInstitutionConfigurationByUnnormalizedIdCommand();
@@ -60,9 +52,6 @@ final readonly class MappedInstitutionConfiguration
         return $command;
     }
 
-    /**
-     * @return CreateInstitutionConfigurationCommand
-     */
     public function inferCreateInstitutionConfigurationCommand(): CreateInstitutionConfigurationCommand
     {
         $command = new CreateInstitutionConfigurationCommand();
@@ -72,9 +61,6 @@ final readonly class MappedInstitutionConfiguration
         return $command;
     }
 
-    /**
-     * @return ReconfigureInstitutionConfigurationOptionsCommand
-     */
     public function inferReconfigureInstitutionConfigurationCommand(): ReconfigureInstitutionConfigurationOptionsCommand
     {
         $command = new ReconfigureInstitutionConfigurationOptionsCommand();

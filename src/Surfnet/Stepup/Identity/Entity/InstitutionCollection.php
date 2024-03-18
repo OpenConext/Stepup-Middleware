@@ -18,15 +18,11 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 final class InstitutionCollection
 {
-    /**
-     * @var InstitutionRole[]
-     */
     private $institutions = [];
 
     public function set(Institution $institution): void
@@ -41,17 +37,11 @@ final class InstitutionCollection
         }
     }
 
-    /**
-     * @return Institution
-     */
-    public function get(Institution $institution)
+    public function get(Institution $institution): Institution
     {
         return $this->institutions[(string)$institution];
     }
 
-    /**
-     * @return Institution
-     */
     public function exists(Institution $institution): bool
     {
         return array_key_exists((string)$institution, $this->institutions);
@@ -62,18 +52,15 @@ final class InstitutionCollection
         unset($this->institutions[(string)$institution]);
     }
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         return count($this->institutions);
     }
 
     /**
-     * @return InstitutionRole[]
+     * @return Institution[]
      */
-    public function institutions()
+    public function institutions(): array
     {
         return $this->institutions;
     }

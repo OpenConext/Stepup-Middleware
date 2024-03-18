@@ -19,17 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
-use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
-use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\VettingTypeHintService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class VettingTypeHintController extends AbstractController
@@ -37,7 +31,6 @@ class VettingTypeHintController extends AbstractController
     public function __construct(
         private readonly VettingTypeHintService $service,
         private readonly LoggerInterface $logger,
-        private readonly AuthorizationContextService $authorizationService,
     ) {
     }
 
@@ -55,41 +48,5 @@ class VettingTypeHintController extends AbstractController
             );
         }
         return new JsonResponse($recoveryToken);
-    }
-
-    public function collection(Request $request)
-    {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
-        $this->logger->info(
-            sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()),
-        );
-        $query = new RecoveryTokenQuery();
-        $query->identityId = $request->get('identityId');
-        $query->type = $request->get('type');
-        $query->status = $request->get('status');
-        $query->institution = $request->get('institution');
-        $query->email = $request->get('email');
-        $query->name = $request->get('name');
-        $query->pageNumber = (int)$request->get('p', 1);
-        $query->orderBy = $request->get('orderBy');
-        $query->orderDirection = $request->get('orderDirection');
-
-        $roles = $this->getUser()->getRoles();
-        // Only apply the authorization context on non self service requests
-        if (!in_array('ROLE_SS', $roles)) {
-            $actorId = $request->get('actorId', $request->get('identityId'));
-            $this->logger->info(sprintf('Executing query on behalf of %s', $actorId));
-            $actorId = new IdentityId($actorId);
-            $query->authorizationContext = $this->authorizationService->buildInstitutionAuthorizationContext(
-                $actorId,
-                new InstitutionRole(InstitutionRole::ROLE_USE_RA),
-            );
-        }
-        $paginator = $this->service->search($query);
-        $this->logger->info(sprintf('Found %d results', $paginator->count()));
-
-        $filters = $this->service->getFilterOptions($query);
-
-        return JsonCollectionResponse::fromPaginator($paginator, $filters);
     }
 }

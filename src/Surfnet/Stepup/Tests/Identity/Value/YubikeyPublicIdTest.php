@@ -61,8 +61,6 @@ class YubikeyPublicIdTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidFormatProvider
-     *
-     * @param mixed $invalidFormat
      */
     public function it_cannot_be_constructed_with_an_invalid_format(string $invalidFormat): void
     {

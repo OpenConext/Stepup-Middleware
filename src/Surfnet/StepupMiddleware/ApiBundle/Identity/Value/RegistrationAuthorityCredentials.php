@@ -30,42 +30,25 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
 class RegistrationAuthorityCredentials implements JsonSerializable
 {
-    /**
-     * @var Institution
-     */
-    private $institution;
+    private Institution $institution;
 
-    /**
-     * @var CommonName
-     */
-    private $commonName;
+    private CommonName $commonName;
 
-    /**
-     * @var Location|null
-     */
-    private $location;
+    private ?Location $location;
 
-    /**
-     * @var ContactInformation|null
-     */
-    private $contactInformation;
+    private ?ContactInformation $contactInformation;
 
-    /**
-     * @param string $identityId
-     * @param bool $isRa
-     * @param bool $isRaa
-     * @param bool $isSraa
-     */
-    private function __construct(private $identityId, private $isRa, private $isRaa, private $isSraa)
-    {
+    private function __construct(
+        private readonly string $identityId,
+        private readonly bool $isRa,
+        private readonly bool $isRaa,
+        private bool $isSraa
+    ) {
     }
 
-    /**
-     * @return RegistrationAuthorityCredentials
-     */
     public static function fromSraa(Sraa $sraa, Identity $identity): self
     {
-        static::assertEquals($sraa->nameId, $identity->nameId);
+        self::assertEquals($sraa->nameId, $identity->nameId);
 
         $credentials = new self($identity->id, true, true, true);
         $credentials->commonName = $identity->commonName;
@@ -75,7 +58,6 @@ class RegistrationAuthorityCredentials implements JsonSerializable
 
     /**
      * @param RaListing[] $raListings
-     * @return RegistrationAuthorityCredentials
      */
     public static function fromRaListings(array $raListings): self
     {
@@ -108,10 +90,6 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         return $credentials;
     }
 
-
-    /**
-     * @return RegistrationAuthorityCredentials
-     */
     public static function fromRaListing(RaListing $raListing): self
     {
         $credentials = new self(
@@ -129,19 +107,11 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         return $credentials;
     }
 
-    /**
-     * @param string $nameId
-     * @param string $identityNameId
-     * @return void
-     */
-    private static function assertEquals($nameId, $identityNameId): void
+    private static function assertEquals(string $nameId, string $identityNameId): void
     {
         Assertion::eq($nameId, $identityNameId);
     }
 
-    /**
-     * @return RegistrationAuthorityCredentials
-     */
     public function grantSraa(): static
     {
         $copy = clone $this;
@@ -150,9 +120,6 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         return $copy;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(RegistrationAuthorityCredentials $other): bool
     {
         return $other->jsonSerialize() === $this->jsonSerialize();
@@ -174,66 +141,42 @@ class RegistrationAuthorityCredentials implements JsonSerializable
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }
 
-    /**
-     * @return Institution
-     */
-    public function getInstitution()
+    public function getInstitution(): Institution
     {
         return $this->institution;
     }
 
-    /**
-     * @return CommonName
-     */
-    public function getCommonName()
+    public function getCommonName(): CommonName
     {
         return $this->commonName;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocation()
+    public function getLocation(): string
     {
         return $this->location;
     }
 
-    /**
-     * @return string
-     */
-    public function getContactInformation()
+    public function getContactInformation(): string
     {
         return $this->contactInformation;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRa()
+    public function isRa(): bool
     {
         return $this->isRa;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRaa()
+    public function isRaa(): bool
     {
         return $this->isRaa;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isSraa()
+    public function isSraa(): bool
     {
         return $this->isSraa;
     }

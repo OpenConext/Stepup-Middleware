@@ -31,9 +31,6 @@ class RecoveryTokenStatusTypeTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var MySqlPlatform
-     */
     private MariaDBPlatform $platform;
 
     /**
@@ -88,9 +85,6 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validPhpValues
      * @group doctrine
-     *
-     * @param mixed $phpValue
-     * @param mixed $databaseValue
      */
     public function a_valid_php_value_is_converted_to_a_sql_value(
         RecoveryTokenStatus $phpValue,
@@ -139,8 +133,6 @@ class RecoveryTokenStatusTypeTest extends UnitTest
      * @test
      * @dataProvider validDatabaseValues
      * @group doctrine
-     *
-     * @param mixed $phpValue
      */
     public function a_valid_database_value_is_converted_to_a_sql_value(
         string $databaseValue,

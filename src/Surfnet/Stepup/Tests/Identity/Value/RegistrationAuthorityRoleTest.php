@@ -32,8 +32,6 @@ class RegistrationAuthorityRoleTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     *
-     * @param mixed $invalidValue
      */
     public function it_cannot_be_created_with_anything_but_a_valid_role(float|StdClass|array $invalidValue): void
     {

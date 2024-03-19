@@ -42,12 +42,9 @@ class SecondFactorStatusType extends Type
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return int
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): int
     {
         if (!$value instanceof SecondFactorStatus) {
             throw new ConversionException(
@@ -75,12 +72,9 @@ class SecondFactorStatusType extends Type
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return SecondFactorStatus
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): SecondFactorStatus
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): SecondFactorStatus
     {
         if ($value === '0') {
             return SecondFactorStatus::unverified();

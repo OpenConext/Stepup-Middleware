@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Iterator;
+use IteratorAggregate;
 use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -32,6 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedT
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
+use Traversable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -55,22 +58,14 @@ class IdentityService extends AbstractSearchService
         return $this->repository->find($id);
     }
 
-    /**
-     * @param InstitutionRoleSet $institutionRoles
-     * @return Pagerfanta
-     */
-    public function search(IdentityQuery $query)
+    public function search(IdentityQuery $query): Pagerfanta
     {
         $searchQuery = $this->repository->createSearchQuery($query);
 
         return $this->createPaginatorFrom($searchQuery, $query);
     }
 
-    /**
-     * @param string $identityId
-     * @return null|RegistrationAuthorityCredentials
-     */
-    public function findRegistrationAuthorityCredentialsOf($identityId)
+    public function findRegistrationAuthorityCredentialsOf(string $identityId): ?RegistrationAuthorityCredentials
     {
         $identity = $this->find($identityId);
 
@@ -81,11 +76,10 @@ class IdentityService extends AbstractSearchService
         return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
     }
 
-    /**
-     * @return RegistrationAuthorityCredentials|null
-     */
-    public function findRegistrationAuthorityCredentialsByNameIdAndInstitution(NameId $nameId, Institution $institution)
-    {
+    public function findRegistrationAuthorityCredentialsByNameIdAndInstitution(
+        NameId $nameId,
+        Institution $institution
+    ): ?RegistrationAuthorityCredentials {
         $query = new IdentityQuery();
         $query->nameId = $nameId->getNameId();
         $query->institution = $institution->getInstitution();
@@ -109,8 +103,11 @@ class IdentityService extends AbstractSearchService
             );
         }
 
+        /** @var Iterator $collection */
+        $collection = $identities->getIterator();
+
         /** @var Identity $identity */
-        $identity = $identities->getIterator()->current();
+        $identity = $collection->current();
 
         return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
     }

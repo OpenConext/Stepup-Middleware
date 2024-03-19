@@ -1371,10 +1371,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     /**
      * This method is kept to be backwards compatible for changes before FGA
-     *
-     * @param AppointedAsRaaEvent $event
      */
-    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event)
+    protected function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event): void
     {
         $this->registrationAuthorities->set(
             $event->identityInstitution,
@@ -1565,7 +1563,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     private function assertAllVettedTokensAreSelfAsserted(): bool
     {
-        /** @var VettedSecondFactor $vettedToken */
+        /** @var VettedSecondFactor $vettedSecondFactor */
         foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
             if ($vettedSecondFactor->vettingType()->type() !== VettingType::TYPE_SELF_ASSERTED_REGISTRATION) {
                 throw new DomainException(

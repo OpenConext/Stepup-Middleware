@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
+use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Exception;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
@@ -85,7 +86,7 @@ class EventStreamReplayer
             $preparationProgress->advance();
 
             $preparationProgress->setMessage('Determining amount of events to replay...');
-            $totalEvents = $this->eventHydrator->getCount();
+            $totalEvents = (int) $this->eventHydrator->getCount();
 
             $preparationProgress->advance();
 
@@ -148,6 +149,9 @@ class EventStreamReplayer
         }
     }
 
+    /**
+     * @throws InvalidArgumentException|\Doctrine\DBAL\Exception
+     */
     private function wipeReadTables(OutputInterface $output): void
     {
         if ($output->getVerbosity() === OutputInterface::VERBOSITY_DEBUG) {

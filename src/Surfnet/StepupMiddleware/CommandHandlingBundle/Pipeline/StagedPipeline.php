@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class StagedPipeline implements Pipeline
@@ -32,7 +33,7 @@ class StagedPipeline implements Pipeline
     {
     }
 
-    public function process(Command $command)
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(sprintf('Processing "%s"', $command));
 

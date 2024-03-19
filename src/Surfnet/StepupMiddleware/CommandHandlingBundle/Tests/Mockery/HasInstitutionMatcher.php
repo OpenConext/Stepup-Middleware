@@ -19,17 +19,18 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery;
 
 use Mockery\Exception\RuntimeException;
-use Mockery\Matcher\MatcherInterface;
+use Mockery\Matcher\MatcherAbstract;
 
-final class HasInstitutionMatcher implements MatcherInterface
+final class HasInstitutionMatcher extends MatcherAbstract
 {
-    public function __construct(private $expected)
+    public function __construct($expected)
     {
-        if (!is_string($this->expected)) {
+        if (!is_string($expected)) {
             throw new RuntimeException(
                 sprintf('In order to use the %s, a string should be given.', self::class),
             );
         }
+        parent::__construct($expected);
     }
 
     public function match(&$actual): bool
@@ -39,10 +40,10 @@ final class HasInstitutionMatcher implements MatcherInterface
         }
 
         if (method_exists($actual, 'getInstitution')) {
-            return $this->expected === $actual->getInstitution();
+            return $this->_expected === $actual->getInstitution();
         }
         if (property_exists($actual, 'institution')) {
-            return $this->expected === $actual->institution;
+            return $this->_expected === $actual->institution;
         }
 
         return false;
@@ -50,6 +51,6 @@ final class HasInstitutionMatcher implements MatcherInterface
 
     public function __toString(): string
     {
-        return sprintf('<HasInstitutionMatcher(%s)>', $this->expected);
+        return sprintf('<HasInstitutionMatcher(%s)>', $this->_expected);
     }
 }

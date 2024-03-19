@@ -32,17 +32,11 @@ final class RegistrationAuthorityCollection
         $this->registrationAuthorities[(string)$institution] = $registrationAuthority;
     }
 
-    /**
-     * @return RegistrationAuthority
-     */
-    public function get(Institution $institution)
+    public function get(Institution $institution): RegistrationAuthority
     {
         return $this->registrationAuthorities[(string)$institution];
     }
 
-    /**
-     * @return RegistrationAuthority
-     */
     public function exists(Institution $institution): bool
     {
         return array_key_exists((string)$institution, $this->registrationAuthorities);
@@ -53,9 +47,6 @@ final class RegistrationAuthorityCollection
         unset($this->registrationAuthorities[(string)$institution]);
     }
 
-    /**
-     * @return int
-     */
     public function count(): int
     {
         return count($this->registrationAuthorities);

@@ -54,9 +54,6 @@ class BufferedEventBus implements EventBusInterface
         $this->eventListeners[] = $eventListener;
     }
 
-    /**
-     * @throws Throwable
-     */
     public function publish(DomainEventStreamInterface $domainMessages): void
     {
         foreach ($domainMessages as $domainMessage) {
@@ -66,6 +63,7 @@ class BufferedEventBus implements EventBusInterface
 
     /**
      * Flushes the buffered domain messages to all event listeners.
+     * @throws Exception
      */
     public function flush(): void
     {
@@ -93,7 +91,7 @@ class BufferedEventBus implements EventBusInterface
                 // This comes with a caveat: event listeners cannot hold references to certain entities between events
                 $this->entityManager->clear();
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->isFlushing = false;
 
             array_splice($this->buffer, 0, 0, $buffer);

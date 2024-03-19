@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -81,26 +82,14 @@ class CommandAuthorizationServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var WhitelistService|m\MockInterface
-     */
-    private $whitelistService;
-    /**
-     * @var IdentityService|m\MockInterface
-     */
-    private $identityService;
-    /**
-     * @var LoggerInterface|m\MockInterface
-     */
-    private $logger;
-    /**
-     * @var AuthorizationContextService|m\MockInterface
-     */
-    private $authorizationContextService;
+    private WhitelistService&MockInterface $whitelistService;
 
-    /**
-     * @var CommandAuthorizationService
-     */
+    private IdentityService&MockInterface $identityService;
+
+    private LoggerInterface&MockInterface $logger;
+
+    private AuthorizationContextService&MockInterface $authorizationContextService;
+
     private CommandAuthorizationService $service;
 
     public function setUp(): void
@@ -177,10 +166,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_own_selfservice_commands($file, $command): void
+    public function an_identity_should_be_able_to_execute_own_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -211,10 +198,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_commands($file, $command): void
+    public function an_identity_should_be_able_to_execute_configured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -273,10 +258,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands($file, $command): void
+    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -331,10 +314,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands($file, $command): void
+    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -373,10 +354,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands($file, $command): void
+    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -433,8 +412,6 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     *
-     * @param mixed $value
      */
     public function all_available_commands_should_be_tested(): void
     {

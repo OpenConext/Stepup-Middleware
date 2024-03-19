@@ -33,15 +33,9 @@ class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightTo
         'ra_institution',
     ];
 
-    /**
-     * @var NameId
-     */
-    public $nameId;
+    public NameId $nameId;
 
-    /**
-     * @var Institution
-     */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     public function __construct(
         IdentityId $identityId,
@@ -65,9 +59,6 @@ class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightTo
         return $metadata;
     }
 
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self(

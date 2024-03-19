@@ -32,8 +32,6 @@ class DocumentNumberTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidArgumentProvider
-     *
-     * @param mixed $invalidValue
      */
     public function the_document_number_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
     {

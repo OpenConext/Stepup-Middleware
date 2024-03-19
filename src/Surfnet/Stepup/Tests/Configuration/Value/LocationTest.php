@@ -32,8 +32,6 @@ class LocationTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider nonStringProvider
-     *
-     * @param mixed $nonString
      */
     public function it_cannot_be_created_with_anything_but_a_string(bool|int|float|stdClass|array|null $nonString): void
     {

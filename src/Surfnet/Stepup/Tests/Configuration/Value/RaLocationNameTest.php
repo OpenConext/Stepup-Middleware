@@ -32,8 +32,6 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group        domain
      * @dataProvider nonStringOrEmptyStringProvider
-     *
-     * @param mixed $nonStringOrEmptyString
      */
     public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string(
         string|int|float|StdClass|array $nonStringOrEmptyString,

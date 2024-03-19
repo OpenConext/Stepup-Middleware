@@ -328,12 +328,6 @@ interface Identity extends AggregateRoot
     public function getVettedSecondFactorById(SecondFactorId $secondFactorId): ?VettedSecondFactor;
 
     /**
-     * @return IdentityId We're deviating from Broadway's official API, as they accept toString-able VOs as IDs, and we
-     *     require the IdentityId VO in our SensitiveDataEventStoreDecorator.
-     */
-    public function getAggregateRootId(): string;
-
-    /**
      * Identity proved possession of a phone number by reproducing a secret sent to it via SMS
      */
     public function provePossessionOfPhoneRecoveryToken(

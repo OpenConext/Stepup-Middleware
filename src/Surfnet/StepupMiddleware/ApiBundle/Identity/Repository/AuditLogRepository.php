@@ -106,7 +106,6 @@ class AuditLogRepository extends ServiceEntityRepository
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) - The filtering switch triggers the CyclomaticComplexity, it does
      *                                                 not actually make the class complex or hard to maintain.
-     * @return Query
      */
     public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query): Query
     {
@@ -133,7 +132,7 @@ class AuditLogRepository extends ServiceEntityRepository
     /**
      * @return AuditLogEntry[]
      */
-    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId)
+    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId): array
     {
         return $this->createQueryBuilder('al')
             ->where('al.actorId = :actorId')
@@ -144,10 +143,9 @@ class AuditLogRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $actorId
      * @return AuditLogEntry[]
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): array
     {
         return $this->createQueryBuilder('al')
             ->where('al.identityId = :identityId')

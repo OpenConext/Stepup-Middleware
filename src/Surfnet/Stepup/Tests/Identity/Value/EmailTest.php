@@ -32,8 +32,6 @@ class EmailTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidArgumentProvider
-     *
-     * @param mixed $invalidValue
      */
     public function the_email_address_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
     {

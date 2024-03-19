@@ -25,10 +25,10 @@ final class InstitutionSet
     /**
      * @var Institution[]
      */
-    private $institutions;
+    private array $institutions;
 
     /**
-     * @param Institution[]
+     * @param Institution[] $institutions
      */
     private function __construct(array $institutions)
     {
@@ -42,8 +42,7 @@ final class InstitutionSet
     }
 
     /**
-     * @param Institution[]
-     * @return InstitutionSet
+     * @param Institution[] $institutions
      */
     public static function create(array $institutions): self
     {
@@ -69,9 +68,6 @@ final class InstitutionSet
         return $this->toScalarArray() === $other->toScalarArray();
     }
 
-    /**
-     * @return bool
-     */
     public function isOption(Institution $institution): bool
     {
         return in_array($institution->getInstitution(), $this->institutions);
@@ -80,7 +76,7 @@ final class InstitutionSet
     /**
      * @return Institution[]
      */
-    public function getInstitutions()
+    public function getInstitutions(): array
     {
         return $this->institutions;
     }

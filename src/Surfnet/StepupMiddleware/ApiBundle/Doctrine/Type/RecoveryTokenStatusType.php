@@ -36,10 +36,9 @@ class RecoveryTokenStatusType extends Type
     }
 
     /**
-     * @param mixed $value
      * @throws ConversionException
      */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): int
     {
         if (!$value instanceof RecoveryTokenStatus) {
             throw new ConversionException(
@@ -63,10 +62,9 @@ class RecoveryTokenStatusType extends Type
     }
 
     /**
-     * @param mixed $value
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): RecoveryTokenStatus
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): RecoveryTokenStatus
     {
         if ($value === '0') {
             return RecoveryTokenStatus::active();

@@ -33,8 +33,6 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group        domain
      * @group        institution-configuration-option
      * @dataProvider nonBooleanProvider
-     *
-     * @param mixed $nonBooleanProvider
      */
     public function show_raa_contact_information_option_can_only_be_boolean(
         string|int|float|StdClass|array $nonBooleanProvider,

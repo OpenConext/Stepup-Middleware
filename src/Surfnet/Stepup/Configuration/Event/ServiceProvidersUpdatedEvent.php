@@ -36,9 +36,6 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
         $this->serviceProviders = $serviceProviders;
     }
 
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self($data['id'], $data['service_providers']);

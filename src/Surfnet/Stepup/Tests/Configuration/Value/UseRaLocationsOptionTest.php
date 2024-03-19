@@ -33,8 +33,6 @@ class UseRaLocationsOptionTest extends TestCase
      * @group        domain
      * @group        institution-configuration-option
      * @dataProvider nonBooleanProvider
-     *
-     * @param mixed $nonBooleanProvider
      */
     public function use_ra_locations_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider,): void
     {

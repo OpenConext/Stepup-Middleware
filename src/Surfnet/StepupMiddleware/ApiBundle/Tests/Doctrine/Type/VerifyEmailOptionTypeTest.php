@@ -30,9 +30,6 @@ class VerifyEmailOptionTypeTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var MySqlPlatform
-     */
     private MariaDBPlatform $platform;
 
     /**

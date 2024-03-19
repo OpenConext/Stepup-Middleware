@@ -32,7 +32,7 @@ class AppointRoleCommand extends AbstractCommand implements RaExecutable
     public $identityId;
 
     /**
-     * @var
+     * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]

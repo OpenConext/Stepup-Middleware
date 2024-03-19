@@ -83,7 +83,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @group domain
      * @dataProvider eventProvider
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event,): void
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
         $providesSensitiveData = method_exists($event, 'getSensitiveData') || method_exists($event, 'setSensitiveData');
@@ -100,6 +100,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
 
         $serializedEvent = $event->serialize();
         if ($isForgettableEvent) {
+            assert($event instanceof Forgettable);
             $sensitiveData = $event->getSensitiveData();
         }
 

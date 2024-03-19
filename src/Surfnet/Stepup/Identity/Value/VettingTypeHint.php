@@ -31,6 +31,14 @@ class VettingTypeHint implements JsonSerializable
     ) {
     }
 
+    public function __toString(): string
+    {
+        if ($this->hint === null) {
+            return '';
+        }
+        return $this->hint;
+    }
+
     public function jsonSerialize(): array
     {
         return [

@@ -21,7 +21,9 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Request;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
@@ -62,14 +64,14 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
-        /** @var Request&m\Mock $request */
+        /** @var Request&MockInterface $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', m::type($expectedCommandClass))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
+        $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -85,13 +87,14 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
+        /** @var Request&MockInterface $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
+        $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -107,13 +110,14 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 
+        /** @var Request&MockInterface $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
         $request->attributes = m::mock()
             ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
+        $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);

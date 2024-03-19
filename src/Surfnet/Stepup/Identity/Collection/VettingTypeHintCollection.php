@@ -49,21 +49,6 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
         $this->elements[] = $hint;
     }
 
-    public function remove(VettingTypeHint $hint): void
-    {
-        if (!in_array($hint, $this->elements)) {
-            throw new RuntimeException(
-                sprintf(
-                    'Cannot remove vetting type hint "%s" from the collection as it is not in the collection',
-                    $hint,
-                ),
-            );
-        }
-
-        $elements = array_filter($this->elements, fn($inst): bool => !$hint->equals($inst));
-        $this->elements = $elements;
-    }
-
     public function jsonSerialize(): array
     {
         return $this->elements;

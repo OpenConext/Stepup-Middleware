@@ -39,11 +39,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         $this->isDefault = (bool)$isDefault;
     }
 
-    /**
-     * @param string[]|null
-     * @return InstitutionAuthorizationOption
-     */
-    public static function fromInstitutionConfig(InstitutionRole $role, $institutions = null)
+    public static function fromInstitutionConfig(InstitutionRole $role, $institutions = null): InstitutionAuthorizationOption
     {
         if (is_null($institutions)) {
             return self::getDefault($role);
@@ -82,7 +78,6 @@ final class InstitutionAuthorizationOption implements JsonSerializable
 
     /**
      * @param Institution[] $institutions
-     * @return InstitutionAuthorizationOption
      */
     public static function fromInstitutions(InstitutionRole $role, Institution $institution, array $institutions): self
     {
@@ -92,35 +87,21 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         return new self($role, InstitutionSet::create($institutions), false);
     }
 
-    /**
-     * @param string[]|null
-     * @return InstitutionAuthorizationOption
-     */
     public static function getDefault(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), true);
     }
 
-    /**
-     * @param string[]|null
-     * @return InstitutionAuthorizationOption
-     */
     public static function getEmpty(InstitutionRole $role): self
     {
         return new self($role, InstitutionSet::create([]), false);
     }
 
-    /**
-     * @return null
-     */
-    public static function blank()
+    public static function blank(): null
     {
         return null;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(InstitutionAuthorizationOption $option): bool
     {
         return
@@ -129,18 +110,12 @@ final class InstitutionAuthorizationOption implements JsonSerializable
             $this->isDefault === $option->isDefault();
     }
 
-    /**
-     * @return InstitutionRole
-     */
-    public function getInstitutionRole()
+    public function getInstitutionRole(): InstitutionRole
     {
         return $this->institutionRole;
     }
 
-    /**
-     * @return InstitutionSet
-     */
-    public function getInstitutionSet()
+    public function getInstitutionSet(): InstitutionSet
     {
         return $this->institutionSet;
     }
@@ -151,7 +126,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      *
      * @return Institution[]
      */
-    public function getInstitutions(Institution $institution)
+    public function getInstitutions(Institution $institution): array
     {
         if ($this->isDefault) {
             return [$institution];
@@ -159,9 +134,6 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         return $this->institutionSet->getInstitutions();
     }
 
-    /**
-     * @return bool
-     */
     public function hasInstitution(Institution $institution, Institution $default): bool
     {
         $institutions = $this->getInstitutions($default);
@@ -172,10 +144,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         return in_array($institution->getInstitution(), $list);
     }
 
-    /**
-     * @return bool
-     */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->isDefault;
     }

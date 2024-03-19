@@ -22,8 +22,10 @@ use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\CommandAuthorizationService;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventSourcing\MetadataEnricher;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
@@ -34,6 +36,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use function sprintf;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -49,7 +52,7 @@ class CommandController extends AbstractController
     ) {
     }
 
-    public function handle(Command $command, Metadata $metadata, Request $request): JsonResponse
+    public function handle(AbstractCommand $command, Metadata $metadata, Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));
@@ -101,7 +104,7 @@ class CommandController extends AbstractController
         );
     }
 
-    private function handleAuthorization(Command $command, Metadata $metadata): void
+    private function handleAuthorization(AbstractCommand $command, Metadata $metadata): void
     {
         // Get the actorId and actorInstitution from the metadata
         // Be aware that these values could be null when executing commands where we shouldn't log in for
@@ -135,13 +138,15 @@ class CommandController extends AbstractController
             $command,
             $actorId,
         )) {
-            throw new AccessDeniedHttpException(
-                sprintf(
+            $message = 'Processing of SelfService command denied, see log entries for details';
+            if ($command instanceof SelfServiceExecutable) {
+                $message = sprintf(
                     'The actor "%s" is not allowed to act on behalf of identity "%s" processing of SelfService command denied',
                     new IdentityId($metadata->actorId),
                     $command->getIdentityId(),
-                ),
-            );
+                );
+            }
+            throw new AccessDeniedHttpException($message);
         }
 
         // Validate that if a command is an RAExecutable we may execute the command

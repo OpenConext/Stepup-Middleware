@@ -85,7 +85,8 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $command->commonName = $input->getArgument('common-name');
         $command->email = $input->getArgument('email');
         $command->preferredLocale = $input->getArgument('preferred-locale');
-        $command->secondFactorId = (string)Uuid::uuid4();
+        $secondFactorId = (string)Uuid::uuid4();
+        $command->secondFactorId = $secondFactorId;
         $command->yubikeyPublicId = $input->getArgument('yubikey');
 
         $this->transactionHelper->beginTransaction();
@@ -109,7 +110,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends Command
         $output->writeln(
             sprintf(
                 '<info>Successfully registered a Yubikey token with UUID %s</info>',
-                $command->secondFactorId,
+                $secondFactorId,
             ),
         );
         return 0;

@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use DateTime as CoreDateTime;
 use DateTimeZone;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
@@ -37,19 +36,13 @@ class DateTimeType extends Type
      * @param array $column
      * @param AbstractPlatform $platform
      * @return string
-     * @throws DBALException
      */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getDateTimeTypeDeclarationSQL($column);
     }
 
-    /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return null|string
-     */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if ($value === null) {
             return null;
@@ -62,12 +55,9 @@ class DateTimeType extends Type
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return null|DateTime
      * @throws ConversionException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?DateTime
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DateTime
     {
         if (is_null($value)) {
             return $value;

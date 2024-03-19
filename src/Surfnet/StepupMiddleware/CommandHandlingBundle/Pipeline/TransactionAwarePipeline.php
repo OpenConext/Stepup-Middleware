@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
 class TransactionAwarePipeline implements Pipeline
 {
@@ -33,7 +33,7 @@ class TransactionAwarePipeline implements Pipeline
     ) {
     }
 
-    public function process(Command $command)
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(
             sprintf(

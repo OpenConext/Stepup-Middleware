@@ -23,7 +23,6 @@ use Doctrine\ORM\QueryBuilder;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution as InstitutionValue;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
@@ -33,20 +32,11 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var QueryBuilder
-     */
     private QueryBuilder $queryBuilder;
 
-    /**
-     * @var EntityManager
-     */
-    private MockObject $entityManager;
+    private EntityManager&MockObject $entityManager;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface|PHPUnit_Framework_MockObject_MockObject
-     */
-    private MockObject $mockedAuthorizationContext;
+    private InstitutionAuthorizationContextInterface&MockObject $mockedAuthorizationContext;
 
     public function setUp(): void
     {

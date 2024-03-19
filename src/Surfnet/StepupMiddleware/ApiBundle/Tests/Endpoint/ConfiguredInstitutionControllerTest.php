@@ -30,9 +30,6 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var Client
-     */
     private KernelBrowser $client;
 
     /**

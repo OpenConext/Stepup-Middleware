@@ -58,10 +58,6 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         return $metadata;
     }
 
-    /**
-     * @param array $data
-     * @return IdentityRenamedEvent The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self(

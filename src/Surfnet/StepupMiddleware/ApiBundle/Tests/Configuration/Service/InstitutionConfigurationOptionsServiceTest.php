@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Service;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
@@ -31,15 +32,9 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
     private InstitutionConfigurationOptionsService $service;
 
-    /**
-     * @var InstitutionConfigurationOptionsRepository|Mock
-     */
-    private $repository;
+    private InstitutionConfigurationOptionsRepository&MockInterface $repository;
 
     /**
      * A representation of the globally configured application setting for the numberOfTokensPerIdentity, this value

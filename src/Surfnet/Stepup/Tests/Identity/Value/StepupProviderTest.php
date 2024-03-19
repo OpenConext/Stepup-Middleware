@@ -32,8 +32,6 @@ class StepupProviderTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidValueProvider
-     *
-     * @param mixed $invalidValue
      */
     public function a_stepup_provider_cannot_be_created_with_anything_but_a_nonempty_string(
         string|int|float|StdClass|array $invalidValue,

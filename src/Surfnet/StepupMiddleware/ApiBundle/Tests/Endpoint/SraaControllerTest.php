@@ -31,9 +31,6 @@ class SraaControllerTest extends WebTestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var Client
-     */
     private KernelBrowser $client;
 
     /**
@@ -41,9 +38,6 @@ class SraaControllerTest extends WebTestCase
      */
     private array $accounts;
 
-    /**
-     * @var string
-     */
     private string $endpoint;
 
     private DatabaseToolCollection $databaseTool;

@@ -32,8 +32,6 @@ class CommonNameTest extends UnitTest
      * @test
      * @group        domain
      * @dataProvider invalidArgumentProvider
-     *
-     * @param mixed $invalidValue
      */
     public function the_common_name_address_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue,): void
     {

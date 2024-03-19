@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -37,7 +37,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     /**
      * @return InstitutionAuthorization[]
      */
-    public function findAuthorizationOptionsForInstitutionByRole(Institution $institution, InstitutionRole $role)
+    public function findAuthorizationOptionsForInstitutionByRole(Institution $institution, InstitutionRole $role): array
     {
         return $this->createQueryBuilder('ia')
             ->where('ia.institution = :institution')
@@ -51,7 +51,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     /**
      * @return InstitutionAuthorization[]
      */
-    public function findAuthorizationOptionsForInstitution(Institution $institution)
+    public function findAuthorizationOptionsForInstitution(Institution $institution): array
     {
         return $this->createQueryBuilder('ia')
             ->where('ia.institution = :institution')
@@ -63,7 +63,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     /**
      * @return InstitutionAuthorization[]
      */
-    public function findSelectRaasForInstitution(Institution $institution)
+    public function findSelectRaasForInstitution(Institution $institution): array
     {
         return $this->createQueryBuilder('ia')
             ->where('ia.institutionRelation = :institution')
@@ -95,7 +95,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param InstitutionAuthorizationOption $institutionOption
      * @throws OptimisticLockException
      */
     public function clearInstitutionOption(Institution $institution): void
@@ -147,7 +146,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
     }
 
     private function clearOldAuthorizations(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         Institution $institution,
         InstitutionRole $role,
     ): void {
@@ -164,7 +163,7 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
      * @param InstitutionAuthorization[] $institutionAuthorizations
      */
     private function addNewAuthorizations(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         InstitutionRole $role,
         array $institutionAuthorizations,
     ): void {

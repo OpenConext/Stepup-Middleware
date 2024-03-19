@@ -42,20 +42,12 @@ class RaListingRepository extends ServiceEntityRepository
         parent::__construct($registry, RaListing::class);
     }
 
-    /**
-     * @param IdentityId $identityId The RA's identity id.
-     * @return null|RaListing[]
-     */
-    public function findByIdentityId(IdentityId $identityId): array
+    public function findByIdentityId(IdentityId $identityId): ?array
     {
         return parent::findBy(['identityId' => (string)$identityId]);
     }
 
-    /**
-     * @param IdentityId $identityId The RA's identity id.
-     * @return null|RaListing
-     */
-    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): ?object
+    public function findByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): ?RaListing
     {
         return parent::findOneBy([
             'identityId' => (string)$identityId,
@@ -63,16 +55,11 @@ class RaListingRepository extends ServiceEntityRepository
         ]);
     }
 
-
-    /**
-     * @param IdentityId $identityId The RA's identity id.
-     * @return null|RaListing
-     */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
         Institution $raInstitution,
         InstitutionAuthorizationContextInterface $authorizationContext,
-    ) {
+    ): ?RaListing {
         $queryBuilder = $this->createQueryBuilder('r')
             ->where('r.identityId = :identityId')
             ->andWhere('r.raInstitution = :raInstitution')
@@ -95,7 +82,6 @@ class RaListingRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $identityId The RA's identity id.
      * @return RaListing[]
      */
     public function findByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): array
@@ -115,8 +101,6 @@ class RaListingRepository extends ServiceEntityRepository
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
      * @SuppressWarnings(PHPMD.NPathComplexity)      below complex or hard to maintain.
-     *
-     * @return Query
      */
     public function createSearchQuery(RaListingQuery $query): Query
     {
@@ -183,9 +167,6 @@ class RaListingRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    /**
-     * @return Query
-     */
     public function createOptionsQuery(RaListingQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('r')
@@ -206,9 +187,6 @@ class RaListingRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function listRasFor(Institution $raInstitution): ArrayCollection
     {
         $listings = $this->createQueryBuilder('rl')
@@ -220,9 +198,6 @@ class RaListingRepository extends ServiceEntityRepository
         return new ArrayCollection($listings);
     }
 
-    /**
-     * @return void
-     */
     public function removeByIdentityId(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()
@@ -235,9 +210,6 @@ class RaListingRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @return void
-     */
     public function removeByIdentityIdAndRaInstitution(IdentityId $identityId, Institution $raInstitution): void
     {
         $this->getEntityManager()->createQueryBuilder()
@@ -250,9 +222,6 @@ class RaListingRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * @return void
-     */
     public function removeByIdentityIdAndInstitution(IdentityId $identityId, Institution $institution): void
     {
         $this->getEntityManager()->createQueryBuilder()

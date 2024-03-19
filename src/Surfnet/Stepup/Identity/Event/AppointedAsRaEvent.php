@@ -35,10 +35,7 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         'name_id',
     ];
 
-    /**
-     * @var NameId
-     */
-    public $nameId;
+    public NameId $nameId;
 
     public function __construct(
         IdentityId $identityId,
@@ -59,9 +56,6 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         return $metadata;
     }
 
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self(
@@ -71,9 +65,6 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize(): array
     {
         return [

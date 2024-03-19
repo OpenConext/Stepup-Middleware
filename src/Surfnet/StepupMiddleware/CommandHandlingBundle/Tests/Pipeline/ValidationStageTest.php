@@ -61,11 +61,10 @@ class ValidationStageTest extends TestCase
         $this->expectException(InvalidCommandException::class);
 
         $command = m::mock(Command::class);
-        $violations = m::mock(ConstraintViolationListInterface::class)
-            ->shouldReceive('count')->with()->andReturn(1);
-        $violations
-            ->shouldReceive('getIterator')->with()->andReturn(new ArrayIterator())
-            ->getMock();
+        $violations = m::mock(ConstraintViolationListInterface::class);
+        $violations->allows()->count()->andReturn(1);
+        $violations->allows()->getIterator()->andReturn(new ArrayIterator())->getMock();
+
         $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();

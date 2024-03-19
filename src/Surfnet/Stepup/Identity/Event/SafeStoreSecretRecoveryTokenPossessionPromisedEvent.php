@@ -21,7 +21,6 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
-use Surfnet\Stepup\Identity\Value\HashableSecret;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -52,30 +51,15 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         'common_name',
     ];
 
-    /**
-     * @var RecoveryTokenId
-     */
-    public $recoveryTokenId;
+    public RecoveryTokenId $recoveryTokenId;
 
-    /**
-     * @var HashableSecret
-     */
-    public $secret;
+    public RecoveryTokenIdentifier $secret;
 
-    /**
-     * @var CommonName
-     */
-    public $commonName;
+    public CommonName $commonName;
 
-    /**
-     * @var Email
-     */
-    public $email;
+    public Email $email;
 
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     public function __construct(
         IdentityId $identityId,

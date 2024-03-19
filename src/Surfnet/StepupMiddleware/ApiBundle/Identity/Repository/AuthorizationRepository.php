@@ -119,7 +119,7 @@ class AuthorizationRepository extends ServiceEntityRepository
                 $this->logger->notice(
                     sprintf(
                         'Adding %s to authorized institutions from %s',
-                        $role->getType(),
+                        $role,
                         $institution['institution'],
                     ),
                 );

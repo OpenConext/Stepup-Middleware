@@ -30,7 +30,6 @@ final class InstitutionAuthorizationOptionMap
     private array $institutionOptions = [];
 
     /**
-     * InstitutionAuthorizationOptionMap constructor.
      * @param InstitutionAuthorization[] $institutionAuthorizations
      */
     private function __construct(Institution $institution, array $institutionAuthorizations)
@@ -60,10 +59,6 @@ final class InstitutionAuthorizationOptionMap
         }
     }
 
-    /**
-     * @param InstitutionAuthorization[]|null
-     * @return InstitutionAuthorizationOptionMap
-     */
     public static function fromInstitutionAuthorizations(
         Institution $institution,
         array $institutionAuthorizations,
@@ -71,11 +66,7 @@ final class InstitutionAuthorizationOptionMap
         return new self($institution, $institutionAuthorizations);
     }
 
-    /**
-     * InstitutionAuthorizationOption
-     * @return InstitutionAuthorizationOption
-     */
-    public function getAuthorizationOptionsByRole(InstitutionRole $role)
+    public function getAuthorizationOptionsByRole(InstitutionRole $role): InstitutionAuthorizationOption
     {
         if (!isset($this->institutionOptions[$role->getType()])) {
             return InstitutionAuthorizationOption::getEmpty($role);

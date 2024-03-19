@@ -32,9 +32,7 @@ class DateTimeTypeTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var MySqlPlatform
-     */
+
     private MariaDBPlatform $platform;
 
     /**

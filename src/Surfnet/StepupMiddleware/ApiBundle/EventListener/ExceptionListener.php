@@ -74,11 +74,6 @@ class ExceptionListener
         }
     }
 
-    /**
-     * @param Throwable $exception
-     * @param array $headers OPTIONAL
-     * @return JsonResponse
-     */
     private function createJsonErrorResponse(Throwable $throwable, int $statusCode, array $headers = []): JsonResponse
     {
         if ($throwable instanceof BadApiRequestException

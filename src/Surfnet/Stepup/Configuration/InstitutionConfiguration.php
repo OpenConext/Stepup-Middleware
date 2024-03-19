@@ -200,10 +200,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $institutionConfiguration;
     }
 
-    /**
-     * @return InstitutionConfiguration
-     */
-    public function rebuild(): static
+    public function rebuild(): self
     {
         // We can only rebuild a destroyed InstitutionConfiguration, all other cases are not valid
         if ($this->isMarkedAsDestroyed !== true) {

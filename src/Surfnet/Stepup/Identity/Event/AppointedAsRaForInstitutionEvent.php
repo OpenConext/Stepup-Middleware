@@ -65,9 +65,6 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
         return $metadata;
     }
 
-    /**
-     * @return mixed The object instance
-     */
     public static function deserialize(array $data): self
     {
         return new self(

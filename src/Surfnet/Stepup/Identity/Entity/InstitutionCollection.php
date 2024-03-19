@@ -33,7 +33,7 @@ final class InstitutionCollection
     public function update(Institutions $institutions): void
     {
         foreach ($institutions as $institution) {
-            $this->institutions[(string)$institutions] = $institution;
+            $this->institutions[(string)$institution] = $institution;
         }
     }
 

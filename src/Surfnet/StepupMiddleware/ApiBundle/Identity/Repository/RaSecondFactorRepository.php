@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
@@ -71,9 +70,6 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The amount of if statements do not necessarily make the method
      *                                               below complex or hard to maintain.
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
-     * @return Query
-     * @throws DBALException
      */
     public function createSearchQuery(RaSecondFactorQuery $query): Query
     {

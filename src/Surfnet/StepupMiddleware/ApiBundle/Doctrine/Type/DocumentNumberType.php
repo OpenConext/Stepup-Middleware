@@ -18,10 +18,10 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 
 /**
@@ -31,21 +31,12 @@ class DocumentNumberType extends Type
 {
     public const NAME = 'stepup_document_number';
 
-    /**
-     * @param array $column
-     * @param AbstractPlatform $platform
-     * @return string
-     * @throws DBALException
-     */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return null|string
      * @throws ConversionException
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
@@ -68,12 +59,9 @@ class DocumentNumberType extends Type
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
-     * @return null|DocumentNumber
-     * @throws ConversionException
+     * @throws InvalidArgumentException
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?DocumentNumber
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DocumentNumber
     {
         if (is_null($value)) {
             return null;

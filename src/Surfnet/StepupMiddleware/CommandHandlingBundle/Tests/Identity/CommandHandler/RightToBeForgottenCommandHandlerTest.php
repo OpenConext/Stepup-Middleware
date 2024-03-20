@@ -58,13 +58,13 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
 {
     /** @var MockInterface */
-    private $apiIdentityRepository;
+    private MockInterface $apiIdentityRepository;
 
     /** @var MockInterface */
-    private $sensitiveDataService;
+    private MockInterface $sensitiveDataService;
 
     /** @var MockInterface */
-    private $sraaRepository;
+    private MockInterface $sraaRepository;
 
     protected function createCommandHandler(
         EventStoreInterface $eventStore,

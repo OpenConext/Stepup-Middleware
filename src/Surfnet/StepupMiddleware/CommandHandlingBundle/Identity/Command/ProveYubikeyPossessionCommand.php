@@ -30,7 +30,7 @@ class ProveYubikeyPossessionCommand extends AbstractCommand implements SelfServi
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of the second factor to create.
@@ -38,7 +38,7 @@ class ProveYubikeyPossessionCommand extends AbstractCommand implements SelfServi
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * The Yubikey's public ID.
@@ -46,12 +46,12 @@ class ProveYubikeyPossessionCommand extends AbstractCommand implements SelfServi
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $yubikeyPublicId;
+    public string $yubikeyPublicId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

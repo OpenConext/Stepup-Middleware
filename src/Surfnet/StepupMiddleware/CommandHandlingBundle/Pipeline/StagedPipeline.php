@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 
 class StagedPipeline implements Pipeline
 {

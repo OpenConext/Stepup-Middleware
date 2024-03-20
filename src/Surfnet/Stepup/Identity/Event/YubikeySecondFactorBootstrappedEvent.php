@@ -51,7 +51,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
 
     public function __construct(
         IdentityId $identityId,
@@ -107,7 +107,7 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         );
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -119,7 +119,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        $yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        assert($yubikeyPublicId instanceof YubikeyPublicId);
+        $this->yubikeyPublicId = $yubikeyPublicId;
     }
 
     public function obtainUserData(): array

@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Exception;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
@@ -57,6 +58,8 @@ final class ConfigurableSettings
      * @param int $emailVerificationTimeFrame positive integer
      * @param string[] $locales
      * @return ConfigurableSettings
+     * @throws Exception
+     * @throws Exception
      */
     public static function create($emailVerificationTimeFrame, array $locales): self
     {
@@ -72,7 +75,7 @@ final class ConfigurableSettings
     /**
      * @return EmailVerificationWindow
      */
-    public function createNewEmailVerificationWindow()
+    public function createNewEmailVerificationWindow(): EmailVerificationWindow
     {
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             $this->emailVerificationTimeFrame,
@@ -80,9 +83,6 @@ final class ConfigurableSettings
         );
     }
 
-    /**
-     * @return bool
-     */
     public function isSupportedLocale(Locale $locale): bool
     {
         return array_reduce(

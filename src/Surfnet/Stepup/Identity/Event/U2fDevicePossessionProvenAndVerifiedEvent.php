@@ -55,32 +55,32 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var U2fKeyHandle
      */
-    public $keyHandle;
+    public U2fKeyHandle $keyHandle;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @var DateTime
      */
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     /**
      * @param IdentityId $identityId
@@ -94,15 +94,15 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param string $registrationCode
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
+        IdentityId     $identityId,
+        Institution    $identityInstitution,
         SecondFactorId $secondFactorId,
-        U2fKeyHandle $keyHandle,
-        CommonName $commonName,
-        Email $email,
-        Locale $locale,
-        DateTime $registrationRequestedAt,
-        public $registrationCode,
+        U2fKeyHandle   $keyHandle,
+        CommonName     $commonName,
+        Email          $email,
+        Locale         $locale,
+        DateTime       $registrationRequestedAt,
+        public string  $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -161,7 +161,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -171,7 +171,9 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        $keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        assert($keyHandle instanceof U2fKeyHandle);
+        $this->keyHandle = $keyHandle;
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }

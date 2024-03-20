@@ -29,5 +29,5 @@ interface SelfServiceExecutable
      *
      * @return string
      */
-    public function getIdentityId();
+    public function getIdentityId(): string;
 }

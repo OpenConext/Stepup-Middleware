@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Broadway\CommandHandling\CommandBus;
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
 class DispatchStage implements Stage
 {
@@ -30,7 +30,7 @@ class DispatchStage implements Stage
     ) {
     }
 
-    public function process(Command $command): Command
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(sprintf('Dispatching command "%s" for handling', $command));
 

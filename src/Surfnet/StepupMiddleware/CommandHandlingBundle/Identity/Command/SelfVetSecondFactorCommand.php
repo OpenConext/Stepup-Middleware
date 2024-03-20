@@ -25,49 +25,30 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
 {
-    /**
-     * The ID of an existing identity.
-     * @var string
-     */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
-    /**
-     * @var string
-     */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
-    /**
-     * @var string
-     */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorType;
+    public string $secondFactorType;
 
-    /**
-     * @var string
-     */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $registrationCode;
+    public string $registrationCode;
 
-    /**
-     * @var string
-     */
     #[Assert\Type(type: 'string')]
-    public $authoringSecondFactorLoa;
+    public string $authoringSecondFactorLoa;
 
-    /**
-     * @var string
-     */
     #[Assert\Type(type: 'string')]
-    public $authoringSecondFactorIdentifier;
+    public ?string $authoringSecondFactorIdentifier = null;
 
-    public function getIdentityId(): void
+    public function getIdentityId(): string
     {
-        $this->identityId;
+        return $this->identityId;
     }
 }

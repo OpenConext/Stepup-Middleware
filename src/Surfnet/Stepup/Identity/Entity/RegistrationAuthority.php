@@ -37,9 +37,6 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
 
     private ?Institution $institution = null;
 
-    /**
-     * @return RegistrationAuthority
-     */
     public static function accreditWith(
         RegistrationAuthorityRole $role,
         Location $location,
@@ -61,26 +58,17 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
         $this->contactInformation = $contactInformation;
     }
 
-    /**
-     * @return void
-     */
     public function appointAs(RegistrationAuthorityRole $role): void
     {
         $this->role = $role;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAppointedAs(RegistrationAuthorityRole $role)
+    public function isAppointedAs(RegistrationAuthorityRole $role): bool
     {
         return $this->role->equals($role);
     }
 
-    /**
-     * @return RegistrationAuthorityRole
-     */
-    public function getRole()
+    public function getRole(): ?RegistrationAuthorityRole
     {
         return $this->role;
     }

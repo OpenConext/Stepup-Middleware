@@ -121,41 +121,32 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @var IdentityId
      */
-    private $id;
+    private IdentityId $id;
 
     /**
      * @var Institution
      */
-    private $institution;
+    private Institution $institution;
 
     /**
      * @var NameId
      */
-    private $nameId;
+    private NameId $nameId;
 
     /**
      * @var CommonName
      */
-    private $commonName;
+    private CommonName $commonName;
 
     /**
      * @var Email
      */
-    private $email;
+    private Email $email;
 
-    /**
-     * @var SecondFactorCollection|UnverifiedSecondFactor[]
-     */
     private ?SecondFactorCollection $unverifiedSecondFactors = null;
 
-    /**
-     * @var SecondFactorCollection|VerifiedSecondFactor[]
-     */
     private ?SecondFactorCollection $verifiedSecondFactors = null;
 
-    /**
-     * @var SecondFactorCollection|VettedSecondFactor[]
-     */
     private ?SecondFactorCollection $vettedSecondFactors = null;
 
     private ?RegistrationAuthorityCollection $registrationAuthorities = null;
@@ -163,7 +154,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @var Locale
      */
-    private $preferredLocale;
+    private Locale $preferredLocale;
 
     private ?bool $forgotten = null;
 
@@ -212,9 +203,9 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function bootstrapYubikeySecondFactor(
-        SecondFactorId $secondFactorId,
+        SecondFactorId  $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
-        $maxNumberOfTokens,
+        int             $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -234,11 +225,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function provePossessionOfYubikey(
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        YubikeyPublicId         $yubikeyPublicId,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -278,11 +269,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function provePossessionOfPhone(
-        SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        PhoneNumber             $phoneNumber,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -372,12 +363,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function provePossessionOfGssf(
-        SecondFactorId $secondFactorId,
-        StepupProvider $provider,
-        GssfId $gssfId,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        StepupProvider          $provider,
+        GssfId                  $gssfId,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
+                                $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -422,11 +413,11 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
      */
     public function provePossessionOfU2fDevice(
-        SecondFactorId $secondFactorId,
-        U2fKeyHandle $keyHandle,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        U2fKeyHandle            $keyHandle,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
+                                $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -465,7 +456,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function verifyEmail($verificationNonce): void
+    public function verifyEmail(string $verificationNonce): void
     {
         $this->assertNotForgotten();
 
@@ -495,16 +486,16 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function vetSecondFactor(
-        IdentityApi $registrant,
-        SecondFactorId $registrantsSecondFactorId,
-        SecondFactorType $registrantsSecondFactorType,
-        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
-        $registrationCode,
-        DocumentNumber $documentNumber,
-        $identityVerified,
-        SecondFactorTypeService $secondFactorTypeService,
+        IdentityApi                       $registrant,
+        SecondFactorId                    $registrantsSecondFactorId,
+        SecondFactorType                  $registrantsSecondFactorType,
+        SecondFactorIdentifier            $registrantsSecondFactorIdentifier,
+        string                            $registrationCode,
+        DocumentNumber                    $documentNumber,
+        bool                              $identityVerified,
+        SecondFactorTypeService           $secondFactorTypeService,
         SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
-        $provePossessionSkipped,
+        bool                              $provePossessionSkipped,
     ): void {
         $this->assertNotForgotten();
 
@@ -728,12 +719,12 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     }
 
     public function complyWithVettingOfSecondFactor(
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
+        SecondFactorId         $secondFactorId,
+        SecondFactorType       $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
-        $registrationCode,
-        DocumentNumber $documentNumber,
-        $provePossessionSkipped,
+        string                 $registrationCode,
+        DocumentNumber         $documentNumber,
+        bool                   $provePossessionSkipped,
     ): void {
         $this->assertNotForgotten();
 
@@ -1029,7 +1020,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event)
+    protected function applyIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $this->id = $event->identityId;
         $this->institution = $event->identityInstitution;
@@ -1056,7 +1047,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->email = $event->email;
     }
 
-    protected function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    protected function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
     {
         $secondFactor = VettedSecondFactor::create(
             $event->secondFactorId,
@@ -1069,7 +1060,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    protected function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1083,7 +1074,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    protected function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = VerifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1097,7 +1088,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    protected function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1111,7 +1102,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    protected function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = VerifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1125,7 +1116,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    protected function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1139,7 +1130,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    protected function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = VerifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1153,7 +1144,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    protected function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event): void
     {
         $secondFactor = UnverifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1167,7 +1158,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->unverifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    protected function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event): void
     {
         $secondFactor = VerifiedSecondFactor::create(
             $event->secondFactorId,
@@ -1181,7 +1172,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->verifiedSecondFactors->set((string)$secondFactor->getId(), $secondFactor);
     }
 
-    protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
+    protected function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event): void
     {
         $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::sms(), $this);
 
@@ -1190,13 +1181,14 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(
         SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event,
-    ) {
+    ): void
+    {
         $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore(), $this);
 
         $this->recoveryTokens->set($recoveryToken);
     }
 
-    protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    protected function applyEmailVerifiedEvent(EmailVerifiedEvent $event): void
     {
         $secondFactorId = (string)$event->secondFactorId;
 
@@ -1226,7 +1218,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
 
-    protected function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    protected function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
         $secondFactorId = (string)$event->secondFactorId;
         $verified = $this->verifiedSecondFactors->get($secondFactorId);
@@ -1237,7 +1229,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applySecondFactorVettedWithoutTokenProofOfPossession(
         SecondFactorVettedWithoutTokenProofOfPossession $event,
-    ) {
+    ): void
+    {
         $secondFactorId = (string)$event->secondFactorId;
 
         /** @var VerifiedSecondFactor $verified */
@@ -1248,50 +1241,53 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         $this->vettedSecondFactors->set($secondFactorId, $vetted);
     }
 
-    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
+    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event): void
     {
         $this->unverifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->unverifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
-    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
+    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event): void
     {
         $this->verifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->verifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
-    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event): void
     {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
     }
 
-    protected function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event)
+    protected function applyCompliedWithRecoveryCodeRevocationEvent(CompliedWithRecoveryCodeRevocationEvent $event): void
     {
         $this->recoveryTokens->remove($event->recoveryTokenId);
     }
 
-    protected function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event)
+    protected function applyRecoveryTokenRevokedEvent(RecoveryTokenRevokedEvent $event): void
     {
         $this->recoveryTokens->remove($event->recoveryTokenId);
     }
 
-    protected function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event)
+    protected function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event): void
     {
         $this->registrationAuthorities->set(
             $event->raInstitution,
@@ -1304,7 +1300,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
     }
 
-    protected function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event,)
+    protected function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event,): void
     {
         $this->registrationAuthorities->set(
             $event->raInstitution,
@@ -1319,14 +1315,15 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
         RegistrationAuthorityInformationAmendedForInstitutionEvent $event,
-    ) {
+    ): void
+    {
         $this->registrationAuthorities->get($event->raInstitution)->amendInformation(
             $event->location,
             $event->contactInformation,
         );
     }
 
-    protected function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event)
+    protected function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event): void
     {
         $this->registrationAuthorities->get($event->raInstitution)->appointAs(
             new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
@@ -1335,16 +1332,17 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyRegistrationAuthorityRetractedForInstitutionEvent(
         RegistrationAuthorityRetractedForInstitutionEvent $event,
-    ) {
+    ): void
+    {
         $this->registrationAuthorities->remove($event->raInstitution);
     }
 
-    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event): void
     {
         $this->preferredLocale = $event->preferredLocale;
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->commonName = CommonName::unknown();
         $this->email = Email::unknown();
@@ -1354,7 +1352,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      */
-    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event)
+    protected function applyAppointedAsRaEvent(AppointedAsRaEvent $event): void
     {
         $this->registrationAuthorities->get($event->identityInstitution)
             ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
@@ -1363,7 +1361,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      */
-    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event)
+    protected function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event): void
     {
         $this->registrationAuthorities->get($event->identityInstitution)
             ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA));
@@ -1388,7 +1386,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      */
-    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event)
+    protected function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event): void
     {
         $this->registrationAuthorities->set(
             $event->identityInstitution,
@@ -1404,7 +1402,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      */
-    protected function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event)
+    protected function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event): void
     {
         $this->registrationAuthorities->get($event->identityInstitution)
             ->appointAs(new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA));
@@ -1415,7 +1413,8 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     protected function applyRegistrationAuthorityInformationAmendedEvent(
         RegistrationAuthorityInformationAmendedEvent $event,
-    ) {
+    ): void
+    {
         $this->registrationAuthorities->get($event->identityInstitution)->amendInformation(
             $event->location,
             $event->contactInformation,
@@ -1425,7 +1424,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * This method is kept to be backwards compatible for changes before FGA
      */
-    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event)
+    protected function applyRegistrationAuthorityRetractedEvent(RegistrationAuthorityRetractedEvent $event): void
     {
         $this->registrationAuthorities->remove($event->identityInstitution);
     }
@@ -1481,7 +1480,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         }
     }
 
-    public function getId()
+    public function getId(): IdentityId
     {
         return $this->id;
     }
@@ -1489,7 +1488,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @return NameId
      */
-    public function getNameId()
+    public function getNameId(): NameId
     {
         return $this->nameId;
     }
@@ -1497,22 +1496,22 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @return Institution
      */
-    public function getInstitution()
+    public function getInstitution(): Institution
     {
         return $this->institution;
     }
 
-    public function getCommonName()
+    public function getCommonName(): CommonName
     {
         return $this->commonName;
     }
 
-    public function getEmail()
+    public function getEmail(): Email
     {
         return $this->email;
     }
 
-    public function getPreferredLocale()
+    public function getPreferredLocale(): Locale
     {
         return $this->preferredLocale;
     }
@@ -1561,7 +1560,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * Verify that every vetted second factor is self-asserted
      */
-    private function assertAllVettedTokensAreSelfAsserted(): bool
+    private function assertAllVettedTokensAreSelfAsserted(): void
     {
         /** @var VettedSecondFactor $vettedSecondFactor */
         foreach ($this->vettedSecondFactors as $vettedSecondFactor) {
@@ -1571,6 +1570,5 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
                 );
             }
         }
-        return true;
     }
 }

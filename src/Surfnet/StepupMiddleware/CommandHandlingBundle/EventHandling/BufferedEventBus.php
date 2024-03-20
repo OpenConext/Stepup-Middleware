@@ -37,7 +37,7 @@ class BufferedEventBus implements EventBusInterface
     /**
      * @var DomainMessage[]
      */
-    private $buffer = [];
+    private array $buffer = [];
 
     /**
      * Flag to ensure only one loop is publishing domain messages from the buffer.

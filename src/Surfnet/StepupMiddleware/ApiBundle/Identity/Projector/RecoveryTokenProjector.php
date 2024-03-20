@@ -87,7 +87,7 @@ class RecoveryTokenProjector extends Projector
      * When Identity is forgotten, the recovery token projections for this identity
      * are removed from the recovery_tokens table.
      */
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->recoveryTokenRepository->removeByIdentity($event->identityId);
     }

@@ -32,8 +32,5 @@ interface Id
      */
     public function __toString();
 
-    /**
-     * @return bool
-     */
-    public function equals(Id $other);
+    public function equals(Id $other): bool;
 }

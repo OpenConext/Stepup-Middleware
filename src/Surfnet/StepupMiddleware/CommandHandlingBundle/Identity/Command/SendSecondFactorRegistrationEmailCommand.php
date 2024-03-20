@@ -30,7 +30,7 @@ class SendSecondFactorRegistrationEmailCommand extends AbstractCommand implement
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of a second factor token
@@ -38,9 +38,9 @@ class SendSecondFactorRegistrationEmailCommand extends AbstractCommand implement
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

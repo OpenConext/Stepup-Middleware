@@ -56,7 +56,7 @@ class RecordEventsAndPublishToBusOnFirstCallEventListener implements EventListen
     /**
      * @return DomainMessage[]
      */
-    public function getRecordedEvents()
+    public function getRecordedEvents(): array
     {
         return $this->recordedEvents;
     }

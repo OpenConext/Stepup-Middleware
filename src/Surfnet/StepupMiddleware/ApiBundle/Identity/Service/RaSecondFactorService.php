@@ -31,7 +31,7 @@ class RaSecondFactorService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function search(RaSecondFactorQuery $query)
+    public function search(RaSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->repository->createSearchQuery($query);
 
@@ -41,7 +41,7 @@ class RaSecondFactorService extends AbstractSearchService
     /**
      * @return array
      */
-    public function getFilterOptions(RaSecondFactorQuery $query)
+    public function getFilterOptions(RaSecondFactorQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->repository->createOptionsQuery($query));
     }
@@ -49,7 +49,7 @@ class RaSecondFactorService extends AbstractSearchService
     /**
      * @return array
      */
-    public function searchUnpaginated(RaSecondFactorQuery $query)
+    public function searchUnpaginated(RaSecondFactorQuery $query): array
     {
         return $this->repository->createSearchQuery($query)->getResult();
     }

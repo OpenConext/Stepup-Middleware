@@ -34,43 +34,24 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 #[ORM\Entity(repositoryClass: IdentityRepository::class)]
 class Identity implements JsonSerializable
 {
-    /**
-     *
-     * @var string
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
-    /**
-     * @var NameId
-     */
     #[ORM\Column(type: 'stepup_name_id')]
-    public $nameId;
+    public NameId $nameId;
 
-    /**
-     * @var CommonName
-     */
     #[ORM\Column(type: 'stepup_common_name')]
-    public $commonName;
+    public CommonName $commonName;
 
-    /**
-     * @var Institution
-     */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
-    /**
-     * @var Email
-     */
     #[ORM\Column(type: 'stepup_email')]
-    public $email;
+    public Email $email;
 
-    /**
-     * @var Locale
-     */
     #[ORM\Column(type: 'stepup_locale')]
-    public $preferredLocale;
+    public Locale $preferredLocale;
     public ?bool $possessedSelfAssertedToken;
 
     public static function create(

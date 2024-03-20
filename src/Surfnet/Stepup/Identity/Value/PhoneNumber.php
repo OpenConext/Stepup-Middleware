@@ -24,7 +24,7 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
 {
     private readonly string $phoneNumber;
 
-    public static function unknown(): self
+    public static function unknown(): static
     {
         return new self('+0 (0) 000000000');
     }
@@ -48,12 +48,12 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->phoneNumber;
     }
 
-    public function equals($other): bool
+    public function equals(mixed $other): bool
     {
         return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }

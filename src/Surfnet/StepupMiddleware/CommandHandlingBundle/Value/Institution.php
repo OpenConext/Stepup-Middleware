@@ -28,7 +28,7 @@ final class Institution implements Stringable
     /**
      * @param string $institution may not be an empty string
      */
-    public function __construct($institution)
+    public function __construct(string $institution)
     {
         if (!is_string($institution) || trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
@@ -40,7 +40,7 @@ final class Institution implements Stringable
     /**
      * @return string
      */
-    public function getInstitution()
+    public function getInstitution(): string
     {
         return $this->institution;
     }

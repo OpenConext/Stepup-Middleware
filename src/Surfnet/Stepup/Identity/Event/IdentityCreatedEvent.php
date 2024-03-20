@@ -43,22 +43,22 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     public function __construct(
         IdentityId $id,
@@ -110,7 +110,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)

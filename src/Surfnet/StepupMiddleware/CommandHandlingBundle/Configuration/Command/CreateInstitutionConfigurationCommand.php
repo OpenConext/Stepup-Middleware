@@ -29,5 +29,5 @@ class CreateInstitutionConfigurationCommand extends AbstractCommand implements M
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 }

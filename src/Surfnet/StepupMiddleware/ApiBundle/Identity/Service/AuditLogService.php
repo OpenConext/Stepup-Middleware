@@ -31,7 +31,7 @@ class AuditLogService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function searchSecondFactorAuditLog(SecondFactorAuditLogQuery $query)
+    public function searchSecondFactorAuditLog(SecondFactorAuditLogQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->repository->createSecondFactorSearchQuery($query);
 

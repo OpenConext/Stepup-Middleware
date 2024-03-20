@@ -52,34 +52,34 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * The Yubikey's public ID.
      *
      * @var YubikeyPublicId
      */
-    public $yubikeyPublicId;
+    public YubikeyPublicId $yubikeyPublicId;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @var DateTime
      */
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     /**
      * @param IdentityId $identityId
@@ -93,15 +93,15 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param string $registrationCode
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $institution,
-        SecondFactorId $secondFactorId,
+        IdentityId      $identityId,
+        Institution     $institution,
+        SecondFactorId  $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
-        CommonName $commonName,
-        Email $email,
-        Locale $locale,
-        DateTime $registrationRequestedAt,
-        public $registrationCode,
+        CommonName      $commonName,
+        Email           $email,
+        Locale          $locale,
+        DateTime        $registrationRequestedAt,
+        public string   $registrationCode,
     ) {
         parent::__construct($identityId, $institution);
 
@@ -160,7 +160,7 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -170,7 +170,10 @@ class YubikeyPossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        $yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        assert($yubikeyPublicId instanceof YubikeyPublicId);
+        $this->yubikeyPublicId = $yubikeyPublicId;
+
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }

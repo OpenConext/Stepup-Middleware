@@ -28,9 +28,9 @@ class Profile implements JsonSerializable
      * @param bool $isSraa
      */
     public function __construct(
-        private readonly Identity $identity,
+        private readonly Identity                        $identity,
         private readonly AuthorizedInstitutionCollection $authorizedInstitutionCollection,
-        private $isSraa,
+        private bool                                     $isSraa,
     ) {
     }
 

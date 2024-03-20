@@ -25,7 +25,6 @@ use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
 use Hamcrest\Matchers;
 use Mockery as m;
-use Mockery\Mock;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
@@ -100,40 +99,19 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 {
     private static int $window = 3600;
 
-    /**
-     * @var AllowedSecondFactorListService|MockInterface
-     */
-    private $allowedSecondFactorListServiceMock;
+    private AllowedSecondFactorListService&MockInterface $allowedSecondFactorListServiceMock;
 
-    /**
-     * @var MockInterface|IdentityProjectionRepository
-     */
-    private $identityProjectionRepository;
+    private IdentityProjectionRepository&MockInterface $identityProjectionRepository;
 
-    /**
-     * @var SecondFactorTypeService|MockInterface
-     */
-    private $secondFactorTypeService;
+    private SecondFactorTypeService&MockInterface $secondFactorTypeService;
 
-    /**
-     * @var SecondFactorProvePossessionHelper|MockInterface
-     */
-    private $secondFactorProvePossessionHelper;
+    private SecondFactorProvePossessionHelper&MockInterface $secondFactorProvePossessionHelper;
 
-    /**
-     * @var InstitutionConfigurationOptionsService|MockInterface $configService
-     */
-    private $configService;
+    private InstitutionConfigurationOptionsService|MockInterface $configService;
 
-    /**
-     * @var LoaResolutionService|MockInterface
-     */
-    private $loaResolutionService;
+    private LoaResolutionService&MockInterface $loaResolutionService;
 
-    /**
-     * @var RegistrationMailService|MockInterface
-     */
-    private $registrationMailService;
+    private RegistrationMailService|MockInterface $registrationMailService;
 
     public function setUp(): void
     {

@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -40,11 +41,12 @@ class ConfigurationControllerTest extends WebTestCase
      */
     private $passwordRo;
 
-    private DatabaseToolCollection $databaseTool;
+    private ORMSqliteDatabaseTool $databaseTool;
 
     public function setUp(): void
     {
-        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.

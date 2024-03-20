@@ -53,32 +53,32 @@ class EmailVerifiedEvent extends IdentityEvent implements
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var SecondFactorType
      */
-    public $secondFactorType;
+    public SecondFactorType $secondFactorType;
 
     /**
      * @var DateTime
      */
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -95,16 +95,16 @@ class EmailVerifiedEvent extends IdentityEvent implements
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
+        IdentityId                     $identityId,
+        Institution                    $identityInstitution,
+        SecondFactorId                 $secondFactorId,
+        SecondFactorType               $secondFactorType,
         private SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime $registrationRequestedAt,
-        public $registrationCode,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        DateTime                       $registrationRequestedAt,
+        public string                  $registrationCode,
+        CommonName                     $commonName,
+        Email                          $email,
+        Locale                         $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -162,7 +162,7 @@ class EmailVerifiedEvent extends IdentityEvent implements
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)

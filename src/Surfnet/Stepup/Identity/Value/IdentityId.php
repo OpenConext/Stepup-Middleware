@@ -38,7 +38,7 @@ final class IdentityId implements Id, JsonSerializable
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->value;
     }

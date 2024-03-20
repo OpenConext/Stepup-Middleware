@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -30,7 +32,7 @@ final class RaLocationId implements JsonSerializable, Stringable
     /**
      * @param string $raLocationId
      */
-    public function __construct($raLocationId)
+    public function __construct(string $raLocationId)
     {
         if (!is_string($raLocationId) || trim($raLocationId) === '') {
             throw InvalidArgumentException::invalidType(
@@ -51,9 +53,6 @@ final class RaLocationId implements JsonSerializable, Stringable
         $this->raLocationId = $raLocationId;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(RaLocationId $otherRaLocationId): bool
     {
         return $this->raLocationId === $otherRaLocationId->raLocationId;
@@ -62,7 +61,7 @@ final class RaLocationId implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getRaLocationId()
+    public function getRaLocationId(): string
     {
         return $this->raLocationId;
     }

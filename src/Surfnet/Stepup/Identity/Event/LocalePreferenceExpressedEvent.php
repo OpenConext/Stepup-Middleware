@@ -35,7 +35,7 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
     /**
      * @var Locale
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $id

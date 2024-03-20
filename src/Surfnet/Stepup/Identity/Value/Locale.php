@@ -29,7 +29,7 @@ final class Locale implements JsonSerializable, Stringable
     /**
      * @param string $locale
      */
-    public function __construct($locale)
+    public function __construct(string $locale)
     {
         if (!is_string($locale)) {
             throw InvalidArgumentException::invalidType('string', 'locale', $locale);
@@ -38,9 +38,6 @@ final class Locale implements JsonSerializable, Stringable
         $this->locale = $locale;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(Locale $other): bool
     {
         return $this == $other;
@@ -49,7 +46,7 @@ final class Locale implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }

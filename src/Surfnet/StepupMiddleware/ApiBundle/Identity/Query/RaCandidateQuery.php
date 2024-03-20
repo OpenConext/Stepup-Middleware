@@ -26,30 +26,30 @@ class RaCandidateQuery extends AbstractQuery
     /**
      * @var string|Institution
      */
-    public $institution;
+    public string|Institution $institution;
 
     /**
      * @var string
      */
-    public $commonName;
+    public string $commonName;
 
     /**
      * @var string
      */
-    public $email;
+    public string $email;
 
     /**
      * @var string[]
      */
-    public $secondFactorTypes;
+    public array $secondFactorTypes;
 
     /**
      * @var string|Institution
      */
-    public $raInstitution;
+    public string|Institution $raInstitution;
 
     /**
      * @var InstitutionAuthorizationContextInterface
      */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

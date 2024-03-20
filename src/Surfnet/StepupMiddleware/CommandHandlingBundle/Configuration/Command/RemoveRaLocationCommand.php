@@ -29,19 +29,19 @@ class RemoveRaLocationCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raLocationId;
+    public string $raLocationId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->institution;
     }

@@ -51,7 +51,7 @@ final class SecondFactorStatus implements Stringable
      * @param string $status
      * @return bool
      */
-    public static function isValidStatus($status): bool
+    public static function isValidStatus(string $status): bool
     {
         return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', 'forgotten', true]);
     }
@@ -59,7 +59,7 @@ final class SecondFactorStatus implements Stringable
     /**
      * @param string $status
      */
-    private function __construct(private $status)
+    private function __construct(private string $status)
     {
     }
 

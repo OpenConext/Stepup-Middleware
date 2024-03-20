@@ -37,7 +37,7 @@ final class SecondFactorId implements Id
     /**
      * @return string
      */
-    public function getSecondFactorId()
+    public function getSecondFactorId(): string
     {
         return $this->value;
     }

@@ -172,7 +172,7 @@ class InstitutionCollectionTest extends UnitTest
     /**
      * @return array
      */
-    private function getInstitutions()
+    private function getInstitutions(): array
     {
         static $institutions;
 

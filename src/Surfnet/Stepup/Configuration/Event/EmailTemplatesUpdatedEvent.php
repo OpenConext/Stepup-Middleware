@@ -23,7 +23,7 @@ class EmailTemplatesUpdatedEvent extends ConfigurationEvent
     /**
      * @var array
      */
-    public $emailTemplates;
+    public array $emailTemplates;
 
     /**
      * @param string $configurationId

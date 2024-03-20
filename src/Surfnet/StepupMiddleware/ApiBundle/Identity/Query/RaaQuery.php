@@ -25,10 +25,10 @@ class RaaQuery extends AbstractQuery
     /**
      * @var string|Institution
      */
-    public $institution;
+    public string|Institution $institution;
 
     /**
      * @var string
      */
-    public $nameId;
+    public string $nameId;
 }

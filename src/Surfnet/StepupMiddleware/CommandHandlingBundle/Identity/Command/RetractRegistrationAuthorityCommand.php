@@ -29,19 +29,19 @@ class RetractRegistrationAuthorityCommand extends AbstractCommand implements RaE
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raInstitution;
+    public string $raInstitution;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->raInstitution;
     }

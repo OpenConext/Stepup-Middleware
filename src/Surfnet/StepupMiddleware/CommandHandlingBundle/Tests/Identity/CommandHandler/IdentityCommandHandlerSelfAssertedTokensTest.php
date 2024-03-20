@@ -93,35 +93,17 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 {
     private static int $window = 3600;
 
-    /**
-     * @var AllowedSecondFactorListService|MockInterface
-     */
-    private $allowedSecondFactorListServiceMock;
+    private AllowedSecondFactorListService&MockInterface $allowedSecondFactorListServiceMock;
 
-    /**
-     * @var MockInterface|IdentityProjectionRepository
-     */
-    private $identityProjectionRepository;
+    private IdentityProjectionRepository&MockInterface $identityProjectionRepository;
 
-    /**
-     * @var SecondFactorTypeService|MockInterface
-     */
-    private $secondFactorTypeService;
+    private SecondFactorTypeService&MockInterface $secondFactorTypeService;
 
-    /**
-     * @var SecondFactorProvePossessionHelper|MockInterface
-     */
-    private $secondFactorProvePossessionHelper;
+    private SecondFactorProvePossessionHelper&MockInterface $secondFactorProvePossessionHelper;
 
-    /**
-     * @var InstitutionConfigurationOptionsService|MockInterface
-     */
-    private $configService;
+    private InstitutionConfigurationOptionsService&MockInterface $configService;
 
-    /**
-     * @var LoaResolutionService|MockInterface
-     */
-    private $loaResolutionService;
+    private LoaResolutionService&MockInterface $loaResolutionService;
 
     /**
      * @var IdentityId
@@ -150,7 +132,7 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
     /**
      * @var RecoveryTokenSecretHelper|MockInterface
      */
-    private $recoveryTokenSecretHelper;
+    private RecoveryTokenSecretHelper|MockInterface $recoveryTokenSecretHelper;
 
     private ?NameId $nameId = null;
 

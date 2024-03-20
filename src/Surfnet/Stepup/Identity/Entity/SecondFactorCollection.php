@@ -26,10 +26,7 @@ use function array_pop;
 
 final class SecondFactorCollection extends ArrayCollection
 {
-    /**
-     * @return null|SecondFactor
-     */
-    public function getSecondFactorWithHighestLoa(SecondFactorTypeService $service)
+    public function getSecondFactorWithHighestLoa(SecondFactorTypeService $service): ?SecondFactor
     {
         // We can only get the highest loa'ed second factor when we have a collection of
         // VettedSecondFactors. The because that is the only SF type that has a vetting

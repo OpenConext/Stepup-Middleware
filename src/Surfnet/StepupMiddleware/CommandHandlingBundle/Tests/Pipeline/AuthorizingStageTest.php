@@ -35,14 +35,8 @@ class AuthorizingStageTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var MockInterface mock of Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
+    private MockInterface&AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @var NullLogger
-     */
     private NullLogger $logger;
 
     public function setUp(): void

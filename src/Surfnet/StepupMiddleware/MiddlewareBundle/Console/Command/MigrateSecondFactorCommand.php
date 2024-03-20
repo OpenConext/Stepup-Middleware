@@ -58,7 +58,7 @@ final class MigrateSecondFactorCommand extends Command
             ->addArgument('email', InputArgument::OPTIONAL, 'The e-mail address of the identity to create');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sourceNameId = new NameId($input->getArgument('old-name-id'));
         $targetNameId = new NameId($input->getArgument('new-name-id'));
@@ -109,7 +109,7 @@ final class MigrateSecondFactorCommand extends Command
                 ),
             );
             $this->transactionHelper->rollback();
-            throw $e;
+            return 1;
         }
         $output->writeln(
             sprintf(
@@ -118,6 +118,7 @@ final class MigrateSecondFactorCommand extends Command
                 $targetIdentity->id,
             ),
         );
+        return 0;
     }
 
     /**

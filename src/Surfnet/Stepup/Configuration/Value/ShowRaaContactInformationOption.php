@@ -43,9 +43,6 @@ final class ShowRaaContactInformationOption implements JsonSerializable
         $this->showRaaContactInformationOption = $showRaaContactInformationOption;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(ShowRaaContactInformationOption $other): bool
     {
         return $this->showRaaContactInformationOption === $other->showRaaContactInformationOption;
@@ -54,7 +51,7 @@ final class ShowRaaContactInformationOption implements JsonSerializable
     /**
      * @return boolean
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->showRaaContactInformationOption;
     }

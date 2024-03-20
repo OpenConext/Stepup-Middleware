@@ -33,51 +33,51 @@ class RecoveryToken implements JsonSerializable
 {
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 16)]
-    public $type;
+    public string $type;
 
     /**
      * @var RecoveryTokenStatus
      */
     #[ORM\Column(type: 'stepup_recovery_token_status')]
-    public $status;
+    public RecoveryTokenStatus $status;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * The name of the registrant.
      * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name')]
-    public $name;
+    public CommonName $name;
 
     /**
      * The e-mail of the registrant.
      * @var Email
      */
     #[ORM\Column(type: 'stepup_email')]
-    public $email;
+    public Email $email;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 255)]
-    public $recoveryMethodIdentifier;
+    public string $recoveryMethodIdentifier;
 
     public function jsonSerialize(): array
     {

@@ -20,6 +20,7 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use Exception;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -118,9 +119,10 @@ class EmailVerificationWindowTest extends TestCase
      * Helper method for easy EmailVerificationWindow creation
      *
      * @param string|null $startTimeOffset
-     * @return EmailVerificationWindow
+     * @throws Exception
+     * @throws Exception
      */
-    private function newEmailVerificationWindow(int $timeFrameSeconds, $startTimeOffset = null)
+    private function newEmailVerificationWindow(int $timeFrameSeconds, string $startTimeOffset = null): EmailVerificationWindow
     {
         $start = DateTime::now();
         if ($startTimeOffset) {

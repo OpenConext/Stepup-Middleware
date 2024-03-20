@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -29,7 +31,7 @@ final class Location implements JsonSerializable, Stringable
     /**
      * @param string $location
      */
-    public function __construct($location)
+    public function __construct(string $location)
     {
         if (!is_string($location)) {
             throw InvalidArgumentException::invalidType('string', 'location', $location);
@@ -38,9 +40,6 @@ final class Location implements JsonSerializable, Stringable
         $this->location = trim($location);
     }
 
-    /**
-     * @return bool
-     */
     public function equals(Location $otherLocation): bool
     {
         return $this->location === $otherLocation->location;
@@ -49,7 +48,7 @@ final class Location implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getLocation()
+    public function getLocation(): string
     {
         return $this->location;
     }

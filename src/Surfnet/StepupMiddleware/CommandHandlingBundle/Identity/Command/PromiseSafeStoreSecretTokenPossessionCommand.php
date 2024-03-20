@@ -31,7 +31,7 @@ class PromiseSafeStoreSecretTokenPossessionCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of the recovery code to create.
@@ -39,14 +39,14 @@ class PromiseSafeStoreSecretTokenPossessionCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $recoveryTokenId;
+    public string $recoveryTokenId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
+    public string $recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
 
     /**
      * The unhashed password
@@ -54,12 +54,9 @@ class PromiseSafeStoreSecretTokenPossessionCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secret;
+    public string $secret;
 
-    /**
-     * @return string
-     */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

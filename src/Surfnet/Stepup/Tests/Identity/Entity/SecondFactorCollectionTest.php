@@ -52,10 +52,7 @@ class SecondFactorCollectionTest extends UnitTest
         $this->assertTrue($secondFactor->getType()->isYubikey(), 'Expected yubikey since it has a higher LoA than sms');
     }
 
-    /**
-     * @return SecondFactor
-     */
-    private function mockVettedSecondFactor(string $type)
+    private function mockVettedSecondFactor(string $type): SecondFactor
     {
         $mock = m::mock(VettedSecondFactor::class);
         $mock->shouldReceive('getType')

@@ -53,37 +53,37 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var StepupProvider
      */
-    public $stepupProvider;
+    public StepupProvider $stepupProvider;
 
     /**
      * @var GssfId
      */
-    public $gssfId;
+    public GssfId $gssfId;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @var DateTime
      */
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     /**
      * @param IdentityId $identityId
@@ -100,16 +100,16 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
+        IdentityId     $identityId,
+        Institution    $identityInstitution,
         SecondFactorId $secondFactorId,
         StepupProvider $stepupProvider,
-        GssfId $gssfId,
-        CommonName $commonName,
-        Email $email,
-        Locale $locale,
-        DateTime $registrationRequestedAt,
-        public $registrationCode,
+        GssfId         $gssfId,
+        CommonName     $commonName,
+        Email          $email,
+        Locale         $locale,
+        DateTime       $registrationRequestedAt,
+        public string  $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -171,7 +171,7 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -181,7 +181,9 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->gssfId = $sensitiveData->getSecondFactorIdentifier();
+        $gssfId = $sensitiveData->getSecondFactorIdentifier();
+        assert($gssfId instanceof GssfId);
+        $this->gssfId = $gssfId;
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }

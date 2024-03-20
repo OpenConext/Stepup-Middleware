@@ -29,26 +29,26 @@ class UpdateIdentityCommand extends AbstractCommand implements SelfServiceExecut
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $id;
+    public string $id;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $email;
+    public string $email;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $commonName;
+    public string $commonName;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->id;
     }

@@ -31,17 +31,11 @@ final readonly class EmailVerificationWindow implements SerializableInterface, S
     ) {
     }
 
-    /**
-     * @return EmailVerificationWindow
-     */
     public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start): EmailVerificationWindow
     {
         return new EmailVerificationWindow($start, $timeFrame->getEndWhenStartingAt($start));
     }
 
-    /**
-     * @return EmailVerificationWindow
-     */
     public static function createWindowFromTill(DateTime $start, DateTime $end): EmailVerificationWindow
     {
         if (!$end->comesAfter($start)) {
@@ -71,14 +65,11 @@ final readonly class EmailVerificationWindow implements SerializableInterface, S
     /**
      * @return DateTime
      */
-    public function openUntil()
+    public function openUntil(): DateTime
     {
         return $this->end;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(EmailVerificationWindow $other): bool
     {
         return $this->start == $other->start && $this->end == $other->end;

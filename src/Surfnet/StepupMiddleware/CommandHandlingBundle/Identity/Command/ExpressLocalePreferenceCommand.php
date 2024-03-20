@@ -31,7 +31,7 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      *
@@ -39,12 +39,9 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $preferredLocale;
+    public string $preferredLocale;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getRaInstitution(): null
     {
         return null;
     }
@@ -52,7 +49,7 @@ class ExpressLocalePreferenceCommand extends AbstractCommand implements SelfServ
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

@@ -18,9 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 
 #[ORM\Table]
@@ -28,55 +28,33 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorR
 #[ORM\Entity(repositoryClass: VerifiedSecondFactorRepository::class)]
 class VerifiedSecondFactor implements JsonSerializable
 {
-    /**
-     * @var string
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
-    /**
-     * @var string
-     */
     #[ORM\Column]
-    public $institution;
+    public string $institution;
 
-    /**
-     * @var string
-     */
     #[ORM\Column]
-    public $commonName;
+    public string $commonName;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 16)]
-    public $type;
+    public string $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     * @var string
      */
     #[ORM\Column(length: 255)]
-    public $secondFactorIdentifier;
+    public string $secondFactorIdentifier;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 8)]
-    public $registrationCode;
+    public string $registrationCode;
 
-    /**
-     * @var DateTime
-     */
     #[ORM\Column(type: 'stepup_datetime')]
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     public function jsonSerialize(): array
     {

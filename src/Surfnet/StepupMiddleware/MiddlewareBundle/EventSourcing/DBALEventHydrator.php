@@ -23,17 +23,14 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class DBALEventHydrator
 {
-    /**
-     * @var Statement
-     */
-    private $loadStatement = null;
+    private ?Statement $loadStatement = null;
 
     /**
      * @param string $eventStreamTableName

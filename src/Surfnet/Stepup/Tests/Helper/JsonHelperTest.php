@@ -34,7 +34,6 @@ class JsonHelperTest extends TestCase
      * @group json
      *
      * @dataProvider nonStringProvider
-     * @param $nonString
      */
     public function json_helper_can_only_decode_strings(bool|int|float|StdClass|array $nonString): void
     {

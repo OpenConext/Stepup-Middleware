@@ -59,45 +59,45 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
     /**
      * @var NameId
      */
-    public $targetNameId;
+    public NameId $targetNameId;
 
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var SecondFactorId
      */
-    public $newSecondFactorId;
+    public SecondFactorId $newSecondFactorId;
 
     /**
      * @var SecondFactorType
      */
-    public $secondFactorType;
+    public SecondFactorType $secondFactorType;
 
     /**
      * @var SecondFactorIdentifier
      */
-    public $secondFactorIdentifier;
+    public SecondFactorIdentifier $secondFactorIdentifier;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
     /**
      * @var Locale
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
     /**
      * @var VettingType
      */
-    public $vettingType;
+    public VettingType $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -184,7 +184,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)

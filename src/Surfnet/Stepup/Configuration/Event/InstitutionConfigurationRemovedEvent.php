@@ -27,12 +27,12 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     public function __construct(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
     {

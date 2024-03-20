@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use TypeError;
 
 class DocumentNumberTest extends UnitTest
 {
@@ -33,9 +36,20 @@ class DocumentNumberTest extends UnitTest
      * @group        domain
      * @dataProvider invalidArgumentProvider
      */
-    public function the_document_number_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
+    public function the_document_number_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
+        new DocumentNumber($invalidValue);
+    }
+
+    /**
+     * @test
+     * @group        domain
+     * @dataProvider invalidArgumentProviderTypeError
+     */
+    public function the_document_number_must_be_a_non_empty_string_type_error(int|float|StdClass|array $invalidValue): void
+    {
+        $this->expectException(TypeError::class);
         new DocumentNumber($invalidValue);
     }
 
@@ -55,13 +69,16 @@ class DocumentNumberTest extends UnitTest
         $this->assertFalse($commonName->equals($unknown));
     }
 
-    /**
-     * provider for {@see the_document_number_address_must_be_a_non_empty_string()}
-     */
     public function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
+        ];
+    }
+
+    public function invalidArgumentProviderTypeError(): array
+    {
+        return [
             'array' => [[]],
             'integer' => [1],
             'float' => [1.2],

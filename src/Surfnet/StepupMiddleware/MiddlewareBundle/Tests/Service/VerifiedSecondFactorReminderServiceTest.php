@@ -23,12 +23,18 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Surfnet\Stepup\DateTime\DateTime as MiddlewareDateTime;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Email;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VerifiedSecondFactorRepository;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderMailService;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\VerifiedSecondFactorReminderService;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 class VerifiedSecondFactorReminderServiceTest extends TestCase
 {
@@ -189,7 +195,7 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         $this->mailService
             ->shouldReceive('sendReminder')
             ->once()
-            ->andReturn(0);
+            ->andThrow(TransportException::class);
 
         $this->logger
             ->shouldReceive('info')
@@ -431,9 +437,9 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
         for ($i = 1; $i <= $numberOfResults; $i++) {
             $token = new VerifiedSecondFactor();
             $token->id = "fa125c7c-c9ee-11e7-800{$i}-00000000000{$i}";
-            $token->identityId = $i;
+            $token->identityId = (string) $i;
             $token->registrationCode = "CODE_{$i}";
-            $token->registrationRequestedAt = $requestedAt;
+            $token->registrationRequestedAt = new MiddlewareDateTime($requestedAt);
             $token->type = 'yubikey';
             $token->commonName = "John Doe {$i}";
             $collection[] = $token;
@@ -449,10 +455,10 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
     {
         $identity = new Identity();
         $identity->id = $token->identityId;
-        $identity->commonName = "John Doe {$token->identityId}";
-        $identity->institution = "Institution {$token->identityId}";
-        $identity->preferredLocale = 'nl_NL';
-        $identity->email = "mail@example{$token->identityId}.org";
+        $identity->commonName = new CommonName("John Doe {$token->identityId}");
+        $identity->institution = new Institution("Institution {$token->identityId}");
+        $identity->preferredLocale = new Locale('nl_NL');
+        $identity->email = new Email("mail@example{$token->identityId}.org");
 
         return $identity;
     }

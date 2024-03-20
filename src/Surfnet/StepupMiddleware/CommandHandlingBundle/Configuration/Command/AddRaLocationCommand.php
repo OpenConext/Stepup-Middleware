@@ -30,7 +30,7 @@ class AddRaLocationCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raLocationId;
+    public string $raLocationId;
 
     /**
      *
@@ -38,7 +38,7 @@ class AddRaLocationCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 
     /**
      *
@@ -46,7 +46,7 @@ class AddRaLocationCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raLocationName;
+    public string $raLocationName;
 
     /**
      *
@@ -54,18 +54,15 @@ class AddRaLocationCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $location;
+    public string $location;
 
     /**
      * @var string
      */
     #[Assert\Type(type: 'string')]
-    public $contactInformation;
+    public string $contactInformation;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->institution;
     }

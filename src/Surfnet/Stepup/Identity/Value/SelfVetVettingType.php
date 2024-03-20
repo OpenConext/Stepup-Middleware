@@ -25,7 +25,7 @@ class SelfVetVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type = VettingType::TYPE_SELF_VET;
+    protected string $type = VettingType::TYPE_SELF_VET;
 
     public function __construct(private readonly Loa $authoringLoa)
     {

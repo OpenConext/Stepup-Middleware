@@ -40,14 +40,14 @@ class DateTime implements Stringable
      *
      * @var self|null
      */
-    private static $now;
+    private static ?DateTime $now;
 
     private readonly CoreDateTime $dateTime;
 
     /**
      * @return self
      */
-    public static function now()
+    public static function now(): DateTime
     {
         return self::$now ?: new self(new CoreDateTime);
     }
@@ -56,7 +56,7 @@ class DateTime implements Stringable
      * @param string $string A date-time string formatted using `self::FORMAT` (eg. '2014-11-26T15:20:43+01:00').
      * @return self
      */
-    public static function fromString($string): self
+    public static function fromString(string $string): self
     {
         if (!is_string($string)) {
             InvalidArgumentException::invalidType('string', 'dateTime', $string);
@@ -79,9 +79,6 @@ class DateTime implements Stringable
         $this->dateTime = $dateTime ?: new CoreDateTime();
     }
 
-    /**
-     * @return DateTime
-     */
     public function add(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
@@ -90,9 +87,6 @@ class DateTime implements Stringable
         return new self($dateTime);
     }
 
-    /**
-     * @return DateTime
-     */
     public function sub(DateInterval $interval): self
     {
         $dateTime = clone $this->dateTime;
@@ -112,33 +106,23 @@ class DateTime implements Stringable
         return new self($dateTime);
     }
 
-    /**
-     * @return boolean
-     */
     public function comesBefore(DateTime $dateTime): bool
     {
         return $this->dateTime < $dateTime->dateTime;
     }
 
-    /**
-     * @return boolean
-     */
     public function comesBeforeOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime <= $dateTime->dateTime;
     }
 
-    /**
-     * @return boolean
-     */
     public function comesAfter(DateTime $dateTime): bool
     {
-        return $this->dateTime > $dateTime->dateTime;
+        $end = $this->dateTime->getTimestamp();
+        $start = $dateTime->dateTime->getTimestamp();
+        return $end > $start;
     }
 
-    /**
-     * @return boolean
-     */
     public function comesAfterOrIsEqual(DateTime $dateTime): bool
     {
         return $this->dateTime >= $dateTime->dateTime;
@@ -148,7 +132,7 @@ class DateTime implements Stringable
      * @param $format
      * @return string
      */
-    public function format($format)
+    public function format($format): string
     {
         $formatted = $this->dateTime->format($format);
 

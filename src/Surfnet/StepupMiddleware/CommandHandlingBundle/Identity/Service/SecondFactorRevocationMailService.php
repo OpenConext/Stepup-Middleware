@@ -42,7 +42,7 @@ final class SecondFactorRevocationMailService
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     private readonly string $fallbackLocale;
 

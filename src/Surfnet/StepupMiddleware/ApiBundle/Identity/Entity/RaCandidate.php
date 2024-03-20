@@ -39,7 +39,7 @@ class RaCandidate implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
     /**
      *
@@ -47,31 +47,31 @@ class RaCandidate implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(type: 'institution')]
-    public $raInstitution;
+    public Institution $raInstitution;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var NameId
      */
     #[ORM\Column(type: 'stepup_name_id')]
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name')]
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
     #[ORM\Column(type: 'stepup_email')]
-    public $email;
+    public Email $email;
 
     private function __construct()
     {

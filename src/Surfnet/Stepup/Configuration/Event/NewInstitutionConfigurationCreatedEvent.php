@@ -38,46 +38,46 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
     /**
      * @var UseRaLocationsOption
      */
-    public $useRaLocationsOption;
+    public UseRaLocationsOption $useRaLocationsOption;
 
     /**
      * @var ShowRaaContactInformationOption
      */
-    public $showRaaContactInformationOption;
+    public ShowRaaContactInformationOption $showRaaContactInformationOption;
 
     /**
      * @var VerifyEmailOption
      */
-    public $verifyEmailOption;
+    public VerifyEmailOption $verifyEmailOption;
 
     /**
      * @var NumberOfTokensPerIdentityOption
      */
-    public $numberOfTokensPerIdentityOption;
+    public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
     /**
      * @var SelfVetOption
      */
-    public $selfVetOption;
+    public SelfVetOption $selfVetOption;
 
     /**
      * @var SelfAssertedTokensOption
      */
-    public $selfAssertedTokensOption;
+    public SelfAssertedTokensOption $selfAssertedTokensOption;
 
     /**
      * @var SsoOn2faOption
      */
-    public $ssoOn2faOption;
+    public SsoOn2faOption $ssoOn2faOption;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

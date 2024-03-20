@@ -26,6 +26,7 @@ use Broadway\EventHandling\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 
@@ -131,7 +132,7 @@ class BufferedEventBusTest extends TestCase
         return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));
     }
 
-    private function getDummyEntityManager()
+    private function getDummyEntityManager(): EntityManagerInterface&MockInterface
     {
         return m::mock(EntityManagerInterface::class)->shouldIgnoreMissing(true);
     }

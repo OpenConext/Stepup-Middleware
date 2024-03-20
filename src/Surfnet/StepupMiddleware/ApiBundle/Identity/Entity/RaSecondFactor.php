@@ -44,7 +44,7 @@ class RaSecondFactor implements JsonSerializable
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * The name of the registrant.
@@ -53,7 +53,7 @@ class RaSecondFactor implements JsonSerializable
      * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name')]
-    public $name;
+    public CommonName $name;
 
     /**
      * The e-mail of the registrant.
@@ -62,19 +62,19 @@ class RaSecondFactor implements JsonSerializable
      * @var Email
      */
     #[ORM\Column(type: 'stepup_email')]
-    public $email;
+    public Email $email;
 
     /**
      * @var DocumentNumber
      */
     #[ORM\Column(type: 'stepup_document_number', nullable: true)]
-    public $documentNumber;
+    public ?DocumentNumber $documentNumber;
 
     /**
      * @var SecondFactorStatus
      */
     #[ORM\Column(type: 'stepup_second_factor_status')]
-    public $status;
+    public SecondFactorStatus $status;
 
     /**
      * @param string $id
@@ -86,16 +86,16 @@ class RaSecondFactor implements JsonSerializable
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(length: 36)]
-        public $id,
+        public string  $id,
         #[ORM\Column(length: 16)]
-        public $type,
+        public string  $type,
         #[ORM\Column(length: 255)]
-        public $secondFactorId,
+        public string  $secondFactorId,
         #[ORM\Column(length: 36)]
-        public $identityId,
-        Institution $institution,
-        CommonName $name,
-        Email $email,
+        public string  $identityId,
+        Institution    $institution,
+        CommonName     $name,
+        Email          $email,
         DocumentNumber $documentNumber = null,
     ) {
         $this->institution = $institution;

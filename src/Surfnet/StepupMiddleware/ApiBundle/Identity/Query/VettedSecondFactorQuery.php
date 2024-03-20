@@ -25,5 +25,5 @@ class VettedSecondFactorQuery extends AbstractQuery
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 }

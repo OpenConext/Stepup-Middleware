@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class InstitutionParamConverter implements ParamConverterInterface
 {
-    public function apply(Request $request, ParamConverter $configuration): void
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $query = $request->query;
         $institution = $query->get('institution', false);
@@ -38,6 +38,8 @@ class InstitutionParamConverter implements ParamConverterInterface
         $query->remove('institution');
 
         $request->attributes->set('institution', new Institution($institution));
+
+        return true;
     }
 
     public function supports(ParamConverter $configuration): bool

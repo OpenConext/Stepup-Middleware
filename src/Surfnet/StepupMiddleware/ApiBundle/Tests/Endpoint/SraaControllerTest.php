@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Liip\TestFixturesBundle\Test\FixturesTrait;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -40,11 +41,11 @@ class SraaControllerTest extends WebTestCase
 
     private string $endpoint;
 
-    private DatabaseToolCollection $databaseTool;
+    private ORMSqliteDatabaseTool $databaseTool;
 
     public function setUp(): void
     {
-        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.

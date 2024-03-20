@@ -49,7 +49,7 @@ final class BootstrapIdentityCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
@@ -70,7 +70,7 @@ final class BootstrapIdentityCommand extends Command
                     $institution->getInstitution(),
                 ),
             );
-            return;
+            return 1;
         }
         try {
             $this->transactionHelper->beginTransaction();
@@ -91,10 +91,12 @@ final class BootstrapIdentityCommand extends Command
                 ),
             );
             $this->transactionHelper->rollback();
-            throw $e;
+            return 1;
         }
         $output->writeln(
             sprintf('<info>Successfully created identity with UUID %s</info>', $identity->id),
         );
+
+        return 0;
     }
 }

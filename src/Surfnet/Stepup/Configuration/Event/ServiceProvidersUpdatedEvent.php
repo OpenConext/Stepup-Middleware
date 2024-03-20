@@ -23,7 +23,7 @@ class ServiceProvidersUpdatedEvent extends ConfigurationEvent
     /**
      * @var array
      */
-    public $serviceProviders;
+    public array $serviceProviders;
 
     /**
      * @param string $configurationId

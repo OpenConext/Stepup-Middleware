@@ -139,7 +139,7 @@ class InstitutionAuthorizationOptionTest extends TestCase
         );
 
         $this->assertEquals([$this->institution], $option->getInstitutions($this->institution));
-        $this->assertEquals(true, $option->isDefault());
+        $this->assertTrue($option->isDefault());
         $this->assertEquals([], $option->getInstitutionSet()->toScalarArray());
     }
 

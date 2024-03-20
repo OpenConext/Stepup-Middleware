@@ -36,12 +36,12 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var Institution
      */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     public function __construct(
         IdentityId $identityId,

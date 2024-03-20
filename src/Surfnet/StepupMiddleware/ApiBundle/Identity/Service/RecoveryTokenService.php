@@ -49,7 +49,7 @@ class RecoveryTokenService extends AbstractSearchService
         return $recoveryToken;
     }
 
-    public function getFilterOptions(RecoveryTokenQuery $query)
+    public function getFilterOptions(RecoveryTokenQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->recoveryTokenRepository->createOptionsQuery($query));
     }

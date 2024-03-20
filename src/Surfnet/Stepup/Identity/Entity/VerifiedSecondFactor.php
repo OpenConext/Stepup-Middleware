@@ -53,23 +53,19 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     /**
      * @var SecondFactorIdentifier
      */
-    private $secondFactorIdentifier;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
     private ?DateTime $registrationRequestedAt = null;
 
     private ?string $registrationCode = null;
 
-    /**
-     * @param string $registrationCode
-     * @return self
-     */
     public static function create(
-        SecondFactorId $id,
-        Identity $identity,
-        SecondFactorType $type,
+        SecondFactorId         $id,
+        Identity               $identity,
+        SecondFactorType       $type,
         SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime $registrationRequestedAt,
-        $registrationCode,
+        DateTime               $registrationRequestedAt,
+        string                 $registrationCode,
     ): self {
         if (!is_string($registrationCode)) {
             throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
@@ -90,20 +86,13 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
 
-    /**
-     * @param string $registrationCode
-     * @return bool
-     */
     public function hasRegistrationCodeAndIdentifier(
-        $registrationCode,
+        string                 $registrationCode,
         SecondFactorIdentifier $secondFactorIdentifier,
     ): bool {
         return strcasecmp($registrationCode, (string)$this->registrationCode) === 0
@@ -185,10 +174,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    /**
-     * @return VettedSecondFactor
-     */
-    public function asVetted(VettingType $vettingType)
+    public function asVetted(VettingType $vettingType): VettedSecondFactor
     {
         return VettedSecondFactor::create(
             $this->id,
@@ -199,16 +185,18 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): int
+    public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): float
     {
         return $secondFactorTypeService->getLevel($this->type, new StepupVettingType(VettingType::TYPE_UNKNOWN));
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
-        $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
+        $identifier = $secondFactorIdentifierClass::unknown();
+        assert($identifier instanceof SecondFactorIdentifier);
+        $this->secondFactorIdentifier = $identifier;
     }
 
     public function getType(): SecondFactorType

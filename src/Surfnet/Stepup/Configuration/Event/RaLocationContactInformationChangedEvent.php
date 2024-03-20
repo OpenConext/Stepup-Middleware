@@ -28,17 +28,17 @@ class RaLocationContactInformationChangedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var RaLocationId
      */
-    public $raLocationId;
+    public RaLocationId $raLocationId;
 
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

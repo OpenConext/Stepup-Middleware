@@ -42,26 +42,26 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var RegistrationAuthorityRole
      */
-    public $registrationAuthorityRole;
+    public RegistrationAuthorityRole $registrationAuthorityRole;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
     /**
      * @var Institution
      */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     /**
      * @param IdentityId $identityId

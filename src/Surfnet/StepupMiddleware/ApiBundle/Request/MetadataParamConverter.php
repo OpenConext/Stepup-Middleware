@@ -31,7 +31,7 @@ class MetadataParamConverter implements ParamConverterInterface
     {
     }
 
-    public function apply(Request $request, ParamConverter $configuration): void
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $data = json_decode($request->getContent());
 
@@ -50,6 +50,7 @@ class MetadataParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set('metadata', $metadata);
+        return true;
     }
 
     public function supports(ParamConverter $configuration): bool

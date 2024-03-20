@@ -19,12 +19,10 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Iterator;
-use IteratorAggregate;
 use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\IdentitySelfAssertedTokenOptions;
@@ -34,7 +32,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentitySelfAssertedT
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
-use Traversable;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -115,7 +112,7 @@ class IdentityService extends AbstractSearchService
     /**
      * @return null|RegistrationAuthorityCredentials
      */
-    private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity)
+    private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity): ?RegistrationAuthorityCredentials
     {
         $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));
         $sraa = $this->sraaRepository->findByNameId($identity->nameId);

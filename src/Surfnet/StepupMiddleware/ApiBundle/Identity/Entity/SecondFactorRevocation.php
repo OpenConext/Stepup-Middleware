@@ -33,29 +33,29 @@ class SecondFactorRevocation
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var string|null
      */
     #[ORM\Column(length: 36, nullable: true)]
-    public $secondFactorType;
+    public ?string $secondFactorType;
 
     /**
      * @var string
      */
     #[ORM\Column]
-    public $revokedBy;
+    public string $revokedBy;
 
     /**
      * @var DateTime
      */
     #[ORM\Column(type: 'stepup_datetime')]
-    public $recordedOn;
+    public DateTime $recordedOn;
 }

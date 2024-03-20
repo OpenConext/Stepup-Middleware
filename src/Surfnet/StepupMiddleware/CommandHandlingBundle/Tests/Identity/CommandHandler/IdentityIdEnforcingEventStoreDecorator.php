@@ -24,7 +24,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Surfnet\Stepup\Identity\Event\IdentityEvent;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 
-final readonly class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterface
+final class IdentityIdEnforcingEventStoreDecorator implements EventStoreInterface
 {
     use MockeryPHPUnitIntegration;
 

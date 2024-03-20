@@ -26,20 +26,20 @@ final class SecondFactorAuditLogQuery extends AbstractQuery
     /**
      * @var Institution
      */
-    public $identityInstitution;
+    public Institution $identityInstitution;
 
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var string
      */
-    public $orderBy = 'recordedOn';
+    public string $orderBy = 'recordedOn';
 
     /**
      * @var string
      */
-    public $orderDirection = 'desc';
+    public string $orderDirection = 'desc';
 }

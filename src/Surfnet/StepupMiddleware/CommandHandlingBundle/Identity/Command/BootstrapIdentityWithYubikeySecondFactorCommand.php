@@ -29,7 +29,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      *
@@ -37,7 +37,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $nameId;
+    public string $nameId;
 
     /**
      *
@@ -45,7 +45,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $institution;
+    public string $institution;
 
     /**
      *
@@ -53,7 +53,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $commonName;
+    public string $commonName;
 
     /**
      *
@@ -61,7 +61,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Email]
-    public $email;
+    public string $email;
 
     /**
      *
@@ -69,7 +69,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $preferredLocale;
+    public string $preferredLocale;
 
     /**
      *
@@ -77,7 +77,7 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      *
@@ -85,5 +85,5 @@ final class BootstrapIdentityWithYubikeySecondFactorCommand extends AbstractComm
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $yubikeyPublicId;
+    public string $yubikeyPublicId;
 }

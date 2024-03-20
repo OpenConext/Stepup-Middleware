@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -34,12 +36,9 @@ final class DocumentNumber implements JsonSerializable, Stringable
         return new self('—');
     }
 
-    /**
-     * @param string $documentNumber
-     */
-    public function __construct($documentNumber)
+    public function __construct(string $documentNumber)
     {
-        if (!is_string($documentNumber) || ($documentNumber === '' || $documentNumber === '0')) {
+        if ($documentNumber === '' || $documentNumber === '0') {
             throw InvalidArgumentException::invalidType('non-empty string', 'documentNumber', $documentNumber);
         }
 
@@ -49,7 +48,7 @@ final class DocumentNumber implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getDocumentNumber()
+    public function getDocumentNumber(): string
     {
         return $this->documentNumber;
     }

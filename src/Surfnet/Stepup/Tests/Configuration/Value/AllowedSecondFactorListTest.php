@@ -184,7 +184,7 @@ class AllowedSecondFactorListTest extends TestCase
         $this->assertTrue($base->equals($other));
     }
 
-    public function differentAllowedSecondFactorListsProvider()
+    public function differentAllowedSecondFactorListsProvider(): array
     {
         return [
             'Different second factor types' => [
@@ -206,7 +206,7 @@ class AllowedSecondFactorListTest extends TestCase
         ];
     }
 
-    public function sameAllowedSecondFactorListsProvider()
+    public function sameAllowedSecondFactorListsProvider(): array
     {
         return [
             'Same second factor types' => [
@@ -228,7 +228,7 @@ class AllowedSecondFactorListTest extends TestCase
         ];
     }
 
-    public function availableSecondFactorTypeProvider()
+    public function availableSecondFactorTypeProvider(): array
     {
         $service = new SecondFactorTypeService([
             'biometric' => ['loa' => 3],

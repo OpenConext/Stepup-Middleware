@@ -36,12 +36,12 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
     /**
      * @var VettingTypeHintCollection
      */
-    public $hints;
+    public VettingTypeHintCollection $hints;
 
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
 
     public function __construct(
         IdentityId $identityId,

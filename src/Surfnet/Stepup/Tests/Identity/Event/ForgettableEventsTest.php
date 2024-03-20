@@ -21,6 +21,7 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionException;
 use Surfnet\Stepup\Identity\Event\CompliedWithRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
 use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
@@ -113,6 +114,8 @@ final class ForgettableEventsTest extends TestCase
 
     /**
      * @return string[]
+     * @throws ReflectionException
+     * @throws ReflectionException
      */
     private function getConcreteIdentityEventFqcns(): array
     {

@@ -44,22 +44,22 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Institution
      */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     public function __construct(
         IdentityId $identityId,
@@ -111,7 +111,7 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)

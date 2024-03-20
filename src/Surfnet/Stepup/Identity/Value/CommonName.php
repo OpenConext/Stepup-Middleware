@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -37,7 +39,7 @@ final class CommonName implements JsonSerializable, Stringable
     /**
      * @param string $commonName
      */
-    public function __construct($commonName)
+    public function __construct(string $commonName)
     {
         if (!is_string($commonName) || trim($commonName) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'commonName', $commonName);
@@ -49,7 +51,7 @@ final class CommonName implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getCommonName()
+    public function getCommonName(): string
     {
         return $this->commonName;
     }

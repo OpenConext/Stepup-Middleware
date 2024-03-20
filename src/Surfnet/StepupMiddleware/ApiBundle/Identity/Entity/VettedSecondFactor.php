@@ -34,32 +34,32 @@ class VettedSecondFactor implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 16)]
-    public $type;
+    public string $type;
 
     /**
      * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
      * @var string
      */
     #[ORM\Column(length: 255)]
-    public $secondFactorIdentifier;
+    public string $secondFactorIdentifier;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 255, nullable: true)]
-    public $vettingType;
+    public string $vettingType;
 
     /**
      * @return bool

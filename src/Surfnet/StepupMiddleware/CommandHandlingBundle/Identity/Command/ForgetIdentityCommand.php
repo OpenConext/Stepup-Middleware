@@ -31,7 +31,7 @@ final class ForgetIdentityCommand extends AbstractCommand implements ManagementE
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $nameId;
+    public string $nameId;
 
     /**
      *
@@ -39,5 +39,5 @@ final class ForgetIdentityCommand extends AbstractCommand implements ManagementE
      */
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-    public $institution;
+    public string $institution;
 }

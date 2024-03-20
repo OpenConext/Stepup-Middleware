@@ -30,7 +30,7 @@ class ProveU2fDevicePossessionCommand extends AbstractCommand implements SelfSer
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of the second factor to create.
@@ -38,7 +38,7 @@ class ProveU2fDevicePossessionCommand extends AbstractCommand implements SelfSer
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * The key handle issued by the U2F device
@@ -46,12 +46,12 @@ class ProveU2fDevicePossessionCommand extends AbstractCommand implements SelfSer
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $keyHandle;
+    public string $keyHandle;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

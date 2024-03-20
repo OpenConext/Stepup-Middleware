@@ -28,17 +28,17 @@ class RaLocationRelocatedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var RaLocationId
      */
-    public $raLocationId;
+    public RaLocationId $raLocationId;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

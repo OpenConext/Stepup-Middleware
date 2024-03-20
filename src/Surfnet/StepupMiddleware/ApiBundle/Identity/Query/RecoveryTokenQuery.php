@@ -26,45 +26,45 @@ class RecoveryTokenQuery extends AbstractQuery
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var string|null
      */
-    public $type;
+    public ?string $type;
 
     /**
      * @var string|null
      */
-    public $status;
+    public ?string $status;
 
     /**
      * @var string|null
      */
-    public $institution;
+    public ?string $institution;
 
     /**
      * @var string|null
      */
-    public $name;
+    public ?string $name;
 
     /**
      * @var string|null
      */
-    public $email;
+    public ?string $email;
 
     /**
      * @var string|null
      */
-    public $orderBy;
+    public ?string $orderBy;
 
     /**
      * @var string|null
      */
-    public $orderDirection;
+    public ?string $orderDirection;
 
     /**
      * @var InstitutionAuthorizationContextInterface
      */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

@@ -25,7 +25,7 @@ class VettingLocation
      * @param string $location
      * @param string $contactInformation
      */
-    public function __construct(public $name, public $location, public $contactInformation)
+    public function __construct(public string $name, public string $location, public string $contactInformation)
     {
     }
 }

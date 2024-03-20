@@ -23,7 +23,7 @@ class SraaUpdatedEvent extends ConfigurationEvent
     /**
      * @var array
      */
-    public $sraaList;
+    public array $sraaList;
 
     /**
      * @param string $configurationId

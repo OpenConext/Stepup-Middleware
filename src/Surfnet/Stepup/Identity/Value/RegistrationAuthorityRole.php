@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -50,9 +52,6 @@ final class RegistrationAuthorityRole implements SerializableInterface, Stringab
         return new self(self::ROLE_RAA);
     }
 
-    /**
-     * @return bool
-     */
     public function equals(RegistrationAuthorityRole $role): bool
     {
         return $this->role === $role->role;
@@ -74,7 +73,7 @@ final class RegistrationAuthorityRole implements SerializableInterface, Stringab
         return $this->role === self::ROLE_RAA;
     }
 
-    public function jsonSerialize(): string
+    public function jsonSerialize(): int
     {
         return $this->role;
     }

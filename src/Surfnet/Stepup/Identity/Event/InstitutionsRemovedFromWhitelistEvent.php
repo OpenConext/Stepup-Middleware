@@ -25,7 +25,7 @@ class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
     /**
      * @var InstitutionCollection
      */
-    public $removedInstitutions;
+    public InstitutionCollection $removedInstitutions;
 
     public function __construct(InstitutionCollection $removedInstitutions)
     {

@@ -41,22 +41,22 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     /**
      * @var Institution
      */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     /**
      * @param IdentityId $identityId

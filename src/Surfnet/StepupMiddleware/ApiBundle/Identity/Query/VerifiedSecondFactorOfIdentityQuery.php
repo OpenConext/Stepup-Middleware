@@ -25,5 +25,5 @@ class VerifiedSecondFactorOfIdentityQuery extends AbstractQuery
     /**
      * @var IdentityId|null
      */
-    public $identityId;
+    public ?IdentityId $identityId;
 }

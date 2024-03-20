@@ -32,7 +32,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
     /**
      * @return static
      */
-    public static function unknown(): self
+    public static function unknown(): static
     {
         return new self(self::UNKNOWN);
     }
@@ -55,7 +55,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -65,7 +65,7 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function equals($other): bool
+    public function equals(SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }

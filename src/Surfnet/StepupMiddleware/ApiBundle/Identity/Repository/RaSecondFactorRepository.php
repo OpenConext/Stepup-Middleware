@@ -51,7 +51,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @param string $identityId
      * @return RaSecondFactor[]
      */
-    public function findByIdentityId($identityId): array
+    public function findByIdentityId(string $identityId): array
     {
         return parent::findBy(['identityId' => $identityId]);
     }
@@ -61,7 +61,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
      * @param string $institution
      * @return RaSecondFactor[]
      */
-    public function findByInstitution($institution): array
+    public function findByInstitution(string $institution): array
     {
         return parent::findBy(['institution' => $institution]);
     }

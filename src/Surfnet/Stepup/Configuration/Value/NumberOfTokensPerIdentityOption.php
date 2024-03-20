@@ -25,10 +25,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
 {
     public const DISABLED = 0;
 
-    /**
-     * @var int
-     */
-    private $numberOfTokensPerIdentity;
+    private int $numberOfTokensPerIdentity;
 
     public static function getDefault(): self
     {
@@ -48,9 +45,6 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
         $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(NumberOfTokensPerIdentityOption $other): bool
     {
         return $this->numberOfTokensPerIdentity === $other->numberOfTokensPerIdentity;
@@ -64,10 +58,7 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
         return $this->numberOfTokensPerIdentity > self::DISABLED;
     }
 
-    /**
-     * @return int
-     */
-    public function getNumberOfTokensPerIdentity()
+    public function getNumberOfTokensPerIdentity(): int
     {
         return $this->numberOfTokensPerIdentity;
     }

@@ -23,7 +23,7 @@ class OnPremiseVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type = VettingType::TYPE_ON_PREMISE;
+    protected string $type = VettingType::TYPE_ON_PREMISE;
 
     public function __construct(private readonly DocumentNumber $documentNumber)
     {

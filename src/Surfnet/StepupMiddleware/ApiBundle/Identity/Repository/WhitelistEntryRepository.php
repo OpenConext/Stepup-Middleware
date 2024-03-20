@@ -35,7 +35,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
      * @param Institution[] $institutions
      * @return array
      */
-    public function findEntriesByInstitutions(array $institutions)
+    public function findEntriesByInstitutions(array $institutions): array
     {
         $qb = $this->createQueryBuilder('w');
 

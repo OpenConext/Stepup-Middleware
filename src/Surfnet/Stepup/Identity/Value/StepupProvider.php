@@ -37,7 +37,7 @@ final class StepupProvider implements Stringable
     /**
      * @return string
      */
-    public function getStepupProvider()
+    public function getStepupProvider(): string
     {
         return $this->provider;
     }

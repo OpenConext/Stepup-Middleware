@@ -51,9 +51,6 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 interface Identity extends AggregateRoot
 {
-    /**
-     * @return Identity
-     */
     public static function create(
         IdentityId $id,
         Institution $institution,
@@ -61,115 +58,87 @@ interface Identity extends AggregateRoot
         CommonName $commonName,
         Email $email,
         Locale $preferredLocale,
-    );
+    ): Identity;
 
     /**
      * Construct a new aggregate root. Aggregate roots can only be affected by events, so no parameters are allowed.
      */
     public function __construct();
 
-    /**
-     * @return void
-     */
-    public function rename(CommonName $commonName);
+    public function rename(CommonName $commonName): void;
 
-    /**
-     * @return void
-     */
-    public function changeEmail(Email $email);
+    public function changeEmail(Email $email): void;
 
-    /**
-     * @param int $maxNumberOfTokens
-     * @return void
-     */
     public function bootstrapYubikeySecondFactor(
-        SecondFactorId $secondFactorId,
+        SecondFactorId  $secondFactorId,
         YubikeyPublicId $yubikeyPublicId,
-        $maxNumberOfTokens,
-    );
+        int             $maxNumberOfTokens,
+    ): void;
 
-    /**
-     * @param bool $emailVerificationRequired
-     * @param int $maxNumberOfTokens
-     * @return void
-     */
     public function provePossessionOfYubikey(
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        YubikeyPublicId         $yubikeyPublicId,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
-    );
+        int                     $maxNumberOfTokens,
+    ): void;
 
-    /**
-     * @param bool $emailVerificationRequired
-     * @param int $maxNumberOfTokens
-     * @return void
-     */
     public function provePossessionOfPhone(
-        SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        PhoneNumber             $phoneNumber,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
-    );
+        int                     $maxNumberOfTokens,
+    ): void;
 
     /**
-     * @param bool $emailVerificationRequired
      * @parame int $maxNumberOfTokens
-     * @return void
      */
     public function provePossessionOfGssf(
-        SecondFactorId $secondFactorId,
-        StepupProvider $provider,
-        GssfId $gssfId,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        StepupProvider          $provider,
+        GssfId                  $gssfId,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
-    );
+                                $maxNumberOfTokens,
+    ): void;
 
     /**
-     * @param bool $emailVerificationRequired
      * @parame int $maxNumberOfTokens
-     * @return void
      * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
      */
     public function provePossessionOfU2fDevice(
-        SecondFactorId $secondFactorId,
-        U2fKeyHandle $keyHandle,
-        $emailVerificationRequired,
+        SecondFactorId          $secondFactorId,
+        U2fKeyHandle            $keyHandle,
+        bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        $maxNumberOfTokens,
-    );
+                                $maxNumberOfTokens,
+    ): void;
 
     /**
      * @param string $verificationNonce
      * @return void
      */
-    public function verifyEmail($verificationNonce);
+    public function verifyEmail(string $verificationNonce): void;
 
     /**
      * Attempts to vet another identity's verified second factor.
      *
-     * @param string $registrationCode
-     * @param bool $identityVerified
-     * @param bool $provePossessionSkipped
-     * @return void
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function vetSecondFactor(
-        Identity $registrant,
-        SecondFactorId $registrantsSecondFactorId,
-        SecondFactorType $registrantsSecondFactorType,
-        SecondFactorIdentifier $registrantsSecondFactorIdentifier,
-        $registrationCode,
-        DocumentNumber $documentNumber,
-        $identityVerified,
-        SecondFactorTypeService $secondFactorTypeService,
+        Identity                          $registrant,
+        SecondFactorId                    $registrantsSecondFactorId,
+        SecondFactorType                  $registrantsSecondFactorType,
+        SecondFactorIdentifier            $registrantsSecondFactorIdentifier,
+        string                            $registrationCode,
+        DocumentNumber                    $documentNumber,
+        bool                              $identityVerified,
+        SecondFactorTypeService           $secondFactorTypeService,
         SecondFactorProvePossessionHelper $secondFactorProvePossessionHelper,
-        $provePossessionSkipped,
-    );
+        bool                              $provePossessionSkipped,
+    ): void;
 
     /**
      * Self vetting, is when the user uses its own token to vet another.
@@ -208,29 +177,20 @@ interface Identity extends AggregateRoot
     /**
      * Makes the identity comply with an authority's vetting of a verified second factor.
      *
-     * @param string $registrationCode
-     * @param bool $provePossessionSkipped
-     * @return void
      * @throws DomainException
      */
     public function complyWithVettingOfSecondFactor(
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
+        SecondFactorId         $secondFactorId,
+        SecondFactorType       $secondFactorType,
         SecondFactorIdentifier $secondFactorIdentifier,
-        $registrationCode,
-        DocumentNumber $documentNumber,
-        $provePossessionSkipped,
-    );
+        string                 $registrationCode,
+        DocumentNumber         $documentNumber,
+        bool                   $provePossessionSkipped,
+    ): void;
 
-    /**
-     * @return void
-     */
-    public function revokeSecondFactor(SecondFactorId $secondFactorId);
+    public function revokeSecondFactor(SecondFactorId $secondFactorId): void;
 
-    /**
-     * @return void
-     */
-    public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId);
+    public function complyWithSecondFactorRevocation(SecondFactorId $secondFactorId, IdentityId $authorityId): void;
 
     /**
      * From SelfService, an Identity is allowed to revoke a recovery token
@@ -243,88 +203,67 @@ interface Identity extends AggregateRoot
      */
     public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void;
 
-    /**
-     * @return void
-     */
     public function accreditWith(
         RegistrationAuthorityRole $role,
         Institution $institution,
         Location $location,
         ContactInformation $contactInformation,
         InstitutionConfiguration $institutionConfiguration,
-    );
+    ): void;
 
-    /**
-     * @return void
-     */
     public function appointAs(
         Institution $institution,
         RegistrationAuthorityRole $role,
         InstitutionConfiguration $institutionConfiguration,
-    );
+    ): void;
 
-    /**
-     * @return void
-     */
     public function amendRegistrationAuthorityInformation(
         Institution $institution,
         Location $location,
         ContactInformation $contactInformation,
-    );
+    ): void;
+
+    public function retractRegistrationAuthority(Institution $institution): void;
+
+    public function expressPreferredLocale(Locale $preferredLocale): void;
 
     /**
      * @return void
      */
-    public function retractRegistrationAuthority(Institution $institution);
-
-    /**
-     * @return void
-     */
-    public function expressPreferredLocale(Locale $preferredLocale);
-
-    /**
-     * @return void
-     */
-    public function forget();
+    public function forget(): void;
 
     /**
      * @return IdentityId
      */
-    public function getId();
+    public function getId(): IdentityId;
 
     /**
      * @return NameId
      */
-    public function getNameId();
+    public function getNameId(): NameId;
 
     /**
      * @return Institution
      */
-    public function getInstitution();
+    public function getInstitution(): Institution;
 
     /**
      * @return CommonName
      */
-    public function getCommonName();
+    public function getCommonName(): CommonName;
 
     /**
      * @return Email
      */
-    public function getEmail();
+    public function getEmail(): Email;
 
     /**
      * @return Locale
      */
-    public function getPreferredLocale();
+    public function getPreferredLocale(): Locale;
 
-    /**
-     * @return VerifiedSecondFactor|null
-     */
-    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId);
+    public function getVerifiedSecondFactor(SecondFactorId $secondFactorId): ?VerifiedSecondFactor;
 
-    /**
-     * @return VettedSecondFactor|null
-     */
     public function getVettedSecondFactorById(SecondFactorId $secondFactorId): ?VettedSecondFactor;
 
     /**

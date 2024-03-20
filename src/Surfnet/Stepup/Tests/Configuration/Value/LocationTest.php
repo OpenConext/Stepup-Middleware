@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use stdClass;
 use Surfnet\Stepup\Configuration\Value\Location;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use TypeError;
 
 class LocationTest extends UnitTest
 {
@@ -35,7 +38,7 @@ class LocationTest extends UnitTest
      */
     public function it_cannot_be_created_with_anything_but_a_string(bool|int|float|stdClass|array|null $nonString): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         new Location($nonString);
     }

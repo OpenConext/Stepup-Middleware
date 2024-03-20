@@ -37,7 +37,7 @@ final class RecoveryTokenId implements Id
     /**
      * @return string
      */
-    public function getRecoveryTokenId()
+    public function getRecoveryTokenId(): string
     {
         return $this->value;
     }

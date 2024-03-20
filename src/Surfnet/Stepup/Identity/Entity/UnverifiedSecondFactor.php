@@ -49,24 +49,19 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     /**
      * @var SecondFactorIdentifier
      */
-    private $secondFactorIdentifier;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
     private ?EmailVerificationWindow $verificationWindow = null;
 
     private ?string $verificationNonce = null;
 
-    /**
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param string $verificationNonce
-     * @return UnverifiedSecondFactor
-     */
     public static function create(
-        SecondFactorId $id,
-        Identity $identity,
-        SecondFactorType $type,
-        $secondFactorIdentifier,
+        SecondFactorId          $id,
+        Identity                $identity,
+        SecondFactorType        $type,
+        SecondFactorIdentifier  $secondFactorIdentifier,
         EmailVerificationWindow $emailVerificationWindow,
-        $verificationNonce,
+        string                  $verificationNonce,
     ): self {
         if (!is_string($verificationNonce)) {
             throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
@@ -91,10 +86,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
@@ -103,7 +95,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
      * @param string $verificationNonce
      * @return bool
      */
-    public function hasNonce($verificationNonce): bool
+    public function hasNonce(string $verificationNonce): bool
     {
         return $this->verificationNonce === $verificationNonce;
     }
@@ -111,7 +103,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     /**
      * @return bool
      */
-    public function canBeVerifiedNow()
+    public function canBeVerifiedNow(): bool
     {
         return $this->verificationWindow->isOpen();
     }
@@ -161,11 +153,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    /**
-     * @param string $registrationCode
-     * @return VerifiedSecondFactor
-     */
-    public function asVerified(DateTime $registrationRequestedAt, $registrationCode)
+    public function asVerified(DateTime $registrationRequestedAt, string $registrationCode): VerifiedSecondFactor
     {
         return VerifiedSecondFactor::create(
             $this->id,
@@ -177,7 +165,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 

@@ -27,45 +27,45 @@ class RaListingQuery extends AbstractQuery
     /**
      * @var string|Institution
      */
-    public $institution;
+    public string|Institution $institution;
 
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var string|null
      */
-    public $name;
+    public ?string $name;
 
     /**
      * @var string|null
      */
-    public $email;
+    public ?string $email;
 
     /**
      * @var string|null
      */
-    public $role;
+    public ?string $role;
 
     /**
      * @var string|null
      */
-    public $raInstitution;
+    public ?string $raInstitution;
 
     /**
      * @var string
      */
-    public $orderBy;
+    public string $orderBy;
 
     /**
      * @var string
      */
-    public $orderDirection;
+    public string $orderDirection;
 
     /**
      * @var InstitutionAuthorizationContextInterface
      */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

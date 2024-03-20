@@ -30,50 +30,32 @@ use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 
 interface InstitutionConfiguration extends AggregateRoot
 {
-    /**
-     * @return InstitutionConfiguration
-     */
-    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution);
+    public static function create(InstitutionConfigurationId $institutionConfigurationId, Institution $institution): InstitutionConfiguration;
 
-    /**
-     * @return void
-     */
-    public function configureUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption);
+    public function configureUseRaLocationsOption(UseRaLocationsOption $useRaLocationsOption): void;
 
-    /**
-     * @return void
-     */
     public function configureShowRaaContactInformationOption(
         ShowRaaContactInformationOption $showRaaContactInformationOption,
-    );
+    ): void;
 
-    /**
-     * @return void
-     */
     public function addRaLocation(
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
         ContactInformation $contactInformation,
-    );
+    ): void;
 
-    /**
-     * @return void
-     */
     public function changeRaLocation(
         RaLocationId $raLocationId,
         RaLocationName $raLocationName,
         Location $location,
         ContactInformation $contactInformation,
-    );
+    ): void;
+
+    public function removeRaLocation(RaLocationId $raLocationId): void;
 
     /**
      * @return void
      */
-    public function removeRaLocation(RaLocationId $raLocationId);
-
-    /**
-     * @return void
-     */
-    public function destroy();
+    public function destroy(): void;
 }

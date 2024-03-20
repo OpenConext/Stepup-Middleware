@@ -25,20 +25,20 @@ interface SecondFactorIdentifier extends JsonSerializable
     /**
      * @return static
      */
-    public static function unknown();
+    public static function unknown(): static;
 
     /**
      * Return a string representation of the value of this value object.
      *
      * @return string
      */
-    public function getValue();
+    public function getValue(): string;
 
     /**
      * @param self $other
      * @return bool
      */
-    public function equals($other): bool;
+    public function equals(SecondFactorIdentifier $other): bool;
 
     /**
      * @return string

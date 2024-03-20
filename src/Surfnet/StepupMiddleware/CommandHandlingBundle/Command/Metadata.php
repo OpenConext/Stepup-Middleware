@@ -28,11 +28,11 @@ final class Metadata
      */
     #[Assert\Type(type: 'string')]
     #[Assert\Regex(pattern: '~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i')]
-    public $actorId;
+    public ?string $actorId;
 
     /**
      * @var string|null
      */
     #[Assert\Type(type: 'string')]
-    public $actorInstitution;
+    public ?string $actorInstitution;
 }

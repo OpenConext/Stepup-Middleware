@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -37,7 +39,7 @@ final class Email implements JsonSerializable, Stringable
     /**
      * @param string $email
      */
-    public function __construct($email)
+    public function __construct(string $email)
     {
         if (!is_string($email) || trim($email) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'email', $email);
@@ -58,7 +60,7 @@ final class Email implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }

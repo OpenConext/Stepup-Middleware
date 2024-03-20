@@ -23,7 +23,7 @@ use Surfnet\Stepup\Identity\Value\Institution;
 
 final class InstitutionCollection
 {
-    private $institutions = [];
+    private array $institutions = [];
 
     public function set(Institution $institution): void
     {

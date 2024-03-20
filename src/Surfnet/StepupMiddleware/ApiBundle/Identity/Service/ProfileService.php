@@ -22,14 +22,12 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContextService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
-use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorizedInstitutionCollection;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\Profile;
 
 class ProfileService extends AbstractSearchService
 {
     public function __construct(
-        private readonly RaListingRepository $raListingRepository,
         private readonly IdentityService $identityService,
         private readonly AuthorizationContextService $authorizationService,
     ) {
@@ -51,7 +49,7 @@ class ProfileService extends AbstractSearchService
      * @param string $identityId
      * @return Profile|null
      */
-    public function createProfile($identityId): ?Profile
+    public function createProfile(string $identityId): ?Profile
     {
         $identity = $this->identityService->find($identityId);
         if (!$identity instanceof Identity) {

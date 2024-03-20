@@ -30,11 +30,11 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
     /**
      * @var RecoveryTokenId
      */
-    public $recoveryTokenId;
+    public RecoveryTokenId $recoveryTokenId;
     /**
      * @var RecoveryTokenType
      */
-    public $recoveryTokenType;
+    public RecoveryTokenType $recoveryTokenType;
 
     private array $allowlist = [
         'identity_id',

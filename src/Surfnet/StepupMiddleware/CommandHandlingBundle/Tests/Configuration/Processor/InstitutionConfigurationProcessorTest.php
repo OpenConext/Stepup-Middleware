@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\Pro
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
@@ -42,7 +43,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    private $pipelineMock;
+    private Pipeline&MockInterface $pipelineMock;
 
     public function setUp(): void
     {
@@ -383,7 +384,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
     /**
      * @return ContainerInterface
      */
-    private function getContainerMock()
+    private function getContainerMock(): ContainerInterface
     {
         $containerMock = Mockery::mock(ContainerInterface::class);
         $containerMock

@@ -29,7 +29,7 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $authorityId;
+    public string $authorityId;
 
     /**
      * The ID of an existing identity.
@@ -37,14 +37,14 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      *
@@ -52,45 +52,45 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $registrationCode;
+    public string $registrationCode;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorType;
+    public string $secondFactorType;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorIdentifier;
+    public string $secondFactorIdentifier;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $documentNumber;
+    public string $documentNumber;
 
     /**
      * @var boolean
      */
     #[Assert\EqualTo(value: true)]
-    public $identityVerified;
+    public bool $identityVerified;
 
     /**
      * @var boolean
      */
     #[Assert\Type(type: 'bool')]
-    public $provePossessionSkipped;
+    public bool $provePossessionSkipped;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         // Returning null as opposed to having the institution on this command was done
         // because the RA (actor) institution can be loaded from the authorityId

@@ -44,17 +44,17 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     public function __construct(
         IdentityId $identityId,
@@ -99,7 +99,7 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)

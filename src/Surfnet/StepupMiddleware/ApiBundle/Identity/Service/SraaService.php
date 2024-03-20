@@ -31,7 +31,7 @@ class SraaService
     /**
      * @return Sraa|null
      */
-    public function findByNameId(NameId $nameId)
+    public function findByNameId(NameId $nameId): ?Sraa
     {
         return $this->sraaRepository->findByNameId($nameId);
     }
@@ -47,7 +47,7 @@ class SraaService
     /**
      * @return bool
      */
-    public function contains(NameId $nameId)
+    public function contains(NameId $nameId): bool
     {
         return $this->sraaRepository->contains($nameId);
     }

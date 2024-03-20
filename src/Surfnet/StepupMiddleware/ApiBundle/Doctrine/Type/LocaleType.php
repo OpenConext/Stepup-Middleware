@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -23,6 +25,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Locale;
+use TypeError;
 
 /**
  * Custom Type for the Locale Value Object
@@ -53,7 +56,7 @@ class LocaleType extends Type
 
         try {
             $locale = new Locale($value);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,

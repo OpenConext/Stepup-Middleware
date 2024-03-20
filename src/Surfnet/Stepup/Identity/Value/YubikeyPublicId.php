@@ -26,7 +26,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
 
     private string $value;
 
-    public static function unknown(): self
+    public static function unknown(): static
     {
         return new self(self::UNKNOWN);
     }
@@ -62,7 +62,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -72,7 +72,7 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return $this->value;
     }
 
-    public function equals($other): bool
+    public function equals(SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }

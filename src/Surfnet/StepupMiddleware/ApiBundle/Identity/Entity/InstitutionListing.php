@@ -32,7 +32,7 @@ class InstitutionListing implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     public static function createFrom(Institution $institution): self
     {

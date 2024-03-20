@@ -62,7 +62,7 @@ final class BootstrapGsspSecondFactorCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $registrationStatus = $input->getArgument('registration-status');
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
@@ -84,7 +84,7 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 ),
             );
 
-            return;
+            return 1;
         }
         $identity = $this->bootstrapService->getIdentity($nameId, $institution);
         $output->writeln(
@@ -154,7 +154,7 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 ),
             );
             $this->transactionHelper->rollback();
-            throw $e;
+            return 1;
         }
         $output->writeln(
             sprintf(
@@ -164,5 +164,6 @@ final class BootstrapGsspSecondFactorCommand extends Command
                 $secondFactorId,
             ),
         );
+        return 0;
     }
 }

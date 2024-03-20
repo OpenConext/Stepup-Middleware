@@ -32,7 +32,7 @@ class AuthorityRole implements Stringable
     /**
      * @var string
      */
-    private $role;
+    private string $role;
 
     public function __construct($role)
     {
@@ -71,7 +71,7 @@ class AuthorityRole implements Stringable
     /**
      * @return AuthorityRole
      */
-    public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole)
+    public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole): AuthorityRole
     {
         if ($registrationAuthorityRole->isRa()) {
             return static::ra();
@@ -82,7 +82,7 @@ class AuthorityRole implements Stringable
         throw new RuntimeException(
             sprintf(
                 'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
-                (string)$registrationAuthorityRole,
+                $registrationAuthorityRole,
             ),
         );
     }
@@ -98,7 +98,7 @@ class AuthorityRole implements Stringable
     /**
      * @return string
      */
-    public function getRole()
+    public function getRole(): string
     {
         return $this->role;
     }

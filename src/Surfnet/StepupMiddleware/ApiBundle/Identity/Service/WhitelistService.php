@@ -26,12 +26,12 @@ class WhitelistService
     {
     }
 
-    public function isWhitelisted($institution)
+    public function isWhitelisted($institution): bool
     {
         return $this->whitelistEntryRepository->hasEntryFor($institution);
     }
 
-    public function getAllEntries()
+    public function getAllEntries(): \Doctrine\Common\Collections\ArrayCollection
     {
         return $this->whitelistEntryRepository->getAll();
     }

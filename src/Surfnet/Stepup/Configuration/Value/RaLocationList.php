@@ -29,7 +29,7 @@ final class RaLocationList implements IteratorAggregate
     /**
      * @var RaLocation[]
      */
-    private $raLocations = [];
+    private array $raLocations = [];
 
     public function __construct(array $raLocations)
     {
@@ -38,9 +38,6 @@ final class RaLocationList implements IteratorAggregate
         }
     }
 
-    /**
-     * @return bool
-     */
     public function containsWithId(RaLocationId $raLocationId): bool
     {
         foreach ($this->raLocations as $raLocation) {
@@ -85,10 +82,7 @@ final class RaLocationList implements IteratorAggregate
         );
     }
 
-    /**
-     * @return RaLocation
-     */
-    public function getById(RaLocationId $raLocationId)
+    public function getById(RaLocationId $raLocationId): RaLocation
     {
         foreach ($this->raLocations as $raLocation) {
             if ($raLocation->hasId($raLocationId)) {

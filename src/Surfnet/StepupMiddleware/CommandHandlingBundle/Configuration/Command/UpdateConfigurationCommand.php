@@ -29,5 +29,5 @@ class UpdateConfigurationCommand extends AbstractCommand implements ManagementEx
      *
      * @ManagementAssert\HasValidConfigurationStructure
      */
-    public $configuration;
+    public string $configuration;
 }

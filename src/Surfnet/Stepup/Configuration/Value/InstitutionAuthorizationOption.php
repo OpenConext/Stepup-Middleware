@@ -29,12 +29,11 @@ final class InstitutionAuthorizationOption implements JsonSerializable
      * will take the current institution into account when returning institutions.
      *
      * AbstractRoleOption constructor.
-     * @param bool $isDefault
      */
     private function __construct(
         private readonly InstitutionRole $institutionRole,
-        private readonly InstitutionSet $institutionSet,
-        $isDefault,
+        private readonly InstitutionSet  $institutionSet,
+        bool                             $isDefault,
     ) {
         $this->isDefault = (bool)$isDefault;
     }

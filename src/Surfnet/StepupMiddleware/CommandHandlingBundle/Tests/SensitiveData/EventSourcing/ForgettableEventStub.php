@@ -26,12 +26,12 @@ final class ForgettableEventStub implements Forgettable
     /**
      * @var SensitiveData
      */
-    public $sensitiveData;
+    public SensitiveData $sensitiveData;
 
     /**
      * @return SensitiveData
      */
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return $this->sensitiveData;
     }

@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Configuration\CommandHandler;
 
 use Broadway\CommandHandling\CommandHandler;
-use Broadway\CommandHandling\CommandHandlerInterface;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;

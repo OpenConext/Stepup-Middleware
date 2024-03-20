@@ -23,7 +23,7 @@ class SelfAssertedRegistrationVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
+    protected string $type = VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
 
     public function __construct(protected RecoveryTokenId $authoringRecoveryToken)
     {

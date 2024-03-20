@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet bv
  *
@@ -23,6 +25,7 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use TypeError;
 
 /**
  * Custom Type for the ContactInformation Value Object for the Configuration domain
@@ -63,7 +66,7 @@ class ConfigurationContactInformationType extends Type
 
         try {
             $contactInformation = new ContactInformation($value);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,

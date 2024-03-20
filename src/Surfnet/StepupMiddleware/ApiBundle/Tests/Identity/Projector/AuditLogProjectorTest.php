@@ -28,6 +28,7 @@ use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime as StepupDateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
+use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
@@ -87,8 +88,6 @@ final class AuditLogProjectorTest extends TestCase
                         $this->createAuditLogMetadata(
                             new IdentityId('abcd'),
                             new Institution('efgh'),
-                            null,
-                            null,
                         ),
                     ),
                     BroadwayDateTime::fromString('1970-01-01H00:00:00.000'),
@@ -98,11 +97,6 @@ final class AuditLogProjectorTest extends TestCase
                     new Institution('efgh'),
                     EventStub::class,
                     new StepupDateTime(new CoreDateTime('1970-01-01H00:00:00.000')),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
                 ),
             ],
             'with actor, with second factor' => [
@@ -153,7 +147,7 @@ final class AuditLogProjectorTest extends TestCase
         $identityRepository = m::mock(IdentityRepository::class);
 
         $identity = new Identity();
-        $identity->commonName = self::$actorCommonName;
+        $identity->commonName = new CommonName(self::$actorCommonName);
         $identityRepository->shouldReceive('find')->andReturn($identity);
 
         $projector = new AuditLogProjector($repository, $identityRepository);
@@ -196,13 +190,13 @@ final class AuditLogProjectorTest extends TestCase
         $actorCommonName = null,
     ): AuditLogEntry {
         $entry = new AuditLogEntry();
-        $entry->actorId = $actorId instanceof IdentityId ? (string)$actorId : null;
-        $entry->actorInstitution = $actorInstitution instanceof Institution ? (string)$actorInstitution : null;
-        $entry->identityId = (string)$identityId;
+        $entry->actorId = $actorId instanceof IdentityId ? $actorId : null;
+        $entry->actorInstitution = $actorInstitution instanceof Institution ? $actorInstitution : null;
+        $entry->identityId = $identityId;
         $entry->identityInstitution = $identityInstitution;
-        $entry->secondFactorId = $secondFactorId instanceof SecondFactorId ? (string)$secondFactorId : null;
-        $entry->secondFactorType = $secondFactorType instanceof SecondFactorType ? (string)$secondFactorType : null;
-        $entry->secondFactorIdentifier = $secondFactorIdentifier instanceof YubikeyPublicId ? (string)$secondFactorIdentifier : null;
+        $entry->secondFactorId = $secondFactorId instanceof SecondFactorId ? $secondFactorId : null;
+        $entry->secondFactorType = $secondFactorType instanceof SecondFactorType ? $secondFactorType : null;
+        $entry->secondFactorIdentifier = $secondFactorIdentifier instanceof YubikeyPublicId ? $secondFactorIdentifier : null;
         $entry->event = $event;
         $entry->recordedOn = $recordedOn;
         $entry->actorCommonName = $actorCommonName;

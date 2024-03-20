@@ -29,23 +29,23 @@ class AppointRoleCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $role;
+    public string $role;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raInstitution;
+    public string $raInstitution;
 
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->raInstitution;
     }

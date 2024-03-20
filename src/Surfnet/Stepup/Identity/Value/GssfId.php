@@ -24,7 +24,7 @@ final class GssfId implements SecondFactorIdentifier
 {
     private readonly string $gssfId;
 
-    public static function unknown(): self
+    public static function unknown(): static
     {
         return new self('—');
     }
@@ -38,7 +38,7 @@ final class GssfId implements SecondFactorIdentifier
         $this->gssfId = trim($gssfId);
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->gssfId;
     }
@@ -48,7 +48,7 @@ final class GssfId implements SecondFactorIdentifier
         return $this->gssfId;
     }
 
-    public function equals($other): bool
+    public function equals(SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->gssfId === $other->gssfId;
     }

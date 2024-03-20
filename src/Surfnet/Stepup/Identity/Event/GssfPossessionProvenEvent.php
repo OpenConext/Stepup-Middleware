@@ -49,65 +49,53 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var StepupProvider
      */
-    public $stepupProvider;
+    public StepupProvider $stepupProvider;
 
     /**
      * @var GssfId
      */
-    public $gssfId;
+    public GssfId $gssfId;
 
     /**
      * @var EmailVerificationWindow
      */
-    public $emailVerificationWindow;
+    public EmailVerificationWindow $emailVerificationWindow;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @param IdentityId $identityId
-     * @param Institution $identityInstitution
-     * @param SecondFactorId $secondFactorId
-     * @param StepupProvider $stepupProvider
-     * @param GssfId $gssfId
-     * @param bool $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
-     * @param string $emailVerificationNonce
-     * @param CommonName $commonName
-     * @param Email $email
-     * @param Locale $preferredLocale
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        StepupProvider $stepupProvider,
-        GssfId $gssfId,
-        public $emailVerificationRequired,
+        IdentityId              $identityId,
+        Institution             $identityInstitution,
+        SecondFactorId          $secondFactorId,
+        StepupProvider          $stepupProvider,
+        GssfId                  $gssfId,
+        public bool             $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        public $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public string           $emailVerificationNonce,
+        CommonName              $commonName,
+        Email                   $email,
+        Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -163,14 +151,14 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
             'stepup_provider' => (string)$this->stepupProvider,
-            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_required' => $this->emailVerificationRequired,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'email_verification_nonce' => $this->emailVerificationNonce,
             'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -182,7 +170,9 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->gssfId = $sensitiveData->getSecondFactorIdentifier();
+        $gssfId = $sensitiveData->getSecondFactorIdentifier();
+        assert($gssfId instanceof GssfId);
+        $this->gssfId = $gssfId;
     }
 
     public function obtainUserData(): array

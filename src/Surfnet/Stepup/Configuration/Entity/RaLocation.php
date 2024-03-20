@@ -25,9 +25,6 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class RaLocation
 {
-    /**
-     * @return RaLocation
-     */
     public static function create(
         RaLocationId $id,
         RaLocationName $name,
@@ -60,10 +57,7 @@ class RaLocation
         $this->contactInformation = $contactInformation;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasId(RaLocationId $otherId)
+    public function hasId(RaLocationId $otherId): bool
     {
         return $this->id->equals($otherId);
     }
@@ -71,7 +65,7 @@ class RaLocation
     /**
      * @return RaLocationId
      */
-    public function getId()
+    public function getId(): RaLocationId
     {
         return $this->id;
     }
@@ -79,7 +73,7 @@ class RaLocation
     /**
      * @return RaLocationName
      */
-    public function getName()
+    public function getName(): RaLocationName
     {
         return $this->name;
     }
@@ -87,7 +81,7 @@ class RaLocation
     /**
      * @return Location
      */
-    public function getLocation()
+    public function getLocation(): Location
     {
         return $this->location;
     }
@@ -95,7 +89,7 @@ class RaLocation
     /**
      * @return ContactInformation
      */
-    public function getContactInformation()
+    public function getContactInformation(): ContactInformation
     {
         return $this->contactInformation;
     }

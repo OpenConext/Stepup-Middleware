@@ -43,9 +43,6 @@ final class VerifyEmailOption implements JsonSerializable
         $this->verifyEmailOption = $verifyEmailOption;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(VerifyEmailOption $other): bool
     {
         return $this->verifyEmailOption === $other->verifyEmailOption;
@@ -54,7 +51,7 @@ final class VerifyEmailOption implements JsonSerializable
     /**
      * @return boolean
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->verifyEmailOption;
     }

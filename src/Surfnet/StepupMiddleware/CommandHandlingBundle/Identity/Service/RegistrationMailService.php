@@ -42,12 +42,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class RegistrationMailService
 {
-    public $institutionConfigurationOptionsService;
+    public InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
 
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     private readonly string $fallbackLocale;
 
@@ -232,7 +232,7 @@ class RegistrationMailService
         $this->mailer->send($message);
     }
 
-    private function getExpirationDateOfRegistration(DateTime $date)
+    private function getExpirationDateOfRegistration(DateTime $date): DateTime
     {
         return $date->add(
             new DateInterval('P14D'),

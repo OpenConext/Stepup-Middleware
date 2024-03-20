@@ -48,10 +48,10 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     /**
      * @return VerifiedSecondFactor[]
      */
-    public function findByDate(DateTime $requestedAt)
+    public function findByDate(DateTime $requestedAt): array
     {
         $fromDate = clone $requestedAt;
-        $fromDate->setTime(0, 0, 0);
+        $fromDate->setTime(0, 0);
 
         $toDate = clone $requestedAt;
         $toDate->setTime(23, 59, 59);
@@ -102,9 +102,6 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
-    /**
-     * @return Query
-     */
     public function createSearchForIdentityQuery(VerifiedSecondFactorOfIdentityQuery $query): Query
     {
         $queryBuilder = $this->createQueryBuilder('sf');

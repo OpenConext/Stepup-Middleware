@@ -32,7 +32,7 @@ class AuthorizedInstitutionCollection
      *      'institution-3' => [select_raa],
      * ]
      *
-     * @var string[]
+     * @var array<string, array<string>>
      */
     private array $authorizations = [];
 
@@ -42,24 +42,26 @@ class AuthorizedInstitutionCollection
     ): self {
         $collection = new self();
 
+        /** @var string $institution */
         foreach ($raInstitutions as $institution) {
-            $collection->authorizations[(string)$institution][] = (string)AuthorityRole::ROLE_RA;
+            $collection->authorizations[$institution][] = AuthorityRole::ROLE_RA;
         }
         if ($raaInstitutions instanceof InstitutionCollection) {
+            /** @var string $institution */
             foreach ($raaInstitutions as $institution) {
                 // Override existing lower role
-                if (isset($collection->authorizations[(string)$institution])
-                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[(string)$institution])
+                if (isset($collection->authorizations[$institution])
+                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[$institution])
                 ) {
-                    $collection->authorizations[(string)$institution] = [];
+                    $collection->authorizations[$institution] = [];
                 }
-                $collection->authorizations[(string)$institution][] = (string)AuthorityRole::ROLE_RAA;
+                $collection->authorizations[$institution][] = AuthorityRole::ROLE_RAA;
             }
         }
         return $collection;
     }
 
-    public function getAuthorizations()
+    public function getAuthorizations(): array
     {
         return $this->authorizations;
     }

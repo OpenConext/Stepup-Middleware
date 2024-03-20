@@ -52,32 +52,32 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var PhoneNumber
      */
-    public $phoneNumber;
+    public PhoneNumber $phoneNumber;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @var DateTime
      */
-    public $registrationRequestedAt;
+    public DateTime $registrationRequestedAt;
 
     /**
      * @param IdentityId $identityId
@@ -91,15 +91,15 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param string $registrationCode
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
+        IdentityId     $identityId,
+        Institution    $identityInstitution,
         SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber,
-        CommonName $commonName,
-        Email $email,
-        Locale $locale,
-        DateTime $registrationRequestedAt,
-        public $registrationCode,
+        PhoneNumber    $phoneNumber,
+        CommonName     $commonName,
+        Email          $email,
+        Locale         $locale,
+        DateTime       $registrationRequestedAt,
+        public string  $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -158,7 +158,7 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -168,7 +168,9 @@ class PhonePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
+        $phoneNumber = $sensitiveData->getSecondFactorIdentifier();
+        assert($phoneNumber instanceof PhoneNumber);
+        $this->phoneNumber = $phoneNumber;
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
     }

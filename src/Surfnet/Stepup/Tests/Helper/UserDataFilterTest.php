@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use DateTime as CoreDateTime;
 use Generator;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
@@ -117,7 +118,7 @@ class UserDataFilterTest extends TestCase
             new SecondFactorId("52"),
             new PhoneNumber("+0 (0) 000000000"),
             true,
-            emailVerificationWindow::createWindowFromTill(new DateTime(), new DateTime()),
+            EmailVerificationWindow::createWindowFromTill(new DateTime(), new DateTime(new CoreDateTime('+5 minute'))),
             "30c0fcb136bf324eea652d5b86c1a08c",
             new CommonName("commonname"),
             new Email("test@example.com"),

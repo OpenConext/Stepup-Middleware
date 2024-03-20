@@ -28,7 +28,7 @@ final readonly class EventStub implements AuditableEvent
     ) {
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         return $this->metadata;
     }

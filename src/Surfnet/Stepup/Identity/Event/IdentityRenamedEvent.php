@@ -37,7 +37,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     public function __construct(IdentityId $id, Institution $institution, CommonName $commonName)
     {
@@ -79,7 +79,7 @@ class IdentityRenamedEvent extends IdentityEvent implements Forgettable, RightTo
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName);

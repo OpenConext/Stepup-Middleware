@@ -85,8 +85,8 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
         // In the audit log we do not show the secret (hashed)
-        $metadata->recoveryTokenId = (string)SafeStore::hidden();
-        $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
+        $metadata->recoveryTokenId = new RecoveryTokenId((string) SafeStore::hidden());
+        $metadata->recoveryTokenType = RecoveryTokenType::safeStore();
         return $metadata;
     }
 

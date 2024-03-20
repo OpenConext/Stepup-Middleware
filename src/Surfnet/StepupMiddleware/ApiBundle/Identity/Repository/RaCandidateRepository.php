@@ -131,7 +131,7 @@ class RaCandidateRepository extends ServiceEntityRepository
     /**
      * @return array|null
      */
-    public function findOneByIdentityId(string $identityId)
+    public function findOneByIdentityId(string $identityId): ?array
     {
         // Finds a single identity by its identity id. Returns the identity as an array
         $queryBuilder = $this->getBaseQuery()
@@ -146,7 +146,7 @@ class RaCandidateRepository extends ServiceEntityRepository
     /**
      * @return QueryBuilder
      */
-    private function getBaseQuery()
+    private function getBaseQuery(): QueryBuilder
     {
         // Base query to get all allowed ra candidates
         $queryBuilder = $this->getEntityManager()->createQueryBuilder()

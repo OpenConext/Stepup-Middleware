@@ -49,7 +49,7 @@ class SensitiveDataMessage
     /**
      * @return IdentityId
      */
-    public function getIdentityId()
+    public function getIdentityId(): IdentityId
     {
         return $this->identityId;
     }
@@ -57,7 +57,7 @@ class SensitiveDataMessage
     /**
      * @return int
      */
-    public function getPlayhead()
+    public function getPlayhead(): int
     {
         return $this->playhead;
     }
@@ -65,7 +65,7 @@ class SensitiveDataMessage
     /**
      * @return SensitiveData
      */
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return $this->sensitiveData;
     }

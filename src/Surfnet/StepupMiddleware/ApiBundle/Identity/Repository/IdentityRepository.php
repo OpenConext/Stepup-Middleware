@@ -25,7 +25,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
@@ -33,7 +32,6 @@ class IdentityRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
-        private readonly InstitutionAuthorizationRepositoryFilter $authorizationRepositoryFilter,
     ) {
         parent::__construct($registry, Identity::class);
     }
@@ -92,7 +90,7 @@ class IdentityRepository extends ServiceEntityRepository
      * @param string[] $nameIds
      * @return Identity[] Indexed by NameID.
      */
-    public function findByNameIdsIndexed(array $nameIds)
+    public function findByNameIdsIndexed(array $nameIds): array
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->select('i')
@@ -124,7 +122,7 @@ class IdentityRepository extends ServiceEntityRepository
     /**
      * @return Identity
      */
-    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution)
+    public function findOneByNameIdAndInstitution(NameId $nameId, Institution $institution): Identity
     {
         return $this->createQueryBuilder('i')
             ->where('i.nameId = :nameId')
@@ -153,7 +151,7 @@ class IdentityRepository extends ServiceEntityRepository
     /**
      * @return ArrayCollection|Identity[]
      */
-    public function findByInstitution(Institution $institution)
+    public function findByInstitution(Institution $institution): ArrayCollection|array
     {
         return $this->createQueryBuilder('i')
             ->where('i.institution = :institution')

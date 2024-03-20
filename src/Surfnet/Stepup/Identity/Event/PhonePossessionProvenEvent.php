@@ -48,32 +48,32 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var PhoneNumber
      */
-    public $phoneNumber;
+    public PhoneNumber $phoneNumber;
 
     /**
      * @var EmailVerificationWindow
      */
-    public $emailVerificationWindow;
+    public EmailVerificationWindow $emailVerificationWindow;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -90,16 +90,16 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        PhoneNumber $phoneNumber,
-        public $emailVerificationRequired,
+        IdentityId              $identityId,
+        Institution             $identityInstitution,
+        SecondFactorId          $secondFactorId,
+        PhoneNumber             $phoneNumber,
+        public bool             $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        public $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public string           $emailVerificationNonce,
+        CommonName              $commonName,
+        Email                   $email,
+        Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -152,14 +152,14 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
             'identity_id' => (string)$this->identityId,
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
-            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_required' => $this->emailVerificationRequired,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'email_verification_nonce' => $this->emailVerificationNonce,
             'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -171,7 +171,9 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->phoneNumber = $sensitiveData->getSecondFactorIdentifier();
+        $phoneNumber = $sensitiveData->getSecondFactorIdentifier();
+        assert($phoneNumber instanceof PhoneNumber);
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function obtainUserData(): array

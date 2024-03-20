@@ -47,27 +47,27 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
     /**
      * @var Institution
      */
-    public $targetInstitution;
+    public Institution $targetInstitution;
 
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var SecondFactorId
      */
-    public $targetSecondFactorId;
+    public SecondFactorId $targetSecondFactorId;
 
     /**
      * @var SecondFactorType
      */
-    public $secondFactorType;
+    public SecondFactorType $secondFactorType;
 
     /**
      * @var SecondFactorIdentifier
      */
-    public $secondFactorIdentifier;
+    public SecondFactorIdentifier $secondFactorIdentifier;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -131,7 +131,7 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);

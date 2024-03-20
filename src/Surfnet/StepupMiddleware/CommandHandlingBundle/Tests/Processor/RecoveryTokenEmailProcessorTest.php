@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Processor;
 
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
@@ -38,24 +39,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\RecoveryTokenMailService;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\RecoveryTokenEmailProcessor;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Identity\Processor\InstitutionConfigurationProcessor;
 
 class RecoveryTokenEmailProcessorTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    /**
-     * @var RecoveryTokenEmailProcessor
-     */
     private RecoveryTokenEmailProcessor $processor;
-    /**
-     * @var Mockery\MockInterface|RecoveryTokenMailService
-     */
-    private $mailService;
-    /**
-     * @var Mockery\MockInterface|IdentityService
-     */
-    private $identityService;
+
+    private RecoveryTokenMailService&MockInterface $mailService;
+
+    private IdentityService&MockInterface $identityService;
 
     public function setUp(): void
     {

@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CommandParamConverter implements ParamConverterInterface
 {
-    public function apply(Request $request, ParamConverter $configuration): void
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $data = json_decode($request->getContent(), true);
 
@@ -49,6 +49,7 @@ class CommandParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set('command', $command);
+        return true;
     }
 
     public function supports(ParamConverter $configuration): bool

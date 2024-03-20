@@ -43,55 +43,55 @@ class RaListing implements JsonSerializable
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
-    public $id;
+    public int $id;
 
     /**
      * @var string
      */
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $raInstitution;
+    public Institution $raInstitution;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var CommonName
      */
     #[ORM\Column(type: 'stepup_common_name')]
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
     #[ORM\Column(type: 'stepup_email')]
-    public $email;
+    public Email $email;
 
     /**
      * @var AuthorityRole
      */
     #[ORM\Column(type: 'authority_role')]
-    public $role;
+    public AuthorityRole $role;
 
     /**
      * @var Location
      */
     #[ORM\Column(type: 'stepup_location', nullable: true)]
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
     #[ORM\Column(type: 'stepup_contact_information', nullable: true)]
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     public static function create(
         $identityId,

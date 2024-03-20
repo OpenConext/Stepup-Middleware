@@ -28,17 +28,17 @@ class RaLocationRemovedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var RaLocationId
      */
-    public $raLocationId;
+    public RaLocationId $raLocationId;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

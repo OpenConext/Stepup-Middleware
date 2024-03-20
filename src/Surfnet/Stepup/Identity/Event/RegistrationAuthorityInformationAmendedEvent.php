@@ -42,17 +42,17 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     /**
      * @param IdentityId $identityId

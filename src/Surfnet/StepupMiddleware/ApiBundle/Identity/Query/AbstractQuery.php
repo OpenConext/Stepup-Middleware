@@ -23,10 +23,10 @@ abstract class AbstractQuery
     /**
      * @var int
      */
-    public $pageNumber;
+    public int $pageNumber;
 
     /**
      * @var int
      */
-    public $itemsPerPage = 25;
+    public int $itemsPerPage = 25;
 }

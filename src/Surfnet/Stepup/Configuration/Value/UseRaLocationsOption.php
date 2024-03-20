@@ -46,9 +46,6 @@ final class UseRaLocationsOption implements JsonSerializable
         $this->useRaLocationsOption = $useRaLocationsOption;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(UseRaLocationsOption $other): bool
     {
         return $this->useRaLocationsOption === $other->useRaLocationsOption;
@@ -57,7 +54,7 @@ final class UseRaLocationsOption implements JsonSerializable
     /**
      * @return boolean
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->useRaLocationsOption;
     }

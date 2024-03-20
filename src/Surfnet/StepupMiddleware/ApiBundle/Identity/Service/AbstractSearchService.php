@@ -61,7 +61,7 @@ class AbstractSearchService
         foreach ($results as $options) {
             foreach ($options as $key => $value) {
                 $val = (string)$value;
-                $filters[$key][$val] = (string)$val;
+                $filters[$key][$val] = $val;
             }
         }
 

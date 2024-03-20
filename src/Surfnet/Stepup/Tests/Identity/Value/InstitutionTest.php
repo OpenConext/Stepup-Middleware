@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Institution;
+use TypeError;
 
 class InstitutionTest extends UnitTest
 {
@@ -34,10 +37,18 @@ class InstitutionTest extends UnitTest
      * @dataProvider invalidValueProvider
      */
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
-        string|int|float|StdClass|array $invalidValue,
+        int|float|StdClass|array $invalidValue,
     ): void {
+        $this->expectException(TypeError::class);
+        new Institution($invalidValue);
+    }
+    /**
+     * @test
+     * @group domain
+     * @dataProvider invalidValueProviderInvalidString
+     */
+    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(string $invalidValue): void {
         $this->expectException(InvalidArgumentException::class);
-
         new Institution($invalidValue);
     }
 
@@ -63,12 +74,21 @@ class InstitutionTest extends UnitTest
     public function invalidValueProvider(): array
     {
         return [
-            'empty string' => [''],
-            'blank string' => ['   '],
             'array' => [[]],
             'integer' => [1],
             'float' => [1.2],
             'object' => [new StdClass()],
+        ];
+    }
+
+    /**
+     * dataprovider
+     */
+    public function invalidValueProviderInvalidString(): array
+    {
+        return [
+            'empty string' => [''],
+            'blank string' => ['   '],
         ];
     }
 }

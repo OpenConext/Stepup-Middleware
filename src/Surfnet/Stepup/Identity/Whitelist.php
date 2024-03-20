@@ -34,9 +34,6 @@ final class Whitelist extends EventSourcedAggregateRoot implements WhitelistApi
      */
     public const WHITELIST_AGGREGATE_ID = '125ccee5-d650-437a-a0b0-6bf17c8188fa';
 
-    /**
-     * @var InstitutionCollection The collection of institutions currently on the whitelist
-     */
     private ?InstitutionCollection $whitelist = null;
 
     public function __construct()

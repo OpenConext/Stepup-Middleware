@@ -130,7 +130,7 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
      * @param string $commandId
      * @return RegistrationAuthorityRole
      */
-    private function assertValidRoleAndConvertIfValid($role, $commandId): RegistrationAuthorityRole
+    private function assertValidRoleAndConvertIfValid(string $role, string $commandId): RegistrationAuthorityRole
     {
         if ($role === 'ra') {
             return new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA);
@@ -148,11 +148,9 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
     }
 
     /**
-     * @return InstitutionConfiguration
      * @deprecated Should be used until existing institution configurations have been migrated to using normalized ids
-     *
      */
-    private function loadInstitutionConfigurationFor(Institution $institution)
+    private function loadInstitutionConfigurationFor(Institution $institution): InstitutionConfiguration
     {
         $institution = new ConfigurationInstitution($institution->getInstitution());
         try {
@@ -166,7 +164,7 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
                 $institutionConfigurationId->getInstitutionConfigurationId(),
             );
         }
-
+        assert($institutionConfiguration instanceof InstitutionConfiguration);
         return $institutionConfiguration;
     }
 }

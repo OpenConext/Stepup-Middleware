@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -29,18 +31,11 @@ final class ContactInformation implements JsonSerializable, Stringable
     /**
      * @param string $contactInformation
      */
-    public function __construct($contactInformation)
+    public function __construct(string $contactInformation)
     {
-        if (!is_string($contactInformation)) {
-            throw InvalidArgumentException::invalidType('string', 'contactInformation', $contactInformation);
-        }
-
         $this->contactInformation = trim($contactInformation);
     }
 
-    /**
-     * @return bool
-     */
     public function equals(ContactInformation $otherContactInformation): bool
     {
         return $this->contactInformation === $otherContactInformation->contactInformation;
@@ -49,7 +44,7 @@ final class ContactInformation implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getContactInformation()
+    public function getContactInformation(): string
     {
         return $this->contactInformation;
     }

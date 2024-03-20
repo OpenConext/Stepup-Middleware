@@ -33,7 +33,7 @@ class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServic
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of a verified or vetted second factor.
@@ -41,12 +41,12 @@ class RevokeOwnSecondFactorCommand extends AbstractCommand implements SelfServic
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

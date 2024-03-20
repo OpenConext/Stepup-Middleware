@@ -31,38 +31,38 @@ class RegisterSelfAssertedSecondFactorCommand extends AbstractCommand implements
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorType;
+    public string $secondFactorType;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorIdentifier;
+    public string $secondFactorIdentifier;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $authoringRecoveryTokenId;
+    public string $authoringRecoveryTokenId;
 
-    public function getIdentityId(): void
+    public function getIdentityId(): string
     {
-        $this->identityId;
+        return $this->identityId;
     }
 }

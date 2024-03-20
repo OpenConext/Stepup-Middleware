@@ -26,10 +26,10 @@ class SendVerifiedSecondFactorRemindersCommand extends AbstractCommand
     /**
      * @var bool
      */
-    public $dryRun;
+    public bool $dryRun;
 
     /**
      * @var DateTime
      */
-    public $requestedAt;
+    public DateTime $requestedAt;
 }

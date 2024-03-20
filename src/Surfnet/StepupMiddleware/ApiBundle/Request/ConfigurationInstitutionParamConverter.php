@@ -28,9 +28,10 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
 {
     public const INSTITUTION = 'institution';
 
-    public function apply(Request $request, ParamConverter $configuration): void
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $request->attributes->set(self::INSTITUTION, new Institution($this->getInstitutionFromRequest($request)));
+        return true;
     }
 
     public function supports(ParamConverter $configuration): bool

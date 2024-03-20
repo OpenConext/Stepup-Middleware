@@ -23,7 +23,7 @@ class IdentityProvidersUpdatedEvent extends ConfigurationEvent
     /**
      * @var array
      */
-    public $identityProviders;
+    public array $identityProviders;
 
     /**
      * @param string $configurationId

@@ -38,9 +38,6 @@ class SecondFactorProvePossessionHelper
         $this->skipProvePossessionSecondFactorTypes = $skipProvePossessionSecondFactorTypes;
     }
 
-    /**
-     * @return bool
-     */
     public function canSkipProvePossession(SecondFactorType $secondFactorType): bool
     {
         return in_array($secondFactorType->getSecondFactorType(), $this->skipProvePossessionSecondFactorTypes);

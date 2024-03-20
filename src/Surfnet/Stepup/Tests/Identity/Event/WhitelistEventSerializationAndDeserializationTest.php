@@ -65,7 +65,7 @@ class WhitelistEventSerializationAndDeserializationTest extends UnitTest
     /**
      * @return InstitutionCollection
      */
-    private function getInstitutionCollection()
+    private function getInstitutionCollection(): InstitutionCollection
     {
         static $institutionCollection;
 

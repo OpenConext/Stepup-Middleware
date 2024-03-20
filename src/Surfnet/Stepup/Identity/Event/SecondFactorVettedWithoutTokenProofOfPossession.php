@@ -59,45 +59,45 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var SecondFactorType
      */
-    public $secondFactorType;
+    public SecondFactorType $secondFactorType;
 
     /**
      * @var SecondFactorIdentifier
      */
-    public $secondFactorIdentifier;
+    public SecondFactorIdentifier $secondFactorIdentifier;
 
     /**
      * @var DocumentNumber
      */
-    public $documentNumber;
+    public DocumentNumber $documentNumber;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /** @var VettingType */
-    public $vettingType;
+    public VettingType $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)

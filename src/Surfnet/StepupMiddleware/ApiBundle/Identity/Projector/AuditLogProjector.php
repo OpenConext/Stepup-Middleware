@@ -161,7 +161,9 @@ class AuditLogProjector implements EventListener
     private function augmentActorCommonName(AuditLogEntry $entry, Metadata $auditLogMetadata): void
     {
         if (property_exists($auditLogMetadata, 'vettingType') && !is_null($auditLogMetadata->vettingType)) {
-            $entry->actorCommonName .= $auditLogMetadata->vettingType->auditLog();
+            $entry->actorCommonName = new CommonName(
+                $entry->actorCommonName->getCommonName() . $auditLogMetadata->vettingType->auditLog()
+            );
         }
     }
 }

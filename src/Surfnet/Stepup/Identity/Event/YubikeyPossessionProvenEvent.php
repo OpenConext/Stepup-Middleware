@@ -49,56 +49,54 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * The Yubikey's public ID.
      *
      * @var YubikeyPublicId
      */
-    public $yubikeyPublicId;
+    public YubikeyPublicId $yubikeyPublicId;
 
     /**
      * @var DateTime
      */
-    public $emailVerificationRequestedAt;
+    public DateTime $emailVerificationRequestedAt;
 
     /**
      * @var EmailVerificationWindow
      */
-    public $emailVerificationWindow;
+    public EmailVerificationWindow $emailVerificationWindow;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
-     * @param bool $emailVerificationRequired
-     * @param string $emailVerificationNonce
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $institution,
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        public $emailVerificationRequired,
+        IdentityId              $identityId,
+        Institution             $institution,
+        SecondFactorId          $secondFactorId,
+        YubikeyPublicId         $yubikeyPublicId,
+        public bool             $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        public $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public string           $emailVerificationNonce,
+        CommonName              $commonName,
+        Email                   $email,
+        Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $institution);
 
@@ -151,14 +149,14 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
             'identity_id' => (string)$this->identityId,
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
-            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_required' => $this->emailVerificationRequired,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'email_verification_nonce' => $this->emailVerificationNonce,
             'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -170,7 +168,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        $yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        assert($yubikeyPublicId instanceof YubikeyPublicId);
+        $this->yubikeyPublicId = $yubikeyPublicId;
     }
 
     public function obtainUserData(): array

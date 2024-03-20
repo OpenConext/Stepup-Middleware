@@ -37,7 +37,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     public function __construct(IdentityId $identityId, Institution $institution, Email $email)
     {
@@ -79,7 +79,7 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withEmail($this->email);

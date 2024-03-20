@@ -78,9 +78,6 @@ class EventSerializationAndDeserializationTest extends TestCase
         $this->assertEquals($unserializedEvent, $deserializedEvent);
     }
 
-    /**
-     * @return SerializableInterface[]
-     */
     public function institutionConfigurationEventsProvider(): array
     {
         $institution = new Institution('A test institution');

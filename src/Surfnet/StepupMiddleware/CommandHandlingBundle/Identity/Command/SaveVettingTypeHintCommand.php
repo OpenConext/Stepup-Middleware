@@ -38,14 +38,14 @@ class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 
     #[Assert\Type(type: 'array')]
     #[Assert\All([
@@ -53,7 +53,7 @@ class SaveVettingTypeHintCommand extends AbstractCommand implements RaExecutable
     ])]
     public array $hints;
 
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         return null;
     }

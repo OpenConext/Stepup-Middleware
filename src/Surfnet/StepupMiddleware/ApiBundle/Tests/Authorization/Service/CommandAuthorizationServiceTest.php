@@ -77,6 +77,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand;
+use function property_exists;
 
 class CommandAuthorizationServiceTest extends TestCase
 {
@@ -208,6 +209,9 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorInstitution = new Institution('institution');
 
             $command = m::mock($command);
+            if (property_exists($command, 'identityId')) {
+                $command->identityId = $actorId;
+            }
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
 
@@ -391,6 +395,9 @@ class CommandAuthorizationServiceTest extends TestCase
                 || $command instanceof RevokeRegistrantsSecondFactorCommand
                 || $command instanceof RevokeRegistrantsRecoveryTokenCommand
             ) {
+                if (property_exists($command, 'identityId')) {
+                    $command->identityId = $actorId;
+                }
                 $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);

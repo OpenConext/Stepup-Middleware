@@ -36,7 +36,7 @@ final class InstitutionRole implements JsonSerializable, Stringable
     /**
      * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * InstitutionRole constructor.
@@ -75,9 +75,6 @@ final class InstitutionRole implements JsonSerializable, Stringable
         return new self(self::ROLE_SELECT_RAA);
     }
 
-    /**
-     * @return bool
-     */
     public function equals(InstitutionRole $role): bool
     {
         return $this->type == $role->getType();
@@ -86,7 +83,7 @@ final class InstitutionRole implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

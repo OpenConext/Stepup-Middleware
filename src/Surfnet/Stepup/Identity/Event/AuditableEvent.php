@@ -25,5 +25,5 @@ interface AuditableEvent
     /**
      * @return Metadata
      */
-    public function getAuditLogMetadata();
+    public function getAuditLogMetadata(): Metadata;
 }

@@ -32,43 +32,43 @@ final class Metadata
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var Institution
      */
-    public $identityInstitution;
+    public Institution $identityInstitution;
 
     /**
      * @var Institution
      */
-    public $raInstitution;
+    public Institution $raInstitution;
 
     /**
      * @var SecondFactorId|null
      */
-    public $secondFactorId;
+    public ?SecondFactorId $secondFactorId;
 
     /**
      * @var SecondFactorType|null
      */
-    public $secondFactorType;
+    public ?SecondFactorType $secondFactorType;
 
     /**
      * @var SecondFactorIdentifier|null
      */
-    public $secondFactorIdentifier;
+    public ?SecondFactorIdentifier $secondFactorIdentifier;
 
     /** @var VettingType */
-    public $vettingType;
+    public VettingType $vettingType;
 
     /**
      * @var RecoveryTokenId
      */
-    public $recoveryTokenId;
+    public RecoveryTokenId $recoveryTokenId;
 
     /**
      * @var RecoveryTokenType
      */
-    public $recoveryTokenType;
+    public RecoveryTokenType $recoveryTokenType;
 }

@@ -41,7 +41,7 @@ class RecoveryTokenMailService
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    private TranslatorInterface $translator;
 
     private readonly string $fallbackLocale;
 

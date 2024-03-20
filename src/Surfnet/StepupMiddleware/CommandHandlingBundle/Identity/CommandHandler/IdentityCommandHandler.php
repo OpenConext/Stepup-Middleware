@@ -529,7 +529,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
     /**
      * @return bool
      */
-    private function emailVerificationIsRequired(IdentityApi $identity)
+    private function emailVerificationIsRequired(IdentityApi $identity): bool
     {
         $institution = new ConfigurationInstitution(
             (string)$identity->getInstitution(),

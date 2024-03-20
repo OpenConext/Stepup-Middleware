@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -29,7 +31,7 @@ final class Institution implements JsonSerializable, Stringable
     /**
      * @param string $institution may not be an empty string
      */
-    public function __construct($institution)
+    public function __construct(string $institution)
     {
         if (!is_string($institution) || trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
@@ -41,14 +43,11 @@ final class Institution implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getInstitution()
+    public function getInstitution(): string
     {
         return $this->institution;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(Institution $otherInstitution): bool
     {
         return $this->institution === $otherInstitution->institution;

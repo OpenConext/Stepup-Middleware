@@ -30,12 +30,12 @@ abstract class IdentityEvent implements AuditableEvent, SerializableInterface
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var Institution
      */
-    public $identityInstitution;
+    public Institution $identityInstitution;
 
     public function __construct(IdentityId $identityId, Institution $identityInstitution)
     {

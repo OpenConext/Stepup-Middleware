@@ -33,7 +33,7 @@ class RevokeOwnRecoveryTokenCommand extends AbstractCommand implements SelfServi
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of a recovery token.
@@ -41,12 +41,12 @@ class RevokeOwnRecoveryTokenCommand extends AbstractCommand implements SelfServi
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $recoveryTokenId;
+    public string $recoveryTokenId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

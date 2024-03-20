@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -23,6 +25,8 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
+use Throwable;
+use TypeError;
 
 class TimeFrameTest extends UnitTest
 {
@@ -31,11 +35,23 @@ class TimeFrameTest extends UnitTest
     /**
      * @test
      * @group        domain
-     * @dataProvider invalidValueProvider
+     * @dataProvider invalidValueProviderInt
      */
-    public function it_cannot_be_given_an_non_positive_amount_of_seconds(string|float|int|StdClass|array $invalidValue,): void
+    public function it_cannot_be_given_an_non_positive_amount_of_seconds(int $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
+
+        TimeFrame::ofSeconds($invalidValue);
+    }
+
+    /**
+     * @test
+     * @group        domain
+     * @dataProvider invalidValueProviderOtherTypes
+     */
+    public function it_cannot_be_given_an_non_positive_amount_of_secondsOtherTypes(string|float|StdClass|array $invalidValue): void
+    {
+        $this->expectException(TypeError::class);
 
         TimeFrame::ofSeconds($invalidValue);
     }
@@ -60,15 +76,24 @@ class TimeFrameTest extends UnitTest
     /**
      * dataprovider
      */
-    public function invalidValueProvider(): array
+    public function invalidValueProviderInt(): array
+    {
+        return [
+            'zero' => [0],
+            'negative int' => [-1],
+        ];
+    }
+
+    /**
+     * dataprovider
+     */
+    public function invalidValueProviderOtherTypes(): array
     {
         return [
             'empty string' => [''],
             'string' => ['abc'],
             'array' => [[]],
-            'float' => [2.718],
-            'zero' => [0],
-            'negative int' => [-1],
+            'float' => [2.123],
             'object' => [new StdClass()],
         ];
     }

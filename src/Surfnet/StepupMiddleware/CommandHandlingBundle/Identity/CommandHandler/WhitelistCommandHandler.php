@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler;
 
 use Broadway\CommandHandling\SimpleCommandHandler;
-use Broadway\Domain\AggregateRoot;
 use Broadway\Repository\AggregateNotFoundException;
 use Broadway\Repository\Repository as RepositoryInterface;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
@@ -66,13 +65,12 @@ class WhitelistCommandHandler extends SimpleCommandHandler
         $this->repository->save($whitelist);
     }
 
-    /**
-     * @return Whitelist
-     */
-    private function getWhitelist(): AggregateRoot|Whitelist
+    private function getWhitelist(): Whitelist
     {
         try {
-            return $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
+            $whitelist = $this->repository->load(Whitelist::WHITELIST_AGGREGATE_ID);
+            assert($whitelist instanceof Whitelist);
+            return $whitelist;
         } catch (AggregateNotFoundException) {
             return Whitelist::create(new InstitutionCollection());
         }

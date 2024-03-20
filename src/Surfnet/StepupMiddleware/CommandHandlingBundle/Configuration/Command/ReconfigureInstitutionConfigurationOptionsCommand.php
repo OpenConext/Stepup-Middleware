@@ -29,32 +29,32 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 
     /**
      * @var bool
      */
     #[Assert\Type(type: 'boolean')]
-    public $useRaLocationsOption;
+    public bool $useRaLocationsOption;
 
     /**
      * @var bool
      */
     #[Assert\Type(type: 'boolean')]
-    public $showRaaContactInformationOption;
+    public bool $showRaaContactInformationOption;
 
     /**
      * @var bool
      */
     #[Assert\Type(type: 'boolean')]
-    public $verifyEmailOption;
+    public bool $verifyEmailOption;
 
 
     /**
      * @var int
      */
     #[Assert\Type(type: 'integer')]
-    public $numberOfTokensPerIdentityOption;
+    public int $numberOfTokensPerIdentityOption;
 
     #[Assert\NotNull]
     public $allowedSecondFactors;
@@ -62,30 +62,30 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     /**
      * @var array|null
      */
-    public $useRaOption;
+    public ?array $useRaOption;
 
     /**
      * @var array|null
      */
-    public $useRaaOption;
+    public ?array $useRaaOption;
 
     /**
      * @var array|null
      */
-    public $selectRaaOption;
+    public ?array $selectRaaOption;
 
     /**
      * @var bool|null
      */
-    public $selfVetOption;
+    public ?bool $selfVetOption;
 
     /**
      * @var bool|null
      */
-    public $selfAssertedTokensOption;
+    public ?bool $selfAssertedTokensOption;
 
     /**
      * @var bool|null
      */
-    public $ssoOn2faOption;
+    public ?bool $ssoOn2faOption;
 }

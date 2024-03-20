@@ -28,5 +28,5 @@ final class RemoveInstitutionConfigurationByUnnormalizedIdCommand extends Abstra
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 }

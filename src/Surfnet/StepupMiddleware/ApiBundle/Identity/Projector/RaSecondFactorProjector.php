@@ -224,19 +224,19 @@ class RaSecondFactorProjector extends Projector
      * @param DocumentNumber|null $documentNumber
      */
     private function saveRaSecondFactor(
-        string $identityId,
-        string $secondFactorId,
-        string $secondFactorType,
-        $secondFactorIdentifier,
-        CommonName $commonName,
-        Email $email,
+        string             $identityId,
+        string             $secondFactorId,
+        string             $secondFactorType,
+        string             $secondFactorIdentifier,
+        CommonName         $commonName,
+        Email              $email,
         SecondFactorStatus $status = null,
-        DocumentNumber $documentNumber = null,
+        DocumentNumber     $documentNumber = null,
     ): void {
         $identity = $this->identityRepository->find($identityId);
 
         $secondFactor = new RaSecondFactor(
-            (string)$secondFactorId,
+            $secondFactorId,
             $secondFactorType,
             $secondFactorIdentifier,
             $identity->id,
@@ -302,40 +302,43 @@ class RaSecondFactorProjector extends Projector
         $this->raSecondFactorRepository->save($secondFactor);
     }
 
-    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
+    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
+    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->raSecondFactorRepository->updateStatusByIdentityIdToForgotten($event->identityId);
     }

@@ -5,8 +5,6 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use function json_decode;
-use function json_encode;
 
 /**
  * This migration removes sensitive data (vetting type) from the event stream
@@ -36,11 +34,12 @@ SQL;
         // Do not show warning on migrations.
         $this->addSql('# Updating entities.');
 
-        $affectedEventStreamRows = $this->connection->executeQuery(self::$select);
+        $result = $this->connection->executeQuery(self::$select);
 
-        $this->write("<info>Affected records: {$affectedEventStreamRows->rowCount()}</info>");
+        $affectedEventStreamRows = $result->fetchAllAssociative();
+        $this->write("<info>Affected records: {$result->rowCount()}</info>");
 
-        if ($affectedEventStreamRows->rowCount() === 0) {
+        if ($result->rowCount() === 0) {
             return;
         }
 

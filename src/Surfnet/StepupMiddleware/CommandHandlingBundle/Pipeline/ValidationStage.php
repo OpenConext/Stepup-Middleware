@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -31,7 +31,7 @@ class ValidationStage implements Stage
     ) {
     }
 
-    public function process(Command $command): Command
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(sprintf('Processing validation for "%s"', $command));
 

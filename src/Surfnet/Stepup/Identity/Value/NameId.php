@@ -55,7 +55,7 @@ final class NameId implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getNameId()
+    public function getNameId(): string
     {
         return $this->value;
     }

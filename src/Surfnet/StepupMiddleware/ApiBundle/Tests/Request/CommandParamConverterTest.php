@@ -29,7 +29,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class CommandParamConverterTest extends TestCase
 {
@@ -68,9 +70,12 @@ class CommandParamConverterTest extends TestCase
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
-        $request->attributes = m::mock()
+
+        /** @var ParameterBag $attributes */
+        $attributes = m::mock()
             ->shouldReceive('set')->with('command', m::type($expectedCommandClass))
             ->getMock();
+        $request->attributes = $attributes;
         $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
@@ -87,13 +92,17 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
-        /** @var Request&MockInterface $request */
+        /** @var Request $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
-        $request->attributes = m::mock()
+
+        /** @var ParameterBag $attributes */
+        $attributes = m::mock()
             ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
+        $request->attributes = $attributes;
+
         $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
@@ -110,13 +119,18 @@ class CommandParamConverterTest extends TestCase
     {
         $command = ['command' => ['name' => 'Root:FooBar', 'uuid' => 'abcdef', 'payload' => ['snake_case' => true]]];
 
-        /** @var Request&MockInterface $request */
+        /** @var Request $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
-        $request->attributes = m::mock()
+
+        /** @var ParameterBag $attributes */
+        $attributes = m::mock()
             ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
             ->getMock();
+
+        $request->attributes = $attributes;
+
         $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();

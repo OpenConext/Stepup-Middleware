@@ -29,48 +29,48 @@ class CreateIdentityCommand extends AbstractCommand implements SelfServiceExecut
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $id;
+    public string $id;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $nameId;
+    public string $nameId;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $email;
+    public string $email;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $institution;
+    public string $institution;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $commonName;
+    public string $commonName;
 
     /**
      * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $preferredLocale;
+    public string $preferredLocale;
 
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->id;
     }

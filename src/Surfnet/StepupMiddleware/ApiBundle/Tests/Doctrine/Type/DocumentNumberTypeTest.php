@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -26,6 +28,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType;
+use TypeError;
 
 class DocumentNumberTypeTest extends UnitTest
 {
@@ -123,7 +126,7 @@ class DocumentNumberTypeTest extends UnitTest
      */
     public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         $type = Type::getType(DocumentNumberType::NAME);
 

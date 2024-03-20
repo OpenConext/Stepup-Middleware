@@ -48,7 +48,7 @@ class SecondFactorService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query)
+    public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->unverifiedRepository->createSearchQuery($query);
 
@@ -58,7 +58,7 @@ class SecondFactorService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
+    public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->verifiedRepository->createSearchQuery($query);
 
@@ -69,7 +69,7 @@ class SecondFactorService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query)
+    public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->verifiedRepository->createSearchForIdentityQuery($query);
 
@@ -79,7 +79,7 @@ class SecondFactorService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function searchVettedSecondFactors(VettedSecondFactorQuery $query)
+    public function searchVettedSecondFactors(VettedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->vettedRepository->createSearchQuery($query);
 

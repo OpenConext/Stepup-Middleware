@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
@@ -44,14 +45,17 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
 
     private ORMSqliteDatabaseTool $databaseTool;
 
+
     public function setUp(): void
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $this->databaseTool = static::getContainer()->get(DatabaseToolCollection::class)->get();
+        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        $this->databaseTool->setRegistry(static::getContainer()->get(ManagerRegistry::class));
+        $this->databaseTool->setObjectManagerName('middleware');
         // Initialises schema.
-        $this->databaseTool->loadFixtures([]);
+        $this->databaseTool->loadFixtures();
 
 
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');

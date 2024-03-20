@@ -51,32 +51,32 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     /**
      * @var SecondFactorId
      */
-    public $secondFactorId;
+    public SecondFactorId $secondFactorId;
 
     /**
      * @var U2fKeyHandle
      */
-    public $keyHandle;
+    public U2fKeyHandle $keyHandle;
 
     /**
      * @var EmailVerificationWindow
      */
-    public $emailVerificationWindow;
+    public EmailVerificationWindow $emailVerificationWindow;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -93,16 +93,16 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        U2fKeyHandle $keyHandle,
-        public $emailVerificationRequired,
+        IdentityId              $identityId,
+        Institution             $identityInstitution,
+        SecondFactorId          $secondFactorId,
+        U2fKeyHandle            $keyHandle,
+        public bool             $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-        public $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public string           $emailVerificationNonce,
+        CommonName              $commonName,
+        Email                   $email,
+        Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
 
@@ -155,14 +155,14 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
             'identity_id' => (string)$this->identityId,
             'identity_institution' => (string)$this->identityInstitution,
             'second_factor_id' => (string)$this->secondFactorId,
-            'email_verification_required' => (bool)$this->emailVerificationRequired,
+            'email_verification_required' => $this->emailVerificationRequired,
             'email_verification_window' => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce' => (string)$this->emailVerificationNonce,
+            'email_verification_nonce' => $this->emailVerificationNonce,
             'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -174,7 +174,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        $keyHandle = $sensitiveData->getSecondFactorIdentifier();
+        assert($keyHandle instanceof U2fKeyHandle);
+        $this->keyHandle = $keyHandle;
     }
 
     public function obtainUserData(): array

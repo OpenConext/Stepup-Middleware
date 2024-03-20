@@ -27,40 +27,31 @@ class ProvePhoneRecoveryTokenPossessionCommand extends AbstractCommand implement
 {
     /**
      * The ID of an existing identity.
-     * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of the recovery code to create.
-     * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $recoveryTokenId;
+    public string $recoveryTokenId;
 
-    /**
-     * @var string
-     */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $recoveryTokenType = RecoveryTokenType::TYPE_SMS;
+    public string $recoveryTokenType = RecoveryTokenType::TYPE_SMS;
 
     /**
      * The phone number
-     * @var string
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
     #[Assert\Regex(pattern: '~^\+[\d\s]+ \(0\) \d+$~')]
-    public $phoneNumber;
+    public string $phoneNumber;
 
-    /**
-     * @return string
-     */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

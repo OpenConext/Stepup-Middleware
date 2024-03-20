@@ -30,7 +30,6 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
     private readonly string $institutionConfigurationId;
 
     /**
-     * @return InstitutionConfigurationId
      * @deprecated To be removed in next release; use normalizedFrom method to account for case-(in)sensitivity issues
      *
      */
@@ -39,9 +38,6 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
         return new self((string)Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
     }
 
-    /**
-     * @return InstitutionConfigurationId
-     */
     public static function normalizedFrom(Institution $institution): self
     {
         return new self((string)Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
@@ -68,9 +64,6 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
         $this->institutionConfigurationId = $institutionConfigurationId;
     }
 
-    /**
-     * @return bool
-     */
     public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId): bool
     {
         return $this->institutionConfigurationId === $otherInstitutionConfigurationId->institutionConfigurationId;
@@ -79,7 +72,7 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
     /**
      * @return string
      */
-    public function getInstitutionConfigurationId()
+    public function getInstitutionConfigurationId(): string
     {
         return $this->institutionConfigurationId;
     }

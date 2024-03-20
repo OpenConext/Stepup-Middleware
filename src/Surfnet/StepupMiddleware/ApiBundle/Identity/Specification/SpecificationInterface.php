@@ -25,5 +25,5 @@ interface SpecificationInterface
     /**
      * @return mixed
      */
-    public function apply(EntityRepository $entityRepository);
+    public function apply(EntityRepository $entityRepository): mixed;
 }

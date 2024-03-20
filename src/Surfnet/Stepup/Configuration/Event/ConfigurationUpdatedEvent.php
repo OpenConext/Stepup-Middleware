@@ -23,12 +23,12 @@ class ConfigurationUpdatedEvent extends ConfigurationEvent
     /**
      * @var array
      */
-    public $newConfiguration;
+    public array $newConfiguration;
 
     /**
      * @var array|null
      */
-    public $oldConfiguration;
+    public ?array $oldConfiguration;
 
     /**
      * @param string $id

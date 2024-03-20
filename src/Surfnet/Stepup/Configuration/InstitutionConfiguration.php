@@ -78,70 +78,70 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * @var InstitutionConfigurationId
      */
-    private $institutionConfigurationId;
+    private InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var Institution
      */
-    private $institution;
+    private Institution $institution;
 
     private ?RaLocationList $raLocations = null;
 
     /**
      * @var UseRaLocationsOption
      */
-    private $useRaLocationsOption;
+    private UseRaLocationsOption $useRaLocationsOption;
 
     /**
      * @var ShowRaaContactInformationOption
      */
-    private $showRaaContactInformationOption;
+    private ShowRaaContactInformationOption $showRaaContactInformationOption;
 
     /**
      * @var VerifyEmailOption
      */
-    private $verifyEmailOption;
+    private VerifyEmailOption $verifyEmailOption;
 
     /**
      * @var NumberOfTokensPerIdentityOption
      */
-    private $numberOfTokensPerIdentityOption;
+    private NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
     /**
      * @var SelfVetOption
      */
-    private $selfVetOption;
+    private SelfVetOption $selfVetOption;
 
     /**
      * @var SsoOn2faOption
      */
-    private $ssoOn2faOption;
+    private SsoOn2faOption $ssoOn2faOption;
 
     /**
      * @var SelfAssertedTokensOption
      */
-    private $selfAssertedTokensOption;
+    private SelfAssertedTokensOption $selfAssertedTokensOption;
 
     /**
      * @var InstitutionAuthorizationOption
      */
-    private $useRaOption;
+    private InstitutionAuthorizationOption $useRaOption;
 
     /**
      * @var InstitutionAuthorizationOption
      */
 
-    private $useRaaOption;
+    private InstitutionAuthorizationOption $useRaaOption;
 
     /**
      * @var InstitutionAuthorizationOption
      */
-    private $selectRaaOption;
+    private InstitutionAuthorizationOption $selectRaaOption;
 
     /**
      * @var AllowedSecondFactorList
      */
-    private $allowedSecondFactorList;
+    private AllowedSecondFactorList $allowedSecondFactorList;
 
     private ?bool $isMarkedAsDestroyed = null;
 
@@ -550,9 +550,8 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * Check if role from institution is allowed to accredit roles
      *
-     * @return bool
      */
-    public function isInstitutionAllowedToAccreditRoles(Institution $institution)
+    public function isInstitutionAllowedToAccreditRoles(Institution $institution): bool
     {
         // This method is needed to support the situation pre FGA. In that situation the SelectRaaOptionChanged wasn't
         // fired and that would result in a situation were $this->selectRaaOption is null. If that occurs we should check
@@ -563,7 +562,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         return $this->selectRaaOption->hasInstitution($institution, $this->institution);
     }
 
-    protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event)
+    protected function applyNewInstitutionConfigurationCreatedEvent(NewInstitutionConfigurationCreatedEvent $event): void
     {
         $this->institutionConfigurationId = $event->institutionConfigurationId;
         $this->institution = $event->institution;
@@ -588,68 +587,74 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
      *
      * This also applies for applyUseRaaOptionChangedEvent & applySelectRaaOptionChangedEvent
      */
-    protected function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event)
+    protected function applyUseRaOptionChangedEvent(UseRaOptionChangedEvent $event): void
     {
         $this->useRaOption = $event->useRaOption;
     }
 
-    protected function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event)
+    protected function applyUseRaaOptionChangedEvent(UseRaaOptionChangedEvent $event): void
     {
         $this->useRaaOption = $event->useRaaOption;
     }
 
-    protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event)
+    protected function applySelectRaaOptionChangedEvent(SelectRaaOptionChangedEvent $event): void
     {
         $this->selectRaaOption = $event->selectRaaOption;
     }
 
-    protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event)
+    protected function applyUseRaLocationsOptionChangedEvent(UseRaLocationsOptionChangedEvent $event): void
     {
         $this->useRaLocationsOption = $event->useRaLocationsOption;
     }
 
     protected function applyShowRaaContactInformationOptionChangedEvent(
         ShowRaaContactInformationOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
     }
 
     protected function applyVerifyEmailOptionChangedEvent(
         VerifyEmailOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->verifyEmailOption = $event->verifyEmailOption;
     }
 
     protected function applySelfVetOptionChangedEvent(
         SelfVetOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->selfVetOption = $event->selfVetOption;
     }
 
     protected function applySelfAssertedTokensOptionChangedEvent(
         SelfAssertedTokensOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
     }
 
     protected function applySsoOn2faOptionChangedEvent(
         SsoOn2faOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->ssoOn2faOption = $event->ssoOn2faOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(
         NumberOfTokensPerIdentityOptionChangedEvent $event,
-    ) {
+    ): void
+    {
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
     }
 
-    protected function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event)
+    protected function applyAllowedSecondFactorListUpdatedEvent(AllowedSecondFactorListUpdatedEvent $event): void
     {
         $this->allowedSecondFactorList = $event->allowedSecondFactorList;
     }
 
-    protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event)
+    protected function applyRaLocationAddedEvent(RaLocationAddedEvent $event): void
     {
         $this->raLocations->add(
             RaLocation::create(
@@ -661,25 +666,25 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
         );
     }
 
-    protected function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event)
+    protected function applyRaLocationRenamedEvent(RaLocationRenamedEvent $event): void
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->rename($event->raLocationName);
     }
 
-    protected function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event)
+    protected function applyRaLocationRelocatedEvent(RaLocationRelocatedEvent $event): void
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->relocate($event->location);
     }
 
-    protected function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event)
+    protected function applyRaLocationContactInformationChangedEvent(RaLocationContactInformationChangedEvent $event): void
     {
         $raLocation = $this->raLocations->getById($event->raLocationId);
         $raLocation->changeContactInformation($event->contactInformation);
     }
 
-    protected function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event)
+    protected function applyRaLocationRemovedEvent(RaLocationRemovedEvent $event): void
     {
         $this->raLocations->removeWithId($event->raLocationId);
     }
@@ -687,7 +692,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event)
+    protected function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void
     {
         // reset all configuration to defaults. This way, should it be rebuild, it seems like it is new again
         $this->raLocations = new RaLocationList([]);

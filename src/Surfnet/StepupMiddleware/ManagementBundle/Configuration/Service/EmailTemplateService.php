@@ -37,7 +37,7 @@ final readonly class EmailTemplateService implements CommandHandlingEmailTemplat
      * @param string $fallbackLocale
      * @return null|EmailTemplate
      */
-    public function findByName($name, $preferredLocale, $fallbackLocale): ?EmailTemplate
+    public function findByName(string $name, string $preferredLocale, string $fallbackLocale): ?EmailTemplate
     {
         try {
             $emailTemplateEntity = $this->repository->findOneByName($name, $preferredLocale, $fallbackLocale);

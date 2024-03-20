@@ -116,96 +116,53 @@ class AuditLogEntry implements JsonSerializable
         CompliedWithRecoveryCodeRevocationEvent::class => 'recovery_token_revoked',
     ];
 
-    /**
-     *
-     * @var string
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 36, nullable: true)]
-    public $actorId;
+    public ?string $actorId;
 
-    /**
-     * @var CommonName
-     */
     #[ORM\Column(type: 'stepup_common_name', nullable: true)]
-    public $actorCommonName;
+    public CommonName $actorCommonName;
 
-    /**
-     * @var Institution|null
-     */
     #[ORM\Column(type: 'institution', nullable: true)]
-    public $actorInstitution;
+    public ?Institution $actorInstitution;
 
     /**
      * Only in certain situations will this field be filled, It represents the RA institution the
      * event log entry is targeted at. For example. John Doe is accredited to become RA by Joe from
      * institution-a. The actual institution John is appointed RA for is stored in this field.
-     *
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255, nullable: true)]
-    public $raInstitution;
+    public ?string $raInstitution;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public string $identityId;
 
-    /**
-     * @var Institution
-     */
     #[ORM\Column(type: 'institution')]
-    public $identityInstitution;
+    public Institution $identityInstitution;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 36, nullable: true)]
-    public $secondFactorId;
+    public ?string $secondFactorId;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 255, nullable: true)]
-    public $secondFactorIdentifier;
+    public string $secondFactorIdentifier;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 36, nullable: true)]
-    public $secondFactorType;
+    public ?string $secondFactorType;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 255, nullable: true)]
-    public $recoveryTokenIdentifier;
+    public string $recoveryTokenIdentifier;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 36, nullable: true)]
-    public $recoveryTokenType;
+    public ?string $recoveryTokenType;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 255)]
-    public $event;
+    public string $event;
 
-    /**
-     * @var DateTime
-     */
     #[ORM\Column(type: 'stepup_datetime')]
-    public $recordedOn;
+    public DateTime $recordedOn;
 
     public function jsonSerialize(): array
     {
@@ -232,7 +189,7 @@ class AuditLogEntry implements JsonSerializable
      * @param string $event Event FQCN
      * @return string Action name
      */
-    private function mapEventToAction($event)
+    private function mapEventToAction(string $event): string
     {
         if (!isset($this->eventActionMap[$event])) {
             throw new LogicException(sprintf("Action name for event '%s' not registered", $event));

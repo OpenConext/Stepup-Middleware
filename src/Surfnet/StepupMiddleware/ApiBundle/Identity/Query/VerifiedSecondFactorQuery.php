@@ -27,20 +27,20 @@ class VerifiedSecondFactorQuery extends AbstractQuery
     /**
      * @var IdentityId|null
      */
-    public $identityId;
+    public ?IdentityId $identityId;
 
     /**
      * @var SecondFactorId|null
      */
-    public $secondFactorId;
+    public ?SecondFactorId $secondFactorId;
 
     /**
      * @var string|null
      */
-    public $registrationCode;
+    public ?string $registrationCode;
 
     /**
      * @var InstitutionAuthorizationContext
      */
-    public $authorizationContext;
+    public InstitutionAuthorizationContext $authorizationContext;
 }

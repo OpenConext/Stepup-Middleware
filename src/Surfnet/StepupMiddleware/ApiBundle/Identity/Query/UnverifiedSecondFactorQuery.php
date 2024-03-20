@@ -25,10 +25,10 @@ class UnverifiedSecondFactorQuery extends AbstractQuery
     /**
      * @var IdentityId
      */
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      * @var string|null
      */
-    public $verificationNonce;
+    public ?string $verificationNonce;
 }

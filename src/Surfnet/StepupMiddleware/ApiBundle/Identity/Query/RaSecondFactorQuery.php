@@ -25,45 +25,45 @@ final class RaSecondFactorQuery extends AbstractQuery
     /**
      * @var string|null
      */
-    public $name;
+    public ?string $name;
 
     /**
      * @var string|null
      */
-    public $type;
+    public ?string $type;
 
     /**
      * @var string|null The second factor type's ID (eg. Yubikey public ID)
      */
-    public $secondFactorId;
+    public ?string $secondFactorId;
 
     /**
      * @var string|null
      */
-    public $email;
+    public ?string $email;
 
     /**
      * @var string|null the filter value, not to be confused with the actorInstitution which is used for authorizations.
      */
-    public $institution;
+    public ?string $institution;
 
     /**
      * @var string|null One of the ApiBundle\Identity\Entity\RaSecondFactor::STATUS_* constants.
      */
-    public $status;
+    public ?string $status;
 
     /**
      * @var string|null
      */
-    public $orderBy;
+    public ?string $orderBy;
 
     /**
      * @var string|null
      */
-    public $orderDirection;
+    public ?string $orderDirection;
 
     /**
      * @var InstitutionAuthorizationContextInterface
      */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

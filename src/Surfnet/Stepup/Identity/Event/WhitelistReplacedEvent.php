@@ -25,7 +25,7 @@ class WhitelistReplacedEvent implements WhitelistEvent
     /**
      * @var InstitutionCollection
      */
-    public $whitelistedInstitutions;
+    public InstitutionCollection $whitelistedInstitutions;
 
     public function __construct(InstitutionCollection $whitelistedInstitutions)
     {

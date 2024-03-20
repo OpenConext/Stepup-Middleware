@@ -51,27 +51,27 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
     /**
      * @var RecoveryTokenId
      */
-    public $recoveryTokenId;
+    public RecoveryTokenId $recoveryTokenId;
 
     /**
      * @var PhoneNumber
      */
-    public $phoneNumber;
+    public PhoneNumber $phoneNumber;
 
     /**
      * @var CommonName
      */
-    public $commonName;
+    public CommonName $commonName;
 
     /**
      * @var Email
      */
-    public $email;
+    public Email $email;
 
     /**
      * @var Locale Eg. "en_GB"
      */
-    public $preferredLocale;
+    public Locale $preferredLocale;
 
     public function __construct(
         IdentityId $identityId,
@@ -96,8 +96,8 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->recoveryTokenId = (string)$this->phoneNumber;
-        $metadata->recoveryTokenType = RecoveryTokenType::TYPE_SMS;
+        $metadata->recoveryTokenId = new RecoveryTokenId((string) $this->phoneNumber);
+        $metadata->recoveryTokenType = RecoveryTokenType::sms();
         return $metadata;
     }
 
@@ -140,7 +140,9 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
     {
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->phoneNumber = $sensitiveData->getRecoveryTokenIdentifier();
+        $phoneNumber = $sensitiveData->getRecoveryTokenIdentifier();
+        assert($phoneNumber instanceof PhoneNumber);
+        $this->phoneNumber = $phoneNumber;
     }
 
     public function obtainUserData(): array

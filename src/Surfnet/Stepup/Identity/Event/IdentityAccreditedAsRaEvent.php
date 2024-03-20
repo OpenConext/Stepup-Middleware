@@ -44,22 +44,22 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
     /**
      * @var NameId
      */
-    public $nameId;
+    public NameId $nameId;
 
     /**
      * @var RegistrationAuthorityRole
      */
-    public $registrationAuthorityRole;
+    public RegistrationAuthorityRole $registrationAuthorityRole;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     /**
      * @param IdentityId $identityId

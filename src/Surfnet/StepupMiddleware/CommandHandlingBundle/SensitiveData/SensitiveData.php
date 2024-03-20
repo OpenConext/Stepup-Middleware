@@ -39,10 +39,7 @@ class SensitiveData implements SerializableInterface
 
     private ?SecondFactorIdentifier $secondFactorIdentifier = null;
 
-    /**
-     * @var SecondFactorType|null
-     */
-    private $secondFactorType;
+    private ?SecondFactorType $secondFactorType = null;
 
     private ?VettingType $vettingType = null;
 

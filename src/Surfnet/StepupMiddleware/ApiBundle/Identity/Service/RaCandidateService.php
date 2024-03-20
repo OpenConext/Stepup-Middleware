@@ -33,7 +33,7 @@ class RaCandidateService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function search(RaCandidateQuery $query)
+    public function search(RaCandidateQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->raCandidateRepository->createSearchQuery($query);
 
@@ -43,7 +43,7 @@ class RaCandidateService extends AbstractSearchService
     /**
      * @return array
      */
-    public function getFilterOptions(RaCandidateQuery $query)
+    public function getFilterOptions(RaCandidateQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->raCandidateRepository->createOptionsQuery($query));
     }
@@ -51,7 +51,7 @@ class RaCandidateService extends AbstractSearchService
     /**
      * @return null|array
      */
-    public function findOneByIdentityId(string $identityId)
+    public function findOneByIdentityId(string $identityId): ?array
     {
         return $this->raCandidateRepository->findOneByIdentityId($identityId);
     }

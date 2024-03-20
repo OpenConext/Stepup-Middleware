@@ -30,7 +30,7 @@ class AmendRegistrationAuthorityInformationCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      *
@@ -38,7 +38,7 @@ class AmendRegistrationAuthorityInformationCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $location;
+    public string $location;
 
     /**
      *
@@ -46,7 +46,7 @@ class AmendRegistrationAuthorityInformationCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $contactInformation;
+    public string $contactInformation;
 
     /**
      *
@@ -54,12 +54,12 @@ class AmendRegistrationAuthorityInformationCommand extends AbstractCommand imple
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $raInstitution;
+    public string $raInstitution;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->raInstitution;
     }

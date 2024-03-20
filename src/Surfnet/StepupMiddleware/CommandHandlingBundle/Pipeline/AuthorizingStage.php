@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
 use Psr\Log\LoggerInterface;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\DeprovisionExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
@@ -35,7 +35,7 @@ class AuthorizingStage implements Stage
     ) {
     }
 
-    public function process(Command $command): Command
+    public function process(AbstractCommand $command): AbstractCommand
     {
         $this->logger->debug(sprintf('Processing authorization for command "%s"', $command));
 

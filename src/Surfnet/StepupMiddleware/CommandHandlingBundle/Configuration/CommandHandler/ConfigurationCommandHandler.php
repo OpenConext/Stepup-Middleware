@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler;
 
 use Broadway\CommandHandling\SimpleCommandHandler;
-use Broadway\Domain\AggregateRoot;
 use Broadway\Repository\AggregateNotFoundException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;

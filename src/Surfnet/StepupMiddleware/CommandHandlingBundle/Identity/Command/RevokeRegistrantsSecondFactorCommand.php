@@ -33,7 +33,7 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $authorityId;
+    public string $authorityId;
 
     /**
      * The ID of an identity.
@@ -41,7 +41,7 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of a verified or vetted second factor.
@@ -49,12 +49,12 @@ class RevokeRegistrantsSecondFactorCommand extends AbstractCommand implements Ra
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * @inheritDoc
      */
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         // Returning null as opposed to having the institution on this command was done
         // because the RA (actor) institution can be loaded from the authorityId

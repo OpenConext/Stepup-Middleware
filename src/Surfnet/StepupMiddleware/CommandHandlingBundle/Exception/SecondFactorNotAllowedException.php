@@ -25,12 +25,12 @@ class SecondFactorNotAllowedException extends RuntimeException implements Proces
     /**
      * @var string[]
      */
-    private $errors;
+    private array $errors;
 
     /**
      * @return string[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

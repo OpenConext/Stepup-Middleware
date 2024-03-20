@@ -45,7 +45,7 @@ class InvalidCommandException extends RuntimeException implements ProcessingAbor
     /**
      * @return string[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

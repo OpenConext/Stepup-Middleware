@@ -46,7 +46,6 @@ class InstitutionConfigurationIdTest extends TestCase
      * @group domain
      *
      * @dataProvider nonStringOrEmptyStringProvider
-     * @param $nonStringOrEmptyString
      */
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(
         string|int|float|StdClass|array $nonStringOrEmptyString,

@@ -27,7 +27,7 @@ abstract class ConfigurationEvent implements SerializableInterface
     /**
      * @var string
      */
-    public $id;
+    public string $id;
 
     public function __construct($id)
     {

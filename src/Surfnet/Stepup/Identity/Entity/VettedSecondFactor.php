@@ -44,13 +44,10 @@ class VettedSecondFactor extends AbstractSecondFactor
     /**
      * @var SecondFactorIdentifier
      */
-    private $secondFactorIdentifier;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
     private ?VettingType $vettingType = null;
 
-    /**
-     * @return VettedSecondFactor
-     */
     public static function create(
         SecondFactorId $id,
         Identity $identity,
@@ -72,10 +69,7 @@ class VettedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
@@ -112,7 +106,7 @@ class VettedSecondFactor extends AbstractSecondFactor
         return $this->vettingType;
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 

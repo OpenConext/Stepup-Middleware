@@ -25,11 +25,11 @@ interface Configuration extends AggregateRoot
     /**
      * @return Configuration
      */
-    public static function create();
+    public static function create(): Configuration;
 
     /**
      * @param string $newConfiguration
      * @return void
      */
-    public function update($newConfiguration);
+    public function update(string $newConfiguration): void;
 }

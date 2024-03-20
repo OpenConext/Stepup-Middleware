@@ -32,7 +32,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $identityId;
+    public IdentityId $identityId;
 
     /**
      *  In order to determine if the user is allowed to register
@@ -42,7 +42,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
      * @var bool
      */
     #[ORM\Column(type: 'boolean')]
-    public $possessedToken = false;
+    public bool $possessedToken = false;
 
     /**
      *  Indicator if Identity is allowed to work with Recovery Tokens
@@ -54,7 +54,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
      * @var bool
      */
     #[ORM\Column(type: 'boolean')]
-    public $possessedSelfAssertedToken;
+    public bool $possessedSelfAssertedToken;
 
     public static function create(
         IdentityId $identityId,

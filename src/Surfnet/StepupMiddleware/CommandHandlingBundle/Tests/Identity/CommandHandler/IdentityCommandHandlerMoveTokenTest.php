@@ -23,6 +23,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery as m;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\DateTime\DateTime;
@@ -71,25 +72,13 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
 {
     private static int $window = 3600;
 
-    /**
-     * @var AllowedSecondFactorListService|m\MockInterface
-     */
-    private $allowedSecondFactorListServiceMock;
+    private AllowedSecondFactorListService&MockInterface $allowedSecondFactorListServiceMock;
 
-    /**
-     * @var LoaResolutionService
-     */
-    private $loaResolutionService;
+    private LoaResolutionService&MockInterface $loaResolutionService;
 
-    /**
-     * @var m\Mock|InstitutionConfigurationOptionsService
-     */
-    private $configService;
+    private InstitutionConfigurationOptionsService&MockInterface $configService;
 
-    /**
-     * @var IdentityProjectionRepository|m\MockInterface
-     */
-    private $identityProjectionRepository;
+    private IdentityProjectionRepository&MockInterface $identityProjectionRepository;
 
 
     public function setUp(): void

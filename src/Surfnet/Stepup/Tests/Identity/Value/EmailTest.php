@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase as UnitTest;
 use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Email;
+use TypeError;
 
 class EmailTest extends UnitTest
 {
@@ -33,7 +36,7 @@ class EmailTest extends UnitTest
      * @group domain
      * @dataProvider invalidArgumentProvider
      */
-    public function the_email_address_must_be_a_non_empty_string(string|int|float|StdClass|array $invalidValue): void
+    public function the_email_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Email($invalidValue);
@@ -42,8 +45,18 @@ class EmailTest extends UnitTest
     /**
      * @test
      * @group domain
+     * @dataProvider invalidArgumentProviderTypeErrors
+     */
+    public function the_email_address_must_be_a_non_empty_string_invalid_types(int|float|StdClass|array $invalidValue): void
+    {
+        $this->expectException(TypeError::class);
+        new Email($invalidValue);
+    }
+
+    /**
+     * @test
+     * @group domain
      * @dataProvider invalidEmailProvider
-     * @param $invalidValue
      */
     public function the_email_address_given_must_be_rfc_822_compliant(string $invalidValue): void
     {
@@ -68,14 +81,17 @@ class EmailTest extends UnitTest
         $this->assertFalse($email->equals($unknown));
     }
 
-    /**
-     * provider for {@see the_email_address_must_be_a_non_empty_string()}
-     */
     public function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
+        ];
+    }
+
+    public function invalidArgumentProviderTypeErrors(): array
+    {
+        return [
             'array' => [[]],
             'integer' => [1],
             'float' => [1.2],

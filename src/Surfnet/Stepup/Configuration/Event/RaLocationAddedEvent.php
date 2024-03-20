@@ -31,31 +31,31 @@ class RaLocationAddedEvent implements SerializableInterface
     /**
      * @var InstitutionConfigurationId
      */
-    public $institutionConfigurationId;
+    public InstitutionConfigurationId $institutionConfigurationId;
 
     /**
      * @var Institution
      */
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var RaLocationId
      */
-    public $raLocationId;
+    public RaLocationId $raLocationId;
 
     /**
      * @var RaLocationName
      */
-    public $raLocationName;
+    public RaLocationName $raLocationName;
 
     /**
      * @var Location
      */
-    public $location;
+    public Location $location;
     /**
      * @var ContactInformation
      */
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     public function __construct(
         InstitutionConfigurationId $institutionConfigurationId,

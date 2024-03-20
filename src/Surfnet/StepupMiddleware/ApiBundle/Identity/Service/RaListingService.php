@@ -40,7 +40,8 @@ class RaListingService extends AbstractSearchService
         IdentityId $identityId,
         Institution $raInstitution,
         InstitutionAuthorizationContextInterface $authorizationContext,
-    ) {
+    ): ?RaListing
+    {
         return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext(
             $identityId,
             $raInstitution,
@@ -51,7 +52,7 @@ class RaListingService extends AbstractSearchService
     /**
      * @return Pagerfanta
      */
-    public function search(RaListingQuery $query)
+    public function search(RaListingQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->raListingRepository->createSearchQuery($query);
 
@@ -61,7 +62,7 @@ class RaListingService extends AbstractSearchService
     /**
      * @return array
      */
-    public function getFilterOptions(RaListingQuery $query)
+    public function getFilterOptions(RaListingQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->raListingRepository->createOptionsQuery($query));
     }
@@ -69,7 +70,7 @@ class RaListingService extends AbstractSearchService
     /**
      * @return RegistrationAuthorityCredentials[]
      */
-    public function listRegistrationAuthoritiesFor(Institution $institution)
+    public function listRegistrationAuthoritiesFor(Institution $institution): array
     {
         $raListings = $this->raListingRepository->listRasFor($institution);
 

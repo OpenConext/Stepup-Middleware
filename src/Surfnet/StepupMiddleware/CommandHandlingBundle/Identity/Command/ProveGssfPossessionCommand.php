@@ -30,7 +30,7 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $identityId;
+    public string $identityId;
 
     /**
      * The ID of the second factor to create.
@@ -38,7 +38,7 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $secondFactorId;
+    public string $secondFactorId;
 
     /**
      * The SecondFactorType identifier.
@@ -48,7 +48,7 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $stepupProvider;
+    public string $stepupProvider;
 
     /**
      * The identifier of the generic Stepup second factor type
@@ -56,12 +56,12 @@ class ProveGssfPossessionCommand extends AbstractCommand implements SelfServiceE
      */
     #[Assert\NotBlank]
     #[Assert\Type(type: 'string')]
-    public $gssfId;
+    public string $gssfId;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

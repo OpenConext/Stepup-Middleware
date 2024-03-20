@@ -23,6 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInte
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use function is_bool;
 
 class InstitutionParamConverter implements ParamConverterInterface
 {
@@ -31,7 +32,7 @@ class InstitutionParamConverter implements ParamConverterInterface
         $query = $request->query;
         $institution = $query->get('institution', false);
 
-        if ($institution === false) {
+        if (!is_string($institution)) {
             throw new BadApiRequestException(['This API-call MUST include the institution as get parameter']);
         }
 

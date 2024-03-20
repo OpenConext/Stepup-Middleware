@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime as CoreDateTime;
 use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
+use TypeError;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -37,14 +38,15 @@ class DateTime implements Stringable
 
     /**
      * Allows for mocking of time.
-     *
+     * @see DateTimeHelper::setCurrentTime here you can see how now can be overridden using reflection
      * @var self|null
      */
-    private static ?DateTime $now;
+    private static ?DateTime $now; // @phpstan-ignore-line PHPStan can not see that the DateTimeHelper is able to set the now value using reflection
 
     private readonly CoreDateTime $dateTime;
 
     /**
+     * @see DateTimeHelper::setCurrentTime here you can see how now can be overridden using reflection
      * @return self
      */
     public static function now(): DateTime
@@ -118,9 +120,7 @@ class DateTime implements Stringable
 
     public function comesAfter(DateTime $dateTime): bool
     {
-        $end = $this->dateTime->getTimestamp();
-        $start = $dateTime->dateTime->getTimestamp();
-        return $end > $start;
+        return $this->dateTime > $dateTime->dateTime;
     }
 
     public function comesAfterOrIsEqual(DateTime $dateTime): bool
@@ -128,24 +128,9 @@ class DateTime implements Stringable
         return $this->dateTime >= $dateTime->dateTime;
     }
 
-    /**
-     * @param $format
-     * @return string
-     */
-    public function format($format): string
+    public function format(string $format): string
     {
-        $formatted = $this->dateTime->format($format);
-
-        if ($formatted === false) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Given format "%s" is not a valid format for DateTime',
-                    $format,
-                ),
-            );
-        }
-
-        return $formatted;
+        return $this->dateTime->format($format);
     }
 
     /**

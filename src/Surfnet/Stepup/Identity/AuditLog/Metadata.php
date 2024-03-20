@@ -39,19 +39,10 @@ final class Metadata
      */
     public Institution $identityInstitution;
 
-    /**
-     * @var Institution
-     */
-    public Institution $raInstitution;
+    public ?Institution $raInstitution;
 
-    /**
-     * @var SecondFactorId|null
-     */
     public ?SecondFactorId $secondFactorId;
 
-    /**
-     * @var SecondFactorType|null
-     */
     public ?SecondFactorType $secondFactorType;
 
     /**
@@ -59,16 +50,9 @@ final class Metadata
      */
     public ?SecondFactorIdentifier $secondFactorIdentifier;
 
-    /** @var VettingType */
-    public VettingType $vettingType;
+    public ?VettingType $vettingType;
 
-    /**
-     * @var RecoveryTokenId
-     */
-    public RecoveryTokenId $recoveryTokenId;
+    public ?RecoveryTokenId $recoveryTokenId;
 
-    /**
-     * @var RecoveryTokenType
-     */
-    public RecoveryTokenType $recoveryTokenType;
+    public ?RecoveryTokenType $recoveryTokenType;
 }

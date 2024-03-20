@@ -103,7 +103,7 @@ class BufferedEventBus implements EventBusInterface
         unset($buffer);
 
         // if during the handling of events new events have been queued, we need to flush them
-        if ($this->buffer !== []) {
+        if (!empty($this->buffer)) {
             $this->flush();
         }
     }

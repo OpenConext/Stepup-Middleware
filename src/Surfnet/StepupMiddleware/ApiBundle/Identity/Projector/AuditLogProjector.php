@@ -31,6 +31,7 @@ use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
+use Surfnet\Stepup\Identity\Value\VettingType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
@@ -160,7 +161,7 @@ class AuditLogProjector implements EventListener
 
     private function augmentActorCommonName(AuditLogEntry $entry, Metadata $auditLogMetadata): void
     {
-        if (property_exists($auditLogMetadata, 'vettingType') && !is_null($auditLogMetadata->vettingType)) {
+        if (property_exists($auditLogMetadata, 'vettingType') && $auditLogMetadata->vettingType instanceof VettingType) {
             $entry->actorCommonName = new CommonName(
                 $entry->actorCommonName->getCommonName() . $auditLogMetadata->vettingType->auditLog()
             );

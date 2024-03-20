@@ -821,9 +821,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function revokeRecoveryToken(RecoveryTokenId $recoveryTokenId): void
     {
         $this->assertNotForgotten();
-        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
-        if (!$recoveryToken) {
-            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        try {
+            $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        } catch (DomainException $e) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.', 0, $e);
         }
         $recoveryToken->revoke();
     }
@@ -831,9 +832,10 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     public function complyWithRecoveryTokenRevocation(RecoveryTokenId $recoveryTokenId, IdentityId $authorityId): void
     {
         $this->assertNotForgotten();
-        $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
-        if (!$recoveryToken) {
-            throw new DomainException('Cannot revoke recovery token: no token with given id exists.');
+        try {
+            $recoveryToken = $this->recoveryTokens->get($recoveryTokenId);
+        } catch (DomainException $e) {
+            throw new DomainException('Cannot revoke recovery token: no token with given id exists.', 0, $e);
         }
         $recoveryToken->complyWithRevocation($authorityId);
     }

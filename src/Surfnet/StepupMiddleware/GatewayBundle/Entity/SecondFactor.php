@@ -37,34 +37,25 @@ class SecondFactor
     #[ORM\Column(length: 36)]
     private string $id;
 
-    /**
-     * @param string $identityId
-     * @param string $nameId
-     * @param string $institution
-     * @param string $displayLocale
-     * @param string $secondFactorId
-     * @param string $secondFactorType
-     * @param string $secondFactorIdentifier
-     */
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(length: 36)]
-        private $identityId,
+        private string $identityId,
         #[ORM\Column(length: 200)]
-        private $nameId,
+        private string $nameId,
         #[ORM\Column(length: 200)]
-        private $institution,
+        private string $institution,
         /**
          * In which language to display any second factor verification screens.
          */
         #[ORM\Column]
-        public $displayLocale,
+        public string $displayLocale,
         #[ORM\Column(length: 36)]
-        private $secondFactorId,
+        private string $secondFactorId,
         #[ORM\Column(length: 255)]
-        private $secondFactorIdentifier,
+        private string $secondFactorIdentifier,
         #[ORM\Column(length: 50)]
-        private $secondFactorType,
+        private string $secondFactorType,
         /**
          * This boolean indicates if the second factor token was vetted
          * using one of the vetting types that are considered 'identity-vetted'.
@@ -74,7 +65,7 @@ class SecondFactor
          * was RA vetted.
          */
         #[ORM\Column(type: 'boolean', options: ['default' => '1'])]
-        private $identityVetted,
+        private bool $identityVetted,
     ) {
         $this->id = (string)Uuid::uuid4();
     }

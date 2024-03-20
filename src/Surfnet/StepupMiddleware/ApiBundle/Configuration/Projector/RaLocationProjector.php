@@ -88,22 +88,13 @@ class RaLocationProjector extends Projector
         $this->repository->removeRaLocationsFor($event->institution);
     }
 
-    /**
-     * @return RaLocation
-     */
-    private function fetchRaLocationById(RaLocationId $raLocationId)
+    private function fetchRaLocationById(RaLocationId $raLocationId): RaLocation
     {
         $raLocation = $this->repository->findByRaLocationId($raLocationId);
 
         if (is_null($raLocation)) {
             throw new RuntimeException(
                 'Tried to update an RA Locations contact information, but location could not be found',
-            );
-        }
-
-        if (!$raLocation instanceof RaLocation) {
-            throw new RuntimeException(
-                'Tried to update an RA Locations contact information, but location is of the wrong type',
             );
         }
 

@@ -32,10 +32,9 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return InstitutionConfigurationOptions
      * @throws NonUniqueResultException
      */
-    public function findConfigurationOptionsFor(Institution $institution)
+    public function findConfigurationOptionsFor(Institution $institution): ?InstitutionConfigurationOptions
     {
         return $this->createQueryBuilder('ico')
             ->where('ico.institution = :institution')

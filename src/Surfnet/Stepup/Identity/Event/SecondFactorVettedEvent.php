@@ -88,8 +88,7 @@ class SecondFactorVettedEvent extends IdentityEvent implements Forgettable, Righ
      */
     public Locale $preferredLocale;
 
-    /** @var VettingType */
-    public VettingType $vettingType;
+    public ?VettingType $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)

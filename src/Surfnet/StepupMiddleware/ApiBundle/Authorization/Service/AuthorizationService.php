@@ -96,7 +96,7 @@ class AuthorizationService
         }
         // The Identity is not allowed to do a SAT when he had a RT, but lost it. And also currently has no SF
         $hasActiveRecoveryToken = $this->recoveryTokenService->identityHasActiveRecoveryToken($identity);
-        if ($options->possessedSelfAssertedToken && !$hasActiveRecoveryToken && !$hasVettedSecondFactorToken) {
+        if ($options->possessedSelfAssertedToken && !$hasActiveRecoveryToken) {
             return $this->deny('Identity lost both Recovery and Second Factor token, SAT is not allowed');
         }
 

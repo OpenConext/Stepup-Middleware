@@ -55,10 +55,7 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return RaLocation[]
-     */
-    public function findByRaLocationId(RaLocationId $raLocationId)
+    public function findByRaLocationId(RaLocationId $raLocationId): ?RaLocation
     {
         return $this->createQueryBuilder('rl')
             ->where('rl.id = :id')
@@ -84,7 +81,7 @@ class RaLocationRepository extends ServiceEntityRepository
     /**
      * @return RaLocation[]
      */
-    public function findByInstitution(Institution $institution)
+    public function findByInstitution(Institution $institution): array
     {
         return $this->createQueryBuilder('rl')
             ->where('rl.institution = :institution')

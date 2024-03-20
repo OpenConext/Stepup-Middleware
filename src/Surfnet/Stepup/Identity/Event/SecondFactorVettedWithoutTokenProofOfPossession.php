@@ -96,8 +96,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
      */
     public Locale $preferredLocale;
 
-    /** @var VettingType */
-    public VettingType $vettingType;
+    public ?VettingType $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)

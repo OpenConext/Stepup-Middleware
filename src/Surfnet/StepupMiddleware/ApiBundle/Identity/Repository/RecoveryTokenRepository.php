@@ -86,7 +86,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 throw new RuntimeException(
                     sprintf(
                         'Received invalid status "%s" in RecoveryTokenRepository::createSearchQuery',
-                        is_object($stringStatus) ? $stringStatus::class : (string)$stringStatus,
+                        $stringStatus,
                     ),
                 );
             }

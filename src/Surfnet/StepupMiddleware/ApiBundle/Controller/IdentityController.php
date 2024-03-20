@@ -18,9 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionRoleSet;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
@@ -33,14 +31,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IdentityController extends AbstractController
 {
-    private readonly InstitutionRoleSet $roleRequirements;
-
     public function __construct(
-        private IdentityService $identityService,
+        private readonly IdentityService $identityService,
     ) {
-        $this->roleRequirements = new InstitutionRoleSet(
-            [new InstitutionRole(InstitutionRole::ROLE_USE_RA), new InstitutionRole(InstitutionRole::ROLE_USE_RAA)],
-        );
     }
 
     public function get($id): JsonResponse

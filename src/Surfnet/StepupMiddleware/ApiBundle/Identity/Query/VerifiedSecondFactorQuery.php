@@ -24,20 +24,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class VerifiedSecondFactorQuery extends AbstractQuery
 {
-    /**
-     * @var IdentityId|null
-     */
-    public ?IdentityId $identityId;
+    public ?IdentityId $identityId = null;
 
-    /**
-     * @var SecondFactorId|null
-     */
-    public ?SecondFactorId $secondFactorId;
+    public ?SecondFactorId $secondFactorId = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $registrationCode;
+    public ?string $registrationCode = null;
 
     /**
      * @var InstitutionAuthorizationContext

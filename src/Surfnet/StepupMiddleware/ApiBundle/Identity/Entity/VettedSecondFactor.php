@@ -29,41 +29,22 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
 #[ORM\Entity(repositoryClass: VettedSecondFactorRepository::class)]
 class VettedSecondFactor implements JsonSerializable
 {
-    /**
-     * @var string
-     */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
     public string $id;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 36)]
     public string $identityId;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 16)]
     public string $type;
 
-    /**
-     * The second factor identifier, ie. telephone number, Yubikey public ID, Tiqr ID
-     * @var string
-     */
     #[ORM\Column(length: 255)]
     public string $secondFactorIdentifier;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(length: 255, nullable: true)]
-    public string $vettingType;
+    public ?string $vettingType;
 
-    /**
-     * @return bool
-     */
     public function isEqual(VettedSecondFactor $vettedSecondFactor): bool
     {
         return $vettedSecondFactor->type == $this->type && $vettedSecondFactor->secondFactorIdentifier == $this->secondFactorIdentifier;
@@ -71,7 +52,7 @@ class VettedSecondFactor implements JsonSerializable
 
     public function vettingType(): string
     {
-        if (is_null($this->vettingType)) {
+        if (!$this->vettingType) {
             return VettingType::TYPE_ON_PREMISE;
         }
         return $this->vettingType;

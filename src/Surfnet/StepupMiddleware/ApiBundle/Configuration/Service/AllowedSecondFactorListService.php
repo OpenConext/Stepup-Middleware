@@ -22,13 +22,11 @@ use Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\AllowedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\AllowedSecondFactorRepository;
-use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 
 class AllowedSecondFactorListService
 {
     public function __construct(
         private readonly AllowedSecondFactorRepository $allowedSecondFactorRepository,
-        private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
     ) {
     }
 

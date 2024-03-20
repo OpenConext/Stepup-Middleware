@@ -113,7 +113,7 @@ class RaSecondFactorRepository extends ServiceEntityRepository
                 throw new RuntimeException(
                     sprintf(
                         'Received invalid status "%s" in RaSecondFactorRepository::createSearchQuery',
-                        is_object($stringStatus) ? $stringStatus::class : (string)$stringStatus,
+                        $stringStatus,
                     ),
                 );
             }

@@ -33,15 +33,12 @@ class RaLocationService
     /**
      * @return null|RaLocation[]
      */
-    public function search(RaLocationQuery $query)
+    public function search(RaLocationQuery $query): ?array
     {
         return $this->repository->search($query);
     }
 
-    /**
-     * @return RaLocation[]
-     */
-    public function findByRaLocationId(RaLocationId $raLocationId)
+    public function findByRaLocationId(RaLocationId $raLocationId): ?RaLocation
     {
         return $this->repository->findByRaLocationId($raLocationId);
     }
@@ -50,7 +47,7 @@ class RaLocationService
     /**
      * @return RaLocation[]
      */
-    public function listRaLocationsFor(Institution $institution)
+    public function listRaLocationsFor(Institution $institution): ?array
     {
         return $this->repository->findByInstitution($institution);
     }

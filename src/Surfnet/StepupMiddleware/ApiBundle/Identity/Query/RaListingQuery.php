@@ -24,48 +24,21 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class RaListingQuery extends AbstractQuery
 {
-    /**
-     * @var string|Institution
-     */
     public string|Institution $institution;
 
-    /**
-     * @var IdentityId
-     */
-    public IdentityId $identityId;
+    public ?IdentityId $identityId = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $name;
+    public ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $email;
+    public ?string $email = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $role;
+    public ?string $role = null;
 
-    /**
-     * @var string|null
-     */
-    public ?string $raInstitution;
+    public ?string $raInstitution = null;
 
-    /**
-     * @var string
-     */
     public string $orderBy;
 
-    /**
-     * @var string
-     */
     public string $orderDirection;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
     public InstitutionAuthorizationContextInterface $authorizationContext;
 }

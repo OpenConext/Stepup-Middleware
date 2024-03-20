@@ -53,13 +53,11 @@ class InstitutionConfigurationProjector extends Projector
         }
         // It can happen that the event changed for an institution that already exists, but is not yet projected to
         // this projection. In that case we can create it.
-        if (!$institutionConfiguration) {
-            $institutionConfiguration = new InstitutionConfiguration(
-                (string)$event->institution,
-                $event->ssoOn2faOption->isEnabled(),
-            );
-            $this->repository->save($institutionConfiguration);
-        }
+        $institutionConfiguration = new InstitutionConfiguration(
+            (string)$event->institution,
+            $event->ssoOn2faOption->isEnabled(),
+        );
+        $this->repository->save($institutionConfiguration);
     }
 
     public function applyInstitutionConfigurationRemovedEvent(InstitutionConfigurationRemovedEvent $event): void

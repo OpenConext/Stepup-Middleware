@@ -69,9 +69,6 @@ class SensitiveDataMessageStream implements IteratorAggregate
         return new ArrayIterator($this->messages);
     }
 
-    /**
-     * @param SensitiveDataMessage|null $sensitiveDataMessage
-     */
     private function setSensitiveData(
         DomainMessage $domainMessage,
         SensitiveDataMessage $sensitiveDataMessage = null,
@@ -93,7 +90,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
             );
         }
 
-        if (!$eventIsForgettable && $sensitiveDataMessage) {
+        if (!$eventIsForgettable) {
             throw new SensitiveDataApplicationException(
                 sprintf(
                     'Encountered sensitive data for event which does not support sensitive data, UUID %s, playhead %d',

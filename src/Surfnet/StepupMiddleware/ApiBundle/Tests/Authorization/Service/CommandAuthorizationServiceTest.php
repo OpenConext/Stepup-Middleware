@@ -83,8 +83,6 @@ class CommandAuthorizationServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    private WhitelistService&MockInterface $whitelistService;
-
     private IdentityService&MockInterface $identityService;
 
     private LoggerInterface&MockInterface $logger;
@@ -107,7 +105,6 @@ class CommandAuthorizationServiceTest extends TestCase
             $authorizationContextService,
         );
 
-        $this->whitelistService = $whitelistService;
         $this->identityService = $identityService;
         $this->logger = $logger;
         $this->authorizationContextService = $authorizationContextService;

@@ -34,7 +34,6 @@ final class InstitutionAuthorizationProjector extends Projector
 {
     public function __construct(
         private readonly InstitutionAuthorizationRepository $institutionAuthorizationRepository,
-        private readonly InstitutionConfigurationOptionsRepository $institutionConfigurationOptionsRepository,
     ) {
     }
 

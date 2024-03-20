@@ -50,9 +50,6 @@ class RaListingProjector extends Projector
     ) {
     }
 
-    /**
-     * @return void
-     */
     public function applyIdentityAccreditedAsRaForInstitutionEvent(IdentityAccreditedAsRaForInstitutionEvent $event,): void
     {
         $identity = $this->identityRepository->find((string)$event->identityId);
@@ -71,9 +68,6 @@ class RaListingProjector extends Projector
         $this->raListingRepository->save($raListing);
     }
 
-    /**
-     * @return void
-     */
     public function applyIdentityAccreditedAsRaaForInstitutionEvent(IdentityAccreditedAsRaaForInstitutionEvent $event,): void
     {
         $identity = $this->identityRepository->find((string)$event->identityId);
@@ -95,7 +89,6 @@ class RaListingProjector extends Projector
     public function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
         RegistrationAuthorityInformationAmendedForInstitutionEvent $event,
     ): void {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
             $event->identityId,
             $event->raInstitution,
@@ -116,7 +109,6 @@ class RaListingProjector extends Projector
 
     public function applyAppointedAsRaForInstitutionEvent(AppointedAsRaForInstitutionEvent $event): void
     {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
             $event->identityId,
             $event->raInstitution,
@@ -129,7 +121,6 @@ class RaListingProjector extends Projector
 
     public function applyAppointedAsRaaForInstitutionEvent(AppointedAsRaaForInstitutionEvent $event): void
     {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
             $event->identityId,
             $event->raInstitution,
@@ -160,7 +151,6 @@ class RaListingProjector extends Projector
     public function applyIdentityAccreditedAsRaEvent(IdentityAccreditedAsRaEvent $event): void
     {
         $identity = $this->identityRepository->find((string)$event->identityId);
-
         $raListing = RaListing::create(
             (string)$event->identityId,
             $event->identityInstitution,
@@ -183,7 +173,6 @@ class RaListingProjector extends Projector
     public function applyIdentityAccreditedAsRaaEvent(IdentityAccreditedAsRaaEvent $event): void
     {
         $identity = $this->identityRepository->find((string)$event->identityId);
-
         $raListing = RaListing::create(
             (string)$event->identityId,
             $event->identityInstitution,
@@ -204,7 +193,6 @@ class RaListingProjector extends Projector
     public function applyRegistrationAuthorityInformationAmendedEvent(
         RegistrationAuthorityInformationAmendedEvent $event,
     ): void {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndRaInstitution(
             $event->identityId,
             $event->identityInstitution,
@@ -228,13 +216,14 @@ class RaListingProjector extends Projector
      */
     public function applyAppointedAsRaEvent(AppointedAsRaEvent $event): void
     {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution(
             $event->identityId,
             $event->identityInstitution,
         );
 
-        $raListing->role = AuthorityRole::ra();
+        foreach ($raListing as $listing) {
+            $listing->role = AuthorityRole::ra();
+        }
 
         $this->raListingRepository->save($raListing);
     }
@@ -244,13 +233,14 @@ class RaListingProjector extends Projector
      */
     public function applyAppointedAsRaaEvent(AppointedAsRaaEvent $event): void
     {
-        /** @var RaListing $raListing */
         $raListing = $this->raListingRepository->findByIdentityIdAndInstitution(
             $event->identityId,
             $event->identityInstitution,
         );
 
-        $raListing->role = AuthorityRole::raa();
+        foreach ($raListing as $listing) {
+            $listing->role = AuthorityRole::raa();
+        }
 
         $this->raListingRepository->save($raListing);
     }

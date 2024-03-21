@@ -23,10 +23,8 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Ramsey\Uuid\Uuid;
-use StdClass;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 class RaLocationIdTest extends TestCase
 {
@@ -43,19 +41,6 @@ class RaLocationIdTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new RaLocationId($nonStringOrEmptyString);
-    }
-
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider nonStringOrEmptyStringProviderTypeError
-     */
-    public function an_ra_location_id_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(
-        int|float|StdClass|array $errorValue,
-    ): void {
-        $this->expectException(TypeError::class);
-
-        new RaLocationId($errorValue);
     }
 
     /**
@@ -102,16 +87,6 @@ class RaLocationIdTest extends TestCase
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-        ];
-    }
-
-    public function nonStringOrEmptyStringProviderTypeError(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 

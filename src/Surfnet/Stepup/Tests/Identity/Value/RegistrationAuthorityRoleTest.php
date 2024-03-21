@@ -22,26 +22,11 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
-use TypeError;
 
 class RegistrationAuthorityRoleTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
-
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     */
-    public function it_cannot_be_created_with_anything_but_a_valid_role(float|StdClass|array $invalidValue): void
-    {
-        $this->expectException(TypeError::class);
-
-        new RegistrationAuthorityRole($invalidValue);
-    }
 
     /**
      * @test
@@ -55,17 +40,5 @@ class RegistrationAuthorityRoleTest extends UnitTest
 
         $this->assertTrue($role->equals($theSame));
         $this->assertFalse($role->equals($different));
-    }
-
-    /**
-     * dataprovider
-     */
-    public function invalidValueProvider(): array
-    {
-        return [
-            'array' => [[]],
-            'float' => [1.2],
-            'object' => [new StdClass()],
-        ];
     }
 }

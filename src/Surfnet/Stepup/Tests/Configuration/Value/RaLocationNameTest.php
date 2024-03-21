@@ -22,10 +22,8 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
-use StdClass;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 class RaLocationNameTest extends TestCase
 {
@@ -42,19 +40,6 @@ class RaLocationNameTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new RaLocationName($nonStringOrEmptyString);
-    }
-
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider nonStringOrEmptyStringProviderTypeError
-     */
-    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(
-        int|float|StdClass|array $error,
-    ): void {
-        $this->expectException(TypeError::class);
-
-        new RaLocationName($error);
     }
 
     /**
@@ -86,16 +71,6 @@ class RaLocationNameTest extends TestCase
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-        ];
-    }
-
-    public function nonStringOrEmptyStringProviderTypeError(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

@@ -23,7 +23,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\ManagementExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
@@ -53,7 +53,7 @@ class AuthorizingStageTest extends UnitTest
      */
     public function when_a_command_has_no_marker_interface_authorization_is_granted_by_default(): void
     {
-        $command = m::mock(Command::class);
+        $command = m::mock(AbstractCommand::class);
         $this->authorizationChecker->shouldNotHaveReceived('isGranted');
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
@@ -72,7 +72,8 @@ class AuthorizingStageTest extends UnitTest
         string $interface,
         string $role,
     ): void {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, ' . $interface);
+        /** @var MockInterface&AbstractCommand $command */
+        $command = m::mock(AbstractCommand::class . ', ' . $interface);
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->once()
@@ -92,11 +93,15 @@ class AuthorizingStageTest extends UnitTest
      */
     public function when_a_command_implements_multiple_marker_interfaces_at_least_one_corresponding_role_is_required(): void
     {
+        /** @var AbstractCommand&SelfServiceExecutable&RaExecutable&ManagementExecutable&MockInterface $command */
         $command = m::mock(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
-            . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable, '
-            . 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable, '
-            . ManagementExecutable::class,
+            sprintf(
+                "%s, %s, %s, %s",
+                AbstractCommand::class,
+                SelfServiceExecutable::class,
+                RaExecutable::class,
+                ManagementExecutable::class
+            )
         );
 
         $this->authorizationChecker
@@ -129,9 +134,13 @@ class AuthorizingStageTest extends UnitTest
     {
         $this->expectException(ForbiddenException::class);
 
+        /** @var AbstractCommand&SelfServiceExecutable&MockInterface $command */
         $command = m::mock(
-            'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command, '
-            . SelfServiceExecutable::class,
+            sprintf(
+                "%s, %s",
+                AbstractCommand::class,
+                SelfServiceExecutable::class,
+            )
         );
 
         $this->authorizationChecker
@@ -144,7 +153,7 @@ class AuthorizingStageTest extends UnitTest
 
         $authorizingStage->process($command);
 
-        $this->assertInstanceOf($authorizingStage, AuthorizingStage::class);
+        $this->assertInstanceOf(AuthorizingStage::class, $authorizingStage);
     }
 
     public function interfaceToRoleMappingProvider(): array

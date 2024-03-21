@@ -223,9 +223,8 @@ class RaListingProjector extends Projector
 
         foreach ($raListing as $listing) {
             $listing->role = AuthorityRole::ra();
+            $this->raListingRepository->save($listing);
         }
-
-        $this->raListingRepository->save($raListing);
     }
 
     /**
@@ -240,9 +239,9 @@ class RaListingProjector extends Projector
 
         foreach ($raListing as $listing) {
             $listing->role = AuthorityRole::raa();
+            $this->raListingRepository->save($listing);
         }
 
-        $this->raListingRepository->save($raListing);
     }
 
     /**

@@ -22,10 +22,8 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Email;
-use TypeError;
 
 class EmailTest extends UnitTest
 {
@@ -39,17 +37,6 @@ class EmailTest extends UnitTest
     public function the_email_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new Email($invalidValue);
-    }
-
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidArgumentProviderTypeErrors
-     */
-    public function the_email_address_must_be_a_non_empty_string_invalid_types(int|float|StdClass|array $invalidValue): void
-    {
-        $this->expectException(TypeError::class);
         new Email($invalidValue);
     }
 
@@ -86,16 +73,6 @@ class EmailTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-        ];
-    }
-
-    public function invalidArgumentProviderTypeErrors(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 

@@ -35,6 +35,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
@@ -173,6 +174,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var SelfServiceExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getIdentityId')
                 ->andReturn($actorId->getIdentityId());
@@ -205,6 +207,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             if (property_exists($command, 'identityId')) {
                 $command->identityId = $actorId;
@@ -268,6 +271,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
@@ -324,6 +328,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var SelfServiceExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getIdentityId')
                 ->andReturn(new IdentityId('someone else'));
@@ -364,6 +369,7 @@ class CommandAuthorizationServiceTest extends TestCase
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());

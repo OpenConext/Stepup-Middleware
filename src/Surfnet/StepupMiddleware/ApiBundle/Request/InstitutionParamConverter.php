@@ -30,7 +30,7 @@ class InstitutionParamConverter implements ParamConverterInterface
     public function apply(Request $request, ParamConverter $configuration): bool
     {
         $query = $request->query;
-        $institution = $query->get('institution', false);
+        $institution = $query->get('institution');
 
         if (!is_string($institution)) {
             throw new BadApiRequestException(['This API-call MUST include the institution as get parameter']);

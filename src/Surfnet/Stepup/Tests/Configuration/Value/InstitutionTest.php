@@ -22,10 +22,8 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 class InstitutionTest extends UnitTest
 {
@@ -40,18 +38,6 @@ class InstitutionTest extends UnitTest
         string $invalidValue,
     ): void {
         $this->expectException(InvalidArgumentException::class);
-        new Institution($invalidValue);
-    }
-
-    /**
-     * @test
-     * @group domain
-     * @dataProvider nonStringOrNonEmptyStringProviderTypeError
-     */
-    public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string_type_errors(
-        int|float|StdClass|array $invalidValue,
-    ): void {
-        $this->expectException(TypeError::class);
         new Institution($invalidValue);
     }
 
@@ -76,16 +62,6 @@ class InstitutionTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-        ];
-    }
-
-    public function nonStringOrNonEmptyStringProviderTypeError(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

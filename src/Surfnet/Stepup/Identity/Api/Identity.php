@@ -19,6 +19,7 @@
 namespace Surfnet\Stepup\Identity\Api;
 
 use Broadway\Domain\AggregateRoot;
+use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Surfnet\Stepup\Configuration\InstitutionConfiguration;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\SecondFactorProvePossessionHelper;

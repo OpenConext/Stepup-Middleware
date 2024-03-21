@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Ramsey\Uuid\Uuid;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,10 +43,7 @@ class ConfigurationController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    private function handleCommand(Request $request, Command $command): JsonResponse
+    private function handleCommand(Request $request, AbstractCommand $command): JsonResponse
     {
         $this->pipeline->process($command);
 

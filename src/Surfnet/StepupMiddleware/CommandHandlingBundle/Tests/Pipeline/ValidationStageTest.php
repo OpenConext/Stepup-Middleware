@@ -21,9 +21,10 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 use ArrayIterator;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\InvalidCommandException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -39,10 +40,11 @@ class ValidationStageTest extends TestCase
      */
     public function it_validates_commands(): void
     {
-        $command = m::mock(Command::class);
+        $command = m::mock(AbstractCommand::class);
         $violations = m::mock(ConstraintViolationListInterface::class)
             ->shouldReceive('count')->with()->andReturn(0)
             ->getMock();
+        /** @var ValidatorInterface&MockInterface $validator */
         $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();
@@ -60,11 +62,12 @@ class ValidationStageTest extends TestCase
     {
         $this->expectException(InvalidCommandException::class);
 
-        $command = m::mock(Command::class);
+        $command = m::mock(AbstractCommand::class);
         $violations = m::mock(ConstraintViolationListInterface::class);
         $violations->allows()->count()->andReturn(1);
         $violations->allows()->getIterator()->andReturn(new ArrayIterator())->getMock();
 
+        /** @var ValidatorInterface&MockInterface $validator */
         $validator = m::mock(ValidatorInterface::class)
             ->shouldReceive('validate')->once()->with($command)->andReturn($violations)
             ->getMock();

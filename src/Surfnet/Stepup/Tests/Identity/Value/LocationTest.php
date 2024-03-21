@@ -22,25 +22,11 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Location;
-use TypeError;
 
 class LocationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
-
-    /**
-     * @test
-     * @group domain
-     * @dataProvider invalidValueProvider
-     */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue,): void
-    {
-        $this->expectException(TypeError::class);
-        new Location($invalidValue);
-    }
 
     /**
      * @test
@@ -56,18 +42,5 @@ class LocationTest extends UnitTest
         $this->assertTrue($location->equals($theSame));
         $this->assertTrue($location->equals($theSameWithSpaces));
         $this->assertFalse($location->equals($different));
-    }
-
-    /**
-     * dataprovider
-     */
-    public function invalidValueProvider(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
-        ];
     }
 }

@@ -810,12 +810,12 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
             ->then([
                 new SecondFactorMigratedToEvent(
                     $targetRegistrantId,
-                    $sourceRegistrantNameId,
-                    $targetRegistrantNameId,
+                    $sourceRegistrantInstitution,
                     $targetRegistrantInstitution,
                     $sourceRegistrantSecFacId,
                     $targetRegistrantSecFacId,
                     new SecondFactorType('yubikey'),
+                    $sourceYubikeySecFacId,
                 ),
             ]);
     }

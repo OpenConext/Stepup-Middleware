@@ -24,6 +24,7 @@ use Broadway\Domain\DomainMessage;
 use Broadway\Domain\Metadata;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -269,11 +270,11 @@ final class SensitiveDataMessageStreamTest extends TestCase
      */
     public function it_can_forget_all_sensitive_data(): void
     {
-        $sensitiveDataMessageStream = new SensitiveDataMessageStream([
-            m::mock(SensitiveDataMessage::class)
-                ->shouldReceive('forget')->once()
-                ->getMock(),
-        ]);
+        /** @var MockInterface&SensitiveDataMessage $command */
+        $command = m::mock(SensitiveDataMessage::class)
+            ->shouldReceive('forget')->once()
+            ->getMock();
+        $sensitiveDataMessageStream = new SensitiveDataMessageStream([$command]);
         $sensitiveDataMessageStream->forget();
 
         $this->assertInstanceOf(SensitiveDataMessageStream::class, $sensitiveDataMessageStream);

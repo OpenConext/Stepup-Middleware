@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactor
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
@@ -159,7 +159,7 @@ final class InstitutionConfigurationController extends AbstractController
     }
 
     /**
-     * @param Command[] $commands
+     * @param AbstractCommand[] $commands
      * @throws Exception
      */
     private function handleCommands(array $commands): void

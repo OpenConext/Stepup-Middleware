@@ -24,7 +24,7 @@ use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -71,10 +71,7 @@ class RightToBeForgottenController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    private function handleCommand(Request $request, Command $command): JsonResponse
+    private function handleCommand(Request $request, AbstractCommand $command): JsonResponse
     {
         $this->pipeline->process($command);
 

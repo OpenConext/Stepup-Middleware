@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command as MiddlewareCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 
@@ -47,7 +47,7 @@ final readonly class TransactionHelper
         $this->connection->rollBack();
     }
 
-    public function process(MiddlewareCommand $command): MiddlewareCommand
+    public function process(AbstractCommand $command): AbstractCommand
     {
         return $this->pipeline->process($command);
     }

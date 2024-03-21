@@ -41,6 +41,7 @@ class BufferedEventBusTest extends TestCase
     public function it_buffers_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
+        /** @var EventListener&MockInterface $listener */
         $listener = m::mock(EventListener::class)
             ->shouldNotHaveReceived('handle')
             ->getMock();
@@ -61,6 +62,7 @@ class BufferedEventBusTest extends TestCase
     public function it_flushes_events(): void
     {
         $event = $this->createDummyDomainMessage(null);
+        /** @var EventListener&MockInterface $listener */
         $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -83,6 +85,7 @@ class BufferedEventBusTest extends TestCase
     public function flushing_succesfully_empties_the_buffer_to_prevent_flushing_the_same_event_twice(): void
     {
         $event = $this->createDummyDomainMessage(null);
+        /** @var EventListener&MockInterface $listener */
         $listener = m::mock(EventListener::class)
             ->shouldReceive('handle')->once()->with($event)
             ->getMock();
@@ -124,9 +127,6 @@ class BufferedEventBusTest extends TestCase
         $this->assertEquals($expectedEventSequence, $actualEventSequence);
     }
 
-    /**
-     * @return DomainMessage
-     */
     private function createDummyDomainMessage(?string $payload): DomainMessage
     {
         return new DomainMessage('1', 0, new Metadata(), $payload, DateTime::fromString('1970-01-01H00:00:00.000'));

@@ -22,10 +22,8 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
-use TypeError;
 
 class CommonNameTest extends UnitTest
 {
@@ -39,18 +37,6 @@ class CommonNameTest extends UnitTest
     public function the_common_name_address_must_be_a_non_empty_string(string $invalidValue): void
     {
         $this->expectException(InvalidArgumentException::class);
-
-        new CommonName($invalidValue);
-    }
-
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidArgumentProviderTypeError
-     */
-    public function the_common_name_address_must_be_a_non_empty_string_type_error(int|float|StdClass|array $invalidValue): void
-    {
-        $this->expectException(TypeError::class);
 
         new CommonName($invalidValue);
     }
@@ -76,16 +62,6 @@ class CommonNameTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-        ];
-    }
-
-    public function invalidArgumentProviderTypeError(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

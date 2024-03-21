@@ -22,7 +22,7 @@ use DateTime;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Helper\JsonHelper;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
@@ -88,10 +88,7 @@ class WhitelistController extends AbstractController
         return new JsonResponse(['institutions' => $entries->getValues()]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    private function handleCommand(Request $request, Command $command): JsonResponse
+    private function handleCommand(Request $request, AbstractCommand $command): JsonResponse
     {
         try {
             $this->pipeline->process($command);

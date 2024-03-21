@@ -31,7 +31,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class CommandParamConverterTest extends TestCase
 {

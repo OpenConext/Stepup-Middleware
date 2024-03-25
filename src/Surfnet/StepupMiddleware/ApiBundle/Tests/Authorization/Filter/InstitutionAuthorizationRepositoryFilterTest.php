@@ -47,7 +47,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
             ->getMock();
 
         $this->queryBuilder = new QueryBuilder($this->entityManager);
-        $this->queryBuilder->from('institution', 'i');
+        $this->queryBuilder->from(InstitutionValue::class, 'i');
     }
 
     /**
@@ -73,7 +73,7 @@ class InstitutionAuthorizationRepositoryFilterTest extends TestCase
         );
 
         $this->assertEquals(
-            'SELECT FROM institution i WHERE i.institution IN (:iacalias_institutions)',
+            sprintf('SELECT FROM %s i WHERE i.institution IN (:iacalias_institutions)', InstitutionValue::class),
             $this->queryBuilder->getDQL(),
         );
         $this->assertEquals(1, $this->queryBuilder->getParameters()->count());

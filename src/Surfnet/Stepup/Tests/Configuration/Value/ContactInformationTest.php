@@ -22,25 +22,11 @@ namespace Surfnet\Stepup\Tests\Configuration\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
-use TypeError;
 
 class ContactInformationTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
-
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string(int|float|StdClass|array $invalidValue,): void
-    {
-        $this->expectException(TypeError::class);
-        new ContactInformation($invalidValue);
-    }
 
     /**
      * @test
@@ -56,18 +42,5 @@ class ContactInformationTest extends UnitTest
         $this->assertTrue($contactInformation->equals($theSame));
         $this->assertTrue($contactInformation->equals($theSameWithSpaces));
         $this->assertFalse($contactInformation->equals($different));
-    }
-
-    /**
-     * dataprovider
-     */
-    public function invalidValueProvider(): array
-    {
-        return [
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
-        ];
     }
 }

@@ -45,14 +45,14 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
      */
     private function getInstitutionFromRequest(Request $request)
     {
-        $institution = $request->attributes->get(self::INSTITUTION, false);
+        $institution = $request->attributes->get(self::INSTITUTION);
         $request->attributes->remove(self::INSTITUTION);
 
         if (is_string($institution) && ($institution !== '' && $institution !== '0')) {
             return $institution;
         }
 
-        $institution = $request->query->get(self::INSTITUTION, false);
+        $institution = $request->query->get(self::INSTITUTION);
         $request->query->remove(self::INSTITUTION);
 
         if (is_string($institution) && ($institution !== '' && $institution !== '0')) {

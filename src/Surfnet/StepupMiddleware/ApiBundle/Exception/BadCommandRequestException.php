@@ -20,17 +20,14 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Exception;
 
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Throwable;
 
 /**
  * Thrown when a client provided invalid command input to the application.
  */
 class BadCommandRequestException extends RuntimeException
 {
-    /**
-     * @param string $message
-     * @return self
-     */
-    public static function withViolations($message, ConstraintViolationListInterface $violations): self
+    public static function withViolations(string $message, ConstraintViolationListInterface $violations): self
     {
         $violationStrings = self::convertViolationsToStrings($violations);
         $message = sprintf('%s (%s)', $message, implode('; ', $violationStrings));
@@ -53,16 +50,11 @@ class BadCommandRequestException extends RuntimeException
         return $violationStrings;
     }
 
-    /**
-     * @param string[] $errors
-     * @param string $message
-     * @param int $code
-     */
     public function __construct(
         private readonly array $errors,
-        $message = 'JSON could not be reconstituted into valid object.',
-        $code = 0,
-        Exception $previous = null,
+        string $message = 'JSON could not be reconstituted into valid object.',
+        int $code = 0,
+        ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
     }
@@ -70,7 +62,7 @@ class BadCommandRequestException extends RuntimeException
     /**
      * @return string[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

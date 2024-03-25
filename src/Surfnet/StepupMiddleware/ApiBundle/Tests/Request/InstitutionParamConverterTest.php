@@ -22,6 +22,7 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter;
@@ -32,20 +33,14 @@ class InstitutionParamConverterTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var MockInterface&Request
-     */
-    private $request;
+    private MockInterface&Request $request;
 
-    /**
-     * @var MockInterface
-     */
-    private $paramConverterConfig;
+    private MockInterface&ParamConverter $paramConverterConfig;
 
     public function setUp(): void
     {
         $this->request = m::mock(Request::class);
-        $this->paramConverterConfig = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
+        $this->paramConverterConfig = m::mock(ParamConverter::class);
     }
 
     /**

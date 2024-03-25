@@ -46,10 +46,13 @@ class CommandParamConverterTest extends TestCase
     {
         $this->expectException(BadCommandRequestException::class);
 
+        /** @var Request&MockInterface $request */
         $request = m::mock(Request::class)
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
             ->getMock();
-        $configuration = m::mock('Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter');
+
+        /** @var ParamConverter&MockInterface $configuration */
+        $configuration = m::mock(ParamConverter::class);
 
         $converter = new CommandParamConverter();
         $converter->apply($request, $configuration);
@@ -70,7 +73,7 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
 
-        /** @var ParameterBag $attributes */
+        /** @var ParameterBag&MockInterface $attributes */
         $attributes = m::mock()
             ->shouldReceive('set')->with('command', m::type($expectedCommandClass))
             ->getMock();

@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
 use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
@@ -37,7 +38,7 @@ final class RecoveryToken extends SimpleEventSourcedEntity
     public static function create(
         RecoveryTokenId $id,
         RecoveryTokenType $type,
-        Identity $identity,
+        Identity&EventSourcedAggregateRoot $identity,
     ): self {
         $token = new self;
         $token->tokenId = $id;

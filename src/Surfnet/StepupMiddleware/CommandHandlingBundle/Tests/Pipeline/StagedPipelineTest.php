@@ -56,11 +56,11 @@ class StagedPipelineTest extends TestCase
     public function it_passes_a_command_through_multiple_stages(): void
     {
         $command = m::mock(AbstractCommand::class);
-        /** @var Stage&MockInterface $stage */
+        /** @var Stage&MockInterface $stage1 */
         $stage1 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
-        /** @var Stage&MockInterface $stage */
+        /** @var Stage&MockInterface $stage2 */
         $stage2 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command)->andReturn($command)
             ->getMock();
@@ -80,11 +80,11 @@ class StagedPipelineTest extends TestCase
     {
         $command1 = m::mock(AbstractCommand::class);
         $command2 = m::mock(AbstractCommand::class);
-        /** @var Stage&MockInterface $stage */
+        /** @var Stage&MockInterface $stage1 */
         $stage1 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command1)->andReturn($command2)
             ->getMock();
-        /** @var Stage&MockInterface $stage */
+        /** @var Stage&MockInterface $stage2 */
         $stage2 = m::mock(Stage::class)
             ->shouldReceive('process')->once()->with($command2)->andReturn($command2)
             ->getMock();

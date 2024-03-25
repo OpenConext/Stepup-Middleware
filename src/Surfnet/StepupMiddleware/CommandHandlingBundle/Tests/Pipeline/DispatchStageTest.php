@@ -39,7 +39,7 @@ class DispatchStageTest extends TestCase
     public function it_dispatches_commands(): void
     {
         $command = m::mock(AbstractCommand::class);
-        /** @var BufferedEventBus&MockInterface $eventBus */
+        /** @var CommandBus&MockInterface $commandBus */
         $commandBus = m::mock(CommandBus::class)->makePartial()
             ->shouldReceive('dispatch')->once()->with($command)->andReturnNull()
             ->getMock();

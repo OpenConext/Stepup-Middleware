@@ -72,6 +72,7 @@ class AuthorizingStageTest extends UnitTest
         string $interface,
         string $role,
     ): void {
+        /** @var MockInterface&AbstractCommand $command */
         $command = m::mock(AbstractCommand::class . ', ' . $interface);
         $this->authorizationChecker
             ->shouldReceive('isGranted')

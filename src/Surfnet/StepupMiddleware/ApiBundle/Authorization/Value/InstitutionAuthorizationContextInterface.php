@@ -36,10 +36,10 @@ interface InstitutionAuthorizationContextInterface
     /**
      * @return InstitutionCollection
      */
-    public function getInstitutions();
+    public function getInstitutions(): InstitutionCollection;
 
     /**
      * @return bool
      */
-    public function isActorSraa();
+    public function isActorSraa(): bool;
 }

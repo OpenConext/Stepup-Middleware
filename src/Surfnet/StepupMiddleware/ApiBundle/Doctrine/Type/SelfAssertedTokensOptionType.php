@@ -36,10 +36,10 @@ class SelfAssertedTokensOptionType extends Type
         return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof SelfAssertedTokensOption) {
@@ -59,7 +59,7 @@ class SelfAssertedTokensOptionType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?SelfAssertedTokensOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

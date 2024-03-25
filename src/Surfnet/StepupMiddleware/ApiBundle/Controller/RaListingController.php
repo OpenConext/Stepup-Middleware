@@ -38,7 +38,7 @@ class RaListingController extends AbstractController
     ) {
     }
 
-    public function get(Request $request, $identityId): JsonResponse
+    public function get(Request $request, string $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -56,7 +56,7 @@ class RaListingController extends AbstractController
             $authorizationContext,
         );
 
-        if ($raListing === null) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new NotFoundHttpException(sprintf("RaListing '%s' does not exist", $identityId));
         }
 
@@ -66,7 +66,7 @@ class RaListingController extends AbstractController
     /**
      * @return JsonCollectionResponse
      */
-    public function search(Request $request)
+    public function search(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

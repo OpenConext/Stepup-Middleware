@@ -36,6 +36,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
     Forgettable,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'name_id',
@@ -81,6 +84,8 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -131,6 +136,9 @@ final class YubikeySecondFactorBootstrappedEvent extends IdentityEvent implement
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

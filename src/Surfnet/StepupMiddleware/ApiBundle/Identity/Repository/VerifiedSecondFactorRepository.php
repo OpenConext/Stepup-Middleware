@@ -28,6 +28,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 
+/**
+ * @extends ServiceEntityRepository<VerifiedSecondFactor>
+ */
 class VerifiedSecondFactorRepository extends ServiceEntityRepository
 {
     public function __construct(
@@ -72,13 +75,13 @@ class VerifiedSecondFactorRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId) {
+        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);
         }
 
-        if ($query->secondFactorId) {
+        if ($query->secondFactorId instanceof \Surfnet\Stepup\Identity\Value\SecondFactorId) {
             $queryBuilder
                 ->andWhere('sf.id = :secondFactorId')
                 ->setParameter('secondFactorId', (string)$query->secondFactorId);

@@ -32,6 +32,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaListingQuery;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @extends ServiceEntityRepository<RaListing>
  */
 class RaListingRepository extends ServiceEntityRepository
 {
@@ -112,7 +113,7 @@ class RaListingRepository extends ServiceEntityRepository
                 ->setParameter('institution', $query->institution);
         }
 
-        if ($query->identityId) {
+        if ($query->identityId instanceof IdentityId) {
             $queryBuilder
                 ->andWhere('r.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);
@@ -153,7 +154,7 @@ class RaListingRepository extends ServiceEntityRepository
             'iac',
         );
 
-        if (!$query->orderBy) {
+        if ($query->orderBy === '' || $query->orderBy === '0') {
             return $queryBuilder->getQuery();
         }
 
@@ -187,6 +188,9 @@ class RaListingRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery();
     }
 
+    /**
+     * @return ArrayCollection<RaListing>
+     */
     public function listRasFor(Institution $raInstitution): ArrayCollection
     {
         $listings = $this->createQueryBuilder('rl')

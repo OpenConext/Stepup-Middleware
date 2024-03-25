@@ -38,6 +38,9 @@ class EmailVerifiedEvent extends IdentityEvent implements
     PossessionProvenAndVerified,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -49,36 +52,6 @@ class EmailVerifiedEvent extends IdentityEvent implements
         'common_name',
         'email',
     ];
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var DateTime
-     */
-    public DateTime $registrationRequestedAt;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -97,23 +70,16 @@ class EmailVerifiedEvent extends IdentityEvent implements
     public function __construct(
         IdentityId                     $identityId,
         Institution                    $identityInstitution,
-        SecondFactorId                 $secondFactorId,
-        SecondFactorType               $secondFactorType,
+        public SecondFactorId                 $secondFactorId,
+        public SecondFactorType               $secondFactorType,
         private SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime                       $registrationRequestedAt,
+        public DateTime                       $registrationRequestedAt,
         public string                  $registrationCode,
-        CommonName                     $commonName,
-        Email                          $email,
-        Locale                         $preferredLocale,
+        public CommonName                     $commonName,
+        public Email                          $email,
+        public Locale                         $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->registrationRequestedAt = $registrationRequestedAt;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -148,6 +114,8 @@ class EmailVerifiedEvent extends IdentityEvent implements
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -184,6 +152,9 @@ class EmailVerifiedEvent extends IdentityEvent implements
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

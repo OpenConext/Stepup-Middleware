@@ -49,7 +49,7 @@ services:
   surfnet_stepup_middleware_api.projector.recovery_token:
     class: Surfnet\StepupMiddleware\ApiBundle\Identity\Projector\RecoveryTokenProjector
     arguments:
-      - "@Surfnet\\StepupMiddleware\\ApiBundle\\Identity\\Repository\\RecoveryTokenRepository"
+      - '@Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository'
     tags: [ { name: event_bus.event_listener, disable_for_replay: false } ]
 
   surfnet_stepup_middleware_api.projector.vetting_type_hint:

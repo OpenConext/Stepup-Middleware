@@ -30,7 +30,7 @@ final class RaLocationName implements JsonSerializable, Stringable
 
     public function __construct(string $raLocationName)
     {
-        if (!is_string($raLocationName) || trim($raLocationName) === '') {
+        if (trim($raLocationName) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'raLocationName', $raLocationName);
         }
 

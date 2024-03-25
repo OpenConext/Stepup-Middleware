@@ -38,24 +38,18 @@ use function str_replace;
  */
 class RecoveryTokenMailService
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-
     private readonly string $fallbackLocale;
 
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         private readonly string $selfServiceUrl,
         private readonly LoggerInterface $logger,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->translator = $translator;
         $this->fallbackLocale = $fallbackLocale;
     }
 

@@ -40,31 +40,15 @@ class VerifiedSecondFactorReminderServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var VerifiedSecondFactorReminderService
-     */
     private VerifiedSecondFactorReminderService $service;
 
-    /**
-     * @var VerifiedSecondFactorReminderMailService|MockInterface
+    private VerifiedSecondFactorReminderMailService&MockInterface $mailService;
 
-     */
-    private $mailService;
+    private LoggerInterface&MockInterface $logger;
 
-    /**
-     * @var LoggerInterface|MockInterface
-     */
-    private $logger;
+    private VerifiedSecondFactorRepository&MockInterface $verifiedSecondFactorRepository;
 
-    /**
-     * @var VerifiedSecondFactorRepository|MockInterface
-     */
-    private $verifiedSecondFactorRepository;
-    /**
-     * @var IdentityRepository|MockInterface
-     */
-    private $identityRepository;
-
+    private IdentityRepository&MockInterface $identityRepository;
 
     public function setUp(): void
     {

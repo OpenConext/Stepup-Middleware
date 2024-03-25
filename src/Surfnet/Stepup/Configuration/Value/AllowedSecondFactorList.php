@@ -25,6 +25,9 @@ use IteratorAggregate;
 use JsonSerializable;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 
+/**
+ * @implements IteratorAggregate<SecondFactorType>
+ */
 final class AllowedSecondFactorList implements JsonSerializable, IteratorAggregate, SerializableInterface
 {
     /**
@@ -47,11 +50,7 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return new self([]);
     }
 
-    /**
-     * @param $allowedSecondFactors
-     * @return AllowedSecondFactorList
-     */
-    public static function ofTypes($allowedSecondFactors): self
+    public static function ofTypes(array $allowedSecondFactors): self
     {
         return new self($allowedSecondFactors);
     }
@@ -61,9 +60,6 @@ final class AllowedSecondFactorList implements JsonSerializable, IteratorAggrega
         return $this->isBlank() || $this->contains($secondFactor);
     }
 
-    /**
-     * @return bool
-     */
     public function isBlank(): bool
     {
         return $this->allowedSecondFactors === [];

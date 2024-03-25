@@ -140,7 +140,7 @@ class CommandAuthorizationServiceTest extends TestCase
      * @test
      * @dataProvider availableCommands
      */
-    public function a_sraa_should_be_able_to_execute_all_commands($file, Command $command): void
+    public function a_sraa_should_be_able_to_execute_all_commands(string $file, Command $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 

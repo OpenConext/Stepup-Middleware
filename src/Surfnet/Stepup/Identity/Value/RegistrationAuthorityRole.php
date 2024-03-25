@@ -24,13 +24,13 @@ use Broadway\Serializer\Serializable as SerializableInterface;
 use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RegistrationAuthorityRole implements SerializableInterface, Stringable
+final readonly class RegistrationAuthorityRole implements SerializableInterface, Stringable
 {
     public const ROLE_RA = 1;
     public const ROLE_RAA = 2;
     public const ROLE_SRAA = 3;
 
-    public function __construct(private readonly int $role)
+    public function __construct(private int $role)
     {
         if (!in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
             throw new InvalidArgumentException(

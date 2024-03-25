@@ -25,9 +25,9 @@ final class StepupProvider implements Stringable
 {
     private readonly string $provider;
 
-    public function __construct($provider)
+    public function __construct(string $provider)
     {
-        if (!is_string($provider) || trim($provider) === '') {
+        if (trim($provider) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'provider', $provider);
         }
 

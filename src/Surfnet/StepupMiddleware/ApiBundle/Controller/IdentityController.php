@@ -36,7 +36,7 @@ class IdentityController extends AbstractController
     ) {
     }
 
-    public function get($id): JsonResponse
+    public function get(string $id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -49,7 +49,7 @@ class IdentityController extends AbstractController
         return new JsonResponse($identity);
     }
 
-    public function collection(Request $request, Institution $institution)
+    public function collection(Request $request, Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -65,10 +65,7 @@ class IdentityController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    /**
-     * @param string $identityId
-     */
-    public function getRegistrationAuthorityCredentials($identityId): JsonResponse
+    public function getRegistrationAuthorityCredentials(string $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -76,7 +73,7 @@ class IdentityController extends AbstractController
 
         $credentials = $identityService->findRegistrationAuthorityCredentialsOf($identityId);
 
-        if (!$credentials) {
+        if (!$credentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
             return new JsonNotFoundResponse();
         }
 

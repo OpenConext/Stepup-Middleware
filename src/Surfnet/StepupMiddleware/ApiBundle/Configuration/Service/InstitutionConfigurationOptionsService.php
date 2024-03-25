@@ -44,7 +44,7 @@ class InstitutionConfigurationOptionsService
     /**
      * @return InstitutionConfigurationOptions|null
      */
-    public function findInstitutionConfigurationOptionsFor(Institution $institution)
+    public function findInstitutionConfigurationOptionsFor(Institution $institution): ?InstitutionConfigurationOptions
     {
         return $this->repository->findConfigurationOptionsFor($institution);
     }
@@ -57,11 +57,11 @@ class InstitutionConfigurationOptionsService
      *
      * @return int
      */
-    public function getMaxNumberOfTokensFor(Institution $institution)
+    public function getMaxNumberOfTokensFor(Institution $institution): int
     {
         $configuration = $this->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($configuration !== null && $configuration->numberOfTokensPerIdentityOption->isEnabled()) {
+        if ($configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions && $configuration->numberOfTokensPerIdentityOption->isEnabled()) {
             return $configuration->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         }
 

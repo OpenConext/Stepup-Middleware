@@ -30,19 +30,6 @@ class UseRaLocationsOptionTest extends TestCase
 
     /**
      * @test
-     * @group        domain
-     * @group        institution-configuration-option
-     * @dataProvider nonBooleanProvider
-     */
-    public function use_ra_locations_option_can_only_be_boolean(string|int|float|StdClass|array $nonBooleanProvider,): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new UseRaLocationsOption($nonBooleanProvider);
-    }
-
-    /**
-     * @test
      * @group domain
      * @group institution-configuration-option
      */
@@ -80,16 +67,5 @@ class UseRaLocationsOptionTest extends TestCase
         $false = new UseRaLocationsOption(false);
 
         $this->assertTrue($default->equals($false));
-    }
-
-    public function nonBooleanProvider(): array
-    {
-        return [
-            'string' => [''],
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
-        ];
-    }
+   }
 }

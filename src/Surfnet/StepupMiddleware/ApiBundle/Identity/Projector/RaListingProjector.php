@@ -94,7 +94,7 @@ class RaListingProjector extends Projector
             $event->raInstitution,
         );
 
-        if (!$raListing) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new RuntimeException(
                 "Tried to amend an RaListing's registration authority location and contact information, " .
                 "but the listing could not be found",
@@ -198,7 +198,7 @@ class RaListingProjector extends Projector
             $event->identityInstitution,
         );
 
-        if (!$raListing) {
+        if (!$raListing instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing) {
             throw new RuntimeException(
                 "Tried to amend an RaListing's registration authority location and contact information, " .
                 "but the listing could not be found",

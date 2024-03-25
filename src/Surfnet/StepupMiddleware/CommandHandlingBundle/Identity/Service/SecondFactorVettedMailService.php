@@ -32,11 +32,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SecondFactorVettedMailService
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-
     private readonly string $fallbackLocale;
 
     /**
@@ -45,13 +40,12 @@ final class SecondFactorVettedMailService
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         private readonly string $selfServiceUrl,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->translator = $translator;
         $this->fallbackLocale = $fallbackLocale;
     }
 

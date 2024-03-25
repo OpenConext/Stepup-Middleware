@@ -36,21 +36,21 @@ class EmailTemplate
      * @var string
      */
     #[ORM\Column]
-    private $name;
+    private string $name;
 
     /**
      * @var string
      */
     #[ORM\Column]
-    private $locale;
+    private string $locale;
 
     /**
      * @var string
      */
     #[ORM\Column(type: 'text')]
-    private $htmlContent;
+    private string $htmlContent;
 
-    public static function create($name, $locale, $htmlContent): self
+    public static function create(string $name, string $locale, string $htmlContent): self
     {
         $self = new self();
         $self->id = (string)Uuid::uuid4();
@@ -73,7 +73,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -81,7 +81,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -89,7 +89,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getHtmlContent()
+    public function getHtmlContent(): string
     {
         return $this->htmlContent;
     }

@@ -47,7 +47,7 @@ class RightToBeForgottenController extends AbstractController
     ) {
     }
 
-    public function forgetIdentity(Request $request)
+    public function forgetIdentity(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -92,7 +92,7 @@ class RightToBeForgottenController extends AbstractController
         $credentials =
             $this->identityService->findRegistrationAuthorityCredentialsByNameIdAndInstitution($nameId, $institution);
 
-        if ($credentials === null) {
+        if (!$credentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
             return;
         }
 

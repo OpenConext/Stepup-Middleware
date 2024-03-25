@@ -34,8 +34,8 @@ final class MetadataEnrichingEventStreamDecorator implements EventStreamDecorato
     }
 
     public function decorateForWrite(
-        $aggregateType,
-        $aggregateIdentifier,
+        string $aggregateType,
+        string $aggregateIdentifier,
         DomainEventStream $eventStream,
     ): DomainEventStream {
         if (!$this->metadata instanceof Metadata) {

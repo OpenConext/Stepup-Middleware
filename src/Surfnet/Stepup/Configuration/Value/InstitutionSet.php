@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2018 SURFnet B.V.
  *
@@ -25,16 +27,14 @@ final class InstitutionSet
     /**
      * @var Institution[]
      */
-    private array $institutions;
+    private readonly array $institutions;
 
     /**
      * @param Institution[] $institutions
      */
     private function __construct(array $institutions)
     {
-        // Normalize (lowercase) the institutions for the test on unique entries below.
-        $institutionsLowerCased = array_map('strtolower', $institutions);
-        if ($institutionsLowerCased !== array_unique($institutionsLowerCased)) {
+        if ($institutions !== array_unique($institutions)) {
             throw new InvalidArgumentException('Duplicate entries are not allowed in the InstitutionSet');
         }
 

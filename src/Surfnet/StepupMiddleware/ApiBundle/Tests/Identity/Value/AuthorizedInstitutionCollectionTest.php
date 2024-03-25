@@ -68,6 +68,9 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         $this->assertEquals('raa', $collection->getAuthorizations()['b'][0]);
     }
 
+    /**
+     * @param string[] $institutions
+     */
     private function buildInstitutionCollection(array $institutions): InstitutionCollection
     {
         $institutionList = [];
@@ -77,7 +80,7 @@ final class AuthorizedInstitutionCollectionTest extends TestCase
         return new InstitutionCollection($institutionList);
     }
 
-    private function buildInstitution($name): Institution
+    private function buildInstitution(string $name): Institution
     {
         return new Institution($name);
     }

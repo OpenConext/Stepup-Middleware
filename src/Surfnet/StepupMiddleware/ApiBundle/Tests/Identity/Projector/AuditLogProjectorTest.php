@@ -128,7 +128,7 @@ final class AuditLogProjectorTest extends TestCase
                     new SecondFactorId('ijkl'),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('99992222'),
-                    self::$actorCommonName,
+                    new CommonName(self::$actorCommonName),
                 ),
             ],
         ];
@@ -187,7 +187,7 @@ final class AuditLogProjectorTest extends TestCase
         SecondFactorId $secondFactorId = null,
         SecondFactorType $secondFactorType = null,
         ?YubikeyPublicId $secondFactorIdentifier = null,
-        $actorCommonName = null,
+        ?CommonName $actorCommonName = null,
     ): AuditLogEntry {
         $entry = new AuditLogEntry();
         $entry->actorId = $actorId instanceof IdentityId ? $actorId : null;
@@ -207,7 +207,7 @@ final class AuditLogProjectorTest extends TestCase
     /**
      * @return MatcherAbstract
      */
-    private function spy(mixed &$spy)
+    private function spy(mixed &$spy): MatcherAbstract
     {
         return m::on(
             function ($value) use (&$spy): bool {

@@ -124,7 +124,7 @@ final class MigrateSecondFactorCommand extends Command
     /**
      * @return string
      */
-    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, InputInterface $input)
+    private function createIdentity(NameId $targetNameId, Identity $sourceIdentity, InputInterface $input): string
     {
         $newInstitution = $input->getArgument('target-institution');
         $newEmail = $input->getArgument('email');
@@ -148,7 +148,7 @@ final class MigrateSecondFactorCommand extends Command
     private function tokenExists(array $targetSecondFactors, VettedSecondFactor $sourceSecondFactor): bool
     {
         foreach ($targetSecondFactors as $secondFactor) {
-            if ($secondFactor->isEqual($secondFactor)) {
+            if ($secondFactor->isEqual($sourceSecondFactor)) {
                 return true;
             }
         }

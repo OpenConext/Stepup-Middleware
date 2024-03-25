@@ -27,5 +27,5 @@ class UnverifiedSecondFactorQuery extends AbstractQuery
     /**
      * @var string|null
      */
-    public ?string $verificationNonce;
+    public ?string $verificationNonce = null;
 }

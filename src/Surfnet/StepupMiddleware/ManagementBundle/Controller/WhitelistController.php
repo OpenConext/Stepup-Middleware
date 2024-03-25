@@ -48,7 +48,7 @@ class WhitelistController extends AbstractController
     ) {
     }
 
-    public function replaceWhitelist(Request $request)
+    public function replaceWhitelist(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -59,7 +59,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function addToWhitelist(Request $request)
+    public function addToWhitelist(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -70,7 +70,7 @@ class WhitelistController extends AbstractController
         return $this->handleCommand($request, $command);
     }
 
-    public function removeFromWhitelist(Request $request)
+    public function removeFromWhitelist(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
 
@@ -111,7 +111,7 @@ class WhitelistController extends AbstractController
     /**
      * @return array
      */
-    private function getInstitutionsFromBody(Request $request)
+    private function getInstitutionsFromBody(Request $request): array
     {
         $decoded = JsonHelper::decode($request->getContent());
 

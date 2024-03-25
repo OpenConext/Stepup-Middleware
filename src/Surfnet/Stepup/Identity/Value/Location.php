@@ -28,9 +28,6 @@ final class Location implements JsonSerializable, Stringable
 {
     private readonly string $location;
 
-    /**
-     * @param string $location
-     */
     public function __construct(string $location)
     {
         $this->location = trim($location);

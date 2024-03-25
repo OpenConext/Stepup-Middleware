@@ -57,35 +57,35 @@ final class ReconfigureInstitutionConfigurationOptionsCommand extends AbstractCo
     public int $numberOfTokensPerIdentityOption;
 
     #[Assert\NotNull]
-    public $allowedSecondFactors;
+    public array $allowedSecondFactors;
 
     /**
      * @var array|null
      */
-    public ?array $useRaOption;
+    public ?array $useRaOption = null;
 
     /**
      * @var array|null
      */
-    public ?array $useRaaOption;
+    public ?array $useRaaOption = null;
 
     /**
      * @var array|null
      */
-    public ?array $selectRaaOption;
+    public ?array $selectRaaOption = null;
 
     /**
      * @var bool|null
      */
-    public ?bool $selfVetOption;
+    public ?bool $selfVetOption = null;
 
     /**
      * @var bool|null
      */
-    public ?bool $selfAssertedTokensOption;
+    public ?bool $selfAssertedTokensOption = null;
 
     /**
      * @var bool|null
      */
-    public ?bool $ssoOn2faOption;
+    public ?bool $ssoOn2faOption = null;
 }

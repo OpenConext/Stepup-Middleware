@@ -45,7 +45,7 @@ class RaLocationService
 
 
     /**
-     * @return RaLocation[]
+     * @return RaLocation[]|null
      */
     public function listRaLocationsFor(Institution $institution): ?array
     {

@@ -31,15 +31,11 @@ final class YubikeyPublicId implements SecondFactorIdentifier
         return new self(self::UNKNOWN);
     }
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
         if ($value === self::UNKNOWN) {
             $this->value = $value;
             return;
-        }
-
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
         }
 
         // Numeric IDs must be left-padded with zeroes until eight characters. Longer IDs, up to twenty characters, may

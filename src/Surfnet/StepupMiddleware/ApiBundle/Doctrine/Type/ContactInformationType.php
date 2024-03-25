@@ -42,7 +42,7 @@ class ContactInformationType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         return (string)$value;
@@ -51,7 +51,7 @@ class ContactInformationType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ContactInformation
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

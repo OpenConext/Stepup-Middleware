@@ -43,7 +43,7 @@ class SafeStore implements RecoveryTokenIdentifier
         return $this->secret->getSecret();
     }
 
-    public function equals($other): bool
+    public function equals(RecoveryTokenIdentifier $other): bool
     {
         return $other instanceof self && $other->getValue() === $this->getValue();
     }

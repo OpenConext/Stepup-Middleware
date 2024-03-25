@@ -55,7 +55,8 @@
         "twig/extra-bundle": "^3.0",
         "twig/intl-extra": "^3",
         "twig/twig": "^3",
-      "ext-pdo": "*"
+      "ext-pdo": "*",
+      "ext-openssl": "*"
     },
     "require-dev": {
         "doctrine/data-fixtures": "~1.7",
@@ -70,6 +71,7 @@
         "phpstan/phpstan-mockery": "^1.1",
         "phpstan/phpstan-symfony": "^1.3",
         "phpunit/phpunit": "^9.5",
+        "rector/rector": "^1.0",
         "sebastian/phpcpd": "^6.0",
         "squizlabs/php_codesniffer": "^3.7",
         "symfony/browser-kit": "6.4.*",

@@ -29,8 +29,9 @@ final readonly class SsoOn2faOption implements JsonSerializable
         return new self(false);
     }
 
-    public function __construct(private bool $ssoOn2faOption)
-    {
+    public function __construct(
+        private bool $ssoOn2faOption
+    ) {
     }
 
     public function equals(SsoOn2faOption $other): bool

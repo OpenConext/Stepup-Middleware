@@ -22,7 +22,11 @@ use Assert\InvalidArgumentException;
 
 final class Assert
 {
-    public static function keysMatch(array $value, array $keys, $message = null, $propertyPath = null): void
+    /**
+     * @param array $value
+     * @param array $keys
+     */
+    public static function keysMatch(array $value, array $keys, ?string $message = null, ?string $propertyPath = null): void
     {
         $keysOfValue = array_keys($value);
         $extraKeys = array_diff($keysOfValue, $keys);
@@ -45,8 +49,8 @@ final class Assert
         array $value,
         array $required,
         array $optional,
-        $message = null,
-        $propertyPath = null,
+        ?string $message = null,
+        ?string $propertyPath = null,
     ): void {
         // Filter out the optional items from the value array
         $requiredValueSet = array_diff_key($value, array_flip($optional));

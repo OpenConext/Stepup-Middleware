@@ -28,22 +28,18 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'id',
         'identity_institution',
         'email',
     ];
 
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    public function __construct(IdentityId $identityId, Institution $institution, Email $email)
+    public function __construct(IdentityId $identityId, Institution $institution, public Email $email)
     {
         parent::__construct($identityId, $institution);
-
-        $this->email = $email;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -70,6 +66,8 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -97,6 +95,9 @@ class IdentityEmailChangedEvent extends IdentityEvent implements Forgettable, Ri
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

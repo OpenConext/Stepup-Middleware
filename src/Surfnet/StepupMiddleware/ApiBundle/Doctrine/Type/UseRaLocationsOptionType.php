@@ -36,10 +36,10 @@ class UseRaLocationsOptionType extends Type
         return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof UseRaLocationsOption) {
@@ -58,7 +58,7 @@ class UseRaLocationsOptionType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?UseRaLocationsOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

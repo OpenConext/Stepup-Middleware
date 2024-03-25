@@ -19,8 +19,9 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
 use Assert\Assertion;
-use DateTime;
 use Surfnet\Stepup\Configuration\Value\Institution;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaListingService;
@@ -39,17 +40,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VerifiedSecondFactorReminderMailService
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
     private readonly string $fallbackLocale;
 
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private readonly EmailTemplateService $emailTemplateService,
         private readonly InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         private readonly RaListingService $raListingService,
@@ -57,13 +53,15 @@ class VerifiedSecondFactorReminderMailService
         string $fallbackLocale,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->translator = $translator;
         $this->fallbackLocale = $fallbackLocale;
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
     public function sendReminder(VerifiedTokenInformation $tokenInformation): void
     {
-        $institution = new Institution((string)$tokenInformation->getInstitution());
+        $institution = new Institution($tokenInformation->getInstitution());
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
         if ($institutionConfigurationOptions->useRaLocationsOption->isEnabled()) {
@@ -105,21 +103,16 @@ class VerifiedSecondFactorReminderMailService
     }
 
     /**
-     * @param string $locale
-     * @param string $commonName
-     * @param string $email
-     * @param DateTime $requestedAt
-     * @param $registrationCode
-     * @return void
+     * @param RaLocation[]|null $raLocations
      * @throws TransportExceptionInterface
      */
     private function sendReminderWithInstitution(
-        $locale,
-        $commonName,
-        $email,
-        $requestedAt,
-        $registrationCode,
-        $raLocations,
+        string   $locale,
+        string   $commonName,
+        string   $email,
+        DateTime $requestedAt,
+        string $registrationCode,
+        ?array $raLocations,
     ): void {
         $subject = $this->translator->trans(
             'ss.mail.registration_email.subject',
@@ -152,12 +145,16 @@ class VerifiedSecondFactorReminderMailService
         $this->mailer->send($email);
     }
 
+    /**
+     * @param RegistrationAuthorityCredentials[] $ras
+     * @throws TransportExceptionInterface
+     */
     private function sendReminderWithRas(
-        $locale,
-        $commonName,
-        $email,
-        $requestedAt,
-        $registrationCode,
+        string $locale,
+        string $commonName,
+        string $email,
+        DateTime$requestedAt,
+        string $registrationCode,
         array $ras,
     ): void {
         $subject = $this->translator->trans(
@@ -186,7 +183,7 @@ class VerifiedSecondFactorReminderMailService
             ->from(new Address($this->sender->getEmail(), $this->sender->getName()))
             ->to(new Address($email, $commonName))
             ->subject($subject)
-            ->htmlTemplate('SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
+            ->htmlTemplate('@SurfnetStepupMiddlewareCommandHandling/SecondFactorMailService/email.html.twig')
             ->context($parameters);
         $this->mailer->send($email);
     }

@@ -39,7 +39,7 @@ class RaLocationNameType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof RaLocationName) {
@@ -58,7 +58,7 @@ class RaLocationNameType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?RaLocationName
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

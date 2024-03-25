@@ -37,6 +37,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\AuthorityRole;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @extends ServiceEntityRepository<InstitutionCollection>
  */
 class AuthorizationRepository extends ServiceEntityRepository
 {

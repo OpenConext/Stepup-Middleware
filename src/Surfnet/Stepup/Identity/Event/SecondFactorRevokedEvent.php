@@ -31,6 +31,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -39,33 +42,14 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
         'second_factor_identifier',
     ];
 
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var SecondFactorIdentifier
-     */
-    public SecondFactorIdentifier $secondFactorIdentifier;
-
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -124,6 +108,9 @@ abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgett
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

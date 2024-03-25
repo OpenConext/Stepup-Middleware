@@ -36,12 +36,9 @@ final class CommonName implements JsonSerializable, Stringable
         return new self('—');
     }
 
-    /**
-     * @param string $commonName
-     */
     public function __construct(string $commonName)
     {
-        if (!is_string($commonName) || trim($commonName) === '') {
+        if (trim($commonName) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'commonName', $commonName);
         }
 

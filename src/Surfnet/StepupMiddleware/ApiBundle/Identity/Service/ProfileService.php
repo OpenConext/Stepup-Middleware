@@ -45,9 +45,6 @@ class ProfileService extends AbstractSearchService
      * Profile. Its possible to retrieve profile data for a non RA user, in that case no authorization data is set
      * on the profile. The same goes for the SRAA user. As that user is allowed all authorizations for all institutions.
      * An additional isSraa flag is set to true for these administrators.
-     *
-     * @param string $identityId
-     * @return Profile|null
      */
     public function createProfile(string $identityId): ?Profile
     {

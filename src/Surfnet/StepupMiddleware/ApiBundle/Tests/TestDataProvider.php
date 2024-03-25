@@ -22,6 +22,9 @@ use StdClass;
 
 final class TestDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public static function notNull(): array
     {
         return [

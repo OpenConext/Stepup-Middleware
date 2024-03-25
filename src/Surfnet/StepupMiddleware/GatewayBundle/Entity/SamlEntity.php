@@ -37,7 +37,7 @@ class SamlEntity
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
     private function __construct(
         #[ORM\Column]
@@ -51,19 +51,17 @@ class SamlEntity
     }
 
     /**
-     * @param string $entityId
      * @return SamlEntity
      */
-    public static function createServiceProvider($entityId, array $configuration): self
+    public static function createServiceProvider(string $entityId, array $configuration): self
     {
         return new self($entityId, self::TYPE_SP, json_encode($configuration));
     }
 
     /**
-     * @param string $entityId
      * @return SamlEntity
      */
-    public static function createIdentityProvider($entityId, array $configuration): self
+    public static function createIdentityProvider(string $entityId, array $configuration): self
     {
         return new self($entityId, self::TYPE_IDP, json_encode($configuration));
     }

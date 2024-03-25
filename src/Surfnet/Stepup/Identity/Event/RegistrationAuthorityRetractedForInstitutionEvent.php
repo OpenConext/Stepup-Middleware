@@ -32,6 +32,9 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
     Forgettable,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -41,40 +44,15 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         'common_name',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Institution
-     */
-    public Institution $raInstitution;
-
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        CommonName $commonName,
-        Email $email,
-        Institution $raInstitution,
+        public NameId $nameId,
+        public CommonName $commonName,
+        public Email $email,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -100,6 +78,8 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -131,6 +111,9 @@ class RegistrationAuthorityRetractedForInstitutionEvent extends IdentityEvent im
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

@@ -63,11 +63,7 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
         EmailVerificationWindow $emailVerificationWindow,
         string                  $verificationNonce,
     ): self {
-        if (!is_string($verificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
-        }
-
-        if (empty($verificationNonce)) {
+        if ($verificationNonce === '' || $verificationNonce === '0') {
             throw new InvalidArgumentException("'verificationNonce' may not be empty");
         }
 
@@ -92,7 +88,6 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     }
 
     /**
-     * @param string $verificationNonce
      * @return bool
      */
     public function hasNonce(string $verificationNonce): bool

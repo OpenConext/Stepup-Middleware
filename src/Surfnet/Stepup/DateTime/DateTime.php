@@ -41,7 +41,7 @@ class DateTime implements Stringable
      * @see DateTimeHelper::setCurrentTime here you can see how now can be overridden using reflection
      * @var self|null
      */
-    private static ?DateTime $now; // @phpstan-ignore-line PHPStan can not see that the DateTimeHelper is able to set the now value using reflection
+    private static ?DateTime $now = null;
 
     private readonly CoreDateTime $dateTime;
 
@@ -60,10 +60,6 @@ class DateTime implements Stringable
      */
     public static function fromString(string $string): self
     {
-        if (!is_string($string)) {
-            InvalidArgumentException::invalidType('string', 'dateTime', $string);
-        }
-
         $dateTime = CoreDateTime::createFromFormat(self::FORMAT, $string);
 
         if ($dateTime === false) {

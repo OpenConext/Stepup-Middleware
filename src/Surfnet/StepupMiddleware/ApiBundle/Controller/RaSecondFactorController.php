@@ -36,7 +36,7 @@ final class RaSecondFactorController extends AbstractController
     ) {
     }
 
-    public function collection(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

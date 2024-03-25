@@ -66,9 +66,8 @@ class VerifyEmailOptionTypeTest extends UnitTest
      * @group doctrine
      *
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_an_option_type_or_null($incorrectValue): void
+    public function a_value_can_only_be_converted_to_sql_if_it_is_an_option_type_or_null(mixed $incorrectValue): void
     {
         $this->expectException(ConversionException::class);
 

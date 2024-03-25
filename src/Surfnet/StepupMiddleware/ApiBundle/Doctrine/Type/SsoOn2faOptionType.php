@@ -36,10 +36,10 @@ class SsoOn2faOptionType extends Type
         return $platform->getIntegerTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof SsoOn2faOption) {
@@ -59,7 +59,7 @@ class SsoOn2faOptionType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?SsoOn2faOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

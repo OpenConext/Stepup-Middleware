@@ -126,8 +126,6 @@ class RegistrationAuthorityCommandHandler extends SimpleCommandHandler
     }
 
     /**
-     * @param string $role
-     * @param string $commandId
      * @return RegistrationAuthorityRole
      */
     private function assertValidRoleAndConvertIfValid(string $role, string $commandId): RegistrationAuthorityRole

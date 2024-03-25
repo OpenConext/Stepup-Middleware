@@ -32,6 +32,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /** @var string[] */
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'name_id',
@@ -41,48 +45,15 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
         'contact_information',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public RegistrationAuthorityRole $registrationAuthorityRole;
-
-    /**
-     * @var Location
-     */
-    public Location $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public ContactInformation $contactInformation;
-
-    /**
-     * @param IdentityId $identityId
-     * @param NameId $nameId
-     * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
-        Location $location,
-        ContactInformation $contactInformation,
+        public RegistrationAuthorityRole $registrationAuthorityRole,
+        public Location $location,
+        public ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -94,6 +65,9 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
         return $metadata;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function deserialize(array $data): self
     {
         return new self(
@@ -106,6 +80,9 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function serialize(): array
     {
         return [
@@ -123,6 +100,9 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

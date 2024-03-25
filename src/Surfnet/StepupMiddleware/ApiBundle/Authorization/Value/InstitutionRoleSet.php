@@ -42,7 +42,7 @@ final class InstitutionRoleSet implements InstitutionRoleSetInterface
         $this->institutionRoles = $institutionRoles;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->institutionRoles;
     }

@@ -37,18 +37,14 @@ final class U2fKeyHandle implements SecondFactorIdentifier
         return new self(self::UNKNOWN);
     }
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
         if ($value === self::UNKNOWN) {
             $this->value = $value;
             return;
         }
 
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
-        if (empty($value)) {
+        if ($value === '' || $value === '0') {
             throw new InvalidArgumentException('Invalid Argument, parameter "value" may not be an empty string');
         }
 

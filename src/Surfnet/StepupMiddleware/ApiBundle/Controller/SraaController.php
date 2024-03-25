@@ -33,15 +33,14 @@ class SraaController extends AbstractController
 
     /**
      * @param string $nameId injected by symfony from the request
-     * @return JsonNotFoundResponse|JsonResponse
      */
-    public function get($nameId): JsonResponse
+    public function get(string $nameId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
         $sraa = $this->sraaService->findByNameId(new NameId($nameId));
 
-        if (!$sraa) {
+        if (!$sraa instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa) {
             return new JsonNotFoundResponse();
         }
 

@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
 
-class VettingTypeHint implements JsonSerializable
+class VettingTypeHint implements JsonSerializable, \Stringable
 {
     public function __construct(
         private readonly string $locale,

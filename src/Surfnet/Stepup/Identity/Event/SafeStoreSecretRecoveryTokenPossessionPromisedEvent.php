@@ -42,6 +42,9 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     Forgettable,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -51,32 +54,16 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         'common_name',
     ];
 
-    public RecoveryTokenId $recoveryTokenId;
-
-    public RecoveryTokenIdentifier $secret;
-
-    public CommonName $commonName;
-
-    public Email $email;
-
-    public Locale $preferredLocale;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        RecoveryTokenId $recoveryTokenId,
-        RecoveryTokenIdentifier $secret,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public RecoveryTokenId $recoveryTokenId,
+        public RecoveryTokenIdentifier $secret,
+        public CommonName $commonName,
+        public Email $email,
+        public Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->recoveryTokenId = $recoveryTokenId;
-        $this->secret = $secret;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -105,6 +92,8 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -139,6 +128,9 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

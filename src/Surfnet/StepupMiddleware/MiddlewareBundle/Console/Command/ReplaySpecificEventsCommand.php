@@ -72,7 +72,7 @@ class ReplaySpecificEventsCommand extends Command
 
         if ($input->getOption(self::OPTION_LIST_EVENTS)) {
             $output->writeln('<info>The following events can be replayed:</info>');
-            $output->writeln(empty($availableEvents) ? 'None.' : $availableEvents);
+            $output->writeln($availableEvents === [] ? 'None.' : $availableEvents);
 
             return 0;
         }

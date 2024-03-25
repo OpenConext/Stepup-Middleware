@@ -40,9 +40,8 @@ class CommandParamConverterTest extends TestCase
      * @test
      * @group api-bundle
      * @dataProvider invalidCommandJsonStructures
-     * @param string $commandJson
      */
-    public function it_validates_the_command_structure($commandJson): void
+    public function it_validates_the_command_structure(string $commandJson): void
     {
         $this->expectException(BadCommandRequestException::class);
 
@@ -62,9 +61,8 @@ class CommandParamConverterTest extends TestCase
      * @test
      * @group api-bundle
      * @dataProvider convertibleCommandNames
-     * @param string $expectedCommandClass
      */
-    public function it_can_convert_command_name_notation($expectedCommandClass, string $commandName): void
+    public function it_can_convert_command_name_notation(string $expectedCommandClass, string $commandName): void
     {
         $command = ['command' => ['name' => $commandName, 'uuid' => 'abcdef', 'payload' => new stdClass]];
 
@@ -189,7 +187,7 @@ class CommandParamConverterTest extends TestCase
     /**
      * @return MatcherAbstract
      */
-    private function spy(mixed &$spy)
+    private function spy(mixed &$spy): MatcherAbstract
     {
         return m::on(
             function ($value) use (&$spy): bool {

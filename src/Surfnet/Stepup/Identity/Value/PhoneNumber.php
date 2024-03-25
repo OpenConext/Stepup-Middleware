@@ -29,12 +29,8 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
         return new self('+0 (0) 000000000');
     }
 
-    public function __construct($phoneNumber)
+    public function __construct(string $phoneNumber)
     {
-        if (!is_string($phoneNumber)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $phoneNumber);
-        }
-
         if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $phoneNumber)) {
             throw new InvalidArgumentException(
                 sprintf(
@@ -53,7 +49,7 @@ final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifi
         return $this->phoneNumber;
     }
 
-    public function equals(mixed $other): bool
+    public function equals(RecoveryTokenIdentifier|SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }

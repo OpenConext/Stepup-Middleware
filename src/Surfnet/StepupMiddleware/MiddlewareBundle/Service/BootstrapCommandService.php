@@ -49,6 +49,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class BootstrapCommandService
 {
+    /**
+     * @var string[]
+     */
     private array $validRegistrationStatuses = ['unverified', 'verified', 'vetted'];
 
     public function __construct(
@@ -68,10 +71,7 @@ class BootstrapCommandService
         $this->tokenStorage->setToken($token);
     }
 
-    /**
-     * @param string $registrationStatus
-     */
-    public function validRegistrationStatus($registrationStatus): void
+    public function validRegistrationStatus(string $registrationStatus): void
     {
         if (!in_array($registrationStatus, $this->validRegistrationStatuses)) {
             throw new InvalidArgumentException(
@@ -84,12 +84,12 @@ class BootstrapCommandService
         }
     }
 
-    public function requiresMailVerification(string $institution)
+    public function requiresMailVerification(string $institution): bool
     {
         $configuration = $this->institutionConfigurationRepository->findConfigurationOptionsFor(
             new ConfigurationInstitution($institution),
         );
-        if ($configuration) {
+        if ($configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
             return $configuration->verifyEmailOption->isEnabled();
         }
         return true;
@@ -120,18 +120,12 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    /**
-     * @param $commonName
-     * @param $email
-     * @param $preferredLocale
-     * @return CreateIdentityCommand
-     */
     public function createIdentity(
         Institution $institution,
         NameId $nameId,
-        $commonName,
-        $email,
-        $preferredLocale,
+        string $commonName,
+        string $email,
+        string $preferredLocale,
     ): CreateIdentityCommand {
         $command = new CreateIdentityCommand();
         $command->UUID = (string)Uuid::uuid4();
@@ -147,8 +141,12 @@ class BootstrapCommandService
         return $command;
     }
 
-    public function proveGsspPossession($secondFactorId, $identity, $tokenType, $tokenIdentifier): void
-    {
+    public function proveGsspPossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $tokenType,
+        string $tokenIdentifier
+    ): void {
         $command = new ProveGssfPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -159,8 +157,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function provePhonePossession($secondFactorId, $identity, $phoneNumber): void
-    {
+    public function provePhonePossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $phoneNumber
+    ): void {
         $command = new ProvePhonePossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -170,8 +171,11 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function proveYubikeyPossession($secondFactorId, $identity, $yubikeyPublicId): void
-    {
+    public function proveYubikeyPossession(
+        string $secondFactorId,
+        Identity $identity,
+        string $yubikeyPublicId
+    ): void {
         $command = new ProveYubikeyPossessionCommand();
         $command->UUID = (string)Uuid::uuid4();
         $command->secondFactorId = $secondFactorId;
@@ -181,8 +185,10 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function verifyEmail(Identity $identity, string $tokenType): void
-    {
+    public function verifyEmail(
+        Identity $identity,
+        string $tokenType
+    ): void {
         $unverifiedSecondFactor = $this->unverifiedSecondFactorRepository->findOneBy(
             ['identityId' => $identity->id, 'type' => $tokenType],
         );
@@ -210,7 +216,7 @@ class BootstrapCommandService
         $this->pipeline->process($command);
     }
 
-    public function enrichEventMetadata($actorId): void
+    public function enrichEventMetadata(string $actorId): void
     {
         $actor = $this->identityRepository->findOneBy(['id' => $actorId]);
 
@@ -220,17 +226,11 @@ class BootstrapCommandService
         $this->enricher->setMetadata($metadata);
     }
 
-    /**
-     * @return Identity
-     */
-    public function getIdentity(NameId $nameId, Institution $institution)
+    public function getIdentity(NameId $nameId, Institution $institution): Identity
     {
         return $this->identityRepository->findOneByNameIdAndInstitution($nameId, $institution);
     }
 
-    /**
-     ** @return Identity
-     */
     public function getIdentityByNameId(NameId $nameId): ?Identity
     {
         return $this->identityRepository->findOneByNameId($nameId);

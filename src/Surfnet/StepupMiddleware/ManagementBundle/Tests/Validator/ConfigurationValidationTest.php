@@ -57,10 +57,8 @@ final class ConfigurationValidationTest extends TestCase
      * @test
      * @group command-handler
      * @dataProvider invalidConfigurations
-     * @param array $configuration
-     * @param string $expectedPropertyPath
      */
-    public function it_rejects_invalid_configuration($configuration, $expectedPropertyPath): void
+    public function it_rejects_invalid_configuration(array $configuration, string $expectedPropertyPath): void
     {
         $builder = m::mock(ConstraintViolationBuilderInterface::class);
         $builder->shouldReceive('addViolation')->with()->once();
@@ -90,7 +88,7 @@ final class ConfigurationValidationTest extends TestCase
     /**
      * @return MatcherAbstract
      */
-    private function spy(mixed &$spy)
+    private function spy(mixed &$spy): MatcherAbstract
     {
         return m::on(
             function ($value) use (&$spy): bool {

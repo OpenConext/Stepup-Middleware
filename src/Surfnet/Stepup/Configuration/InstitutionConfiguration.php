@@ -75,81 +75,36 @@ use Surfnet\Stepup\Exception\DomainException;
  */
 class InstitutionConfiguration extends EventSourcedAggregateRoot implements InstitutionConfigurationInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
     private InstitutionConfigurationId $institutionConfigurationId;
 
-    /**
-     * @var Institution
-     */
     private Institution $institution;
 
     private ?RaLocationList $raLocations = null;
 
-    /**
-     * @var UseRaLocationsOption
-     */
     private UseRaLocationsOption $useRaLocationsOption;
 
-    /**
-     * @var ShowRaaContactInformationOption
-     */
     private ShowRaaContactInformationOption $showRaaContactInformationOption;
 
-    /**
-     * @var VerifyEmailOption
-     */
     private VerifyEmailOption $verifyEmailOption;
 
-    /**
-     * @var NumberOfTokensPerIdentityOption
-     */
     private NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
-    /**
-     * @var SelfVetOption
-     */
     private SelfVetOption $selfVetOption;
 
-    /**
-     * @var SsoOn2faOption
-     */
-    private SsoOn2faOption $ssoOn2faOption;
+    private ?SsoOn2faOption $ssoOn2faOption = null;
 
-    /**
-     * @var SelfAssertedTokensOption
-     */
-    private SelfAssertedTokensOption $selfAssertedTokensOption;
+    private ?SelfAssertedTokensOption $selfAssertedTokensOption = null;
 
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    private InstitutionAuthorizationOption $useRaOption;
+    private ?InstitutionAuthorizationOption $useRaOption = null;
 
-    /**
-     * @var InstitutionAuthorizationOption
-     */
+    private ?InstitutionAuthorizationOption $useRaaOption = null;
 
-    private InstitutionAuthorizationOption $useRaaOption;
+    private ?InstitutionAuthorizationOption $selectRaaOption = null;
 
-    /**
-     * @var InstitutionAuthorizationOption
-     */
-    private InstitutionAuthorizationOption $selectRaaOption;
-
-    /**
-     * @var AllowedSecondFactorList
-     */
-    private AllowedSecondFactorList $allowedSecondFactorList;
+    private ?AllowedSecondFactorList $allowedSecondFactorList = null;
 
     private ?bool $isMarkedAsDestroyed = null;
 
-    /**
-     * @param InstitutionConfigurationId $institutionConfigurationId
-     * @param Institution $institution
-     * @return InstitutionConfiguration
-     */
     public static function create(
         InstitutionConfigurationId $institutionConfigurationId,
         Institution $institution,
@@ -335,7 +290,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSelfAssertedTokensOption(SelfAssertedTokensOption $selfAssertedTokensOption): void
     {
-        if ($this->selfAssertedTokensOption !== null &&
+        if ($this->selfAssertedTokensOption instanceof \Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption &&
             $this->selfAssertedTokensOption->equals($selfAssertedTokensOption)
         ) {
             return;
@@ -352,7 +307,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function configureSsoOn2faOption(SsoOn2faOption $ssoOn2faOption): void
     {
-        if ($this->ssoOn2faOption !== null && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
+        if ($this->ssoOn2faOption instanceof \Surfnet\Stepup\Configuration\Value\SsoOn2faOption && $this->ssoOn2faOption->equals($ssoOn2faOption)) {
             return;
         }
 
@@ -367,7 +322,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateUseRaOption(InstitutionAuthorizationOption $useRaOption): void
     {
-        if ($this->useRaOption !== null
+        if ($this->useRaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
             && $this->useRaOption->equals($useRaOption)
         ) {
             return;
@@ -384,7 +339,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateUseRaaOption(InstitutionAuthorizationOption $useRaaOption): void
     {
-        if ($this->useRaaOption !== null
+        if ($this->useRaaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
             && $this->useRaaOption->equals($useRaaOption)
         ) {
             return;
@@ -401,7 +356,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     public function updateSelectRaaOption(InstitutionAuthorizationOption $selectRaaOption): void
     {
-        if ($this->selectRaaOption !== null
+        if ($this->selectRaaOption instanceof \Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption
             && $this->selectRaaOption->equals($selectRaaOption)
         ) {
             return;
@@ -419,7 +374,7 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
     public function updateAllowedSecondFactorList(AllowedSecondFactorList $allowedSecondFactorList): void
     {
         // AllowedSecondFactorList can be null for InstitutionConfigurations for which this functionality did not exist
-        if ($this->allowedSecondFactorList !== null
+        if ($this->allowedSecondFactorList instanceof \Surfnet\Stepup\Configuration\Value\AllowedSecondFactorList
             && $this->allowedSecondFactorList->equals($allowedSecondFactorList)
         ) {
             return;

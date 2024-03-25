@@ -24,20 +24,8 @@ use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 
 class InstitutionConfigurationRemovedEvent implements SerializableInterface
 {
-    /**
-     * @var Institution
-     */
-    public Institution $institution;
-
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public InstitutionConfigurationId $institutionConfigurationId;
-
-    public function __construct(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
+    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public Institution $institution)
     {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
     }
 
     /**

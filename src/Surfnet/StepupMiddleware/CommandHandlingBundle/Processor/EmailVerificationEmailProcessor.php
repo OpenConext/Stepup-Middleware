@@ -33,7 +33,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
                 (string)$event->preferredLocale,
                 (string)$event->commonName,
@@ -45,7 +45,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
                 (string)$event->preferredLocale,
                 (string)$event->commonName,
@@ -57,7 +57,7 @@ final class EmailVerificationEmailProcessor extends Processor
 
     public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
                 (string)$event->preferredLocale,
                 (string)$event->commonName,

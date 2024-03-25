@@ -23,10 +23,11 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class IdentityProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
-    public function validate(array $configuration, $propertyPath): void
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    public function validate(array $configuration, string $propertyPath): void
     {
-        Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
-
         $requiredProperties = [
             'entity_id',
             'loa',

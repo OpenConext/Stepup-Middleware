@@ -28,14 +28,8 @@ final class RecoveryTokenType implements Stringable
 
     private readonly string $type;
 
-    public function __construct($type)
+    public function __construct(string $type)
     {
-        if (!is_string($type)) {
-            throw new InvalidArgumentException(
-                sprintf('The RecoveryTokenType must be of type string, %s given', gettype($type)),
-            );
-        }
-
         if (!in_array($type, [self::TYPE_SMS, self::TYPE_SAFE_STORE])) {
             throw new InvalidArgumentException('The RecoveryTokenType must be one of "sms" or "safe-store".');
         }

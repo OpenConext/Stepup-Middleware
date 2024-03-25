@@ -26,6 +26,9 @@ use IteratorAggregate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
+/**
+ * @implements IteratorAggregate<SensitiveDataMessage>
+ */
 class SensitiveDataMessageStream implements IteratorAggregate
 {
     /**

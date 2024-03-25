@@ -45,7 +45,7 @@ class RecoveryTokenController extends AbstractController
     ) {
     }
 
-    public function get($id): JsonResponse
+    public function get(string $id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get recovery token: %s', $id));
@@ -58,7 +58,7 @@ class RecoveryTokenController extends AbstractController
         return new JsonResponse($recoveryToken);
     }
 
-    public function collection(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(

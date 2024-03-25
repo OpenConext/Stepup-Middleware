@@ -56,7 +56,7 @@ class Version20150522164907 extends AbstractMigration implements ContainerAwareI
         $this->addSql(sprintf('DROP INDEX unq_saml_entity_entity_id_type ON %s.saml_entity', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

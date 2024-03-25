@@ -264,7 +264,7 @@ class CommandAuthorizationService
         $registrationAuthorityCredentials = $this->identityService->findRegistrationAuthorityCredentialsOf(
             $actorId->getIdentityId(),
         );
-        if (!$registrationAuthorityCredentials) {
+        if (!$registrationAuthorityCredentials instanceof \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials) {
             return false;
         }
         return $registrationAuthorityCredentials->isSraa();

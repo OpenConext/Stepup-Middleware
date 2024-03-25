@@ -42,6 +42,9 @@ use function array_key_exists;
  */
 class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'source_institution',
@@ -57,75 +60,23 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @var NameId
-     */
-    public NameId $targetNameId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $newSecondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var SecondFactorIdentifier
-     */
-    public SecondFactorIdentifier $secondFactorIdentifier;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-    /**
-     * @var Locale
-     */
-    public Locale $preferredLocale;
-    /**
-     * @var VettingType
-     */
-    public VettingType $vettingType;
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $targetNameId,
+        public NameId $targetNameId,
         Institution $targetInstitution,
         private Institution $sourceInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorId $newSecondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
-        VettingType $vettingType,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorId $newSecondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
+        public VettingType $vettingType,
+        public CommonName $commonName,
+        public Email $email,
+        public Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $targetInstitution);
-        $this->targetNameId = $targetNameId;
-        $this->secondFactorId = $secondFactorId;
-        $this->newSecondFactorId = $newSecondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->vettingType = $vettingType;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -168,6 +119,8 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -208,6 +161,9 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

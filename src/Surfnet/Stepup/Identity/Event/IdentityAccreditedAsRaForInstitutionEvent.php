@@ -29,6 +29,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityAccreditedAsRaForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+/**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'name_id',
@@ -39,56 +42,16 @@ class IdentityAccreditedAsRaForInstitutionEvent extends IdentityEvent implements
         'ra_institution',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public RegistrationAuthorityRole $registrationAuthorityRole;
-
-    /**
-     * @var Location
-     */
-    public Location $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public ContactInformation $contactInformation;
-
-    /**
-     * @var Institution
-     */
-    public Institution $raInstitution;
-
-    /**
-     * @param IdentityId $identityId
-     * @param NameId $nameId
-     * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param Institution $raInstitution
-     */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
-        Location $location,
-        ContactInformation $contactInformation,
-        Institution $raInstitution,
+        public RegistrationAuthorityRole $registrationAuthorityRole,
+        public Location $location,
+        public ContactInformation $contactInformation,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
-        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -116,6 +79,7 @@ class IdentityAccreditedAsRaForInstitutionEvent extends IdentityEvent implements
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -130,11 +94,17 @@ class IdentityAccreditedAsRaForInstitutionEvent extends IdentityEvent implements
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function obtainUserData(): array
     {
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

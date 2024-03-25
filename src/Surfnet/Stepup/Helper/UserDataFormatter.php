@@ -44,7 +44,7 @@ class UserDataFormatter implements UserDataFormatterInterface
             'data' => $userData,
         ];
 
-        if (!empty($errors)) {
+        if ($errors !== []) {
             $data['message'] = $errors;
             $status = 'FAILED';
         }

@@ -43,7 +43,7 @@ class ConfigurationInstitutionParamConverter implements ParamConverterInterface
     /**
      * @return string
      */
-    private function getInstitutionFromRequest(Request $request)
+    private function getInstitutionFromRequest(Request $request): string
     {
         $institution = $request->attributes->get(self::INSTITUTION);
         $request->attributes->remove(self::INSTITUTION);

@@ -42,7 +42,7 @@ class ConfigurationLocationType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof Location) {
@@ -61,7 +61,7 @@ class ConfigurationLocationType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Location
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

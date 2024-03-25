@@ -35,70 +35,8 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
  */
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public InstitutionConfigurationId $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public Institution $institution;
-    /**
-     * @var UseRaLocationsOption
-     */
-    public UseRaLocationsOption $useRaLocationsOption;
-
-    /**
-     * @var ShowRaaContactInformationOption
-     */
-    public ShowRaaContactInformationOption $showRaaContactInformationOption;
-
-    /**
-     * @var VerifyEmailOption
-     */
-    public VerifyEmailOption $verifyEmailOption;
-
-    /**
-     * @var NumberOfTokensPerIdentityOption
-     */
-    public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
-
-    /**
-     * @var SelfVetOption
-     */
-    public SelfVetOption $selfVetOption;
-
-    /**
-     * @var SelfAssertedTokensOption
-     */
-    public SelfAssertedTokensOption $selfAssertedTokensOption;
-
-    /**
-     * @var SsoOn2faOption
-     */
-    public SsoOn2faOption $ssoOn2faOption;
-
-    public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption,
-        VerifyEmailOption $verifyEmailOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        SsoOn2faOption $ssoOn2faOption,
-        SelfVetOption $selfVetOption,
-        SelfAssertedTokensOption $selfAssertedTokensOption,
-    ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution = $institution;
-        $this->useRaLocationsOption = $useRaLocationsOption;
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $this->verifyEmailOption = $verifyEmailOption;
-        $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
-        $this->ssoOn2faOption = $ssoOn2faOption;
-        $this->selfVetOption = $selfVetOption;
-        $this->selfAssertedTokensOption = $selfAssertedTokensOption;
+    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public Institution $institution, public UseRaLocationsOption $useRaLocationsOption, public ShowRaaContactInformationOption $showRaaContactInformationOption, public VerifyEmailOption $verifyEmailOption, public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption, public SsoOn2faOption $ssoOn2faOption, public SelfVetOption $selfVetOption, public SelfAssertedTokensOption $selfAssertedTokensOption)
+    {
     }
 
     public static function deserialize(array $data): self

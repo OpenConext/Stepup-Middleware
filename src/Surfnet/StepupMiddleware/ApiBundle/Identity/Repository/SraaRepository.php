@@ -24,6 +24,9 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
 
+/**
+ * @extends ServiceEntityRepository<Sraa>
+ */
 class SraaRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -83,10 +86,7 @@ class SraaRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    /**
-     * @return null|Sraa
-     */
-    public function findByNameId(NameId $nameId): ?object
+    public function findByNameId(NameId $nameId): ?Sraa
     {
         return $this->findOneBy(['nameId' => (string)$nameId]);
     }

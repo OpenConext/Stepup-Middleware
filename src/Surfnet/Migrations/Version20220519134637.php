@@ -79,7 +79,7 @@ final class Version20220519134637 extends AbstractMigration implements Container
         $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP identity_vetted', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

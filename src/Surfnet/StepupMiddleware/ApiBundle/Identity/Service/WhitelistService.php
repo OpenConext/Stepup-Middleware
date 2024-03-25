@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\WhitelistEntryRepository;
 
 class WhitelistService
@@ -26,12 +28,15 @@ class WhitelistService
     {
     }
 
-    public function isWhitelisted($institution): bool
+    public function isWhitelisted(string $institution): bool
     {
         return $this->whitelistEntryRepository->hasEntryFor($institution);
     }
 
-    public function getAllEntries(): \Doctrine\Common\Collections\ArrayCollection
+    /**
+     * @return ArrayCollection<int, WhitelistEntry>
+     */
+    public function getAllEntries(): ArrayCollection
     {
         return $this->whitelistEntryRepository->getAll();
     }

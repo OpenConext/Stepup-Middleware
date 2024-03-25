@@ -182,7 +182,7 @@ class SecondFactorProjector extends Projector
         // In case the vetting type is unknown (for example when no event replay was performed)
         // fall back to the unknown vetting type.
         $vettingType = $event->vettingType;
-        if (!$vettingType) {
+        if (!$vettingType instanceof \Surfnet\Stepup\Identity\Value\VettingType) {
             $vettingType = new UnknownVettingType();
         }
         $vetted->vettingType = $vettingType->type();
@@ -221,7 +221,7 @@ class SecondFactorProjector extends Projector
         $vettingType = $event->vettingType;
         // In case the vetting type is unknown (for example when no event replay was performed)
         // fall back to the unknown vetting type.
-        if (!$vettingType) {
+        if (!$vettingType instanceof \Surfnet\Stepup\Identity\Value\VettingType) {
             $vettingType = new UnknownVettingType();
         }
         $vetted->vettingType = $vettingType->type();

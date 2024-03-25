@@ -28,17 +28,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements RightToObtainDataInterface
 {
     /**
-     * @var IdentityId
+     * @var string[] 
      */
-    public IdentityId $authorityId;
-    /**
-     * @var RecoveryTokenId
-     */
-    public RecoveryTokenId $recoveryTokenId;
-    /**
-     * @var RecoveryTokenType
-     */
-    public RecoveryTokenType $recoveryTokenType;
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -49,15 +40,11 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        RecoveryTokenId $recoveryTokenId,
-        RecoveryTokenType $recoveryTokenType,
-        IdentityId $authorityId,
+        public RecoveryTokenId $recoveryTokenId,
+        public RecoveryTokenType $recoveryTokenType,
+        public IdentityId $authorityId,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->authorityId = $authorityId;
-        $this->recoveryTokenId = $recoveryTokenId;
-        $this->recoveryTokenType = $recoveryTokenType;
     }
 
     final public static function deserialize(array $data): self
@@ -103,6 +90,9 @@ class CompliedWithRecoveryCodeRevocationEvent extends IdentityEvent implements R
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

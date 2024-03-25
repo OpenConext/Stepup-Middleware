@@ -30,20 +30,6 @@ class ShowRaaContactInformationOptionTest extends TestCase
 
     /**
      * @test
-     * @group        domain
-     * @group        institution-configuration-option
-     * @dataProvider nonBooleanProvider
-     */
-    public function show_raa_contact_information_option_can_only_be_boolean(
-        string|int|float|StdClass|array $nonBooleanProvider,
-    ): void {
-        $this->expectException(InvalidArgumentException::class);
-
-        new ShowRaaContactInformationOption($nonBooleanProvider);
-    }
-
-    /**
-     * @test
      * @group domain
      * @group institution-configuration-option
      */
@@ -81,16 +67,5 @@ class ShowRaaContactInformationOptionTest extends TestCase
         $true = new ShowRaaContactInformationOption(true);
 
         $this->assertTrue($default->equals($true));
-    }
-
-    public function nonBooleanProvider(): array
-    {
-        return [
-            'string' => [''],
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
-        ];
     }
 }

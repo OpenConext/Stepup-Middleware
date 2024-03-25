@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Service;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
@@ -34,25 +35,13 @@ class DeprovisionServiceTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var DeprovisionService
-     */
     private DeprovisionService $deprovisionService;
 
-    /**
-     * @var m\LegacyMockInterface|m\MockInterface|Pipeline
-     */
-    private $pipeline;
+    private MockInterface&Pipeline $pipeline;
 
-    /**
-     * @var m\LegacyMockInterface|m\MockInterface|ApiIdentityRepository
-     */
-    private $apiRepo;
+    private MockInterface&ApiIdentityRepository $apiRepo;
 
-    /**
-     * @var m\LegacyMockInterface|m\MockInterface|IdentityRepository
-     */
-    private $eventRepo;
+    private MockInterface&IdentityRepository $eventRepo;
 
     protected function setUp(): void
     {
@@ -100,7 +89,6 @@ class DeprovisionServiceTest extends TestCase
 
         $data = $this->deprovisionService->readUserData('urn:collab:person:example.com:maynard_keenan');
 
-        $this->assertTrue(is_array($data));
         $this->assertEquals($data['status'], 'OK');
     }
 

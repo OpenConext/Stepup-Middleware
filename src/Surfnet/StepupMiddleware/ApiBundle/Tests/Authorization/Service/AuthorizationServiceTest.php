@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery as m;
+use Mockery\MockInterface;
 use Pagerfanta\Pagerfanta;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
@@ -40,29 +41,14 @@ class AuthorizationServiceTest extends TestCase
 {
     use m\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    /**
-     * @var m\MockInterface|IdentityService
-     */
-    private $identityService;
+    private MockInterface&IdentityService $identityService;
 
-    /**
-     * @var m\MockInterface|InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationService;
+    private MockInterface&InstitutionConfigurationOptionsService $institutionConfigurationService;
 
-    /**
-     * @var m\MockInterface|SecondFactorService
-     */
-    private $secondFactorService;
+    private MockInterface&SecondFactorService $secondFactorService;
 
-    /**
-     * @var m\MockInterface|RecoveryTokenService
-     */
-    private $recoveryTokenService;
+    private MockInterface&RecoveryTokenService $recoveryTokenService;
 
-    /**
-     * @var AuthorizationService
-     */
     private AuthorizationService $service;
 
     protected function setUp(): void

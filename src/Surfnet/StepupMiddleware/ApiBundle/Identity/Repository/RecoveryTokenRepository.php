@@ -30,6 +30,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
+/**
+ * @extends ServiceEntityRepository<RecoveryToken>
+ */
 class RecoveryTokenRepository extends ServiceEntityRepository
 {
     public function __construct(
@@ -60,7 +63,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('rt');
 
-        if ($query->authorizationContext) {
+        if ($query->authorizationContext instanceof \Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all recovery tokens of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(
@@ -70,7 +73,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 'iac',
             );
         }
-        if ($query->identityId) {
+        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
             $queryBuilder
                 ->andWhere('rt.identityId = :identityId')
                 ->setParameter('identityId', $query->identityId);
@@ -136,7 +139,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
             ->select('sf.institution')
             ->groupBy('sf.institution');
 
-        if ($query->authorizationContext) {
+        if ($query->authorizationContext instanceof \Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all second factors of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(

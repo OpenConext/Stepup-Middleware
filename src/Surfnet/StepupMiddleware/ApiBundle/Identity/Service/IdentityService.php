@@ -46,15 +46,14 @@ class IdentityService extends AbstractSearchService
     ) {
     }
 
-    /**
-     * @param string $id
-     * @return Identity|null
-     */
-    public function find(mixed $id): ?Identity
+    public function find(string $id): ?Identity
     {
         return $this->repository->find($id);
     }
 
+    /**
+     * @return Pagerfanta<Identity>
+     */
     public function search(IdentityQuery $query): Pagerfanta
     {
         $searchQuery = $this->repository->createSearchQuery($query);
@@ -109,9 +108,6 @@ class IdentityService extends AbstractSearchService
         return $this->findRegistrationAuthorityCredentialsByIdentity($identity);
     }
 
-    /**
-     * @return null|RegistrationAuthorityCredentials
-     */
     private function findRegistrationAuthorityCredentialsByIdentity(Identity $identity): ?RegistrationAuthorityCredentials
     {
         $raListing = $this->raListingRepository->findByIdentityId(new IdentityId($identity->id));

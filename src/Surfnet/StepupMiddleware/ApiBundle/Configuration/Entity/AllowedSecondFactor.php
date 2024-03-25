@@ -32,7 +32,7 @@ class AllowedSecondFactor
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      *
@@ -40,7 +40,7 @@ class AllowedSecondFactor
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_second_factor_type')]
-    public $secondFactorType;
+    public SecondFactorType $secondFactorType;
 
     private function __construct()
     {

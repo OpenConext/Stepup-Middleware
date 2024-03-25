@@ -29,12 +29,9 @@ final class RaLocationId implements JsonSerializable, Stringable
 {
     private readonly string $raLocationId;
 
-    /**
-     * @param string $raLocationId
-     */
     public function __construct(string $raLocationId)
     {
-        if (!is_string($raLocationId) || trim($raLocationId) === '') {
+        if (trim($raLocationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'raLocationId',

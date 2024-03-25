@@ -68,10 +68,9 @@ class ShowRaaContactInformationOptionTypeTest extends UnitTest
      * @group doctrine
      *
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     * @param $incorrectValue
      */
     public function a_value_can_only_be_converted_to_sql_if_it_is_a_show_raa_contact_information_option_or_null(
-        $incorrectValue,
+        mixed $incorrectValue,
     ): void {
         $this->expectException(ConversionException::class);
 

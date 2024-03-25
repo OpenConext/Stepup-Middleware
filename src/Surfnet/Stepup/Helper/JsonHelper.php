@@ -31,12 +31,8 @@ final class JsonHelper
         JSON_ERROR_UTF8 => 'JSON_ERROR_UTF8 - Malformed UTF-8 characters, possibly incorrectly encoded',
     ];
 
-    public static function decode($json)
+    public static function decode(string $json): mixed
     {
-        if (!is_string($json)) {
-            throw InvalidArgumentException::invalidType('string', 'json', $json);
-        }
-
         $data = json_decode($json, true);
 
         if (JSON_ERROR_NONE !== json_last_error()) {

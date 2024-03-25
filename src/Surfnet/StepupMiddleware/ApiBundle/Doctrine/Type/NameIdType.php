@@ -39,7 +39,7 @@ class NameIdType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         return (string)$value;
@@ -48,7 +48,7 @@ class NameIdType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?NameId
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

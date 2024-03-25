@@ -26,6 +26,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -33,25 +36,13 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         'institution',
     ];
 
-    /**
-     * @var VettingTypeHintCollection
-     */
-    public VettingTypeHintCollection $hints;
-
-    /**
-     * @var Institution
-     */
-    public Institution $institution;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        VettingTypeHintCollection $hints,
-        Institution $institution,
+        public VettingTypeHintCollection $hints,
+        public Institution $institution,
     ) {
         parent::__construct($identityId, $identityInstitution);
-        $this->hints = $hints;
-        $this->institution = $institution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -68,6 +59,9 @@ class VettingTypeHintsSavedEvent extends IdentityEvent implements RightToObtainD
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

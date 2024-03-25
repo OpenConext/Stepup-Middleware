@@ -57,6 +57,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
+/**
+ * @extends ServiceEntityRepository<AuditLogEntry>
+ */
 class AuditLogRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)

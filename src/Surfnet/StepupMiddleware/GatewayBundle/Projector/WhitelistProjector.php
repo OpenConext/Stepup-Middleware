@@ -32,7 +32,7 @@ class WhitelistProjector extends Projector
     {
     }
 
-    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    protected function applyWhitelistCreatedEvent(WhitelistCreatedEvent $event): void
     {
         $whitelistEntries = [];
         foreach ($event->whitelistedInstitutions as $institution) {
@@ -42,7 +42,7 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    protected function applyWhitelistReplacedEvent(WhitelistReplacedEvent $event): void
     {
         $this->whitelistEntryRepository->removeAll();
 
@@ -54,7 +54,7 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    protected function applyInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event): void
     {
         $whitelistEntries = [];
         foreach ($event->addedInstitutions as $institution) {
@@ -64,7 +64,7 @@ class WhitelistProjector extends Projector
         $this->whitelistEntryRepository->saveEntries($whitelistEntries);
     }
 
-    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event)
+    protected function applyInstitutionsRemovedFromWhitelistEvent(InstitutionsRemovedFromWhitelistEvent $event): void
     {
         $institutions = [];
         foreach ($event->removedInstitutions as $institution) {

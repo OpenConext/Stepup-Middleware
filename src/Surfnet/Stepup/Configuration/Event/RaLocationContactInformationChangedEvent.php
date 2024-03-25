@@ -25,29 +25,8 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 
 class RaLocationContactInformationChangedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public InstitutionConfigurationId $institutionConfigurationId;
-
-    /**
-     * @var RaLocationId
-     */
-    public RaLocationId $raLocationId;
-
-    /**
-     * @var ContactInformation
-     */
-    public ContactInformation $contactInformation;
-
-    public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        RaLocationId $raLocationId,
-        ContactInformation $contactInformation,
-    ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->raLocationId = $raLocationId;
-        $this->contactInformation = $contactInformation;
+    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public RaLocationId $raLocationId, public ContactInformation $contactInformation)
+    {
     }
 
     public static function deserialize(array $data): self

@@ -33,6 +33,9 @@ class RecoveryTokenService extends AbstractSearchService
     {
     }
 
+    /**
+     * @return Pagerfanta<RecoveryToken>
+     */
     public function search(RecoveryTokenQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->recoveryTokenRepository->createSearchQuery($query);

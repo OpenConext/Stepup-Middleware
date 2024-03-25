@@ -38,49 +38,49 @@ class InstitutionConfigurationOptions
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var UseRaLocationsOption
      */
     #[ORM\Column(type: 'stepup_use_ra_locations_option')]
-    public $useRaLocationsOption;
+    public UseRaLocationsOption $useRaLocationsOption;
 
     /**
      * @var ShowRaaContactInformationOption
      */
     #[ORM\Column(type: 'stepup_show_raa_contact_information_option')]
-    public $showRaaContactInformationOption;
+    public ShowRaaContactInformationOption $showRaaContactInformationOption;
 
     /**
      * @var VerifyEmailOption
      */
     #[ORM\Column(type: 'stepup_verify_email_option', options: ['default' => 1])]
-    public $verifyEmailOption;
+    public VerifyEmailOption $verifyEmailOption;
 
     /**
      * @var SelfVetOption
      */
     #[ORM\Column(type: 'stepup_self_vet_option', options: ['default' => 0])]
-    public $selfVetOption;
+    public SelfVetOption $selfVetOption;
 
     /**
      * @var SsoOn2FaOption
      */
     #[ORM\Column(type: 'stepup_sso_on_2fa_option', options: ['default' => 0])]
-    public $ssoOn2faOption;
+    public SsoOn2faOption $ssoOn2faOption;
 
     /**
      * @var SelfAssertedTokensOption
      */
     #[ORM\Column(type: 'stepup_self_asserted_tokens_option', options: ['default' => 0])]
-    public $selfAssertedTokensOption;
+    public SelfAssertedTokensOption $selfAssertedTokensOption;
 
     /**
      * @var NumberOfTokensPerIdentityOption
      */
     #[ORM\Column(type: 'stepup_number_of_tokens_per_identity_option', options: ['default' => 0])]
-    public $numberOfTokensPerIdentityOption;
+    public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
     public static function create(
         Institution $institution,

@@ -18,9 +18,6 @@ services:
   Surfnet\StepupMiddleware\ManagementBundle\Service\DBALConnectionHelper: "@surfnet_stepup_middleware_management.dbal_connection_helper"
   Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator: "@surfnet_stepup_middleware_management.validator.email_templates_configuration"
 
-
-  Liip\FunctionalTestBundle\Validator\DataCollectingValidator: '@validator'
-
   surfnet_stepup_middleware_management.validator.configuration:
     class: Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator
     arguments:

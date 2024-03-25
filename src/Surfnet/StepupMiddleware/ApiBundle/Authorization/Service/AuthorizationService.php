@@ -88,7 +88,7 @@ class AuthorizationService
 
         // Only allow self-asserted token (SAT) if the user does not have a token yet, or the first
         // registered token was a SAT.
-        $hadOtherTokenType = $options->possessedSelfAssertedToken === false && $options->possessedToken === true;
+        $hadOtherTokenType = $options->possessedSelfAssertedToken === false && $options->possessedToken;
         if ($hadOtherTokenType) {
             return $this->deny(
                 'Identity never possessed a self-asserted token, but did/does possess one of the other types',

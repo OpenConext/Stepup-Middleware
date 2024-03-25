@@ -60,7 +60,7 @@ class DateTimeType extends Type
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?DateTime
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         $dateTime = CoreDateTime::createFromFormat(

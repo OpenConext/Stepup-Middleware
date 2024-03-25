@@ -29,6 +29,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent implements
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'institution',
@@ -37,26 +40,6 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         'contact_information',
         'ra_institution',
     ];
-
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var Location
-     */
-    public Location $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public ContactInformation $contactInformation;
-
-    /**
-     * @var Institution
-     */
-    public Institution $raInstitution;
 
     /**
      * @param IdentityId $identityId
@@ -69,17 +52,12 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        Location $location,
-        ContactInformation $contactInformation,
-        Institution $raInstitution,
+        public NameId $nameId,
+        public Location $location,
+        public ContactInformation $contactInformation,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
-        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -120,6 +98,9 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

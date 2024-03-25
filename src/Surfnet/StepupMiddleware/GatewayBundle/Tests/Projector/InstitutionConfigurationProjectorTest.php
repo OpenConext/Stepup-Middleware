@@ -22,6 +22,7 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Tests\Projector;
 
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Event\SsoOn2faOptionChangedEvent;
@@ -38,7 +39,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
 
     private InstitutionConfigurationProjector $projector;
 
-    private $repository;
+    private InstitutionConfigurationRepository&MockInterface $repository;
 
     protected function setUp(): void
     {
@@ -58,7 +59,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn(null);
         $this->repository->shouldReceive('save')->withArgs(
             fn(InstitutionConfiguration $configuration,
-            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled,
         );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);
@@ -76,7 +77,7 @@ class InstitutionConfigurationProjectorTest extends TestCase
         $this->repository->shouldReceive('findByInstitution')->with('institution-a.nl')->andReturn($configuration);
         $this->repository->shouldReceive('save')->withArgs(
             fn(InstitutionConfiguration $configuration,
-            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled === true,
+            ): bool => $configuration->institution === 'institution-a.nl' && $configuration->ssoOn2faEnabled,
         );
 
         $this->projector->applySsoOn2faOptionChangedEvent($event);

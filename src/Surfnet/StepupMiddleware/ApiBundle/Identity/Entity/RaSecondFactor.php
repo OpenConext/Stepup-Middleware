@@ -41,48 +41,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 class RaSecondFactor implements JsonSerializable
 {
     /**
-     * @var Institution
-     */
-    #[ORM\Column(type: 'institution')]
-    public Institution $institution;
-
-    /**
-     * The name of the registrant.
-     *
-     *
-     * @var CommonName
-     */
-    #[ORM\Column(type: 'stepup_common_name')]
-    public CommonName $name;
-
-    /**
-     * The e-mail of the registrant.
-     *
-     *
-     * @var Email
-     */
-    #[ORM\Column(type: 'stepup_email')]
-    public Email $email;
-
-    /**
-     * @var DocumentNumber
-     */
-    #[ORM\Column(type: 'stepup_document_number', nullable: true)]
-    public ?DocumentNumber $documentNumber;
-
-    /**
      * @var SecondFactorStatus
      */
     #[ORM\Column(type: 'stepup_second_factor_status')]
     public SecondFactorStatus $status;
 
-    /**
-     * @param string $id
-     * @param string $type
-     * @param string $secondFactorId
-     * @param string $identityId
-     * @param DocumentNumber|null $documentNumber
-     */
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(length: 36)]
@@ -93,15 +56,21 @@ class RaSecondFactor implements JsonSerializable
         public string  $secondFactorId,
         #[ORM\Column(length: 36)]
         public string  $identityId,
-        Institution    $institution,
-        CommonName     $name,
-        Email          $email,
-        DocumentNumber $documentNumber = null,
+        #[ORM\Column(type: 'institution')]
+        public Institution $institution,
+        /**
+         * The name of the registrant.
+         */
+        #[ORM\Column(type: 'stepup_common_name')]
+        public CommonName $name,
+        /**
+         * The e-mail of the registrant.
+         */
+        #[ORM\Column(type: 'stepup_email')]
+        public Email $email,
+        #[ORM\Column(type: 'stepup_document_number', nullable: true)]
+        public ?DocumentNumber $documentNumber = null,
     ) {
-        $this->institution = $institution;
-        $this->name = $name;
-        $this->email = $email;
-        $this->documentNumber = $documentNumber;
         $this->status = SecondFactorStatus::unverified();
     }
 

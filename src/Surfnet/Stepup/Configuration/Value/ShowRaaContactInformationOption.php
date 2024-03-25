@@ -23,24 +23,16 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class ShowRaaContactInformationOption implements JsonSerializable
 {
-    private readonly bool $showRaaContactInformationOption;
+
 
     public static function getDefault(): self
     {
         return new self(true);
     }
 
-    public function __construct($showRaaContactInformationOption)
-    {
-        if (!is_bool($showRaaContactInformationOption)) {
-            throw InvalidArgumentException::invalidType(
-                'boolean',
-                'showRaaContactInformationOption',
-                $showRaaContactInformationOption,
-            );
-        }
-
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
+    public function __construct(
+        private readonly bool $showRaaContactInformationOption
+    ) {
     }
 
     public function equals(ShowRaaContactInformationOption $other): bool

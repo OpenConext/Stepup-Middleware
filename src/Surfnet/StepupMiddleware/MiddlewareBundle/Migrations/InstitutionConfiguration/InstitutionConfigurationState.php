@@ -33,12 +33,12 @@ final readonly class InstitutionConfigurationState
      * @return InstitutionConfigurationState
      */
     public static function load(
-        $configuredInstitutions,
-        $institutionConfigurationOptions,
-        $raLocations,
+        array $configuredInstitutions,
+        array $institutionConfigurationOptions,
+        array $raLocations,
     ): self {
         $optionInstitutions = array_map(
-            fn(InstitutionConfigurationOptions $options) => $options->institution->getInstitution(),
+            fn(InstitutionConfigurationOptions $options): string => $options->institution->getInstitution(),
             $institutionConfigurationOptions,
         );
         $mappedConfigurationOptions = array_combine($optionInstitutions, $institutionConfigurationOptions);
@@ -89,7 +89,7 @@ final readonly class InstitutionConfigurationState
     /**
      * @return Generator
      */
-    public function inferRemovalCommands()
+    public function inferRemovalCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferRemoveInstitutionConfigurationByIdCommand();
@@ -99,7 +99,7 @@ final readonly class InstitutionConfigurationState
     /**
      * @return Generator
      */
-    public function inferCreateCommands()
+    public function inferCreateCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferCreateInstitutionConfigurationCommand();
@@ -109,7 +109,7 @@ final readonly class InstitutionConfigurationState
     /**
      * @return Generator
      */
-    public function inferReconfigureCommands()
+    public function inferReconfigureCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferReconfigureInstitutionConfigurationCommand();
@@ -119,7 +119,7 @@ final readonly class InstitutionConfigurationState
     /**
      * @return Generator
      */
-    public function inferAddRaLocationCommands()
+    public function inferAddRaLocationCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             foreach ($mappedInstitutionConfiguration->inferAddRaLocationCommands() as $command) {

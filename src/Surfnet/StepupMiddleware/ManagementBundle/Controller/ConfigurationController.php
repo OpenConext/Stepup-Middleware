@@ -34,7 +34,7 @@ class ConfigurationController extends AbstractController
     ) {
     }
 
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         $command = new UpdateConfigurationCommand();
         $command->UUID = (string)Uuid::uuid4();

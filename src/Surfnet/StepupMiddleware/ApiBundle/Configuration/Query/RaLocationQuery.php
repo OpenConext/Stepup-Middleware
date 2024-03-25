@@ -25,15 +25,15 @@ final class RaLocationQuery
     /**
      * @var string|Institution
      */
-    public $institution;
+    public string|Institution $institution;
 
     /**
      * @var string
      */
-    public $orderBy = 'name';
+    public string $orderBy = 'name';
 
     /**
      * @var string
      */
-    public $orderDirection = 'asc';
+    public string $orderDirection = 'asc';
 }

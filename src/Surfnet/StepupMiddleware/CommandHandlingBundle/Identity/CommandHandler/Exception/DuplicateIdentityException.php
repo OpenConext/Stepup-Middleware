@@ -17,14 +17,14 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\CommandHandler\Exception;
 
-use Exception;
 use RuntimeException;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
+use Throwable;
 
 final class DuplicateIdentityException extends RuntimeException
 {
-    public function __construct($message = "", $code = 0, Exception $previous = null)
+    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

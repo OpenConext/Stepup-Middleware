@@ -101,7 +101,7 @@ interface Identity extends AggregateRoot
         GssfId                  $gssfId,
         bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-                                $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void;
 
     /**
@@ -113,11 +113,10 @@ interface Identity extends AggregateRoot
         U2fKeyHandle            $keyHandle,
         bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-                                $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void;
 
     /**
-     * @param string $verificationNonce
      * @return void
      */
     public function verifyEmail(string $verificationNonce): void;
@@ -280,5 +279,5 @@ interface Identity extends AggregateRoot
      */
     public function promisePossessionOfSafeStoreSecretRecoveryToken(RecoveryTokenId $tokenId, SafeStore $secret): void;
 
-    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints);
+    public function saveVettingTypeHints(Institution $institution, VettingTypeHintCollection $hints): void;
 }

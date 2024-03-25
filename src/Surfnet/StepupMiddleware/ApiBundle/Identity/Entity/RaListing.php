@@ -94,7 +94,7 @@ class RaListing implements JsonSerializable
     public ContactInformation $contactInformation;
 
     public static function create(
-        $identityId,
+        string $identityId,
         Institution $institution,
         CommonName $commonName,
         Email $email,
@@ -103,10 +103,6 @@ class RaListing implements JsonSerializable
         ContactInformation $contactInformation,
         Institution $raInstitution,
     ): self {
-        if (!is_string($identityId)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $identityId);
-        }
-
         $entry = new self();
         $entry->identityId = $identityId;
         $entry->institution = $institution;

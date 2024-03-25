@@ -35,21 +35,15 @@ final class InstitutionAuthorizationOption implements JsonSerializable
         private readonly InstitutionSet  $institutionSet,
         bool                             $isDefault,
     ) {
-        $this->isDefault = (bool)$isDefault;
+        $this->isDefault = $isDefault;
     }
 
-    public static function fromInstitutionConfig(InstitutionRole $role, $institutions = null): InstitutionAuthorizationOption
-    {
+    public static function fromInstitutionConfig(
+        InstitutionRole $role,
+        ?array $institutions = null
+    ): InstitutionAuthorizationOption {
         if (is_null($institutions)) {
             return self::getDefault($role);
-        }
-
-        if (!is_array($institutions)) {
-            throw InvalidArgumentException::invalidType(
-                'array',
-                'institutions',
-                $institutions,
-            );
         }
 
         array_walk(
@@ -137,7 +131,7 @@ final class InstitutionAuthorizationOption implements JsonSerializable
     {
         $institutions = $this->getInstitutions($default);
         $list = array_map(
-            fn(Institution $institution) => $institution->getInstitution(),
+            fn(Institution $institution): string => $institution->getInstitution(),
             $institutions,
         );
         return in_array($institution->getInstitution(), $list);

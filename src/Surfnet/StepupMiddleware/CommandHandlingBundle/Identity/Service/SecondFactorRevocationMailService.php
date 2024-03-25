@@ -39,11 +39,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class SecondFactorRevocationMailService
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-
     private readonly string $fallbackLocale;
 
     private readonly string $selfServiceUrl;
@@ -54,7 +49,7 @@ final class SecondFactorRevocationMailService
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         string $selfServiceUrl,
@@ -62,7 +57,6 @@ final class SecondFactorRevocationMailService
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         Assertion::string($selfServiceUrl, 'Self Service URL "%s" expected to be string, type %s given');
-        $this->translator = $translator;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
     }

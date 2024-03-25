@@ -22,11 +22,11 @@ use JsonSerializable;
 
 interface RecoveryTokenIdentifier extends JsonSerializable
 {
-    public static function unknown();
+    public static function unknown(): RecoveryTokenIdentifier;
 
-    public function getValue();
+    public function getValue(): string;
 
-    public function equals($other): bool;
+    public function equals(RecoveryTokenIdentifier $other): bool;
 
-    public function __toString();
+    public function __toString(): string;
 }

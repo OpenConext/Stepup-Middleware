@@ -31,7 +31,6 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
 
     /**
      * @deprecated To be removed in next release; use normalizedFrom method to account for case-(in)sensitivity issues
-     *
      */
     public static function from(Institution $institution): self
     {
@@ -43,9 +42,9 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
         return new self((string)Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
     }
 
-    public function __construct($institutionConfigurationId)
+    public function __construct(string $institutionConfigurationId)
     {
-        if (!is_string($institutionConfigurationId) || trim($institutionConfigurationId) === '') {
+        if (trim($institutionConfigurationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'institutionConfigurationId',
@@ -69,9 +68,6 @@ final class InstitutionConfigurationId implements JsonSerializable, Stringable
         return $this->institutionConfigurationId === $otherInstitutionConfigurationId->institutionConfigurationId;
     }
 
-    /**
-     * @return string
-     */
     public function getInstitutionConfigurationId(): string
     {
         return $this->institutionConfigurationId;

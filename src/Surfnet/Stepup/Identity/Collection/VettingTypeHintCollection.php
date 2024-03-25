@@ -71,6 +71,6 @@ final class VettingTypeHintCollection implements JsonSerializable, SerializableI
 
     public function serialize(): array
     {
-        return array_map(fn(VettingTypeHint $hint) => $hint->jsonSerialize(), $this->elements);
+        return array_map(fn(VettingTypeHint $hint): array => $hint->jsonSerialize(), $this->elements);
     }
 }

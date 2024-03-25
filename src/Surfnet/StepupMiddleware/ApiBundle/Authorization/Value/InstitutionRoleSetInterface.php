@@ -20,5 +20,5 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Authorization\Value;
 
 interface InstitutionRoleSetInterface
 {
-    public function getRoles();
+    public function getRoles(): array;
 }

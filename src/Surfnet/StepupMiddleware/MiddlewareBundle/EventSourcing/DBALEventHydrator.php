@@ -23,6 +23,7 @@ use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Broadway\Serializer\SimpleInterfaceSerializer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Statement;
 use PDO;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
@@ -72,7 +73,11 @@ class DBALEventHydrator
         return new DomainEventStream($events);
     }
 
-    public function fetchByEventTypes($eventTypes): DomainEventStream
+    /**
+     * @param string[] $eventTypes
+     * @throws Exception
+     */
+    public function fetchByEventTypes(array $eventTypes): DomainEventStream
     {
         $eventTypePlaceholders = implode(', ', array_fill(0, count($eventTypes), '?'));
 
@@ -116,9 +121,9 @@ class DBALEventHydrator
         );
     }
 
-    private function prepareLoadStatement()
+    private function prepareLoadStatement(): Statement
     {
-        if ($this->loadStatement === null) {
+        if (!$this->loadStatement instanceof Statement) {
             $query = str_replace(
                 ['%es%', '%sd%'],
                 [$this->eventStreamTableName, $this->sensitiveDataTable],

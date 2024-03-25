@@ -49,7 +49,7 @@ class InstitutionAuthorizationService
     /**
      * @return InstitutionAuthorizationOptionMap
      */
-    public function findAuthorizationsFor(Institution $institution)
+    public function findAuthorizationsFor(Institution $institution): InstitutionAuthorizationOptionMap
     {
         $authorizations = $this->repository->findAuthorizationOptionsForInstitution($institution);
 

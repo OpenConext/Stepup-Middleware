@@ -22,20 +22,10 @@ use JsonSerializable;
 use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Locale implements JsonSerializable, Stringable
+final readonly class Locale implements JsonSerializable, Stringable
 {
-    private readonly string $locale;
-
-    /**
-     * @param string $locale
-     */
-    public function __construct(string $locale)
+    public function __construct(private string $locale)
     {
-        if (!is_string($locale)) {
-            throw InvalidArgumentException::invalidType('string', 'locale', $locale);
-        }
-
-        $this->locale = $locale;
     }
 
     public function equals(Locale $other): bool

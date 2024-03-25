@@ -25,7 +25,7 @@ interface Id
     /**
      * @throws InvalidArgumentException
      */
-    public function __construct(mixed $value);
+    public function __construct(string $value);
 
     /**
      * @return string

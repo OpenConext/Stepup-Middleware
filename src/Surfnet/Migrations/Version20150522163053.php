@@ -57,7 +57,7 @@ class Version20150522163053 extends AbstractMigration implements ContainerAwareI
         $this->addSql(sprintf('ALTER TABLE %s.saml_entity ADD PRIMARY KEY (entity_id)', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

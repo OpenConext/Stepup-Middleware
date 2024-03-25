@@ -34,7 +34,7 @@ final class AuditLogController extends AbstractController
     ) {
     }
 
-    public function secondFactorAuditLog(Request $request, Institution $institution)
+    public function secondFactorAuditLog(Request $request, Institution $institution): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

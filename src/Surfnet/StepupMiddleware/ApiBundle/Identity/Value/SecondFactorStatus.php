@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Stringable;
 
-final class SecondFactorStatus implements Stringable
+final readonly class SecondFactorStatus implements Stringable
 {
     public static function unverified(): self
     {
@@ -48,7 +48,6 @@ final class SecondFactorStatus implements Stringable
     }
 
     /**
-     * @param string $status
      * @return bool
      */
     public static function isValidStatus(string $status): bool
@@ -56,9 +55,6 @@ final class SecondFactorStatus implements Stringable
         return in_array($status, ['unverified', 'verified', 'vetted', 'revoked', 'forgotten', true]);
     }
 
-    /**
-     * @param string $status
-     */
     private function __construct(private string $status)
     {
     }

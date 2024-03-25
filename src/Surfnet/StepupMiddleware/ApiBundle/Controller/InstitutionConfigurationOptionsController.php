@@ -36,7 +36,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
     ) {
     }
 
-    public function getForInstitution($institutionName): JsonResponse
+    public function getForInstitution(string $institutionName): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 
@@ -50,7 +50,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
             ->allowedSecondFactorListService
             ->getAllowedSecondFactorListFor($institution);
 
-        if ($institutionConfigurationOptions === null) {
+        if (!$institutionConfigurationOptions instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
             throw new NotFoundHttpException(
                 sprintf('No institution configuration options found for institution "%s"', $institution),
             );

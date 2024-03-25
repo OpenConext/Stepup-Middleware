@@ -31,6 +31,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'id',
         'institution',
@@ -40,40 +43,15 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         'email',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale
-     */
-    public Locale $preferredLocale;
-
     public function __construct(
         IdentityId $id,
         Institution $institution,
-        NameId $nameId,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public NameId $nameId,
+        public CommonName $commonName,
+        public Email $email,
+        public Locale $preferredLocale,
     ) {
         parent::__construct($id, $institution);
-
-        $this->nameId = $nameId;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -99,6 +77,8 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -130,6 +110,9 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

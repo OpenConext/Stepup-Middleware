@@ -30,6 +30,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
+/**
+ * @extends ServiceEntityRepository<RaSecondFactor>
+ */
 class RaSecondFactorRepository extends ServiceEntityRepository
 {
     public function __construct(
@@ -48,7 +51,6 @@ class RaSecondFactorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $identityId
      * @return RaSecondFactor[]
      */
     public function findByIdentityId(string $identityId): array
@@ -58,7 +60,6 @@ class RaSecondFactorRepository extends ServiceEntityRepository
 
 
     /**
-     * @param string $institution
      * @return RaSecondFactor[]
      */
     public function findByInstitution(string $institution): array

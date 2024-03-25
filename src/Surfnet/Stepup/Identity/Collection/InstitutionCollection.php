@@ -26,6 +26,9 @@ use JsonSerializable;
 use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Value\Institution;
 
+/**
+ * @implements IteratorAggregate<Institution>
+ */
 final class InstitutionCollection implements IteratorAggregate, JsonSerializable, SerializableInterface
 {
     private array $elements = [];

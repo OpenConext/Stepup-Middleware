@@ -28,9 +28,6 @@ final class ContactInformation implements JsonSerializable, Stringable
 {
     private readonly string $contactInformation;
 
-    /**
-     * @param string $contactInformation
-     */
     public function __construct(string $contactInformation)
     {
         $this->contactInformation = trim($contactInformation);

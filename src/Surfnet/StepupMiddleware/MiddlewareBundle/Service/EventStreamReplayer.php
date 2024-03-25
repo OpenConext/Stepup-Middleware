@@ -18,7 +18,6 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Exception;
@@ -71,7 +70,7 @@ class EventStreamReplayer
         );
     }
 
-    public function replayEvents(OutputInterface $output, $increments): void
+    public function replayEvents(OutputInterface $output, int $increments): void
     {
         $preparationProgress = new ProgressBar($output, 3);
         $preparationProgress->setFormat('event_replay');

@@ -30,8 +30,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class EmailVerificationMailService
 {
-    private TranslatorInterface $translator;
-
     private readonly string $emailVerificationUrlTemplate;
 
     /**
@@ -40,7 +38,7 @@ final class EmailVerificationMailService
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         string $emailVerificationUrlTemplate,
         private readonly EmailTemplateService $emailTemplateService,
         private readonly string $fallbackLocale,
@@ -50,7 +48,6 @@ final class EmailVerificationMailService
             $emailVerificationUrlTemplate,
             'Email verification URL template "%s" expected to be string, type %s given',
         );
-        $this->translator = $translator;
         $this->emailVerificationUrlTemplate = $emailVerificationUrlTemplate;
     }
 

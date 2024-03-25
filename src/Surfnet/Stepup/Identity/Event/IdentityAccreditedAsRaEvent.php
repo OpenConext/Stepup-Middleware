@@ -32,6 +32,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'name_id',
@@ -42,47 +45,22 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
     ];
 
     /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public RegistrationAuthorityRole $registrationAuthorityRole;
-
-    /**
-     * @var Location
-     */
-    public Location $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public ContactInformation $contactInformation;
-
-    /**
      * @param IdentityId $identityId
      * @param NameId $nameId
      * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
+     * @param RegistrationAuthorityRole $registrationAuthorityRole
      * @param Location $location
      * @param ContactInformation $contactInformation
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
-        Location $location,
-        ContactInformation $contactInformation,
+        public RegistrationAuthorityRole $registrationAuthorityRole,
+        public Location $location,
+        public ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -123,6 +101,9 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

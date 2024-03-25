@@ -34,6 +34,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -45,49 +48,18 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
     ];
 
     /**
-     * @var Institution
-     */
-    public Institution $targetInstitution;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $targetSecondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var SecondFactorIdentifier
-     */
-    public SecondFactorIdentifier $secondFactorIdentifier;
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        Institution $targetInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorId $targetSecondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
+        public Institution $targetInstitution,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorId $targetSecondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->targetSecondFactorId = $targetSecondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->targetInstitution = $targetInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -118,6 +90,8 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -149,6 +123,9 @@ class SecondFactorMigratedToEvent extends IdentityEvent implements Forgettable, 
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

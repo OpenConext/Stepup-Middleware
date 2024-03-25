@@ -370,7 +370,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         // @todo remove this BC construct once we drop BC support for SelfService 3.5
         if ($command->authoringSecondFactorIdentifier) {
             $loaIdentifier = $command->authoringSecondFactorIdentifier;
-        } elseif ($command->authoringSecondFactorLoa) {
+        } elseif ($command->authoringSecondFactorLoa !== '' && $command->authoringSecondFactorLoa !== '0') {
             $loaIdentifier = $command->authoringSecondFactorLoa;
         }
         if (!$loaIdentifier) {
@@ -538,7 +538,7 @@ class IdentityCommandHandler extends SimpleCommandHandler
         $configuration = $this->institutionConfigurationOptionsService
             ->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($configuration === null) {
+        if (!$configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions) {
             return true;
         }
 

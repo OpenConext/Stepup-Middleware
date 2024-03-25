@@ -28,15 +28,8 @@ final class ContactInformation implements JsonSerializable, Stringable
 {
     private readonly string $contactInformation;
 
-    /**
-     * @param string $contactInformation
-     */
     public function __construct(string $contactInformation)
     {
-        if (!is_string($contactInformation)) {
-            throw InvalidArgumentException::invalidType('string', 'contactInformation', $contactInformation);
-        }
-
         $this->contactInformation = trim($contactInformation);
     }
 

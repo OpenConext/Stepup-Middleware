@@ -61,7 +61,7 @@ class ConfigurationContactInformationType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ContactInformation
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

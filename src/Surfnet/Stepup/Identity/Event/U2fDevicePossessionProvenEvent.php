@@ -37,6 +37,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -47,36 +50,6 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         'email',
         'common_name',
     ];
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var U2fKeyHandle
-     */
-    public U2fKeyHandle $keyHandle;
-
-    /**
-     * @var EmailVerificationWindow
-     */
-    public EmailVerificationWindow $emailVerificationWindow;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -95,23 +68,16 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
     public function __construct(
         IdentityId              $identityId,
         Institution             $identityInstitution,
-        SecondFactorId          $secondFactorId,
-        U2fKeyHandle            $keyHandle,
+        public SecondFactorId          $secondFactorId,
+        public U2fKeyHandle            $keyHandle,
         public bool             $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
+        public EmailVerificationWindow $emailVerificationWindow,
         public string           $emailVerificationNonce,
-        CommonName              $commonName,
-        Email                   $email,
-        Locale                  $preferredLocale,
+        public CommonName              $commonName,
+        public Email                   $email,
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->keyHandle = $keyHandle;
-        $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -148,6 +114,8 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -186,6 +154,9 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

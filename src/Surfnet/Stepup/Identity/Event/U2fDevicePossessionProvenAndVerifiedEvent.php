@@ -40,6 +40,9 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     PossessionProvenAndVerified,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -53,65 +56,28 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     ];
 
     /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var U2fKeyHandle
-     */
-    public U2fKeyHandle $keyHandle;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
-
-    /**
-     * @var DateTime
-     */
-    public DateTime $registrationRequestedAt;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
      * @param U2fKeyHandle $keyHandle
      * @param CommonName $commonName
      * @param Email $email
-     * @param Locale $locale
+     * @param Locale $preferredLocale
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      */
     public function __construct(
         IdentityId     $identityId,
         Institution    $identityInstitution,
-        SecondFactorId $secondFactorId,
-        U2fKeyHandle   $keyHandle,
-        CommonName     $commonName,
-        Email          $email,
-        Locale         $locale,
-        DateTime       $registrationRequestedAt,
+        public SecondFactorId $secondFactorId,
+        public U2fKeyHandle   $keyHandle,
+        public CommonName     $commonName,
+        public Email          $email,
+        public Locale         $preferredLocale,
+        public DateTime       $registrationRequestedAt,
         public string  $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->keyHandle = $keyHandle;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $locale;
-        $this->registrationRequestedAt = $registrationRequestedAt;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -148,6 +114,8 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -185,6 +153,9 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

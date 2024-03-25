@@ -368,7 +368,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         GssfId                  $gssfId,
         bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-                                $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -417,7 +417,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         U2fKeyHandle            $keyHandle,
         bool                    $emailVerificationRequired,
         EmailVerificationWindow $emailVerificationWindow,
-                                $maxNumberOfTokens,
+        int                     $maxNumberOfTokens,
     ): void {
         $this->assertNotForgotten();
         $this->assertUserMayAddSecondFactor($maxNumberOfTokens);
@@ -510,7 +510,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
         );
         $registrantsSecondFactor = $registrant->getVerifiedSecondFactor($registrantsSecondFactorId);
 
-        if ($registrantsSecondFactor === null) {
+        if (!$registrantsSecondFactor instanceof \Surfnet\Stepup\Identity\Entity\VerifiedSecondFactor) {
             throw new DomainException(
                 sprintf('Registrant second factor with ID %s does not exist', $registrantsSecondFactorId),
             );
@@ -1460,7 +1460,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
     /**
      * @throws DomainException
      */
-    private function assertUserMayAddSecondFactor($maxNumberOfTokens): void
+    private function assertUserMayAddSecondFactor(int $maxNumberOfTokens): void
     {
         if (count($this->unverifiedSecondFactors) +
             count($this->verifiedSecondFactors) +

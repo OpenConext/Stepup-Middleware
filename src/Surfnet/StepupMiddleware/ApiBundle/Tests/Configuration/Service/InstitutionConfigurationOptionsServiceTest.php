@@ -109,7 +109,7 @@ class InstitutionConfigurationOptionsServiceTest extends TestCase
         $this->assertEquals($expectedNumberOfTokens, $numberOfTokens);
     }
 
-    private function buildConfigurationOption(int $expectedNumberOfTokens)
+    private function buildConfigurationOption(int $expectedNumberOfTokens): InstitutionConfigurationOptions&MockInterface
     {
         $numberOfTokensOptionMock = m::mock(NumberOfTokensPerIdentityOption::class);
         $numberOfTokensOptionMock

@@ -23,10 +23,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 
 class Profile implements JsonSerializable
 {
-    /**
-     *
-     * @param bool $isSraa
-     */
+    
     public function __construct(
         private readonly Identity                        $identity,
         private readonly AuthorizedInstitutionCollection $authorizedInstitutionCollection,

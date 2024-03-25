@@ -24,6 +24,9 @@ use IteratorAggregate;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
 use Surfnet\Stepup\Exception\LogicException;
 
+/**
+ * @implements IteratorAggregate<RaLocation>
+ */
 final class RaLocationList implements IteratorAggregate
 {
     /**

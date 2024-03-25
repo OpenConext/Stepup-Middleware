@@ -22,6 +22,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate;
 
+/**
+ * @extends ServiceEntityRepository<EmailTemplate>
+ */
 final class EmailTemplateRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -35,7 +38,7 @@ final class EmailTemplateRepository extends ServiceEntityRepository
      * @param string $fallbackLocale
      * @return EmailTemplate|null
      */
-    public function findOneByName(mixed $name, mixed $preferredLocale, mixed $fallbackLocale)
+    public function findOneByName(mixed $name, mixed $preferredLocale, mixed $fallbackLocale): ?EmailTemplate
     {
         return $this
             ->createQueryBuilder('tpl')

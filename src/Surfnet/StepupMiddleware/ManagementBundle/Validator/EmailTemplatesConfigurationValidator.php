@@ -38,7 +38,11 @@ final class EmailTemplatesConfigurationValidator implements ConfigurationValidat
         $this->requiredLocale = $requiredLocale;
     }
 
-    public function validate(array $configuration, $propertyPath): void
+    /**
+     * @param array<string, mixed> $configuration
+     * @throws \Assert\AssertionFailedException
+     */
+    public function validate(array $configuration, string $propertyPath): void
     {
         $templateNames = [
             'confirm_email',

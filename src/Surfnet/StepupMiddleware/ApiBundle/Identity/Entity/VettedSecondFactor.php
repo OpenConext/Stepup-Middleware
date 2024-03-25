@@ -43,11 +43,11 @@ class VettedSecondFactor implements JsonSerializable
     public string $secondFactorIdentifier;
 
     #[ORM\Column(length: 255, nullable: true)]
-    public ?string $vettingType;
+    public ?string $vettingType = null;
 
     public function isEqual(VettedSecondFactor $vettedSecondFactor): bool
     {
-        return $vettedSecondFactor->type == $this->type && $vettedSecondFactor->secondFactorIdentifier == $this->secondFactorIdentifier;
+        return $vettedSecondFactor->type === $this->type && $vettedSecondFactor->secondFactorIdentifier === $this->secondFactorIdentifier;
     }
 
     public function vettingType(): string

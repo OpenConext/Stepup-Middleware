@@ -34,6 +34,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -44,36 +47,6 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
         'email',
         'common_name',
     ];
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var PhoneNumber
-     */
-    public PhoneNumber $phoneNumber;
-
-    /**
-     * @var EmailVerificationWindow
-     */
-    public EmailVerificationWindow $emailVerificationWindow;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
 
     /**
      * @param IdentityId $identityId
@@ -92,23 +65,16 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
     public function __construct(
         IdentityId              $identityId,
         Institution             $identityInstitution,
-        SecondFactorId          $secondFactorId,
-        PhoneNumber             $phoneNumber,
+        public SecondFactorId          $secondFactorId,
+        public PhoneNumber             $phoneNumber,
         public bool             $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
+        public EmailVerificationWindow $emailVerificationWindow,
         public string           $emailVerificationNonce,
-        CommonName              $commonName,
-        Email                   $email,
-        Locale                  $preferredLocale,
+        public CommonName              $commonName,
+        public Email                   $email,
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->phoneNumber = $phoneNumber;
-        $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -145,6 +111,8 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -183,6 +151,9 @@ class PhonePossessionProvenEvent extends IdentityEvent implements Forgettable, R
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

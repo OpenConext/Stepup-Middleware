@@ -34,9 +34,9 @@ class RegistrationAuthorityCredentials implements JsonSerializable
 
     private CommonName $commonName;
 
-    private ?Location $location;
+    private ?Location $location = null;
 
-    private ?ContactInformation $contactInformation;
+    private ?ContactInformation $contactInformation = null;
 
     private function __construct(
         private readonly string $identityId,

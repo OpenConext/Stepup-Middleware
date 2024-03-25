@@ -23,9 +23,8 @@ use Assert\InvalidArgumentException;
 interface ConfigurationValidatorInterface
 {
     /**
-     * @param string $propertyPath
-     * @return void
+     * @param array<string, mixed> $configuration
      * @throws InvalidArgumentException
      */
-    public function validate(array $configuration, $propertyPath);
+    public function validate(array $configuration, string $propertyPath): void;
 }

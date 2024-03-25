@@ -32,9 +32,9 @@ class AuthorityRole implements Stringable
     /**
      * @var string
      */
-    private string $role;
+    private readonly string $role;
 
-    public function __construct($role)
+    public function __construct(string $role)
     {
         if (!in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
             throw InvalidArgumentException::invalidType(

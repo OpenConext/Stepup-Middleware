@@ -26,6 +26,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'institution',
@@ -33,26 +36,13 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
         'ra_institution',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var Institution
-     */
-    public Institution $raInstitution;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId,
-        Institution $raInstitution,
+        public NameId $nameId,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->nameId = $nameId;
-        $this->raInstitution = $raInstitution;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -77,6 +67,8 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -93,6 +85,9 @@ class AppointedAsRaForInstitutionEvent extends IdentityEvent implements RightToO
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

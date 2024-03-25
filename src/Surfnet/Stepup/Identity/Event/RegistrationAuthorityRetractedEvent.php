@@ -33,6 +33,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -41,33 +44,14 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         'email',
     ];
 
-    /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        CommonName $commonName,
-        Email $email,
+        public NameId $nameId,
+        public CommonName $commonName,
+        public Email $email,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->commonName = $commonName;
-        $this->email = $email;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -119,6 +103,9 @@ class RegistrationAuthorityRetractedEvent extends IdentityEvent implements Forge
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

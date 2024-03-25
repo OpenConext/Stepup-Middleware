@@ -25,6 +25,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -70,6 +73,9 @@ class VettedSecondFactorsAllRevokedEvent extends IdentityEvent implements RightT
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

@@ -25,6 +25,9 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
 
+/**
+ * @extends ServiceEntityRepository<UnverifiedSecondFactor>
+ */
 class UnverifiedSecondFactorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -47,7 +50,7 @@ class UnverifiedSecondFactorRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId) {
+        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);

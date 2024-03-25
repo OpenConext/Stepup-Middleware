@@ -25,6 +25,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'institution',
@@ -49,6 +52,8 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -63,6 +68,9 @@ class IdentityForgottenEvent extends IdentityEvent implements RightToObtainDataI
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

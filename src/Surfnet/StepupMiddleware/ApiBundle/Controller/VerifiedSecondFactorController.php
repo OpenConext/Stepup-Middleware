@@ -46,7 +46,7 @@ class VerifiedSecondFactorController extends AbstractController
     ) {
     }
 
-    public function get($id): JsonResponse
+    public function get(string $id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -59,7 +59,7 @@ class VerifiedSecondFactorController extends AbstractController
         return new JsonResponse($secondFactor);
     }
 
-    public function collection(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 
@@ -87,7 +87,7 @@ class VerifiedSecondFactorController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function collectionOfIdentity(Request $request)
+    public function collectionOfIdentity(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
         $query = new VerifiedSecondFactorOfIdentityQuery();
@@ -100,7 +100,7 @@ class VerifiedSecondFactorController extends AbstractController
         return JsonCollectionResponse::fromPaginator($paginator);
     }
 
-    public function getCanSkipProvePossession($id): JsonResponse
+    public function getCanSkipProvePossession(string $id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

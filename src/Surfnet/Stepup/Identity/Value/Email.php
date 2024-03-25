@@ -36,12 +36,9 @@ final class Email implements JsonSerializable, Stringable
         return new self('unknown@domain.invalid');
     }
 
-    /**
-     * @param string $email
-     */
     public function __construct(string $email)
     {
-        if (!is_string($email) || trim($email) === '') {
+        if (trim($email) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'email', $email);
         }
 

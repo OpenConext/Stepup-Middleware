@@ -63,7 +63,7 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         $this->throwIrreversibleMigrationException('This migration is irreversible');
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

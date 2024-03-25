@@ -34,12 +34,12 @@ class InstitutionConfigurationControllerTest extends WebTestCase
     /**
      * @var string
      */
-    private $password;
+    private string|array|bool|int|null|float|\UnitEnum $password;
 
     /**
      * @var string
      */
-    private $passwordRo;
+    private string|array|bool|int|null|float|\UnitEnum $passwordRo;
 
     private ORMSqliteDatabaseTool $databaseTool;
 
@@ -153,7 +153,6 @@ class InstitutionConfigurationControllerTest extends WebTestCase
      * @group management
      *
      * @dataProvider invalidHttpMethodProvider
-     * @param $invalidHttpMethod
      */
     public function only_post_and_get_requests_are_accepted(string $invalidHttpMethod): void
     {

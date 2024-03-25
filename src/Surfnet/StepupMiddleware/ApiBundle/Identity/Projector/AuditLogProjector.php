@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\IdentityForgottenEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifierFactory;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\Stepup\Identity\Value\VettingType;
@@ -99,7 +100,7 @@ class AuditLogProjector implements EventListener
         $this->augmentActorCommonName($entry, $auditLogMetadata);
 
         if (isset($metadata['actorInstitution'])) {
-            $entry->actorInstitution = $metadata['actorInstitution'];
+            $entry->actorInstitution = new Institution($metadata['actorInstitution']);
         }
 
         $entry->identityId = (string)$auditLogMetadata->identityId;
@@ -107,11 +108,11 @@ class AuditLogProjector implements EventListener
         $entry->event = $event::class;
         $entry->recordedOn = new DateTime(new CoreDateTime($domainMessage->getRecordedOn()->toString()));
 
-        if ($auditLogMetadata->secondFactorId) {
+        if ($auditLogMetadata->secondFactorId instanceof \Surfnet\Stepup\Identity\Value\SecondFactorId) {
             $entry->secondFactorId = (string)$auditLogMetadata->secondFactorId;
         }
 
-        if ($auditLogMetadata->secondFactorType) {
+        if ($auditLogMetadata->secondFactorType instanceof \Surfnet\StepupBundle\Value\SecondFactorType) {
             $entry->secondFactorType = (string)$auditLogMetadata->secondFactorType;
         }
 
@@ -122,15 +123,15 @@ class AuditLogProjector implements EventListener
             $entry->recoveryTokenIdentifier = (string)$auditLogMetadata->recoveryTokenId;
         }
 
-        if ($auditLogMetadata->recoveryTokenType) {
+        if ($auditLogMetadata->recoveryTokenType instanceof \Surfnet\Stepup\Identity\Value\RecoveryTokenType) {
             $entry->recoveryTokenType = (string)$auditLogMetadata->recoveryTokenType;
         }
 
-        if ($auditLogMetadata->secondFactorIdentifier) {
+        if ($auditLogMetadata->secondFactorIdentifier instanceof \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier) {
             $entry->secondFactorIdentifier = (string)$auditLogMetadata->secondFactorIdentifier;
         }
 
-        if ($auditLogMetadata->raInstitution) {
+        if ($auditLogMetadata->raInstitution instanceof \Surfnet\Stepup\Identity\Value\Institution) {
             $entry->raInstitution = (string)$auditLogMetadata->raInstitution;
         }
 

@@ -30,7 +30,7 @@ final class Institution implements Stringable
      */
     public function __construct(string $institution)
     {
-        if (!is_string($institution) || trim($institution) === '') {
+        if (trim($institution) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'institution', $institution);
         }
 

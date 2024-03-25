@@ -32,19 +32,6 @@ class JsonHelperTest extends TestCase
     /**
      * @test
      * @group json
-     *
-     * @dataProvider nonStringProvider
-     */
-    public function json_helper_can_only_decode_strings(bool|int|float|StdClass|array $nonString): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        JsonHelper::decode($nonString);
-    }
-
-    /**
-     * @test
-     * @group json
      */
     public function json_helper_decodes_strings_to_arrays(): void
     {

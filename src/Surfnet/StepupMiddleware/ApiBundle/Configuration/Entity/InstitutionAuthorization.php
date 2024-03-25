@@ -34,7 +34,7 @@ class InstitutionAuthorization
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      *
@@ -42,7 +42,7 @@ class InstitutionAuthorization
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institutionRelation;
+    public Institution $institutionRelation;
 
     /**
      *
@@ -50,7 +50,7 @@ class InstitutionAuthorization
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_institution_role', length: 10)]
-    public $institutionRole;
+    public InstitutionRole $institutionRole;
 
     /**
      * @return InstitutionAuthorization

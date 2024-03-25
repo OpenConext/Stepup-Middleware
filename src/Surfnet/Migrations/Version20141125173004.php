@@ -74,12 +74,12 @@ class Version20141125173004 extends AbstractMigration implements ContainerAwareI
         $this->addSql(sprintf('DROP TABLE %s.saml_entity', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }
 
-    private function getMiddlewareUser()
+    private function getMiddlewareUser(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_middleware_user');
     }

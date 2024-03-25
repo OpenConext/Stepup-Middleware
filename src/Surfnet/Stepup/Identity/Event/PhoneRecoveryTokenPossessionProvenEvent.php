@@ -39,6 +39,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
  */
 class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -48,47 +51,19 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         'common_name',
     ];
 
-    /**
-     * @var RecoveryTokenId
-     */
-    public RecoveryTokenId $recoveryTokenId;
-
-    /**
-     * @var PhoneNumber
-     */
-    public PhoneNumber $phoneNumber;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        RecoveryTokenId $recoveryTokenId,
-        PhoneNumber $phoneNumber,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
+        public RecoveryTokenId $recoveryTokenId,
+        public PhoneNumber $phoneNumber,
+        public CommonName $commonName,
+        public Email $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->recoveryTokenId = $recoveryTokenId;
-        $this->phoneNumber = $phoneNumber;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -116,6 +91,8 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -152,6 +129,9 @@ class PhoneRecoveryTokenPossessionProvenEvent extends IdentityEvent implements F
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

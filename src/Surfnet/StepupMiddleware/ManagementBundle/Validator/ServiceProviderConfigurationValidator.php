@@ -23,10 +23,11 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class ServiceProviderConfigurationValidator implements ConfigurationValidatorInterface
 {
-    public function validate(array $configuration, $propertyPath): void
+    /**
+     * @param array<string, mixed> $configuration
+     */
+    public function validate(array $configuration, string $propertyPath): void
     {
-        Assertion::isArray($configuration, 'invalid configuration format, must be an object', $propertyPath);
-
         $requiredProperties = [
             'entity_id',
             'public_key',
@@ -108,10 +109,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         Assertion::boolean($configuration[$name], 'value must be a boolean', $propertyPath . '.' . $name);
     }
 
-    /**
-     * @param string $propertyPath
-     */
-    private function validateAssertionConsumerUrls(array $configuration, $propertyPath): void
+    private function validateAssertionConsumerUrls(array $configuration, string $propertyPath): void
     {
         $value = $configuration['acs'];
         $propertyPath .= '.acs';
@@ -143,10 +141,7 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
         );
     }
 
-    /**
-     * @param string $propertyPath
-     */
-    private function validateListOfNameIdPatterns(array $configuration, string $name, $propertyPath): void
+    private function validateListOfNameIdPatterns(array $configuration, string $name, string $propertyPath): void
     {
         $value = $configuration[$name];
         $propertyPath = $propertyPath . '.' . $name;
@@ -165,7 +160,6 @@ class ServiceProviderConfigurationValidator implements ConfigurationValidatorInt
      *     'My.Institution'   => 'loa2', // invalid
      *  ]
      *
-     * @param $propertyPath
      */
     private function assertValidInstitutionIdentifiers(
         array $spLoaConfiguration,

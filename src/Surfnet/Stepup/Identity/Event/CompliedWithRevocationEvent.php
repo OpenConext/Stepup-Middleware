@@ -31,6 +31,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -39,40 +42,15 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         'authority_id',
     ];
 
-    /**
-     * @var IdentityId
-     */
-    public IdentityId $authorityId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var SecondFactorIdentifier
-     */
-    public SecondFactorIdentifier $secondFactorIdentifier;
-
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
-        IdentityId $authorityId,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
+        public IdentityId $authorityId,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->authorityId = $authorityId;
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -133,6 +111,9 @@ abstract class CompliedWithRevocationEvent extends IdentityEvent implements Forg
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

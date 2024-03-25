@@ -24,6 +24,9 @@ use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
+/**
+ * @implements IteratorAggregate<ProjectorInterface>
+ */
 final class ProjectorCollection implements IteratorAggregate
 {
     /**

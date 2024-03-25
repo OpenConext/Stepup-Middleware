@@ -64,12 +64,12 @@ class Version20141209150426 extends AbstractMigration implements ContainerAwareI
         $this->addSql('DROP TABLE second_factor');
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }
 
-    private function getMiddlewareUser()
+    private function getMiddlewareUser(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_middleware_user');
     }

@@ -20,7 +20,7 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjec
 
 final class ObjectWithInstitutionProperty
 {
-    public function __construct(public $institution)
+    public function __construct(public string $institution)
     {
     }
 }

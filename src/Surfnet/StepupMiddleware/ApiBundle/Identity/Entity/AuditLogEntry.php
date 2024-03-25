@@ -121,13 +121,13 @@ class AuditLogEntry implements JsonSerializable
     public string $id;
 
     #[ORM\Column(length: 36, nullable: true)]
-    public ?string $actorId;
+    public ?string $actorId = null;
 
     #[ORM\Column(type: 'stepup_common_name', nullable: true)]
-    public CommonName $actorCommonName;
+    public ?CommonName $actorCommonName = null;
 
     #[ORM\Column(type: 'institution', nullable: true)]
-    public ?Institution $actorInstitution;
+    public ?Institution $actorInstitution = null;
 
     /**
      * Only in certain situations will this field be filled, It represents the RA institution the
@@ -135,7 +135,7 @@ class AuditLogEntry implements JsonSerializable
      * institution-a. The actual institution John is appointed RA for is stored in this field.
      */
     #[ORM\Column(length: 255, nullable: true)]
-    public ?string $raInstitution;
+    public ?string $raInstitution = null;
 
     #[ORM\Column(length: 36)]
     public string $identityId;
@@ -144,19 +144,19 @@ class AuditLogEntry implements JsonSerializable
     public Institution $identityInstitution;
 
     #[ORM\Column(length: 36, nullable: true)]
-    public ?string $secondFactorId;
+    public ?string $secondFactorId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    public string $secondFactorIdentifier;
+    public ?string $secondFactorIdentifier = null;
 
     #[ORM\Column(length: 36, nullable: true)]
-    public ?string $secondFactorType;
+    public ?string $secondFactorType = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    public string $recoveryTokenIdentifier;
+    public ?string $recoveryTokenIdentifier;
 
     #[ORM\Column(length: 36, nullable: true)]
-    public ?string $recoveryTokenType;
+    public ?string $recoveryTokenType = null;
 
     #[ORM\Column(length: 255)]
     public string $event;
@@ -168,7 +168,7 @@ class AuditLogEntry implements JsonSerializable
     {
         return [
             'actor_id' => $this->actorId,
-            'actor_institution' => $this->actorInstitution ? (string)$this->actorInstitution : null,
+            'actor_institution' => $this->actorInstitution instanceof \Surfnet\Stepup\Identity\Value\Institution ? (string)$this->actorInstitution : null,
             'actor_common_name' => $this->actorCommonName,
             'identity_id' => $this->identityId,
             'identity_institution' => (string)$this->identityInstitution,

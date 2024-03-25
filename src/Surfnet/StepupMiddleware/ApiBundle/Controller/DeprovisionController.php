@@ -47,7 +47,6 @@ class DeprovisionController extends AbstractController
             // just so the deprovision run does not end prematurely. At this point, no other domain exceptions
             // are thrown.
             $userData = [];
-            $errors = [];
         } catch (Exception $e) {
             $userData = [];
             $errors = [$e->getMessage()];

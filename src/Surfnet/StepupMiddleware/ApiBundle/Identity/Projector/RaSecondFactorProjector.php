@@ -219,7 +219,6 @@ class RaSecondFactorProjector extends Projector
     }
 
     /**
-     * @param string $secondFactorIdentifier
      * @param SecondFactorStatus|null $status
      * @param DocumentNumber|null $documentNumber
      */

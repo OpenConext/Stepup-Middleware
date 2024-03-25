@@ -80,7 +80,7 @@ class InstitutionParamConverterTest extends UnitTest
         $this->assertTrue($this->request->attributes->get('institution')->equals($equal));
     }
 
-    private function mockQuery(bool|string $returnValue)
+    private function mockQuery(bool|string $returnValue): ParameterBag&MockInterface
     {
         $query = m::mock(ParameterBag::class);
         $query

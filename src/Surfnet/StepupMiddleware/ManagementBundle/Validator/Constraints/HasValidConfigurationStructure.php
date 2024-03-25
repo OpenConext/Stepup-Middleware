@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class HasValidConfigurationStructure extends Constraint
 {
-    public $message = 'Invalid Configuration Structure';
+    public string $message = 'Invalid Configuration Structure';
 
     public function validatedBy(): string
     {

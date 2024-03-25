@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 
 class GatewayConfigurationValidator implements ConfigurationValidatorInterface
@@ -30,36 +31,33 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
     }
 
     /**
-     * @param array $gatewayConfiguration
-     * @param string $propertyPath
+     * @param array<string, mixed> $configuration
      */
-    public function validate(array $gatewayConfiguration, $propertyPath): void
+    public function validate(array $configuration, string $propertyPath): void
     {
         StepupAssert::keysMatch(
-            $gatewayConfiguration,
+            $configuration,
             ['service_providers', 'identity_providers'],
             "Expected properties 'service_providers' and 'identity_providers'",
             $propertyPath,
         );
 
         $this->validateIdentityProviders(
-            $gatewayConfiguration['identity_providers'],
+            $configuration['identity_providers'],
             $propertyPath . '.identity_providers',
         );
         $this->validateServiceProviders(
-            $gatewayConfiguration['service_providers'],
+            $configuration['service_providers'],
             $propertyPath . '.service_providers',
         );
     }
 
-    private function validateIdentityProviders($identityProviders, string $propertyPath): void
+    /**
+     * @param array<string, array<string, mixed>> $identityProviders
+     * @throws AssertionFailedException
+     */
+    private function validateIdentityProviders(array $identityProviders, string $propertyPath): void
     {
-        Assertion::isArray(
-            $identityProviders,
-            'identity_providers must have an array of identity provider configurations as value',
-            $propertyPath,
-        );
-
         foreach ($identityProviders as $index => $identityProvider) {
             $path = $propertyPath . '[' . $index . ']';
             Assertion::isArray($identityProvider, 'Identity provider must be an object', $path);
@@ -68,13 +66,12 @@ class GatewayConfigurationValidator implements ConfigurationValidatorInterface
         }
     }
 
-    private function validateServiceProviders($serviceProviders, string $propertyPath): void
+    /**
+     * @param array<string, array<string, mixed>> $serviceProviders
+     * @throws AssertionFailedException
+     */
+    private function validateServiceProviders(array $serviceProviders, string $propertyPath): void
     {
-        Assertion::isArray(
-            $serviceProviders,
-            'service_providers must have an array of service provider configurations as value',
-            $propertyPath,
-        );
         Assertion::true(
             count($serviceProviders) >= 1,
             'at least one service_provider must be configured',

@@ -35,6 +35,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -47,41 +50,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     ];
 
     /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * The Yubikey's public ID.
-     *
-     * @var YubikeyPublicId
-     */
-    public YubikeyPublicId $yubikeyPublicId;
-
-    /**
      * @var DateTime
      */
     public DateTime $emailVerificationRequestedAt;
-
-    /**
-     * @var EmailVerificationWindow
-     */
-    public EmailVerificationWindow $emailVerificationWindow;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -89,23 +60,22 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     public function __construct(
         IdentityId              $identityId,
         Institution             $institution,
-        SecondFactorId          $secondFactorId,
-        YubikeyPublicId         $yubikeyPublicId,
+        public SecondFactorId          $secondFactorId,
+        /**
+         * The Yubikey's public ID.
+         */
+        public YubikeyPublicId         $yubikeyPublicId,
         public bool             $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
+        public EmailVerificationWindow $emailVerificationWindow,
         public string           $emailVerificationNonce,
-        CommonName              $commonName,
-        Email                   $email,
-        Locale                  $preferredLocale,
+        public CommonName              $commonName,
+        public Email                   $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->yubikeyPublicId = $yubikeyPublicId;
-        $this->emailVerificationWindow = $emailVerificationWindow;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -142,6 +112,8 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -180,6 +152,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

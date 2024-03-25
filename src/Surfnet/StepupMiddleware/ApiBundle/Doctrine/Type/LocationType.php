@@ -42,7 +42,7 @@ class LocationType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         return (string)$value;
@@ -51,7 +51,7 @@ class LocationType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Location
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

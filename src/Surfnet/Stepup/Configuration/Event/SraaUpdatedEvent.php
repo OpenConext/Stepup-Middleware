@@ -21,19 +21,12 @@ namespace Surfnet\Stepup\Configuration\Event;
 class SraaUpdatedEvent extends ConfigurationEvent
 {
     /**
-     * @var array
-     */
-    public array $sraaList;
-
-    /**
      * @param string $configurationId
      * @param array $sraaList
      */
-    public function __construct($configurationId, array $sraaList)
+    public function __construct($configurationId, public array $sraaList)
     {
         parent::__construct($configurationId);
-
-        $this->sraaList = $sraaList;
     }
 
     public static function deserialize(array $data): self

@@ -27,8 +27,9 @@ final readonly class SelfAssertedTokensOption implements JsonSerializable
         return new self(false);
     }
 
-    public function __construct(private bool $allowed)
-    {
+    public function __construct(
+        private bool $allowed
+    ) {
     }
 
     public function equals(SelfAssertedTokensOption $other): bool

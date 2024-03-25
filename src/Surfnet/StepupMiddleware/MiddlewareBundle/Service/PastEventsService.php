@@ -31,7 +31,7 @@ final readonly class PastEventsService
     /**
      * @return DomainEventStream
      */
-    public function findEventsBy(EventCollection $events)
+    public function findEventsBy(EventCollection $events): DomainEventStream
     {
         return $this->eventHydrator->fetchByEventTypes($events->formatAsEventStreamTypes());
     }

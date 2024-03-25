@@ -52,7 +52,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     ) {
     }
 
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         /** @var ConstraintViolationBuilder|false $violation */
         $violation = false;
@@ -197,14 +197,14 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      *
      * @return string[]
      */
-    private function getConfiguredInstitutions()
+    private function getConfiguredInstitutions(): array
     {
         if ($this->configuredInstitutions !== null && $this->configuredInstitutions !== []) {
             return $this->configuredInstitutions;
         }
 
         $this->configuredInstitutions = array_map(
-            fn(ConfiguredInstitution $configuredInstitution) => $configuredInstitution->institution->getInstitution(),
+            fn(ConfiguredInstitution $configuredInstitution): string => $configuredInstitution->institution->getInstitution(),
             $this->configuredInstitutionsService->getAll(),
         );
 
@@ -216,7 +216,7 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      *
      * @return string[]
      */
-    private function getWhitelistedInstitutions()
+    private function getWhitelistedInstitutions(): array
     {
         if ($this->whitelistedInstitutions !== null && $this->whitelistedInstitutions !== []) {
             return $this->whitelistedInstitutions;
@@ -232,10 +232,10 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
     /**
      * @param string[] $institutions
-     * @param $configuredInstitutions
+     * @param string[] $configuredInstitutions
      * @return string[]
      */
-    public function determineNonExistentInstitutions(array $institutions, $configuredInstitutions): array
+    public function determineNonExistentInstitutions(array $institutions, array $configuredInstitutions): array
     {
         $normalizedConfiguredInstitutions = array_map(
             fn($institution): string => strtolower((string)$institution),
@@ -258,9 +258,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
      *  - The optional options should contain whitelisted institutions
      *  - Or be empty
      *
-     * @param $authorizationSettings
-     * @param $institution
-     * @param $propertyPath
      * @throws AssertionFailedException
      */
     private function validateAuthorizationSettings(

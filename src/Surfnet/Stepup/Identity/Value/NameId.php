@@ -37,12 +37,8 @@ final class NameId implements JsonSerializable, Stringable
 
     private readonly string $value;
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
         if (strlen($value) > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
                 'Invalid argument type: maximum length for nameId exceeds configured length of ' . self::MAX_LENGTH,
@@ -60,9 +56,9 @@ final class NameId implements JsonSerializable, Stringable
         return $this->value;
     }
 
-    public function equals($other): bool
+    public function equals(NameId $other): bool
     {
-        return $this == $other;
+        return $this === $other;
     }
 
     public function __toString(): string

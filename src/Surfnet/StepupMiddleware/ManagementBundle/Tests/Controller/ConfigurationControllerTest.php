@@ -34,12 +34,12 @@ class ConfigurationControllerTest extends WebTestCase
     /**
      * @var string
      */
-    private $password;
+    private string|array|bool|int|null|float|\UnitEnum $password;
 
     /**
      * @var string
      */
-    private $passwordRo;
+    private string|array|bool|int|null|float|\UnitEnum $passwordRo;
 
     private ORMSqliteDatabaseTool $databaseTool;
 

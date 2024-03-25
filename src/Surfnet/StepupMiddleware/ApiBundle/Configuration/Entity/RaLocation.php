@@ -38,43 +38,39 @@ class RaLocation implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public $id;
+    public string $id;
 
     /**
      * @var Institution
      */
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institution;
+    public Institution $institution;
 
     /**
      * @var RaLocationName
      */
     #[ORM\Column(type: 'stepup_ra_location_name')]
-    public $name;
+    public RaLocationName $name;
 
     /**
      * @var Location
      */
     #[ORM\Column(type: 'stepup_configuration_location')]
-    public $location;
+    public Location $location;
 
     /**
      * @var ContactInformation
      */
     #[ORM\Column(type: 'stepup_configuration_contact_information')]
-    public $contactInformation;
+    public ContactInformation $contactInformation;
 
     public static function create(
-        $id,
+        string $id,
         Institution $institution,
         RaLocationName $name,
         Location $location,
         ContactInformation $contactInformation,
     ): self {
-        if (!is_string($id)) {
-            throw InvalidArgumentException::invalidType('string', 'id', $id);
-        }
-
         $raLocation = new self;
 
         $raLocation->id = $id;

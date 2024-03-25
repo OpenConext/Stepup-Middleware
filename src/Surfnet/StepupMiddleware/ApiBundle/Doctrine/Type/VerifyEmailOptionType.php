@@ -36,10 +36,10 @@ class VerifyEmailOptionType extends Type
         return $platform->getBooleanTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?int
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?int
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof VerifyEmailOption) {
@@ -58,7 +58,7 @@ class VerifyEmailOptionType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?VerifyEmailOption
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

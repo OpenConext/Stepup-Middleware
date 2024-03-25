@@ -29,9 +29,9 @@ final class GssfId implements SecondFactorIdentifier
         return new self('—');
     }
 
-    public function __construct($gssfId)
+    public function __construct(string $gssfId)
     {
-        if (!is_string($gssfId) || trim($gssfId) === '') {
+        if (trim($gssfId) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'gssfId', $gssfId);
         }
 

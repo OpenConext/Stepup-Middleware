@@ -28,7 +28,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
 class AbstractSearchService
 {
     protected function createPaginatorFrom(
-        $doctrineQuery,
+        QueryBuilder|Query $doctrineQuery,
         AbstractQuery $query,
         bool $fetchCollection = true,
     ): Pagerfanta {
@@ -54,6 +54,9 @@ class AbstractSearchService
         return $paginator;
     }
 
+    /**
+     * @return array<int|string, array<string, string>>
+     */
     protected function getFilteredQueryOptions(Query $doctrineQuery): array
     {
         $filters = [];

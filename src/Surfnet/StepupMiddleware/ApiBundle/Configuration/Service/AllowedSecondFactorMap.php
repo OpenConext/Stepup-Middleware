@@ -37,7 +37,7 @@ final class AllowedSecondFactorMap
      * @param AllowedSecondFactor[] $allowedSecondFactors
      * @return AllowedSecondFactorMap
      */
-    public static function from($allowedSecondFactors): self
+    public static function from(array $allowedSecondFactors): self
     {
         $allowedSecondFactorMap = new self();
         foreach ($allowedSecondFactors as $allowedSecondFactor) {

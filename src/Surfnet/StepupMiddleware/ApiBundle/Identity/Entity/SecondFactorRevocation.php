@@ -45,7 +45,7 @@ class SecondFactorRevocation
      * @var string|null
      */
     #[ORM\Column(length: 36, nullable: true)]
-    public ?string $secondFactorType;
+    public ?string $secondFactorType = null;
 
     /**
      * @var string

@@ -45,7 +45,7 @@ final readonly class EmailTemplateService implements CommandHandlingEmailTemplat
             throw new RuntimeException($e->getMessage(), 0, $e);
         }
 
-        if (!$emailTemplateEntity) {
+        if (!$emailTemplateEntity instanceof \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate) {
             return null;
         }
 

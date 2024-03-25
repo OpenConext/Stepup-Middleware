@@ -26,26 +26,12 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 class RaLocationRemovedEvent implements SerializableInterface
 {
     /**
-     * @var InstitutionConfigurationId
-     */
-    public InstitutionConfigurationId $institutionConfigurationId;
-
-    /**
      * @var Institution
      */
     public Institution $institution;
 
-    /**
-     * @var RaLocationId
-     */
-    public RaLocationId $raLocationId;
-
-    public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        RaLocationId $raLocationId,
-    ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->raLocationId = $raLocationId;
+    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public RaLocationId $raLocationId)
+    {
     }
 
     public static function deserialize(array $data): self

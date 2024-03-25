@@ -35,7 +35,6 @@ interface SecondFactorIdentifier extends JsonSerializable
     public function getValue(): string;
 
     /**
-     * @param self $other
      * @return bool
      */
     public function equals(SecondFactorIdentifier $other): bool;

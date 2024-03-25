@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Pagerfanta\Pagerfanta;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\AuditLogRepository;
 
@@ -29,7 +30,7 @@ class AuditLogService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<AuditLogEntry>
      */
     public function searchSecondFactorAuditLog(SecondFactorAuditLogQuery $query): Pagerfanta
     {

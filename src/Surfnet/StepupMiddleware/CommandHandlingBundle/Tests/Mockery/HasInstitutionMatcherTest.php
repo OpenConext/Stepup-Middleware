@@ -25,24 +25,11 @@ use stdClass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionAccessor;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithInstitutionProperty;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjects\ObjectWithoutInstitutionPropertyAndAccessor;
+use TypeError;
 
 class HasInstitutionMatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-
-    /**
-     * @test
-     * @group mockery
-     * @group institution
-     *
-     * @dataProvider nonStringProvider
-     */
-    public function has_institution_matcher_only_matches_against_strings(bool|int|float|stdClass|array|null $nonString,): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $hasInstitutionMatcher = new HasInstitutionMatcher($nonString);
-    }
 
     /**
      * @test

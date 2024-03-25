@@ -27,6 +27,9 @@ use Surfnet\Stepup\Configuration\Value\InstitutionAuthorizationOption;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionAuthorization;
 
+/**
+ * @extends ServiceEntityRepository<InstitutionAuthorization>
+ */
 class InstitutionAuthorizationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -94,9 +97,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
         $this->save($institution, $institutionOption->getInstitutionRole(), $institutionAuthorizations);
     }
 
-    /**
-     * @throws OptimisticLockException
-     */
     public function clearInstitutionOption(Institution $institution): void
     {
         $entityManager = $this->getEntityManager();
@@ -133,7 +133,6 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
 
     /**
      * @param InstitutionAuthorization[] $institutionAuthorizations
-     * @throws OptimisticLockException
      */
     private function save(Institution $institution, InstitutionRole $role, array $institutionAuthorizations): void
     {

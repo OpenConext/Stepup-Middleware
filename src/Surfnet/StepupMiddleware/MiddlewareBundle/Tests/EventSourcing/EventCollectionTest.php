@@ -29,12 +29,12 @@ use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException
 class EventCollectionTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group event-replay
      *
      * @dataProvider emptyOrNonStringProvider
-     * @param $emptyOrNonString
      */
     public function an_event_collection_must_be_created_from_an_array_of_non_empty_strings(
         bool|int|string|stdClass|array|null $emptyOrNonString,
@@ -155,6 +155,9 @@ class EventCollectionTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function emptyOrNonStringProvider(): array
     {
         return [

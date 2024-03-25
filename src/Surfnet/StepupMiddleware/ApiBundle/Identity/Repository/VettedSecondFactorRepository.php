@@ -25,6 +25,9 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
 
+/**
+ * @extends ServiceEntityRepository<VettedSecondFactor>
+ */
 class VettedSecondFactorRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -44,7 +47,7 @@ class VettedSecondFactorRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('sf');
 
-        if ($query->identityId) {
+        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
             $queryBuilder
                 ->andWhere('sf.identityId = :identityId')
                 ->setParameter('identityId', (string)$query->identityId);

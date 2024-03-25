@@ -23,15 +23,11 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class InstitutionAuthorizationRepositoryFilter
 {
-    /**
-     * @param string $institutionField
-     * @param string $authorizationAlias
-     */
     public function filter(
-        QueryBuilder $queryBuilder,
+        QueryBuilder                             $queryBuilder,
         InstitutionAuthorizationContextInterface $authorizationContext,
-        $institutionField,
-        $authorizationAlias,
+        string                                   $institutionField,
+        string                                   $authorizationAlias,
     ): void {
         // If actor is SRAA we don't need filtering
         if ($authorizationContext->isActorSraa()) {
@@ -56,12 +52,7 @@ class InstitutionAuthorizationRepositoryFilter
         $queryBuilder->setParameter($parameter, $values);
     }
 
-    /**
-     * @param $authorizationAlias
-     * @param $name
-     * @return string
-     */
-    private function getParameterName($authorizationAlias, string $name): string
+    private function getParameterName(string $authorizationAlias, string $name): string
     {
         return "{$authorizationAlias}_{$name}";
     }

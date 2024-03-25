@@ -43,6 +43,9 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     Forgettable,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'name_id',
@@ -57,72 +60,29 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     ];
 
     /**
-     * @var NameId
-     */
-    public NameId $nameId;
-
-    /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var SecondFactorType
-     */
-    public SecondFactorType $secondFactorType;
-
-    /**
-     * @var SecondFactorIdentifier
-     */
-    public SecondFactorIdentifier $secondFactorIdentifier;
-
-    /**
      * @var DocumentNumber
      */
     public DocumentNumber $documentNumber;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
-
-    public ?VettingType $vettingType;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        SecondFactorId $secondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale,
-        VettingType $vettingType,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
+        public CommonName $commonName,
+        public Email $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale $preferredLocale,
+        public ?VettingType $vettingType,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->secondFactorId = $secondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
-        $this->vettingType = $vettingType;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -157,6 +117,8 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -194,6 +156,9 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

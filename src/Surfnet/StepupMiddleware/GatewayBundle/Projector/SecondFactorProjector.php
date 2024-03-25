@@ -108,7 +108,7 @@ class SecondFactorProjector extends Projector
         return $vettingType->type() !== VettingType::TYPE_SELF_ASSERTED_REGISTRATION;
     }
 
-    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event): void
     {
         $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
 
@@ -126,7 +126,8 @@ class SecondFactorProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ) {
+    ): void
+    {
         $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
 
         if ($secondFactor === null) {
@@ -141,7 +142,7 @@ class SecondFactorProjector extends Projector
         $this->repository->remove($secondFactor);
     }
 
-    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event)
+    protected function applyLocalePreferenceExpressedEvent(LocalePreferenceExpressedEvent $event): void
     {
         $secondFactors = $this->repository->findByIdentityId($event->identityId);
 
@@ -151,7 +152,7 @@ class SecondFactorProjector extends Projector
         }
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->repository->removeByIdentityId($event->identityId);
     }

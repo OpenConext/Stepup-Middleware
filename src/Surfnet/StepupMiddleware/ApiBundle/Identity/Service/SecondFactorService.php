@@ -46,7 +46,7 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<UnverifiedSecondFactor>
      */
     public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query): Pagerfanta
     {
@@ -56,7 +56,7 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<VerifiedSecondFactor>
      */
     public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query): Pagerfanta
     {
@@ -67,7 +67,7 @@ class SecondFactorService extends AbstractSearchService
 
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<VerifiedSecondFactor>
      */
     public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query): Pagerfanta
     {
@@ -77,7 +77,7 @@ class SecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<VettedSecondFactor>
      */
     public function searchVettedSecondFactors(VettedSecondFactorQuery $query): Pagerfanta
     {
@@ -86,27 +86,16 @@ class SecondFactorService extends AbstractSearchService
         return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
-    /**
-     * @return null|UnverifiedSecondFactor
-     */
     public function findUnverified(SecondFactorId $id): ?UnverifiedSecondFactor
     {
         return $this->unverifiedRepository->find($id);
     }
 
-
-    /**
-     * @return null|VerifiedSecondFactor
-     */
     public function findVerified(SecondFactorId $id): ?VerifiedSecondFactor
     {
         return $this->verifiedRepository->find($id);
     }
 
-
-    /**
-     * @return null|VettedSecondFactor
-     */
     public function findVetted(SecondFactorId $id): ?VettedSecondFactor
     {
         return $this->vettedRepository->find($id);

@@ -26,12 +26,8 @@ final class IdentityId implements Id, JsonSerializable
 {
     private readonly string $value;
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
         $this->value = $value;
     }
 

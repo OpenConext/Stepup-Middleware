@@ -25,23 +25,15 @@ class NumberOfTokensPerIdentityOption implements JsonSerializable
 {
     public const DISABLED = 0;
 
-    private int $numberOfTokensPerIdentity;
+    private readonly int $numberOfTokensPerIdentity;
 
     public static function getDefault(): self
     {
         return new self(self::DISABLED);
     }
 
-    public function __construct($numberOfTokensPerIdentity)
+    public function __construct(int $numberOfTokensPerIdentity)
     {
-        if (!is_numeric($numberOfTokensPerIdentity)) {
-            throw InvalidArgumentException::invalidType(
-                'integer',
-                'numberOfTokensPerIdentity',
-                $numberOfTokensPerIdentity,
-            );
-        }
-
         $this->numberOfTokensPerIdentity = $numberOfTokensPerIdentity;
     }
 

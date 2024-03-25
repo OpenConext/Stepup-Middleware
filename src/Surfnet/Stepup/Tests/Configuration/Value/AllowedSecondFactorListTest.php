@@ -32,7 +32,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_allowed_second_factor_list_deduplicates_its_second_factors_upon_creation()
+    public function an_allowed_second_factor_list_deduplicates_its_second_factors_upon_creation(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([
             new SecondFactorType('sms'),
@@ -53,7 +53,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @dataProvider availableSecondFactorTypeProvider
      * @param $availableSecondFactorType
      */
-    public function a_blank_allowed_second_factor_list_allows_all_second_factors($availableSecondFactorType)
+    public function a_blank_allowed_second_factor_list_allows_all_second_factors(\Surfnet\StepupBundle\Value\SecondFactorType $availableSecondFactorType): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::blank();
 
@@ -66,7 +66,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_allowed_second_factor_list_contains_a_given_second_factor()
+    public function an_allowed_second_factor_list_contains_a_given_second_factor(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $allowedSecondFactor = new SecondFactorType('sms');
@@ -83,7 +83,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_allowed_second_factor_list_does_not_contain_a_given_second_factor()
+    public function an_allowed_second_factor_list_does_not_contain_a_given_second_factor(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $allowedSecondFactor = new SecondFactorType('yubikey');
@@ -100,7 +100,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function an_allowed_second_factor_list_contains_the_given_second_factors()
+    public function an_allowed_second_factor_list_contains_the_given_second_factors(): void
     {
         $secondFactorTypes = [
             new SecondFactorType('sms'),
@@ -118,7 +118,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function a_second_factor_on_the_allowed_second_factor_list_is_allowed()
+    public function a_second_factor_on_the_allowed_second_factor_list_is_allowed(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $allowedSecondFactor = new SecondFactorType('sms');
@@ -135,7 +135,7 @@ class AllowedSecondFactorListTest extends TestCase
      * @test
      * @group domain
      */
-    public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed()
+    public function a_second_factor_not_on_the_allowed_second_factor_list_is_not_allowed(): void
     {
         $allowedSecondFactorList = AllowedSecondFactorList::ofTypes([new SecondFactorType('sms')]);
         $disallowedSecondFactor = new SecondFactorType('yubikey');
@@ -159,7 +159,7 @@ class AllowedSecondFactorListTest extends TestCase
     public function allowed_second_factor_lists_with_different_elements_are_not_considered_equal(
         array $firstList,
         array $secondList,
-    ) {
+    ): void {
         $base = AllowedSecondFactorList::ofTypes($firstList);
         $other = AllowedSecondFactorList::ofTypes($secondList);
 
@@ -177,7 +177,7 @@ class AllowedSecondFactorListTest extends TestCase
     public function allowed_second_factor_lists_with_the_same_elements_are_considered_equal(
         array $firstList,
         array $secondList,
-    ) {
+    ): void {
         $base = AllowedSecondFactorList::ofTypes($firstList);
         $other = AllowedSecondFactorList::ofTypes($secondList);
 
@@ -235,7 +235,7 @@ class AllowedSecondFactorListTest extends TestCase
             'tiqr' => ['loa' => 3],
         ]);
         $secondFactorTypes = array_map(
-            fn($availableSecondFactorType) => [new SecondFactorType($availableSecondFactorType)],
+            fn($availableSecondFactorType): array => [new SecondFactorType($availableSecondFactorType)],
             $service->getAvailableSecondFactorTypes(),
         );
 

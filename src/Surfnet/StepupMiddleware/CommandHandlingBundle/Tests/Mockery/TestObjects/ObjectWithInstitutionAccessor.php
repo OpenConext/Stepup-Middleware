@@ -20,11 +20,11 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Mockery\TestObjec
 
 final class ObjectWithInstitutionAccessor
 {
-    public function __construct(private $institution)
+    public function __construct(private string $institution)
     {
     }
 
-    public function getInstitution()
+    public function getInstitution(): string
     {
         return $this->institution;
     }

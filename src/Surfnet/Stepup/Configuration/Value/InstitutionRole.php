@@ -33,43 +33,26 @@ final class InstitutionRole implements JsonSerializable, Stringable
         self::ROLE_SELECT_RAA,
     ];
 
-    /**
-     * @var string
-     */
-    private string $type;
+    private readonly string $type;
 
-    /**
-     * InstitutionRole constructor.
-     * @param $type
-     */
-    public function __construct($type)
+    public function __construct(string $type)
     {
         if (!in_array($type, self::$validRoles)) {
             throw new InvalidArgumentException();
         }
-
         $this->type = $type;
     }
 
-    /**
-     * @return InstitutionRole
-     */
     public static function useRa(): self
     {
         return new self(self::ROLE_USE_RA);
     }
 
-    /**
-     * @return InstitutionRole
-     */
     public static function useRaa(): self
     {
         return new self(self::ROLE_USE_RAA);
     }
 
-    /**
-     * @return InstitutionRole
-     */
     public static function selectRaa(): self
     {
         return new self(self::ROLE_SELECT_RAA);
@@ -77,12 +60,9 @@ final class InstitutionRole implements JsonSerializable, Stringable
 
     public function equals(InstitutionRole $role): bool
     {
-        return $this->type == $role->getType();
+        return $this->type === $role->getType();
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -93,9 +73,6 @@ final class InstitutionRole implements JsonSerializable, Stringable
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->type;

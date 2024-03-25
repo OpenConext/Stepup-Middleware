@@ -26,16 +26,9 @@ class SensitiveDataMessage
 {
     private readonly IdentityId $identityId;
 
-    private readonly int $playhead;
-
-    public function __construct(IdentityId $identityId, int $playhead, private SensitiveData $sensitiveData)
+    public function __construct(IdentityId $identityId, private readonly int $playhead, private SensitiveData $sensitiveData)
     {
-        if (!is_int($playhead)) {
-            throw InvalidArgumentException::invalidType('int', 'playhead', $playhead);
-        }
-
         $this->identityId = new IdentityId($identityId);
-        $this->playhead = $playhead;
     }
 
     /**

@@ -23,10 +23,11 @@ use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\SecondFactor;
 
+/**
+ * @extends EntityRepository<SecondFactor>
+ */
 class SecondFactorRepository extends EntityRepository
 {
-    public $_entityName;
-
     public function save(SecondFactor $secondFactor): void
     {
         $this->getEntityManager()->persist($secondFactor);

@@ -18,30 +18,22 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VerifiedSecondFactor;
 
 class VerifiedTokenInformation
 {
-    /**
-     * @param $email
-     * @param $tokenId
-     * @param $tokenType
-     * @param $commonName
-     * @param $requestedAt
-     * @param $preferredLocale
-     * @param $institution
-     * @param $registrationCode
-     */
     public function __construct(
-        private $email,
-        private $tokenId,
-        private $tokenType,
-        private $commonName,
-        private $requestedAt,
-        private $preferredLocale,
-        private $institution,
-        private $registrationCode,
+        private readonly string $email,
+        private readonly string $tokenId,
+        private readonly string $tokenType,
+        private readonly string $commonName,
+        private readonly DateTime $requestedAt,
+        private readonly string $preferredLocale,
+        private readonly Institution $institution,
+        private readonly string $registrationCode,
     ) {
     }
 
@@ -59,42 +51,42 @@ class VerifiedTokenInformation
         );
     }
 
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getTokenId()
+    public function getTokenId(): string
     {
         return $this->tokenId;
     }
 
-    public function getTokenType()
+    public function getTokenType(): string
     {
         return $this->tokenType;
     }
 
-    public function getCommonName()
+    public function getCommonName(): string
     {
         return $this->commonName;
     }
 
-    public function getRequestedAt()
+    public function getRequestedAt(): DateTime
     {
         return $this->requestedAt;
     }
 
-    public function getPreferredLocale()
+    public function getPreferredLocale(): string
     {
         return $this->preferredLocale;
     }
 
-    public function getInstitution()
+    public function getInstitution(): Institution
     {
         return $this->institution;
     }
 
-    public function getRegistrationCode()
+    public function getRegistrationCode(): string
     {
         return $this->registrationCode;
     }

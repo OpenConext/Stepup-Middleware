@@ -45,7 +45,7 @@ class ExceptionListener
 
         $this->logException($throwable);
 
-        if ($throwable instanceof HttpExceptionInterface && $throwable instanceof Throwable) {
+        if ($throwable instanceof HttpExceptionInterface) {
             $statusCode = $throwable->getStatusCode();
             $headers = $throwable->getHeaders();
         } else {

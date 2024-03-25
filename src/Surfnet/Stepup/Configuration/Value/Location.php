@@ -28,15 +28,8 @@ final class Location implements JsonSerializable, Stringable
 {
     private readonly string $location;
 
-    /**
-     * @param string $location
-     */
     public function __construct(string $location)
     {
-        if (!is_string($location)) {
-            throw InvalidArgumentException::invalidType('string', 'location', $location);
-        }
-
         $this->location = trim($location);
     }
 

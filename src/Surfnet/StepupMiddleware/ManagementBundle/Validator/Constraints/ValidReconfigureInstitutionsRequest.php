@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraint;
 
 class ValidReconfigureInstitutionsRequest extends Constraint
 {
-    public $message = 'Invalid Reconfigure InstitutionConfiguration Structure';
+    public string $message = 'Invalid Reconfigure InstitutionConfiguration Structure';
 
     public function validatedBy(): string
     {

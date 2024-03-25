@@ -54,7 +54,7 @@ class Version20150528154959 extends AbstractMigration implements ContainerAwareI
     /**
      * @return string
      */
-    private function getGatewaySchema()
+    private function getGatewaySchema(): string
     {
         return $this->container->getParameter('database_gateway_name');
     }

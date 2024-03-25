@@ -33,7 +33,7 @@ class AllowedSecondFactorListService
     public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
         $allowedSecondFactors = array_map(
-            fn(AllowedSecondFactor $allowedSecondFactor) => $allowedSecondFactor->secondFactorType,
+            fn(AllowedSecondFactor $allowedSecondFactor): \Surfnet\StepupBundle\Value\SecondFactorType => $allowedSecondFactor->secondFactorType,
             $this->allowedSecondFactorRepository->getAllowedSecondFactorsFor($institution),
         );
 
@@ -43,7 +43,7 @@ class AllowedSecondFactorListService
     /**
      * @return AllowedSecondFactorMap
      */
-    public function getAllowedSecondFactorMap()
+    public function getAllowedSecondFactorMap(): AllowedSecondFactorMap
     {
         return AllowedSecondFactorMap::from($this->allowedSecondFactorRepository->findAll());
     }

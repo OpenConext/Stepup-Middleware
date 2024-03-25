@@ -38,6 +38,9 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
     PossessionProvenAndVerified,
     RightToObtainDataInterface
 {
+    /**
+     * @var string[] 
+     */
     private array $allowlist = [
         'identity_id',
         'identity_institution',
@@ -51,41 +54,6 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
     ];
 
     /**
-     * @var SecondFactorId
-     */
-    public SecondFactorId $secondFactorId;
-
-    /**
-     * @var StepupProvider
-     */
-    public StepupProvider $stepupProvider;
-
-    /**
-     * @var GssfId
-     */
-    public GssfId $gssfId;
-
-    /**
-     * @var CommonName
-     */
-    public CommonName $commonName;
-
-    /**
-     * @var Email
-     */
-    public Email $email;
-
-    /**
-     * @var Locale Eg. "en_GB"
-     */
-    public Locale $preferredLocale;
-
-    /**
-     * @var DateTime
-     */
-    public DateTime $registrationRequestedAt;
-
-    /**
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
@@ -93,7 +61,7 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
      * @param GssfId $gssfId
      * @param CommonName $commonName
      * @param Email $email
-     * @param Locale $locale
+     * @param Locale $preferredLocale
      * @param DateTime $registrationRequestedAt
      * @param string $registrationCode
      *
@@ -102,24 +70,16 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
     public function __construct(
         IdentityId     $identityId,
         Institution    $identityInstitution,
-        SecondFactorId $secondFactorId,
-        StepupProvider $stepupProvider,
-        GssfId         $gssfId,
-        CommonName     $commonName,
-        Email          $email,
-        Locale         $locale,
-        DateTime       $registrationRequestedAt,
+        public SecondFactorId $secondFactorId,
+        public StepupProvider $stepupProvider,
+        public GssfId         $gssfId,
+        public CommonName     $commonName,
+        public Email          $email,
+        public Locale         $preferredLocale,
+        public DateTime       $registrationRequestedAt,
         public string  $registrationCode,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId = $secondFactorId;
-        $this->stepupProvider = $stepupProvider;
-        $this->gssfId = $gssfId;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $locale;
-        $this->registrationRequestedAt = $registrationRequestedAt;
     }
 
     public function getAuditLogMetadata(): Metadata
@@ -157,6 +117,8 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * 
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -195,6 +157,9 @@ class GssfPossessionProvenAndVerifiedEvent extends IdentityEvent implements
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

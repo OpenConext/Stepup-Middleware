@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Pagerfanta\Pagerfanta;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaSecondFactorRepository;
 
@@ -29,7 +30,7 @@ class RaSecondFactorService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<RaSecondFactor>
      */
     public function search(RaSecondFactorQuery $query): Pagerfanta
     {

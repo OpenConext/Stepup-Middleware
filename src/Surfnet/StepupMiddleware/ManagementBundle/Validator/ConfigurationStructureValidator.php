@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Assert\InvalidArgumentException as AssertionException;
 use InvalidArgumentException as CoreInvalidArgumentException;
 use Surfnet\Stepup\Helper\JsonHelper;
@@ -26,6 +27,7 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Assert as StepupAssert;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
+use TypeError;
 
 /**
  * Once the Assert 2.0 library has been built this should be converted to the lazy assertions so we can report
@@ -39,7 +41,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
     ) {
     }
 
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         /** @var ConstraintViolationBuilder|false $violation */
         $violation = false;
@@ -51,7 +53,7 @@ class ConfigurationStructureValidator extends ConstraintValidator
             // method is not in the interface yet, but the old method is deprecated.
             $violation = $this->context->buildViolation($exception->getMessage());
             $violation->atPath($exception->getPropertyPath());
-        } catch (CoreInvalidArgumentException $exception) {
+        } catch (CoreInvalidArgumentException|TypeError $exception) {
             $violation = $this->context->buildViolation($exception->getMessage());
         }
 
@@ -61,15 +63,13 @@ class ConfigurationStructureValidator extends ConstraintValidator
         }
     }
 
-    private function decodeJson($rawValue)
+    private function decodeJson(string $rawValue): mixed
     {
         return JsonHelper::decode($rawValue);
     }
 
-    public function validateRoot($configuration): void
+    public function validateRoot(array $configuration): void
     {
-        Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
-
         $acceptedProperties = ['gateway', 'sraa', 'email_templates'];
         StepupAssert::keysMatch(
             $configuration,
@@ -107,6 +107,10 @@ class ConfigurationStructureValidator extends ConstraintValidator
         }
     }
 
+    /**
+     * @param array<string, mixed> $configuration
+     * @throws AssertionFailedException
+     */
     private function validateEmailTemplatesConfiguration(array $configuration, string $propertyPath): void
     {
         Assertion::isArray(

@@ -24,6 +24,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\WhitelistEntry;
 
+/**
+ * @extends ServiceEntityRepository<WhitelistEntry>
+ */
 class WhitelistEntryRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -85,7 +88,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
-    public function hasEntryFor(mixed $institution): bool
+    public function hasEntryFor(string $institution): bool
     {
         $count = $this->createQueryBuilder('w')
             ->select('COUNT(w.institution)')
@@ -98,7 +101,7 @@ class WhitelistEntryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection<WhitelistEntry>
      */
     public function getAll(): ArrayCollection
     {

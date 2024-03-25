@@ -50,7 +50,7 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<RaListing>
      */
     public function search(RaListingQuery $query): Pagerfanta
     {
@@ -60,7 +60,7 @@ class RaListingService extends AbstractSearchService
     }
 
     /**
-     * @return array
+     * @return array<int|string, array<string, string>>
      */
     public function getFilterOptions(RaListingQuery $query): array
     {
@@ -75,7 +75,7 @@ class RaListingService extends AbstractSearchService
         $raListings = $this->raListingRepository->listRasFor($institution);
 
         return $raListings
-            ->map(fn(RaListing $raListing) => RegistrationAuthorityCredentials::fromRaListing($raListing))
+            ->map(fn(RaListing $raListing): \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials => RegistrationAuthorityCredentials::fromRaListing($raListing))
             ->toArray();
     }
 }

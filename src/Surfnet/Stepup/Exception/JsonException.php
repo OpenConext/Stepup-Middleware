@@ -20,7 +20,7 @@ namespace Surfnet\Stepup\Exception;
 
 final class JsonException extends RuntimeException
 {
-    public static function withMessage($errorMessage): self
+    public static function withMessage(string $errorMessage): self
     {
         return new self(sprintf('Unable to parse JSON data: %s', $errorMessage));
     }

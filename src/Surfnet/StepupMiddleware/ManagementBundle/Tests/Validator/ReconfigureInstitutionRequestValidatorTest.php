@@ -62,12 +62,10 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
      * @test
      * @group validator
      * @dataProvider invalidReconfigureInstitutionRequests
-     * @param array $reconfigureRequest
-     * @param string $expectedPropertyPath
      */
     public function it_rejects_invalid_configuration(
-        $reconfigureRequest,
-        $expectedPropertyPath,
+        array  $reconfigureRequest,
+        string $expectedPropertyPath,
         string $expectErrorMessageToContain,
     ): void {
         $existingInstitution = ConfiguredInstitution::createFrom(new Institution('surfnet.nl'));
@@ -259,7 +257,7 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     /**
      * @return MatcherAbstract
      */
-    private function spy(mixed &$spy)
+    private function spy(mixed &$spy): MatcherAbstract
     {
         return Mockery::on(
             function ($value) use (&$spy): bool {

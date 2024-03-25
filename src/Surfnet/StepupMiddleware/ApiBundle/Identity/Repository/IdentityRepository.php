@@ -28,6 +28,9 @@ use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 
+/**
+ * @extends ServiceEntityRepository<Identity>
+ */
 class IdentityRepository extends ServiceEntityRepository
 {
     public function __construct(
@@ -65,19 +68,19 @@ class IdentityRepository extends ServiceEntityRepository
                 ->setParameter('institution', $query->institution);
         }
 
-        if ($query->nameId) {
+        if ($query->nameId !== '' && $query->nameId !== '0') {
             $queryBuilder
                 ->andWhere('i.nameId = :nameId')
                 ->setParameter('nameId', $query->nameId);
         }
 
-        if ($query->email) {
+        if ($query->email !== '' && $query->email !== '0') {
             $queryBuilder
                 ->andWhere('i.email LIKE :email')
                 ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
-        if ($query->commonName) {
+        if ($query->commonName !== '' && $query->commonName !== '0') {
             $queryBuilder
                 ->andWhere('i.commonName LIKE :commonName')
                 ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
@@ -136,27 +139,5 @@ class IdentityRepository extends ServiceEntityRepository
     public function findOneByNameId(string $nameId): ?Identity
     {
         return $this->findOneBy(['nameId' => $nameId]);
-    }
-
-    public function removeByIdentityId(IdentityId $identityId): void
-    {
-        $this->getEntityManager()->createQueryBuilder()
-            ->delete($this->getEntityName(), 'i')
-            ->where('i.id = :identityId')
-            ->setParameter('identityId', $identityId->getIdentityId())
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return ArrayCollection|Identity[]
-     */
-    public function findByInstitution(Institution $institution): ArrayCollection|array
-    {
-        return $this->createQueryBuilder('i')
-            ->where('i.institution = :institution')
-            ->setParameter('institution', $institution->getInstitution())
-            ->getQuery()
-            ->getResult();
     }
 }

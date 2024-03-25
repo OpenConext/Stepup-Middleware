@@ -48,7 +48,7 @@ final class Version20221102143350 extends AbstractMigration implements Container
         $this->addSql(sprintf('DROP TABLE %s.institution_configuration', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

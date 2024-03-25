@@ -27,8 +27,9 @@ final readonly class SelfVetOption implements JsonSerializable
         return new self(false);
     }
 
-    public function __construct(private bool $selfVetOption)
-    {
+    public function __construct(
+        private bool $selfVetOption
+    ) {
     }
 
     public function equals(SelfVetOption $other): bool

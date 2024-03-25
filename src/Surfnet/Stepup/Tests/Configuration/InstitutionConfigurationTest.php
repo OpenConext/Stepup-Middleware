@@ -66,7 +66,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
         $this->scenario
-            ->when(fn() => InstitutionConfiguration::create(
+            ->when(fn(): \Surfnet\Stepup\Configuration\InstitutionConfiguration => InstitutionConfiguration::create(
                 $institutionConfigurationId,
                 $institution,
             ))->then([
@@ -124,7 +124,7 @@ class InstitutionConfigurationTest extends AggregateRootScenarioTestCase
         $selectRaaOption = InstitutionAuthorizationOption::getDefault(InstitutionRole::selectRaa());
 
         $this->scenario
-            ->when(fn() => InstitutionConfiguration::create(
+            ->when(fn(): \Surfnet\Stepup\Configuration\InstitutionConfiguration => InstitutionConfiguration::create(
                 $institutionConfigurationId,
                 $institution,
             ))->then([

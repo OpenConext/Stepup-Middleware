@@ -42,13 +42,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class RegistrationMailService
 {
-    public InstitutionConfigurationOptionsService $institutionConfigurationOptionsService;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-
     private readonly string $fallbackLocale;
 
     /**
@@ -57,11 +50,11 @@ class RegistrationMailService
     public function __construct(
         private readonly Mailer $mailer,
         private readonly Sender $sender,
-        TranslatorInterface $translator,
+        private readonly TranslatorInterface $translator,
         private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         private readonly string $selfServiceUrl,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        public InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
         private readonly IdentityService $identityService,
         private readonly SecondFactorService $secondFactorService,
         private readonly RaLocationService $raLocationsService,
@@ -69,9 +62,7 @@ class RegistrationMailService
         private readonly LoggerInterface $logger,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
-        $this->translator = $translator;
         $this->fallbackLocale = $fallbackLocale;
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
     }
 
     public function send(string $identityId, string $secondFactorId): void

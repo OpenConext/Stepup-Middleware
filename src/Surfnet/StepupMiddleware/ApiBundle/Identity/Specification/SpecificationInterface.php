@@ -22,8 +22,5 @@ use Doctrine\ORM\EntityRepository;
 
 interface SpecificationInterface
 {
-    /**
-     * @return mixed
-     */
     public function apply(EntityRepository $entityRepository): mixed;
 }

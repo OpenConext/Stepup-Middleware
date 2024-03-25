@@ -28,7 +28,6 @@ interface Configuration extends AggregateRoot
     public static function create(): Configuration;
 
     /**
-     * @param string $newConfiguration
      * @return void
      */
     public function update(string $newConfiguration): void;

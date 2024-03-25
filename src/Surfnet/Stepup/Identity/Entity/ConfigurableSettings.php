@@ -61,7 +61,7 @@ final class ConfigurableSettings
      * @throws Exception
      * @throws Exception
      */
-    public static function create($emailVerificationTimeFrame, array $locales): self
+    public static function create(int $emailVerificationTimeFrame, array $locales): self
     {
         return new self(
             TimeFrame::ofSeconds($emailVerificationTimeFrame),

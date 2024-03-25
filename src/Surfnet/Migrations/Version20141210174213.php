@@ -47,7 +47,7 @@ class Version20141210174213 extends AbstractMigration implements ContainerAwareI
         $this->addSql(sprintf('ALTER TABLE %s.second_factor ADD PRIMARY KEY (identity_id)', $gatewaySchema));
     }
 
-    private function getGatewaySchema()
+    private function getGatewaySchema(): float|array|bool|int|string|null
     {
         return $this->container->getParameter('database_gateway_name');
     }

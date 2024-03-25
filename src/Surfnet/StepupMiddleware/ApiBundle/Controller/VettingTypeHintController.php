@@ -34,7 +34,7 @@ class VettingTypeHintController extends AbstractController
     ) {
     }
 
-    public function get($institution): JsonResponse
+    public function get(string $institution): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get a vetting type hint for institution: %s', $institution));

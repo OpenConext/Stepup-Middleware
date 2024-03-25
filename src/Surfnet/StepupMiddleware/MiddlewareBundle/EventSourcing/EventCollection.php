@@ -23,6 +23,9 @@ use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\InvalidArgumentException;
 
+/**
+ * @implements IteratorAggregate<int, string>
+ */
 final class EventCollection implements IteratorAggregate
 {
     /**
@@ -30,10 +33,13 @@ final class EventCollection implements IteratorAggregate
      */
     private array $eventNames = [];
 
+    /**
+     * @param string[] $eventNames
+     */
     public function __construct(array $eventNames)
     {
         foreach ($eventNames as $eventName) {
-            if (!is_string($eventName) || empty($eventName)) {
+            if (!is_string($eventName) || ($eventName === '' || $eventName === '0')) {
                 throw InvalidArgumentException::invalidType('non-empty string', 'eventName', $eventName);
             }
 
@@ -53,11 +59,14 @@ final class EventCollection implements IteratorAggregate
     /**
      * @return string[]
      */
-    public function getEventNames()
+    public function getEventNames(): array
     {
         return $this->eventNames;
     }
 
+    /**
+     * @return string[]
+     */
     public function formatAsEventStreamTypes(): array
     {
         return array_map(
@@ -66,9 +75,6 @@ final class EventCollection implements IteratorAggregate
         );
     }
 
-    /**
-     * @return EventCollection
-     */
     public function select(array $subset): self
     {
         $nonAvailableEventNames = array_diff($subset, $this->eventNames);
@@ -85,15 +91,15 @@ final class EventCollection implements IteratorAggregate
         return new self($subset);
     }
 
-    /**
-     * @param $eventName
-     * @return bool
-     */
-    public function contains($eventName): bool
+
+    public function contains(string $eventName): bool
     {
         return in_array($eventName, $this->eventNames);
     }
 
+    /**
+     * @return Iterator<int, string>
+     */
     public function getIterator(): Iterator
     {
         return new ArrayIterator($this->eventNames);

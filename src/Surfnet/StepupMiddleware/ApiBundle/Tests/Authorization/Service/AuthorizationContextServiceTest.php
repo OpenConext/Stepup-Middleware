@@ -46,24 +46,13 @@ class AuthorizationContextServiceTest extends TestCase
 
     private AuthorizationContextService $service;
 
-    /**
-     * @var IdentityService|MockInterface
-     */
-    private $identityService;
+    private IdentityService&MockInterface $identityService;
 
-    /**
-     * @var SraaService|MockInterface
-     */
-    private $sraaService;
+    private SraaService&MockInterface $sraaService;
 
-    /**
-     * @var AuthorizationRepository|MockInterface
-     */
-    private $authorizationRepository;
-    /**
-     * @var MockInterface|ConfiguredInstitutionRepository
-     */
-    private $institutionRepo;
+    private AuthorizationRepository&MockInterface $authorizationRepository;
+
+    private MockInterface|ConfiguredInstitutionRepository $institutionRepo;
 
     public function setUp(): void
     {

@@ -41,7 +41,7 @@ class RaCandidateController extends AbstractController
     /**
      * @return JsonCollectionResponse
      */
-    public function search(Request $request)
+    public function search(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

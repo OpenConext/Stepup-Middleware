@@ -35,7 +35,7 @@ class UnverifiedSecondFactorController extends AbstractController
     ) {
     }
 
-    public function get($id): JsonResponse
+    public function get(string $id): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
@@ -48,7 +48,7 @@ class UnverifiedSecondFactorController extends AbstractController
         return new JsonResponse($secondFactor);
     }
 
-    public function collection(Request $request)
+    public function collection(Request $request): JsonCollectionResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 

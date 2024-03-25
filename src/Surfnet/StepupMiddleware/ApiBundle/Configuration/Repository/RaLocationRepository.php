@@ -26,6 +26,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
+/**
+ * @extends ServiceEntityRepository<RaLocation>
+ */
 class RaLocationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -36,7 +39,7 @@ class RaLocationRepository extends ServiceEntityRepository
     /**
      * @return null|RaLocation[]
      */
-    public function search(RaLocationQuery $query)
+    public function search(RaLocationQuery $query): ?array
     {
         if (!in_array($query->orderBy, ['name', 'location', 'contact_information'])) {
             throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));

@@ -39,7 +39,7 @@ class ConfigurationInstitutionType extends Type
     public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof Institution) {
@@ -58,7 +58,7 @@ class ConfigurationInstitutionType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform): ?Institution
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {

@@ -20,6 +20,9 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @extends  EntityRepository<SamlEntity>
+ */
 class SamlEntityRepository extends EntityRepository
 {
     /**
@@ -64,10 +67,8 @@ class SamlEntityRepository extends EntityRepository
 
     /**
      * Remove all configured SamlEntities of a specific type
-     *
-     * @param string $type
      */
-    private function removeAllOfType($type): void
+    private function removeAllOfType(string $type): void
     {
         $this
             ->getEntityManager()

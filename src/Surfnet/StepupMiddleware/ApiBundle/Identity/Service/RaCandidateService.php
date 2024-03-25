@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContext;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaCandidate;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository;
 
@@ -31,7 +32,7 @@ class RaCandidateService extends AbstractSearchService
     }
 
     /**
-     * @return Pagerfanta
+     * @return Pagerfanta<RaCandidate>
      */
     public function search(RaCandidateQuery $query): Pagerfanta
     {

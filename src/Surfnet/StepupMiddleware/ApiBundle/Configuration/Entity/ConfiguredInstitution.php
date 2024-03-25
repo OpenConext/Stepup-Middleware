@@ -31,7 +31,7 @@ class ConfiguredInstitution
      */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
-    public $institution;
+    public Institution $institution;
 
     public static function createFrom(Institution $institution): self
     {

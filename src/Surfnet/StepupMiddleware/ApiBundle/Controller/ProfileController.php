@@ -33,7 +33,7 @@ class ProfileController extends AbstractController
     ) {
     }
 
-    public function get(Request $request, $identityId): JsonResponse
+    public function get(Request $request, string $identityId): JsonResponse
     {
         $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
 

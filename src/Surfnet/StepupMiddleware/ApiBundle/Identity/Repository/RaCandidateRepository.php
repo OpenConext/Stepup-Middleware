@@ -35,6 +35,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @extends ServiceEntityRepository<RaCandidate>
  */
 class RaCandidateRepository extends ServiceEntityRepository
 {
@@ -69,19 +70,19 @@ class RaCandidateRepository extends ServiceEntityRepository
                 ->setParameter('institution', $query->institution);
         }
 
-        if ($query->commonName) {
+        if ($query->commonName !== '' && $query->commonName !== '0') {
             $queryBuilder
                 ->andWhere('i.commonName LIKE :commonName')
                 ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));
         }
 
-        if ($query->email) {
+        if ($query->email !== '' && $query->email !== '0') {
             $queryBuilder
                 ->andWhere('i.email LIKE :email')
                 ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
-        if (!empty($query->secondFactorTypes)) {
+        if (isset($query->secondFactorTypes) && $query->secondFactorTypes !== []) {
             $queryBuilder
                 ->andWhere('vsf.type IN (:secondFactorTypes)')
                 ->setParameter('secondFactorTypes', $query->secondFactorTypes);

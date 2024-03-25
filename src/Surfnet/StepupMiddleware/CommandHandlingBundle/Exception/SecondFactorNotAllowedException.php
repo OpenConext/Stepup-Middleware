@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Exception\ProcessingAbortedException;
+use Throwable;
 
 class SecondFactorNotAllowedException extends RuntimeException implements ProcessingAbortedException
 {
@@ -35,7 +36,7 @@ class SecondFactorNotAllowedException extends RuntimeException implements Proces
         return $this->errors;
     }
 
-    public function __construct($message = "", $code = 0, Exception $previous = null)
+    public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 

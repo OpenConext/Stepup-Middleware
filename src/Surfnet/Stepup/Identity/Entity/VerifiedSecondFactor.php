@@ -67,10 +67,6 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         DateTime               $registrationRequestedAt,
         string                 $registrationCode,
     ): self {
-        if (!is_string($registrationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
-        }
-
         $secondFactor = new self;
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
@@ -111,7 +107,7 @@ class VerifiedSecondFactor extends AbstractSecondFactor
         );
     }
 
-    public function vet($provePossessionSkipped, VettingType $type): void
+    public function vet(bool $provePossessionSkipped, VettingType $type): void
     {
         if ($provePossessionSkipped) {
             $this->apply(

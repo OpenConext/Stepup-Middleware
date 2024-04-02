@@ -28,8 +28,14 @@ use Surfnet\Stepup\Configuration\Value\RaLocationName;
 
 class RaLocationAddedEvent implements SerializableInterface
 {
-    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public Institution $institution, public RaLocationId $raLocationId, public RaLocationName $raLocationName, public Location $location, public ContactInformation $contactInformation)
-    {
+    public function __construct(
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public RaLocationId $raLocationId,
+        public RaLocationName $raLocationName,
+        public Location $location,
+        public ContactInformation $contactInformation
+    ) {
     }
 
     public static function deserialize(array $data): self

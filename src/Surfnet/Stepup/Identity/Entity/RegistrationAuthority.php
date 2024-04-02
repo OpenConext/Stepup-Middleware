@@ -31,11 +31,14 @@ final class RegistrationAuthority extends SimpleEventSourcedEntity
 {
     private ?RegistrationAuthorityRole $role = null;
 
-    private ?Location $location = null; // @phpstan-ignore-line PHPStan can not see that this field is written when serialized to the database
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?Location $location = null;
 
-    private ?ContactInformation $contactInformation = null; // @phpstan-ignore-line PHPStan can not see that this field is written when serialized to the database
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?ContactInformation $contactInformation = null;
 
-    private ?Institution $institution = null; // @phpstan-ignore-line PHPStan can not see that this field is written when serialized to the database
+    // @phpstan-ignore-next-line PHPStan can not see that this field is written when serialized to the database
+    private ?Institution $institution = null;
 
     public static function accreditWith(
         RegistrationAuthorityRole $role,

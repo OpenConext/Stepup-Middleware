@@ -23,7 +23,8 @@ use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand
+    as BootstrapIdentityWithYubikeySecondFactorIdentityCommand;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\TransactionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

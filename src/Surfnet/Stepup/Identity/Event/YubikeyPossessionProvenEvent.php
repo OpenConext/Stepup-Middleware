@@ -36,7 +36,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',
@@ -112,7 +112,7 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

@@ -33,15 +33,11 @@ class RaListingService extends AbstractSearchService
     {
     }
 
-    /**
-     * @return null|RaListing
-     */
     public function findByIdentityIdAndRaInstitutionWithContext(
         IdentityId $identityId,
         Institution $raInstitution,
         InstitutionAuthorizationContextInterface $authorizationContext,
-    ): ?RaListing
-    {
+    ): ?RaListing {
         return $this->raListingRepository->findByIdentityIdAndRaInstitutionWithContext(
             $identityId,
             $raInstitution,
@@ -75,7 +71,7 @@ class RaListingService extends AbstractSearchService
         $raListings = $this->raListingRepository->listRasFor($institution);
 
         return $raListings
-            ->map(fn(RaListing $raListing): \Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials => RegistrationAuthorityCredentials::fromRaListing($raListing))
+            ->map(fn(RaListing $raListing): RegistrationAuthorityCredentials => RegistrationAuthorityCredentials::fromRaListing($raListing))
             ->toArray();
     }
 }

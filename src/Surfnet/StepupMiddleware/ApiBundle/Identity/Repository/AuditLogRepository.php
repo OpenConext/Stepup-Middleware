@@ -122,7 +122,14 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameter('secondFactorEvents', self::$secondFactorEvents);
 
         match ($query->orderBy) {
-            'secondFactorType', 'secondFactorIdentifier', 'recoveryTokenType', 'recoveryTokenIdentifier', 'recordedOn', 'actorCommonName', 'actorInstitution' => $queryBuilder->orderBy(
+            'secondFactorType',
+            'secondFactorIdentifier',
+            'recoveryTokenType',
+            'recoveryTokenIdentifier',
+            'recordedOn',
+            'actorCommonName',
+            'actorInstitution'
+            => $queryBuilder->orderBy(
                 sprintf('al.%s', $query->orderBy),
                 $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
             ),

@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 abstract class SecondFactorRevokedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',

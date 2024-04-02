@@ -37,8 +37,7 @@ class SecondFactorRevocationProjector extends Projector
     protected function applyVettedSecondFactorRevokedEvent(
         VettedSecondFactorRevokedEvent $event,
         DomainMessage $domainMessage,
-    ): void
-    {
+    ): void {
         $revocation = new SecondFactorRevocation();
         $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;
@@ -52,8 +51,7 @@ class SecondFactorRevocationProjector extends Projector
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
         DomainMessage $domainMessage,
-    ): void
-    {
+    ): void {
         $revocation = new SecondFactorRevocation();
         $revocation->id = (string)Uuid::uuid4();
         $revocation->institution = $event->identityInstitution;

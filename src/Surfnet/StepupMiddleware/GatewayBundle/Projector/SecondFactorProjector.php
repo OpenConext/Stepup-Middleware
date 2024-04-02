@@ -126,8 +126,7 @@ class SecondFactorProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $secondFactor = $this->repository->findOneBySecondFactorId($event->secondFactorId);
 
         if ($secondFactor === null) {

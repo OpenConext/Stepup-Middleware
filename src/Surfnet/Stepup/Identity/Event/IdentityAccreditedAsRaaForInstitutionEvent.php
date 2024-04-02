@@ -31,7 +31,7 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
 {
     /** @var string[] */
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',

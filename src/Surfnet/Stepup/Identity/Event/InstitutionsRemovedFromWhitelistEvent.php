@@ -38,7 +38,7 @@ class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

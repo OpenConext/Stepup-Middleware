@@ -33,7 +33,8 @@ final class ReplayingEventDispatcher implements EventDispatcher
         $this->projectors[] = $projector;
     }
 
-    public function dispatch(DomainEventStream $events): void    {
+    public function dispatch(DomainEventStream $events): void
+    {
         foreach ($events as $event) {
             foreach ($this->projectors as $projector) {
                 $projector->handle($event);

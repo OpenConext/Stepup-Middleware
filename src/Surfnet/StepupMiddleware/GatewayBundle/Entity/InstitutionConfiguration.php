@@ -36,7 +36,6 @@ class InstitutionConfiguration
          */
         #[ORM\Column(type: 'boolean')]
         public bool $ssoOn2faEnabled
-    )
-    {
+    ) {
     }
 }

@@ -63,7 +63,8 @@ final class BootstrapGsspSecondFactorCommand extends Command
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Method length could be reduced by deconstructing the bootstrapping of the required data and the vetting of the GSSP
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Method length could be reduced by deconstructing the bootstrapping
+     * of the required data and the vetting of the GSSP
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

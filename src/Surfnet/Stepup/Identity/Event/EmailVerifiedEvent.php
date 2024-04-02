@@ -39,7 +39,7 @@ class EmailVerifiedEvent extends IdentityEvent implements
     RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',

@@ -168,7 +168,7 @@ class AuditLogEntry implements JsonSerializable
     {
         return [
             'actor_id' => $this->actorId,
-            'actor_institution' => $this->actorInstitution instanceof \Surfnet\Stepup\Identity\Value\Institution ? (string)$this->actorInstitution : null,
+            'actor_institution' => $this->actorInstitution instanceof Institution ? (string)$this->actorInstitution : null,
             'actor_common_name' => $this->actorCommonName,
             'identity_id' => $this->identityId,
             'identity_institution' => (string)$this->identityInstitution,

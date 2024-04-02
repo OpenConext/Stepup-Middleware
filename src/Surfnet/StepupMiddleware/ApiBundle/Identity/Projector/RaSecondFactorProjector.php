@@ -308,8 +308,7 @@ class RaSecondFactorProjector extends Projector
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
@@ -320,8 +319,7 @@ class RaSecondFactorProjector extends Projector
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
@@ -332,8 +330,7 @@ class RaSecondFactorProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 

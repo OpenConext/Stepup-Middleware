@@ -41,7 +41,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
     RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',
@@ -114,7 +114,7 @@ class U2fDevicePossessionProvenAndVerifiedEvent extends IdentityEvent implements
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

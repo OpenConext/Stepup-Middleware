@@ -44,7 +44,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
     RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',
@@ -117,7 +117,7 @@ class SecondFactorVettedWithoutTokenProofOfPossession extends IdentityEvent impl
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

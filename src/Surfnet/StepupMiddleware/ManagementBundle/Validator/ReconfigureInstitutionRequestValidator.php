@@ -33,6 +33,9 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Coupling to assertion classes is rather high, might be a good candidate for refactoring
+ */
 final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 {
     /**
@@ -74,7 +77,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
 
     public function validateRoot(array $configuration): void
     {
-        Assertion::isArray($configuration, 'Invalid body structure, must be an object', '(root)');
         $this->validateInstitutionsExist(array_keys($configuration));
 
         foreach ($configuration as $institution => $options) {
@@ -98,7 +100,6 @@ final class ReconfigureInstitutionRequestValidator extends ConstraintValidator
     public function validateInstitutionConfigurationOptions(array $options, string $institution): void
     {
         $propertyPath = sprintf('Institution(%s)', $institution);
-        Assertion::isArray($options, 'Invalid institution configuration, must be an object', $propertyPath);
         $requiredOptions = [
             'use_ra_locations',
             'show_raa_contact_information',

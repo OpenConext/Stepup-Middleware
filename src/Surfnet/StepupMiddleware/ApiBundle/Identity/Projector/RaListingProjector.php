@@ -241,7 +241,6 @@ class RaListingProjector extends Projector
             $listing->role = AuthorityRole::raa();
             $this->raListingRepository->save($listing);
         }
-
     }
 
     /**

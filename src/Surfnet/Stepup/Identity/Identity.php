@@ -1183,8 +1183,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(
         SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event,
-    ): void
-    {
+    ): void {
         $recoveryToken = RecoveryTokenEntity::create($event->recoveryTokenId, RecoveryTokenType::safeStore(), $this);
 
         $this->recoveryTokens->set($recoveryToken);
@@ -1231,8 +1230,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applySecondFactorVettedWithoutTokenProofOfPossession(
         SecondFactorVettedWithoutTokenProofOfPossession $event,
-    ): void
-    {
+    ): void {
         $secondFactorId = (string)$event->secondFactorId;
 
         /** @var VerifiedSecondFactor $verified */
@@ -1250,8 +1248,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->unverifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
@@ -1262,8 +1259,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->verifiedSecondFactors->remove((string)$event->secondFactorId);
     }
 
@@ -1274,8 +1270,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->vettedSecondFactors->remove((string)$event->secondFactorId);
     }
 
@@ -1317,8 +1312,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyRegistrationAuthorityInformationAmendedForInstitutionEvent(
         RegistrationAuthorityInformationAmendedForInstitutionEvent $event,
-    ): void
-    {
+    ): void {
         $this->registrationAuthorities->get($event->raInstitution)->amendInformation(
             $event->location,
             $event->contactInformation,
@@ -1334,8 +1328,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
 
     protected function applyRegistrationAuthorityRetractedForInstitutionEvent(
         RegistrationAuthorityRetractedForInstitutionEvent $event,
-    ): void
-    {
+    ): void {
         $this->registrationAuthorities->remove($event->raInstitution);
     }
 
@@ -1415,8 +1408,7 @@ class Identity extends EventSourcedAggregateRoot implements IdentityApi
      */
     protected function applyRegistrationAuthorityInformationAmendedEvent(
         RegistrationAuthorityInformationAmendedEvent $event,
-    ): void
-    {
+    ): void {
         $this->registrationAuthorities->get($event->identityInstitution)->amendInformation(
             $event->location,
             $event->contactInformation,

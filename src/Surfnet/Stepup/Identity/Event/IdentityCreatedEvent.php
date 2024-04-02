@@ -32,7 +32,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'id',
@@ -77,7 +77,7 @@ class IdentityCreatedEvent extends IdentityEvent implements Forgettable, RightTo
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

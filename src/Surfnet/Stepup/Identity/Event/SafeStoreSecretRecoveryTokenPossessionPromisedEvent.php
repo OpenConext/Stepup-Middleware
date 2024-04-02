@@ -43,7 +43,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
     RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',
@@ -92,7 +92,7 @@ class SafeStoreSecretRecoveryTokenPossessionPromisedEvent extends IdentityEvent 
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
-     * 
+     *
      * @return array<string, mixed>
      */
     public function serialize(): array

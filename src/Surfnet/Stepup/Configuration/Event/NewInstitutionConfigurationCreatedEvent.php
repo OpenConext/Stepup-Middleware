@@ -35,8 +35,17 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
  */
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
-    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public Institution $institution, public UseRaLocationsOption $useRaLocationsOption, public ShowRaaContactInformationOption $showRaaContactInformationOption, public VerifyEmailOption $verifyEmailOption, public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption, public SsoOn2faOption $ssoOn2faOption, public SelfVetOption $selfVetOption, public SelfAssertedTokensOption $selfAssertedTokensOption)
-    {
+    public function __construct(
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public UseRaLocationsOption $useRaLocationsOption,
+        public ShowRaaContactInformationOption $showRaaContactInformationOption,
+        public VerifyEmailOption $verifyEmailOption,
+        public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        public SsoOn2faOption $ssoOn2faOption,
+        public SelfVetOption $selfVetOption,
+        public SelfAssertedTokensOption $selfAssertedTokensOption
+    ) {
     }
 
     public static function deserialize(array $data): self
@@ -80,8 +89,7 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             'use_ra_locations_option' => $this->useRaLocationsOption->isEnabled(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
             'verify_email_option' => $this->verifyEmailOption->isEnabled(),
-            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(
-            ),
+            'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
             'sso_on_2fa_option' => $this->ssoOn2faOption->isEnabled(),
             'self_vet_option' => $this->selfVetOption->isEnabled(),
             'self_asserted_tokens_option' => $this->selfAssertedTokensOption->isEnabled(),

@@ -24,12 +24,9 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfi
 
 class InstitutionConfigurationOptionsService
 {
-    /**
-     * @param int $numberOfTokensPerIdentity
-     */
     public function __construct(
         private readonly InstitutionConfigurationOptionsRepository $repository,
-        private $numberOfTokensPerIdentity,
+        private int $numberOfTokensPerIdentity,
     ) {
     }
 
@@ -41,9 +38,6 @@ class InstitutionConfigurationOptionsService
         return $this->repository->findAll();
     }
 
-    /**
-     * @return InstitutionConfigurationOptions|null
-     */
     public function findInstitutionConfigurationOptionsFor(Institution $institution): ?InstitutionConfigurationOptions
     {
         return $this->repository->findConfigurationOptionsFor($institution);
@@ -54,14 +48,14 @@ class InstitutionConfigurationOptionsService
      *
      * When the DISABLED value is set on the institution (when no specific configuration was pushed) the application
      * default is returned.
-     *
-     * @return int
      */
     public function getMaxNumberOfTokensFor(Institution $institution): int
     {
         $configuration = $this->findInstitutionConfigurationOptionsFor($institution);
 
-        if ($configuration instanceof \Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions && $configuration->numberOfTokensPerIdentityOption->isEnabled()) {
+        if ($configuration instanceof InstitutionConfigurationOptions &&
+            $configuration->numberOfTokensPerIdentityOption->isEnabled()
+        ) {
             return $configuration->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity();
         }
 

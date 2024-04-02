@@ -90,12 +90,15 @@
             "@phpcs",
             "@phpstan",
             "@phpcpd",
+            "@license-headers",
             "@phpunit"
         ],
         "phplint": "./ci/qa/phplint",
         "phpmd": "./ci/qa/phpmd",
+        "license-headers": "./ci/qa/docheader",
         "phpstan": "./ci/qa/phpstan",
         "phpcs": "./ci/qa/phpcs",
+        "phpcbf": "./ci/qa/phpcbf",
         "phpcpd": "./ci/qa/phpcpd",
         "phpunit": "./ci/qa/phpunit --",
 

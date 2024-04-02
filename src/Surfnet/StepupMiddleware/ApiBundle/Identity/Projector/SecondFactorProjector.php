@@ -239,8 +239,7 @@ class SecondFactorProjector extends Projector
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
         CompliedWithUnverifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->unverifiedRepository->remove(
             $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId()),
         );
@@ -253,8 +252,7 @@ class SecondFactorProjector extends Projector
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
         CompliedWithVerifiedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->verifiedRepository->remove($this->verifiedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 
@@ -265,8 +263,7 @@ class SecondFactorProjector extends Projector
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
         CompliedWithVettedSecondFactorRevocationEvent $event,
-    ): void
-    {
+    ): void {
         $this->vettedRepository->remove($this->vettedRepository->find($event->secondFactorId->getSecondFactorId()));
     }
 

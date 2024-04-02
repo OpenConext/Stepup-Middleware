@@ -46,12 +46,12 @@ class ReplayEventsCommand extends Command
     {
         $this
              ->addOption(
-                'increments',
-                'i',
-                InputOption::VALUE_REQUIRED,
-                'The amount of events that are replayed at once (repeated until all events are replayed)',
-                1000,
-            );
+                 'increments',
+                 'i',
+                 InputOption::VALUE_REQUIRED,
+                 'The amount of events that are replayed at once (repeated until all events are replayed)',
+                 1000,
+             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

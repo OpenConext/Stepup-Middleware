@@ -30,7 +30,7 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
     RightToObtainDataInterface
 {
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',

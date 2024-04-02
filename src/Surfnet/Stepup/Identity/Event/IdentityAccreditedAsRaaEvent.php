@@ -34,7 +34,7 @@ class IdentityAccreditedAsRaaEvent extends IdentityEvent implements RightToObtai
 {
     /** @var string[] */
     /**
-     * @var string[] 
+     * @var string[]
      */
     private array $allowlist = [
         'identity_id',

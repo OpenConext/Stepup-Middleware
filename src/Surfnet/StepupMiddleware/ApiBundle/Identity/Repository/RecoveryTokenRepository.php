@@ -24,6 +24,7 @@ use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
+use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RecoveryTokenStatusType;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RecoveryToken;
@@ -63,7 +64,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('rt');
 
-        if ($query->authorizationContext instanceof \Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface) {
+        if ($query->authorizationContext instanceof InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all recovery tokens of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(
@@ -73,7 +74,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
                 'iac',
             );
         }
-        if ($query->identityId instanceof \Surfnet\Stepup\Identity\Value\IdentityId) {
+        if ($query->identityId instanceof IdentityId) {
             $queryBuilder
                 ->andWhere('rt.identityId = :identityId')
                 ->setParameter('identityId', $query->identityId);
@@ -139,7 +140,7 @@ class RecoveryTokenRepository extends ServiceEntityRepository
             ->select('sf.institution')
             ->groupBy('sf.institution');
 
-        if ($query->authorizationContext instanceof \Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizationContextInterface) {
+        if ($query->authorizationContext instanceof InstitutionAuthorizationContextInterface) {
             // Modify query to filter on authorization context
             // We want to list all second factors of the institution we are RA for.
             $this->authorizationRepositoryFilter->filter(

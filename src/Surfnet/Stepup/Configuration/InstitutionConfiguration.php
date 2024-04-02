@@ -564,43 +564,37 @@ class InstitutionConfiguration extends EventSourcedAggregateRoot implements Inst
 
     protected function applyShowRaaContactInformationOptionChangedEvent(
         ShowRaaContactInformationOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->showRaaContactInformationOption = $event->showRaaContactInformationOption;
     }
 
     protected function applyVerifyEmailOptionChangedEvent(
         VerifyEmailOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->verifyEmailOption = $event->verifyEmailOption;
     }
 
     protected function applySelfVetOptionChangedEvent(
         SelfVetOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->selfVetOption = $event->selfVetOption;
     }
 
     protected function applySelfAssertedTokensOptionChangedEvent(
         SelfAssertedTokensOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->selfAssertedTokensOption = $event->selfAssertedTokensOption;
     }
 
     protected function applySsoOn2faOptionChangedEvent(
         SsoOn2faOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->ssoOn2faOption = $event->ssoOn2faOption;
     }
 
     protected function applyNumberOfTokensPerIdentityOptionChangedEvent(
         NumberOfTokensPerIdentityOptionChangedEvent $event,
-    ): void
-    {
+    ): void {
         $this->numberOfTokensPerIdentityOption = $event->numberOfTokensPerIdentityOption;
     }
 

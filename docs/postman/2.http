@@ -126,6 +126,7 @@ Content-Type: application/json
 POST http://middleware.dev.openconext.local/management/whitelist/add
 Accept: application/json
 Content-Type: application/json
+Authorization: Basic ra ra_secret
 
 {
   "institutions": [
@@ -193,15 +194,16 @@ Content-Type: application/json
 ###
 # @name /management/institution-configuration
 # GET the institution configuration options
-GET http://middleware.stepup.example.com/management/institution-configuration?
+GET http://middleware.dev.openconext.local/management/institution-configuration?
     XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/json
+Authorization: Basic ra ra_secret
 
 ###
 # @name /management/institution-configuration
 # POST the institution configuration options to reconfigure
-POST http://middleware.stepup.example.com/management/institution-configuration?
+POST http://middleware.dev.openconext.local/management/institution-configuration?
     XDEBUG_SESSION_START=PHPSTORM
 Accept: application/json
 Content-Type: application/json

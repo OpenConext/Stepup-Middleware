@@ -23,6 +23,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use RuntimeException;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\EmailTemplatesUpdatedEvent;
@@ -34,6 +35,7 @@ use Surfnet\Stepup\Configuration\EventSourcing\ConfigurationRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\CommandHandler\ConfigurationCommandHandler;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
+use function is_string;
 
 final class ConfigurationCommandHandlerTest extends CommandHandlerTest
 {
@@ -147,15 +149,13 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
         );
     }
 
-    /**
-     * @return UpdateConfigurationCommand
-     */
     private function createUpdateCommand(array $configuration): UpdateConfigurationCommand
     {
-        $command = new UpdateConfigurationCommand();
-        $command->configuration = json_encode($configuration);
-
-        return $command;
+        $encodedConfiguration = json_encode($configuration);
+        if (!is_string($encodedConfiguration)) {
+            throw new RuntimeException('The configuration could not be json_encoded');
+        }
+        return new UpdateConfigurationCommand($encodedConfiguration);
     }
 
     /**

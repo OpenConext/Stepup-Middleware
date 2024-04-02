@@ -100,5 +100,5 @@ services:
     class: Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor\InstitutionConfigurationProcessor
     arguments:
       - "@surfnet_stepup_middleware_api.repository.configured_institution"
-      - "@service_container"
+      - "@pipeline"
     tags: [ { name: event_bus.event_listener, disable_for_replay: true } ]

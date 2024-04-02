@@ -22,6 +22,7 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase as TestCase;
+use RuntimeException;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\ConfigurationStructureValidator;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
 use Surfnet\StepupMiddleware\ManagementBundle\Validator\EmailTemplatesConfigurationValidator;
@@ -41,8 +42,12 @@ final class ConfigurationValidationTest extends TestCase
     public function invalidConfigurations(): array
     {
         $dataSet = [];
-
-        foreach (glob(__DIR__ . '/Fixtures/invalid_configuration/*.php') as $invalidConfiguration) {
+        $fixtureDir = __DIR__ . '/Fixtures/invalid_configuration/*.php';
+        $requestData = glob($fixtureDir);
+        if ($requestData === false) {
+            throw new RuntimeException(sprintf('No fixture data found in "%s"', $fixtureDir));
+        }
+        foreach ($requestData as $invalidConfiguration) {
             $fixture = include $invalidConfiguration;
             $dataSet[basename($invalidConfiguration)] = [
                 $fixture['configuration'],

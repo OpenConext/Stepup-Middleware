@@ -78,6 +78,8 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdenti
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand;
+use function is_array;
+use function is_string;
 use function property_exists;
 
 class CommandAuthorizationServiceTest extends TestCase
@@ -483,18 +485,24 @@ class CommandAuthorizationServiceTest extends TestCase
     public function availableCommands(): array
     {
         $rootPath = realpath(__DIR__ . '/../../../../../../../src');
+        assert(is_string($rootPath), 'Root path could not be determined correctly');
         $basePath = realPath($rootPath . '/Surfnet/StepupMiddleware/CommandHandlingBundle') . '/*';
 
         $commands = [];
 
         // get folders
         $folders = glob($basePath, GLOB_ONLYDIR);
+        assert(is_array($folders), 'Unable to grab the CommandHandlingBundle folders');
         foreach ($folders as $folder) {
             $commandPath = $folder . '/Command/*Command.php';
             $files = glob($commandPath);
             if ($files === false) {
                 continue;
             }
+            assert(
+                is_array($files),
+                sprintf('Unable to grab the files from %s with pattern %s', $folder , $commandPath)
+            );
 
             foreach ($files as $file) {
                 $className = str_replace($rootPath, '', $file);

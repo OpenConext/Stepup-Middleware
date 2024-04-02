@@ -27,6 +27,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DateTimeType;
+use function assert;
 
 class DateTimeTypeTest extends UnitTest
 {
@@ -99,9 +100,9 @@ class DateTimeTypeTest extends UnitTest
 
         $databaseValue = '2015-02-17 10:48:22';
         $actualDateTime = $dateTime->convertToPHPValue($databaseValue, $this->platform);
-        $expectedDateTime = new DateTime(
-            CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC')),
-        );
+        $coreDateTime = CoreDateTime::createFromFormat('Y-m-d H:i:s', $databaseValue, new DateTimeZone('UTC'));
+        assert($coreDateTime instanceof CoreDateTime, 'Unable to create a DateTime object');
+        $expectedDateTime = new DateTime($coreDateTime);
 
         $this->assertInstanceOf(DateTime::class, $actualDateTime);
         $this->assertEquals($expectedDateTime, $actualDateTime);

@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
+use function assert;
 
 class RegistrationAuthorityCredentials implements JsonSerializable
 {
@@ -62,6 +63,7 @@ class RegistrationAuthorityCredentials implements JsonSerializable
     public static function fromRaListings(array $raListings): self
     {
         $raListingCredentials = current($raListings);
+        assert($raListingCredentials instanceof RaListing, 'The provided raListings are empty');
         $isRa = false;
         $isRaa = false;
 

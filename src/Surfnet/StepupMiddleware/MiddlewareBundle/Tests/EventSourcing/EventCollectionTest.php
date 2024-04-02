@@ -42,7 +42,7 @@ class EventCollectionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid argument type: "non-empty string" expected');
 
-        new EventCollection([$emptyOrNonString]);
+        new EventCollection([$emptyOrNonString]); // @phpstan-ignore-line argument.type: Warning about a faulty constructor argument is exactly what we are testing here
     }
 
     /**

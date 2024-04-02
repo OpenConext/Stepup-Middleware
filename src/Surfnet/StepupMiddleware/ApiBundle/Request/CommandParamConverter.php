@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,6 +41,7 @@ class CommandParamConverter implements ParamConverterInterface
             str_replace('.', '\\', $commandName[2]),
         );
 
+        /** @var AbstractCommand $command */
         $command = new $commandClassName;
         $command->UUID = $data['command']['uuid'];
 

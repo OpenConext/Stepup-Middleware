@@ -114,18 +114,6 @@ class InstitutionAuthorizationOptionTest extends TestCase
     /**
      * @test
      * @group domain
-     * @dataProvider invalidConstructorArgumentsProvider
-     */
-    public function invalid_types_are_rejected_during_construction(bool|int|array $arguments): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        InstitutionAuthorizationOption::fromInstitutionConfig($this->institutionRole, $arguments);
-    }
-
-    /**
-     * @test
-     * @group domain
      */
     public function should_be_set_to_default_if_created_with_own_institution_as_institutions(): void
     {

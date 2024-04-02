@@ -27,6 +27,7 @@ use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
@@ -37,7 +38,7 @@ final class InstitutionConfigurationProcessor extends Processor
      */
     public function __construct(
         private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
-        private readonly ContainerInterface $container,
+        private readonly Pipeline $pipeline,
     ) {
     }
 
@@ -97,6 +98,6 @@ final class InstitutionConfigurationProcessor extends Processor
         $command->UUID = (string)Uuid::uuid4();
         $command->institution = $institution->getInstitution();
 
-        $this->container->get('pipeline')->process($command);
+        $this->pipeline->process($command);
     }
 }

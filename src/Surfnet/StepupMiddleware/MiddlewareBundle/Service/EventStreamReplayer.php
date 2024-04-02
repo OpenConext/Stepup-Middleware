@@ -85,7 +85,7 @@ class EventStreamReplayer
             $preparationProgress->advance();
 
             $preparationProgress->setMessage('Determining amount of events to replay...');
-            $totalEvents = (int) $this->eventHydrator->getCount();
+            $totalEvents = $this->eventHydrator->getCount();
 
             $preparationProgress->advance();
 

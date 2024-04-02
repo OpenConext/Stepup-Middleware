@@ -27,6 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use function is_string;
 
 class SraaControllerTest extends WebTestCase
 {
@@ -45,7 +46,11 @@ class SraaControllerTest extends WebTestCase
 
     public function setUp(): void
     {
-        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        $tool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        if (!$tool instanceof ORMSqliteDatabaseTool) {
+            $this->fail('Unable to grab the ORMSqliteDatabaseTool from the container');
+        }
+        $this->databaseTool = $tool;
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.
@@ -54,6 +59,10 @@ class SraaControllerTest extends WebTestCase
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');
         $passwordRa = $this->client->getKernel()->getContainer()->getParameter('registration_authority_api_password');
         $passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');
+
+        assert(is_string($passwordSs));
+        assert(is_string($passwordRa));
+        assert(is_string($passwordRo));
 
         $this->accounts = ['ss' => $passwordSs, 'ra' => $passwordRa, 'apireader' => $passwordRo];
 
@@ -82,7 +91,7 @@ class SraaControllerTest extends WebTestCase
                 'HTTP_ACCEPT' => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -106,7 +115,7 @@ class SraaControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => $account,
                 'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -129,7 +138,7 @@ class SraaControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => 'ra',
                 'PHP_AUTH_PW' => $this->accounts['ra'],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertTrue(
@@ -158,11 +167,13 @@ class SraaControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => $account,
                 'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent());
+        $content = $this->client->getResponse()->getContent();
+        assert(is_string($content), 'Response content must be of type string');
+        $response = json_decode($content);
         $this->assertEquals([], $response);
     }
 

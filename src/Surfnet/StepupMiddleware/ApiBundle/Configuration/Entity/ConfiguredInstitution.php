@@ -25,10 +25,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstit
 #[ORM\Entity(repositoryClass: ConfiguredInstitutionRepository::class)]
 class ConfiguredInstitution
 {
-    /**
-     *
-     * @var Institution
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'stepup_configuration_institution')]
     public Institution $institution;

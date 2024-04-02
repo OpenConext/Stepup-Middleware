@@ -20,6 +20,8 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
+use function is_string;
 
 #[ORM\Table]
 #[ORM\UniqueConstraint(name: 'unq_saml_entity_entity_id_type', columns: ['entity_id', 'type'])]
@@ -50,19 +52,21 @@ class SamlEntity
         $this->id = (string)Uuid::uuid4();
     }
 
-    /**
-     * @return SamlEntity
-     */
     public static function createServiceProvider(string $entityId, array $configuration): self
     {
-        return new self($entityId, self::TYPE_SP, json_encode($configuration));
+        $encodedConfiguration = json_encode($configuration);
+        if (!is_string($encodedConfiguration)) {
+            throw new RuntimeException('Unable to json_encode the configuration array in SamlEntity::createServiceProvider');
+        }
+        return new self($entityId, self::TYPE_SP, $encodedConfiguration);
     }
 
-    /**
-     * @return SamlEntity
-     */
     public static function createIdentityProvider(string $entityId, array $configuration): self
     {
-        return new self($entityId, self::TYPE_IDP, json_encode($configuration));
+        $encodedConfiguration = json_encode($configuration);
+        if (!is_string($encodedConfiguration)) {
+            throw new RuntimeException('Unable to json_encode the configuration array in SamlEntity::createServiceProvider');
+        }
+        return new self($entityId, self::TYPE_IDP, $encodedConfiguration);
     }
 }

@@ -46,14 +46,18 @@ class DBALEventHydrator
     ) {
     }
 
-    public function getCount(): string
+    public function getCount(): int
     {
         $statement = $this->connection->prepare('SELECT COUNT(1) AS cnt FROM ' . $this->eventStreamTableName);
         $result = $statement->executeQuery();
 
         $row = $result->fetchAssociative();
 
-        return $row['cnt'];
+        if (!$row) {
+            return 0;
+        }
+
+        return (int) $row['cnt'];
     }
 
     public function getFromTill(int $limit, int $offset): DomainEventStream
@@ -97,7 +101,7 @@ class DBALEventHydrator
         $results = $statement->executeQuery($eventTypes);
 
         $events = [];
-        foreach ($results->fetchAssociative() as $row) {
+        foreach ($results->fetchAllAssociative() as $row) {
             $events[] = $this->deserializeEvent($row);
         }
 

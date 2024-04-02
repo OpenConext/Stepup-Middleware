@@ -22,6 +22,7 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Surfnet\Stepup\Configuration\Value\Institution as StepupConfigurationInstitution;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -52,7 +53,7 @@ class AuthorizationContextServiceTest extends TestCase
 
     private AuthorizationRepository&MockInterface $authorizationRepository;
 
-    private MockInterface|ConfiguredInstitutionRepository $institutionRepo;
+    private MockInterface&ConfiguredInstitutionRepository $institutionRepo;
 
     public function setUp(): void
     {
@@ -174,7 +175,7 @@ class AuthorizationContextServiceTest extends TestCase
         $configuredInstitutions = [];
         foreach ($institutions as $institution) {
             $ci = new ConfiguredInstitution();
-            $ci->institution = $institution->getInstitution();
+            $ci->institution = new StepupConfigurationInstitution($institution->getInstitution());
             $configuredInstitutions[] = $ci;
         }
         $this->institutionRepo->shouldReceive('findAll')->andReturn($configuredInstitutions);

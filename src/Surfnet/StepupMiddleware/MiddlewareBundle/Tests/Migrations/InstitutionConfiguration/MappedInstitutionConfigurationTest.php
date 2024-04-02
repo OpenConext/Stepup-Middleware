@@ -200,6 +200,9 @@ class MappedInstitutionConfigurationTest extends UnitTest
         $this->assertEquals(1, count($commands));
 
         $command = reset($commands);
+        if (!$command) {
+            $this->fail('The command should be in the set of commands');
+        }
         $this->assertCommandMatches($command, $institution, $raLocation);
     }
 

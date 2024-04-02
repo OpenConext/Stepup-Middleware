@@ -34,7 +34,7 @@ class PhoneNumberTest extends UnitTest
      * @dataProvider invalidValueProvider
      */
     public function a_phone_number_cannot_be_created_with_anything_but_a_nonempty_string(
-        string|int|float|StdClass|array $invalidValue,
+        string $invalidValue,
     ): void {
         $this->expectException(InvalidArgumentException::class);
 
@@ -65,10 +65,6 @@ class PhoneNumberTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

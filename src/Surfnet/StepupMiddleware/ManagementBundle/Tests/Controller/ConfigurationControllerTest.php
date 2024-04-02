@@ -31,28 +31,37 @@ class ConfigurationControllerTest extends WebTestCase
 
     private KernelBrowser $client;
 
-    /**
-     * @var string
-     */
-    private string|array|bool|int|null|float|\UnitEnum $password;
+    private string $password;
 
-    /**
-     * @var string
-     */
-    private string|array|bool|int|null|float|\UnitEnum $passwordRo;
+    private string $passwordRo;
 
     private ORMSqliteDatabaseTool $databaseTool;
 
     public function setUp(): void
     {
-        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        $tool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        if (!$tool instanceof ORMSqliteDatabaseTool) {
+            $this->fail('Unable to grab the ORMSqliteDatabaseTool from the container');
+        }
+        $this->databaseTool = $tool;
 
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
         // Initialises schema.
         $this->client = static::createClient();
-        $this->password = $this->client->getKernel()->getContainer()->getParameter('management_password');
-        $this->passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');
+
+        $managementPassword = $this->client->getKernel()->getContainer()->getParameter('management_password');
+        if (!is_string($managementPassword)) {
+            $this->fail('Unable to grab the management_password parameter from the container');
+        }
+        $this->password = $managementPassword;
+
+        $readOnlyPassword = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');
+        if (!is_string($readOnlyPassword)) {
+            $this->fail('Unable to grab the readonly_api_password parameter from the container');
+        }
+        $this->passwordRo = $readOnlyPassword;
+
     }
 
     public function tearDown(): void
@@ -77,13 +86,13 @@ class ConfigurationControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => 'management',
                 'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertSame(
             Response::HTTP_BAD_REQUEST,
             $this->client->getResponse()->getStatusCode(),
-            $this->client->getResponse()->getContent(),
+            (string) $this->client->getResponse()->getContent(),
         );
     }
 
@@ -102,7 +111,7 @@ class ConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT' => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
@@ -125,7 +134,7 @@ class ConfigurationControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => 'apireader',
                 'PHP_AUTH_PW' => $this->passwordRo,
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -148,7 +157,7 @@ class ConfigurationControllerTest extends WebTestCase
                 'HTTP_ACCEPT' => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -171,7 +180,7 @@ class ConfigurationControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => 'management',
                 'PHP_AUTH_PW' => $this->password,
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertTrue(

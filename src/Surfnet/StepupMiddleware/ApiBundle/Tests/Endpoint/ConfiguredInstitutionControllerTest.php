@@ -26,6 +26,7 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use function is_string;
 
 class ConfiguredInstitutionControllerTest extends WebTestCase
 {
@@ -51,8 +52,15 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $this->databaseTool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
-        $this->databaseTool->setRegistry(static::getContainer()->get(ManagerRegistry::class));
+        $tool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
+        if (!$tool instanceof ORMSqliteDatabaseTool) {
+            $this->fail('Unable to grab the ORMSqliteDatabaseTool from the container');
+        }
+        $this->databaseTool = $tool;
+        $registry = static::getContainer()->get(ManagerRegistry::class);
+        assert($registry instanceof ManagerRegistry, 'ManagerRegistry could not be fetched from the container');
+        $this->databaseTool->setRegistry($registry);
+
         $this->databaseTool->setObjectManagerName('middleware');
         // Initialises schema.
         $this->databaseTool->loadFixtures();
@@ -61,6 +69,10 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
         $passwordSs = $this->client->getKernel()->getContainer()->getParameter('selfservice_api_password');
         $passwordRa = $this->client->getKernel()->getContainer()->getParameter('registration_authority_api_password');
         $passwordRo = $this->client->getKernel()->getContainer()->getParameter('readonly_api_password');
+
+        assert(is_string($passwordSs), 'Parameter selfservice_api_password must be of type string');
+        assert(is_string($passwordRa), 'Parameter registration_authority_api_password must be of type string');
+        assert(is_string($passwordRo), 'Parameter readonly_api_password must be of type string');
 
         $this->accounts = ['ss' => $passwordSs, 'ra' => $passwordRa, 'apireader' => $passwordRo];
 
@@ -89,7 +101,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
                 'HTTP_ACCEPT' => 'application/json',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_METHOD_NOT_ALLOWED, $this->client->getResponse()->getStatusCode());
@@ -113,7 +125,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => $account,
                 'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
@@ -136,7 +148,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => 'ra',
                 'PHP_AUTH_PW' => $this->accounts['ra'],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertTrue(
@@ -165,11 +177,13 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
                 'PHP_AUTH_USER' => $account,
                 'PHP_AUTH_PW' => $this->accounts[$account],
             ],
-            json_encode([]),
+            '[]',
         );
 
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $response = json_decode($this->client->getResponse()->getContent());
+        $content = $this->client->getResponse()->getContent();
+        assert(is_string($content), 'Unable to get the Response Content from the browser client');
+        $response = json_decode($content);
         $this->assertEquals([], $response);
     }
 

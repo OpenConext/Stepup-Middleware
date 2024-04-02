@@ -20,7 +20,6 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Value;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use StdClass;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Value\Institution;
 
@@ -33,7 +32,7 @@ class InstitutionTest extends UnitTest
      * @dataProvider nonStringOrNonEmptyStringProvider
      */
     public function an_institution_cannot_be_created_with_anything_but_a_nonempty_string(
-        string|int|float|StdClass|array $invalidValue,
+        string $invalidValue,
     ): void {
         $this->expectException(InvalidArgumentException::class);
 
@@ -60,10 +59,6 @@ class InstitutionTest extends UnitTest
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

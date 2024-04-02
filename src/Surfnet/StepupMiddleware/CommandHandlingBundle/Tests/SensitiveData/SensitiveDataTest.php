@@ -29,6 +29,7 @@ use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+use function is_string;
 
 class SensitiveDataTest extends TestCase
 {
@@ -111,7 +112,11 @@ class SensitiveDataTest extends TestCase
         SensitiveData $sensitiveData,
         array $getterExpectations,
     ): void {
-        $sensitiveData = SensitiveData::deserialize(json_decode(json_encode($sensitiveData->serialize()), true));
+        $serializedData = json_encode($sensitiveData->serialize());
+        if (!is_string($serializedData)) {
+            $this->fail('Unable to json_encode the serialized sensitive data');
+        }
+        $sensitiveData = SensitiveData::deserialize(json_decode($serializedData, true));
 
         foreach ($getterExpectations as $data => $expectedValue) {
             $this->assertEquals(

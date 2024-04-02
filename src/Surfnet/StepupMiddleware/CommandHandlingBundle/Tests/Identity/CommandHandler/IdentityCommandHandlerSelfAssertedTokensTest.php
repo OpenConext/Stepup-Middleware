@@ -105,34 +105,17 @@ class IdentityCommandHandlerSelfAssertedTokensTest extends CommandHandlerTest
 
     private LoaResolutionService&MockInterface $loaResolutionService;
 
-    /**
-     * @var IdentityId
-     */
     private IdentityId $id;
 
-    /**
-     * @var Institution
-     */
     private Institution $institution;
 
-    /**
-     * @var Email
-     */
     private Email $email;
 
-    /**
-     * @var CommonName
-     */
     private CommonName $commonName;
 
-    /**
-     * @var Locale
-     */
     private Locale $preferredLocale;
-    /**
-     * @var RecoveryTokenSecretHelper|MockInterface
-     */
-    private RecoveryTokenSecretHelper|MockInterface $recoveryTokenSecretHelper;
+
+    private RecoveryTokenSecretHelper&MockInterface $recoveryTokenSecretHelper;
 
     private ?NameId $nameId = null;
 

@@ -23,6 +23,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Institution as IdentityInstitution;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
@@ -45,8 +46,12 @@ class ReconfigureInstitutionRequestValidatorTest extends TestCase
     public function invalidReconfigureInstitutionRequests(): array
     {
         $dataSet = [];
-
-        foreach (glob(__DIR__ . '/Fixtures/invalid_reconfigure_institution_request/*.php') as $invalidConfiguration) {
+        $fixtureDir = __DIR__ . '/Fixtures/invalid_reconfigure_institution_request/*.php';
+        $requestData = glob($fixtureDir);
+        if ($requestData === false) {
+            throw new RuntimeException(sprintf('No fixture data found in "%s"', $fixtureDir));
+        }
+        foreach ($requestData as $invalidConfiguration) {
             $fixture = include $invalidConfiguration;
             $dataSet[basename($invalidConfiguration)] = [
                 $fixture['reconfigureInstitutionRequest'],

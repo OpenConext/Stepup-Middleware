@@ -107,11 +107,11 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
     private SecondFactorProvePossessionHelper&MockInterface $secondFactorProvePossessionHelper;
 
-    private InstitutionConfigurationOptionsService|MockInterface $configService;
+    private InstitutionConfigurationOptionsService&MockInterface $configService;
 
     private LoaResolutionService&MockInterface $loaResolutionService;
 
-    private RegistrationMailService|MockInterface $registrationMailService;
+    private RegistrationMailService&MockInterface $registrationMailService;
 
     public function setUp(): void
     {

@@ -79,7 +79,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
 
@@ -112,7 +112,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleIdentityCreatedEvent($identityCreatedEvent);
 
@@ -153,7 +153,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
 
@@ -198,7 +198,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleWhitelistCreatedEvent($whitelistCreatedEvent);
 
@@ -241,7 +241,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistReplacedEvent);
 
@@ -286,7 +286,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleWhitelistReplacedEvent($whitelistCreatedEvent);
 
@@ -329,7 +329,7 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($institutionsAddedToWhitelistEvent);
 
@@ -374,24 +374,10 @@ class InstitutionConfigurationProcessorTest extends TestCase
 
         $institutionConfigurationProcessor = new InstitutionConfigurationProcessor(
             $repositoryMock,
-            $this->getContainerMock(),
+            $this->pipelineMock,
         );
         $institutionConfigurationProcessor->handleInstitutionsAddedToWhitelistEvent($whitelistCreatedEvent);
 
         $this->assertInstanceOf(InstitutionConfigurationProcessor::class, $institutionConfigurationProcessor);
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    private function getContainerMock(): ContainerInterface
-    {
-        $containerMock = Mockery::mock(ContainerInterface::class);
-        $containerMock
-            ->shouldReceive('get')
-            ->with('pipeline')
-            ->andReturn($this->pipelineMock);
-
-        return $containerMock;
     }
 }

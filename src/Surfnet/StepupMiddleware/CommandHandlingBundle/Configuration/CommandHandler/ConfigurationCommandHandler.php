@@ -34,7 +34,7 @@ class ConfigurationCommandHandler extends SimpleCommandHandler
     public function handleUpdateConfigurationCommand(UpdateConfigurationCommand $command): void
     {
         $configuration = $this->getConfiguration();
-        if (!$configuration instanceof \Surfnet\Stepup\Configuration\Configuration) {
+        if (!$configuration instanceof Configuration) {
             $configuration = Configuration::create();
         }
 

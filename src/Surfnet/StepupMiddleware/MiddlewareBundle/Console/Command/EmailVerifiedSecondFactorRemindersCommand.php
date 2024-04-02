@@ -86,7 +86,17 @@ final class EmailVerifiedSecondFactorRemindersCommand extends Command
         $date = new DateTime();
         $date->sub(new DateInterval('P7D'));
         if ($input->hasOption('date') && !is_null($input->getOption('date'))) {
-            $date = DateTime::createFromFormat('Y-m-d', $input->getOption('date'));
+            $receivedDate = $input->getOption('date');
+            $date = DateTime::createFromFormat('Y-m-d', $receivedDate);
+            if ($date === false) {
+                $output->writeln(
+                    sprintf(
+                        '<error>Error processing the "date" option. Please review the received input: "%s" </error>',
+                        $receivedDate
+                    )
+                );
+                return 1;
+            }
         }
 
         $dryRun = false;

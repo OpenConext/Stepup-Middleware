@@ -63,9 +63,9 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 class RegistrationAuthorityCommandHandlerTest extends CommandHandlerTest
 {
 
-    private MockInterface|InstitutionConfigurationRepository $institutionConfigurationRepositoryMock;
+    private MockInterface&InstitutionConfigurationRepository $institutionConfigurationRepositoryMock;
 
-    private MockInterface|InstitutionConfiguration $institutionConfiguration;
+    private MockInterface&InstitutionConfiguration $institutionConfiguration;
 
     /**
      * Create a command handler for the given scenario test case.

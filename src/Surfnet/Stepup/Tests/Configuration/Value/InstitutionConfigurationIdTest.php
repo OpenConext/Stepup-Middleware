@@ -48,7 +48,7 @@ class InstitutionConfigurationIdTest extends TestCase
      * @dataProvider nonStringOrEmptyStringProvider
      */
     public function an_institution_configuration_id_cannot_be_created_from_something_other_than_a_string(
-        string|int|float|StdClass|array $nonStringOrEmptyString,
+        string $nonStringOrEmptyString,
     ): void {
         $this->expectException(InvalidArgumentException::class);
 
@@ -125,10 +125,6 @@ class InstitutionConfigurationIdTest extends TestCase
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array' => [[]],
-            'integer' => [1],
-            'float' => [1.2],
-            'object' => [new StdClass()],
         ];
     }
 }

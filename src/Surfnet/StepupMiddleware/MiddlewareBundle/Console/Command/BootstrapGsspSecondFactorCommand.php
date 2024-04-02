@@ -62,6 +62,9 @@ final class BootstrapGsspSecondFactorCommand extends Command
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Method length could be reduced by deconstructing the bootstrapping of the required data and the vetting of the GSSP
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $registrationStatus = $input->getArgument('registration-status');

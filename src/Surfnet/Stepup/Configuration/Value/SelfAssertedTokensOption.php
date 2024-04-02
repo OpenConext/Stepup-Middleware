@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2022 SURF B.V.
+ * Copyright 2022 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

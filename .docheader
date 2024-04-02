@@ -1,7 +1,5 @@
-<?php
-
 /**
- * Copyright 2020 SURFnet B.V.
+ * Copyright %regexp:\d{4}% SURFnet %regexp:(B.V.|bv)%
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
-
-use Surfnet\StepupBundle\Value\SecondFactorType;
-
-final class SecondFactorDisplayNameResolverService
-{
-    public function __construct(private array $secondFactors)
-    {
-    }
-
-    /**
-     * @return string
-     */
-    public function resolveByType(SecondFactorType $secondFactorType): string
-    {
-        return $this->secondFactors[(string)$secondFactorType] ?? ucfirst((string)$secondFactorType);
-    }
-}

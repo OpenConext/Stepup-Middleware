@@ -62,6 +62,7 @@
         "doctrine/data-fixtures": "~1.7",
         "doctrine/doctrine-fixtures-bundle": "^3.5.1",
         "liip/test-fixtures-bundle": "^2.7",
+        "malukenho/docheader": "^1.1",
         "mockery/mockery": "1.7.x-dev",
         "moontoast/math": "^1.2",
         "overtrue/phplint": "*",

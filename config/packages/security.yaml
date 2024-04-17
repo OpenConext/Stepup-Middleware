@@ -4,7 +4,7 @@ security:
             pattern: ^/_trans(/|$)
             security: false
         monitor:
-            pattern: ^/(info|health)$
+            pattern: ^/(internal/)?(info|health)$
             security: false
         api:
             http_basic: ~

@@ -551,7 +551,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
             // Tests for changes in BC support for adding the VettingType in the SecondFactorVettedEvents in favour of the 'DocumentNumber'
             'SecondFactorVettedEvent:support-new-event-with-vetting-type' => [
                 '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
-                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"012345678"}}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"AB-123"}}',
                 new SecondFactorVettedEvent(
                     new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
                     new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
@@ -562,12 +562,12 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
             ],
             'SecondFactorVettedEvent:support-old-event-with-document-number' => [
                 '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
-                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"012345678"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"AB-123"}',
                 new SecondFactorVettedEvent(
                     new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
                     new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
@@ -578,12 +578,12 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
             ],
             'SecondFactorVettedWithoutTokenProofOfPossession:support-new-event-with-vetting-type' => [
                 '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
-                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"012345678"}}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","vetting_type":{"type":"on-premise","document_number":"AB-123"}}',
                 new SecondFactorVettedWithoutTokenProofOfPossession(
                     new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
                     new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
@@ -594,12 +594,12 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
             ],
             'SecondFactorVettedWithoutTokenProofOfPossession:support-old-event-with-document-number' => [
                 '{"identity_id":"b260f10b-ce7c-4d09-b6a4-50a3923d637f","name_id":"urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1","identity_institution":"institution-d.example.com","second_factor_id":"512de1ff-0ae0-41b7-bb21-b71d77e570b8","second_factor_type":"yubikey","preferred_locale":"nl_NL"}',
-                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"012345678"}',
+                '{"common_name":"jane-d1 Institution-D.EXAMPLE.COM","email":"jane+jane-d1@stepup.example.com","second_factor_type":"yubikey","second_factor_identifier":"123465293846985","document_number":"AB-123"}',
                 new SecondFactorVettedWithoutTokenProofOfPossession(
                     new IdentityId('b260f10b-ce7c-4d09-b6a4-50a3923d637f'),
                     new NameId('urn:collab:person:Institution-D.EXAMPLE.COM:jane-d1'),
@@ -610,7 +610,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('AB-123'))
                 ),
             ],
         ];

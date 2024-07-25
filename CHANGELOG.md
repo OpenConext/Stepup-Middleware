@@ -1,4 +1,8 @@
 # Changelog
+# 5.2.0
+- Some changes for the Docker release of Middleware. This app will get a PHP7.2 release in docker
+- Migrate the github actions to reusable actions
+- Bump phpseclib
 
 # 5.1.1
 - The changes from 5.0.10 got lost in release 5.1, in this version they are added back

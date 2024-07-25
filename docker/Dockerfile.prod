@@ -1,10 +1,10 @@
-FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest AS php-build
+FROM ghcr.io/openconext/openconext-basecontainers/php72-apache2:latest
 COPY *.tar.bz2 /tmp/
 RUN tar -xvjf /tmp/*.tar.bz2 -C /var/www/html/ && \
   rm -rf /tmp/*.tar.bz2
 
+WORKDIR /var/www/html
 # Add the application configuration files
-COPY .env .env
 COPY config/legacy/parameters.yaml.dist config/legacy/parameters.yaml
 COPY config/packages/prod/monolog.yaml.docker config/packages/prod/monolog.yaml
 
@@ -14,12 +14,9 @@ COPY ./docker/conf/middleware-apache2.conf /etc/apache2/sites-enabled/middleware
 
 # Recreate the cache directory and set the correct permissions
 RUN rm -rf /var/www/html/var/cache/prod && \
-    mkdir -p /var/www/html/var/cache/prod && \
-    chown -R www-data /var/www/html/var
+  mkdir -p /var/www/html/var/cache/prod && \
+  chown -R www-data /var/www/html/var
 
 EXPOSE 80
-
-# Set the default workdir
-WORKDIR /var/www/html
 
 CMD ["apache2-foreground"]

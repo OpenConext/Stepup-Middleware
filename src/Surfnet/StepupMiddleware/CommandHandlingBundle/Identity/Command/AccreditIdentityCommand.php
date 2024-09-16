@@ -24,58 +24,31 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AccreditIdentityCommand extends AbstractCommand implements RaExecutable
 {
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $role;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $role;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $location;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $location;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $contactInformation;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $contactInformation;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $raInstitution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $raInstitution;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getRaInstitution(): ?string
     {
         return $this->raInstitution;
     }

@@ -58,29 +58,17 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
  */
 class RaSecondFactorProjector extends Projector
 {
-    /**
-     * @var RaSecondFactorRepository
-     */
-    private $raSecondFactorRepository;
-
-    /**
-     * @var IdentityRepository
-     */
-    private $identityRepository;
-
     public function __construct(
-        RaSecondFactorRepository $raSecondFactorRepository,
-        IdentityRepository $identityRepository
+        private readonly RaSecondFactorRepository $raSecondFactorRepository,
+        private readonly IdentityRepository $identityRepository,
     ) {
-        $this->raSecondFactorRepository = $raSecondFactorRepository;
-        $this->identityRepository = $identityRepository;
     }
 
-    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event)
+    public function applyIdentityRenamedEvent(IdentityRenamedEvent $event): void
     {
-        $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
+        $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string)$event->identityId);
 
-        if (count($secondFactors) === 0) {
+        if ($secondFactors === []) {
             return;
         }
 
@@ -93,11 +81,11 @@ class RaSecondFactorProjector extends Projector
         $this->raSecondFactorRepository->saveAll($secondFactors);
     }
 
-    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event)
+    public function applyIdentityEmailChangedEvent(IdentityEmailChangedEvent $event): void
     {
-        $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string) $event->identityId);
+        $secondFactors = $this->raSecondFactorRepository->findByIdentityId((string)$event->identityId);
 
-        if (count($secondFactors) === 0) {
+        if ($secondFactors === []) {
             return;
         }
 
@@ -110,167 +98,161 @@ class RaSecondFactorProjector extends Projector
         $this->raSecondFactorRepository->saveAll($secondFactors);
     }
 
-    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event)
+    public function applyYubikeySecondFactorBootstrappedEvent(YubikeySecondFactorBootstrappedEvent $event): void
     {
-        $identity = $this->identityRepository->find((string) $event->identityId);
+        $identity = $this->identityRepository->find((string)$event->identityId);
 
         $secondFactor = new RaSecondFactor(
-            (string) $event->secondFactorId,
+            (string)$event->secondFactorId,
             'yubikey',
-            (string) $event->yubikeyPublicId,
+            (string)$event->yubikeyPublicId,
             $identity->id,
             $identity->institution,
             $event->commonName,
-            $event->email
+            $event->email,
         );
         $secondFactor->status = SecondFactorStatus::vetted();
 
         $this->raSecondFactorRepository->save($secondFactor);
     }
 
-    public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    public function applyYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'yubikey',
-            (string) $event->yubikeyPublicId,
+            (string)$event->yubikeyPublicId,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
-    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event)
+    public function applyYubikeyPossessionProvenAndVerifiedEvent(YubikeyPossessionProvenAndVerifiedEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'yubikey',
-            (string) $event->yubikeyPublicId,
+            (string)$event->yubikeyPublicId,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
-    public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    public function applyPhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'sms',
-            (string) $event->phoneNumber,
+            (string)$event->phoneNumber,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
-    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event)
+    public function applyPhonePossessionProvenAndVerifiedEvent(PhonePossessionProvenAndVerifiedEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'sms',
-            (string) $event->phoneNumber,
+            (string)$event->phoneNumber,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
-    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    public function applyGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
-            (string) $event->stepupProvider,
-            (string) $event->gssfId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
+            (string)$event->stepupProvider,
+            (string)$event->gssfId,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
-    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event)
+    public function applyGssfPossessionProvenAndVerifiedEvent(GssfPossessionProvenAndVerifiedEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
-            (string) $event->stepupProvider,
-            (string) $event->gssfId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
+            (string)$event->stepupProvider,
+            (string)$event->gssfId,
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
     /**
      * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
      */
-    public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event)
+    public function applyU2fDevicePossessionProvenEvent(U2fDevicePossessionProvenEvent $event): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'u2f',
             $event->keyHandle->getValue(),
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
     /**
      * @deprecated Built in U2F support is dropped from StepUp, this was not removed to support event replay
      */
-    public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event)
+    public function applyU2fDevicePossessionProvenAndVerifiedEvent(U2fDevicePossessionProvenAndVerifiedEvent $event,): void
     {
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->secondFactorId,
+            (string)$event->identityId,
+            (string)$event->secondFactorId,
             'u2f',
             $event->keyHandle->getValue(),
             $event->commonName,
-            $event->email
+            $event->email,
         );
     }
 
     /**
-     * @param string $identityId
-     * @param string $secondFactorId
-     * @param string $secondFactorType
-     * @param string $secondFactorIdentifier
-     * @param CommonName $commonName
-     * @param Email $email
      * @param SecondFactorStatus|null $status
      * @param DocumentNumber|null $documentNumber
      */
     private function saveRaSecondFactor(
-        $identityId,
-        $secondFactorId,
-        $secondFactorType,
-        $secondFactorIdentifier,
-        CommonName $commonName,
-        Email $email,
+        string             $identityId,
+        string             $secondFactorId,
+        string             $secondFactorType,
+        string             $secondFactorIdentifier,
+        CommonName         $commonName,
+        Email              $email,
         SecondFactorStatus $status = null,
-        DocumentNumber $documentNumber = null
-    ) {
+        DocumentNumber     $documentNumber = null,
+    ): void {
         $identity = $this->identityRepository->find($identityId);
 
         $secondFactor = new RaSecondFactor(
-            (string) $secondFactorId,
+            $secondFactorId,
             $secondFactorType,
             $secondFactorIdentifier,
             $identity->id,
             $identity->institution,
             $commonName,
             $email,
-            $documentNumber
+            $documentNumber,
         );
 
-        if ($status !== null) {
+        if ($status instanceof SecondFactorStatus) {
             $secondFactor->status = $status;
         }
 
         $this->raSecondFactorRepository->save($secondFactor);
     }
 
-    public function applyEmailVerifiedEvent(EmailVerifiedEvent $event)
+    public function applyEmailVerifiedEvent(EmailVerifiedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::verified());
     }
@@ -279,34 +261,35 @@ class RaSecondFactorProjector extends Projector
      * The RA second factor projection is updated with a new Second factor based on the 'source' second factor
      * from the original identity.
      */
-    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event)
+    public function applySecondFactorMigratedEvent(SecondFactorMigratedEvent $event): void
     {
-        $oldSecondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+        $oldSecondFactor = $this->raSecondFactorRepository->find((string)$event->secondFactorId);
 
         $this->saveRaSecondFactor(
-            (string) $event->identityId,
-            (string) $event->newSecondFactorId,
-            (string) $event->secondFactorType,
-            (string) $event->secondFactorIdentifier,
+            (string)$event->identityId,
+            (string)$event->newSecondFactorId,
+            (string)$event->secondFactorType,
+            (string)$event->secondFactorIdentifier,
             $event->commonName,
             $event->email,
             $oldSecondFactor->status,
-            $oldSecondFactor->documentNumber
+            $oldSecondFactor->documentNumber,
         );
     }
 
-    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event)
+    public function applySecondFactorVettedEvent(SecondFactorVettedEvent $event): void
     {
-        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+        $secondFactor = $this->raSecondFactorRepository->find((string)$event->secondFactorId);
         $secondFactor->documentNumber = $event->vettingType->getDocumentNumber();
         $secondFactor->status = SecondFactorStatus::vetted();
 
         $this->raSecondFactorRepository->save($secondFactor);
     }
 
-    public function applySecondFactorVettedWithoutTokenProofOfPossession(SecondFactorVettedWithoutTokenProofOfPossession $event)
-    {
-        $secondFactor = $this->raSecondFactorRepository->find((string) $event->secondFactorId);
+    public function applySecondFactorVettedWithoutTokenProofOfPossession(
+        SecondFactorVettedWithoutTokenProofOfPossession $event,
+    ): void {
+        $secondFactor = $this->raSecondFactorRepository->find((string)$event->secondFactorId);
 
         $documentNumber = null;
         if ($event->vettingType instanceof OnPremiseVettingType) {
@@ -318,51 +301,47 @@ class RaSecondFactorProjector extends Projector
         $this->raSecondFactorRepository->save($secondFactor);
     }
 
-    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event)
+    protected function applyUnverifiedSecondFactorRevokedEvent(UnverifiedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithUnverifiedSecondFactorRevocationEvent(
-        CompliedWithUnverifiedSecondFactorRevocationEvent $event
-    ) {
+        CompliedWithUnverifiedSecondFactorRevocationEvent $event,
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event)
+    protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(
-        CompliedWithVerifiedSecondFactorRevocationEvent $event
-    ) {
+        CompliedWithVerifiedSecondFactorRevocationEvent $event,
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event)
+    protected function applyVettedSecondFactorRevokedEvent(VettedSecondFactorRevokedEvent $event): void
     {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
     protected function applyCompliedWithVettedSecondFactorRevocationEvent(
-        CompliedWithVettedSecondFactorRevocationEvent $event
-    ) {
+        CompliedWithVettedSecondFactorRevocationEvent $event,
+    ): void {
         $this->updateStatus($event->secondFactorId, SecondFactorStatus::revoked());
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->raSecondFactorRepository->updateStatusByIdentityIdToForgotten($event->identityId);
     }
 
-    /**
-     * @param SecondFactorId $secondFactorId
-     * @param SecondFactorStatus $status
-     */
-    private function updateStatus(SecondFactorId $secondFactorId, SecondFactorStatus $status)
+    private function updateStatus(SecondFactorId $secondFactorId, SecondFactorStatus $status): void
     {
-        $secondFactor = $this->raSecondFactorRepository->find((string) $secondFactorId);
+        $secondFactor = $this->raSecondFactorRepository->find((string)$secondFactorId);
         $secondFactor->status = $status;
 
         $this->raSecondFactorRepository->save($secondFactor);

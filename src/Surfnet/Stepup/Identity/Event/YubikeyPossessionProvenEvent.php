@@ -18,6 +18,7 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
@@ -34,7 +35,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -46,103 +50,47 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var DateTime
      */
-    public $secondFactorId;
+    public DateTime $emailVerificationRequestedAt;
 
     /**
-     * The Yubikey's public ID.
-     *
-     * @var \Surfnet\Stepup\Identity\Value\YubikeyPublicId
-     */
-    public $yubikeyPublicId;
-
-    /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
-     */
-    public $emailVerificationRequestedAt;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
-     */
-    public $emailVerificationWindow;
-
-    /**
-     * @var string
-     */
-    public $emailVerificationNonce;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
-
-    /**
-     * @param IdentityId              $identityId
-     * @param Institution             $institution
-     * @param SecondFactorId          $secondFactorId
-     * @param YubikeyPublicId         $yubikeyPublicId
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
-     * @param string                  $emailVerificationNonce
-     * @param CommonName              $commonName
-     * @param Email                   $email
-     * @param Locale                  $preferredLocale
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $institution,
-        SecondFactorId $secondFactorId,
-        YubikeyPublicId $yubikeyPublicId,
-        $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale
+        IdentityId              $identityId,
+        Institution             $institution,
+        public SecondFactorId          $secondFactorId,
+        /**
+         * The Yubikey's public ID.
+         */
+        public YubikeyPublicId         $yubikeyPublicId,
+        public bool             $emailVerificationRequired,
+        public EmailVerificationWindow $emailVerificationWindow,
+        public string           $emailVerificationNonce,
+        public CommonName              $commonName,
+        public Email                   $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->secondFactorId            = $secondFactorId;
-        $this->yubikeyPublicId           = $yubikeyPublicId;
-        $this->emailVerificationRequired = $emailVerificationRequired;
-        $this->emailVerificationWindow   = $emailVerificationWindow;
-        $this->emailVerificationNonce    = $emailVerificationNonce;
-        $this->commonName                = $commonName;
-        $this->email                     = $email;
-        $this->preferredLocale           = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                         = new Metadata();
-        $metadata->identityId             = $this->identityId;
-        $metadata->identityInstitution    = $this->identityInstitution;
-        $metadata->secondFactorId         = $this->secondFactorId;
-        $metadata->secondFactorType       = new SecondFactorType('yubikey');
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
+        $metadata->identityInstitution = $this->identityInstitution;
+        $metadata->secondFactorId = $this->secondFactorId;
+        $metadata->secondFactorType = new SecondFactorType('yubikey');
         $metadata->secondFactorIdentifier = $this->yubikeyPublicId;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;
@@ -158,27 +106,29 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
-            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'email_verification_required' => $this->emailVerificationRequired,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce' => $this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -186,11 +136,13 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
             ->withSecondFactorIdentifier($this->yubikeyPublicId, new SecondFactorType('yubikey'));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        $yubikeyPublicId = $sensitiveData->getSecondFactorIdentifier();
+        assert($yubikeyPublicId instanceof YubikeyPublicId);
+        $this->yubikeyPublicId = $yubikeyPublicId;
     }
 
     public function obtainUserData(): array
@@ -200,6 +152,9 @@ class YubikeyPossessionProvenEvent extends IdentityEvent implements Forgettable,
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

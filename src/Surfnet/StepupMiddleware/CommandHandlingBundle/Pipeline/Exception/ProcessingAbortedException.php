@@ -23,5 +23,5 @@ interface ProcessingAbortedException
     /**
      * @return string[]
      */
-    public function getErrors();
+    public function getErrors(): array;
 }

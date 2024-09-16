@@ -40,58 +40,30 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
  */
 class UnverifiedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
+
+    private ?SecondFactorId $id = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
+     * @var SecondFactorIdentifier
      */
-    private $id;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
+    private ?EmailVerificationWindow $verificationWindow = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
-     */
-    private $secondFactorIdentifier;
+    private ?string $verificationNonce = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
-     */
-    private $verificationWindow;
-
-    /**
-     * @var string
-     */
-    private $verificationNonce;
-
-    /**
-     * @param SecondFactorId          $id
-     * @param Identity                $identity
-     * @param SecondFactorType        $type
-     * @param SecondFactorIdentifier  $secondFactorIdentifier
-     * @param EmailVerificationWindow $emailVerificationWindow
-     * @param string                  $verificationNonce
-     * @return UnverifiedSecondFactor
-     */
     public static function create(
-        SecondFactorId $id,
-        Identity $identity,
-        SecondFactorType $type,
-        $secondFactorIdentifier,
+        SecondFactorId          $id,
+        Identity                $identity,
+        SecondFactorType        $type,
+        SecondFactorIdentifier  $secondFactorIdentifier,
         EmailVerificationWindow $emailVerificationWindow,
-        $verificationNonce
-    ) {
-        if (!is_string($verificationNonce)) {
-            throw InvalidArgumentException::invalidType('string', 'verificationNonce', $verificationNonce);
-        }
-
-        if (empty($verificationNonce)) {
+        string                  $verificationNonce,
+    ): self {
+        if ($verificationNonce === '' || $verificationNonce === '0') {
             throw new InvalidArgumentException("'verificationNonce' may not be empty");
         }
 
@@ -110,19 +82,15 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
 
     /**
-     * @param string $verificationNonce
      * @return bool
      */
-    public function hasNonce($verificationNonce)
+    public function hasNonce(string $verificationNonce): bool
     {
         return $this->verificationNonce === $verificationNonce;
     }
@@ -130,12 +98,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
     /**
      * @return bool
      */
-    public function canBeVerifiedNow()
+    public function canBeVerifiedNow(): bool
     {
         return $this->verificationWindow->isOpen();
     }
 
-    public function verifyEmail()
+    public function verifyEmail(): void
     {
         $this->apply(
             new EmailVerifiedEvent(
@@ -148,12 +116,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 OtpGenerator::generate(8),
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
-                $this->identity->getPreferredLocale()
-            )
+                $this->identity->getPreferredLocale(),
+            ),
         );
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new UnverifiedSecondFactorRevokedEvent(
@@ -161,12 +129,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithUnverifiedSecondFactorRevocationEvent(
@@ -175,17 +143,12 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
-    /**
-     * @param DateTime $registrationRequestedAt
-     * @param string   $registrationCode
-     * @return VerifiedSecondFactor
-     */
-    public function asVerified($registrationRequestedAt, $registrationCode)
+    public function asVerified(DateTime $registrationRequestedAt, string $registrationCode): VerifiedSecondFactor
     {
         return VerifiedSecondFactor::create(
             $this->id,
@@ -193,13 +156,13 @@ class UnverifiedSecondFactor extends AbstractSecondFactor
             $this->type,
             $this->secondFactorIdentifier,
             $registrationRequestedAt,
-            $registrationCode
+            $registrationCode,
         );
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
         $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -18,21 +20,24 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class RaLocationNameTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
      * @dataProvider nonStringOrEmptyStringProvider
-     *
-     * @param mixed $nonStringOrEmptyString
      */
-    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string($nonStringOrEmptyString)
-    {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+    public function an_ra_location_name_cannot_be_created_with_anything_but_a_nonempty_string(
+        string $nonStringOrEmptyString,
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
 
         new RaLocationName($nonStringOrEmptyString);
     }
@@ -41,10 +46,10 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_names_with_the_same_values_are_equal()
+    public function two_ra_location_names_with_the_same_values_are_equal(): void
     {
         $raLocationName = new RaLocationName('a');
-        $theSame      = new RaLocationName('a');
+        $theSame = new RaLocationName('a');
 
         $this->assertTrue($raLocationName->equals($theSame));
     }
@@ -53,23 +58,19 @@ class RaLocationNameTest extends TestCase
      * @test
      * @group domain
      */
-    public function two_ra_location_names_with_different_values_are_not_equal()
+    public function two_ra_location_names_with_different_values_are_not_equal(): void
     {
         $raLocationName = new RaLocationName('a');
-        $different    = new RaLocationName('A');
+        $different = new RaLocationName('A');
 
         $this->assertFalse($raLocationName->equals($different));
     }
 
-    public function nonStringOrEmptyStringProvider()
+    public function nonStringOrEmptyStringProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 }

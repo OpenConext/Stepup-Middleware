@@ -24,11 +24,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 interface EmailTemplateService
 {
     /**
-     * @param string $name
-     * @param string $preferredLocale
-     * @param string $fallbackLocale
-     * @return EmailTemplate
      * @throws RuntimeException
      */
-    public function findByName($name, $preferredLocale, $fallbackLocale);
+    public function findByName(string $name, string $preferredLocale, string $fallbackLocale): ?EmailTemplate;
 }

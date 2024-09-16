@@ -20,6 +20,8 @@ namespace Surfnet\Stepup\Tests\Identity\Value;
 
 use DateInterval;
 use DateTime as CoreDateTime;
+use Exception;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
@@ -28,13 +30,15 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\DateTimeHelper;
 
 class EmailVerificationWindowTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      *
      * @runInSeparateProcess
      */
-    public function window_is_open_for_instructed_timeframe_after_given_time()
+    public function window_is_open_for_instructed_timeframe_after_given_time(): void
     {
         $startTime = new DateTime(new CoreDateTime('@1'));
         $timeFrame = TimeFrame::ofSeconds(3);
@@ -64,18 +68,18 @@ class EmailVerificationWindowTest extends TestCase
      *
      * @runInSeparateProcess
      */
-    public function a_window_is_considered_equal_when_the_start_and_end_are_the_same()
+    public function a_window_is_considered_equal_when_the_start_and_end_are_the_same(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10000')));
 
-        $base                        = $this->newEmailVerificationWindow(3);
-        $same                        = $this->newEmailVerificationWindow(3);
-        $startsSameEndsEarlier       = $this->newEmailVerificationWindow(2);
-        $startsSameEndsLater         = $this->newEmailVerificationWindow(4);
-        $startsLater                 = $this->newEmailVerificationWindow(3, 'PT1S');
-        $startsLaterEndsAtSameTime   = $this->newEmailVerificationWindow(2, 'PT1S');
-        $startsEarlier               = $this->newEmailVerificationWindow(2, '-PT1S');
+        $base = $this->newEmailVerificationWindow(3);
+        $same = $this->newEmailVerificationWindow(3);
+        $startsSameEndsEarlier = $this->newEmailVerificationWindow(2);
+        $startsSameEndsLater = $this->newEmailVerificationWindow(4);
+        $startsLater = $this->newEmailVerificationWindow(3, 'PT1S');
+        $startsLaterEndsAtSameTime = $this->newEmailVerificationWindow(2, 'PT1S');
+        $startsEarlier = $this->newEmailVerificationWindow(2, '-PT1S');
         $startsEarlierEndsAtSameTime = $this->newEmailVerificationWindow(4, '-PT1S');
 
         $this->assertTrue($base->equals($same));
@@ -93,7 +97,7 @@ class EmailVerificationWindowTest extends TestCase
      *
      * @runInSeparateProcess
      */
-    public function the_window_correctly_calculates_the_end_datetime()
+    public function the_window_correctly_calculates_the_end_datetime(): void
     {
         // since we work with second precision, we might run issues trusting normal time, so we fixate the time
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@10')));
@@ -105,7 +109,7 @@ class EmailVerificationWindowTest extends TestCase
 
         $window = EmailVerificationWindow::createWindowFromTill(
             DateTime::now(),
-            DateTime::now()->add(new DateInterval('PT3S'))
+            DateTime::now()->add(new DateInterval('PT3S')),
         );
         $endTimeTwo = $window->openUntil();
         $this->assertEquals(new DateTime(new CoreDateTime('@13')), $endTimeTwo);
@@ -114,15 +118,15 @@ class EmailVerificationWindowTest extends TestCase
     /**
      * Helper method for easy EmailVerificationWindow creation
      *
-     * @param int         $timeFrameSeconds
      * @param string|null $startTimeOffset
-     * @return EmailVerificationWindow
+     * @throws Exception
+     * @throws Exception
      */
-    private function newEmailVerificationWindow($timeFrameSeconds, $startTimeOffset = null)
+    private function newEmailVerificationWindow(int $timeFrameSeconds, string $startTimeOffset = null): EmailVerificationWindow
     {
         $start = DateTime::now();
         if ($startTimeOffset) {
-            if (substr($startTimeOffset, 0, 1) === '-') {
+            if (str_starts_with($startTimeOffset, '-')) {
                 $offset = substr($startTimeOffset, 1);
                 $start = $start->sub(new DateInterval($offset));
             } else {
@@ -132,7 +136,7 @@ class EmailVerificationWindowTest extends TestCase
 
         return EmailVerificationWindow::createFromTimeFrameStartingAt(
             TimeFrame::ofSeconds($timeFrameSeconds),
-            $start
+            $start,
         );
     }
 }

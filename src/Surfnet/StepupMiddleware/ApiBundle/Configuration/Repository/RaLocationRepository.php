@@ -19,13 +19,16 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\RaLocationId;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Query\RaLocationQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
+/**
+ * @extends ServiceEntityRepository<RaLocation>
+ */
 class RaLocationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -34,21 +37,20 @@ class RaLocationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param RaLocationQuery $query
      * @return null|RaLocation[]
      */
-    public function search(RaLocationQuery $query)
+    public function search(RaLocationQuery $query): ?array
     {
         if (!in_array($query->orderBy, ['name', 'location', 'contact_information'])) {
             throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
         }
 
-        $orderBy        = 'rl.'.$query->orderBy;
+        $orderBy = 'rl.' . $query->orderBy;
         $orderDirection = $query->orderDirection === 'asc' ? 'ASC' : 'DESC';
 
         return $this->getEntityManager()->createQueryBuilder()
             ->select('rl')
-            ->from('Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation', 'rl')
+            ->from(RaLocation::class, 'rl')
             ->where('rl.institution = :institution')
             ->setParameter('institution', $query->institution->getInstitution())
             ->orderBy($orderBy, $orderDirection)
@@ -56,11 +58,7 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param RaLocationId $raLocationId
-     * @return RaLocation[]
-     */
-    public function findByRaLocationId(RaLocationId $raLocationId)
+    public function findByRaLocationId(RaLocationId $raLocationId): ?RaLocation
     {
         return $this->createQueryBuilder('rl')
             ->where('rl.id = :id')
@@ -69,20 +67,14 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
-    public function save(RaLocation $raLocation)
+    public function save(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($raLocation);
         $entityManager->flush();
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
-    public function remove(RaLocation $raLocation)
+    public function remove(RaLocation $raLocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->remove($raLocation);
@@ -90,10 +82,9 @@ class RaLocationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
      * @return RaLocation[]
      */
-    public function findByInstitution(Institution $institution)
+    public function findByInstitution(Institution $institution): array
     {
         return $this->createQueryBuilder('rl')
             ->where('rl.institution = :institution')
@@ -102,10 +93,7 @@ class RaLocationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param Institution $institution
-     */
-    public function removeRaLocationsFor(Institution $institution)
+    public function removeRaLocationsFor(Institution $institution): void
     {
         $this->createQueryBuilder('rl')
             ->delete()

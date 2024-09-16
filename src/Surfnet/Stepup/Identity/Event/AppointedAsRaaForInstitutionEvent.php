@@ -26,36 +26,26 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'institution',
         'name_id',
-        'ra_institution'
+        'ra_institution',
     ];
-
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var Institution
-     */
-    public $raInstitution;
 
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId,
-        Institution $raInstitution
+        public NameId $nameId,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->nameId = $nameId;
-        $this->raInstitution = $raInstitution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -65,29 +55,28 @@ class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightTo
         return $metadata;
     }
 
-    /**
-     * @return mixed The object instance
-     */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'    => (string) $this->identityId,
-            'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId,
-            'ra_institution' => (string) $this->raInstitution,
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 
@@ -96,6 +85,9 @@ class AppointedAsRaaForInstitutionEvent extends IdentityEvent implements RightTo
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

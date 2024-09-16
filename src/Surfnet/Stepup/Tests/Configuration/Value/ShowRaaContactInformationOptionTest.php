@@ -18,37 +18,27 @@
 
 namespace Surfnet\Stepup\Tests\Configuration\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
+use StdClass;
 use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 class ShowRaaContactInformationOptionTest extends TestCase
 {
-    /**
-     * @test
-     * @group        domain
-     * @group        institution-configuration-option
-     * @dataProvider nonBooleanProvider
-     *
-     * @param mixed $nonBooleanProvider
-     */
-    public function show_raa_contact_information_option_can_only_be_boolean($nonBooleanProvider)
-    {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
-
-        new ShowRaaContactInformationOption($nonBooleanProvider);
-    }
+    use MockeryPHPUnitIntegration;
 
     /**
      * @test
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_show_raa_contact_information_options_with_the_same_values_are_equal()
+    public function two_show_raa_contact_information_options_with_the_same_values_are_equal(): void
     {
         $option = true;
 
         $showRaaContactInformationOption = new ShowRaaContactInformationOption($option);
-        $theSame              = new ShowRaaContactInformationOption($option);
+        $theSame = new ShowRaaContactInformationOption($option);
 
         $this->assertTrue($showRaaContactInformationOption->equals($theSame));
     }
@@ -58,10 +48,10 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function two_show_raa_contact_information_options_with_different_values_are_not_equal()
+    public function two_show_raa_contact_information_options_with_different_values_are_not_equal(): void
     {
         $showRaaContactInformationOption = new ShowRaaContactInformationOption(true);
-        $different            = new ShowRaaContactInformationOption(false);
+        $different = new ShowRaaContactInformationOption(false);
 
         $this->assertFalse($showRaaContactInformationOption->equals($different));
     }
@@ -71,22 +61,11 @@ class ShowRaaContactInformationOptionTest extends TestCase
      * @group domain
      * @group institution-configuration-option
      */
-    public function default_value_is_true()
+    public function default_value_is_true(): void
     {
         $default = ShowRaaContactInformationOption::getDefault();
         $true = new ShowRaaContactInformationOption(true);
 
         $this->assertTrue($default->equals($true));
-    }
-
-    public function nonBooleanProvider()
-    {
-        return [
-            'string'       => [''],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
-        ];
     }
 }

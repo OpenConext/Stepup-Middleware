@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
+use Pagerfanta\Pagerfanta;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
@@ -37,121 +38,72 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\VettedSecondFactorRep
  */
 class SecondFactorService extends AbstractSearchService
 {
-    /**
-     * @var UnverifiedSecondFactorRepository
-     */
-    private $unverifiedRepository;
-
-    /**
-     * @var VerifiedSecondFactorRepository
-     */
-    private $verifiedRepository;
-
-    /**
-     * @var VettedSecondFactorRepository
-     */
-    private $vettedRepository;
-
-    /**
-     * @param UnverifiedSecondFactorRepository $unverifiedRepository
-     * @param VerifiedSecondFactorRepository $verifiedRepository
-     * @param VettedSecondFactorRepository $vettedRepository
-     */
     public function __construct(
-        UnverifiedSecondFactorRepository $unverifiedRepository,
-        VerifiedSecondFactorRepository $verifiedRepository,
-        VettedSecondFactorRepository $vettedRepository
+        private readonly UnverifiedSecondFactorRepository $unverifiedRepository,
+        private readonly VerifiedSecondFactorRepository $verifiedRepository,
+        private readonly VettedSecondFactorRepository $vettedRepository,
     ) {
-        $this->unverifiedRepository = $unverifiedRepository;
-        $this->verifiedRepository = $verifiedRepository;
-        $this->vettedRepository = $vettedRepository;
     }
 
     /**
-     * @param UnverifiedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta<UnverifiedSecondFactor>
      */
-    public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query)
+    public function searchUnverifiedSecondFactors(UnverifiedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->unverifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
-     * @param VerifiedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta<VerifiedSecondFactor>
      */
-    public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query)
+    public function searchVerifiedSecondFactors(VerifiedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->verifiedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
 
     /**
-     * @param VerifiedSecondFactorOfIdentityQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta<VerifiedSecondFactor>
      */
-    public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query)
+    public function searchVerifiedSecondFactorsOfIdentity(VerifiedSecondFactorOfIdentityQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->verifiedRepository->createSearchForIdentityQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
     /**
-     * @param VettedSecondFactorQuery $query
-     * @return \Pagerfanta\Pagerfanta
+     * @return Pagerfanta<VettedSecondFactor>
      */
-    public function searchVettedSecondFactors(VettedSecondFactorQuery $query)
+    public function searchVettedSecondFactors(VettedSecondFactorQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->vettedRepository->createSearchQuery($query);
 
-        $paginator = $this->createPaginatorFrom($doctrineQuery, $query);
-
-        return $paginator;
+        return $this->createPaginatorFrom($doctrineQuery, $query);
     }
 
-    /**
-     * @param SecondFactorId $id
-     * @return null|UnverifiedSecondFactor
-     */
-    public function findUnverified(SecondFactorId $id)
+    public function findUnverified(SecondFactorId $id): ?UnverifiedSecondFactor
     {
         return $this->unverifiedRepository->find($id);
     }
 
-
-    /**
-     * @param SecondFactorId $id
-     * @return null|VerifiedSecondFactor
-     */
-    public function findVerified(SecondFactorId $id)
+    public function findVerified(SecondFactorId $id): ?VerifiedSecondFactor
     {
         return $this->verifiedRepository->find($id);
     }
 
-
-    /**
-     * @param SecondFactorId $id
-     * @return null|VettedSecondFactor
-     */
-    public function findVetted(SecondFactorId $id)
+    public function findVetted(SecondFactorId $id): ?VettedSecondFactor
     {
         return $this->vettedRepository->find($id);
     }
 
     public function hasVettedByIdentity(IdentityId $id): bool
     {
-        $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string) $id]);
-        return count($vettedSecondFactors) > 0;
+        $vettedSecondFactors = $this->vettedRepository->findBy(['identityId' => (string)$id]);
+        return $vettedSecondFactors !== [];
     }
 }

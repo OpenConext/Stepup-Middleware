@@ -24,17 +24,11 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTe
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
-final class EmailTemplateService implements CommandHandlingEmailTemplateService
+final readonly class EmailTemplateService implements CommandHandlingEmailTemplateService
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
-     */
-    private $repository;
-
     public function __construct(
-        EmailTemplateRepository $repository
+        private EmailTemplateRepository $repository,
     ) {
-        $this->repository = $repository;
     }
 
     /**
@@ -43,7 +37,7 @@ final class EmailTemplateService implements CommandHandlingEmailTemplateService
      * @param string $fallbackLocale
      * @return null|EmailTemplate
      */
-    public function findByName($name, $preferredLocale, $fallbackLocale)
+    public function findByName(string $name, string $preferredLocale, string $fallbackLocale): ?EmailTemplate
     {
         try {
             $emailTemplateEntity = $this->repository->findOneByName($name, $preferredLocale, $fallbackLocale);
@@ -51,7 +45,7 @@ final class EmailTemplateService implements CommandHandlingEmailTemplateService
             throw new RuntimeException($e->getMessage(), 0, $e);
         }
 
-        if (!$emailTemplateEntity) {
+        if (!$emailTemplateEntity instanceof \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity\EmailTemplate) {
             return null;
         }
 

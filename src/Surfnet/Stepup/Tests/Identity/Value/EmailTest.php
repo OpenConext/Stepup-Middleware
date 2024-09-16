@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,21 +20,23 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\Email;
 
 class EmailTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      * @dataProvider invalidArgumentProvider
-     *
-     * @param mixed $invalidValue
      */
-    public function the_email_address_must_be_a_non_empty_string($invalidValue)
+    public function the_email_address_must_be_a_non_empty_string(string $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Email($invalidValue);
     }
 
@@ -40,11 +44,10 @@ class EmailTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider invalidEmailProvider
-     * @param $invalidValue
      */
-    public function the_email_address_given_must_be_rfc_822_compliant($invalidValue)
+    public function the_email_address_given_must_be_rfc_822_compliant(string $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Email($invalidValue);
     }
@@ -53,30 +56,23 @@ class EmailTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_emails_with_the_same_value_are_equal()
+    public function two_emails_with_the_same_value_are_equal(): void
     {
-        $email     = new Email('email@example.invalid');
-        $theSame   = new Email('email@example.invalid');
+        $email = new Email('email@example.invalid');
+        $theSame = new Email('email@example.invalid');
         $different = new Email('different@example.invalid');
-        $unknown   = Email::unknown();
+        $unknown = Email::unknown();
 
         $this->assertTrue($email->equals($theSame));
         $this->assertFalse($email->equals($different));
         $this->assertFalse($email->equals($unknown));
     }
 
-    /**
-     * provider for {@see the_email_address_must_be_a_non_empty_string()}
-     */
-    public function invalidArgumentProvider()
+    public function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 
@@ -87,12 +83,12 @@ class EmailTest extends UnitTest
      *
      * @return array
      */
-    public function invalidEmailProvider()
+    public function invalidEmailProvider(): array
     {
         return [
-            'no @-sign'       => ['mailboxexample.invalid'],
-            'no tld'          => ['mailbox@example'],
-            'no mailbox'      => ['@example.invalid'],
+            'no @-sign' => ['mailboxexample.invalid'],
+            'no tld' => ['mailbox@example'],
+            'no mailbox' => ['@example.invalid'],
             'invalid mailbox' => ['(｡◕‿◕｡)@example.invalid'],
         ];
     }

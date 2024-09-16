@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 SURF bv
+ * Copyright 2021 SURFnet bv
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,63 +19,36 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command;
 
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SelfVetSecondFactorCommand extends AbstractCommand implements SelfServiceExecutable, SelfAsserted
 {
-    /**
-     * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $secondFactorId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorId;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $secondFactorType;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secondFactorType;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $registrationCode;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $registrationCode;
 
-    /**
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $authoringSecondFactorLoa;
+    #[Assert\Type(type: 'string')]
+    public string $authoringSecondFactorLoa;
 
-    /**
-     * @Assert\Type(type="string")
-     *
-     * @var string
-     */
-    public $authoringSecondFactorIdentifier;
+    #[Assert\Type(type: 'string')]
+    public ?string $authoringSecondFactorIdentifier = null;
 
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
-        $this->identityId;
+        return $this->identityId;
     }
 }

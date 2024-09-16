@@ -22,13 +22,16 @@ use Doctrine\ORM\EntityRepository;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\WhitelistEntry;
 
+/**
+ * @extends EntityRepository<WhitelistEntry>
+ */
 class WhitelistEntryRepository extends EntityRepository
 {
     /**
      * @param Institution[] $institutions
-     * @return array
+     * @return WhitelistEntry[]
      */
-    public function findEntriesByInstitutions(array $institutions)
+    public function findEntriesByInstitutions(array $institutions): array
     {
         $qb = $this->createQueryBuilder('w');
 
@@ -41,7 +44,7 @@ class WhitelistEntryRepository extends EntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function saveEntries(array $whitelistEntries)
+    public function saveEntries(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 
@@ -55,7 +58,7 @@ class WhitelistEntryRepository extends EntityRepository
     /**
      * Removes all WhitelistEntries
      */
-    public function removeAll()
+    public function removeAll(): void
     {
         $this->createQueryBuilder('w')
             ->delete()
@@ -67,7 +70,7 @@ class WhitelistEntryRepository extends EntityRepository
     /**
      * @param WhitelistEntry[] $whitelistEntries
      */
-    public function remove(array $whitelistEntries)
+    public function remove(array $whitelistEntries): void
     {
         $entityManager = $this->getEntityManager();
 

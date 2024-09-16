@@ -27,70 +27,60 @@ use Surfnet\Stepup\Configuration\Value\ShowRaaContactInformationOption;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use Surfnet\Stepup\Configuration\Value\UseRaLocationsOption;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionConfigurationOptionsRepository"
- * )
- */
+#[ORM\Entity(repositoryClass: InstitutionConfigurationOptionsRepository::class)]
 class InstitutionConfigurationOptions
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Column(type="stepup_use_ra_locations_option")
-     *
      * @var UseRaLocationsOption
      */
-    public $useRaLocationsOption;
+    #[ORM\Column(type: 'stepup_use_ra_locations_option')]
+    public UseRaLocationsOption $useRaLocationsOption;
 
     /**
-     * @ORM\Column(type="stepup_show_raa_contact_information_option")
-     *
      * @var ShowRaaContactInformationOption
      */
-    public $showRaaContactInformationOption;
+    #[ORM\Column(type: 'stepup_show_raa_contact_information_option')]
+    public ShowRaaContactInformationOption $showRaaContactInformationOption;
 
     /**
-     * @ORM\Column(type="stepup_verify_email_option", options={"default" : 1})
-     *
      * @var VerifyEmailOption
      */
-    public $verifyEmailOption;
+    #[ORM\Column(type: 'stepup_verify_email_option', options: ['default' => 1])]
+    public VerifyEmailOption $verifyEmailOption;
 
     /**
-     * @ORM\Column(type="stepup_self_vet_option", options={"default" : 0})
-     *
      * @var SelfVetOption
      */
-    public $selfVetOption;
+    #[ORM\Column(type: 'stepup_self_vet_option', options: ['default' => 0])]
+    public SelfVetOption $selfVetOption;
 
     /**
-     * @ORM\Column(type="stepup_sso_on_2fa_option", options={"default" : 0})
-     *
      * @var SsoOn2FaOption
      */
-    public $ssoOn2faOption;
+    #[ORM\Column(type: 'stepup_sso_on_2fa_option', options: ['default' => 0])]
+    public SsoOn2faOption $ssoOn2faOption;
 
     /**
-     * @ORM\Column(type="stepup_self_asserted_tokens_option", options={"default" : 0})
-     *
      * @var SelfAssertedTokensOption
      */
-    public $selfAssertedTokensOption;
+    #[ORM\Column(type: 'stepup_self_asserted_tokens_option', options: ['default' => 0])]
+    public SelfAssertedTokensOption $selfAssertedTokensOption;
 
     /**
-     * @ORM\Column(type="stepup_number_of_tokens_per_identity_option", options={"default" : 0})
-     *
      * @var NumberOfTokensPerIdentityOption
      */
-    public $numberOfTokensPerIdentityOption;
+    #[ORM\Column(type: 'stepup_number_of_tokens_per_identity_option', options: ['default' => 0])]
+    public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption;
 
     public static function create(
         Institution $institution,
@@ -100,14 +90,14 @@ class InstitutionConfigurationOptions
         NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
         SsoOn2faOption $ssoOn2faOption,
         SelfVetOption $selfVetOption,
-        SelfAssertedTokensOption $selfAssertedTokensOption
-    ) {
+        SelfAssertedTokensOption $selfAssertedTokensOption,
+    ): self {
         $options = new self;
 
-        $options->institution                     = $institution;
-        $options->useRaLocationsOption            = $useRaLocationsOption;
+        $options->institution = $institution;
+        $options->useRaLocationsOption = $useRaLocationsOption;
         $options->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $options->verifyEmailOption               = $verifyEmailOption;
+        $options->verifyEmailOption = $verifyEmailOption;
         $options->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
         $options->ssoOn2faOption = $ssoOn2faOption;
         $options->selfVetOption = $selfVetOption;

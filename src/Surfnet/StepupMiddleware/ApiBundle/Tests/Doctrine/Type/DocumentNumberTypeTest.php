@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,37 +20,40 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType;
+use TypeError;
 
 class DocumentNumberTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(DocumentNumberType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\DocumentNumberType');
+        Type::addType(DocumentNumberType::NAME, DocumentNumberType::class);
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -61,7 +66,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_normal_document_number_is_converted_to_a_database_value()
+    public function a_normal_document_number_is_converted_to_a_database_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -76,7 +81,7 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
@@ -90,11 +95,10 @@ class DocumentNumberTypeTest extends UnitTest
      * @group doctrine
      *
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_a_document_number_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_a_document_number_or_null(mixed $incorrectValue): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(DocumentNumberType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -104,14 +108,14 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_stepup_document_number_object()
+    public function a_non_null_value_is_converted_to_the_stepup_document_number_object(): void
     {
         $type = Type::getType(DocumentNumberType::NAME);
 
         $input = '12345';
         $output = $type->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\DocumentNumber', $output);
+        $this->assertInstanceOf(DocumentNumber::class, $output);
         $this->assertTrue((new DocumentNumber($input))->equals($output));
     }
 
@@ -119,9 +123,9 @@ class DocumentNumberTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         $type = Type::getType(DocumentNumberType::NAME);
 

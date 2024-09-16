@@ -19,9 +19,12 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\SecondFactorRevocation;
 
+/**
+ * @extends ServiceEntityRepository<SecondFactorRevocation>
+ */
 class SecondFactorRevocationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -29,10 +32,7 @@ class SecondFactorRevocationRepository extends ServiceEntityRepository
         parent::__construct($registry, SecondFactorRevocation::class);
     }
 
-    /**
-     * @param SecondFactorRevocation $revocation
-     */
-    public function save(SecondFactorRevocation $revocation)
+    public function save(SecondFactorRevocation $revocation): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($revocation);

@@ -29,6 +29,6 @@ return [
             'allow_self_asserted_tokens' => false,
             'number_of_tokens_per_identity' => 3.1415,
             'allowed_second_factors' => [],
-        ]
-    ]
+        ],
+    ],
 ];

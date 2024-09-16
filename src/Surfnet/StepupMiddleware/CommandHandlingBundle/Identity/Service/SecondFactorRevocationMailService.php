@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service;
 
 use Assert\Assertion;
+use Assert\AssertionFailedException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Locale;
@@ -31,70 +32,33 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface as Mailer;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 final class SecondFactorRevocationMailService
 {
-    /**
-     * @var Mailer
-     */
-    private $mailer;
+    private readonly string $fallbackLocale;
+
+    private readonly string $selfServiceUrl;
 
     /**
-     * @var Sender
-     */
-    private $sender;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var \Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Service\EmailTemplateService
-     */
-    private $emailTemplateService;
-
-    /**
-     * @var string
-     */
-    private $fallbackLocale;
-
-    /**
-     * @var string
-     */
-    private $selfServiceUrl;
-
-    /**
-     * @var \Surfnet\StepupMiddleware\MiddlewareBundle\Service\SecondFactorDisplayNameResolverService
-     */
-    private $displayNameResolver;
-
-    /**
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
     public function __construct(
-        Mailer $mailer,
-        Sender $sender,
-        TranslatorInterface $translator,
-        EmailTemplateService $emailTemplateService,
+        private readonly Mailer $mailer,
+        private readonly Sender $sender,
+        private readonly TranslatorInterface $translator,
+        private readonly EmailTemplateService $emailTemplateService,
         string $fallbackLocale,
         string $selfServiceUrl,
-        SecondFactorDisplayNameResolverService $displayNameResolver
+        private readonly SecondFactorDisplayNameResolverService $displayNameResolver,
     ) {
         Assertion::string($fallbackLocale, 'Fallback locale "%s" expected to be string, type %s given');
         Assertion::string($selfServiceUrl, 'Self Service URL "%s" expected to be string, type %s given');
-
-        $this->mailer = $mailer;
-        $this->sender = $sender;
-        $this->translator = $translator;
-        $this->emailTemplateService = $emailTemplateService;
         $this->fallbackLocale = $fallbackLocale;
         $this->selfServiceUrl = $selfServiceUrl;
-        $this->displayNameResolver = $displayNameResolver;
     }
 
     /**
@@ -105,21 +69,21 @@ final class SecondFactorRevocationMailService
         CommonName $commonName,
         Email $email,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
-    ) {
+        SecondFactorIdentifier $secondFactorIdentifier,
+    ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType),
             ],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_revoked',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
 
         $parameters = [
@@ -150,21 +114,21 @@ final class SecondFactorRevocationMailService
         CommonName $commonName,
         Email $email,
         SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier
-    ) {
+        SecondFactorIdentifier $secondFactorIdentifier,
+    ): void {
         $subject = $this->translator->trans(
             'mw.mail.second_factor_revoked.subject',
             [
-                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType)
+                '%tokenType%' => $this->displayNameResolver->resolveByType($secondFactorType),
             ],
             'messages',
-            $locale->getLocale()
+            $locale->getLocale(),
         );
 
         $emailTemplate = $this->emailTemplateService->findByName(
             'second_factor_revoked',
             $locale->getLocale(),
-            $this->fallbackLocale
+            $this->fallbackLocale,
         );
         $parameters = [
             'isRevokedByRa' => false,

@@ -25,48 +25,44 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AddRaLocationCommand extends AbstractCommand implements RaExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $raLocationId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $raLocationId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $raLocationName;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $raLocationName;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
      *
      * @var string
      */
-    public $location;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $location;
 
     /**
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $contactInformation;
+    #[Assert\Type(type: 'string')]
+    public string $contactInformation;
 
-    /**
-     * @inheritDoc
-     */
-    public function getRaInstitution()
+    public function getRaInstitution(): string
     {
         return $this->institution;
     }

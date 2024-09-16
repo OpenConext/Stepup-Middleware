@@ -18,18 +18,22 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Collection;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\RuntimeException;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\Institution;
 
 class InstitutionCollectionTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
      * @group        whitelist
      */
-    public function it_can_be_constructed_with_or_without_institutions()
+    public function it_can_be_constructed_with_or_without_institutions(): void
     {
         $collection1 = new InstitutionCollection($this->getInstitutions());
         $collection2 = new InstitutionCollection();
@@ -43,7 +47,7 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function it_correctly_asserts_whether_or_not_it_contains_an_institution()
+    public function it_correctly_asserts_whether_or_not_it_contains_an_institution(): void
     {
         $institutions = $this->getInstitutions();
 
@@ -61,7 +65,7 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function it_allows_to_add_an_institution_that_it_does_not_already_contain()
+    public function it_allows_to_add_an_institution_that_it_does_not_already_contain(): void
     {
         $toAdd = new Institution('to be added');
 
@@ -76,9 +80,9 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function an_institution_already_in_the_collection_cannot_be_added()
+    public function an_institution_already_in_the_collection_cannot_be_added(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $institutions = $this->getInstitutions();
         $alreadyExists = $institutions[0];
 
@@ -93,9 +97,9 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function an_institution_in_the_collection_can_be_removed()
+    public function an_institution_in_the_collection_can_be_removed(): void
     {
-        $institutions  = $this->getInstitutions();
+        $institutions = $this->getInstitutions();
         $inCollection = $institutions[0];
 
         $institutionCollection = new InstitutionCollection($institutions);
@@ -111,9 +115,9 @@ class InstitutionCollectionTest extends UnitTest
      * @group        whitelist
      *
      */
-    public function an_institution_not_in_the_collection_cannot_be_removed()
+    public function an_institution_not_in_the_collection_cannot_be_removed(): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $institutions = $this->getInstitutions();
         $notInCollection = new Institution('not in the collection');
@@ -129,7 +133,7 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function multiple_institutions_can_be_added_from_another_collection()
+    public function multiple_institutions_can_be_added_from_another_collection(): void
     {
         $institutions = $this->getInstitutions();
         $collectionOneElements = [$institutions[0], $institutions[1]];
@@ -150,7 +154,7 @@ class InstitutionCollectionTest extends UnitTest
      * @group        domain
      * @group        whitelist
      */
-    public function multiple_institutions_can_be_removed()
+    public function multiple_institutions_can_be_removed(): void
     {
         $collectionOneElements = $this->getInstitutions();
         $collectionTwoElements = [$collectionOneElements[0], $collectionOneElements[2]];
@@ -168,7 +172,7 @@ class InstitutionCollectionTest extends UnitTest
     /**
      * @return array
      */
-    private function getInstitutions()
+    private function getInstitutions(): array
     {
         static $institutions;
 

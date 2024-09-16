@@ -18,35 +18,27 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
+use Broadway\EventSourcing\EventSourcedAggregateRoot;
 use Broadway\EventSourcing\SimpleEventSourcedEntity;
+use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
 use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
-use Surfnet\Stepup\Identity\Api\Identity;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 
 final class RecoveryToken extends SimpleEventSourcedEntity
 {
-    /**
-     * @var RecoveryTokenId
-     */
-    private $tokenId;
+    private ?RecoveryTokenId $tokenId = null;
 
-    /**
-     * @var RecoveryTokenType
-     */
-    private $type;
+    private ?RecoveryTokenType $type = null;
 
-    /**
-     * @var Identity
-     */
-    private $identity;
+    private ?Identity $identity = null;
 
     public static function create(
         RecoveryTokenId $id,
         RecoveryTokenType $type,
-        Identity $identity
+        Identity&EventSourcedAggregateRoot $identity,
     ): self {
         $token = new self;
         $token->tokenId = $id;
@@ -70,19 +62,19 @@ final class RecoveryToken extends SimpleEventSourcedEntity
         return $this->type;
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new RecoveryTokenRevokedEvent(
                 $this->identity->getId(),
                 $this->identity->getInstitution(),
                 $this->tokenId,
-                $this->type
-            )
+                $this->type,
+            ),
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithRecoveryCodeRevocationEvent(
@@ -90,8 +82,8 @@ final class RecoveryToken extends SimpleEventSourcedEntity
                 $this->identity->getInstitution(),
                 $this->tokenId,
                 $this->type,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 }

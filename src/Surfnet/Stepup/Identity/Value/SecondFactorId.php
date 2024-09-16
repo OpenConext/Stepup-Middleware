@@ -23,34 +23,27 @@ use Surfnet\Stepup\Identity\Api\Id;
 
 final class SecondFactorId implements Id
 {
-    /**
-     * @var string
-     */
-    private $value;
+    private readonly string $value;
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
         $this->value = $value;
     }
 
     /**
      * @return string
      */
-    public function getSecondFactorId()
+    public function getSecondFactorId(): string
     {
         return $this->value;
     }
 
-    public function equals(Id $other)
+    public function equals(Id $other): bool
     {
         return $this == $other;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }

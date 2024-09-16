@@ -35,7 +35,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'second_factor_id',
@@ -47,104 +50,40 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    public $secondFactorId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\StepupProvider
-     */
-    public $stepupProvider;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\GssfId
-     */
-    public $gssfId;
-
-    /**
-     * @var bool
-     */
-    public $emailVerificationRequired;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\EmailVerificationWindow
-     */
-    public $emailVerificationWindow;
-
-    /**
-     * @var string
-     */
-    public $emailVerificationNonce;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale Eg. "en_GB"
-     */
-    public $preferredLocale;
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
-     *
-     * @param IdentityId              $identityId
-     * @param Institution             $identityInstitution
-     * @param SecondFactorId          $secondFactorId
-     * @param StepupProvider          $stepupProvider
-     * @param GssfId                  $gssfId
-     * @param bool                    $emailVerificationRequired
-     * @param EmailVerificationWindow $emailVerificationWindow
-     * @param string                  $emailVerificationNonce
-     * @param CommonName              $commonName
-     * @param Email                   $email
-     * @param Locale                  $preferredLocale
      */
     public function __construct(
-        IdentityId $identityId,
-        Institution $identityInstitution,
-        SecondFactorId $secondFactorId,
-        StepupProvider $stepupProvider,
-        GssfId $gssfId,
-        $emailVerificationRequired,
-        EmailVerificationWindow $emailVerificationWindow,
-        $emailVerificationNonce,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale
+        IdentityId              $identityId,
+        Institution             $identityInstitution,
+        public SecondFactorId          $secondFactorId,
+        public StepupProvider          $stepupProvider,
+        public GssfId                  $gssfId,
+        public bool             $emailVerificationRequired,
+        public EmailVerificationWindow $emailVerificationWindow,
+        public string           $emailVerificationNonce,
+        public CommonName              $commonName,
+        public Email                   $email,
+        /**
+         * @var Locale Eg. "en_GB"
+         */
+        public Locale                  $preferredLocale,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->secondFactorId            = $secondFactorId;
-        $this->stepupProvider            = $stepupProvider;
-        $this->gssfId                    = $gssfId;
-        $this->emailVerificationRequired = $emailVerificationRequired;
-        $this->emailVerificationWindow   = $emailVerificationWindow;
-        $this->emailVerificationNonce    = $emailVerificationNonce;
-        $this->commonName                = $commonName;
-        $this->email                     = $email;
-        $this->preferredLocale           = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
         $metadata->secondFactorId = $this->secondFactorId;
-        $metadata->secondFactorType = new SecondFactorType((string) $this->stepupProvider);
+        $metadata->secondFactorType = new SecondFactorType((string)$this->stepupProvider);
         $metadata->secondFactorIdentifier = $this->gssfId;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['email_verification_required'])) {
             $data['email_verification_required'] = true;
@@ -161,40 +100,44 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
             $data['email_verification_nonce'],
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'identity_institution'        => (string) $this->identityInstitution,
-            'second_factor_id'            => (string) $this->secondFactorId,
-            'stepup_provider'             => (string) $this->stepupProvider,
-            'email_verification_required' => (bool) $this->emailVerificationRequired,
-            'email_verification_window'   => $this->emailVerificationWindow->serialize(),
-            'email_verification_nonce'    => (string) $this->emailVerificationNonce,
-            'preferred_locale'            => (string) $this->preferredLocale,
+            'identity_id' => (string)$this->identityId,
+            'identity_institution' => (string)$this->identityInstitution,
+            'second_factor_id' => (string)$this->secondFactorId,
+            'stepup_provider' => (string)$this->stepupProvider,
+            'email_verification_required' => $this->emailVerificationRequired,
+            'email_verification_window' => $this->emailVerificationWindow->serialize(),
+            'email_verification_nonce' => $this->emailVerificationNonce,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
             ->withEmail($this->email)
-            ->withSecondFactorIdentifier($this->gssfId, new SecondFactorType((string) $this->stepupProvider));
+            ->withSecondFactorIdentifier($this->gssfId, new SecondFactorType((string)$this->stepupProvider));
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
-        $this->email      = $sensitiveData->getEmail();
+        $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
-        $this->gssfId     = $sensitiveData->getSecondFactorIdentifier();
+        $gssfId = $sensitiveData->getSecondFactorIdentifier();
+        assert($gssfId instanceof GssfId);
+        $this->gssfId = $gssfId;
     }
 
     public function obtainUserData(): array
@@ -204,6 +147,9 @@ class GssfPossessionProvenEvent extends IdentityEvent implements Forgettable, Ri
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

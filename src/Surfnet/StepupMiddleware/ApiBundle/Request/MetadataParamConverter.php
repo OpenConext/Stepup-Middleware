@@ -27,17 +27,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MetadataParamConverter implements ParamConverterInterface
 {
-    /**
-     * @var \Symfony\Component\Validator\Validator\ValidatorInterface
-     */
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(private readonly ValidatorInterface $validator)
     {
-        $this->validator = $validator;
     }
 
-    public function apply(Request $request, ParamConverter $configuration)
+    public function apply(Request $request, ParamConverter $configuration): bool
     {
         $data = json_decode($request->getContent());
 
@@ -46,7 +40,7 @@ class MetadataParamConverter implements ParamConverterInterface
         $metadata = new Metadata();
 
         foreach ($data->meta as $property => $value) {
-            $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $property))));
+            $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', (string)$property))));
             $metadata->$properlyCasedProperty = $value;
         }
 
@@ -56,25 +50,25 @@ class MetadataParamConverter implements ParamConverterInterface
         }
 
         $request->attributes->set('metadata', $metadata);
+        return true;
     }
 
-    public function supports(ParamConverter $configuration)
+    public function supports(ParamConverter $configuration): bool
     {
         return $configuration->getName() === 'metadata'
-            && $configuration->getClass() === 'Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata';
+            && $configuration->getClass() === Metadata::class;
     }
 
     /**
-     * @param mixed $data
      * @throws BadCommandRequestException
      */
-    private function assertIsValidMetadataStructure($data)
+    private function assertIsValidMetadataStructure(mixed $data): void
     {
         if (!is_object($data)) {
             $type = gettype($data);
 
             throw new BadCommandRequestException(
-                [sprintf('Command metadata is not valid: body must be a JSON object, but is of type %s', $type)]
+                [sprintf('Command metadata is not valid: body must be a JSON object, but is of type %s', $type)],
             );
         }
 
@@ -88,8 +82,8 @@ class MetadataParamConverter implements ParamConverterInterface
             throw new BadCommandRequestException([
                 sprintf(
                     "Command metadata is not valid: 'meta' key value must be a JSON object, but is of type %s",
-                    $type
-                )
+                    $type,
+                ),
             ]);
         }
     }

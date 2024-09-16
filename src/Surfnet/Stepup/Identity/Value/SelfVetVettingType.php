@@ -25,20 +25,13 @@ class SelfVetVettingType implements VettingType
     /**
      * @var string
      */
-    protected $type;
+    protected string $type = VettingType::TYPE_SELF_VET;
 
-    /**
-     * @var Loa
-     */
-    private $authoringLoa;
-
-    public function __construct(Loa $loa)
+    public function __construct(private readonly Loa $authoringLoa)
     {
-        $this->authoringLoa = $loa;
-        $this->type = VettingType::TYPE_SELF_VET;
     }
 
-    public static function deserialize($data)
+    public static function deserialize(array $data): self
     {
         $loa = new Loa($data['loa']['level'], $data['loa']['identifier']);
         return new self($loa);
@@ -46,7 +39,7 @@ class SelfVetVettingType implements VettingType
 
     public function auditLog(): string
     {
-        return sprintf(' (self vetted using LoA: %s)', (string) $this->authoringLoa());
+        return sprintf(' (self vetted using LoA: %s)', (string)$this->authoringLoa());
     }
 
     public function authoringLoa(): Loa
@@ -60,8 +53,8 @@ class SelfVetVettingType implements VettingType
             'type' => $this->type(),
             'loa' => [
                 'level' => $this->authoringLoa->getLevel(),
-                'identifier' => (string) $this->authoringLoa,
-            ]
+                'identifier' => (string)$this->authoringLoa,
+            ],
         ];
     }
 

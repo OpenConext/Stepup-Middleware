@@ -26,26 +26,23 @@ class VerifyEmailCommand extends AbstractCommand implements SelfServiceExecutabl
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $verificationNonce;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $verificationNonce;
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

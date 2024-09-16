@@ -19,8 +19,9 @@
 namespace Surfnet\Stepup\Tests\Configuration\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Configuration;
 use Surfnet\Stepup\Configuration\Event\AllowedSecondFactorListUpdatedEvent;
 use Surfnet\Stepup\Configuration\Event\ConfigurationUpdatedEvent;
@@ -59,14 +60,17 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class EventSerializationAndDeserializationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      *
      * @dataProvider institutionConfigurationEventsProvider
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $unserializedEvent)
-    {
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(
+        SerializableInterface $unserializedEvent,
+    ): void {
         $serializedEvent = $unserializedEvent->serialize();
 
         $deserializedEvent = $unserializedEvent::deserialize($serializedEvent);
@@ -74,10 +78,7 @@ class EventSerializationAndDeserializationTest extends TestCase
         $this->assertEquals($unserializedEvent, $deserializedEvent);
     }
 
-    /**
-     * @return SerializableInterface[]
-     */
-    public function institutionConfigurationEventsProvider()
+    public function institutionConfigurationEventsProvider(): array
     {
         $institution = new Institution('A test institution');
         $institutionConfigurationId = InstitutionConfigurationId::from($institution);
@@ -87,38 +88,38 @@ class EventSerializationAndDeserializationTest extends TestCase
             // Configuration
             'NewConfigurationCreatedEvent' => [
                 new NewConfigurationCreatedEvent(
-                    Configuration::CONFIGURATION_ID
-                )
+                    Configuration::CONFIGURATION_ID,
+                ),
             ],
             'ConfigurationUpdatedEvent' => [
                 new ConfigurationUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
-                    ['configurationKey' => 'configurationValue']
-                )
+                    ['configurationKey' => 'configurationValue'],
+                ),
             ],
             'EmailTemplatesUpdatedEvent' => [
                 new EmailTemplatesUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
-                    ['template']
-                )
+                    ['template'],
+                ),
             ],
             'IdentityProvidersUpdatedEvent' => [
                 new IdentityProvidersUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
-                    ['idp']
-                )
+                    ['idp'],
+                ),
             ],
             'ServiceProvidersUpdatedEvent' => [
                 new ServiceProvidersUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
-                    ['sp']
-                )
+                    ['sp'],
+                ),
             ],
             'SraaUpdatedEvent' => [
                 new SraaUpdatedEvent(
                     Configuration::CONFIGURATION_ID,
-                    ['sraa']
-                )
+                    ['sraa'],
+                ),
             ],
 
             // InstitutionConfiguration
@@ -132,43 +133,43 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new NumberOfTokensPerIdentityOption(0),
                     new SsoOn2faOption(false),
                     new SelfVetOption(true),
-                    new SelfAssertedTokensOption(true)
-                )
+                    new SelfAssertedTokensOption(true),
+                ),
             ],
             'UseRaLocationsOptionChangedEvent' => [
                 new UseRaLocationsOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    new UseRaLocationsOption(true)
-                )
+                    new UseRaLocationsOption(true),
+                ),
             ],
             'ShowRaaContactInformationOptionChangedEvent' => [
                 new ShowRaaContactInformationOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    new ShowRaaContactInformationOption(true)
-                )
+                    new ShowRaaContactInformationOption(true),
+                ),
             ],
             'VerifyEmailOptionChangedEvent' => [
                 new VerifyEmailOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    new VerifyEmailOption(true)
-                )
+                    new VerifyEmailOption(true),
+                ),
             ],
             'SelfVetOptionChangedEvent' => [
                 new SelfVetOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    new SelfVetOption(false)
-                )
+                    new SelfVetOption(false),
+                ),
             ],
             'SsoOn2faOptionChangedEvent' => [
                 new SsoOn2faOptionChangedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    new SsoOn2faOption(false)
-                )
+                    new SsoOn2faOption(false),
+                ),
             ],
             'AllowedSecondFactorListUpdatedEvent:withSecondFactors' => [
                 new AllowedSecondFactorListUpdatedEvent(
@@ -177,15 +178,15 @@ class EventSerializationAndDeserializationTest extends TestCase
                     AllowedSecondFactorList::ofTypes([
                         new SecondFactorType('yubikey'),
                         new SecondFactorType('sms'),
-                    ])
-                )
+                    ]),
+                ),
             ],
             'AllowedSecondFactorListUpdatedEvent:blank' => [
                 new AllowedSecondFactorListUpdatedEvent(
                     $institutionConfigurationId,
                     $institution,
-                    AllowedSecondFactorList::blank()
-                )
+                    AllowedSecondFactorList::blank(),
+                ),
             ],
             'RaLocationAddedEvent' => [
                 new RaLocationAddedEvent(
@@ -194,42 +195,42 @@ class EventSerializationAndDeserializationTest extends TestCase
                     new RaLocationId($uuid),
                     new RaLocationName('Test name'),
                     new Location('Test location'),
-                    new ContactInformation('Test contact information')
-                )
+                    new ContactInformation('Test contact information'),
+                ),
             ],
             'RaLocationRenamedEvent' => [
                 new RaLocationRenamedEvent(
                     $institutionConfigurationId,
                     new RaLocationId($uuid),
-                    new RaLocationName('Test name')
-                )
+                    new RaLocationName('Test name'),
+                ),
             ],
             'RaLocationRelocatedEvent' => [
                 new RaLocationRelocatedEvent(
                     $institutionConfigurationId,
                     new RaLocationId($uuid),
-                    new Location('Test location')
-                )
+                    new Location('Test location'),
+                ),
             ],
             'RaLocationContactInformationChangedEvent' => [
                 new RaLocationContactInformationChangedEvent(
                     $institutionConfigurationId,
                     new RaLocationId($uuid),
-                    new ContactInformation('Test contact information')
-                )
+                    new ContactInformation('Test contact information'),
+                ),
             ],
             'RaLocationRemovedEvent' => [
                 new RaLocationRemovedEvent(
                     $institutionConfigurationId,
-                    new RaLocationId($uuid)
-                )
+                    new RaLocationId($uuid),
+                ),
             ],
             'InstitutionConfigurationRemovedEvent' => [
                 new InstitutionConfigurationRemovedEvent(
                     $institutionConfigurationId,
-                    new Institution('Babelfish Inc')
-                )
-            ]
+                    new Institution('Babelfish Inc'),
+                ),
+            ],
         ];
     }
 }

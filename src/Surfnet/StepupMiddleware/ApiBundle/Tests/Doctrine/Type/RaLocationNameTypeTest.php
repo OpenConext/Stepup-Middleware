@@ -18,18 +18,19 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Configuration\Value\RaLocationName;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType;
 
 class RaLocationNameTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
@@ -38,20 +39,20 @@ class RaLocationNameTypeTest extends UnitTest
     {
         Type::addType(
             RaLocationNameType::NAME,
-            'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\RaLocationNameType'
+            RaLocationNameType::class,
         );
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 
@@ -64,13 +65,13 @@ class RaLocationNameTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 
         $expected = 'An RA Location Name';
-        $input    = new RaLocationName($expected);
-        $output   = $raLocationName->convertToDatabaseValue($input, $this->platform);
+        $input = new RaLocationName($expected);
+        $output = $raLocationName->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
         $this->assertEquals($expected, $output);
@@ -81,11 +82,10 @@ class RaLocationNameTypeTest extends UnitTest
      * @group doctrine
      *
      * @dataProvider \Surfnet\StepupMiddleware\ApiBundle\Tests\TestDataProvider::notNull
-     * @param $incorrectValue
      */
-    public function a_value_can_only_be_converted_to_sql_if_it_is_an_ra_location_or_null($incorrectValue)
+    public function a_value_can_only_be_converted_to_sql_if_it_is_an_ra_location_or_null(mixed $incorrectValue): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $configurationContactInformation = Type::getType(RaLocationNameType::NAME);
         $configurationContactInformation->convertToDatabaseValue($incorrectValue, $this->platform);
@@ -95,7 +95,7 @@ class RaLocationNameTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 
@@ -108,7 +108,7 @@ class RaLocationNameTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_ra_location_name_value_object()
+    public function a_non_null_value_is_converted_to_a_ra_location_name_value_object(): void
     {
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 
@@ -116,7 +116,7 @@ class RaLocationNameTypeTest extends UnitTest
 
         $output = $raLocationName->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Configuration\Value\RaLocationName', $output);
+        $this->assertInstanceOf(RaLocationName::class, $output);
         $this->assertEquals(new RaLocationName($input), $output);
     }
 
@@ -124,9 +124,9 @@ class RaLocationNameTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $raLocationName = Type::getType(RaLocationNameType::NAME);
 

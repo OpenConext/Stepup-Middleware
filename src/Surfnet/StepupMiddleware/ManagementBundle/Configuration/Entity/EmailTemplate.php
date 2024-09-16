@@ -19,53 +19,41 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Configuration\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository"
- * )
- * @ORM\Table(
- *      name="email_templates",
- *      indexes={}
- * )
- */
+#[ORM\Table(name: 'email_templates')]
+#[ORM\Entity(repositoryClass: EmailTemplateRepository::class)]
 class EmailTemplate
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column
-     *
-     * @var string
-     */
-    private $id;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[ORM\Column]
+    private ?string $id = null;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
-    private $name;
+    #[ORM\Column]
+    private string $name;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
-    private $locale;
+    #[ORM\Column]
+    private string $locale;
 
     /**
-     * @ORM\Column(type="text")
-     *
      * @var string
      */
-    private $htmlContent;
+    #[ORM\Column(type: 'text')]
+    private string $htmlContent;
 
-    public static function create($name, $locale, $htmlContent)
+    public static function create(string $name, string $locale, string $htmlContent): self
     {
         $self = new self();
-        $self->id = (string) Uuid::uuid4();
+        $self->id = (string)Uuid::uuid4();
 
         $self->name = $name;
         $self->locale = $locale;
@@ -85,7 +73,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -93,7 +81,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -101,7 +89,7 @@ class EmailTemplate
     /**
      * @return string
      */
-    public function getHtmlContent()
+    public function getHtmlContent(): string
     {
         return $this->htmlContent;
     }

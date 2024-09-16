@@ -21,22 +21,16 @@ namespace Surfnet\Stepup\Identity\Event;
 use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
-use Surfnet\Stepup\Identity\Value\recoveryTokenId;
+use Surfnet\Stepup\Identity\Value\RecoveryTokenId;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
 class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
     /**
-     * @var RecoveryTokenId
+     * @var string[]
      */
-    public $recoveryTokenId;
-    /**
-     * @var RecoveryTokenType
-     */
-    public $recoveryTokenType;
-
-    private $allowlist = [
+    private array $allowlist = [
         'identity_id',
         'identity_institution',
         'recovery_token_id',
@@ -46,15 +40,13 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
     final public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        RecoveryTokenId $recoveryTokenId,
-        RecoveryTokenType $recoveryTokenType
+        public RecoveryTokenId $recoveryTokenId,
+        public RecoveryTokenType $recoveryTokenType,
     ) {
         parent::__construct($identityId, $identityInstitution);
-        $this->recoveryTokenId = $recoveryTokenId;
-        $this->recoveryTokenType = $recoveryTokenType;
     }
 
-    final public static function deserialize(array $data)
+    final public static function deserialize(array $data): self
     {
         $recoveryTokenType = new RecoveryTokenType($data['recovery_token_type']);
 
@@ -62,11 +54,11 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
             new IdentityId($data['identity_id']),
             new Institution($data['identity_institution']),
             new RecoveryTokenId($data['recovery_token_id']),
-            $recoveryTokenType
+            $recoveryTokenType,
         );
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -95,6 +87,9 @@ class RecoveryTokenRevokedEvent extends IdentityEvent implements RightToObtainDa
         ];
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

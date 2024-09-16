@@ -1,4 +1,7 @@
 parameters:
+    app_env: prod
+    app_debug: false
+    app_secret: SeTW1ThY0uR0WnS3cR37
     application_name: OpenConext Middleware
     # IP addresses of any HTTP proxies that are sitting in front of the application
     # See: http://symfony.com/doc/current/request/load_balancer_reverse_proxy.html

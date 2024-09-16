@@ -19,21 +19,28 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand;
 
 class EventDispatchingStageTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group pipeline
      */
-    public function buffered_event_bus_flush_is_called_during_process()
+    public function buffered_event_bus_flush_is_called_during_process(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
-        $eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus')
+        $command = m::mock(AbstractCommand::class);
+        /** @var BufferedEventBus&MockInterface $eventBus */
+        $eventBus = m::mock(BufferedEventBus::class)
             ->shouldReceive('flush')->once()
             ->getMock();
 
@@ -47,12 +54,12 @@ class EventDispatchingStageTest extends UnitTest
      * @test
      * @group pipeline
      */
-    public function it_returns_the_same_command_as_it_processes_unmodified()
+    public function it_returns_the_same_command_as_it_processes_unmodified(): void
     {
         $command = new FixedUuidStubCommand();
         $uuid = $command->UUID;
-
-        $eventBus = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus')
+        /** @var BufferedEventBus&MockInterface $eventBus */
+        $eventBus = m::mock(BufferedEventBus::class)
             ->shouldReceive('flush')->once()
             ->getMock();
 

@@ -29,33 +29,21 @@ interface Whitelist
 
     /**
      * Create a new Whitelist instance with the institutions that are on the initial whitelist
-     *
-     * @param InstitutionCollection $institutionCollection
-     * @return Whitelist
      */
-    public static function create(InstitutionCollection $institutionCollection);
+    public static function create(InstitutionCollection $institutionCollection): Whitelist;
 
     /**
      * Replace all institutions on the whitelist with the institutions in the given collection
-     *
-     * @param InstitutionCollection $institutionCollection
-     * @return void
      */
-    public function replaceAll(InstitutionCollection $institutionCollection);
+    public function replaceAll(InstitutionCollection $institutionCollection): void;
 
     /**
      * Add the institutions in the given collection to the whitelist
-     *
-     * @param InstitutionCollection $institutionCollection
-     * @return void
      */
-    public function add(InstitutionCollection $institutionCollection);
+    public function add(InstitutionCollection $institutionCollection): void;
 
     /**
      * Remove the institutions in the given collection from the whitelist
-     *
-     * @param InstitutionCollection $institutionCollection
-     * @return mixed
      */
-    public function remove(InstitutionCollection $institutionCollection);
+    public function remove(InstitutionCollection $institutionCollection): void;
 }

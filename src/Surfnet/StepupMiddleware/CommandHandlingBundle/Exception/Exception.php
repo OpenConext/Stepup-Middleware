@@ -18,6 +18,8 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Exception;
 
-interface Exception
+use Throwable;
+
+interface Exception extends Throwable
 {
 }

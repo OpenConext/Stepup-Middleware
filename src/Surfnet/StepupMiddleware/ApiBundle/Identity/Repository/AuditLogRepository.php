@@ -19,13 +19,47 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query;
+use Doctrine\Persistence\ManagerRegistry;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent;
+use Surfnet\Stepup\Identity\Event\EmailVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent;
+use Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent;
+use Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent;
+use Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent;
+use Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent;
+use Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession;
+use Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent;
+use Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\AuditLogEntry;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 
+/**
+ * @extends ServiceEntityRepository<AuditLogEntry>
+ */
 class AuditLogRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -38,47 +72,45 @@ class AuditLogRepository extends ServiceEntityRepository
      *
      * @var string[]
      */
-    private static $secondFactorEvents = [
-        'Surfnet\Stepup\Identity\Event\YubikeySecondFactorBootstrappedEvent',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenEvent',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenEvent',
-        'Surfnet\Stepup\Identity\Event\YubikeyPossessionProvenAndVerifiedEvent',
-        'Surfnet\Stepup\Identity\Event\GssfPossessionProvenAndVerifiedEvent',
-        'Surfnet\Stepup\Identity\Event\PhonePossessionProvenAndVerifiedEvent',
-        'Surfnet\Stepup\Identity\Event\EmailVerifiedEvent',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedEvent',
-        'Surfnet\Stepup\Identity\Event\SecondFactorVettedWithoutTokenProofOfPossession',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedEvent',
-        'Surfnet\Stepup\Identity\Event\SecondFactorMigratedToEvent',
-        'Surfnet\Stepup\Identity\Event\UnverifiedSecondFactorRevokedEvent',
-        'Surfnet\Stepup\Identity\Event\VerifiedSecondFactorRevokedEvent',
-        'Surfnet\Stepup\Identity\Event\VettedSecondFactorRevokedEvent',
-        'Surfnet\Stepup\Identity\Event\CompliedWithUnverifiedSecondFactorRevocationEvent',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVerifiedSecondFactorRevocationEvent',
-        'Surfnet\Stepup\Identity\Event\CompliedWithVettedSecondFactorRevocationEvent',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaEvent',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaEvent',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaForInstitutionEvent',
-        'Surfnet\Stepup\Identity\Event\IdentityAccreditedAsRaaForInstitutionEvent',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaForInstitutionEvent',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent',
-        'Surfnet\Stepup\Identity\Event\AppointedAsRaEvent',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedEvent',
-        'Surfnet\Stepup\Identity\Event\RegistrationAuthorityRetractedForInstitutionEvent',
-        'Surfnet\Stepup\Identity\Event\SafeStoreSecretRecoveryTokenPossessionPromisedEvent',
-        'Surfnet\Stepup\Identity\Event\RecoveryTokenRevokedEvent',
-        'Surfnet\Stepup\Identity\Event\PhoneRecoveryTokenPossessionProvenEvent',
-        'Surfnet\Stepup\Identity\Event\CompliedWithRecoveryCodeRevocationEvent',
+    private static array $secondFactorEvents = [
+        YubikeySecondFactorBootstrappedEvent::class,
+        GssfPossessionProvenEvent::class,
+        PhonePossessionProvenEvent::class,
+        YubikeyPossessionProvenAndVerifiedEvent::class,
+        GssfPossessionProvenAndVerifiedEvent::class,
+        PhonePossessionProvenAndVerifiedEvent::class,
+        EmailVerifiedEvent::class,
+        SecondFactorVettedEvent::class,
+        SecondFactorVettedWithoutTokenProofOfPossession::class,
+        SecondFactorMigratedEvent::class,
+        SecondFactorMigratedToEvent::class,
+        UnverifiedSecondFactorRevokedEvent::class,
+        VerifiedSecondFactorRevokedEvent::class,
+        VettedSecondFactorRevokedEvent::class,
+        CompliedWithUnverifiedSecondFactorRevocationEvent::class,
+        CompliedWithVerifiedSecondFactorRevocationEvent::class,
+        CompliedWithVettedSecondFactorRevocationEvent::class,
+        IdentityAccreditedAsRaaEvent::class,
+        IdentityAccreditedAsRaEvent::class,
+        IdentityAccreditedAsRaForInstitutionEvent::class,
+        IdentityAccreditedAsRaaForInstitutionEvent::class,
+        AppointedAsRaaEvent::class,
+        AppointedAsRaForInstitutionEvent::class,
+        AppointedAsRaaForInstitutionEvent::class,
+        AppointedAsRaEvent::class,
+        RegistrationAuthorityRetractedEvent::class,
+        RegistrationAuthorityRetractedForInstitutionEvent::class,
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent::class,
+        RecoveryTokenRevokedEvent::class,
+        PhoneRecoveryTokenPossessionProvenEvent::class,
+        CompliedWithRecoveryCodeRevocationEvent::class,
     ];
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) - The filtering switch triggers the CyclomaticComplexity, it does
      *                                                 not actually make the class complex or hard to maintain.
-     * @param SecondFactorAuditLogQuery $query
-     * @return Query
      */
-    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query)
+    public function createSecondFactorSearchQuery(SecondFactorAuditLogQuery $query): Query
     {
         $queryBuilder = $this
             ->createQueryBuilder('al')
@@ -89,31 +121,28 @@ class AuditLogRepository extends ServiceEntityRepository
             ->setParameter('identityId', $query->identityId)
             ->setParameter('secondFactorEvents', self::$secondFactorEvents);
 
-        switch ($query->orderBy) {
-            case 'secondFactorType':
-            case 'secondFactorIdentifier':
-            case 'recoveryTokenType':
-            case 'recoveryTokenIdentifier':
-            case 'recordedOn':
-            case 'actorCommonName':
-            case 'actorInstitution':
-                $queryBuilder->orderBy(
-                    sprintf('al.%s', $query->orderBy),
-                    $query->orderDirection === 'desc' ? 'DESC' : 'ASC'
-                );
-                break;
-            default:
-                throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy));
-        }
+        match ($query->orderBy) {
+            'secondFactorType',
+            'secondFactorIdentifier',
+            'recoveryTokenType',
+            'recoveryTokenIdentifier',
+            'recordedOn',
+            'actorCommonName',
+            'actorInstitution'
+            => $queryBuilder->orderBy(
+                sprintf('al.%s', $query->orderBy),
+                $query->orderDirection === 'desc' ? 'DESC' : 'ASC',
+            ),
+            default => throw new RuntimeException(sprintf('Unknown order by column "%s"', $query->orderBy)),
+        };
 
         return $queryBuilder->getQuery();
     }
 
     /**
-     * @param IdentityId $actorId
      * @return AuditLogEntry[]
      */
-    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId)
+    public function findEntriesWhereIdentityIsActorOnly(IdentityId $actorId): array
     {
         return $this->createQueryBuilder('al')
             ->where('al.actorId = :actorId')
@@ -124,10 +153,9 @@ class AuditLogRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param IdentityId $actorId
      * @return AuditLogEntry[]
      */
-    public function findByIdentityId(IdentityId $identityId)
+    public function findByIdentityId(IdentityId $identityId): array
     {
         return $this->createQueryBuilder('al')
             ->where('al.identityId = :identityId')
@@ -136,17 +164,14 @@ class AuditLogRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @param AuditLogEntry $entry
-     */
-    public function save(AuditLogEntry $entry)
+    public function save(AuditLogEntry $entry): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($entry);
         $entityManager->flush();
     }
 
-    public function saveAll(array $entries)
+    public function saveAll(array $entries): void
     {
         $entityManager = $this->getEntityManager();
 

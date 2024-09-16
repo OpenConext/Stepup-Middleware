@@ -19,53 +19,43 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Surfnet\Stepup\DateTime\DateTime;
+use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SecondFactorRevocationRepository"
- * )
- * @ORM\Table(
- *      name="second_factor_revocation",
- *      indexes={
- *          @ORM\Index(name="idx_secondfactorrevocation_recordedon", columns={"recorded_on"})
- *      }
- * )
- */
+#[ORM\Table(name: 'second_factor_revocation')]
+#[ORM\Index(name: 'idx_secondfactorrevocation_recordedon', columns: ['recorded_on'])]
+#[ORM\Entity(repositoryClass: SecondFactorRevocationRepository::class)]
 class SecondFactorRevocation
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
     /**
-     * @ORM\Column(type="institution")
-     *
-     * @var \Surfnet\Stepup\Identity\Value\Institution
+     * @var Institution
      */
-    public $institution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Column(length=36, nullable=true)
-     *
      * @var string|null
      */
-    public $secondFactorType;
+    #[ORM\Column(length: 36, nullable: true)]
+    public ?string $secondFactorType = null;
 
     /**
-     * @ORM\Column
-     *
      * @var string
      */
-    public $revokedBy;
+    #[ORM\Column]
+    public string $revokedBy;
 
     /**
-     * @ORM\Column(type="stepup_datetime")
-     *
-     * @var \Surfnet\Stepup\DateTime\DateTime
+     * @var DateTime
      */
-    public $recordedOn;
+    #[ORM\Column(type: 'stepup_datetime')]
+    public DateTime $recordedOn;
 }

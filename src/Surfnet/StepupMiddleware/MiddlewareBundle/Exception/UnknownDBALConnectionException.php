@@ -22,7 +22,7 @@ use DomainException;
 
 final class UnknownDBALConnectionException extends DomainException
 {
-    public function __construct($connectionName)
+    public function __construct(string $connectionName)
     {
         parent::__construct(sprintf('DBAL Connection "%s" does not exist', $connectionName));
     }

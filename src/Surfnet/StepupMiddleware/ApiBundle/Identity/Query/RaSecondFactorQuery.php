@@ -22,48 +22,30 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 final class RaSecondFactorQuery extends AbstractQuery
 {
-    /**
-     * @var string|null
-     */
-    public $name;
+    public ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    public $type;
+    public ?string $type = null;
 
-    /**
-     * @var string|null The second factor type's ID (eg. Yubikey public ID)
+    /*
+     * The second factor type's ID (eg. Yubikey public ID)
      */
-    public $secondFactorId;
+    public ?string $secondFactorId = null;
 
-    /**
-     * @var string|null
-     */
-    public $email;
+    public ?string $email = null;
 
-    /**
-     * @var string|null the filter value, not to be confused with the actorInstitution which is used for authorizations.
+    /*
+     * the filter value, not to be confused with the actorInstitution which is used for authorizations.
      */
-    public $institution;
+    public ?string $institution = null;
 
-    /**
-     * @var string|null One of the ApiBundle\Identity\Entity\RaSecondFactor::STATUS_* constants.
+    /*
+     * One of the ApiBundle\Identity\Entity\RaSecondFactor::STATUS_* constants.
      */
-    public $status;
+    public ?string $status = null;
 
-    /**
-     * @var string|null
-     */
-    public $orderBy;
+    public ?string $orderBy = null;
 
-    /**
-     * @var string|null
-     */
-    public $orderDirection;
+    public ?string $orderDirection = null;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
-    public $authorizationContext;
+    public InstitutionAuthorizationContextInterface $authorizationContext;
 }

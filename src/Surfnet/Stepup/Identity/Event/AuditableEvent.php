@@ -18,10 +18,12 @@
 
 namespace Surfnet\Stepup\Identity\Event;
 
+use Surfnet\Stepup\Identity\AuditLog\Metadata;
+
 interface AuditableEvent
 {
     /**
-     * @return \Surfnet\Stepup\Identity\AuditLog\Metadata
+     * @return Metadata
      */
-    public function getAuditLogMetadata();
+    public function getAuditLogMetadata(): Metadata;
 }

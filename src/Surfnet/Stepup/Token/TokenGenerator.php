@@ -25,7 +25,7 @@ class TokenGenerator
      *
      * @return string
      */
-    public static function generateNonce()
+    public static function generateNonce(): string
     {
         return md5(openssl_random_pseudo_bytes(50));
     }

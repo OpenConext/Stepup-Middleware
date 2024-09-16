@@ -18,12 +18,15 @@
 
 namespace Surfnet\Stepup\Tests\Helper;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Surfnet\Stepup\Helper\UserDataFormatter;
 
 class UserDataFormatterTest extends TestCase
 {
-    public function test_data_is_formatted()
+    use MockeryPHPUnitIntegration;
+
+    public function test_data_is_formatted(): void
     {
         $formatter = new UserDataFormatter('Stepup-Middleware');
         $expected = [
@@ -33,7 +36,7 @@ class UserDataFormatterTest extends TestCase
                 ['name' => 'name2', 'value' => 'some-value-2'],
                 ['name' => 'name3', 'value' => 'some-value-3'],
             ],
-            'name' => 'Stepup-Middleware'
+            'name' => 'Stepup-Middleware',
         ];
 
         $inputData = [
@@ -45,7 +48,7 @@ class UserDataFormatterTest extends TestCase
         $this->assertEquals($expected, $formatter->format($inputData, []));
     }
 
-    public function test_errors_are_included_in_output()
+    public function test_errors_are_included_in_output(): void
     {
         $formatter = new UserDataFormatter('Stepup-Middleware');
         $expected = [
@@ -55,19 +58,20 @@ class UserDataFormatterTest extends TestCase
             ],
             'name' => 'Stepup-Middleware',
             'message' => [
-                'The application is teetering on the edge of catastrophe!'
-            ]
+                'The application is teetering on the edge of catastrophe!',
+            ],
         ];
 
         $inputData = [
             'foobar-name1' => 'some-value-1',
         ];
 
-        $this->assertEquals($expected,
+        $this->assertEquals(
+            $expected,
             $formatter->format(
                 $inputData,
-                ['The application is teetering on the edge of catastrophe!']
-            )
+                ['The application is teetering on the edge of catastrophe!'],
+            ),
         );
     }
 }

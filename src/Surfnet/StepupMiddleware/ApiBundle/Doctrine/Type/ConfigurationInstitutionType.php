@@ -29,36 +29,36 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 class ConfigurationInstitutionType extends Type
 {
-    const NAME = 'stepup_configuration_institution';
+    public const NAME = 'stepup_configuration_institution';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         if (!$value instanceof Institution) {
             throw new ConversionException(
                 sprintf(
                     "Encountered illegal institution of type %s '%s', expected an Institution instance",
-                    is_object($value) ? get_class($value) : gettype($value),
-                    is_scalar($value) ? (string) $value : ''
-                )
+                    get_debug_type($value),
+                    is_scalar($value) ? (string)$value : '',
+                ),
             );
         }
 
         return $value->getInstitution();
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Institution
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
@@ -67,7 +67,7 @@ class ConfigurationInstitutionType extends Type
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -76,7 +76,7 @@ class ConfigurationInstitutionType extends Type
         return $institution;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

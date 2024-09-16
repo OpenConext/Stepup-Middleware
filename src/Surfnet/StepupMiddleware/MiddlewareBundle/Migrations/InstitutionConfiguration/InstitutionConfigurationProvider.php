@@ -22,39 +22,16 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstituti
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\RaLocationService;
 
-final class InstitutionConfigurationProvider
+final readonly class InstitutionConfigurationProvider
 {
-    /**
-     * @var ConfiguredInstitutionService
-     */
-    private $configuredInstitutionService;
-
-    /**
-     * @var InstitutionConfigurationOptionsService
-     */
-    private $institutionConfigurationOptionsService;
-
-    /**
-     * @var RaLocationService
-     */
-    private $raLocationService;
-
-    /**
-     * @param ConfiguredInstitutionService           $configuredInstitutionService
-     * @param InstitutionConfigurationOptionsService $institutionConfigurationOptionsService
-     * @param RaLocationService                      $raLocationService
-     */
     public function __construct(
-        ConfiguredInstitutionService $configuredInstitutionService,
-        InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
-        RaLocationService $raLocationService
+        private ConfiguredInstitutionService $configuredInstitutionService,
+        private InstitutionConfigurationOptionsService $institutionConfigurationOptionsService,
+        private RaLocationService $raLocationService,
     ) {
-        $this->configuredInstitutionService = $configuredInstitutionService;
-        $this->institutionConfigurationOptionsService = $institutionConfigurationOptionsService;
-        $this->raLocationService = $raLocationService;
     }
 
-    public function loadData()
+    public function loadData(): InstitutionConfigurationState
     {
         $configuredInstitutions = $this->configuredInstitutionService->getAll();
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
@@ -64,7 +41,7 @@ final class InstitutionConfigurationProvider
         return InstitutionConfigurationState::load(
             $configuredInstitutions,
             $institutionConfigurationOptions,
-            $raLocations
+            $raLocations,
         );
     }
 }

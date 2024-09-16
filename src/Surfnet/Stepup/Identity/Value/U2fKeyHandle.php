@@ -25,55 +25,48 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
  */
 final class U2fKeyHandle implements SecondFactorIdentifier
 {
-    const UNKNOWN = '—';
+    public const UNKNOWN = '—';
 
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
     /**
      * @return static
      */
-    public static function unknown()
+    public static function unknown(): static
     {
         return new self(self::UNKNOWN);
     }
 
-    public function __construct($value)
+    public function __construct(string $value)
     {
         if ($value === self::UNKNOWN) {
             $this->value = $value;
             return;
         }
 
-        if (!is_string($value)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $value);
-        }
-
-        if (empty($value)) {
+        if ($value === '' || $value === '0') {
             throw new InvalidArgumentException('Invalid Argument, parameter "value" may not be an empty string');
         }
 
         $this->value = $value;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->value;
     }
 
-    public function equals($other): bool
+    public function equals(SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->value === $other->value;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->value;
     }

@@ -25,17 +25,12 @@ use Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemp
 
 final class EmailTemplatesProjector extends Projector
 {
-    /**
-     * @var \Surfnet\StepupMiddleware\ManagementBundle\Configuration\Repository\EmailTemplateRepository
-     */
-    private $repository;
-
-    public function __construct(EmailTemplateRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private readonly EmailTemplateRepository $repository,
+    ) {
     }
 
-    public function applyEmailTemplatesUpdatedEvent(EmailTemplatesUpdatedEvent $event)
+    public function applyEmailTemplatesUpdatedEvent(EmailTemplatesUpdatedEvent $event): void
     {
         $this->repository->removeAll();
 

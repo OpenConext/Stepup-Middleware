@@ -30,7 +30,9 @@ final class RecoveryTokenIdentifierFactory
         if ($type->isSafeStore()) {
             return new SafeStore(new HashedSecret($recoveryTokenIdentifier));
         }
-        throw new InvalidArgumentException(sprintf('Unsupported type given while building recovery method: "%s"', $type));
+        throw new InvalidArgumentException(
+            sprintf('Unsupported type given while building recovery method: "%s"', $type),
+        );
     }
 
     public static function unknownForType(RecoveryTokenType $type): RecoveryTokenIdentifier
@@ -42,7 +44,7 @@ final class RecoveryTokenIdentifierFactory
             return SafeStore::unknown();
         }
         throw new InvalidArgumentException(
-            sprintf('Unsupported type given while building unknown recovery method: "%s"', $type)
+            sprintf('Unsupported type given while building unknown recovery method: "%s"', $type),
         );
     }
 }

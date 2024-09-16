@@ -32,7 +32,10 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'institution',
@@ -42,59 +45,34 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
     ];
 
     /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public $registrationAuthorityRole;
-
-    /**
-     * @var Location
-     */
-    public $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public $contactInformation;
-
-    /**
      * @param IdentityId $identityId
      * @param NameId $nameId
      * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
+     * @param RegistrationAuthorityRole $registrationAuthorityRole
      * @param Location $location
      * @param ContactInformation $contactInformation
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
-        Location $location,
-        ContactInformation $contactInformation
+        public RegistrationAuthorityRole $registrationAuthorityRole,
+        public Location $location,
+        public ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId                    = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location                  = $location;
-        $this->contactInformation        = $contactInformation;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -102,19 +80,19 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
             new Institution($data['institution']),
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'name_id'                     => (string) $this->nameId,
-            'institution'                 => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'institution' => (string)$this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
-            'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 
@@ -123,6 +101,9 @@ class IdentityAccreditedAsRaEvent extends IdentityEvent implements RightToObtain
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

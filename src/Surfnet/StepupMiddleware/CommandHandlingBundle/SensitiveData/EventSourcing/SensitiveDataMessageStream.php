@@ -21,65 +21,61 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\EventSour
 use ArrayIterator;
 use Broadway\Domain\DomainEventStream;
 use Broadway\Domain\DomainMessage;
+use Iterator;
 use IteratorAggregate;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Exception\SensitiveDataApplicationException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
 
+/**
+ * @implements IteratorAggregate<SensitiveDataMessage>
+ */
 class SensitiveDataMessageStream implements IteratorAggregate
 {
     /**
-     * @var array
-     */
-    private $messages;
-
-    /**
      * @param SensitiveDataMessage[] $messages
      */
-    public function __construct(array $messages)
+    public function __construct(private readonly array $messages)
     {
-        $this->messages = $messages;
     }
 
-    public function applyToDomainEventStream(DomainEventStream $domainEventStream)
+    public function applyToDomainEventStream(DomainEventStream $domainEventStream): void
     {
         $sensitiveDataMap = $this->createSensitiveDataMap($this->messages);
 
         /** @var DomainMessage $domainMessage */
         foreach ($domainEventStream as $domainMessage) {
-            $sensitiveDataMessage = isset($sensitiveDataMap[$domainMessage->getPlayhead()])
-                ? $sensitiveDataMap[$domainMessage->getPlayhead()]
-                : null;
+            $sensitiveDataMessage = $sensitiveDataMap[$domainMessage->getPlayhead()] ?? null;
             unset($sensitiveDataMap[$domainMessage->getPlayhead()]);
 
             $this->setSensitiveData($domainMessage, $sensitiveDataMessage);
         }
 
-        if (count($sensitiveDataMap) > 0) {
-            throw new SensitiveDataApplicationException(sprintf(
-                '%d sensitive data messages are still to be matched to events',
-                count($sensitiveDataMap)
-            ));
+        if ($sensitiveDataMap !== []) {
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    '%d sensitive data messages are still to be matched to events',
+                    count($sensitiveDataMap),
+                ),
+            );
         }
     }
 
-    public function forget()
+    public function forget(): void
     {
         foreach ($this->messages as $message) {
             $message->forget();
         }
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->messages);
     }
 
-    /**
-     * @param DomainMessage $domainMessage
-     * @param SensitiveDataMessage|null $sensitiveDataMessage
-     */
-    private function setSensitiveData(DomainMessage $domainMessage, SensitiveDataMessage $sensitiveDataMessage = null)
-    {
+    private function setSensitiveData(
+        DomainMessage $domainMessage,
+        SensitiveDataMessage $sensitiveDataMessage = null,
+    ): void {
         $event = $domainMessage->getPayload();
         $eventIsForgettable = $event instanceof Forgettable;
 
@@ -88,27 +84,33 @@ class SensitiveDataMessageStream implements IteratorAggregate
         }
 
         if ($eventIsForgettable && !$sensitiveDataMessage) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Sensitive data is missing for event with UUID %s, playhead %d',
-                $domainMessage->getId(),
-                $domainMessage->getPlayhead()
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Sensitive data is missing for event with UUID %s, playhead %d',
+                    $domainMessage->getId(),
+                    $domainMessage->getPlayhead(),
+                ),
+            );
         }
 
-        if (!$eventIsForgettable && $sensitiveDataMessage) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Encountered sensitive data for event which does not support sensitive data, UUID %s, playhead %d',
-                $domainMessage->getId(),
-                $domainMessage->getPlayhead()
-            ));
+        if (!$eventIsForgettable) {
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Encountered sensitive data for event which does not support sensitive data, UUID %s, playhead %d',
+                    $domainMessage->getId(),
+                    $domainMessage->getPlayhead(),
+                ),
+            );
         }
 
         if ($domainMessage->getId() != $sensitiveDataMessage->getIdentityId()) {
-            throw new SensitiveDataApplicationException(sprintf(
-                'Encountered sensitive data from stream %s for event from stream %s',
-                $sensitiveDataMessage->getIdentityId(),
-                $domainMessage->getId()
-            ));
+            throw new SensitiveDataApplicationException(
+                sprintf(
+                    'Encountered sensitive data from stream %s for event from stream %s',
+                    $sensitiveDataMessage->getIdentityId(),
+                    $domainMessage->getId(),
+                ),
+            );
         }
 
         $event->setSensitiveData($sensitiveDataMessage->getSensitiveData());
@@ -118,7 +120,7 @@ class SensitiveDataMessageStream implements IteratorAggregate
      * @param SensitiveDataMessage[] $messages
      * @return SensitiveDataMessage[] The same messages, but indexed by their playheads.
      */
-    private function createSensitiveDataMap(array $messages)
+    private function createSensitiveDataMap(array $messages): array
     {
         $map = [];
         foreach ($messages as $message) {

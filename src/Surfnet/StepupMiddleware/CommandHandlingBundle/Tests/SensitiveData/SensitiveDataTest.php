@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\SensitiveData;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\DocumentNumber;
@@ -28,19 +29,22 @@ use Surfnet\Stepup\Identity\Value\UnknownVettingType;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
+use function is_string;
 
 class SensitiveDataTest extends TestCase
 {
-    public function sensitiveDataToSerialise()
+    use MockeryPHPUnitIntegration;
+
+    public function sensitiveDataToSerialise(): array
     {
         return [
             'None' => [
                 (new SensitiveData()),
-                []
+                [],
             ],
             'None, forgotten' => [
                 (new SensitiveData())->forget(),
-                []
+                [],
             ],
             'CommonName' => [
                 (new SensitiveData())->withCommonName(new CommonName('Willie')),
@@ -103,21 +107,22 @@ class SensitiveDataTest extends TestCase
      * @test
      * @group sensitive-data
      * @dataProvider sensitiveDataToSerialise
-     *
-     * @param SensitiveData $sensitiveData
-     * @param array         $getterExpectations
      */
     public function it_serialises_and_deserialises(
         SensitiveData $sensitiveData,
-        array $getterExpectations
-    ) {
-        $sensitiveData = SensitiveData::deserialize(json_decode(json_encode($sensitiveData->serialize()), true));
+        array $getterExpectations,
+    ): void {
+        $serializedData = json_encode($sensitiveData->serialize());
+        if (!is_string($serializedData)) {
+            $this->fail('Unable to json_encode the serialized sensitive data');
+        }
+        $sensitiveData = SensitiveData::deserialize(json_decode($serializedData, true));
 
         foreach ($getterExpectations as $data => $expectedValue) {
             $this->assertEquals(
                 $expectedValue,
                 $sensitiveData->{"get$data"}(),
-                "get$data() returned an unexpected value"
+                "get$data() returned an unexpected value",
             );
         }
 

@@ -25,37 +25,19 @@ use Surfnet\Stepup\Configuration\Value\RaLocationId;
 
 class RaLocationRelocatedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var RaLocationId
-     */
-    public $raLocationId;
-
-    /**
-     * @var Location
-     */
-    public $location;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        RaLocationId $raLocationId,
-        Location $location
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public RaLocationId $raLocationId,
+        public Location $location
     ) {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->raLocationId               = $raLocationId;
-        $this->location                   = $location;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
             new RaLocationId($data['ra_location_id']),
-            new Location($data['location'])
+            new Location($data['location']),
         );
     }
 
@@ -63,8 +45,8 @@ class RaLocationRelocatedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'ra_location_id'               => $this->raLocationId->getRaLocationId(),
-            'location'                     => $this->location->getLocation(),
+            'ra_location_id' => $this->raLocationId->getRaLocationId(),
+            'location' => $this->location->getLocation(),
         ];
     }
 }

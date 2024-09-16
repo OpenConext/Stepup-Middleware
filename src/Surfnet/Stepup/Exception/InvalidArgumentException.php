@@ -20,20 +20,13 @@ namespace Surfnet\Stepup\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException implements Exception
 {
-    /**
-     * @param string $expected description of expected type
-     * @param string $parameterName
-     * @param mixed $parameter the parameter that is not of the expected type.
-     *
-     * @return self
-     */
-    public static function invalidType($expected, $parameterName, $parameter)
+    public static function invalidType(string $expected, string $parameterName, mixed $parameter): self
     {
         $message = sprintf(
             'Invalid argument type: "%s" expected, "%s" given for "%s"',
             $expected,
-            is_object($parameter) ? get_class($parameter) : gettype($parameter),
-            $parameterName
+            get_debug_type($parameter),
+            $parameterName,
         );
 
         return new self($message);

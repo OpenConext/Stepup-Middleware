@@ -18,28 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
+use Stringable;
 use Surfnet\Stepup\Identity\Value\RegistrationAuthorityRole;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\RuntimeException;
 
-class AuthorityRole
+class AuthorityRole implements Stringable
 {
-    const ROLE_RA   = 'ra';
-    const ROLE_RAA  = 'raa';
-    const ROLE_SRAA = 'sraa';
+    public const ROLE_RA = 'ra';
+    public const ROLE_RAA = 'raa';
+    public const ROLE_SRAA = 'sraa';
 
     /**
      * @var string
      */
-    private $role;
+    private readonly string $role;
 
-    public function __construct($role)
+    public function __construct(string $role)
     {
         if (!in_array($role, [self::ROLE_RA, self::ROLE_RAA, self::ROLE_SRAA])) {
             throw InvalidArgumentException::invalidType(
                 'One of AuthorityRole::ROLE_RA, AuthorityRole::ROLE_RAA or AuthorityRole::ROLE_SRAA',
                 'role',
-                $role
+                $role,
             );
         }
 
@@ -52,7 +53,7 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function ra()
+    public static function ra(): self
     {
         return new self(self::ROLE_RA);
     }
@@ -62,16 +63,15 @@ class AuthorityRole
      *
      * @return AuthorityRole
      */
-    public static function raa()
+    public static function raa(): self
     {
         return new self(self::ROLE_RAA);
     }
 
     /**
-     * @param RegistrationAuthorityRole $registrationAuthorityRole
      * @return AuthorityRole
      */
-    public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole)
+    public static function fromRegistrationAuthorityRole(RegistrationAuthorityRole $registrationAuthorityRole): AuthorityRole
     {
         if ($registrationAuthorityRole->isRa()) {
             return static::ra();
@@ -79,17 +79,18 @@ class AuthorityRole
             return static::raa();
         }
 
-        throw new RuntimeException(sprintf(
-            'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
-            (string) $registrationAuthorityRole
-        ));
+        throw new RuntimeException(
+            sprintf(
+                'AuthorityRole cannot be created from RegistrationAuthorityRole of value "%s"',
+                $registrationAuthorityRole,
+            ),
+        );
     }
 
     /**
-     * @param AuthorityRole $other
      * @return bool
      */
-    public function equals(AuthorityRole $other)
+    public function equals(AuthorityRole $other): bool
     {
         return $this->role === $other->role;
     }
@@ -97,12 +98,12 @@ class AuthorityRole
     /**
      * @return string
      */
-    public function getRole()
+    public function getRole(): string
     {
         return $this->role;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->role;
     }

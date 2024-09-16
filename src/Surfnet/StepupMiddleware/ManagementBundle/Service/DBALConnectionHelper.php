@@ -27,7 +27,7 @@ class DBALConnectionHelper
     /**
      * @var Connection[]
      */
-    private $connections;
+    private array $connections;
 
     /**
      * @param Connection[] $connections
@@ -36,7 +36,7 @@ class DBALConnectionHelper
     {
         foreach ($connections as $connection) {
             if (!$connection instanceof Connection) {
-                throw InvalidArgumentException::invalidType('\Doctrine\DBAL\Connection', 'connection', $connection);
+                throw InvalidArgumentException::invalidType(Connection::class, 'connection', $connection);
             }
         }
 
@@ -46,7 +46,7 @@ class DBALConnectionHelper
     /**
      * Start transaction on each connection
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         foreach ($this->connections as $connection) {
             $connection->beginTransaction();
@@ -56,7 +56,7 @@ class DBALConnectionHelper
     /**
      * Commit transaction on each connection
      */
-    public function commit()
+    public function commit(): void
     {
         foreach ($this->connections as $connection) {
             $connection->commit();
@@ -66,7 +66,7 @@ class DBALConnectionHelper
     /**
      * Roll back the transaction on each connection
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         foreach ($this->connections as $connection) {
             $connection->rollBack();
@@ -74,10 +74,9 @@ class DBALConnectionHelper
     }
 
     /**
-     * @param string $connectionName
      * @return Connection
      */
-    public function getConnection($connectionName)
+    public function getConnection(string $connectionName): Connection
     {
         if (!is_string($connectionName)) {
             throw InvalidArgumentException::invalidType('string', 'connectionName', $connectionName);

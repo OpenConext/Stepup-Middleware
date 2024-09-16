@@ -19,83 +19,54 @@
 namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Surfnet\StepupMiddleware\GatewayBundle\Exception\RuntimeException;
+use function is_string;
 
-/**
- * @ORM\Entity(repositoryClass="Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntityRepository")
- * @ORM\Table(
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="unq_saml_entity_entity_id_type", columns={"entity_id", "type"})
- *     }
- * )
- */
+#[ORM\Table]
+#[ORM\UniqueConstraint(name: 'unq_saml_entity_entity_id_type', columns: ['entity_id', 'type'])]
+#[ORM\Entity(repositoryClass: SamlEntityRepository::class)]
 class SamlEntity
 {
     /**
      * Constants denoting the type of SamlEntity. Also used in the gateway to make that distinction
      */
-    const TYPE_IDP = 'idp';
-    const TYPE_SP  = 'sp';
+    public const TYPE_IDP = 'idp';
+    public const TYPE_SP = 'sp';
 
     /**
      * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(length=36)
      */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
-    /**
-     * @ORM\Column
-     *
-     * @var string
-     */
-    public $entityId;
-
-    /**
-     * @ORM\Column
-     *
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @ORM\Column(type="text")
-     *
-     * @var string the configuration as json string
-     */
-    public $configuration;
-
-    /**
-     * @param string $entityId
-     * @param string $type
-     * @param string $configuration
-     */
-    private function __construct($entityId, $type, $configuration)
-    {
-        $this->id = (string) Uuid::uuid4();
-        $this->entityId = $entityId;
-        $this->type = $type;
-        $this->configuration = $configuration;
+    private function __construct(
+        #[ORM\Column]
+        public string $entityId,
+        #[ORM\Column]
+        public string $type,
+        #[ORM\Column(type: 'text')]
+        public string $configuration,
+    ) {
+        $this->id = (string)Uuid::uuid4();
     }
 
-    /**
-     * @param string $entityId
-     * @param array  $configuration
-     * @return SamlEntity
-     */
-    public static function createServiceProvider($entityId, array $configuration)
+    public static function createServiceProvider(string $entityId, array $configuration): self
     {
-        return new self($entityId, self::TYPE_SP, json_encode($configuration));
+        $encodedConfiguration = json_encode($configuration);
+        if (!is_string($encodedConfiguration)) {
+            throw new RuntimeException('Unable to json_encode the configuration array in SamlEntity::createServiceProvider');
+        }
+        return new self($entityId, self::TYPE_SP, $encodedConfiguration);
     }
 
-    /**
-     * @param string $entityId
-     * @param array  $configuration
-     * @return SamlEntity
-     */
-    public static function createIdentityProvider($entityId, array $configuration)
+    public static function createIdentityProvider(string $entityId, array $configuration): self
     {
-        return new self($entityId, self::TYPE_IDP, json_encode($configuration));
+        $encodedConfiguration = json_encode($configuration);
+        if (!is_string($encodedConfiguration)) {
+            throw new RuntimeException('Unable to json_encode the configuration array in SamlEntity::createServiceProvider');
+        }
+        return new self($entityId, self::TYPE_IDP, $encodedConfiguration);
     }
 }

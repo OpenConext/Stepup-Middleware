@@ -26,30 +26,26 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'id',
         'institution',
         'preferred_locale',
     ];
 
     /**
-     * @var Locale
-     */
-    public $preferredLocale;
-
-    /**
-     * @param IdentityId  $id
+     * @param IdentityId $id
      * @param Institution $institution
-     * @param Locale      $preferredLocale
+     * @param Locale $preferredLocale
      */
-    public function __construct(IdentityId $id, Institution $institution, Locale $preferredLocale)
+    public function __construct(IdentityId $id, Institution $institution, public Locale $preferredLocale)
     {
         parent::__construct($id, $institution);
-
-        $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -58,28 +54,26 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         return $metadata;
     }
 
-    /**
-     * @param array $data
-     * @return IdentityRenamedEvent The object instance
-     */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['id']),
             new Institution($data['institution']),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'id'          => (string) $this->identityId,
-            'institution' => (string) $this->identityInstitution,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
@@ -88,6 +82,9 @@ class LocalePreferenceExpressedEvent extends IdentityEvent implements RightToObt
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

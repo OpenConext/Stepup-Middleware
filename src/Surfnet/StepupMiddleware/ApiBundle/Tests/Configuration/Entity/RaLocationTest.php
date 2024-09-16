@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Configuration\Entity;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as TestCase;
 use Surfnet\Stepup\Configuration\Value\ContactInformation;
 use Surfnet\Stepup\Configuration\Value\Institution;
@@ -27,17 +28,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 
 class RaLocationTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     /**
      * @test
      * @group entity
      */
-    public function an_ra_location_is_correctly_serialized_to_json()
+    public function an_ra_location_is_correctly_serialized_to_json(): void
     {
         $deserializedRaLocation = [
-            'id'                  => 'An id',
-            'institution'         => 'surfnet.nl',
-            'name'                => 'An RA location',
-            'location'            => 'A location',
+            'id' => 'An id',
+            'institution' => 'surfnet.nl',
+            'name' => 'An RA location',
+            'location' => 'A location',
             'contact_information' => 'Contact information',
         ];
 
@@ -46,12 +48,12 @@ class RaLocationTest extends TestCase
             new Institution($deserializedRaLocation['institution']),
             new RaLocationName($deserializedRaLocation['name']),
             new Location($deserializedRaLocation['location']),
-            new ContactInformation($deserializedRaLocation['contact_information'])
+            new ContactInformation($deserializedRaLocation['contact_information']),
         );
 
         $expectedSerialization = json_encode($deserializedRaLocation);
-        $actualSerialization   = json_encode($raLocation);
+        $actualSerialization = json_encode($raLocation);
 
-       $this->assertSame($expectedSerialization, $actualSerialization);
+        $this->assertSame($expectedSerialization, $actualSerialization);
     }
 }

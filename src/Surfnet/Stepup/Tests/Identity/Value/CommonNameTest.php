@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,21 +20,23 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
+use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 
 class CommonNameTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group        domain
      * @dataProvider invalidArgumentProvider
-     *
-     * @param mixed $invalidValue
      */
-    public function the_common_name_address_must_be_a_non_empty_string($invalidValue)
+    public function the_common_name_address_must_be_a_non_empty_string(string $invalidValue): void
     {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new CommonName($invalidValue);
     }
@@ -41,30 +45,23 @@ class CommonNameTest extends UnitTest
      * @test
      * @group domain
      */
-    public function two_common_names_with_the_same_value_are_equal()
+    public function two_common_names_with_the_same_value_are_equal(): void
     {
         $commonName = new CommonName('John Doe');
-        $theSame    = new CommonName('John Doe');
-        $different  = new CommonName('Jane Doe');
-        $unknown    = CommonName::unknown();
+        $theSame = new CommonName('John Doe');
+        $different = new CommonName('Jane Doe');
+        $unknown = CommonName::unknown();
 
         $this->assertTrue($commonName->equals($theSame));
         $this->assertFalse($commonName->equals($different));
         $this->assertFalse($commonName->equals($unknown));
     }
 
-    /**
-     * provider for {@see the_common_name_address_must_be_a_non_empty_string()}
-     */
-    public function invalidArgumentProvider()
+    public function invalidArgumentProvider(): array
     {
         return [
             'empty string' => [''],
             'blank string' => ['   '],
-            'array'        => [[]],
-            'integer'      => [1],
-            'float'        => [1.2],
-            'object'       => [new \StdClass()],
         ];
     }
 }

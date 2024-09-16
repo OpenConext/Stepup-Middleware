@@ -18,22 +18,19 @@
 
 namespace Surfnet\Stepup\Identity\Api;
 
+use InvalidArgumentException;
+
 interface Id
 {
     /**
-     * @param mixed $value
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function __construct($value);
+    public function __construct(string $value);
 
     /**
      * @return string
      */
     public function __toString();
 
-    /**
-     * @param Id $other
-     * @return bool
-     */
-    public function equals(Id $other);
+    public function equals(Id $other): bool;
 }

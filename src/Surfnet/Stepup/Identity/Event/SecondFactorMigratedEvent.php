@@ -42,7 +42,10 @@ use function array_key_exists;
  */
 class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'source_institution',
         'target_name_id',
@@ -57,85 +60,26 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
     ];
 
     /**
-     * @var Institution
-     */
-    private $sourceInstitution;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\NameId
-     */
-    public $targetNameId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    public $secondFactorId;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    public $newSecondFactorId;
-
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    public $secondFactorType;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
-     */
-    public $secondFactorIdentifier;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\CommonName
-     */
-    public $commonName;
-
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Email
-     */
-    public $email;
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\Locale
-     */
-    public $preferredLocale;
-    /**
-     * @var VettingType
-     */
-    public $vettingType;
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         IdentityId $identityId,
-        NameId $targetNameId,
+        public NameId $targetNameId,
         Institution $targetInstitution,
-        Institution $sourceInstitution,
-        SecondFactorId $secondFactorId,
-        SecondFactorId $newSecondFactorId,
-        SecondFactorType $secondFactorType,
-        SecondFactorIdentifier $secondFactorIdentifier,
-        VettingType $vettingType,
-        CommonName $commonName,
-        Email $email,
-        Locale $preferredLocale
+        private Institution $sourceInstitution,
+        public SecondFactorId $secondFactorId,
+        public SecondFactorId $newSecondFactorId,
+        public SecondFactorType $secondFactorType,
+        public SecondFactorIdentifier $secondFactorIdentifier,
+        public VettingType $vettingType,
+        public CommonName $commonName,
+        public Email $email,
+        public Locale $preferredLocale,
     ) {
         parent::__construct($identityId, $targetInstitution);
-
-        $this->sourceInstitution = $sourceInstitution;
-        $this->targetNameId = $targetNameId;
-        $this->secondFactorId = $secondFactorId;
-        $this->newSecondFactorId = $newSecondFactorId;
-        $this->secondFactorType = $secondFactorType;
-        $this->secondFactorIdentifier = $secondFactorIdentifier;
-        $this->vettingType = $vettingType;
-        $this->commonName = $commonName;
-        $this->email = $email;
-        $this->preferredLocale = $preferredLocale;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -147,7 +91,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         // Events not having a vetting type (recorded pre 5.0) default the
         // vetting type to 'unknown'
@@ -169,12 +113,14 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             $vettingType,
             CommonName::unknown(),
             Email::unknown(),
-            new Locale($data['preferred_locale'])
+            new Locale($data['preferred_locale']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
@@ -186,12 +132,12 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             'second_factor_id' => (string)$this->secondFactorId,
             'new_second_factor_id' => (string)$this->newSecondFactorId,
             'vetting_type' => $this->vettingType->jsonSerialize(),
-            'second_factor_type' => (string) $this->secondFactorType,
-            'preferred_locale' => (string) $this->preferredLocale,
+            'second_factor_type' => (string)$this->secondFactorType,
+            'preferred_locale' => (string)$this->preferredLocale,
         ];
     }
 
-    public function getSensitiveData()
+    public function getSensitiveData(): SensitiveData
     {
         return (new SensitiveData)
             ->withCommonName($this->commonName)
@@ -200,7 +146,7 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
             ->withSecondFactorIdentifier($this->secondFactorIdentifier, $this->secondFactorType);
     }
 
-    public function setSensitiveData(SensitiveData $sensitiveData)
+    public function setSensitiveData(SensitiveData $sensitiveData): void
     {
         $this->secondFactorIdentifier = $sensitiveData->getSecondFactorIdentifier();
         $this->commonName = $sensitiveData->getCommonName();
@@ -215,6 +161,9 @@ class SecondFactorMigratedEvent extends IdentityEvent implements Forgettable, Ri
         return array_merge($serializedPublicUserData, $serializedSensitiveUserData);
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

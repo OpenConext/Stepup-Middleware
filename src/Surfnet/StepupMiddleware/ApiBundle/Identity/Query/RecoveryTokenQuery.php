@@ -23,48 +23,21 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class RecoveryTokenQuery extends AbstractQuery
 {
-    /**
-     * @var IdentityId
-     */
-    public $identityId;
+    public ?IdentityId $identityId = null;
 
-    /**
-     * @var string|null
-     */
-    public $type;
+    public ?string $type = null;
 
-    /**
-     * @var string|null
-     */
-    public $status;
+    public ?string $status = null;
 
-    /**
-     * @var string|null
-     */
-    public $institution;
+    public ?string $institution = null;
 
-    /**
-     * @var string|null
-     */
-    public $name;
+    public ?string $name = null;
 
-    /**
-     * @var string|null
-     */
-    public $email;
+    public ?string $email = null;
 
-    /**
-     * @var string|null
-     */
-    public $orderBy;
+    public ?string $orderBy = null;
 
-    /**
-     * @var string|null
-     */
-    public $orderDirection;
+    public ?string $orderDirection = null;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
-    public $authorizationContext;
+    public ?InstitutionAuthorizationContextInterface $authorizationContext = null;
 }

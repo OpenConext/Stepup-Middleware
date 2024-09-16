@@ -19,9 +19,11 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Authorization\Service;
 
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -33,40 +35,64 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\WhitelistService;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RegistrationAuthorityCredentials;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\RaExecutable;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfAsserted;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\SelfServiceExecutable;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\AddRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ChangeRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\ReconfigureInstitutionConfigurationOptionsCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveInstitutionConfigurationByUnnormalizedIdCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\RemoveRaLocationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AccreditIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AddToWhitelistCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AmendRegistrationAuthorityInformationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\AppointRoleCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\BootstrapIdentityWithYubikeySecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ExpressLocalePreferenceCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\MigrateVettedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\PromiseSafeStoreSecretTokenPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveGssfPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhonePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProvePhoneRecoveryTokenPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveU2fDevicePossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ProveYubikeyPossessionCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RegisterSelfAssertedSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RemoveFromWhitelistCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ReplaceWhitelistCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RetractRegistrationAuthorityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnRecoveryTokenCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeOwnSecondFactorCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsRecoveryTokenCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\RevokeRegistrantsSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SaveVettingTypeHintCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SelfVetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendSecondFactorRegistrationEmailCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\SendVerifiedSecondFactorRemindersCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VerifyEmailCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\VetSecondFactorCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Command\FixedUuidStubCommand;
+use function is_array;
+use function is_string;
+use function property_exists;
 
 class CommandAuthorizationServiceTest extends TestCase
 {
-    /**
-     * @var WhitelistService|m\MockInterface
-     */
-    private $whitelistService;
-    /**
-     * @var IdentityService|m\MockInterface
-     */
-    private $identityService;
-    /**
-     * @var LoggerInterface|m\MockInterface
-     */
-    private $logger;
-    /**
-     * @var AuthorizationContextService|m\MockInterface
-     */
-    private $authorizationContextService;
+    use MockeryPHPUnitIntegration;
 
-    /**
-     * @var CommandAuthorizationService
-     */
-    private $service;
+    private IdentityService&MockInterface $identityService;
+
+    private LoggerInterface&MockInterface $logger;
+
+    private AuthorizationContextService&MockInterface $authorizationContextService;
+
+    private CommandAuthorizationService $service;
 
     public function setUp(): void
     {
@@ -75,9 +101,13 @@ class CommandAuthorizationServiceTest extends TestCase
         $logger = m::mock(LoggerInterface::class);
         $authorizationContextService = m::mock(AuthorizationContextService::class);
 
-        $service = new CommandAuthorizationService($whitelistService, $identityService, $logger, $authorizationContextService);
+        $service = new CommandAuthorizationService(
+            $whitelistService,
+            $identityService,
+            $logger,
+            $authorizationContextService,
+        );
 
-        $this->whitelistService = $whitelistService;
         $this->identityService = $identityService;
         $this->logger = $logger;
         $this->authorizationContextService = $authorizationContextService;
@@ -85,7 +115,7 @@ class CommandAuthorizationServiceTest extends TestCase
         $this->service = $service;
     }
 
-    public function test_shared_ra_and_ss_commands_are_correctly_authorized()
+    public function test_shared_ra_and_ss_commands_are_correctly_authorized(): void
     {
         $actorId = new IdentityId('123');
         $actorInstitution = new Institution('institution');
@@ -111,10 +141,8 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function a_sraa_should_be_able_to_execute_all_commands($file, $command)
+    public function a_sraa_should_be_able_to_execute_all_commands(string $file, Command $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
@@ -139,18 +167,16 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_own_selfservice_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_own_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
-        if ($command instanceof SelfServiceExecutable && !$command instanceof  RaExecutable) {
-
+        if ($command instanceof SelfServiceExecutable && !$command instanceof RaExecutable) {
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var SelfServiceExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getIdentityId')
                 ->andReturn($actorId->getIdentityId());
@@ -174,19 +200,20 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_configured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
-        if ($command instanceof RaExecutable && !$command instanceof  SelfServiceExecutable) {
-
+        if ($command instanceof RaExecutable && !$command instanceof SelfServiceExecutable) {
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
+            if (property_exists($command, 'identityId')) {
+                $command->identityId = $actorId;
+            }
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
 
@@ -207,7 +234,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
             $authorizationContext = new InstitutionAuthorizationContext(
                 $institutionCollection,
-                false
+                false,
             );
 
             $role = RegistrationAuthorityRole::raa();
@@ -225,9 +252,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role){
-                    return $arg == $role;
-                }))
+                ->with($actorId, m::on(fn($arg): bool => $arg == $role))
                 ->andReturn($authorizationContext);
 
             $this->assertTrue($this->service->maySelfServiceCommandBeExecutedOnBehalfOf($command, $actorId));
@@ -239,18 +264,16 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_configured_ra_and_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
-        if ($command instanceof RaExecutable && $command instanceof  SelfServiceExecutable) {
-
+        if ($command instanceof RaExecutable && $command instanceof SelfServiceExecutable) {
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
@@ -275,7 +298,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
             $authorizationContext = new InstitutionAuthorizationContext(
                 $institutionCollection,
-                false
+                false,
             );
 
             $role = RegistrationAuthorityRole::raa();
@@ -285,9 +308,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role){
-                    return $arg == $role;
-                }))
+                ->with($actorId, m::on(fn($arg): bool => $arg == $role))
                 ->andReturn($authorizationContext);
 
 
@@ -300,18 +321,16 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands($file, $command)
+    public function an_identity_should_not_be_able_to_execute_someone_elses_selfservice_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
-        if ($command instanceof SelfServiceExecutable && !$command instanceof  RaExecutable) {
-
+        if ($command instanceof SelfServiceExecutable && !$command instanceof RaExecutable) {
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var SelfServiceExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getIdentityId')
                 ->andReturn(new IdentityId('someone else'));
@@ -343,18 +362,16 @@ class CommandAuthorizationServiceTest extends TestCase
     /**
      * @test
      * @dataProvider availableCommands
-     *
-     * @param mixed $value
      */
-    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands($file, $command)
+    public function an_identity_should_be_able_to_execute_unconfigured_ra_commands(string $file, mixed $command): void
     {
         $this->assertInstanceOf(Command::class, $command);
 
-        if ($command instanceof RaExecutable && !$command instanceof  SelfServiceExecutable) {
-
+        if ($command instanceof RaExecutable && !$command instanceof SelfServiceExecutable) {
             $actorId = new IdentityId('123');
             $actorInstitution = new Institution('institution');
 
+            /** @var RaExecutable&AbstractCommand&MockInterface $command */
             $command = m::mock($command);
             $command->shouldReceive('getRaInstitution')
                 ->andReturn($actorInstitution->getInstitution());
@@ -375,7 +392,7 @@ class CommandAuthorizationServiceTest extends TestCase
 
             $authorizationContext = new InstitutionAuthorizationContext(
                 $institutionCollection,
-                false
+                false,
             );
 
             $role = RegistrationAuthorityRole::raa();
@@ -383,6 +400,9 @@ class CommandAuthorizationServiceTest extends TestCase
                 || $command instanceof RevokeRegistrantsSecondFactorCommand
                 || $command instanceof RevokeRegistrantsRecoveryTokenCommand
             ) {
+                if (property_exists($command, 'identityId')) {
+                    $command->identityId = $actorId;
+                }
                 $role = RegistrationAuthorityRole::ra();
                 $mockInstitution = new Institution('mock institution');
                 $mockIdentity = m::mock(Identity::class);
@@ -393,9 +413,7 @@ class CommandAuthorizationServiceTest extends TestCase
             }
 
             $this->authorizationContextService->shouldReceive('buildInstitutionAuthorizationContext')
-                ->with($actorId, m::on(function($arg) use ($role) {
-                    return $arg == $role;
-                }))
+                ->with($actorId, m::on(fn($arg): bool => $arg == $role))
                 ->andReturn($authorizationContext);
 
             $this->assertTrue($this->service->maySelfServiceCommandBeExecutedOnBehalfOf($command, $actorId));
@@ -406,79 +424,85 @@ class CommandAuthorizationServiceTest extends TestCase
 
     /**
      * @test
-     *
-     * @param mixed $value
      */
-    public function all_available_commands_should_be_tested()
+    public function all_available_commands_should_be_tested(): void
     {
-        $tested = array (
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\AddRaLocationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ChangeRaLocationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\CreateInstitutionConfigurationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\ReconfigureInstitutionConfigurationOptionsCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveInstitutionConfigurationByUnnormalizedIdCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\RemoveRaLocationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Configuration\\Command\\UpdateConfigurationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AccreditIdentityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AddToWhitelistCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AmendRegistrationAuthorityInformationCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\AppointRoleCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\BootstrapIdentityWithYubikeySecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\CreateIdentityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ExpressLocalePreferenceCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ForgetIdentityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\MigrateVettedSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\PromiseSafeStoreSecretTokenPossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveGssfPossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhonePossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProvePhoneRecoveryTokenPossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveU2fDevicePossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ProveYubikeyPossessionCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RegisterSelfAssertedSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RemoveFromWhitelistCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\ReplaceWhitelistCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RetractRegistrationAuthorityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnRecoveryTokenCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeOwnSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsRecoveryTokenCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\RevokeRegistrantsSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SaveVettingTypeHintCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SelfVetSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendSecondFactorRegistrationEmailCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\SendVerifiedSecondFactorRemindersCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\UpdateIdentityCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VerifyEmailCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Identity\\Command\\VetSecondFactorCommand',
-            'Surfnet\\StepupMiddleware\\CommandHandlingBundle\\Tests\\Command\\FixedUuidStubCommand',
-        );
+        $tested = [
+            AddRaLocationCommand::class,
+            ChangeRaLocationCommand::class,
+            CreateInstitutionConfigurationCommand::class,
+            ReconfigureInstitutionConfigurationOptionsCommand::class,
+            RemoveInstitutionConfigurationByUnnormalizedIdCommand::class,
+            RemoveRaLocationCommand::class,
+            UpdateConfigurationCommand::class,
+            AccreditIdentityCommand::class,
+            AddToWhitelistCommand::class,
+            AmendRegistrationAuthorityInformationCommand::class,
+            AppointRoleCommand::class,
+            BootstrapIdentityWithYubikeySecondFactorCommand::class,
+            CreateIdentityCommand::class,
+            ExpressLocalePreferenceCommand::class,
+            ForgetIdentityCommand::class,
+            MigrateVettedSecondFactorCommand::class,
+            PromiseSafeStoreSecretTokenPossessionCommand::class,
+            ProveGssfPossessionCommand::class,
+            ProvePhonePossessionCommand::class,
+            ProvePhoneRecoveryTokenPossessionCommand::class,
+            ProveU2fDevicePossessionCommand::class,
+            ProveYubikeyPossessionCommand::class,
+            RegisterSelfAssertedSecondFactorCommand::class,
+            RemoveFromWhitelistCommand::class,
+            ReplaceWhitelistCommand::class,
+            RetractRegistrationAuthorityCommand::class,
+            RevokeOwnRecoveryTokenCommand::class,
+            RevokeOwnSecondFactorCommand::class,
+            RevokeRegistrantsRecoveryTokenCommand::class,
+            RevokeRegistrantsSecondFactorCommand::class,
+            SaveVettingTypeHintCommand::class,
+            SelfVetSecondFactorCommand::class,
+            SendSecondFactorRegistrationEmailCommand::class,
+            SendVerifiedSecondFactorRemindersCommand::class,
+            UpdateIdentityCommand::class,
+            VerifyEmailCommand::class,
+            VetSecondFactorCommand::class,
+            FixedUuidStubCommand::class,
+        ];
 
         $available = $this->availableCommands();
 
         $classNames = [];
         foreach ($available as $command) {
-            $classNames[] = get_class($command[1]);
+            $classNames[] = $command[1]::class;
         }
 
         $this->assertSame($tested, $classNames);
     }
 
 
-    public function availableCommands()
+    /**
+     * @return string[][]|Command[][]
+     */
+    public function availableCommands(): array
     {
         $rootPath = realpath(__DIR__ . '/../../../../../../../src');
-        $basePath = realPath($rootPath . '/Surfnet/StepupMiddleware/CommandHandlingBundle').'/*';
+        assert(is_string($rootPath), 'Root path could not be determined correctly');
+        $basePath = realPath($rootPath . '/Surfnet/StepupMiddleware/CommandHandlingBundle') . '/*';
 
         $commands = [];
 
         // get folders
         $folders = glob($basePath, GLOB_ONLYDIR);
+        assert(is_array($folders), 'Unable to grab the CommandHandlingBundle folders');
         foreach ($folders as $folder) {
-
             $commandPath = $folder . '/Command/*Command.php';
             $files = glob($commandPath);
             if ($files === false) {
                 continue;
             }
+            assert(
+                is_array($files),
+                sprintf('Unable to grab the files from %s with pattern %s', $folder , $commandPath)
+            );
 
             foreach ($files as $file) {
                 $className = str_replace($rootPath, '', $file);

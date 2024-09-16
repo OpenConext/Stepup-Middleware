@@ -19,16 +19,20 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
-use Surfnet\Stepup\Exception\LogicException;
 use Surfnet\Stepup\Configuration\Entity\RaLocation;
+use Surfnet\Stepup\Exception\LogicException;
 
+/**
+ * @implements IteratorAggregate<RaLocation>
+ */
 final class RaLocationList implements IteratorAggregate
 {
     /**
      * @var RaLocation[]
      */
-    private $raLocations = [];
+    private array $raLocations = [];
 
     public function __construct(array $raLocations)
     {
@@ -37,11 +41,7 @@ final class RaLocationList implements IteratorAggregate
         }
     }
 
-    /**
-     * @param RaLocationId $raLocationId
-     * @return bool
-     */
-    public function containsWithId(RaLocationId $raLocationId)
+    public function containsWithId(RaLocationId $raLocationId): bool
     {
         foreach ($this->raLocations as $raLocation) {
             if ($raLocation->hasId($raLocationId)) {
@@ -52,25 +52,21 @@ final class RaLocationList implements IteratorAggregate
         return false;
     }
 
-    /**
-     * @param RaLocation $raLocation
-     */
-    public function add(RaLocation $raLocation)
+    public function add(RaLocation $raLocation): void
     {
         if ($this->containsWithId($raLocation->getId())) {
-            throw new LogicException(sprintf(
-                'Cannot add RaLocation with id "%s" to RaLocationList: it is already present',
-                $raLocation->getId()
-            ));
+            throw new LogicException(
+                sprintf(
+                    'Cannot add RaLocation with id "%s" to RaLocationList: it is already present',
+                    $raLocation->getId(),
+                ),
+            );
         }
 
         $this->raLocations[] = $raLocation;
     }
 
-    /**
-     * @param RaLocationId $raLocationId
-     */
-    public function removeWithId(RaLocationId $raLocationId)
+    public function removeWithId(RaLocationId $raLocationId): void
     {
         foreach ($this->raLocations as $key => $raLocation) {
             if ($raLocation->hasId($raLocationId)) {
@@ -81,17 +77,15 @@ final class RaLocationList implements IteratorAggregate
             }
         }
 
-        throw new LogicException(sprintf(
-            'Cannot remove RaLocation with id "%s" from RaLocationList: it is not present',
-            $raLocationId
-        ));
+        throw new LogicException(
+            sprintf(
+                'Cannot remove RaLocation with id "%s" from RaLocationList: it is not present',
+                $raLocationId,
+            ),
+        );
     }
 
-    /**
-     * @param RaLocationId $raLocationId
-     * @return RaLocation
-     */
-    public function getById(RaLocationId $raLocationId)
+    public function getById(RaLocationId $raLocationId): RaLocation
     {
         foreach ($this->raLocations as $raLocation) {
             if ($raLocation->hasId($raLocationId)) {
@@ -99,13 +93,15 @@ final class RaLocationList implements IteratorAggregate
             }
         }
 
-        throw new LogicException(sprintf(
-            'Cannot get RaLocation by id "%s" from RaLocationList: RaLocationId not found',
-            $raLocationId
-        ));
+        throw new LogicException(
+            sprintf(
+                'Cannot get RaLocation by id "%s" from RaLocationList: RaLocationId not found',
+                $raLocationId,
+            ),
+        );
     }
 
-    public function getIterator()
+    public function getIterator(): Iterator
     {
         return new ArrayIterator($this->raLocations);
     }

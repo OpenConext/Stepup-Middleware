@@ -35,73 +35,20 @@ use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
  */
 class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
 {
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    /**
-     * @var Institution
-     */
-    public $institution;
-    /**
-     * @var UseRaLocationsOption
-     */
-    public $useRaLocationsOption;
-
-    /**
-     * @var ShowRaaContactInformationOption
-     */
-    public $showRaaContactInformationOption;
-
-    /**
-     * @var VerifyEmailOption
-     */
-    public $verifyEmailOption;
-
-    /**
-     * @var NumberOfTokensPerIdentityOption
-     */
-    public $numberOfTokensPerIdentityOption;
-
-    /**
-     * @var SelfVetOption
-     */
-    public $selfVetOption;
-
-    /**
-     * @var SelfAssertedTokensOption
-     */
-    public $selfAssertedTokensOption;
-
-    /**
-     * @var SsoOn2faOption
-     */
-    public $ssoOn2faOption;
-
     public function __construct(
-        InstitutionConfigurationId $institutionConfigurationId,
-        Institution $institution,
-        UseRaLocationsOption $useRaLocationsOption,
-        ShowRaaContactInformationOption $showRaaContactInformationOption,
-        VerifyEmailOption $verifyEmailOption,
-        NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
-        SsoOn2faOption $ssoOn2faOption,
-        SelfVetOption $selfVetOption,
-        SelfAssertedTokensOption $selfAssertedTokensOption
+        public InstitutionConfigurationId $institutionConfigurationId,
+        public Institution $institution,
+        public UseRaLocationsOption $useRaLocationsOption,
+        public ShowRaaContactInformationOption $showRaaContactInformationOption,
+        public VerifyEmailOption $verifyEmailOption,
+        public NumberOfTokensPerIdentityOption $numberOfTokensPerIdentityOption,
+        public SsoOn2faOption $ssoOn2faOption,
+        public SelfVetOption $selfVetOption,
+        public SelfAssertedTokensOption $selfAssertedTokensOption
     ) {
-        $this->institutionConfigurationId      = $institutionConfigurationId;
-        $this->institution                     = $institution;
-        $this->useRaLocationsOption            = $useRaLocationsOption;
-        $this->showRaaContactInformationOption = $showRaaContactInformationOption;
-        $this->verifyEmailOption               = $verifyEmailOption;
-        $this->numberOfTokensPerIdentityOption = $numberOfTokensPerIdentityOption;
-        $this->ssoOn2faOption = $ssoOn2faOption;
-        $this->selfVetOption = $selfVetOption;
-        $this->selfAssertedTokensOption = $selfAssertedTokensOption;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         if (!isset($data['verify_email_option'])) {
             $data['verify_email_option'] = true;
@@ -130,18 +77,18 @@ class NewInstitutionConfigurationCreatedEvent implements SerializableInterface
             new NumberOfTokensPerIdentityOption($data['number_of_tokens_per_identity_option']),
             new SsoOn2faOption($data['sso_on_2fa_option']),
             new SelfVetOption($data['self_vet_option']),
-            new SelfAssertedTokensOption($data['self_asserted_tokens_option'])
+            new SelfAssertedTokensOption($data['self_asserted_tokens_option']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'institution_configuration_id'        => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                         => $this->institution->getInstitution(),
-            'use_ra_locations_option'             => $this->useRaLocationsOption->isEnabled(),
+            'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
+            'institution' => $this->institution->getInstitution(),
+            'use_ra_locations_option' => $this->useRaLocationsOption->isEnabled(),
             'show_raa_contact_information_option' => $this->showRaaContactInformationOption->isEnabled(),
-            'verify_email_option'                 => $this->verifyEmailOption->isEnabled(),
+            'verify_email_option' => $this->verifyEmailOption->isEnabled(),
             'number_of_tokens_per_identity_option' => $this->numberOfTokensPerIdentityOption->getNumberOfTokensPerIdentity(),
             'sso_on_2fa_option' => $this->ssoOn2faOption->isEnabled(),
             'self_vet_option' => $this->selfVetOption->isEnabled(),

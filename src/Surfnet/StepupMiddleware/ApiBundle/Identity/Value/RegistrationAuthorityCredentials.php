@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Value;
 
 use Assert\Assertion;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 use Surfnet\Stepup\Identity\Value\Institution;
@@ -26,75 +27,29 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\RaListing;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa;
+use function assert;
 
-class RegistrationAuthorityCredentials implements \JsonSerializable
+class RegistrationAuthorityCredentials implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $identityId;
+    private Institution $institution;
 
-    /**
-     * @var Institution
-     */
-    private $institution;
+    private CommonName $commonName;
 
-    /**
-     * @var CommonName
-     */
-    private $commonName;
+    private ?Location $location = null;
 
-    /**
-     * @var Location|null
-     */
-    private $location;
+    private ?ContactInformation $contactInformation = null;
 
-    /**
-     * @var ContactInformation|null
-     */
-    private $contactInformation;
-
-    /**
-     * @var bool
-     */
-    private $isRa;
-
-    /**
-     * @var bool
-     */
-    private $isRaa;
-
-    /**
-     * @var bool
-     */
-    private $isSraa;
-
-    /**
-     * @param string $identityId
-     * @param bool   $isRa
-     * @param bool   $isRaa
-     * @param bool   $isSraa
-     */
     private function __construct(
-        $identityId,
-        $isRa,
-        $isRaa,
-        $isSraa
+        private readonly string $identityId,
+        private readonly bool $isRa,
+        private readonly bool $isRaa,
+        private bool $isSraa
     ) {
-        $this->identityId = $identityId;
-        $this->isRa = $isRa;
-        $this->isRaa = $isRaa;
-        $this->isSraa = $isSraa;
     }
 
-    /**
-     * @param Sraa     $sraa
-     * @param Identity $identity
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromSraa(Sraa $sraa, Identity $identity)
+    public static function fromSraa(Sraa $sraa, Identity $identity): self
     {
-        static::assertEquals($sraa->nameId, $identity->nameId);
+        self::assertEquals($sraa->nameId, $identity->nameId);
 
         $credentials = new self($identity->id, true, true, true);
         $credentials->commonName = $identity->commonName;
@@ -104,11 +59,11 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
 
     /**
      * @param RaListing[] $raListings
-     * @return RegistrationAuthorityCredentials
      */
-    public static function fromRaListings(array $raListings)
+    public static function fromRaListings(array $raListings): self
     {
         $raListingCredentials = current($raListings);
+        assert($raListingCredentials instanceof RaListing, 'The provided raListings are empty');
         $isRa = false;
         $isRaa = false;
 
@@ -126,7 +81,7 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
             $raListingCredentials->identityId,
             $isRa,
             $isRaa,
-            false
+            false,
         );
 
         $credentials->institution = $raListingCredentials->institution;
@@ -137,42 +92,29 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
         return $credentials;
     }
 
-
-    /**
-     * @param RaListing $raListing
-     * @return RegistrationAuthorityCredentials
-     */
-    public static function fromRaListing(RaListing $raListing)
+    public static function fromRaListing(RaListing $raListing): self
     {
         $credentials = new self(
             $raListing->identityId,
             $raListing->role->equals(AuthorityRole::ra()),
             $raListing->role->equals(AuthorityRole::raa()),
-            false
+            false,
         );
 
-        $credentials->institution        = $raListing->institution;
-        $credentials->commonName         = $raListing->commonName;
-        $credentials->location           = $raListing->location;
+        $credentials->institution = $raListing->institution;
+        $credentials->commonName = $raListing->commonName;
+        $credentials->location = $raListing->location;
         $credentials->contactInformation = $raListing->contactInformation;
 
         return $credentials;
     }
 
-    /**
-     * @param string $nameId
-     * @param string $identityNameId
-     * @return void
-     */
-    private static function assertEquals($nameId, $identityNameId)
+    private static function assertEquals(string $nameId, string $identityNameId): void
     {
         Assertion::eq($nameId, $identityNameId);
     }
 
-    /**
-     * @return RegistrationAuthorityCredentials
-     */
-    public function grantSraa()
+    public function grantSraa(): static
     {
         $copy = clone $this;
         $copy->isSraa = true;
@@ -180,91 +122,63 @@ class RegistrationAuthorityCredentials implements \JsonSerializable
         return $copy;
     }
 
-    /**
-     * @param RegistrationAuthorityCredentials $other
-     * @return bool
-     */
-    public function equals(RegistrationAuthorityCredentials $other)
+    public function equals(RegistrationAuthorityCredentials $other): bool
     {
         return $other->jsonSerialize() === $this->jsonSerialize();
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->identityId,
             'attributes' => [
-                'institution'         => $this->institution,
-                'common_name'         => $this->commonName,
-                'location'            => $this->location,
+                'institution' => $this->institution,
+                'common_name' => $this->commonName,
+                'location' => $this->location,
                 'contact_information' => $this->contactInformation,
-                'is_ra'               => ($this->isRa || $this->isSraa),
-                'is_raa'              => ($this->isRaa || $this->isSraa),
-                'is_sraa'             => $this->isSraa,
-            ]
+                'is_ra' => ($this->isRa || $this->isSraa),
+                'is_raa' => ($this->isRaa || $this->isSraa),
+                'is_sraa' => $this->isSraa,
+            ],
         ];
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }
 
-    /**
-     * @return Institution
-     */
-    public function getInstitution()
+    public function getInstitution(): Institution
     {
         return $this->institution;
     }
 
-    /**
-     * @return CommonName
-     */
-    public function getCommonName()
+    public function getCommonName(): CommonName
     {
         return $this->commonName;
     }
 
-    /**
-     * @return string
-     */
-    public function getLocation()
+    public function getLocation(): string
     {
         return $this->location;
     }
 
-    /**
-     * @return string
-     */
-    public function getContactInformation()
+    public function getContactInformation(): string
     {
         return $this->contactInformation;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRa()
+    public function isRa(): bool
     {
         return $this->isRa;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isRaa()
+    public function isRaa(): bool
     {
         return $this->isRaa;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isSraa()
+    public function isSraa(): bool
     {
         return $this->isSraa;
     }

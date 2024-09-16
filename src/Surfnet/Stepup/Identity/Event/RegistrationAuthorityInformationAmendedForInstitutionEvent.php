@@ -26,36 +26,20 @@ use Surfnet\Stepup\Identity\Value\Location;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDataInterface;
 
-class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
+class RegistrationAuthorityInformationAmendedForInstitutionEvent extends IdentityEvent implements
+    RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'institution',
         'name_id',
         'location',
         'contact_information',
-        'ra_institution'
+        'ra_institution',
     ];
-
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var Location
-     */
-    public $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public $contactInformation;
-
-    /**
-     * @var Institution
-     */
-    public $raInstitution;
 
     /**
      * @param IdentityId $identityId
@@ -68,20 +52,15 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        Location $location,
-        ContactInformation $contactInformation,
-        Institution $raInstitution
+        public NameId $nameId,
+        public Location $location,
+        public ContactInformation $contactInformation,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
-        $this->raInstitution = $raInstitution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -90,7 +69,7 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -98,19 +77,19 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
             new NameId($data['name_id']),
             new Location($data['location']),
             new ContactInformation($data['contact_information']),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'         => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation,
-            'ra_institution'      => (string) $this->raInstitution,
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 
@@ -119,6 +98,9 @@ class RegistrationAuthorityInformationAmendedForInstitutionEvent extends Identit
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

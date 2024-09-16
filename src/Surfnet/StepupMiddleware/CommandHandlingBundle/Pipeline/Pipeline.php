@@ -18,7 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline;
 
-use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 
 /**
  * Describes a linear structure in which commands are processed. For example, authorisation may be checked and
@@ -26,9 +26,5 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
  */
 interface Pipeline
 {
-    /**
-     * @param Command $command
-     * @return Command
-     */
-    public function process(Command $command);
+    public function process(AbstractCommand $command): AbstractCommand;
 }

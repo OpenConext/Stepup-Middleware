@@ -19,7 +19,6 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
-use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\RecoveryTokenIdentifier;
@@ -34,46 +33,21 @@ use Surfnet\StepupBundle\Value\SecondFactorType;
 
 class SensitiveData implements SerializableInterface
 {
-    /**
-     * @var CommonName|null
-     */
-    private $commonName;
+    private ?CommonName $commonName = null;
 
-    /**
-     * @var Email|null
-     */
-    private $email;
+    private ?Email $email = null;
 
-    /**
-     * @var SecondFactorIdentifier|null
-     */
-    private $secondFactorIdentifier;
+    private ?SecondFactorIdentifier $secondFactorIdentifier = null;
 
-    /**
-     * @var SecondFactorType|null
-     */
-    private $secondFactorType;
+    private ?SecondFactorType $secondFactorType = null;
 
-    /**
-     * @var VettingType
-     */
-    private $vettingType;
+    private ?VettingType $vettingType = null;
 
-    /**
-     * @var RecoveryTokenType
-     */
-    private $recoveryTokenType;
+    private ?RecoveryTokenType $recoveryTokenType = null;
 
-    /**
-     * @var RecoveryTokenIdentifier
-     */
-    private $recoveryTokenIdentifier;
+    private ?RecoveryTokenIdentifier $recoveryTokenIdentifier = null;
 
-    /**
-     * @param CommonName $commonName
-     * @return SensitiveData
-     */
-    public function withCommonName(CommonName $commonName)
+    public function withCommonName(CommonName $commonName): static
     {
         $clone = clone $this;
         $clone->commonName = $commonName;
@@ -81,11 +55,7 @@ class SensitiveData implements SerializableInterface
         return $clone;
     }
 
-    /**
-     * @param Email $email
-     * @return SensitiveData
-     */
-    public function withEmail(Email $email)
+    public function withEmail(Email $email): static
     {
         $clone = clone $this;
         $clone->email = $email;
@@ -93,15 +63,10 @@ class SensitiveData implements SerializableInterface
         return $clone;
     }
 
-    /**
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param SecondFactorType       $secondFactorType
-     * @return SensitiveData
-     */
     public function withSecondFactorIdentifier(
         SecondFactorIdentifier $secondFactorIdentifier,
-        SecondFactorType $secondFactorType
-    ) {
+        SecondFactorType $secondFactorType,
+    ): static {
         $clone = clone $this;
         $clone->secondFactorType = $secondFactorType;
         $clone->secondFactorIdentifier = $secondFactorIdentifier;
@@ -111,7 +76,7 @@ class SensitiveData implements SerializableInterface
 
     public function withRecoveryTokenSecret(
         RecoveryTokenIdentifier $recoveryTokenIdentifier,
-        RecoveryTokenType $type
+        RecoveryTokenType $type,
     ): SensitiveData {
         $clone = clone $this;
         $clone->recoveryTokenType = $type;
@@ -130,10 +95,8 @@ class SensitiveData implements SerializableInterface
 
     /**
      * Returns an instance in which all sensitive data is forgotten.
-     *
-     * @return SensitiveData
      */
-    public function forget()
+    public function forget(): self
     {
         $forgotten = new self();
         $forgotten->secondFactorType = $this->secondFactorType;
@@ -141,50 +104,38 @@ class SensitiveData implements SerializableInterface
         return $forgotten;
     }
 
-    /**
-     * @return CommonName
-     */
-    public function getCommonName()
+    public function getCommonName(): CommonName
     {
         return $this->commonName ?: CommonName::unknown();
     }
 
-    /**
-     * @return Email
-     */
-    public function getEmail()
+    public function getEmail(): Email
     {
         return $this->email ?: Email::unknown();
     }
 
-    /**
-     * @return SecondFactorIdentifier
-     */
-    public function getSecondFactorIdentifier()
+    public function getSecondFactorIdentifier(): SecondFactorIdentifier
     {
         return $this->secondFactorIdentifier ?: SecondFactorIdentifierFactory::unknownForType($this->secondFactorType);
     }
 
     public function getRecoveryTokenIdentifier(): ?RecoveryTokenIdentifier
     {
-        if ($this->recoveryTokenIdentifier) {
+        if ($this->recoveryTokenIdentifier instanceof RecoveryTokenIdentifier) {
             return $this->recoveryTokenIdentifier;
         }
-        if ($this->recoveryTokenType) {
+        if ($this->recoveryTokenType instanceof RecoveryTokenType) {
             return RecoveryTokenIdentifierFactory::unknownForType($this->recoveryTokenType);
         }
         return null;
     }
 
-    /**
-     * @return VettingType
-     */
-    public function getVettingType()
+    public function getVettingType(): VettingType
     {
         return $this->vettingType ?: new UnknownVettingType();
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): SensitiveData
     {
         $self = new self;
 
@@ -211,7 +162,7 @@ class SensitiveData implements SerializableInterface
         if (isset($data['recovery_token_identifier'])) {
             $self->recoveryTokenIdentifier = RecoveryTokenIdentifierFactory::forType(
                 $self->recoveryTokenType,
-                $data['recovery_token_identifier']
+                $data['recovery_token_identifier'],
             );
         }
 
@@ -224,15 +175,15 @@ class SensitiveData implements SerializableInterface
 
     public function serialize(): array
     {
-        $vettingType = (!is_null($this->vettingType)) ? $this->vettingType->jsonSerialize() : null;
+        $vettingType = (is_null($this->vettingType)) ? null : $this->vettingType->jsonSerialize();
         return array_filter([
-            'common_name'              => $this->commonName,
-            'email'                    => $this->email,
-            'second_factor_type'       => $this->secondFactorType,
+            'common_name' => $this->commonName,
+            'email' => $this->email,
+            'second_factor_type' => $this->secondFactorType,
             'second_factor_identifier' => $this->secondFactorIdentifier,
-            'recovery_token_type' => (string) $this->recoveryTokenType,
+            'recovery_token_type' => (string)$this->recoveryTokenType,
             'recovery_token_identifier' => $this->recoveryTokenIdentifier,
-            'vetting_type' => $vettingType
+            'vetting_type' => $vettingType,
         ]);
     }
 }

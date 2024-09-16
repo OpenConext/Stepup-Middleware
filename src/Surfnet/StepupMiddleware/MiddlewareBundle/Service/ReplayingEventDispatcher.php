@@ -18,25 +18,22 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Service;
 
-use Broadway\Domain\DomainEventStreamInterface;
-use Broadway\ReadModel\ProjectorInterface;
+use Broadway\Domain\DomainEventStream;
+use Broadway\EventHandling\EventListener;
 
 final class ReplayingEventDispatcher implements EventDispatcher
 {
     /**
-     * @var ProjectorInterface[]
+     * @var EventListener[]
      */
-    private $projectors;
+    private ?array $projectors = null;
 
-    /**
-     * @param ProjectorInterface $projector
-     */
-    public function registerProjector(ProjectorInterface $projector)
+    public function registerProjector(EventListener $projector): void
     {
         $this->projectors[] = $projector;
     }
 
-    public function dispatch(DomainEventStreamInterface $events)
+    public function dispatch(DomainEventStream $events): void
     {
         foreach ($events as $event) {
             foreach ($this->projectors as $projector) {

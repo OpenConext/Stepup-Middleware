@@ -27,47 +27,36 @@ class PromiseSafeStoreSecretTokenPossessionCommand extends AbstractCommand imple
 {
     /**
      * The ID of an existing identity.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $identityId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $identityId;
 
     /**
      * The ID of the recovery code to create.
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $recoveryTokenId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $recoveryTokenId;
 
     /**
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $recoveryTokenType = RecoveryTokenType::TYPE_SAFE_STORE;
 
     /**
      * The unhashed password
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $secret;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $secret;
 
-    /**
-     * @return string
-     */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->identityId;
     }

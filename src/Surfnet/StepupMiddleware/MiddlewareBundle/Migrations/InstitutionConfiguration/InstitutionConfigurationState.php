@@ -18,32 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration;
 
+use Generator;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\ConfiguredInstitution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\RaLocation;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Exception\RuntimeException;
 
-final class InstitutionConfigurationState
+final readonly class InstitutionConfigurationState
 {
     /**
-     * @var MappedInstitutionConfiguration[]
-     */
-    private $mappedInstitutionConfigurations;
-
-    /**
-     * @param ConfiguredInstitution[]           $configuredInstitutions
+     * @param ConfiguredInstitution[] $configuredInstitutions
      * @param InstitutionConfigurationOptions[] $institutionConfigurationOptions
-     * @param RaLocation[]                      $raLocations
+     * @param RaLocation[] $raLocations
      * @return InstitutionConfigurationState
      */
     public static function load(
-        $configuredInstitutions,
-        $institutionConfigurationOptions,
-        $raLocations
-    ) {
-        $optionInstitutions = array_map(function (InstitutionConfigurationOptions $options) {
-            return $options->institution->getInstitution();
-        }, $institutionConfigurationOptions);
+        array $configuredInstitutions,
+        array $institutionConfigurationOptions,
+        array $raLocations,
+    ): self {
+        $optionInstitutions = array_map(
+            fn(InstitutionConfigurationOptions $options): string => $options->institution->getInstitution(),
+            $institutionConfigurationOptions,
+        );
         $mappedConfigurationOptions = array_combine($optionInstitutions, $institutionConfigurationOptions);
 
         $mappedRaLocations = [];
@@ -56,15 +53,17 @@ final class InstitutionConfigurationState
         foreach ($configuredInstitutions as $institution) {
             $institutionName = $institution->institution->getInstitution();
             if (!array_key_exists($institutionName, $mappedConfigurationOptions)) {
-                throw new RuntimeException(sprintf(
-                    'Institution "%s" has been configured, but does not have options.',
-                    $institutionName
-                ));
+                throw new RuntimeException(
+                    sprintf(
+                        'Institution "%s" has been configured, but does not have options.',
+                        $institutionName,
+                    ),
+                );
             }
 
             /** @var InstitutionConfigurationOptions $options */
             $options = $mappedConfigurationOptions[$institutionName];
-            $locations = isset($mappedRaLocations[$institutionName]) ? $mappedRaLocations[$institutionName] : [];
+            $locations = $mappedRaLocations[$institutionName] ?? [];
 
             $mappedInstitutionConfigurations[] = new MappedInstitutionConfiguration(
                 $institution->institution,
@@ -73,7 +72,7 @@ final class InstitutionConfigurationState
                 $options->verifyEmailOption,
                 $options->selfVetOption,
                 $options->numberOfTokensPerIdentityOption,
-                $locations
+                $locations,
             );
         }
 
@@ -83,15 +82,14 @@ final class InstitutionConfigurationState
     /**
      * @param MappedInstitutionConfiguration[] $mappedInstitutionConfigurations
      */
-    private function __construct(array $mappedInstitutionConfigurations)
+    private function __construct(private array $mappedInstitutionConfigurations)
     {
-        $this->mappedInstitutionConfigurations = $mappedInstitutionConfigurations;
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function inferRemovalCommands()
+    public function inferRemovalCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferRemoveInstitutionConfigurationByIdCommand();
@@ -99,9 +97,9 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function inferCreateCommands()
+    public function inferCreateCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferCreateInstitutionConfigurationCommand();
@@ -109,9 +107,9 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function inferReconfigureCommands()
+    public function inferReconfigureCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             yield $mappedInstitutionConfiguration->inferReconfigureInstitutionConfigurationCommand();
@@ -119,9 +117,9 @@ final class InstitutionConfigurationState
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    public function inferAddRaLocationCommands()
+    public function inferAddRaLocationCommands(): Generator
     {
         foreach ($this->mappedInstitutionConfigurations as $mappedInstitutionConfiguration) {
             foreach ($mappedInstitutionConfiguration->inferAddRaLocationCommands() as $command) {

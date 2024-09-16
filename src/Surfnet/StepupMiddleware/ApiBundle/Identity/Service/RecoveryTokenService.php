@@ -29,16 +29,13 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
 class RecoveryTokenService extends AbstractSearchService
 {
-    /**
-     * @var RecoveryTokenRepository
-     */
-    private $recoveryTokenRepository;
-
-    public function __construct(RecoveryTokenRepository $recoveryTokenRepository)
+    public function __construct(private readonly RecoveryTokenRepository $recoveryTokenRepository)
     {
-        $this->recoveryTokenRepository = $recoveryTokenRepository;
     }
 
+    /**
+     * @return Pagerfanta<RecoveryToken>
+     */
     public function search(RecoveryTokenQuery $query): Pagerfanta
     {
         $doctrineQuery = $this->recoveryTokenRepository->createSearchQuery($query);
@@ -55,7 +52,7 @@ class RecoveryTokenService extends AbstractSearchService
         return $recoveryToken;
     }
 
-    public function getFilterOptions(RecoveryTokenQuery $query)
+    public function getFilterOptions(RecoveryTokenQuery $query): array
     {
         return $this->getFilteredQueryOptions($this->recoveryTokenRepository->createOptionsQuery($query));
     }
@@ -65,10 +62,10 @@ class RecoveryTokenService extends AbstractSearchService
         $recoveryTokens = $this->recoveryTokenRepository->findBy(
             [
                 'identityId' => $identity->id,
-                'status' => RecoveryTokenStatus::active()
-            ]
+                'status' => RecoveryTokenStatus::active(),
+            ],
         );
 
-        return count($recoveryTokens) > 0;
+        return $recoveryTokens !== [];
     }
 }

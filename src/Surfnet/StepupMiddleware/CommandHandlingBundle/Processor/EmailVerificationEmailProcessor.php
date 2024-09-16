@@ -26,48 +26,43 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Service\EmailVerific
 
 final class EmailVerificationEmailProcessor extends Processor
 {
-    /**
-     * @var EmailVerificationMailService
-     */
-    private $emailVerificationMailService;
-
-    public function __construct(EmailVerificationMailService $emailVerificationMailService)
-    {
-        $this->emailVerificationMailService = $emailVerificationMailService;
+    public function __construct(
+        private readonly EmailVerificationMailService $emailVerificationMailService,
+    ) {
     }
 
-    public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event)
+    public function handlePhonePossessionProvenEvent(PhonePossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }
 
-    public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event)
+    public function handleYubikeyPossessionProvenEvent(YubikeyPossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }
 
-    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event)
+    public function handleGssfPossessionProvenEvent(GssfPossessionProvenEvent $event): void
     {
-        if ($event->emailVerificationRequired !== false) {
+        if ($event->emailVerificationRequired) {
             $this->emailVerificationMailService->sendEmailVerificationEmail(
-                (string) $event->preferredLocale,
-                (string) $event->commonName,
-                (string) $event->email,
-                $event->emailVerificationNonce
+                (string)$event->preferredLocale,
+                (string)$event->commonName,
+                (string)$event->email,
+                $event->emailVerificationNonce,
             );
         }
     }

@@ -18,73 +18,49 @@
 
 namespace Surfnet\Stepup\Identity\Entity;
 
-use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 use Surfnet\Stepup\Identity\Value\Institution;
-use \Surfnet\Stepup\Identity\Collection\InstitutionCollection as Institutions;
 
 final class InstitutionCollection
 {
-    /**
-     * @var InstitutionRole[]
-     */
-    private $institutions = [];
+    private array $institutions = [];
 
-    /**
-     * @param Institution $institution
-     */
-    public function set(Institution $institution)
+    public function set(Institution $institution): void
     {
         $this->institutions[(string)$institution] = $institution;
     }
 
-    /**
-     * @param Institutions $institutions
-     */
-    public function update(Institutions $institutions)
+    public function update(Institutions $institutions): void
     {
         foreach ($institutions as $institution) {
-            $this->institutions[(string)$institutions] = $institution;
+            $this->institutions[(string)$institution] = $institution;
         }
     }
 
-    /**
-     * @param Institution $institution
-     * @return Institution
-     */
-    public function get(Institution $institution)
+    public function get(Institution $institution): Institution
     {
         return $this->institutions[(string)$institution];
     }
 
-    /**
-     * @param Institution $institution
-     * @return Institution
-     */
-    public function exists(Institution $institution)
+    public function exists(Institution $institution): bool
     {
         return array_key_exists((string)$institution, $this->institutions);
     }
 
-    /**
-     * @param Institution $institution
-     */
-    public function remove(Institution $institution)
+    public function remove(Institution $institution): void
     {
         unset($this->institutions[(string)$institution]);
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->institutions);
     }
 
     /**
-     * @return InstitutionRole[]
+     * @return Institution[]
      */
-    public function institutions()
+    public function institutions(): array
     {
         return $this->institutions;
     }

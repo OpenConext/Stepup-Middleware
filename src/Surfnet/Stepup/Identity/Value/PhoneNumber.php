@@ -22,49 +22,44 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class PhoneNumber implements SecondFactorIdentifier, RecoveryTokenIdentifier
 {
-    /**
-     * @var string
-     */
-    private $phoneNumber;
+    private readonly string $phoneNumber;
 
-    public static function unknown(): self
+    public static function unknown(): static
     {
         return new self('+0 (0) 000000000');
     }
 
-    public function __construct($phoneNumber)
+    public function __construct(string $phoneNumber)
     {
-        if (!is_string($phoneNumber)) {
-            throw InvalidArgumentException::invalidType('string', 'value', $phoneNumber);
-        }
-
         if (!preg_match('~^\+[\d\s]+ \(0\) \d+$~', $phoneNumber)) {
-            throw new InvalidArgumentException(sprintf(
-                "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
-                // 12 characters captures the most extended country code up to and incl. the first subscriber digit
-                substr($phoneNumber, 0, 12)
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    "Invalid phone number format, expected +{countryCode} (0) {subscriber}, got '%s...' (truncated)",
+                    // 12 characters captures the most extended country code up to and incl. the first subscriber digit
+                    substr($phoneNumber, 0, 12),
+                ),
+            );
         }
 
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->phoneNumber;
     }
 
-    public function equals($other): bool
+    public function equals(RecoveryTokenIdentifier|SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->phoneNumber === $other->phoneNumber;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->phoneNumber;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->phoneNumber;
     }

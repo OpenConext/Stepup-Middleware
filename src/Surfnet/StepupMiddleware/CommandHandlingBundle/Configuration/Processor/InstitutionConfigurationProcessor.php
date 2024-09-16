@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Processor;
 
 use Broadway\Processor\Processor;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Identity\Event\IdentityCreatedEvent;
 use Surfnet\Stepup\Identity\Event\InstitutionsAddedToWhitelistEvent;
@@ -27,36 +27,22 @@ use Surfnet\Stepup\Identity\Event\WhitelistCreatedEvent;
 use Surfnet\Stepup\Identity\Event\WhitelistReplacedEvent;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\ConfiguredInstitutionRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\CreateInstitutionConfigurationCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class InstitutionConfigurationProcessor extends Processor
 {
     /**
-     * @var ConfiguredInstitutionRepository
-     */
-    private $configuredInstitutionRepository;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * The container needs to be called during runtime in order to prevent a circular reference
      * during container compilation.
-     *
-     * @param ConfiguredInstitutionRepository $configuredInstitutionRepository
-     * @param ContainerInterface $container
      */
     public function __construct(
-        ConfiguredInstitutionRepository $configuredInstitutionRepository,
-        ContainerInterface $container
+        private readonly ConfiguredInstitutionRepository $configuredInstitutionRepository,
+        private readonly Pipeline $pipeline,
     ) {
-        $this->configuredInstitutionRepository = $configuredInstitutionRepository;
-        $this->container                       = $container;
     }
 
-    public function handleIdentityCreatedEvent(IdentityCreatedEvent $event)
+    public function handleIdentityCreatedEvent(IdentityCreatedEvent $event): void
     {
         $institution = new Institution($event->identityInstitution->getInstitution());
 
@@ -67,7 +53,7 @@ final class InstitutionConfigurationProcessor extends Processor
         $this->createConfigurationFor($institution);
     }
 
-    public function handleWhitelistCreatedEvent(WhitelistCreatedEvent $event)
+    public function handleWhitelistCreatedEvent(WhitelistCreatedEvent $event): void
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -80,7 +66,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function handleWhitelistReplacedEvent(WhitelistReplacedEvent $event)
+    public function handleWhitelistReplacedEvent(WhitelistReplacedEvent $event): void
     {
         foreach ($event->whitelistedInstitutions as $whitelistedInstitution) {
             $institution = new Institution($whitelistedInstitution->getInstitution());
@@ -93,7 +79,7 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    public function handleInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event)
+    public function handleInstitutionsAddedToWhitelistEvent(InstitutionsAddedToWhitelistEvent $event): void
     {
         foreach ($event->addedInstitutions as $addedInstitution) {
             $institution = new Institution($addedInstitution->getInstitution());
@@ -106,15 +92,12 @@ final class InstitutionConfigurationProcessor extends Processor
         }
     }
 
-    /**
-     * @param Institution $institution
-     */
-    private function createConfigurationFor(Institution $institution)
+    private function createConfigurationFor(Institution $institution): void
     {
-        $command              = new CreateInstitutionConfigurationCommand();
-        $command->UUID        = (string) Uuid::uuid4();
+        $command = new CreateInstitutionConfigurationCommand();
+        $command->UUID = (string)Uuid::uuid4();
         $command->institution = $institution->getInstitution();
 
-        $this->container->get('pipeline')->process($command);
+        $this->pipeline->process($command);
     }
 }

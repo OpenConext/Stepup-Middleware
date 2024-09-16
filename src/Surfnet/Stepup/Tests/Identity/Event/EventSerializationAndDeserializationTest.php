@@ -20,8 +20,9 @@ namespace Surfnet\Stepup\Tests\Identity\Event;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
 use DateTime as CoreDateTime;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaEvent;
 use Surfnet\Stepup\Identity\Event\AppointedAsRaaForInstitutionEvent;
@@ -75,27 +76,31 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\SensitiveData;
 
 class EventSerializationAndDeserializationTest extends UnitTest
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group domain
      * @dataProvider eventProvider
-     * @param SerializableInterface $event
      */
-    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event)
+    public function an_event_should_be_the_same_after_serialization_and_deserialization(SerializableInterface $event): void
     {
         $isForgettableEvent = $event instanceof Forgettable;
         $providesSensitiveData = method_exists($event, 'getSensitiveData') || method_exists($event, 'setSensitiveData');
 
         if (!$isForgettableEvent && $providesSensitiveData) {
-            $this->fail(sprintf(
-                'You provide sensitive data in %s, but do not implement %s',
-                get_class($event),
-                'Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable'
-            ));
+            $this->fail(
+                sprintf(
+                    'You provide sensitive data in %s, but do not implement %s',
+                    $event::class,
+                    Forgettable::class,
+                ),
+            );
         }
 
         $serializedEvent = $event->serialize();
         if ($isForgettableEvent) {
+            assert($event instanceof Forgettable);
             $sensitiveData = $event->getSensitiveData();
         }
 
@@ -111,12 +116,12 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @test
      * @group domain
      * @dataProvider serializedDataProvider
-     * @param string $serializedData
-     * @param string $serializedSensitiveData
-     * @param SerializableInterface $event
      */
-    public function an_serialized_event_should_be_the_same(string $serializedData, string $serializedSensitiveData, SerializableInterface $event)
-    {
+    public function an_serialized_event_should_be_the_same(
+        string $serializedData,
+        string $serializedSensitiveData,
+        SerializableInterface $event,
+    ): void {
         $isForgettableEvent = $event instanceof Forgettable;
 
         $serializedDataArray = json_decode($serializedData, true);
@@ -134,7 +139,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
      * @test
      * @group domain
      */
-    public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization()
+    public function an_email_verification_window_should_be_the_same_after_serialization_and_deserialization(): void
     {
         // use a fixed datetime instance, to prevent microsecond precision issues in PHP 7.1+
         $startDateTime = new DateTime(new CoreDateTime('@1000'));
@@ -143,410 +148,420 @@ class EventSerializationAndDeserializationTest extends UnitTest
         $this->assertTrue($window == EmailVerificationWindow::deserialize($window->serialize()));
     }
 
-    public function eventProvider()
+    public function eventProvider(): array
     {
         return [
             'CompliedWithUnverifiedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
                     new PhoneNumber('+358 (0) 687654321'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithUnverifiedSecondFactorRevocationEvent:yubikey' => [
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('01906382'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithUnverifiedSecondFactorRevocationEvent:tiqr' => [
                 new CompliedWithUnverifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
                     new GssfId('bleep-blorp'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVerifiedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithVerifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
                     new PhoneNumber('+0 (0) 000000000'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVerifiedSecondFactorRevocationEvent:yubikey' => [
                 new CompliedWithVerifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('01906382'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVerifiedSecondFactorRevocationEvent:tiqr' => [
                 new CompliedWithVerifiedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
                     new GssfId('bleep-blorp'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVettedSecondFactorRevocationEvent:sms' => [
                 new CompliedWithVettedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
                     new PhoneNumber('+0 (0) 000000000'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVettedSecondFactorRevocationEvent:yubikey' => [
                 new CompliedWithVettedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('01906382'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'CompliedWithVettedSecondFactorRevocationEvent:tiqr' => [
                 new CompliedWithVettedSecondFactorRevocationEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
                     new GssfId('bleep-blorp'),
-                    new IdentityId(static::UUID())
-                )
+                    new IdentityId($this->UUID()),
+                ),
             ],
             'EmailVerifiedEvent:sms' => [
                 new EmailVerifiedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
                     new PhoneNumber('+0 (0) 000000000'),
                     new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'EmailVerifiedEvent:yubikey' => [
                 new EmailVerifiedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
                     new YubikeyPublicId('01906382'),
                     new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'EmailVerifiedEvent:tiqr' => [
                 new EmailVerifiedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
                     new GssfId('bleep-blorp'),
                     new DateTime(new CoreDateTime('@1000')),
                     '123',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'IdentityCreatedEvent' => [
                 new IdentityCreatedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('BabelFish Inc'),
                     new NameId('42'),
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'IdentityEmailChangedEvent' => [
                 new IdentityEmailChangedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new Email('info@example.invalid')
-                )
+                    new Email('info@example.invalid'),
+                ),
             ],
             'IdentityRenamedEvent' => [
                 new IdentityRenamedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new CommonName('Henk Westbroek')
-                )
+                    new CommonName('Henk Westbroek'),
+                ),
             ],
             'PhonePossessionProvenEvent' => [
                 new PhonePossessionProvenEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new PhoneNumber('+31 (0) 612345678'),
                     true,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(3),
+                        new DateTime(new CoreDateTime('@1000')),
+                    ),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'UnverifiedSecondFactorRevokedEvent:sms' => [
                 new UnverifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+31 (0) 612345678')
-                )
+                    new PhoneNumber('+31 (0) 612345678'),
+                ),
             ],
             'UnverifiedSecondFactorRevokedEvent:yubikey' => [
                 new UnverifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('01906382')
-                )
+                    new YubikeyPublicId('01906382'),
+                ),
             ],
             'UnverifiedSecondFactorRevokedEvent:tiqr' => [
                 new UnverifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
-                    new GssfId('bleep-blorp')
-                )
+                    new GssfId('bleep-blorp'),
+                ),
             ],
             'VerifiedSecondFactorRevokedEvent:sms' => [
                 new VerifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
-                    PhoneNumber::unknown()
-                )
+                    PhoneNumber::unknown(),
+                ),
             ],
             'VerifiedSecondFactorRevokedEvent:yubikey' => [
                 new VerifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('01906382')
-                )
+                    new YubikeyPublicId('01906382'),
+                ),
             ],
             'VerifiedSecondFactorRevokedEvent:tiqr' => [
                 new VerifiedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
-                    new GssfId('bleep-blorp')
-                )
+                    new GssfId('bleep-blorp'),
+                ),
             ],
             'VettedSecondFactorRevokedEvent:sms' => [
                 new VettedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('sms'),
-                    new PhoneNumber('+1 (0) 5155550100')
-                )
+                    new PhoneNumber('+1 (0) 5155550100'),
+                ),
             ],
             'VettedSecondFactorRevokedEvent:yubikey' => [
                 new VettedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('yubikey'),
-                    new YubikeyPublicId('01906382')
-                )
+                    new YubikeyPublicId('01906382'),
+                ),
             ],
             'VettedSecondFactorRevokedEvent:tiqr' => [
                 new VettedSecondFactorRevokedEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new SecondFactorType('tiqr'),
-                    new GssfId('bleep-blorp')
-                )
+                    new GssfId('bleep-blorp'),
+                ),
             ],
             'YubikeyPossessionProvenEvent' => [
                 new YubikeyPossessionProvenEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new YubikeyPublicId('19382933'),
                     true,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(3),
+                        new DateTime(new CoreDateTime('@1000')),
+                    ),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'GssfPossessionProvenEvent' => [
                 new GssfPossessionProvenEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
-                    new SecondFactorId(static::UUID()),
+                    new SecondFactorId($this->UUID()),
                     new StepupProvider('tiqr'),
                     new GssfId('_' . md5('Tiqr')),
                     true,
-                    EmailVerificationWindow::createFromTimeFrameStartingAt(TimeFrame::ofSeconds(3), new DateTime(new CoreDateTime('@1000'))),
+                    EmailVerificationWindow::createFromTimeFrameStartingAt(
+                        TimeFrame::ofSeconds(3),
+                        new DateTime(new CoreDateTime('@1000')),
+                    ),
                     '42',
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Locale('en_GB')
-                )
+                    new Locale('en_GB'),
+                ),
             ],
             'IdentityAccreditedAsRaEvent' => [
                 new IdentityAccreditedAsRaEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new NameId(md5('someNameId')),
                     new Institution('Babelfish Inc.'),
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
                     new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe')
-                )
+                    new ContactInformation('Call me maybe'),
+                ),
             ],
             'IdentityAccreditedAsRaaEvent' => [
                 new IdentityAccreditedAsRaaEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new NameId(md5('someNameId')),
                     new Institution('Babelfish Inc.'),
                     new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
                     new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe')
-                )
+                    new ContactInformation('Call me maybe'),
+                ),
             ],
             'RegistrationAuthorityInformationAmendedEvent' => [
                 new RegistrationAuthorityInformationAmendedEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Blue Note'),
-                    new NameId(md5('Coleman Hawkins')),
-                    new Location('New York'),
-                    new ContactInformation("131 West 3rd Street, NY")
-                )
-            ],
-            'AppointedAsRaaEvent' => [
-                new AppointedAsRaaEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId'))
-                )
-            ],
-            'AppointedAsRaEvent' => [
-                new AppointedAsRaEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId'))
-                )
-            ],
-            'RegistrationAuthorityRetractedEvent' => [
-                new RegistrationAuthorityRetractedEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId')),
-                    new CommonName('Henk Westbroek'),
-                    new Email('info@example.invalid')
-                )
-            ],
-            'LocalePreferenceExpressedEvent' => [
-                new LocalePreferenceExpressedEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new Locale('fi_FI')
-                )
-            ],
-            'AppointedAsRaaForInstitutionEvent' => [
-                new AppointedAsRaaForInstitutionEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId')),
-                    new Institution('Babelfish BV.')
-                )
-            ],
-            'AppointedAsRaForInstitutionEvent' => [
-                new AppointedAsRaForInstitutionEvent(
-                    new IdentityId(static::UUID()),
-                    new Institution('Babelfish Inc.'),
-                    new NameId(md5('someNameId')),
-                    new Institution('Babelfish BV.')
-                )
-            ],
-            'IdentityAccreditedAsRaForInstitutionEvent' => [
-                new IdentityAccreditedAsRaForInstitutionEvent(
-                    new IdentityId(static::UUID()),
-                    new NameId(md5('someNameId')),
-                    new Institution('Babelfish Inc.'),
-                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
-                    new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe'),
-                    new Institution('Babelfish BV.')
-                )
-            ],
-            'IdentityAccreditedAsRaaForInstitutionEvent' => [
-                new IdentityAccreditedAsRaaForInstitutionEvent(
-                    new IdentityId(static::UUID()),
-                    new NameId(md5('someNameId')),
-                    new Institution('Babelfish Inc.'),
-                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
-                    new Location('somewhere behind you'),
-                    new ContactInformation('Call me maybe'),
-                    new Institution('Babelfish BV.')
-                )
-            ],
-            'RegistrationAuthorityInformationAmendedForInstitutionEvent' => [
-                new RegistrationAuthorityInformationAmendedForInstitutionEvent(
-                    new IdentityId(static::UUID()),
+                    new IdentityId($this->UUID()),
                     new Institution('Blue Note'),
                     new NameId(md5('Coleman Hawkins')),
                     new Location('New York'),
                     new ContactInformation("131 West 3rd Street, NY"),
-                    new Institution('Babelfish Inc.')
-                )
+                ),
             ],
-            'RegistrationAuthorityRetractedForInstitutionEvent' => [
-                new RegistrationAuthorityRetractedForInstitutionEvent(
-                    new IdentityId(static::UUID()),
+            'AppointedAsRaaEvent' => [
+                new AppointedAsRaaEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                ),
+            ],
+            'AppointedAsRaEvent' => [
+                new AppointedAsRaEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                ),
+            ],
+            'RegistrationAuthorityRetractedEvent' => [
+                new RegistrationAuthorityRetractedEvent(
+                    new IdentityId($this->UUID()),
                     new Institution('Babelfish Inc.'),
                     new NameId(md5('someNameId')),
                     new CommonName('Henk Westbroek'),
                     new Email('info@example.invalid'),
-                    new Institution('Babelfish Inc.')
-                )
+                ),
+            ],
+            'LocalePreferenceExpressedEvent' => [
+                new LocalePreferenceExpressedEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new Locale('fi_FI'),
+                ),
+            ],
+            'AppointedAsRaaForInstitutionEvent' => [
+                new AppointedAsRaaForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish BV.'),
+                ),
+            ],
+            'AppointedAsRaForInstitutionEvent' => [
+                new AppointedAsRaForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish BV.'),
+                ),
+            ],
+            'IdentityAccreditedAsRaForInstitutionEvent' => [
+                new IdentityAccreditedAsRaForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish BV.'),
+                ),
+            ],
+            'IdentityAccreditedAsRaaForInstitutionEvent' => [
+                new IdentityAccreditedAsRaaForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new NameId(md5('someNameId')),
+                    new Institution('Babelfish Inc.'),
+                    new RegistrationAuthorityRole(RegistrationAuthorityRole::ROLE_RAA),
+                    new Location('somewhere behind you'),
+                    new ContactInformation('Call me maybe'),
+                    new Institution('Babelfish BV.'),
+                ),
+            ],
+            'RegistrationAuthorityInformationAmendedForInstitutionEvent' => [
+                new RegistrationAuthorityInformationAmendedForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Blue Note'),
+                    new NameId(md5('Coleman Hawkins')),
+                    new Location('New York'),
+                    new ContactInformation("131 West 3rd Street, NY"),
+                    new Institution('Babelfish Inc.'),
+                ),
+            ],
+            'RegistrationAuthorityRetractedForInstitutionEvent' => [
+                new RegistrationAuthorityRetractedForInstitutionEvent(
+                    new IdentityId($this->UUID()),
+                    new Institution('Babelfish Inc.'),
+                    new NameId(md5('someNameId')),
+                    new CommonName('Henk Westbroek'),
+                    new Email('info@example.invalid'),
+                    new Institution('Babelfish Inc.'),
+                ),
             ],
         ];
     }
 
-    public function serializedDataProvider(){
+    public function serializedDataProvider(): array
+    {
         return [
             // Tests for changes in BC support for adding the VettingType in the SecondFactorVettedEvents in favour of the 'DocumentNumber'
             'SecondFactorVettedEvent:support-new-event-with-vetting-type' => [
@@ -562,7 +577,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('012345678')),
                 ),
             ],
             'SecondFactorVettedEvent:support-old-event-with-document-number' => [
@@ -578,7 +593,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('012345678')),
                 ),
             ],
             'SecondFactorVettedWithoutTokenProofOfPossession:support-new-event-with-vetting-type' => [
@@ -594,7 +609,7 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('012345678')),
                 ),
             ],
             'SecondFactorVettedWithoutTokenProofOfPossession:support-old-event-with-document-number' => [
@@ -610,14 +625,14 @@ class EventSerializationAndDeserializationTest extends UnitTest
                     new CommonName('jane-d1 Institution-D.EXAMPLE.COM'),
                     new Email('jane+jane-d1@stepup.example.com'),
                     new Locale('nl_NL'),
-                    new OnPremiseVettingType(new DocumentNumber('012345678'))
+                    new OnPremiseVettingType(new DocumentNumber('012345678')),
                 ),
             ],
         ];
     }
 
-    private static function UUID()
+    private function UUID(): string
     {
-        return (string) Uuid::uuid4();
+        return (string)Uuid::uuid4();
     }
 }

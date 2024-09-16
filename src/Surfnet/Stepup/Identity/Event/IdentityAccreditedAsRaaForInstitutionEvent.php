@@ -29,78 +29,46 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
 
 class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /** @var string[] */
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'institution',
         'registration_authority_role',
         'location',
         'contact_information',
-        'ra_institution'
+        'ra_institution',
     ];
 
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var RegistrationAuthorityRole
-     */
-    public $registrationAuthorityRole;
-
-    /**
-     * @var Location
-     */
-    public $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public $contactInformation;
-    /**
-     * @var Institution
-     */
-    public $raInstitution;
-
-    /**
-     * @param IdentityId $identityId
-     * @param NameId $nameId
-     * @param Institution $institution
-     * @param RegistrationAuthorityRole $role
-     * @param Location $location
-     * @param ContactInformation $contactInformation
-     * @param Institution $raInstitution
-     */
     public function __construct(
         IdentityId $identityId,
-        NameId $nameId,
+        public NameId $nameId,
         Institution $institution,
-        RegistrationAuthorityRole $role,
-        Location $location,
-        ContactInformation $contactInformation,
-        Institution $raInstitution
+        public RegistrationAuthorityRole $registrationAuthorityRole,
+        public Location $location,
+        public ContactInformation $contactInformation,
+        public Institution $raInstitution,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId                    = $nameId;
-        $this->registrationAuthorityRole = $role;
-        $this->location                  = $location;
-        $this->contactInformation        = $contactInformation;
-        $this->raInstitution             = $raInstitution;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
-        $metadata                      = new Metadata();
-        $metadata->identityId          = $this->identityId;
+        $metadata = new Metadata();
+        $metadata->identityId = $this->identityId;
         $metadata->identityInstitution = $this->identityInstitution;
-        $metadata->raInstitution       = $this->raInstitution;
+        $metadata->raInstitution = $this->raInstitution;
 
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
@@ -109,31 +77,38 @@ class IdentityAccreditedAsRaaForInstitutionEvent extends IdentityEvent implement
             RegistrationAuthorityRole::deserialize($data['registration_authority_role']),
             new Location($data['location']),
             new ContactInformation($data['contact_information']),
-            new Institution($data['ra_institution'])
+            new Institution($data['ra_institution']),
         );
     }
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {
         return [
-            'identity_id'                 => (string) $this->identityId,
-            'name_id'                     => (string) $this->nameId,
-            'institution'                 => (string) $this->identityInstitution,
+            'identity_id' => (string)$this->identityId,
+            'name_id' => (string)$this->nameId,
+            'institution' => (string)$this->identityInstitution,
             'registration_authority_role' => $this->registrationAuthorityRole->serialize(),
-            'location'                    => (string) $this->location,
-            'contact_information'         => (string) $this->contactInformation,
-            'ra_institution'              => (string) $this->raInstitution,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
+            'ra_institution' => (string)$this->raInstitution,
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function obtainUserData(): array
     {
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

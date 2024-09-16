@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class CollectProjectorsForEventReplayCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $projectorCollectionDefinition = $container->getDefinition('middleware.event_replay.projector_collection');
         $projectorDefinitions = $container->findTaggedServiceIds('projector.register_for_replay');

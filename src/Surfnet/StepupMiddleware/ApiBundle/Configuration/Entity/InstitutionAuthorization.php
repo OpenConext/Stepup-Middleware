@@ -21,54 +21,45 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\Stepup\Configuration\Value\InstitutionRole;
+use Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository;
 
-/**
- * @ORM\Entity(
- *      repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository\InstitutionAuthorizationRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_authorization", columns={"institution","institution_relation","institution_role"})
- *      }
- * )
- */
+#[ORM\Table]
+#[ORM\Index(name: 'idx_authorization', columns: ['institution', 'institution_relation', 'institution_role'])]
+#[ORM\Entity(repositoryClass: InstitutionAuthorizationRepository::class)]
 class InstitutionAuthorization
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
-    public $institution;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
+    public Institution $institution;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_configuration_institution")
      *
      * @var Institution
      */
-    public $institutionRelation;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_configuration_institution')]
+    public Institution $institutionRelation;
 
     /**
-     * @ORM\Id
-     * @ORM\Column(type="stepup_institution_role", length=10)
      *
      * @var InstitutionRole
      */
-    public $institutionRole;
+    #[ORM\Id]
+    #[ORM\Column(type: 'stepup_institution_role', length: 10)]
+    public InstitutionRole $institutionRole;
 
     /**
-     * @param Institution $institution
-     * @param Institution $institutionRelation
-     * @param InstitutionRole $institutionRole
      * @return InstitutionAuthorization
      */
     public static function create(
         Institution $institution,
         Institution $institutionRelation,
-        InstitutionRole $institutionRole
-    ) {
+        InstitutionRole $institutionRole,
+    ): self {
         $options = new self;
 
         $options->institution = $institution;

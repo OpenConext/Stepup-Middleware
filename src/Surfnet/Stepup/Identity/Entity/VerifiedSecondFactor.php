@@ -44,57 +44,29 @@ use Surfnet\StepupBundle\Value\VettingType as StepupVettingType;
  */
 class VerifiedSecondFactor extends AbstractSecondFactor
 {
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorId
-     */
-    private $id;
+    private ?SecondFactorId $id = null;
+
+    private ?Identity $identity = null;
+
+    private ?SecondFactorType $type = null;
 
     /**
-     * @var \Surfnet\Stepup\Identity\Api\Identity
+     * @var SecondFactorIdentifier
      */
-    private $identity;
+    private SecondFactorIdentifier $secondFactorIdentifier;
 
-    /**
-     * @var \Surfnet\StepupBundle\Value\SecondFactorType
-     */
-    private $type;
+    private ?DateTime $registrationRequestedAt = null;
 
-    /**
-     * @var \Surfnet\Stepup\Identity\Value\SecondFactorIdentifier
-     */
-    private $secondFactorIdentifier;
+    private ?string $registrationCode = null;
 
-    /**
-     * @var \Surfnet\Stepup\DateTime\DateTime
-     */
-    private $registrationRequestedAt;
-
-    /**
-     * @var string
-     */
-    private $registrationCode;
-
-    /**
-     * @param SecondFactorId $id
-     * @param Identity $identity
-     * @param SecondFactorType $type
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @param DateTime $registrationRequestedAt
-     * @param string $registrationCode
-     * @return self
-     */
     public static function create(
-        SecondFactorId $id,
-        Identity $identity,
-        SecondFactorType $type,
+        SecondFactorId         $id,
+        Identity               $identity,
+        SecondFactorType       $type,
         SecondFactorIdentifier $secondFactorIdentifier,
-        DateTime $registrationRequestedAt,
-        $registrationCode
-    ) {
-        if (!is_string($registrationCode)) {
-            throw InvalidArgumentException::invalidType('string', 'registrationCode', $registrationCode);
-        }
-
+        DateTime               $registrationRequestedAt,
+        string                 $registrationCode,
+    ): self {
         $secondFactor = new self;
         $secondFactor->id = $id;
         $secondFactor->identity = $identity;
@@ -110,38 +82,32 @@ class VerifiedSecondFactor extends AbstractSecondFactor
     {
     }
 
-    /**
-     * @return SecondFactorId
-     */
-    public function getId()
+    public function getId(): ?SecondFactorId
     {
         return $this->id;
     }
 
-    /**
-     * @param string $registrationCode
-     * @param SecondFactorIdentifier $secondFactorIdentifier
-     * @return bool
-     */
-    public function hasRegistrationCodeAndIdentifier($registrationCode, SecondFactorIdentifier $secondFactorIdentifier)
-    {
-        return strcasecmp($registrationCode, $this->registrationCode) === 0
+    public function hasRegistrationCodeAndIdentifier(
+        string                 $registrationCode,
+        SecondFactorIdentifier $secondFactorIdentifier,
+    ): bool {
+        return strcasecmp($registrationCode, (string)$this->registrationCode) === 0
             && $secondFactorIdentifier->equals($this->secondFactorIdentifier);
     }
 
     /**
      * @return bool
      */
-    public function canBeVettedNow()
+    public function canBeVettedNow(): bool
     {
         return !DateTime::now()->comesAfter(
             $this->registrationRequestedAt
                 ->add(new DateInterval('P14D'))
-                ->endOfDay()
+                ->endOfDay(),
         );
     }
 
-    public function vet($provePossessionSkipped, VettingType $type)
+    public function vet(bool $provePossessionSkipped, VettingType $type): void
     {
         if ($provePossessionSkipped) {
             $this->apply(
@@ -155,8 +121,8 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                     $this->identity->getCommonName(),
                     $this->identity->getEmail(),
                     $this->identity->getPreferredLocale(),
-                    $type
-                )
+                    $type,
+                ),
             );
             return;
         }
@@ -172,12 +138,12 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getCommonName(),
                 $this->identity->getEmail(),
                 $this->identity->getPreferredLocale(),
-                $type
-            )
+                $type,
+            ),
         );
     }
 
-    public function revoke()
+    public function revoke(): void
     {
         $this->apply(
             new VerifiedSecondFactorRevokedEvent(
@@ -185,12 +151,12 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->identity->getInstitution(),
                 $this->id,
                 $this->type,
-                $this->secondFactorIdentifier
-            )
+                $this->secondFactorIdentifier,
+            ),
         );
     }
 
-    public function complyWithRevocation(IdentityId $authorityId)
+    public function complyWithRevocation(IdentityId $authorityId): void
     {
         $this->apply(
             new CompliedWithVerifiedSecondFactorRevocationEvent(
@@ -199,35 +165,34 @@ class VerifiedSecondFactor extends AbstractSecondFactor
                 $this->id,
                 $this->type,
                 $this->secondFactorIdentifier,
-                $authorityId
-            )
+                $authorityId,
+            ),
         );
     }
 
-    /**
-     * @return VettedSecondFactor
-     */
-    public function asVetted(VettingType $vettingType)
+    public function asVetted(VettingType $vettingType): VettedSecondFactor
     {
         return VettedSecondFactor::create(
             $this->id,
             $this->identity,
             $this->type,
             $this->secondFactorIdentifier,
-            $vettingType
+            $vettingType,
         );
     }
 
-    public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): int
+    public function getLoaLevel(SecondFactorTypeService $secondFactorTypeService): float
     {
         return $secondFactorTypeService->getLevel($this->type, new StepupVettingType(VettingType::TYPE_UNKNOWN));
     }
 
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
-        $secondFactorIdentifierClass = get_class($this->secondFactorIdentifier);
+        $secondFactorIdentifierClass = $this->secondFactorIdentifier::class;
 
-        $this->secondFactorIdentifier = $secondFactorIdentifierClass::unknown();
+        $identifier = $secondFactorIdentifierClass::unknown();
+        assert($identifier instanceof SecondFactorIdentifier);
+        $this->secondFactorIdentifier = $identifier;
     }
 
     public function getType(): SecondFactorType

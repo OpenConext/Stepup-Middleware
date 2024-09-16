@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command;
 
 use Exception;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\MiddlewareBundle\Service\BootstrapCommandService;
@@ -28,27 +28,17 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 
 final class BootstrapYubikeySecondFactorCommand extends Command
 {
-    /**
-     * @var BootstrapCommandService
-     */
-    private $bootstrapService;
-    /**
-     * @var TransactionHelper
-     */
-    private $transactionHelper;
-
-    public function __construct(BootstrapCommandService $bootstrapService, TransactionHelper $transactionHelper)
-    {
-        $this->bootstrapService = $bootstrapService;
-        $this->transactionHelper = $transactionHelper;
+    public function __construct(
+        private readonly BootstrapCommandService $bootstrapService,
+        private readonly TransactionHelper $transactionHelper,
+    ) {
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Creates a Yubikey second factor for a specified user')
@@ -57,24 +47,21 @@ final class BootstrapYubikeySecondFactorCommand extends Command
             ->addArgument(
                 'yubikey',
                 InputArgument::REQUIRED,
-                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.'
+                'The public ID of the Yubikey. Remove the last 32 characters of a Yubikey OTP to acquire this.',
             )
             ->addArgument(
                 'registration-status',
                 InputArgument::REQUIRED,
-                'Valid arguments: unverified, verified, vetted'
+                'Valid arguments: unverified, verified, vetted',
             )
             ->addArgument('actor-id', InputArgument::REQUIRED, 'The id of the vetting actor');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $registrationStatus = $input->getArgument('registration-status');
         $this->bootstrapService->validRegistrationStatus($registrationStatus);
 
-        $this->bootstrapService->setToken(
-            new AnonymousToken('cli.bootstrap-yubikey-token', 'cli', ['ROLE_SS', 'ROLE_RA'])
-        );
         $nameId = new NameId($input->getArgument('name-id'));
         $institutionText = $input->getArgument('institution');
         $institution = new Institution($institutionText);
@@ -88,14 +75,16 @@ final class BootstrapYubikeySecondFactorCommand extends Command
                 sprintf(
                     '<error>An identity with name ID "%s" from institution "%s" does not exist, create it first.</error>',
                     $nameId->getNameId(),
-                    $institution->getInstitution()
-                )
+                    $institution->getInstitution(),
+                ),
             );
 
-            return;
+            return 1;
         }
         $identity = $this->bootstrapService->getIdentity($nameId, $institution);
-        $output->writeln(sprintf('<comment>Adding a %s Yubikey token for %s</comment>', $registrationStatus, $identity->commonName));
+        $output->writeln(
+            sprintf('<comment>Adding a %s Yubikey token for %s</comment>', $registrationStatus, $identity->commonName),
+        );
         $this->transactionHelper->beginTransaction();
         $secondFactorId = Uuid::uuid4()->toString();
 
@@ -126,7 +115,7 @@ final class BootstrapYubikeySecondFactorCommand extends Command
                         $actorId,
                         $identity,
                         $secondFactorId,
-                        $yubikey
+                        $yubikey,
                     );
                     break;
             }
@@ -135,17 +124,18 @@ final class BootstrapYubikeySecondFactorCommand extends Command
             $output->writeln(
                 sprintf(
                     '<error>An Error occurred when trying to bootstrap the Yubikey token: "%s"</error>',
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             $this->transactionHelper->rollback();
-            throw $e;
+            return 1;
         }
         $output->writeln(
             sprintf(
                 '<info>Successfully registered a second factor with UUID %s</info>',
-                $secondFactorId
-            )
+                $secondFactorId,
+            ),
         );
+        return 0;
     }
 }

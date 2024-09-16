@@ -23,17 +23,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class Metadata
 {
     /**
-     * @Assert\Type(type="string")
-     * @Assert\Regex(pattern="~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i")
      *
      * @var string|null
      */
-    public $actorId;
+    #[Assert\Type(type: 'string')]
+    #[Assert\Regex(pattern: '~^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$~i')]
+    public ?string $actorId = null;
 
     /**
-     * @Assert\Type(type="string")
-     *
      * @var string|null
      */
-    public $actorInstitution;
+    #[Assert\Type(type: 'string')]
+    public ?string $actorInstitution = null;
 }

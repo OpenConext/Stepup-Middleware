@@ -25,58 +25,52 @@ use Symfony\Component\Validator\Constraints as Assert;
 class CreateIdentityCommand extends AbstractCommand implements SelfServiceExecutable
 {
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $id;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $id;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $nameId;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $nameId;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $email;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $email;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $institution;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $institution;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $commonName;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $commonName;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Type(type="string")
-     *
      * @var string
      */
-    public $preferredLocale;
+    #[Assert\NotBlank]
+    #[Assert\Type(type: 'string')]
+    public string $preferredLocale;
 
 
     /**
      * @return string
      */
-    public function getIdentityId()
+    public function getIdentityId(): string
     {
         return $this->id;
     }

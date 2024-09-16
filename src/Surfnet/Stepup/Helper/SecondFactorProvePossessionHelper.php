@@ -23,33 +23,22 @@ use Webmozart\Assert\Assert;
 
 class SecondFactorProvePossessionHelper
 {
-    /**
-     * @var array
-     */
-    private $skipProvePossessionSecondFactorTypes;
+    private readonly array $skipProvePossessionSecondFactorTypes;
 
-    /**
-     * @param SecondFactorTypeService $secondFactorTypeService
-     * @param array $skipProvePossessionSecondFactorTypes
-     */
     public function __construct(
         SecondFactorTypeService $secondFactorTypeService,
-        array $skipProvePossessionSecondFactorTypes
+        array $skipProvePossessionSecondFactorTypes,
     ) {
         Assert::allInArray(
             $skipProvePossessionSecondFactorTypes,
             $secondFactorTypeService->getAvailableSecondFactorTypes(),
-            'Unsupported second factor type configured to skip prove possession'
+            'Unsupported second factor type configured to skip prove possession',
         );
 
         $this->skipProvePossessionSecondFactorTypes = $skipProvePossessionSecondFactorTypes;
     }
 
-    /**
-     * @param SecondFactorType $secondFactorType
-     * @return bool
-     */
-    public function canSkipProvePossession(SecondFactorType $secondFactorType)
+    public function canSkipProvePossession(SecondFactorType $secondFactorType): bool
     {
         return in_array($secondFactorType->getSecondFactorType(), $this->skipProvePossessionSecondFactorTypes);
     }

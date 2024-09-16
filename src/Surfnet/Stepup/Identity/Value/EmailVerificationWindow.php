@@ -19,51 +19,34 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use Broadway\Serializer\Serializable as SerializableInterface;
+use Stringable;
 use Surfnet\Stepup\DateTime\DateTime;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class EmailVerificationWindow implements SerializableInterface
+final readonly class EmailVerificationWindow implements SerializableInterface, Stringable
 {
-    /**
-     * @var DateTime
-     */
-    private $start;
-
-    /**
-     * @var DateTime
-     */
-    private $end;
-
-    private function __construct(DateTime $start, DateTime $end)
-    {
-        $this->start = $start;
-        $this->end   = $end;
+    private function __construct(
+        private DateTime $start,
+        private DateTime $end,
+    ) {
     }
 
-    /**
-     * @param TimeFrame $timeFrame
-     * @param DateTime  $start
-     * @return EmailVerificationWindow
-     */
-    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start)
+    public static function createFromTimeFrameStartingAt(TimeFrame $timeFrame, DateTime $start): EmailVerificationWindow
     {
         return new EmailVerificationWindow($start, $timeFrame->getEndWhenStartingAt($start));
     }
 
-    /**
-     * @param DateTime $start
-     * @param DateTime $end
-     * @return EmailVerificationWindow
-     */
-    public static function createWindowFromTill(DateTime $start, DateTime $end)
+    public static function createWindowFromTill(DateTime $start, DateTime $end): EmailVerificationWindow
     {
         if (!$end->comesAfter($start)) {
-            throw new InvalidArgumentException(sprintf(
-                'An EmailVerificationWindow can only be created with an end time that is after the start time, '
-                . 'given start: "%s", given end: "%s"',
-                (string) $start,
-                (string) $end
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'An EmailVerificationWindow can only be created with an end time that is after the start time, '
+                    . 'given start: "%s", given end: "%s"',
+                    (string)$start,
+                    (string)$end,
+                ),
+            );
         }
 
         return new EmailVerificationWindow($start, $end);
@@ -72,7 +55,7 @@ final class EmailVerificationWindow implements SerializableInterface
     /**
      * @return bool
      */
-    public function isOpen()
+    public function isOpen(): bool
     {
         $now = DateTime::now();
 
@@ -82,34 +65,30 @@ final class EmailVerificationWindow implements SerializableInterface
     /**
      * @return DateTime
      */
-    public function openUntil()
+    public function openUntil(): DateTime
     {
         return $this->end;
     }
 
-    /**
-     * @param EmailVerificationWindow $other
-     * @return bool
-     */
-    public function equals(EmailVerificationWindow $other)
+    public function equals(EmailVerificationWindow $other): bool
     {
         return $this->start == $other->start && $this->end == $other->end;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new EmailVerificationWindow(
             DateTime::fromString($data['start']),
-            DateTime::fromString($data['end'])
+            DateTime::fromString($data['end']),
         );
     }
 
     public function serialize(): array
     {
-        return ['start' => (string) $this->start, 'end' => (string) $this->end];
+        return ['start' => (string)$this->start, 'end' => (string)$this->end];
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->start . '-' . $this->end;
     }

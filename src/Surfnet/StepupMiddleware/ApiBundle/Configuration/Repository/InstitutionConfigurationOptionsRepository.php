@@ -19,11 +19,14 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Configuration\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Entity\InstitutionConfigurationOptions;
 
+/**
+ * @extends ServiceEntityRepository<InstitutionConfigurationOptions>
+ */
 class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -32,11 +35,9 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Institution $institution
-     * @return InstitutionConfigurationOptions
      * @throws NonUniqueResultException
      */
-    public function findConfigurationOptionsFor(Institution $institution)
+    public function findConfigurationOptionsFor(Institution $institution): ?InstitutionConfigurationOptions
     {
         return $this->createQueryBuilder('ico')
             ->where('ico.institution = :institution')
@@ -45,20 +46,14 @@ class InstitutionConfigurationOptionsRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param InstitutionConfigurationOptions $institutionConfigurationOptions
-     */
-    public function save(InstitutionConfigurationOptions $institutionConfigurationOptions)
+    public function save(InstitutionConfigurationOptions $institutionConfigurationOptions): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($institutionConfigurationOptions);
         $entityManager->flush();
     }
 
-    /**
-     * @param Institution $institution
-     */
-    public function removeConfigurationOptionsFor(Institution $institution)
+    public function removeConfigurationOptionsFor(Institution $institution): void
     {
         $this->createQueryBuilder('ico')
             ->delete()

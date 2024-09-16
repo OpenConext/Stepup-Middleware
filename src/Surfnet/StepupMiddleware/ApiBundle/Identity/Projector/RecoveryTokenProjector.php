@@ -34,25 +34,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
  */
 class RecoveryTokenProjector extends Projector
 {
-    /**
-     * @var RecoveryTokenRepository
-     */
-    private $recoveryTokenRepository;
-
-    public function __construct(
-        RecoveryTokenRepository $recoveryMethodRepository
-    ) {
-        $this->recoveryTokenRepository = $recoveryMethodRepository;
+    public function __construct(private readonly RecoveryTokenRepository $recoveryTokenRepository)
+    {
     }
 
-    public function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event)
+    public function applyPhoneRecoveryTokenPossessionProvenEvent(PhoneRecoveryTokenPossessionProvenEvent $event): void
     {
         $recoveryToken = new RecoveryToken();
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();
         $recoveryToken->identityId = $event->identityId->getIdentityId();
         $recoveryToken->type = RecoveryTokenType::TYPE_SMS;
         $recoveryToken->status = RecoveryTokenStatus::active();
-        $recoveryToken->recoveryMethodIdentifier = (string) $event->phoneNumber;
+        $recoveryToken->recoveryMethodIdentifier = (string)$event->phoneNumber;
         $recoveryToken->institution = $event->identityInstitution;
         $recoveryToken->email = $event->email;
         $recoveryToken->name = $event->commonName;
@@ -60,14 +53,15 @@ class RecoveryTokenProjector extends Projector
         $this->recoveryTokenRepository->save($recoveryToken);
     }
 
-    public function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event)
-    {
+    public function applySafeStoreSecretRecoveryTokenPossessionPromisedEvent(
+        SafeStoreSecretRecoveryTokenPossessionPromisedEvent $event,
+    ): void {
         $recoveryToken = new RecoveryToken();
         $recoveryToken->id = $event->recoveryTokenId->getRecoveryTokenId();
         $recoveryToken->identityId = $event->identityId->getIdentityId();
         $recoveryToken->type = RecoveryTokenType::TYPE_SAFE_STORE;
         $recoveryToken->status = RecoveryTokenStatus::active();
-        $recoveryToken->recoveryMethodIdentifier = (string) $event->secret;
+        $recoveryToken->recoveryMethodIdentifier = (string)$event->secret;
         $recoveryToken->institution = $event->identityInstitution;
         $recoveryToken->email = $event->email;
         $recoveryToken->name = $event->commonName;
@@ -93,7 +87,7 @@ class RecoveryTokenProjector extends Projector
      * When Identity is forgotten, the recovery token projections for this identity
      * are removed from the recovery_tokens table.
      */
-    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event)
+    protected function applyIdentityForgottenEvent(IdentityForgottenEvent $event): void
     {
         $this->recoveryTokenRepository->removeByIdentity($event->identityId);
     }

@@ -19,42 +19,36 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionConfigurationId implements JsonSerializable
+final class InstitutionConfigurationId implements JsonSerializable, Stringable
 {
-    const UUID_NAMESPACE = '09876543-abcd-0987-abcd-098765432109';
+    public const UUID_NAMESPACE = '09876543-abcd-0987-abcd-098765432109';
 
-    private $institutionConfigurationId;
+    private readonly string $institutionConfigurationId;
 
     /**
      * @deprecated To be removed in next release; use normalizedFrom method to account for case-(in)sensitivity issues
-     *
-     * @param Institution $institution
-     * @return InstitutionConfigurationId
      */
-    public static function from(Institution $institution)
+    public static function from(Institution $institution): self
     {
-        return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
+        return new self((string)Uuid::uuid5(self::UUID_NAMESPACE, $institution->getInstitution()));
     }
 
-    /**
-     * @param Institution $institution
-     * @return InstitutionConfigurationId
-     */
-    public static function normalizedFrom(Institution $institution)
+    public static function normalizedFrom(Institution $institution): self
     {
-        return new self((string) Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
+        return new self((string)Uuid::uuid5(self::UUID_NAMESPACE, strtolower($institution->getInstitution())));
     }
 
-    public function __construct($institutionConfigurationId)
+    public function __construct(string $institutionConfigurationId)
     {
-        if (!is_string($institutionConfigurationId) || strlen(trim($institutionConfigurationId)) === 0) {
+        if (trim($institutionConfigurationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'institutionConfigurationId',
-                $institutionConfigurationId
+                $institutionConfigurationId,
             );
         }
 
@@ -62,36 +56,29 @@ final class InstitutionConfigurationId implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'UUID',
                 'institutionConfigurationId',
-                $institutionConfigurationId
+                $institutionConfigurationId,
             );
         }
 
         $this->institutionConfigurationId = $institutionConfigurationId;
     }
 
-    /**
-     * @param InstitutionConfigurationId $otherInstitutionConfigurationId
-     * @return bool
-     */
-    public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId)
+    public function equals(InstitutionConfigurationId $otherInstitutionConfigurationId): bool
     {
         return $this->institutionConfigurationId === $otherInstitutionConfigurationId->institutionConfigurationId;
     }
 
-    /**
-     * @return string
-     */
-    public function getInstitutionConfigurationId()
+    public function getInstitutionConfigurationId(): string
     {
         return $this->institutionConfigurationId;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->institutionConfigurationId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->institutionConfigurationId;
     }

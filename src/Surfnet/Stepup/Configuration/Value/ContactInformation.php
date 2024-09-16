@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -19,32 +21,19 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class ContactInformation implements JsonSerializable
+final class ContactInformation implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $contactInformation;
+    private readonly string $contactInformation;
 
-    /**
-     * @param string $contactInformation
-     */
-    public function __construct($contactInformation)
+    public function __construct(string $contactInformation)
     {
-        if (!is_string($contactInformation)) {
-            throw InvalidArgumentException::invalidType('string', 'contactInformation', $contactInformation);
-        }
-
         $this->contactInformation = trim($contactInformation);
     }
 
-    /**
-     * @param ContactInformation $otherContactInformation
-     * @return bool
-     */
-    public function equals(ContactInformation $otherContactInformation)
+    public function equals(ContactInformation $otherContactInformation): bool
     {
         return $this->contactInformation === $otherContactInformation->contactInformation;
     }
@@ -52,17 +41,17 @@ final class ContactInformation implements JsonSerializable
     /**
      * @return string
      */
-    public function getContactInformation()
+    public function getContactInformation(): string
     {
         return $this->contactInformation;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->contactInformation;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->contactInformation;
     }

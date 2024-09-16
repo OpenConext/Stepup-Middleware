@@ -22,41 +22,38 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 
 final class GssfId implements SecondFactorIdentifier
 {
-    /**
-     * @var string
-     */
-    private $gssfId;
+    private readonly string $gssfId;
 
-    public static function unknown()
+    public static function unknown(): static
     {
         return new self('—');
     }
 
-    public function __construct($gssfId)
+    public function __construct(string $gssfId)
     {
-        if (!is_string($gssfId) || trim($gssfId) === '') {
+        if (trim($gssfId) === '') {
             throw InvalidArgumentException::invalidType('non-empty string', 'gssfId', $gssfId);
         }
 
         $this->gssfId = trim($gssfId);
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->gssfId;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->gssfId;
     }
 
-    public function equals($other): bool
+    public function equals(SecondFactorIdentifier $other): bool
     {
         return $other instanceof self && $this->gssfId === $other->gssfId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->gssfId;
     }

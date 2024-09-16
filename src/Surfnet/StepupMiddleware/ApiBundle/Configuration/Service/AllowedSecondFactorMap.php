@@ -27,7 +27,7 @@ final class AllowedSecondFactorMap
     /**
      * @var AllowedSecondFactor[]
      */
-    private $mappedAllowedSecondFactors = [];
+    private array $mappedAllowedSecondFactors = [];
 
     private function __construct()
     {
@@ -37,7 +37,7 @@ final class AllowedSecondFactorMap
      * @param AllowedSecondFactor[] $allowedSecondFactors
      * @return AllowedSecondFactorMap
      */
-    public static function from($allowedSecondFactors)
+    public static function from(array $allowedSecondFactors): self
     {
         $allowedSecondFactorMap = new self();
         foreach ($allowedSecondFactors as $allowedSecondFactor) {
@@ -47,11 +47,7 @@ final class AllowedSecondFactorMap
         return $allowedSecondFactorMap;
     }
 
-    /**
-     * @param Institution $institution
-     * @return AllowedSecondFactorList
-     */
-    public function getAllowedSecondFactorListFor(Institution $institution)
+    public function getAllowedSecondFactorListFor(Institution $institution): AllowedSecondFactorList
     {
         $institution = strtolower($institution->getInstitution());
         if (!array_key_exists($institution, $this->mappedAllowedSecondFactors)) {
@@ -62,10 +58,9 @@ final class AllowedSecondFactorMap
     }
 
     /**
-     * @param AllowedSecondFactor $allowedSecondFactor
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function add(AllowedSecondFactor $allowedSecondFactor)
+    private function add(AllowedSecondFactor $allowedSecondFactor): void
     {
         $institution = strtolower($allowedSecondFactor->institution->getInstitution());
 

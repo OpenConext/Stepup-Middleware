@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -19,32 +21,19 @@
 namespace Surfnet\Stepup\Identity\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class Location implements JsonSerializable
+final class Location implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $location;
+    private readonly string $location;
 
-    /**
-     * @param string $location
-     */
-    public function __construct($location)
+    public function __construct(string $location)
     {
-        if (!is_string($location)) {
-            throw InvalidArgumentException::invalidType('string', 'location', $location);
-        }
-
         $this->location = trim($location);
     }
 
-    /**
-     * @param Location $otherLocation
-     * @return bool
-     */
-    public function equals(Location $otherLocation)
+    public function equals(Location $otherLocation): bool
     {
         return $this->location === $otherLocation->location;
     }
@@ -52,17 +41,17 @@ final class Location implements JsonSerializable
     /**
      * @return string
      */
-    public function getLocation()
+    public function getLocation(): string
     {
         return $this->location;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->location;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->location;
     }

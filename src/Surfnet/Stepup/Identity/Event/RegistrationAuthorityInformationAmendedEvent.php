@@ -31,28 +31,16 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'name_id',
         'institution',
         'location',
         'contact_information',
     ];
-
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
-    /**
-     * @var Location
-     */
-    public $location;
-
-    /**
-     * @var ContactInformation
-     */
-    public $contactInformation;
 
     /**
      * @param IdentityId $identityId
@@ -64,18 +52,14 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
     public function __construct(
         IdentityId $identityId,
         Institution $institution,
-        NameId $nameId,
-        Location $location,
-        ContactInformation $contactInformation
+        public NameId $nameId,
+        public Location $location,
+        public ContactInformation $contactInformation,
     ) {
         parent::__construct($identityId, $institution);
-
-        $this->nameId = $nameId;
-        $this->location = $location;
-        $this->contactInformation = $contactInformation;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -84,25 +68,25 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
         return $metadata;
     }
 
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
             new NameId($data['name_id']),
             new Location($data['location']),
-            new ContactInformation($data['contact_information'])
+            new ContactInformation($data['contact_information']),
         );
     }
 
     public function serialize(): array
     {
         return [
-            'identity_id'         => (string) $this->identityId,
-            'institution'         => (string) $this->identityInstitution,
-            'name_id'             => (string) $this->nameId,
-            'location'            => (string) $this->location,
-            'contact_information' => (string) $this->contactInformation,
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
+            'location' => (string)$this->location,
+            'contact_information' => (string)$this->contactInformation,
         ];
     }
 
@@ -111,6 +95,9 @@ class RegistrationAuthorityInformationAmendedEvent extends IdentityEvent impleme
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

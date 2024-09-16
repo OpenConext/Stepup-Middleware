@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Copyright 2018 SURFnet B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not select this file except in compliance with the License.
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
@@ -18,88 +19,62 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class InstitutionRole implements JsonSerializable
+final class InstitutionRole implements JsonSerializable, Stringable
 {
-    const ROLE_USE_RA = 'use_ra';
-    const ROLE_USE_RAA = 'use_raa';
-    const ROLE_SELECT_RAA = 'select_raa';
+    public const ROLE_USE_RA = 'use_ra';
+    public const ROLE_USE_RAA = 'use_raa';
+    public const ROLE_SELECT_RAA = 'select_raa';
 
-    private static $validRoles = [
+    private static array $validRoles = [
         self::ROLE_USE_RA,
         self::ROLE_USE_RAA,
         self::ROLE_SELECT_RAA,
     ];
 
-    /**
-     * @var string
-     */
-    private $type;
+    private readonly string $type;
 
-    /**
-     * InstitutionRole constructor.
-     * @param $type
-     */
-    public function __construct($type)
+    public function __construct(string $type)
     {
         if (!in_array($type, self::$validRoles)) {
             throw new InvalidArgumentException();
         }
-
         $this->type = $type;
     }
 
-    /**
-     * @return InstitutionRole
-     */
-    public static function useRa()
+    public static function useRa(): self
     {
         return new self(self::ROLE_USE_RA);
     }
 
-    /**
-     * @return InstitutionRole
-     */
-    public static function useRaa()
+    public static function useRaa(): self
     {
         return new self(self::ROLE_USE_RAA);
     }
 
-    /**
-     * @return InstitutionRole
-     */
-    public static function selectRaa()
+    public static function selectRaa(): self
     {
         return new self(self::ROLE_SELECT_RAA);
     }
 
-    /**
-     * @param InstitutionRole $role
-     * @return bool
-     */
-    public function equals(InstitutionRole $role)
+    public function equals(InstitutionRole $role): bool
     {
-        return $this->type == $role->getType();
+        return $this->type === $role->getType();
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->type;
     }

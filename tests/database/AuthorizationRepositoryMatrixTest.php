@@ -40,9 +40,9 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
     /**
      * @var AuthorizationRepository
      */
-    private $authzRepository;
+    private ?object $authzRepository;
 
-    public function authorizationMatrix()
+    public function authorizationMatrix(): array
     {
         $ra = RegistrationAuthorityRole::ra();
         $raa = RegistrationAuthorityRole::raa();
@@ -60,7 +60,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
         ];
     }
 
-    public function selectRaaMatrix()
+    public function selectRaaMatrix(): array
     {
         $aRaa = new IdentityId('cccfece4-e5e5-40b7-9aa4-a800d7cd3633'); // Raa @ institution A
         $ghRaa = new IdentityId('02b70719-243f-4c7d-8649-48952a816ddf'); // RAA @ institution H
@@ -93,7 +93,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
         RegistrationAuthorityRole $requiredRole,
         IdentityId $identity,
         array $expectedInstitutions
-    ) {
+    ): void {
         $institutions = $this->authzRepository->getInstitutionsForRole($requiredRole, $identity);
         $results = $this->flattenInstitutionResults($institutions);
 
@@ -102,8 +102,8 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
             $expectedInstitutions,
             sprintf(
                 'The results do not match the expected results. Actual "%s" versus expected: "%s"',
-                implode($results, ','),
-                implode($expectedInstitutions, ',')
+                implode(',', $results),
+                implode(',', $expectedInstitutions)
             )
         );
     }
@@ -111,14 +111,17 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
     /**
      * @dataProvider selectRaaMatrix
      */
-    public function test_select_raa_authorization(IdentityId $identityId, array $expected)
+    public function test_select_raa_authorization(IdentityId $identityId, array $expected): void
     {
         $institutions = $this->authzRepository->getInstitutionsForSelectRaaRole($identityId);
         $this->assertEquals($expected, $this->flattenInstitutionResults($institutions));
 
     }
 
-    private function flattenInstitutionResults(InstitutionCollection $collection)
+    /**
+     * @return mixed[]
+     */
+    private function flattenInstitutionResults(InstitutionCollection $collection): array
     {
         $institutions = [];
         /** @var Institution $institution */

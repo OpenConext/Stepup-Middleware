@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,51 +20,27 @@
 
 namespace Surfnet\Stepup\Tests\Identity\Value;
 
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\ContactInformation;
 
 class ContactInformationTest extends UnitTest
 {
-    /**
-     * @test
-     * @group        domain
-     * @dataProvider invalidValueProvider
-     *
-     * @param mixed $invalidValue
-     */
-    public function it_cannot_be_created_with_anything_but_a_nonempty_string($invalidValue)
-    {
-        $this->expectException(\Surfnet\Stepup\Exception\InvalidArgumentException::class);
-
-        new ContactInformation($invalidValue);
-    }
+    use MockeryPHPUnitIntegration;
 
     /**
      * @test
      * @group domain
      */
-    public function two_instances_with_the_same_value_are_equal()
+    public function two_instances_with_the_same_value_are_equal(): void
     {
         $contactInformation = new ContactInformation('a');
-        $theSame            = new ContactInformation('a');
-        $theSameWithSpaces  = new ContactInformation('  a ');
-        $different          = new ContactInformation('A');
+        $theSame = new ContactInformation('a');
+        $theSameWithSpaces = new ContactInformation('  a ');
+        $different = new ContactInformation('A');
 
         $this->assertTrue($contactInformation->equals($theSame));
         $this->assertTrue($contactInformation->equals($theSameWithSpaces));
         $this->assertFalse($contactInformation->equals($different));
-    }
-
-    /**
-     * dataprovider
-     */
-    public function invalidValueProvider()
-    {
-        return [
-            'array'   => [[]],
-            'integer' => [1],
-            'float'   => [1.2],
-            'object'  => [new \StdClass()],
-        ];
     }
 }

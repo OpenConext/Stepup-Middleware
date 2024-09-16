@@ -23,41 +23,42 @@ use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 use Surfnet\Stepup\Identity\Value\CommonName;
+use TypeError;
 
 /**
  * Custom Type for the CommonName Value Object
  */
 class CommonNameType extends Type
 {
-    const NAME = 'stepup_common_name';
+    public const NAME = 'stepup_common_name';
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getVarcharTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getVarcharTypeDeclarationSQL($column);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
-        return (string) $value;
+        return (string)$value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?CommonName
     {
         if (is_null($value)) {
-            return $value;
+            return null;
         }
 
         try {
             $commonName = new CommonName($value);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|TypeError $e) {
             // get nice standard message, so we can throw it keeping the exception chain
             $doctrineExceptionMessage = ConversionException::conversionFailed(
                 $value,
-                $this->getName()
+                $this->getName(),
             )->getMessage();
 
             throw new ConversionException($doctrineExceptionMessage, 0, $e);
@@ -66,7 +67,7 @@ class CommonNameType extends Type
         return $commonName;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return self::NAME;
     }

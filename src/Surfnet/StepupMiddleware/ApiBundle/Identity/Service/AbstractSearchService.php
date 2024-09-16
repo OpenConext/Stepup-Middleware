@@ -20,21 +20,18 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Service;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\InvalidArgumentException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\AbstractQuery;
 
 class AbstractSearchService
 {
-    /**
-     * @param \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query $doctrineQuery
-     * @param AbstractQuery $query
-     * @param bool $fetchCollection
-     * @return Pagerfanta
-     */
-    protected function createPaginatorFrom($doctrineQuery, AbstractQuery $query, $fetchCollection = true)
-    {
+    protected function createPaginatorFrom(
+        QueryBuilder|Query $doctrineQuery,
+        AbstractQuery $query,
+        bool $fetchCollection = true,
+    ): Pagerfanta {
         $queryObject = $doctrineQuery;
         if ($doctrineQuery instanceof QueryBuilder) {
             $queryObject = $doctrineQuery->getQuery();
@@ -44,11 +41,11 @@ class AbstractSearchService
             throw InvalidArgumentException::invalidType(
                 'Doctrine\ORM\Query or Doctrine\ORM\QueryBuilder',
                 'searchQuery',
-                $doctrineQuery
+                $doctrineQuery,
             );
         }
 
-        $adapter   = new DoctrineORMAdapter($doctrineQuery, $fetchCollection);
+        $adapter = new QueryAdapter($doctrineQuery, $fetchCollection);
         $paginator = new Pagerfanta($adapter);
         $paginator->setMaxPerPage($query->itemsPerPage);
         $paginator->setCurrentPage($query->pageNumber);
@@ -58,17 +55,16 @@ class AbstractSearchService
     }
 
     /**
-     * @param Query $doctrineQuery
-     * @return array
+     * @return array<int|string, array<string, string>>
      */
-    protected function getFilteredQueryOptions(Query $doctrineQuery)
+    protected function getFilteredQueryOptions(Query $doctrineQuery): array
     {
         $filters = [];
         $results = $doctrineQuery->getArrayResult();
         foreach ($results as $options) {
             foreach ($options as $key => $value) {
                 $val = (string)$value;
-                $filters[$key][$val] = (string)$val;
+                $filters[$key][$val] = $val;
             }
         }
 

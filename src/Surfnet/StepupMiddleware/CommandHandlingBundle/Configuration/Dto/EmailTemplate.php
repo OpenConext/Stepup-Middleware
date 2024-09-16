@@ -23,15 +23,15 @@ final class EmailTemplate
     /**
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var string
      */
-    public $locale;
+    public string $locale;
 
     /**
      * @var string
      */
-    public $htmlContent;
+    public string $htmlContent;
 }

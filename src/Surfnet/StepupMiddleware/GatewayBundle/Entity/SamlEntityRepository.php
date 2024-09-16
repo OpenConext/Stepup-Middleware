@@ -20,24 +20,23 @@ namespace Surfnet\StepupMiddleware\GatewayBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * @extends  EntityRepository<SamlEntity>
+ */
 class SamlEntityRepository extends EntityRepository
 {
     /**
      * Replace all configured service provider SamlEntities with the new SamlEntities.
-     *
-     * @param array $newSamlEntities
      */
-    public function replaceAllSps(array $newSamlEntities)
+    public function replaceAllSps(array $newSamlEntities): void
     {
         $this->replaceAllOfType(SamlEntity::TYPE_SP, $newSamlEntities);
     }
 
     /**
      * Replace all configured identity provider SamlEntities with the new SamlEntities.
-     *
-     * @param array $newSamlEntities
      */
-    public function replaceAllIdps(array $newSamlEntities)
+    public function replaceAllIdps(array $newSamlEntities): void
     {
         $this->replaceAllOfType(SamlEntity::TYPE_IDP, $newSamlEntities);
     }
@@ -46,11 +45,8 @@ class SamlEntityRepository extends EntityRepository
      * Replace all configured SamlEntities with the new SamlEntities.
      *
      * Will be updated later, see https://www.pivotaltracker.com/story/show/83532704
-     *
-     * @param string $type
-     * @param array $newSamlEntities
      */
-    private function replaceAllOfType($type, array $newSamlEntities)
+    private function replaceAllOfType(string $type, array $newSamlEntities): void
     {
         $entityManager = $this->getEntityManager();
         $counter = 0;
@@ -71,15 +67,13 @@ class SamlEntityRepository extends EntityRepository
 
     /**
      * Remove all configured SamlEntities of a specific type
-     *
-     * @param string $type
      */
-    private function removeAllOfType($type)
+    private function removeAllOfType(string $type): void
     {
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type'
+                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type',
             )
             ->execute(['type' => $type]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2016 SURFnet B.V.
  *
@@ -19,26 +21,21 @@
 namespace Surfnet\Stepup\Configuration\Value;
 
 use JsonSerializable;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
+use Stringable;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
 
-final class RaLocationId implements JsonSerializable
+final class RaLocationId implements JsonSerializable, Stringable
 {
-    /**
-     * @var string
-     */
-    private $raLocationId;
+    private readonly string $raLocationId;
 
-    /**
-     * @param string $raLocationId
-     */
-    public function __construct($raLocationId)
+    public function __construct(string $raLocationId)
     {
-        if (!is_string($raLocationId) || strlen(trim($raLocationId)) === 0) {
+        if (trim($raLocationId) === '') {
             throw InvalidArgumentException::invalidType(
                 'non-empty string',
                 'raLocationId',
-                $raLocationId
+                $raLocationId,
             );
         }
 
@@ -46,18 +43,14 @@ final class RaLocationId implements JsonSerializable
             throw InvalidArgumentException::invalidType(
                 'UUID',
                 'raLocationId',
-                $raLocationId
+                $raLocationId,
             );
         }
 
         $this->raLocationId = $raLocationId;
     }
 
-    /**
-     * @param RaLocationId $otherRaLocationId
-     * @return bool
-     */
-    public function equals(RaLocationId $otherRaLocationId)
+    public function equals(RaLocationId $otherRaLocationId): bool
     {
         return $this->raLocationId === $otherRaLocationId->raLocationId;
     }
@@ -65,17 +58,17 @@ final class RaLocationId implements JsonSerializable
     /**
      * @return string
      */
-    public function getRaLocationId()
+    public function getRaLocationId(): string
     {
         return $this->raLocationId;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->raLocationId;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): string
     {
         return $this->raLocationId;
     }

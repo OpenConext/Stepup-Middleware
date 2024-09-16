@@ -20,19 +20,26 @@ namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\Pipeline;
 
 use Broadway\CommandHandling\CommandBus;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBus;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage;
 
 class DispatchStageTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @test
      * @group pipeline
      */
-    public function it_dispatches_commands()
+    public function it_dispatches_commands(): void
     {
-        $command = m::mock('Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command');
+        $command = m::mock(AbstractCommand::class);
+        /** @var CommandBus&MockInterface $commandBus */
         $commandBus = m::mock(CommandBus::class)->makePartial()
             ->shouldReceive('dispatch')->once()->with($command)->andReturnNull()
             ->getMock();

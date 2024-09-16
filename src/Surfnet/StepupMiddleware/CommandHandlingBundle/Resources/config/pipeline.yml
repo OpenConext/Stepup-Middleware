@@ -1,64 +1,64 @@
 services:
-    pipeline:
-        alias: surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline
-        public: true
+  pipeline:
+    alias: surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline
+    public: true
 
-    # BC aliases
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline: "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline: "@surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.validation"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching"
-    Broadway\CommandHandling\SimpleCommandBus: "@surfnet_stepup_middleware_command_handling.command_bus"
-    Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener: "@surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener"
+  # BC aliases
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline: "@surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline: "@surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.validation"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage: "@surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching"
+  Broadway\CommandHandling\SimpleCommandBus: "@surfnet_stepup_middleware_command_handling.command_bus"
+  Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener: "@surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener"
 
-    surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline
-        public: true
-        arguments:
-            - "@logger"
-            - "@surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline"
-            - "@doctrine.dbal.middleware_connection"
-            - "@doctrine.dbal.gateway_connection"
+  surfnet_stepup_middleware_command_handling.pipeline.transaction_aware_pipeline:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline
+    public: true
+    arguments:
+      - "@logger"
+      - "@surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline"
+      - "@doctrine.dbal.middleware_connection"
+      - "@doctrine.dbal.gateway_connection"
 
-    surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline
-        arguments:
-            - "@logger"
+  surfnet_stepup_middleware_command_handling.pipeline.staged_pipeline:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\StagedPipeline
+    arguments:
+      - "@logger"
 
-    surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage
-        arguments:
-            - "@logger"
-            - "@security.authorization_checker"
-        tags: [{ name: pipeline.stage, priority: 100 }]
+  surfnet_stepup_middleware_command_handling.pipeline.stage.authorizing:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\AuthorizingStage
+    arguments:
+      - "@logger"
+      - "@security.authorization_checker"
+    tags: [ { name: pipeline.stage, priority: 100 } ]
 
-    surfnet_stepup_middleware_command_handling.pipeline.stage.validation:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage
-        arguments:
-            - "@logger"
-            - "@validator"
-        tags: [{ name: pipeline.stage, priority: 75 }]
+  surfnet_stepup_middleware_command_handling.pipeline.stage.validation:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\ValidationStage
+    arguments:
+      - "@logger"
+      - "@validator"
+    tags: [ { name: pipeline.stage, priority: 75 } ]
 
-    surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage
-        arguments:
-            - "@logger"
-            - "@surfnet_stepup_middleware_command_handling.command_bus"
-        tags: [{ name: pipeline.stage, priority: 50 }]
+  surfnet_stepup_middleware_command_handling.pipeline.stage.dispatch:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\DispatchStage
+    arguments:
+      - "@logger"
+      - "@surfnet_stepup_middleware_command_handling.command_bus"
+    tags: [ { name: pipeline.stage, priority: 50 } ]
 
-    surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage
-        arguments:
-            - "@logger"
-            - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
-        tags: [{ name: pipeline.stage, priority: 25 }]
+  surfnet_stepup_middleware_command_handling.pipeline.stage.event_dispatching:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\EventDispatchingStage
+    arguments:
+      - "@logger"
+      - "@surfnet_stepup_middleware_command_handling.event_bus.buffered"
+    tags: [ { name: pipeline.stage, priority: 25 } ]
 
-    surfnet_stepup_middleware_command_handling.command_bus:
-        class: Broadway\CommandHandling\SimpleCommandBus
+  surfnet_stepup_middleware_command_handling.command_bus:
+    class: Broadway\CommandHandling\SimpleCommandBus
 
-    surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener:
-        class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, priority: 10 }
+  surfnet_stepup_middleware_command_handling.listener.invalid_command_exception_listener:
+    class: Surfnet\StepupMiddleware\CommandHandlingBundle\EventListener\ProcessingAbortedExceptionListener
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, priority: 10 }

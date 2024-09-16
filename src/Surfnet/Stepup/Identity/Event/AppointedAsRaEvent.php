@@ -29,28 +29,24 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\RightToObtainDa
  */
 class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInterface
 {
-    private $allowlist = [
+    /**
+     * @var string[]
+     */
+    private array $allowlist = [
         'identity_id',
         'institution',
         'name_id',
     ];
 
-    /**
-     * @var NameId
-     */
-    public $nameId;
-
     public function __construct(
         IdentityId $identityId,
         Institution $identityInstitution,
-        NameId $nameId
+        public NameId $nameId,
     ) {
         parent::__construct($identityId, $identityInstitution);
-
-        $this->nameId = $nameId;
     }
 
-    public function getAuditLogMetadata()
+    public function getAuditLogMetadata(): Metadata
     {
         $metadata = new Metadata();
         $metadata->identityId = $this->identityId;
@@ -59,27 +55,21 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         return $metadata;
     }
 
-    /**
-     * @return mixed The object instance
-     */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new IdentityId($data['identity_id']),
             new Institution($data['institution']),
-            new NameId($data['name_id'])
+            new NameId($data['name_id']),
         );
     }
 
-    /**
-     * @return array
-     */
     public function serialize(): array
     {
         return [
-            'identity_id'    => (string) $this->identityId,
-            'institution'    => (string) $this->identityInstitution,
-            'name_id'        => (string) $this->nameId
+            'identity_id' => (string)$this->identityId,
+            'institution' => (string)$this->identityInstitution,
+            'name_id' => (string)$this->nameId,
         ];
     }
 
@@ -88,6 +78,9 @@ class AppointedAsRaEvent extends IdentityEvent implements RightToObtainDataInter
         return $this->serialize();
     }
 
+    /**
+     * @return string[]
+     */
     public function getAllowlist(): array
     {
         return $this->allowlist;

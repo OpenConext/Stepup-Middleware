@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 class FixedUuidStubCommand extends AbstractCommand implements Command
 {
     /**
-     * @var string generated using \Rhumsaa\Uuid\Uuid::uuid4()
+     * @var string generated using \Ramsey\Uuid\Uuid::uuid4()
      */
-    public $UUID = '1e8a8dc6-852e-4df8-ba23-8c18061b7c38';
+    public string $UUID = '1e8a8dc6-852e-4df8-ba23-8c18061b7c38';
 }

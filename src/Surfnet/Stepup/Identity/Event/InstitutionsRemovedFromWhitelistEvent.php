@@ -22,21 +22,15 @@ use Surfnet\Stepup\Identity\Collection\InstitutionCollection;
 
 class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
 {
-    /**
-     * @var InstitutionCollection
-     */
-    public $removedInstitutions;
-
-    public function __construct(InstitutionCollection $removedInstitutions)
+    public function __construct(public InstitutionCollection $removedInstitutions)
     {
-        $this->removedInstitutions = $removedInstitutions;
     }
 
     /**
      * @param array $data
      * @return InstitutionsRemovedFromWhitelistEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(InstitutionCollection::deserialize($data['removed_institutions']));
     }
@@ -44,6 +38,8 @@ class InstitutionsRemovedFromWhitelistEvent implements WhitelistEvent
 
     /**
      * The data ending up in the event_stream, be careful not to include sensitive data here!
+     *
+     * @return array<string, mixed>
      */
     public function serialize(): array
     {

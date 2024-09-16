@@ -19,90 +19,72 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Identity\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\Institution;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\RecoveryTokenStatus;
 
-/**
- * @ORM\Entity(
- *     repositoryClass="Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RecoveryTokenRepository"
- * )
- * @ORM\Table(
- *      indexes={
- *          @ORM\Index(name="idx_recovery_method_type", columns={"type"}),
- *     }
- * )
- */
-class RecoveryToken implements \JsonSerializable
+#[ORM\Table]
+#[ORM\Index(name: 'idx_recovery_method_type', columns: ['type'])]
+#[ORM\Entity(repositoryClass: RecoveryTokenRepository::class)]
+class RecoveryToken implements JsonSerializable
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(length=36)
-     *
-     * @var string
-     */
-    public $id;
+    #[ORM\Id]
+    #[ORM\Column(length: 36)]
+    public string $id;
 
     /**
-     * @ORM\Column(length=36)
-     *
      * @var string
      */
-    public $identityId;
+    #[ORM\Column(length: 36)]
+    public string $identityId;
 
     /**
-     * @ORM\Column(length=16)
-     *
      * @var string
      */
-    public $type;
+    #[ORM\Column(length: 16)]
+    public string $type;
 
     /**
-     * @ORM\Column(type="stepup_recovery_token_status")
-     *
      * @var RecoveryTokenStatus
      */
-    public $status;
+    #[ORM\Column(type: 'stepup_recovery_token_status')]
+    public RecoveryTokenStatus $status;
 
     /**
-     * @ORM\Column(type="institution")
-     *
      * @var Institution
      */
-    public $institution;
+    #[ORM\Column(type: 'institution')]
+    public Institution $institution;
 
     /**
      * The name of the registrant.
-     *
-     * @ORM\Column(type="stepup_common_name")
-     *
      * @var CommonName
      */
-    public $name;
+    #[ORM\Column(type: 'stepup_common_name')]
+    public CommonName $name;
 
     /**
      * The e-mail of the registrant.
-     *
-     * @ORM\Column(type="stepup_email")
-     *
      * @var Email
      */
-    public $email;
+    #[ORM\Column(type: 'stepup_email')]
+    public Email $email;
 
     /**
-     * @ORM\Column(length=255)
-     *
      * @var string
      */
-    public $recoveryMethodIdentifier;
+    #[ORM\Column(length: 255)]
+    public string $recoveryMethodIdentifier;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
-            'id'   => $this->id,
+            'id' => $this->id,
             'type' => $this->type,
-            'status' => (string) $this->status,
+            'status' => (string)$this->status,
             'recovery_method_identifier' => $this->recoveryMethodIdentifier,
             'identity_id' => $this->identityId,
             'name' => $this->name,

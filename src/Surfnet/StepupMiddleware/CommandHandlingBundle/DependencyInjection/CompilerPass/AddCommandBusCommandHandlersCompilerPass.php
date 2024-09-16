@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AddCommandBusCommandHandlersCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition('surfnet_stepup_middleware_command_handling.command_bus');
         $commandHandlerDefinitions = $container->findTaggedServiceIds('command_bus.command_handler');

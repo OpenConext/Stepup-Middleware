@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Security\Http\EntryPoint;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
@@ -28,27 +29,22 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
  */
 class JsonBasicAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
-    private $realmName;
-
-    public function __construct($realmName)
+    public function __construct(private string $realmName)
     {
-        $this->realmName = $realmName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        $authExceptionMessage = $authException ? $authException->getMessage() : '';
+        $authExceptionMessage = $authException instanceof AuthenticationException ? $authException->getMessage() : '';
         $error = sprintf('You are required to authorise before accessing this API (%s).', $authExceptionMessage);
 
-        $response = new JsonResponse(
+        return new JsonResponse(
             ['errors' => [$error]],
-            401,
-            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)]
+            Response::HTTP_UNAUTHORIZED,
+            ['WWW-Authenticate' => sprintf('Basic realm="%s"', $this->realmName)],
         );
-
-        return $response;
     }
 }

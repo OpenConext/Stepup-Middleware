@@ -24,31 +24,19 @@ use Surfnet\Stepup\Configuration\Value\InstitutionConfigurationId;
 
 class InstitutionConfigurationRemovedEvent implements SerializableInterface
 {
-    /**
-     * @var Institution
-     */
-    public $institution;
-
-    /**
-     * @var InstitutionConfigurationId
-     */
-    public $institutionConfigurationId;
-
-    public function __construct(InstitutionConfigurationId $institutionConfigurationId, Institution $institution)
+    public function __construct(public InstitutionConfigurationId $institutionConfigurationId, public Institution $institution)
     {
-        $this->institutionConfigurationId = $institutionConfigurationId;
-        $this->institution                = $institution;
     }
 
     /**
      * @param array $data
      * @return InstitutionConfigurationRemovedEvent
      */
-    public static function deserialize(array $data)
+    public static function deserialize(array $data): self
     {
         return new self(
             new InstitutionConfigurationId($data['institution_configuration_id']),
-            new Institution($data['institution'])
+            new Institution($data['institution']),
         );
     }
 
@@ -59,7 +47,7 @@ class InstitutionConfigurationRemovedEvent implements SerializableInterface
     {
         return [
             'institution_configuration_id' => $this->institutionConfigurationId->getInstitutionConfigurationId(),
-            'institution'                  => $this->institution->getInstitution()
+            'institution' => $this->institution->getInstitution(),
         ];
     }
 }

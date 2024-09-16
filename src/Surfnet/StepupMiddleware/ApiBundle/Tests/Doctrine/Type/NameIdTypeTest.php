@@ -18,37 +18,39 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Doctrine\Type;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase as UnitTest;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType;
 
 class NameIdTypeTest extends UnitTest
 {
-    /**
-     * @var \Doctrine\DBAL\Platforms\MySqlPlatform
-     */
-    private $platform;
+    use MockeryPHPUnitIntegration;
+
+
+    private MariaDBPlatform $platform;
 
     /**
      * Register the type, since we're forced to use the factory method.
      */
     public static function setUpBeforeClass(): void
     {
-        Type::addType(NameIdType::NAME, 'Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\NameIdType');
+        Type::addType(NameIdType::NAME, NameIdType::class);
     }
 
     public function setUp(): void
     {
-        $this->platform = new MySqlPlatform();
+        $this->platform = new MariaDBPlatform();
     }
 
     /**
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_in_to_sql_conversion()
+    public function a_null_value_remains_null_in_to_sql_conversion(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
 
@@ -61,12 +63,12 @@ class NameIdTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_the_correct_format()
+    public function a_non_null_value_is_converted_to_the_correct_format(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
 
         $expected = md5('someNameId');
-        $input  = new NameId($expected);
+        $input = new NameId($expected);
         $output = $nameId->convertToDatabaseValue($input, $this->platform);
 
         $this->assertTrue(is_string($output));
@@ -77,7 +79,7 @@ class NameIdTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_null_value_remains_null_when_converting_from_db_to_php_value()
+    public function a_null_value_remains_null_when_converting_from_db_to_php_value(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
 
@@ -90,7 +92,7 @@ class NameIdTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_non_null_value_is_converted_to_a_name_id_value_object()
+    public function a_non_null_value_is_converted_to_a_name_id_value_object(): void
     {
         $nameId = Type::getType(NameIdType::NAME);
 
@@ -98,7 +100,7 @@ class NameIdTypeTest extends UnitTest
 
         $output = $nameId->convertToPHPValue($input, $this->platform);
 
-        $this->assertInstanceOf('Surfnet\Stepup\Identity\Value\NameId', $output);
+        $this->assertInstanceOf(NameId::class, $output);
         $this->assertEquals(new NameId($input), $output);
     }
 
@@ -106,9 +108,9 @@ class NameIdTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function an_invalid_database_value_causes_an_exception_upon_conversion()
+    public function an_invalid_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $nameId = Type::getType(NameIdType::NAME);
 
@@ -119,9 +121,9 @@ class NameIdTypeTest extends UnitTest
      * @test
      * @group doctrine
      */
-    public function a_excessive_long_database_value_causes_an_exception_upon_conversion()
+    public function a_excessive_long_database_value_causes_an_exception_upon_conversion(): void
     {
-        $this->expectException(\Doctrine\DBAL\Types\ConversionException::class);
+        $this->expectException(ConversionException::class);
 
         $nameId = Type::getType(NameIdType::NAME);
         // the bin2hex openssle random bytes combination creates a string of 256 characters long.

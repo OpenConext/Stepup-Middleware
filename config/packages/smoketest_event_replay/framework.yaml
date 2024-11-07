@@ -1,4 +1,0 @@
-framework:
-  test: ~
-  profiler:
-    collect: false

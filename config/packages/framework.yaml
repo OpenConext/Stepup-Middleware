@@ -14,3 +14,20 @@ framework:
     fragments: false
     php_errors:
         log: true
+
+when@dev:
+    framework:
+        router:
+            strict_requirements: true
+        profiler: { only_exceptions: false }
+
+when@smoketest: &testOverride
+    framework:
+        test: true
+        profiler:
+            collect: false
+        php_errors:
+            log: false # prevents user deprecated warnings
+
+when@test: *testOverride
+when@sometest_event_replay: *testOverride

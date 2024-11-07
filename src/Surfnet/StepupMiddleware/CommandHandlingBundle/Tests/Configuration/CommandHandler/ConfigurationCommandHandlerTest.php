@@ -155,7 +155,9 @@ final class ConfigurationCommandHandlerTest extends CommandHandlerTest
         if (!is_string($encodedConfiguration)) {
             throw new RuntimeException('The configuration could not be json_encoded');
         }
-        return new UpdateConfigurationCommand($encodedConfiguration);
+        $configuration = new UpdateConfigurationCommand();
+        $configuration->configuration = $encodedConfiguration;
+        return $configuration;
     }
 
     /**

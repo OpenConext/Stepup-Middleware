@@ -25,11 +25,6 @@ use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints as Managemen
 class UpdateConfigurationCommand extends AbstractCommand implements ManagementExecutable
 {
 
-    public function __construct(
-        /**
-         * @ManagementAssert\HasValidConfigurationStructure
-         */
-        public string $configuration
-    ) {
-    }
+    #[ManagementAssert\HasValidConfigurationStructure]
+    public string $configuration;
 }

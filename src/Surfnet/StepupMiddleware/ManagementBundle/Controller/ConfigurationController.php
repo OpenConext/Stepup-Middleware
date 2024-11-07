@@ -36,7 +36,8 @@ class ConfigurationController extends AbstractController
 
     public function update(Request $request): JsonResponse
     {
-        $command = new UpdateConfigurationCommand($request->getContent());
+        $command = new UpdateConfigurationCommand();
+        $command->configuration = $request->getContent();
         $command->UUID = (string)Uuid::uuid4();
 
         return $this->handleCommand($request, $command);

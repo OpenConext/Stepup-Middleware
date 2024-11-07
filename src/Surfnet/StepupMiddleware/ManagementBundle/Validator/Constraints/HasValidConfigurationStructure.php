@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types = 1);
 /**
  * Copyright 2014 SURFnet bv
  *
@@ -18,11 +19,10 @@
 
 namespace Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[Attribute]
 class HasValidConfigurationStructure extends Constraint
 {
     public string $message = 'Invalid Configuration Structure';

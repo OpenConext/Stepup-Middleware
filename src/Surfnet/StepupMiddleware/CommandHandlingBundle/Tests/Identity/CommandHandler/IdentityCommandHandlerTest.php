@@ -64,6 +64,8 @@ use Surfnet\Stepup\Identity\Value\StepupProvider;
 use Surfnet\Stepup\Identity\Value\TimeFrame;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\Stepup\Identity\Value\YubikeyPublicId;
+use Surfnet\Stepup\Token\TokenGenerator;
+use Surfnet\StepupBundle\Security\OtpGenerator;
 use Surfnet\StepupBundle\Service\LoaResolutionService;
 use Surfnet\StepupBundle\Service\SecondFactorTypeService;
 use Surfnet\StepupBundle\Value\Loa;
@@ -243,9 +245,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+        m::mock('alias:'.TokenGenerator::class)
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -308,11 +308,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     public function a_yubikey_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
-
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
         $institution = new Institution('A Corp.');
@@ -420,9 +415,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+        m::mock('alias:'.TokenGenerator::class)
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -486,11 +479,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
-
         $id = new IdentityId(self::uuid());
         $institution = new Institution('A Corp.');
         $nameId = new NameId(md5(__METHOD__));
@@ -537,11 +525,8 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-
         $nonce = 'nonce';
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+        m::mock('alias:'.TokenGenerator::class)
             ->shouldReceive('generateNonce')->once()->andReturn($nonce);
 
         $identityId = new IdentityId(self::uuid());
@@ -617,13 +602,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-
-        $nonce = 'nonce';
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateNonce')->once()->andReturn($nonce);
-
         $identityId = new IdentityId(self::uuid());
         $institution = new Institution('Surfnet');
         $nameId = new NameId(md5(__METHOD__));
@@ -672,9 +650,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
 
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
+        m::mock('alias:'.TokenGenerator::class)
             ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
@@ -737,11 +713,6 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
     public function a_u2f_device_possession_cannot_be_proven_if_the_second_factor_is_not_allowed_by_the_institution(): void
     {
         DateTimeHelper::setCurrentTime(new DateTime(new CoreDateTime('@12345')));
-
-        m::mock('alias:Surfnet\StepupBundle\Security\OtpGenerator')
-            ->shouldReceive('generate')->once()->andReturn('regcode');
-        m::mock('alias:Surfnet\Stepup\Token\TokenGenerator')
-            ->shouldReceive('generateNonce')->once()->andReturn('nonce');
 
         $id = new IdentityId(self::uuid());
         $institution = new Institution('A Corp.');
@@ -1329,6 +1300,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
         $command->secondFactorIdentifier = '00028278';
         $command->documentNumber = 'NH9392';
         $command->identityVerified = true;
+        $command->provePossessionSkipped = false;
 
         $authorityId = new IdentityId($command->authorityId);
         $authorityInstitution = new Institution('Wazoo');

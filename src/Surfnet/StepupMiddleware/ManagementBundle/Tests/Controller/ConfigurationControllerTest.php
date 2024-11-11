@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ManagementBundle\Tests\Controller;
 
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -35,20 +36,18 @@ class ConfigurationControllerTest extends WebTestCase
 
     private string $passwordRo;
 
-    private ORMSqliteDatabaseTool $databaseTool;
+    private AbstractDatabaseTool $databaseTool;
 
     public function setUp(): void
     {
-        $tool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
-        if (!$tool instanceof ORMSqliteDatabaseTool) {
+        $this->client = static::createClient();
+        $databaseTool = $this->client->getContainer()->get(DatabaseToolCollection::class);
+        if (!$databaseTool instanceof DatabaseToolCollection) {
             $this->fail('Unable to grab the ORMSqliteDatabaseTool from the container');
         }
-        $this->databaseTool = $tool;
-
+        $this->databaseTool = $databaseTool->get();
         // Initialises schema.
         $this->databaseTool->loadFixtures([]);
-        // Initialises schema.
-        $this->client = static::createClient();
 
         $managementPassword = $this->client->getKernel()->getContainer()->getParameter('management_password');
         if (!is_string($managementPassword)) {

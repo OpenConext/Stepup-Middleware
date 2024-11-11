@@ -44,18 +44,18 @@ class AuthorizedInstitutionCollection
 
         /** @var string $institution */
         foreach ($raInstitutions as $institution) {
-            $collection->authorizations[$institution][] = AuthorityRole::ROLE_RA;
+            $collection->authorizations[(string)$institution][] = AuthorityRole::ROLE_RA;
         }
         if ($raaInstitutions instanceof InstitutionCollection) {
             /** @var string $institution */
             foreach ($raaInstitutions as $institution) {
                 // Override existing lower role
-                if (isset($collection->authorizations[$institution])
-                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[$institution])
+                if (isset($collection->authorizations[(string)$institution])
+                    && in_array(AuthorityRole::ROLE_RA, $collection->authorizations[(string)$institution])
                 ) {
-                    $collection->authorizations[$institution] = [];
+                    $collection->authorizations[(string)$institution] = [];
                 }
-                $collection->authorizations[$institution][] = AuthorityRole::ROLE_RAA;
+                $collection->authorizations[(string)$institution][] = AuthorityRole::ROLE_RAA;
             }
         }
         return $collection;

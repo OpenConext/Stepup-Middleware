@@ -30,7 +30,7 @@ services:
       - { name: 'console.command', command: 'middleware:event:replay' }
     arguments:
       - "@middleware.event_replay.event_stream_replayer"
-      - "%app_env%"
+      - '%env(APP_ENV)%'
 
   Surfnet\StepupMiddleware\MiddlewareBundle\Console\Command\BootstrapIdentityWithYubikeySecondFactorCommand:
     tags:

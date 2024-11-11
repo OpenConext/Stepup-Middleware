@@ -86,7 +86,7 @@ class InstitutionParamConverterTest extends UnitTest
         $query
             ->shouldReceive('get')
             ->once()
-            ->with('institution', false)
+            ->with('institution')
             ->andReturn($returnValue);
 
         return $query;

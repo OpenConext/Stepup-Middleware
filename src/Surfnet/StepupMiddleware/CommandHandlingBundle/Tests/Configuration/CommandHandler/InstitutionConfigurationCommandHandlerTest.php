@@ -68,7 +68,6 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Tests\CommandHandlerTest;
 
 class InstitutionConfigurationCommandHandlerTest extends CommandHandlerTest
 {
-    use MockeryPHPUnitIntegration;
 
     /**
      * @test

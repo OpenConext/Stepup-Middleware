@@ -73,7 +73,7 @@ class SamlEntityRepository extends EntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM SurfnetStepupMiddlewareGatewayBundle:SamlEntity se WHERE se.type = :type',
+                'DELETE FROM Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity se WHERE se.type = :type',
             )
             ->execute(['type' => $type]);
     }

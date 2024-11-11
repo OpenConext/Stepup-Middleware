@@ -21,6 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Tests\Endpoint;
 use Doctrine\Persistence\ManagerRegistry;
 use Generator;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Liip\TestFixturesBundle\Services\DatabaseTools\ORMSqliteDatabaseTool;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -44,19 +45,20 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
      */
     private string $endpoint;
 
-    private ORMSqliteDatabaseTool $databaseTool;
+    private AbstractDatabaseTool $databaseTool;
 
 
     public function setUp(): void
     {
         self::ensureKernelShutdown();
-        $this->client = static::createClient();
 
-        $tool = static::getContainer()->get(ORMSqliteDatabaseTool::class);
-        if (!$tool instanceof ORMSqliteDatabaseTool) {
+        $this->client = static::createClient();
+        $databaseTool = $this->client->getContainer()->get(DatabaseToolCollection::class);
+        if (!$databaseTool instanceof DatabaseToolCollection) {
             $this->fail('Unable to grab the ORMSqliteDatabaseTool from the container');
         }
-        $this->databaseTool = $tool;
+        $this->databaseTool = $databaseTool->get();
+
         $registry = static::getContainer()->get(ManagerRegistry::class);
         assert($registry instanceof ManagerRegistry, 'ManagerRegistry could not be fetched from the container');
         $this->databaseTool->setRegistry($registry);

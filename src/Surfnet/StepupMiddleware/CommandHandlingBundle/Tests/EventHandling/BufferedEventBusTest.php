@@ -42,9 +42,8 @@ class BufferedEventBusTest extends TestCase
     {
         $event = $this->createDummyDomainMessage(null);
         /** @var EventListener&MockInterface $listener */
-        $listener = m::mock(EventListener::class)
-            ->shouldNotHaveReceived('handle')
-            ->getMock();
+        $listener = m::mock(EventListener::class);
+        $listener->shouldNotHaveReceived('handle');
 
         $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);
@@ -63,9 +62,8 @@ class BufferedEventBusTest extends TestCase
     {
         $event = $this->createDummyDomainMessage(null);
         /** @var EventListener&MockInterface $listener */
-        $listener = m::mock(EventListener::class)
-            ->shouldReceive('handle')->once()->with($event)
-            ->getMock();
+        $listener = m::mock(EventListener::class);
+        $listener->shouldReceive('handle')->once()->with($event);
 
         $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);
@@ -86,9 +84,8 @@ class BufferedEventBusTest extends TestCase
     {
         $event = $this->createDummyDomainMessage(null);
         /** @var EventListener&MockInterface $listener */
-        $listener = m::mock(EventListener::class)
-            ->shouldReceive('handle')->once()->with($event)
-            ->getMock();
+        $listener = m::mock(EventListener::class);
+        $listener->shouldReceive('handle')->once()->with($event);
 
         $bus = new BufferedEventBus($this->getDummyEntityManager());
         $bus->subscribe($listener);

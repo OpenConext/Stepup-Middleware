@@ -39,7 +39,6 @@ use function is_string;
 
 final class ConfigurationCommandHandlerTest extends CommandHandlerTest
 {
-    use MockeryPHPUnitIntegration;
 
     /**
      * Shorthand for fixed Configuration ID.

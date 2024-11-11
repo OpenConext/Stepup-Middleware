@@ -38,7 +38,7 @@ class Configuration extends EventSourcedAggregateRoot implements ConfigurationIn
     /**
      * @var array
      */
-    private array $configuration;
+    private array|null $configuration = null;
 
     public static function create(): self
     {

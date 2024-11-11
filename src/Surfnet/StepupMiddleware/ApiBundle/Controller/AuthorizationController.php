@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonAuthorizationResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 
 class AuthorizationController extends AbstractController
 {

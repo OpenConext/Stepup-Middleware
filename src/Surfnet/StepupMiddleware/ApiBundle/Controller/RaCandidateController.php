@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Service\AuthorizationContex
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaCandidateQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RaCandidateService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,7 +43,7 @@ class RaCandidateController extends AbstractController
      */
     public function search(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -71,7 +71,7 @@ class RaCandidateController extends AbstractController
      */
     public function get(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 

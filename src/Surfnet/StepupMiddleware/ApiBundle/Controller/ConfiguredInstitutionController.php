@@ -19,7 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\ConfiguredInstitutionService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConfiguredInstitutionController extends AbstractController
@@ -31,7 +31,7 @@ class ConfiguredInstitutionController extends AbstractController
 
     public function collection(): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $allListings = $this->configuredInstitutionService->getAllAsInstitution();
 

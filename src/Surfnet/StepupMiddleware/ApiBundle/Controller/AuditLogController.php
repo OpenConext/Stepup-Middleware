@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\SecondFactorAuditLogQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\AuditLogService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 final class AuditLogController extends AbstractController
@@ -36,7 +36,7 @@ final class AuditLogController extends AbstractController
 
     public function secondFactorAuditLog(Request $request, Institution $institution): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $identityId = $request->get('identityId');
         if (empty($identityId)) {

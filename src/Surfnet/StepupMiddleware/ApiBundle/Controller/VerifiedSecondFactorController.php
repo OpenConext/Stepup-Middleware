@@ -29,7 +29,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorOfIden
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VerifiedSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SecondFactorService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -48,7 +48,7 @@ class VerifiedSecondFactorController extends AbstractController
 
     public function get(string $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 
@@ -61,7 +61,7 @@ class VerifiedSecondFactorController extends AbstractController
 
     public function collection(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $actorId = new IdentityId($request->get('actorId'));
 
@@ -89,7 +89,7 @@ class VerifiedSecondFactorController extends AbstractController
 
     public function collectionOfIdentity(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_SS', 'ROLE_READ']);
         $query = new VerifiedSecondFactorOfIdentityQuery();
 
         $query->identityId = new IdentityId($request->get('identityId'));
@@ -102,7 +102,7 @@ class VerifiedSecondFactorController extends AbstractController
 
     public function getCanSkipProvePossession(string $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $secondFactor = $this->secondFactorService->findVerified(new SecondFactorId($id));
 

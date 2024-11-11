@@ -36,6 +36,8 @@ class ConfigurationController extends AbstractController
 
     public function update(Request $request): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
+
         $command = new UpdateConfigurationCommand();
         $command->configuration = $request->getContent();
         $command->UUID = (string)Uuid::uuid4();

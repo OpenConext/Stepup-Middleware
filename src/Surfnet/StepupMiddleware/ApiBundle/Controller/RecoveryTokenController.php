@@ -27,7 +27,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Exception\NotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RecoveryTokenQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\RecoveryTokenService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -47,7 +47,7 @@ class RecoveryTokenController extends AbstractController
 
     public function get(string $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(sprintf('Received request to get recovery token: %s', $id));
 
         try {
@@ -60,7 +60,7 @@ class RecoveryTokenController extends AbstractController
 
     public function collection(Request $request): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
         $this->logger->info(
             sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()),
         );

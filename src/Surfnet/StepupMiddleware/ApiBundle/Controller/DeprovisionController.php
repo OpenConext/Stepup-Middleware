@@ -22,7 +22,7 @@ use Exception;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFormatterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
@@ -35,7 +35,7 @@ class DeprovisionController extends AbstractController
 
     public function deprovision(string $collabPersonId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_DEPROVISION']);
         $errors = [];
         try {
             $userData = $this->deprovisionService->readUserData($collabPersonId);
@@ -56,7 +56,7 @@ class DeprovisionController extends AbstractController
 
     public function dryRun(string $collabPersonId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_DEPROVISION']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_DEPROVISION']);
         $errors = [];
         try {
             $userData = $this->deprovisionService->readUserData($collabPersonId);

@@ -31,7 +31,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\Exception\ForbiddenException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\CreateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\UpdateIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -54,7 +54,7 @@ class CommandController extends AbstractController
 
     public function handle(AbstractCommand $command, Metadata $metadata, Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS']);
         $this->logger->notice(sprintf('Received request to process Command "%s"', $command));
 
         $this->metadataEnricher->setMetadata($metadata);

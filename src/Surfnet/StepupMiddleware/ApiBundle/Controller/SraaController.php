@@ -21,7 +21,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\SraaService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SraaController extends AbstractController
@@ -36,7 +36,7 @@ class SraaController extends AbstractController
      */
     public function get(string $nameId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         $sraa = $this->sraaService->findByNameId(new NameId($nameId));
 
@@ -49,7 +49,7 @@ class SraaController extends AbstractController
 
     public function list(): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_READ']);
 
         return new JsonResponse($this->sraaService->findAll());
     }

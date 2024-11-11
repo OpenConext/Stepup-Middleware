@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -38,7 +38,7 @@ class IdentityController extends AbstractController
 
     public function get(string $id): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $identity = $this->identityService->find($id);
 
@@ -51,7 +51,7 @@ class IdentityController extends AbstractController
 
     public function collection(Request $request, Institution $institution): JsonCollectionResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new IdentityQuery();
         $query->institution = $institution;
@@ -67,7 +67,7 @@ class IdentityController extends AbstractController
 
     public function getRegistrationAuthorityCredentials(string $identityId): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $identityService = $this->identityService;
 

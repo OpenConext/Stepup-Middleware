@@ -23,7 +23,7 @@ use Surfnet\Stepup\Configuration\Value\InstitutionRole;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\AllowedSecondFactorListService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionAuthorizationService;
 use Surfnet\StepupMiddleware\ApiBundle\Configuration\Service\InstitutionConfigurationOptionsService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -38,7 +38,7 @@ final class InstitutionConfigurationOptionsController extends AbstractController
 
     public function getForInstitution(string $institutionName): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
+        $this->denyAccessUnlessGrantedOneOff(['ROLE_SS', 'ROLE_RA', 'ROLE_READ']);
 
         $institution = new Institution($institutionName);
 

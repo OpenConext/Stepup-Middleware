@@ -50,7 +50,7 @@ class WhitelistController extends AbstractController
 
     public function replaceWhitelist(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $command = new ReplaceWhitelistCommand();
         $command->UUID = (string)Uuid::uuid4();
@@ -61,7 +61,7 @@ class WhitelistController extends AbstractController
 
     public function addToWhitelist(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $command = new AddToWhitelistCommand();
         $command->UUID = (string)Uuid::uuid4();
@@ -72,7 +72,7 @@ class WhitelistController extends AbstractController
 
     public function removeFromWhitelist(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $command = new RemoveFromWhitelistCommand();
         $command->UUID = (string)Uuid::uuid4();

@@ -49,7 +49,7 @@ class RightToBeForgottenController extends AbstractController
 
     public function forgetIdentity(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $payload = JsonHelper::decode($request->getContent());
 

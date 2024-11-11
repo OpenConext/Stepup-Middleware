@@ -59,7 +59,7 @@ final class InstitutionConfigurationController extends AbstractController
 
     public function show(): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $institutionConfigurationOptions = $this->institutionConfigurationOptionsService
             ->findAllInstitutionConfigurationOptions();
@@ -104,7 +104,7 @@ final class InstitutionConfigurationController extends AbstractController
 
     public function reconfigure(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted(['ROLE_MANAGEMENT']);
+        $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
 
         $configuration = JsonHelper::decode($request->getContent());
 

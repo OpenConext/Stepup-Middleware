@@ -18,7 +18,7 @@
 
 return [
     'expectedPropertyPath' => 'Institution(surfnet.nl)',
-    'expectErrorMessageToContain' => 'All values of option "use_raa" should be known institutions.',
+    'expectErrorMessageToContain' => 'All values of option "use_raa" for "surfnet.nl" should be known institutions.',
     'reconfigureInstitutionRequest' => [
         'surfnet.nl' => [
             "use_ra_locations" => true,

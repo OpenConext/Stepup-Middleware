@@ -20,23 +20,33 @@ namespace Surfnet\StepupMiddleware\ManagementBundle\Controller;
 
 use DateTime;
 use Ramsey\Uuid\Uuid;
+use Surfnet\Stepup\Helper\JsonHelper;
+use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Configuration\Command\UpdateConfigurationCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\TransactionAwarePipeline;
+use Surfnet\StepupMiddleware\ManagementBundle\Validator\Constraints\HasValidConfigurationStructure;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ConfigurationController extends AbstractController
 {
     public function __construct(
         private readonly TransactionAwarePipeline $pipeline,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
     public function update(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_MANAGEMENT');
+
+        $violations = $this->validator->validate($request->getContent(), new HasValidConfigurationStructure());
+        if ($violations->count() > 0) {
+            throw BadCommandRequestException::withViolations('Invalid configure institutions request', $violations);
+        }
 
         $command = new UpdateConfigurationCommand();
         $command->configuration = $request->getContent();

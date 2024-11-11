@@ -38,6 +38,13 @@ class DBALConnectionHelper
             if (!$connection instanceof Connection) {
                 throw InvalidArgumentException::invalidType(Connection::class, 'connection', $connection);
             }
+            if (!$connection->getDatabasePlatform()->supportsSavepoints()) {
+                throw new InvalidArgumentException(sprintf(
+                    "Connection  for database '%s' does not support nested savepoints",
+                    $connection->getDatabase()
+                ));
+            }
+            $connection->setNestTransactionsWithSavepoints(true);
         }
 
         $this->connections = $connections;

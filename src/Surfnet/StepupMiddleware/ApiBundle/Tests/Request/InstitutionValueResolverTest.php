@@ -22,25 +22,28 @@ use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as UnitTest;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
-use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter;
+use Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionValueResolver;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class InstitutionParamConverterTest extends UnitTest
+class InstitutionValueResolverTest extends UnitTest
 {
     use MockeryPHPUnitIntegration;
 
     private MockInterface&Request $request;
 
-    private MockInterface&ParamConverter $paramConverterConfig;
+    private MockInterface&ArgumentMetadata $argument;
 
     public function setUp(): void
     {
         $this->request = m::mock(Request::class);
-        $this->paramConverterConfig = m::mock(ParamConverter::class);
+        $this->argument = m::mock(ArgumentMetadata::class);
+        $this->argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Institution::class);
     }
 
     /**
@@ -53,31 +56,27 @@ class InstitutionParamConverterTest extends UnitTest
 
         $this->request->query = $this->mockQuery(false);
 
-        $converter = new InstitutionParamConverter();
-        $converter->apply($this->request, $this->paramConverterConfig);
+        $converter = new InstitutionValueResolver();
+        $converter->resolve($this->request, $this->argument);
     }
 
     /**
      * @test
      * @group api-bundle
      */
-    public function an_institution_is_set_as_attribute(): void
+    public function an_institution_is_resolved(): void
     {
         $query = $this->mockQuery('ABC');
-        $query
-            ->shouldReceive('remove')
-            ->with('institution')
-            ->once();
 
         $this->request->query = $query;
-        $this->request->attributes = new ParameterBag();
 
         $equal = new Institution('ABC');
 
-        $converter = new InstitutionParamConverter();
-        $converter->apply($this->request, $this->paramConverterConfig);
+        $converter = new InstitutionValueResolver();
+        $result = $converter->resolve($this->request, $this->argument);
 
-        $this->assertTrue($this->request->attributes->get('institution')->equals($equal));
+        $this->assertCount(1, $result);
+        $this->assertEquals($equal, $result[0]);
     }
 
     private function mockQuery(bool|string $returnValue): ParameterBag&MockInterface

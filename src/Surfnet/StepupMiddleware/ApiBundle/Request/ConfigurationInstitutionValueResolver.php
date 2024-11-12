@@ -18,26 +18,29 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\Stepup\Configuration\Value\Institution;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadApiRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class ConfigurationInstitutionParamConverter implements ParamConverterInterface
+class ConfigurationInstitutionValueResolver implements ValueResolverInterface
 {
     public const INSTITUTION = 'institution';
 
-    public function apply(Request $request, ParamConverter $configuration): bool
+    /**
+     * @return Institution[]
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
-        $request->attributes->set(self::INSTITUTION, new Institution($this->getInstitutionFromRequest($request)));
-        return true;
-    }
+        $argumentType = $argument->getType();
+        if (!$argumentType
+            || !is_subclass_of($argumentType, Institution::class, true)
+        ) {
+            return [];
+        }
 
-    public function supports(ParamConverter $configuration): bool
-    {
-        return $configuration->getName() === self::INSTITUTION
-            && $configuration->getClass() === Institution::class;
+        return [new Institution($this->getInstitutionFromRequest($request))];
     }
 
     /**

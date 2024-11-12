@@ -34,7 +34,6 @@
         "pagerfanta/doctrine-orm-adapter": "*",
         "pagerfanta/pagerfanta": "^4.3",
         "ramsey/uuid": "^4.7",
-        "sensio/framework-extra-bundle": "*",
         "surfnet/stepup-bundle": "^6.0",
         "symfony/asset": "6.4.*",
         "symfony/expression-language": "6.4.*",

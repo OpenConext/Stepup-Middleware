@@ -18,28 +18,38 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Metadata;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class MetadataParamConverter implements ParamConverterInterface
+class MetadataValueResolver implements ValueResolverInterface
 {
     public function __construct(private readonly ValidatorInterface $validator)
     {
     }
 
-    public function apply(Request $request, ParamConverter $configuration): bool
+    /**
+     * @return Metadata[]
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        $argumentType = $argument->getType();
+        if (!$argumentType
+            || $argumentType !== Metadata::class
+        ) {
+            return [];
+        }
+
         $data = json_decode($request->getContent());
 
         $this->assertIsValidMetadataStructure($data);
 
         $metadata = new Metadata();
 
-        foreach ($data->meta as $property => $value) {
+        foreach ((array)$data->meta as $property => $value) {
             $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', (string)$property))));
             $metadata->$properlyCasedProperty = $value;
         }
@@ -49,14 +59,7 @@ class MetadataParamConverter implements ParamConverterInterface
             throw BadCommandRequestException::withViolations('Command metadata is not valid', $violations);
         }
 
-        $request->attributes->set('metadata', $metadata);
-        return true;
-    }
-
-    public function supports(ParamConverter $configuration): bool
-    {
-        return $configuration->getName() === 'metadata'
-            && $configuration->getClass() === Metadata::class;
+        return [$metadata];
     }
 
     /**

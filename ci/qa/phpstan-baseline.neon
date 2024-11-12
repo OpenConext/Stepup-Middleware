@@ -3116,44 +3116,34 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Value/RegistrationAuthorityCredentials.php
 
 		-
-			message: "#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
-
-		-
 			message: "#^Cannot access offset 'command' on mixed\\.$#"
 			count: 3
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandValueResolver.php
 
 		-
 			message: "#^Cannot access offset 'name' on mixed\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandValueResolver.php
 
 		-
 			message: "#^Cannot access offset 'payload' on mixed\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandValueResolver.php
 
 		-
 			message: "#^Cannot access offset 'uuid' on mixed\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandValueResolver.php
 
 		-
 			message: "#^Cannot cast mixed to string\\.$#"
 			count: 2
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
-
-		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Command\\\\AbstractCommand\\:\\:\\$UUID \\(string\\) does not accept mixed\\.$#"
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/CommandValueResolver.php
 
 		-
 			message: "#^Cannot access property \\$meta on mixed\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/MetadataParamConverter.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Request/MetadataValueResolver.php
 
 		-
 			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Response\\\\JsonAuthorizationResponse\\:\\:__construct\\(\\) has parameter \\$errors with no value type specified in iterable type array\\.$#"
@@ -3281,24 +3271,34 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Identity/Projector/AuditLogProjectorTest.php
 
 		-
-			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Tests\\\\Request\\\\CommandParamConverterTest\\:\\:convertibleCommandNames\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandParamConverterTest.php
+			message: "#^Cannot access offset 0 on iterable\\<Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Command\\\\AbstractCommand\\>\\.$#"
+			count: 4
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandValueResolverTest.php
 
 		-
-			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Tests\\\\Request\\\\CommandParamConverterTest\\:\\:invalidCommandJsonStructures\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Tests\\\\Request\\\\CommandValueResolverTest\\:\\:convertibleCommandNames\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandParamConverterTest.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandValueResolverTest.php
 
 		-
-			message: "#^Cannot call method equals\\(\\) on mixed\\.$#"
+			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Tests\\\\Request\\\\CommandValueResolverTest\\:\\:invalidCommandJsonStructures\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionParamConverterTest.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandValueResolverTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$expected of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertInstanceOf\\(\\) expects class\\-string\\<object\\>, string given\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/CommandValueResolverTest.php
+
+		-
+			message: "#^Cannot access offset 0 on iterable\\<Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\>\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionValueResolverTest.php
 
 		-
 			message: "#^Property Symfony\\\\Component\\\\HttpFoundation\\\\Request\\:\\:\\$query \\(Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\) does not accept Mockery\\\\MockInterface&Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
 			count: 2
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionParamConverterTest.php
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Tests/Request/InstitutionValueResolverTest.php
 
 		-
 			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Configuration\\\\Command\\\\ReconfigureInstitutionConfigurationOptionsCommand\\:\\:\\$allowedSecondFactors type has no value type specified in iterable type array\\.$#"

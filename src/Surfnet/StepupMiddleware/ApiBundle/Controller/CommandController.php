@@ -104,7 +104,7 @@ class CommandController extends AbstractController
         );
     }
 
-    private function handleAuthorization(AbstractCommand $command, Metadata $metadata): void
+    private function handleAuthorization(Command $command, Metadata $metadata): void
     {
         // Get the actorId and actorInstitution from the metadata
         // Be aware that these values could be null when executing commands where we shouldn't log in for

@@ -23,16 +23,16 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\Matcher\MatcherAbstract;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use stdClass;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
-use Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter;
+use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
+use Surfnet\StepupMiddleware\ApiBundle\Request\CommandValueResolver;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\FooBarCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns\QuuxCommand;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class CommandParamConverterTest extends TestCase
+class CommandValueResolverTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
@@ -50,11 +50,17 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn($commandJson)
             ->getMock();
 
-        /** @var ParamConverter&MockInterface $configuration */
-        $configuration = m::mock(ParamConverter::class);
+        /** @var ArgumentMetadata&MockInterface $argument */
+        $argument = m::mock(ArgumentMetadata::class);
+        $argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Command::class);
 
-        $converter = new CommandParamConverter();
-        $converter->apply($request, $configuration);
+        $converter = new CommandValueResolver();
+        $result = $converter->resolve($request, $argument);
+
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(Command::class, $result[0]);
     }
 
     /**
@@ -71,17 +77,17 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
 
-        /** @var ParameterBag&MockInterface $attributes */
-        $attributes = m::mock()
-            ->shouldReceive('set')->with('command', m::type($expectedCommandClass))
-            ->getMock();
-        $request->attributes = $attributes;
-        $configuration = m::mock(ParamConverter::class);
+        /** @var ArgumentMetadata&MockInterface $argument */
+        $argument = m::mock(ArgumentMetadata::class);
+        $argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Command::class);
 
-        $converter = new CommandParamConverter();
-        $converter->apply($request, $configuration);
+        $converter = new CommandValueResolver();
+        $result = $converter->resolve($request, $argument);
 
-        $this->assertInstanceOf(CommandParamConverter::class, $converter);
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf($expectedCommandClass, $result[0]);
     }
 
     /**
@@ -97,18 +103,17 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
 
-        /** @var ParameterBag $attributes */
-        $attributes = m::mock()
-            ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
-            ->getMock();
-        $request->attributes = $attributes;
+        /** @var ArgumentMetadata&MockInterface $argument */
+        $argument = m::mock(ArgumentMetadata::class);
+        $argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Command::class);
 
-        $configuration = m::mock(ParamConverter::class);
+        $converter = new CommandValueResolver();
+        $result = $converter->resolve($request, $argument);
 
-        $converter = new CommandParamConverter();
-        $converter->apply($request, $configuration);
-
-        $this->assertEquals('abcdef', $spiedCommand->UUID, 'UUID mismatch');
+        $this->assertCount(1, $result);
+        $this->assertEquals('abcdef', $result[0]->UUID, 'UUID mismatch');
     }
 
     /**
@@ -124,20 +129,20 @@ class CommandParamConverterTest extends TestCase
             ->shouldReceive('getContent')->with()->andReturn(json_encode($command))
             ->getMock();
 
-        /** @var ParameterBag $attributes */
-        $attributes = m::mock()
-            ->shouldReceive('set')->with('command', $this->spy($spiedCommand))
-            ->getMock();
+        /** @var ArgumentMetadata&MockInterface $argument */
+        $argument = m::mock(ArgumentMetadata::class);
+        $argument->shouldReceive('getType')
+            ->once()
+            ->andReturn(Command::class);
 
-        $request->attributes = $attributes;
+        $converter = new CommandValueResolver();
+        $result = $converter->resolve($request, $argument);
 
-        $configuration = m::mock(ParamConverter::class);
+        $this->assertCount(1, $result);
 
-        $converter = new CommandParamConverter();
-        $converter->apply($request, $configuration);
-
-        $spiedPayload = (array)$spiedCommand;
+        $spiedPayload = (array)$result[0];
         unset($spiedPayload['UUID']);
+
         $this->assertSame(['snakeCase' => true], $spiedPayload, 'Payload mismatch');
     }
 
@@ -182,19 +187,5 @@ class CommandParamConverterTest extends TestCase
                 'Root:Ns.Quux',
             ],
         ];
-    }
-
-    /**
-     * @return MatcherAbstract
-     */
-    private function spy(mixed &$spy): MatcherAbstract
-    {
-        return m::on(
-            function ($value) use (&$spy): bool {
-                $spy = $value;
-
-                return true;
-            },
-        );
     }
 }

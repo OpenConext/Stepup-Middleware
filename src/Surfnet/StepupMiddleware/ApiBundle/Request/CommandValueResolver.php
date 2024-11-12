@@ -18,17 +18,27 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Request;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\ParamConverterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\BadCommandRequestException;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\Command;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-class CommandParamConverter implements ParamConverterInterface
+class CommandValueResolver implements ValueResolverInterface
 {
-    public function apply(Request $request, ParamConverter $configuration): bool
+    /**
+     * @return AbstractCommand[]
+     */
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        $argumentType = $argument->getType();
+        if (!$argumentType
+            || (!is_subclass_of($argumentType, Command::class, true) && Command::class !== $argumentType)
+        ) {
+            return [];
+        }
+
         $data = json_decode($request->getContent(), true);
 
         $this->assertIsValidCommandStructure($data);
@@ -43,21 +53,14 @@ class CommandParamConverter implements ParamConverterInterface
 
         /** @var AbstractCommand $command */
         $command = new $commandClassName;
-        $command->UUID = $data['command']['uuid'];
+        $command->UUID = (string)$data['command']['uuid'];
 
-        foreach ($data['command']['payload'] as $property => $value) {
+        foreach ((array)$data['command']['payload'] as $property => $value) {
             $properlyCasedProperty = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', (string)$property))));
             $command->$properlyCasedProperty = $value;
         }
 
-        $request->attributes->set('command', $command);
-        return true;
-    }
-
-    public function supports(ParamConverter $configuration): bool
-    {
-        return $configuration->getName() === 'command'
-            && $configuration->getClass() === Command::class;
+        return [$command];
     }
 
     /**

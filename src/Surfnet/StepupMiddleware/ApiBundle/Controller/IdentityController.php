@@ -24,7 +24,6 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\IdentityQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Service\IdentityService;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonCollectionResponse;
 use Surfnet\StepupMiddleware\ApiBundle\Response\JsonNotFoundResponse;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

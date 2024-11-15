@@ -27,7 +27,7 @@ services:
     class: Twig\Sandbox\SecurityPolicy
     arguments:
       - [ if, else, elseif, for ] # Allowed tags
-      - [ escape, localizeddate ] # Allowed filters
+      - [ escape, format_datetime ] # Allowed filters
       - # Allowed methods
         Surfnet\Stepup\Identity\Value\CommonName:
           - __toString

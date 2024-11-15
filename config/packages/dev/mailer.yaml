@@ -1,3 +1,0 @@
-framework:
-    mailer:
-        dsn: "%mailer_transport%://%mailer_user%:%mailer_password%@%mailer_host%:1025"

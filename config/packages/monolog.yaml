@@ -19,7 +19,7 @@ when@dev: &override
       main_syslog:
         type: stream
         path: php://stderr
-        level: error
+        level: debug
         channels: ["!event", "!doctrine", "!deprecation", "!console"]
       console:
         type: console

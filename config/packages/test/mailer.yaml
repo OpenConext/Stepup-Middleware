@@ -1,4 +1,0 @@
-framework:
-  mailer:
-    dsn: 'null://null' # disable delivery
-

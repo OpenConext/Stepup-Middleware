@@ -1,4 +1,3 @@
-
 # Doctrine Configuration
 doctrine:
     dbal:
@@ -13,9 +12,6 @@ doctrine:
                 password: "%database_middleware_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                options:
-                    # The 1002 constant sets the PDO MYSQL_ATTR_INIT_COMMAND for when the connection is (re)connected.
-                    1002: "%database_driver_options_1002%"
             gateway:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -25,8 +21,6 @@ doctrine:
                 password: "%database_gateway_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                options:
-                    1002: "%database_driver_options_1002%"
             deploy:
                 driver:   "%database_driver%"
                 host:     "%database_host%"
@@ -36,8 +30,6 @@ doctrine:
                 password: "%database_deploy_password%"
                 server_version: "%database_server_version%"
                 charset: utf8
-                options:
-                    1002: "%database_driver_options_1002%"
         types:
             authority_role:
                 class: Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\AuthorityRoleType
@@ -154,6 +146,19 @@ doctrine:
             deploy:
                 connection: deploy
 
+when@dev:
+    doctrine:
+        dbal: &mariadbDbal
+            connections:
+                middleware: &options
+                    options:
+                        # The 1002 constant sets the PDO MYSQL_ATTR_INIT_COMMAND for when the connection is (re)connected.
+                        1002: "%database_driver_options_1002%"
+                gateway:
+                    *options
+                deploy:
+                    *options
+
 when@prod: &prodOverride
     doctrine:
         orm:
@@ -167,7 +172,8 @@ when@prod: &prodOverride
             result_cache_driver:
                 type: pool
                 pool: doctrine.result_cache_pool
-
+        dbal:
+            <<: *mariadbDbal
     framework:
         cache:
             pools:
@@ -176,30 +182,61 @@ when@prod: &prodOverride
                 doctrine.system_cache_pool:
                     adapter: cache.system
 
-when@prod_event_replay: &prodOverride
+when@prod_event_replay:
+    doctrine:
+        dbal:
+            <<: *mariadbDbal
+        orm:
+            default_entity_manager: deploy
 
 when@smoketest: &smoketestOveride
     doctrine:
         dbal:
-            default_connection: middleware
             connections:
                 middleware:
                     dbname: middleware_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
+                    <<: *options
                 gateway:
                     dbname: gateway_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
+                    <<: *options
                 deploy:
                     dbname: middleware_test
                     host: mariadb
                     password: mw_deploy_secret
                     user: mw_deploy_user
+                    <<: *options
 
-when@smoketest_event_replay: *smoketestOveride
+when@smoketest_event_replay:
+    doctrine:
+        dbal:
+            default_connection: deploy
+            connections:
+                middleware:
+                    dbname: middleware_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+                    <<: *options
+                gateway:
+                    dbname: gateway_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+                    <<: *options
+                deploy:
+                    dbname: middleware_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+                    <<: *options
+        orm:
+            default_entity_manager: deploy
 
 when@test:
     doctrine:

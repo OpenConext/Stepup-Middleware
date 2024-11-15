@@ -3,6 +3,7 @@ services:
     class: Surfnet\StepupMiddleware\CommandHandlingBundle\Processor\EmailVerificationEmailProcessor
     arguments:
       - "@surfnet_stepup_middleware_command_handling.service.email_verification_mail"
+      - "@logger"
     tags: [ { name: event_bus.event_listener, disable_for_replay: true } ]
 
   surfnet_stepup_middleware_command_handling.processor.second_factor_revocation_email:

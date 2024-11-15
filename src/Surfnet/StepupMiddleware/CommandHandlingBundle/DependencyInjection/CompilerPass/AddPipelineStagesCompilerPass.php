@@ -53,6 +53,10 @@ class AddPipelineStagesCompilerPass implements CompilerPassInterface
             $prioritized[$priority] = new Reference($stageServiceId);
         }
 
+        if (!ksort($prioritized)) {
+            throw new RuntimeException('Could not sort stages based on prioritization (ksort failed)');
+        }
+
         // ksort sorts low -> high, so reversing to get them sorted correctly.
         $prioritized = array_reverse($prioritized);
 

@@ -21,6 +21,8 @@
         "php": "^8.2",
         "ext-gmp": "*",
         "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
         "broadway/broadway": "^2.5",
         "broadway/event-store-dbal": "^0.6",
         "doctrine/annotations": "^2.0",
@@ -51,9 +53,7 @@
         "symfony/validator": "6.4.*",
         "twig/extra-bundle": "^3.0",
         "twig/intl-extra": "^3",
-        "twig/twig": "^3",
-      "ext-pdo": "*",
-      "ext-openssl": "*"
+        "twig/twig": "^3"
     },
     "require-dev": {
         "doctrine/data-fixtures": "~1.7",

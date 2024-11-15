@@ -30,5 +30,5 @@ class RaaQuery extends AbstractQuery
     /**
      * @var string
      */
-    public string $nameId;
+    public string|null $nameId;
 }

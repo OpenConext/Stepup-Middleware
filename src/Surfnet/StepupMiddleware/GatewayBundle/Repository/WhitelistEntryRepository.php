@@ -49,6 +49,9 @@ class WhitelistEntryRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
 
         foreach ($whitelistEntries as $whitelistEntry) {
+            if ($this->find($whitelistEntry)) {
+                continue;
+            }
             $entityManager->persist($whitelistEntry);
         }
 

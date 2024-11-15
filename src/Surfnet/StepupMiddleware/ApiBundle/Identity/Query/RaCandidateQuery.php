@@ -23,33 +23,18 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class RaCandidateQuery extends AbstractQuery
 {
-    /**
-     * @var string|Institution
-     */
-    public string|Institution $institution;
+    public string|Institution|null $institution = null;
 
-    /**
-     * @var string
-     */
-    public string $commonName;
+    public ?string $commonName = null;
 
-    /**
-     * @var string
-     */
-    public string $email;
+    public ?string $email = null;
 
     /**
      * @var string[]
      */
-    public array $secondFactorTypes;
+    public array $secondFactorTypes = [];
 
-    /**
-     * @var string|Institution
-     */
-    public string|Institution $raInstitution;
+    public string|Institution|null $raInstitution = null;
 
-    /**
-     * @var InstitutionAuthorizationContextInterface
-     */
     public InstitutionAuthorizationContextInterface $authorizationContext;
 }

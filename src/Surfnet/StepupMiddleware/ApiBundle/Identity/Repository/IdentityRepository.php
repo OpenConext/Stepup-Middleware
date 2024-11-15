@@ -68,19 +68,19 @@ class IdentityRepository extends ServiceEntityRepository
                 ->setParameter('institution', $query->institution);
         }
 
-        if ($query->nameId !== '' && $query->nameId !== '0') {
+        if ($query->nameId) {
             $queryBuilder
                 ->andWhere('i.nameId = :nameId')
                 ->setParameter('nameId', $query->nameId);
         }
 
-        if ($query->email !== '' && $query->email !== '0') {
+        if ($query->email) {
             $queryBuilder
                 ->andWhere('i.email LIKE :email')
                 ->setParameter('email', sprintf('%%%s%%', $query->email));
         }
 
-        if ($query->commonName !== '' && $query->commonName !== '0') {
+        if ($query->commonName) {
             $queryBuilder
                 ->andWhere('i.commonName LIKE :commonName')
                 ->setParameter('commonName', sprintf('%%%s%%', $query->commonName));

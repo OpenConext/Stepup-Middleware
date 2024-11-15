@@ -32,7 +32,7 @@ class IdentitySelfAssertedTokenOptions implements JsonSerializable
      */
     #[ORM\Id]
     #[ORM\Column(length: 36)]
-    public IdentityId $identityId;
+    public string $identityId;
 
     /**
      *  In order to determine if the user is allowed to register

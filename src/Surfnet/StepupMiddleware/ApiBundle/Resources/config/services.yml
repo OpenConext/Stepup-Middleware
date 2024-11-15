@@ -127,31 +127,6 @@ services:
     arguments:
       - "@surfnet_stepup_middleware_api.repository.whitelist_entry"
 
-  # Param Converters
-  surfnet_stepup_middleware_api.request.command_param_converter:
-    class: Surfnet\StepupMiddleware\ApiBundle\Request\CommandParamConverter
-    tags:
-      - { name: request.param_converter, priority: -10, converter: surfnet_stepup_middleware_api.command }
-
-  surfnet_stepup_middleware_api.request.metadata_param_converter:
-    class: Surfnet\StepupMiddleware\ApiBundle\Request\MetadataParamConverter
-    arguments:
-      - "@validator"
-    tags:
-      - { name: request.param_converter, priority: -15, converter: surfnet_stepup_middleware_api.metadata }
-
-  surfnet_stepup_middleware_api.request.institution_param_converter:
-    class: Surfnet\StepupMiddleware\ApiBundle\Request\InstitutionParamConverter
-    tags:
-      - { name: request.param_converter, priority: -5, converter: surfnet_step_middleware.institution }
-
-  surfnet_stepup_middleware_api.request.configuration_institution_param_converter:
-    class: Surfnet\StepupMiddleware\ApiBundle\Request\ConfigurationInstitutionParamConverter
-    tags:
-      - name: request.param_converter
-        priority: -4
-        converter: surfnet_stepup_middleware_api.configuration_institution
-
   # Exception Listeners
   surfnet_stepup_middleware_api.listener.exception_listener:
     class: Surfnet\StepupMiddleware\ApiBundle\EventListener\ExceptionListener

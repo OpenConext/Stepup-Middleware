@@ -85,7 +85,7 @@ class AuthorizingStage implements Stage
     private function clientHasAtLeastOneRole(array $rolesToCheck): bool
     {
         foreach ($rolesToCheck as $role) {
-            if ($this->authorizationChecker->isGranted([$role])) {
+            if ($this->authorizationChecker->isGranted($role)) {
                 return true;
             }
         }

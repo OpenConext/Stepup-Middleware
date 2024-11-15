@@ -26,7 +26,7 @@ class SensitiveDataMessage
 {
     private readonly IdentityId $identityId;
 
-    public function __construct(IdentityId $identityId, private readonly int $playhead, private SensitiveData $sensitiveData)
+    public function __construct(string $identityId, private readonly int $playhead, private SensitiveData $sensitiveData)
     {
         $this->identityId = new IdentityId($identityId);
     }

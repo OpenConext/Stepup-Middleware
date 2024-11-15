@@ -25,12 +25,12 @@ class IdentityQuery extends AbstractQuery
     /**
      * @var string
      */
-    public string $nameId;
+    public ?string $nameId = null;
 
     /**
      * @var string
      */
-    public string $commonName;
+    public ?string $commonName = null;
 
     /**
      * @var string|Institution
@@ -40,5 +40,5 @@ class IdentityQuery extends AbstractQuery
     /**
      * @var string
      */
-    public string $email;
+    public ?string $email = null;
 }

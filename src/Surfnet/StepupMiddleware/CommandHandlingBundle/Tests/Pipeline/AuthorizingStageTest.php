@@ -77,7 +77,7 @@ class AuthorizingStageTest extends UnitTest
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->once()
-            ->with([$role])
+            ->with($role)
             ->andReturn(true);
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
@@ -106,17 +106,17 @@ class AuthorizingStageTest extends UnitTest
 
         $this->authorizationChecker
             ->shouldReceive('isGranted')
-            ->with(['ROLE_SS'])
+            ->with('ROLE_SS')
             ->andReturn(false);
 
         $this->authorizationChecker
             ->shouldReceive('isGranted')
-            ->with(['ROLE_RA'])
+            ->with('ROLE_RA')
             ->andReturn(true);
 
         $this->authorizationChecker
             ->shouldReceive('isGranted')
-            ->with(['ROLE_MANAGEMENT'])
+            ->with('ROLE_MANAGEMENT')
             ->andReturn(false);
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);
@@ -146,7 +146,7 @@ class AuthorizingStageTest extends UnitTest
         $this->authorizationChecker
             ->shouldReceive('isGranted')
             ->once()
-            ->with(['ROLE_SS'])
+            ->with('ROLE_SS')
             ->andReturn(false);
 
         $authorizingStage = new AuthorizingStage($this->logger, $this->authorizationChecker);

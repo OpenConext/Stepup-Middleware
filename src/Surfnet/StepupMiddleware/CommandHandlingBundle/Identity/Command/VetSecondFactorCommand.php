@@ -85,7 +85,7 @@ class VetSecondFactorCommand extends AbstractCommand implements RaExecutable
      * @var boolean
      */
     #[Assert\Type(type: 'bool')]
-    public bool $provePossessionSkipped;
+    public bool $provePossessionSkipped = false;
 
     /**
      * @inheritDoc

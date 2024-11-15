@@ -66,6 +66,10 @@ class RecoveryTokenStatusType extends Type
      */
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): RecoveryTokenStatus
     {
+        if (is_scalar($value)) {
+            $value = (string)$value;
+        }
+
         if ($value === '0') {
             return RecoveryTokenStatus::active();
         } elseif ($value === '10') {

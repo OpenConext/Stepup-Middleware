@@ -76,6 +76,9 @@ class SecondFactorStatusType extends Type
      */
     public function convertToPHPValue(mixed $value, AbstractPlatform $platform): SecondFactorStatus
     {
+        if (is_scalar($value)) {
+            $value = (string)$value;
+        }
         if ($value === '0') {
             return SecondFactorStatus::unverified();
         } elseif ($value === '10') {

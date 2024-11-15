@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\UnverifiedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\UnverifiedSecondFactorQuery;
@@ -53,7 +54,7 @@ class UnverifiedSecondFactorController extends AbstractController
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new UnverifiedSecondFactorQuery();
-        $query->identityId = $request->get('identityId');
+        $query->identityId = new IdentityId($request->get('identityId'));
         $query->verificationNonce = $request->get('verificationNonce');
         $query->pageNumber = (int)$request->get('p', 1);
 

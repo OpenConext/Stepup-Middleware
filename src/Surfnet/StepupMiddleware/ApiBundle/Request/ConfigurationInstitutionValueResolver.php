@@ -34,8 +34,7 @@ class ConfigurationInstitutionValueResolver implements ValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         $argumentType = $argument->getType();
-        if (!$argumentType
-            || !is_subclass_of($argumentType, Institution::class, true)
+        if (!$argumentType || $argumentType !== Institution::class
         ) {
             return [];
         }

@@ -32,19 +32,26 @@ class EventStreamReplayer
      * @var string[]
      */
     private array $middlewareTables = [
+        'allowed_second_factor',
+        'audit_log',
+        'configured_institution',
+        'email_templates',
+        'identity',
+        'identity_self_asserted_token_options',
+        'institution_authorization',
+        'institution_configuration_options',
+        'institution_listing',
+//        'institution_with_ra_locations',
+        'ra_listing',
+        'ra_location',
+        'ra_second_factor',
+        'recovery_token',
+        'second_factor_revocation',
+        'sraa',
         'unverified_second_factor',
         'verified_second_factor',
         'vetted_second_factor',
-        'configured_institution',
-        'institution_configuration_options',
-        'institution_authorization',
-        'ra_location',
-        'ra_second_factor',
-        'identity',
-        'sraa',
-        'audit_log',
-        'ra_listing',
-        'second_factor_revocation',
+        'vetting_type_hint',
         'whitelist_entry',
     ];
 
@@ -52,8 +59,9 @@ class EventStreamReplayer
      * @var string[]
      */
     private array $gatewayTables = [
-        'second_factor',
+        'institution_configuration',
         'saml_entity',
+        'second_factor',
         'whitelist_entry',
     ];
 
@@ -116,7 +124,8 @@ class EventStreamReplayer
                     foreach ($eventStream->getIterator() as $event) {
                         /** @var DomainMessage $event */
                         $messages[] = sprintf(
-                            ' > <info>Publishing Event "<comment>%s</comment>" for UUID <comment>"%s</comment>"</info>',
+                            ' > <info>Publishing Event <comment>%s</comment> "<comment>%s</comment>" for UUID <comment>"%s</comment>"</info>',
+                            $event->getRecordedOn()->toString(),
                             $event->getType(),
                             $event->getId(),
                         );

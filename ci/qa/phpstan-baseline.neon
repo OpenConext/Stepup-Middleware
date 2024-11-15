@@ -2256,17 +2256,17 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/IdentityController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$commonName \\(string\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$commonName \\(string\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/IdentityController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$email \\(string\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$email \\(string\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/IdentityController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$nameId \\(string\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\IdentityQuery\\:\\:\\$nameId \\(string\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/IdentityController.php
 
@@ -2291,22 +2291,22 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaCandidateController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$commonName \\(string\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$commonName \\(string\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaCandidateController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$email \\(string\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$email \\(string\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaCandidateController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$institution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$institution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaCandidateController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$raInstitution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaCandidateQuery\\:\\:\\$raInstitution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaCandidateController.php
 
@@ -2336,7 +2336,7 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaListingController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaListingQuery\\:\\:\\$institution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\) does not accept mixed\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RaListingQuery\\:\\:\\$institution \\(string\\|Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\Institution\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RaListingController.php
 
@@ -2452,7 +2452,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$value of class Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId constructor expects string, mixed given\\.$#"
-			count: 1
+			count: 2
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RecoveryTokenController.php
 
 		-
@@ -2462,11 +2462,6 @@ parameters:
 
 		-
 			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RecoveryTokenQuery\\:\\:\\$email \\(string\\|null\\) does not accept mixed\\.$#"
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RecoveryTokenController.php
-
-		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\RecoveryTokenQuery\\:\\:\\$identityId \\(Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId\\|null\\) does not accept mixed\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/RecoveryTokenController.php
 
@@ -2506,7 +2501,7 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/UnverifiedSecondFactorController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\UnverifiedSecondFactorQuery\\:\\:\\$identityId \\(Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId\\|null\\) does not accept mixed\\.$#"
+			message: "#^Parameter \\#1 \\$value of class Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId constructor expects string, mixed given\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/UnverifiedSecondFactorController.php
 
@@ -2541,7 +2536,7 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/VettedSecondFactorController.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Query\\\\VettedSecondFactorQuery\\:\\:\\$identityId \\(Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId\\|null\\) does not accept mixed\\.$#"
+			message: "#^Parameter \\#1 \\$value of class Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId constructor expects string, mixed given\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Controller/VettedSecondFactorController.php
 
@@ -2727,6 +2722,11 @@ parameters:
 
 		-
 			message: "#^Method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\IdentitySelfAssertedTokenOptions\\:\\:jsonSerialize\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Entity/IdentitySelfAssertedTokenOptions.php
+
+		-
+			message: "#^PHPDoc tag @var for property Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\IdentitySelfAssertedTokenOptions\\:\\:\\$identityId with type Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId is incompatible with native type string\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Entity/IdentitySelfAssertedTokenOptions.php
 
@@ -3326,12 +3326,17 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Configuration/Processor/InstitutionConfigurationProcessor.php
 
 		-
-			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\EventHandling\\\\BufferedEventBus\\:\\:\\$buffer \\(array\\<Broadway\\\\Domain\\\\DomainMessage\\>\\) does not accept array\\.$#"
+			message: "#^Negated boolean expression is always false\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/DependencyInjection/CompilerPass/AddPipelineStagesCompilerPass.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between 0 and 0 is always false\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/EventHandling/BufferedEventBus.php
 
 		-
-			message: "#^Strict comparison using \\!\\=\\= between array\\{\\} and array\\{\\} will always evaluate to false\\.$#"
+			message: "#^Property Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\EventHandling\\\\BufferedEventBus\\:\\:\\$buffer \\(array\\<Broadway\\\\Domain\\\\DomainMessage\\>\\) does not accept array\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/EventHandling/BufferedEventBus.php
 
@@ -3486,7 +3491,7 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/SensitiveData/EventStore/SensitiveDataEventStoreDecorator.php
 
 		-
-			message: "#^Parameter \\#1 \\$identityId of class Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\SensitiveData\\\\EventSourcing\\\\SensitiveDataMessage constructor expects Surfnet\\\\Stepup\\\\Identity\\\\Value\\\\IdentityId, mixed given\\.$#"
+			message: "#^Parameter \\#1 \\$identityId of class Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\SensitiveData\\\\EventSourcing\\\\SensitiveDataMessage constructor expects string, mixed given\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/SensitiveData/EventStore/SensitiveDataEventStoreDecorator.php
 

@@ -24,7 +24,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Authorization\Value\InstitutionAuthorizat
 
 class RaListingQuery extends AbstractQuery
 {
-    public string|Institution $institution;
+    public string|Institution|null $institution = null;
 
     public ?IdentityId $identityId = null;
 

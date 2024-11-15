@@ -18,6 +18,7 @@
 
 namespace Surfnet\StepupMiddleware\ApiBundle\Controller;
 
+use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\VettedSecondFactor;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\VettedSecondFactorQuery;
@@ -53,7 +54,7 @@ class VettedSecondFactorController extends AbstractController
         $this->denyAccessUnlessGrantedOneOff(['ROLE_RA', 'ROLE_SS', 'ROLE_READ']);
 
         $query = new VettedSecondFactorQuery();
-        $query->identityId = $request->get('identityId');
+        $query->identityId = new IdentityId($request->get('identityId'));
         $query->pageNumber = (int)$request->get('p', 1);
 
         $paginator = $this->secondFactorService->searchVettedSecondFactors($query);

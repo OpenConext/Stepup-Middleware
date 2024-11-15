@@ -153,3 +153,62 @@ doctrine:
                         is_bundle: true
             deploy:
                 connection: deploy
+
+when@prod: &prodOverride
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            metadata_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system
+
+when@prod_event_replay: &prodOverride
+
+when@smoketest: &smoketestOveride
+    doctrine:
+        dbal:
+            default_connection: middleware
+            connections:
+                middleware:
+                    dbname: middleware_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+                gateway:
+                    dbname: gateway_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+                deploy:
+                    dbname: middleware_test
+                    host: mariadb
+                    password: mw_deploy_secret
+                    user: mw_deploy_user
+
+when@smoketest_event_replay: *smoketestOveride
+
+when@test:
+    doctrine:
+        dbal:
+            default_connection: middleware
+            connections:
+                middleware:
+                    url: "sqlite:///%kernel.project_dir%/var/middleware.db"
+                gateway:
+                    url: "sqlite:///%kernel.project_dir%/var/gateway.db"
+                deploy:
+                    url: "sqlite:///%kernel.project_dir%/var/deploy.db"

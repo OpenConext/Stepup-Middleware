@@ -156,6 +156,8 @@ class InstitutionAuthorizationRepository extends ServiceEntityRepository
             ->setParameter('role', $role)
             ->setParameter('institution', $institution->getInstitution())
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**

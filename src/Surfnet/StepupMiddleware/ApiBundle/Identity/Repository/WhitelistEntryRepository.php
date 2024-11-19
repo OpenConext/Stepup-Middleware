@@ -72,6 +72,8 @@ class WhitelistEntryRepository extends ServiceEntityRepository
             ->where('1 = 1')
             ->getQuery()
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**

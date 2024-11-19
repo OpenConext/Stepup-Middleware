@@ -49,17 +49,11 @@ class SamlEntityRepository extends EntityRepository
     private function replaceAllOfType(string $type, array $newSamlEntities): void
     {
         $entityManager = $this->getEntityManager();
-        $counter = 0;
 
         $this->removeAllOfType($type);
-        $entityManager->flush();
 
         foreach ($newSamlEntities as $samlEntity) {
             $entityManager->persist($samlEntity);
-
-            if (++$counter % 25 === 0) {
-                $entityManager->flush();
-            }
         }
 
         $entityManager->flush();
@@ -73,8 +67,10 @@ class SamlEntityRepository extends EntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\GatewayBundle\Entity\SamlEntity se WHERE se.type = :type',
+                'DELETE FROM '.SamlEntity::class.' se WHERE se.type = :type',
             )
             ->execute(['type' => $type]);
+
+        $this->getEntityManager()->clear();
     }
 }

@@ -18,7 +18,9 @@
 
 namespace Surfnet\StepupMiddleware\GatewayBundle\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\StepupMiddleware\GatewayBundle\Entity\WhitelistEntry;
 
@@ -27,6 +29,12 @@ use Surfnet\StepupMiddleware\GatewayBundle\Entity\WhitelistEntry;
  */
 class WhitelistEntryRepository extends EntityRepository
 {
+    public function __construct(EntityManagerInterface $em, ClassMetadata $class)
+    {
+        parent::__construct($em, $class);
+    }
+
+
     /**
      * @param Institution[] $institutions
      * @return WhitelistEntry[]
@@ -49,9 +57,6 @@ class WhitelistEntryRepository extends EntityRepository
         $entityManager = $this->getEntityManager();
 
         foreach ($whitelistEntries as $whitelistEntry) {
-            if ($this->find($whitelistEntry)) {
-                continue;
-            }
             $entityManager->persist($whitelistEntry);
         }
 
@@ -68,6 +73,8 @@ class WhitelistEntryRepository extends EntityRepository
             ->where('1 = 1')
             ->getQuery()
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**
@@ -81,6 +88,6 @@ class WhitelistEntryRepository extends EntityRepository
             $entityManager->remove($whitelistEntry);
         }
 
-        $entityManager->flush();
+        $entityManager->clear();
     }
 }

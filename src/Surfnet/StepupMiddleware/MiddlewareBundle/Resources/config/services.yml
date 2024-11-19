@@ -14,6 +14,7 @@ services:
     arguments:
       - middleware: "@doctrine.dbal.middleware_connection"
         gateway: "@doctrine.dbal.gateway_connection"
+        deploy: "@doctrine.dbal.deploy_connection"
 
   surfnet_stepup_middleware_middleware.institution_configuration_provider:
     class: Surfnet\StepupMiddleware\MiddlewareBundle\Migrations\InstitutionConfiguration\InstitutionConfigurationProvider

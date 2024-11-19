@@ -85,14 +85,20 @@ class EventStreamReplayer
 
         $preparationProgress->setMessage('Starting Transaction');
         $this->connectionHelper->beginTransaction();
+        $preparationProgress->clear();
         $preparationProgress->advance();
 
         try {
             $preparationProgress->setMessage('Removing data from Read Tables');
+            $preparationProgress->clear();
             $this->wipeReadTables($output);
+
+            $preparationProgress->setMessage('Done wiping');
+            $preparationProgress->clear();
             $preparationProgress->advance();
 
             $preparationProgress->setMessage('Determining amount of events to replay...');
+            $preparationProgress->clear();
             $totalEvents = $this->eventHydrator->getCount();
 
             $preparationProgress->advance();
@@ -100,6 +106,7 @@ class EventStreamReplayer
             if ($totalEvents == 0) {
                 // Spaces are needed to overwrite the previous message.
                 $preparationProgress->setMessage('There are no events to replay. Done.     ');
+                $preparationProgress->clear();
                 $preparationProgress->finish();
                 return;
             } else {
@@ -109,6 +116,7 @@ class EventStreamReplayer
                     $increments,
                 );
                 $preparationProgress->setMessage($defaultMessage);
+                $preparationProgress->clear();
                 $preparationProgress->finish();
             }
 
@@ -139,6 +147,7 @@ class EventStreamReplayer
 
                 unset($eventStream);
                 $steps = (($count + $increments < $totalEvents) ? $increments : ($totalEvents - $count));
+                $preparationProgress->clear();
                 $replayProgress->advance($steps);
             }
 

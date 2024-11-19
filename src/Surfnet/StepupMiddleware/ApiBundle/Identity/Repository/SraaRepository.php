@@ -42,9 +42,11 @@ class SraaRepository extends ServiceEntityRepository
         $this
             ->getEntityManager()
             ->createQuery(
-                'DELETE FROM Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Sraa',
+                'DELETE FROM '.Sraa::class,
             )
             ->execute();
+
+        $this->getEntityManager()->clear();
     }
 
     /**

@@ -22,7 +22,7 @@ use Broadway\CommandHandling\CommandHandler;
 use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
-use Hamcrest\Matchers;
+use Mockery\Matcher\IsEqual;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
@@ -113,15 +113,15 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
+            ->with(new IsEqual($nameId), new IsEqual($institution))
             ->andReturn($this->createIdentity($identityId->getIdentityId()));
 
         $this->sensitiveDataService
             ->shouldReceive('forgetSensitiveData')
             ->once()
-            ->with(Matchers::equalTo($identityId));
+            ->with(new IsEqual($identityId));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -175,10 +175,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
+            ->with(new IsEqual($nameId), new IsEqual($institution))
             ->andReturn($this->createIdentity($identityId->getIdentityId()));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -230,10 +230,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
+            ->with(new IsEqual($nameId), new IsEqual($institution))
             ->andReturn($this->createIdentity($identityId->getIdentityId()));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -292,10 +292,10 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $this->apiIdentityRepository
             ->shouldReceive('findOneByNameIdAndInstitution')
             ->once()
-            ->with(Matchers::equalTo($nameId), Matchers::equalTo($institution))
+            ->with(new IsEqual($nameId), new IsEqual($institution))
             ->andReturn($this->createIdentity($identityId->getIdentityId()));
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(false);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(false);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();
@@ -352,7 +352,7 @@ class RightToBeForgottenCommandHandlerTest extends CommandHandlerTest
         $email = new Email('e.kuopio@hy.fi');
         $locale = new Locale('fi_FI');
 
-        $this->sraaRepository->shouldReceive('contains')->once()->with(Matchers::equalTo($nameId))->andReturn(true);
+        $this->sraaRepository->shouldReceive('contains')->once()->with(new IsEqual($nameId))->andReturn(true);
 
         $command = new ForgetIdentityCommand();
         $command->nameId = $nameId->getNameId();

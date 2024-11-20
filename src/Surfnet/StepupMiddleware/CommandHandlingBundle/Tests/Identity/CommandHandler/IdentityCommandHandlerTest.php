@@ -23,7 +23,7 @@ use Broadway\EventHandling\EventBus as EventBusInterface;
 use Broadway\EventSourcing\AggregateFactory\PublicConstructorAggregateFactory;
 use Broadway\EventStore\EventStore as EventStoreInterface;
 use DateTime as CoreDateTime;
-use Hamcrest\Matchers;
+use Mockery\Matcher\IsEqual;
 use Mockery as m;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
@@ -1202,7 +1202,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $secondFactorType = new SecondFactorType($command->secondFactorType);
         $this->secondFactorProvePossessionHelper->shouldReceive('canSkipProvePossession')
-            ->with(Matchers::equalTo($secondFactorType))
+            ->with(new IsEqual($secondFactorType))
             ->andReturn(false);
 
         $this->scenario
@@ -1462,7 +1462,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $secondFactorType = new SecondFactorType($command->secondFactorType);
         $this->secondFactorProvePossessionHelper->shouldReceive('canSkipProvePossession')
-            ->with(Matchers::equalTo($secondFactorType))
+            ->with(new IsEqual($secondFactorType))
             ->andReturn(true);
 
         $this->scenario
@@ -1584,7 +1584,7 @@ class IdentityCommandHandlerTest extends CommandHandlerTest
 
         $secondFactorType = new SecondFactorType($command->secondFactorType);
         $this->secondFactorProvePossessionHelper->shouldReceive('canSkipProvePossession')
-            ->with(Matchers::equalTo($secondFactorType))
+            ->with(new IsEqual($secondFactorType))
             ->andReturn(false);
 
         $this->scenario

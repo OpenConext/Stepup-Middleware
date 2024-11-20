@@ -18,14 +18,18 @@
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command {
 
-    class FooBarCommand
+    use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+
+    class FooBarCommand extends AbstractCommand
     {
     }
 }
 
 namespace Surfnet\StepupMiddleware\CommandHandlingBundle\Root\Command\Ns {
 
-    class QuuxCommand
+    use Surfnet\StepupMiddleware\CommandHandlingBundle\Command\AbstractCommand;
+
+    class QuuxCommand extends AbstractCommand
     {
     }
 }

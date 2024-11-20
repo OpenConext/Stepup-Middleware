@@ -25,6 +25,7 @@ use Surfnet\StepupMiddleware\CommandHandlingBundle\EventHandling\BufferedEventBu
 use Surfnet\StepupMiddleware\MiddlewareBundle\EventSourcing\DBALEventHydrator;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class EventStreamReplayer
 {
@@ -147,7 +148,6 @@ class EventStreamReplayer
 
                 unset($eventStream);
                 $steps = (($count + $increments < $totalEvents) ? $increments : ($totalEvents - $count));
-                $preparationProgress->clear();
                 $replayProgress->advance($steps);
             }
 
@@ -155,7 +155,9 @@ class EventStreamReplayer
             $replayProgress->finish();
 
             $output->writeln(['', '<info>Done</info>', '']);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            echo $e->getMessage()."\n";
+
             $this->connectionHelper->rollBack();
             if (isset($replayProgress)) {
                 $replayProgress->setMessage(sprintf('<error>ERROR OCCURRED: "%s"</error>', $e->getMessage()));

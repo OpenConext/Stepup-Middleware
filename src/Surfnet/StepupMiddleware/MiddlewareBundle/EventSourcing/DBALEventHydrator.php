@@ -110,6 +110,10 @@ class DBALEventHydrator
 
     private function deserializeEvent(array $row): DomainMessage
     {
+        echo '1: |'.(string)$row['payload']."|\n";
+        echo '2: |';
+        var_dump(json_decode($row['payload'], true, JSON_THROW_ON_ERROR));
+        echo "|\n";
         $event = $this->payloadSerializer->deserialize(json_decode((string)$row['payload'], true));
 
         if ($event instanceof Forgettable) {

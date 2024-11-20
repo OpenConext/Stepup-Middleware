@@ -80,7 +80,7 @@ class AuthorizationRepositoryMatrixTest extends KernelTestCase
 
         $this->authzRepository = $kernel->getContainer()->get(AuthorizationRepository::class);
         $fixture = file_get_contents(__DIR__ . '/Fixture/test2.sql');
-        $manager->getConnection()->exec($fixture);
+        $manager->getConnection()->executeStatement($fixture);
         $manager->flush();
     }
 

@@ -461,7 +461,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $targetYubikeySecFacId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')
@@ -569,7 +569,7 @@ class IdentityCommandHandlerMoveTokenTest extends CommandHandlerTest
                     new SecondFactorType('yubikey'),
                     $targetYubikeySecFacId,
                     DateTime::now(),
-                    'REGCODE',
+                    'A1B2C3D4',
                     $targetRegistrantCommonName,
                     $targetRegistrantEmail,
                     new Locale('en_GB')

@@ -87,8 +87,8 @@ class SensitiveDataTest extends TestCase
             ],
             'VettingType' => [
                 (new SensitiveData())
-                    ->withVettingType(new OnPremiseVettingType(new DocumentNumber("012345678"))),
-                ['VettingType' => new OnPremiseVettingType(new DocumentNumber("012345678"))],
+                    ->withVettingType(new OnPremiseVettingType(new DocumentNumber("AB-123"))),
+                ['VettingType' => new OnPremiseVettingType(new DocumentNumber("AB-123"))],
             ],
             'VettingType, forgotten' => [
                 (new SensitiveData())

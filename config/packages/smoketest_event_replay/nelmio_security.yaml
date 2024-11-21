@@ -1,4 +1,0 @@
-nelmio_security:
-  csp:
-    report:
-      level1_fallback: true

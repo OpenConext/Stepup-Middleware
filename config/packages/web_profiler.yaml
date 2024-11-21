@@ -1,0 +1,20 @@
+when@dev: &devOverride
+    web_profiler:
+        toolbar: true
+        intercept_redirects: false
+
+    framework:
+        profiler: { only_exceptions: false }
+
+when@test: &testOverride
+    web_profiler:
+        toolbar: false
+        intercept_redirects: false
+
+    framework:
+        profiler: { only_exceptions: false }
+
+when@dev_event_replay: &devOverride
+when@test_event_replay: &testOverride
+when@smoketes: &testOverride
+when@smoketest_event_replay: &testOverride

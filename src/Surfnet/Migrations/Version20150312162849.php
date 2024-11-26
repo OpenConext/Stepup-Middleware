@@ -20,15 +20,15 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20150312162849 extends AbstractMigration implements ContainerAwareInterface
+class Version20150312162849 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
+    use ConfigurationAwareMigrationTrait;
 
     public function up(Schema $schema): void
     {
@@ -38,7 +38,7 @@ class Version20150312162849 extends AbstractMigration implements ContainerAwareI
             'Migration can only be executed safely on \'mysql\'.',
         );
 
-        $gatewaySchema = $this->container->getParameter('database_gateway_name');
+        $gatewaySchema = $this->getGatewaySchema();
         $this->addSql(
             sprintf(
                 'ALTER TABLE %s.second_factor CHANGE second_factor_identifier second_factor_identifier VARCHAR(255) NOT NULL',
@@ -55,17 +55,12 @@ class Version20150312162849 extends AbstractMigration implements ContainerAwareI
             'Migration can only be executed safely on \'mysql\'.',
         );
 
-        $gatewaySchema = $this->container->getParameter('database_gateway_name');
+        $gatewaySchema = $this->getGatewaySchema();
         $this->addSql(
             sprintf(
                 'ALTER TABLE %s.second_factor CHANGE second_factor_identifier second_factor_identifier VARCHAR(36) NOT NULL COLLATE utf8_unicode_ci',
                 $gatewaySchema,
             ),
         );
-    }
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
     }
 }

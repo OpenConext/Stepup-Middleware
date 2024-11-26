@@ -22,17 +22,12 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
-final class Version20221102143350 extends AbstractMigration implements ContainerAwareInterface
+final class Version20221102143350 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    use ConfigurationAwareMigrationTrait;
 
     public function up(Schema $schema): void
     {
@@ -63,10 +58,5 @@ final class Version20221102143350 extends AbstractMigration implements Container
         // Gateway schema change (remove the institution_configuration)
         $gatewaySchema = $this->getGatewaySchema();
         $this->addSql(sprintf('DROP TABLE %s.institution_configuration', $gatewaySchema));
-    }
-
-    private function getGatewaySchema(): float|array|bool|int|string|null
-    {
-        return $this->container->getParameter('database_gateway_name');
     }
 }

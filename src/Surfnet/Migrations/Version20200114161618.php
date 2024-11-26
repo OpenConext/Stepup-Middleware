@@ -20,20 +20,15 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20200114161618 extends AbstractMigration implements ContainerAwareInterface
+class Version20200114161618 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    use ConfigurationAwareMigrationTrait;
 
     /**
      * @param Schema $schema
@@ -77,10 +72,5 @@ class Version20200114161618 extends AbstractMigration implements ContainerAwareI
         // this down() migration is auto-generated, please modify it to your needs
 
         $this->throwIrreversibleMigrationException('This migration is irreversible');
-    }
-
-    private function getGatewaySchema(): float|array|bool|int|string|null
-    {
-        return $this->container->getParameter('database_gateway_name');
     }
 }

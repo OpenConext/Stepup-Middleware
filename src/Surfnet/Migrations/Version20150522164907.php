@@ -20,20 +20,15 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20150522164907 extends AbstractMigration implements ContainerAwareInterface
+class Version20150522164907 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    use ConfigurationAwareMigrationTrait;
 
     /**
      * @param Schema $schema
@@ -70,10 +65,5 @@ class Version20150522164907 extends AbstractMigration implements ContainerAwareI
         );
 
         $this->addSql(sprintf('DROP INDEX unq_saml_entity_entity_id_type ON %s.saml_entity', $gatewaySchema));
-    }
-
-    private function getGatewaySchema(): float|array|bool|int|string|null
-    {
-        return $this->container->getParameter('database_gateway_name');
     }
 }

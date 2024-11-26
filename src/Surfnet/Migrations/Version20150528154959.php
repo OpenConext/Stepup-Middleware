@@ -20,20 +20,15 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20150528154959 extends AbstractMigration implements ContainerAwareInterface
+class Version20150528154959 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    use ConfigurationAwareMigrationTrait;
 
     /**
      * @param Schema $schema
@@ -65,13 +60,5 @@ class Version20150528154959 extends AbstractMigration implements ContainerAwareI
         $gatewaySchema = $this->getGatewaySchema();
 
         $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP display_locale', $gatewaySchema));
-    }
-
-    /**
-     * @return string
-     */
-    private function getGatewaySchema(): string
-    {
-        return $this->container->getParameter('database_gateway_name');
     }
 }

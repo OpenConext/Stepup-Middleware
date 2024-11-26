@@ -8,3 +8,5 @@ doctrine_migrations:
             table_name: 'migration_versions'
             version_column_name: 'version'
             version_column_length: 192
+    services:
+        Doctrine\Migrations\Version\MigrationFactory: 'Surfnet\Stepup\MigrationsFactory\ConfigurationMigrationFactory'

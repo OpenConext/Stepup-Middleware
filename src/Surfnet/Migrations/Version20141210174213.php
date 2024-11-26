@@ -20,15 +20,15 @@ namespace Surfnet\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationInterface;
+use Surfnet\Stepup\MigrationsFactory\ConfigurationAwareMigrationTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20141210174213 extends AbstractMigration implements ContainerAwareInterface
+class Version20141210174213 extends AbstractMigration implements ConfigurationAwareMigrationInterface
 {
-    private ?ContainerInterface $container = null;
+    use ConfigurationAwareMigrationTrait;
 
     public function up(Schema $schema): void
     {
@@ -61,15 +61,5 @@ class Version20141210174213 extends AbstractMigration implements ContainerAwareI
         $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP PRIMARY KEY', $gatewaySchema));
         $this->addSql(sprintf('ALTER TABLE %s.second_factor DROP id', $gatewaySchema));
         $this->addSql(sprintf('ALTER TABLE %s.second_factor ADD PRIMARY KEY (identity_id)', $gatewaySchema));
-    }
-
-    private function getGatewaySchema(): float|array|bool|int|string|null
-    {
-        return $this->container->getParameter('database_gateway_name');
-    }
-
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
     }
 }

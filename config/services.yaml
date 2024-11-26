@@ -53,3 +53,10 @@ services:
           - location
           - contactInformation
       - [] # Allowed functions
+
+  Surfnet\Stepup\MigrationsFactory\ConfigurationMigrationFactory:
+    arguments:
+      - "@doctrine.migrations.migrations_factory"
+      - "%database_gateway_name%"
+      - "%database_middleware_name%"
+      - "%database_middleware_user%"

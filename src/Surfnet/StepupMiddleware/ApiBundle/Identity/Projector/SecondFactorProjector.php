@@ -155,6 +155,9 @@ class SecondFactorProjector extends Projector
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event): void
     {
         $unverified = $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId());
+        if (is_null($unverified)) {
+            return;
+        }
 
         $verified = new VerifiedSecondFactor();
         $verified->id = $event->secondFactorId->getSecondFactorId();
@@ -247,7 +250,11 @@ class SecondFactorProjector extends Projector
 
     protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event): void
     {
-        $this->verifiedRepository->remove($this->verifiedRepository->find($event->secondFactorId->getSecondFactorId()));
+        $verifiedSecondFactor = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
+        if (is_null($verifiedSecondFactor)) {
+            return;
+        }
+        $this->verifiedRepository->remove($verifiedSecondFactor);
     }
 
     protected function applyCompliedWithVerifiedSecondFactorRevocationEvent(

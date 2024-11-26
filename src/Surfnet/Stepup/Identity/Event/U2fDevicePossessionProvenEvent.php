@@ -22,10 +22,12 @@ use Surfnet\Stepup\Identity\AuditLog\Metadata;
 use Surfnet\Stepup\Identity\Value\CommonName;
 use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\EmailVerificationWindow;
+use Surfnet\Stepup\Identity\Value\GssfId;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\Stepup\Identity\Value\Institution;
 use Surfnet\Stepup\Identity\Value\Locale;
 use Surfnet\Stepup\Identity\Value\SecondFactorId;
+use Surfnet\Stepup\Identity\Value\SecondFactorIdentifier;
 use Surfnet\Stepup\Identity\Value\U2fKeyHandle;
 use Surfnet\StepupBundle\Value\SecondFactorType;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\SensitiveData\Forgettable;
@@ -55,7 +57,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
      * @param IdentityId $identityId
      * @param Institution $identityInstitution
      * @param SecondFactorId $secondFactorId
-     * @param U2fKeyHandle $keyHandle
+     * @param SecondFactorIdentifier $keyHandle
      * @param bool $emailVerificationRequired
      * @param EmailVerificationWindow $emailVerificationWindow
      * @param string $emailVerificationNonce
@@ -69,7 +71,7 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         IdentityId              $identityId,
         Institution             $identityInstitution,
         public SecondFactorId          $secondFactorId,
-        public U2fKeyHandle            $keyHandle,
+        public SecondFactorIdentifier            $keyHandle,
         public bool             $emailVerificationRequired,
         public EmailVerificationWindow $emailVerificationWindow,
         public string           $emailVerificationNonce,
@@ -143,7 +145,6 @@ class U2fDevicePossessionProvenEvent extends IdentityEvent implements Forgettabl
         $this->email = $sensitiveData->getEmail();
         $this->commonName = $sensitiveData->getCommonName();
         $keyHandle = $sensitiveData->getSecondFactorIdentifier();
-        assert($keyHandle instanceof U2fKeyHandle);
         $this->keyHandle = $keyHandle;
     }
 

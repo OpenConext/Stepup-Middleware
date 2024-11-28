@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SelfVetOption;
 use TypeError;
@@ -27,7 +28,7 @@ use TypeError;
 /**
  * Custom Type for the SelfVetOption Value Object
  */
-class SelfVetOptionType extends Type
+class SelfVetOptionType extends IntegerType
 {
     public const NAME = 'stepup_self_vet_option';
 

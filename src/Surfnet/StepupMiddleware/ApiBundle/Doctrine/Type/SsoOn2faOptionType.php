@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\SsoOn2faOption;
 use TypeError;
@@ -27,7 +28,7 @@ use TypeError;
 /**
  * Custom Type for the SsoOn2faOption Value Object
  */
-class SsoOn2faOptionType extends Type
+class SsoOn2faOptionType extends IntegerType
 {
     public const NAME = 'stepup_sso_on_2fa_option';
 

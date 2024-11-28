@@ -30,14 +30,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaCandidateRepository
 /**
  * Be aware that this entity is used for the RA Candidate presentation only. This entity shouldn't be used to store any RA candidates.
  */
-#[ORM\Table]
 #[ORM\Entity(repositoryClass: RaCandidateRepository::class, readOnly: true)]
-#[ORM\Index(name: "idx_ra_candidate_institution", columns: ["institution"])]
-#[ORM\Index(name: "idx_ra_candidate_name_id", columns: ["name_id"])]
-#[ORM\Index(name: "idxft_ra_candidate_email", columns: ["email"], flags: ['FULLTEXT'])]
-#[ORM\Index(name: "idxft_ra_candidate_commonname", columns: ["common_name"], flags: ['FULLTEXT'])]
-#[ORM\Index(name: "idx_ra_institution", columns: ["ra_institution"])]
-#[ORM\UniqueConstraint(name: "idx_ra_candidate_unique_identity_institution", columns: ["identity_id", "ra_institution"])]
 class RaCandidate implements JsonSerializable
 {
     /**

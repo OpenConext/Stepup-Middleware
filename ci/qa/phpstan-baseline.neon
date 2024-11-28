@@ -2451,11 +2451,6 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/NameIdType.php
 
 		-
-			message: "#^Cannot cast mixed to int\\.$#"
-			count: 1
-			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/NumberOfTokensPerIdentityType.php
-
-		-
 			message: "#^Parameter \\#1 \\$raLocationName of class Surfnet\\\\Stepup\\\\Configuration\\\\Value\\\\RaLocationName constructor expects string, mixed given\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Doctrine/Type/RaLocationNameType.php

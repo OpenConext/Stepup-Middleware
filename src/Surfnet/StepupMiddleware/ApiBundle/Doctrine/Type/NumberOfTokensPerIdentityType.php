@@ -20,6 +20,7 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\NumberOfTokensPerIdentityOption;
 use Surfnet\Stepup\Exception\InvalidArgumentException;
@@ -27,7 +28,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 /**
  * Custom Type for the NumberOfTokensPerIdentityOption Value Object
  */
-class NumberOfTokensPerIdentityType extends Type
+class NumberOfTokensPerIdentityType extends IntegerType
 {
     public const NAME = 'stepup_number_of_tokens_per_identity_option';
 

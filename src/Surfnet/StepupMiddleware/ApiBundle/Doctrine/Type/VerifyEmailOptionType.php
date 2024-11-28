@@ -19,6 +19,7 @@
 namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
 use Surfnet\Stepup\Configuration\Value\VerifyEmailOption;
@@ -27,7 +28,7 @@ use Surfnet\Stepup\Exception\InvalidArgumentException;
 /**
  * Custom Type for the VerifyEmailOption Value Object
  */
-class VerifyEmailOptionType extends Type
+class VerifyEmailOptionType extends BooleanType
 {
     public const NAME = 'stepup_verify_email_option';
 

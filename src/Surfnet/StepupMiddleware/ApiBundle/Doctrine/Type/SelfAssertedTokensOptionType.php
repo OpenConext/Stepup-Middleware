@@ -20,14 +20,16 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
+use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\Type;
+use phpseclib3\Math\PrimeField\Integer;
 use Surfnet\Stepup\Configuration\Value\SelfAssertedTokensOption;
 use TypeError;
 
 /**
  * Custom Type for the SelfAssertedTokens options Value Object
  */
-class SelfAssertedTokensOptionType extends Type
+class SelfAssertedTokensOptionType extends IntegerType
 {
     public const NAME = 'stepup_self_asserted_tokens_option';
 

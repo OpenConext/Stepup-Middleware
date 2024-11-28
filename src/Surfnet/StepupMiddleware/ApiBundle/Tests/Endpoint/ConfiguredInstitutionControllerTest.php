@@ -65,6 +65,7 @@ class ConfiguredInstitutionControllerTest extends WebTestCase
 
         $this->databaseTool->setObjectManagerName('middleware');
         // Initialises schema.
+        $this->databaseTool->setExcludedDoctrineTables(['ra_candidate']);
         $this->databaseTool->loadFixtures();
 
 

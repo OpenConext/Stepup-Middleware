@@ -47,6 +47,7 @@ class ConfigurationControllerTest extends WebTestCase
         }
         $this->databaseTool = $databaseTool->get();
         // Initialises schema.
+        $this->databaseTool->setExcludedDoctrineTables(['ra_candidate']);
         $this->databaseTool->loadFixtures([]);
 
         $managementPassword = $this->client->getKernel()->getContainer()->getParameter('management_password');

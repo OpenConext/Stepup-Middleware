@@ -53,6 +53,7 @@ class SraaControllerTest extends WebTestCase
         $this->databaseTool = $databaseTool->get();
 
         // Initialises schema.
+        $this->databaseTool->setExcludedDoctrineTables(['ra_candidate']);
         $this->databaseTool->loadFixtures([]);
 
 

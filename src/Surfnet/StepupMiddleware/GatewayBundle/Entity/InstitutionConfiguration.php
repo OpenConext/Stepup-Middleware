@@ -29,7 +29,7 @@ class InstitutionConfiguration
 {
     public function __construct(
         #[ORM\Id]
-        #[ORM\Column(length: 200)]
+        #[ORM\Column(length: 255)]
         public string $institution,
         /**
          * @var bool is the SSO on 2FA feature enabled?

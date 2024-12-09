@@ -3436,6 +3436,11 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/SensitiveData/SensitiveDataTest.php
 
 		-
+			message: "#^Method Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Tests\\\\Twig\\\\BackwardsCompatibleExtensionTest\\:\\:templateProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/Twig/BackwardsCompatibleExtensionTest.php
+
+		-
 			message: "#^Method Surfnet\\\\StepupMiddleware\\\\CommandHandlingBundle\\\\Tests\\\\Value\\\\InstitutionTest\\:\\:nonStringOrNonEmptyStringProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: ../../src/Surfnet/StepupMiddleware/CommandHandlingBundle/Tests/Value/InstitutionTest.php

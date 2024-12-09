@@ -85,7 +85,7 @@ class ReplaySpecificEventsCommand extends Command
         }
 
         if ($availableProjectors === []) {
-            $output->writeln('<error>There are no projectors configured to reply events for</error>');
+            $output->writeln('<error>There are no projectors configured to replay events for</error>');
 
             return 1;
         }

@@ -154,10 +154,11 @@ class SecondFactorProjector extends Projector
 
     public function applyEmailVerifiedEvent(EmailVerifiedEvent $event): void
     {
-        $unverified = $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId());
-        if (is_null($unverified)) {
+        if ($event->secondFactorType->isU2f()) {
+            // u2f is deprecated so those events shouldn't be handled anymore
             return;
         }
+        $unverified = $this->unverifiedRepository->find($event->secondFactorId->getSecondFactorId());
 
         $verified = new VerifiedSecondFactor();
         $verified->id = $event->secondFactorId->getSecondFactorId();
@@ -250,10 +251,12 @@ class SecondFactorProjector extends Projector
 
     protected function applyVerifiedSecondFactorRevokedEvent(VerifiedSecondFactorRevokedEvent $event): void
     {
-        $verifiedSecondFactor = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
-        if (is_null($verifiedSecondFactor)) {
+        if ($event->secondFactorType->isU2f()) {
+            // u2f is deprecated so those events shouldn't be handled anymore
             return;
         }
+        $verifiedSecondFactor = $this->verifiedRepository->find($event->secondFactorId->getSecondFactorId());
+
         $this->verifiedRepository->remove($verifiedSecondFactor);
     }
 

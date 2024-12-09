@@ -2661,13 +2661,18 @@ parameters:
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/RecoveryTokenProjector.php
 
 		-
+			message: "#^Cannot access property \\$secondFactorIdentifier on Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\UnverifiedSecondFactor\\|null\\.$#"
+			count: 1
+			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/SecondFactorProjector.php
+
+		-
 			message: "#^Parameter \\#1 \\$secondFactor of method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Repository\\\\UnverifiedSecondFactorRepository\\:\\:remove\\(\\) expects Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\UnverifiedSecondFactor, Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\UnverifiedSecondFactor\\|null given\\.$#"
-			count: 2
+			count: 3
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/SecondFactorProjector.php
 
 		-
 			message: "#^Parameter \\#1 \\$secondFactor of method Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Repository\\\\VerifiedSecondFactorRepository\\:\\:remove\\(\\) expects Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\VerifiedSecondFactor, Surfnet\\\\StepupMiddleware\\\\ApiBundle\\\\Identity\\\\Entity\\\\VerifiedSecondFactor\\|null given\\.$#"
-			count: 3
+			count: 4
 			path: ../../src/Surfnet/StepupMiddleware/ApiBundle/Identity/Projector/SecondFactorProjector.php
 
 		-

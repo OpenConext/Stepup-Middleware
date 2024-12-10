@@ -65,7 +65,7 @@ class RecoveryTokenController extends AbstractController
             sprintf('Received search request for recovery tokens with params: %s', $request->getQueryString()),
         );
         $query = new RecoveryTokenQuery();
-        $query->identityId = new IdentityId($request->get('identityId'));
+        $query->identityId = $request->get('identityId') ? new IdentityId($request->get('identityId')) : null;
         $query->type = $request->get('type');
         $query->status = $request->get('status');
         $query->institution = $request->get('institution');

@@ -39,7 +39,13 @@ final class NameId implements JsonSerializable, Stringable
 
     public function __construct(string $value)
     {
-        if (strlen($value) > self::MAX_LENGTH || strlen($value) === 0) {
+        if (strlen($value) === 0) {
+            throw new InvalidArgumentException(
+                'Invalid argument type: nameId is empty',
+            );
+        }
+
+        if (strlen($value) > self::MAX_LENGTH) {
             throw new InvalidArgumentException(
                 'Invalid argument type: maximum length for nameId exceeds configured length of ' . self::MAX_LENGTH,
             );

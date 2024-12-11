@@ -35,7 +35,6 @@ class DateTime implements Stringable
      * `DateTime::createFromString()`.
      */
     public const FORMAT = 'Y-m-d\\TH:i:sP';
-    public const MAIL_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * Allows for mocking of time.

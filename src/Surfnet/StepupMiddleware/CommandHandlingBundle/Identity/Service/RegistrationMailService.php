@@ -158,7 +158,7 @@ class RegistrationMailService
             'commonName' => $commonName,
             'emailAddress' => $email,
             'registrationCode' => $registrationCode,
-            'expirationDate' => $expirationDate->format(DateTime::MAIL_FORMAT),
+            'expirationDate' => (string)$expirationDate,
             'ras' => $ras,
             'selfServiceUrl' => $this->selfServiceUrl,
         ];
@@ -208,7 +208,7 @@ class RegistrationMailService
             'commonName' => $commonName,
             'emailAddress' => $email,
             'registrationCode' => $registrationCode,
-            'expirationDate' => $expirationDate->format(DateTime::MAIL_FORMAT),
+            'expirationDate' => (string)$expirationDate,
             'raLocations' => $raLocations,
             'selfServiceUrl' => $this->selfServiceUrl,
         ];

@@ -131,7 +131,7 @@ class VerifiedSecondFactorReminderMailService
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale,
             'commonName' => $commonName,
-            'expirationDate' => $requestedAt->format(DateTime::MAIL_FORMAT),
+            'expirationDate' => (string)$requestedAt,
             'registrationCode' => $registrationCode,
             'raLocations' => $raLocations,
         ];
@@ -174,7 +174,7 @@ class VerifiedSecondFactorReminderMailService
             'templateString' => $emailTemplate->htmlContent,
             'locale' => $locale,
             'commonName' => $commonName,
-            'expirationDate' => $requestedAt->format(DateTime::MAIL_FORMAT),
+            'expirationDate' => (string)$requestedAt,
             'registrationCode' => $registrationCode,
             'ras' => $ras,
         ];

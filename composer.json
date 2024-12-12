@@ -33,7 +33,6 @@
         "jms/translation-bundle": "^2.2",
         "nelmio/security-bundle": "^3.1",
         "openconext/monitor-bundle": "^4.1",
-        "pagerfanta/doctrine-orm-adapter": "*",
         "pagerfanta/pagerfanta": "^4.3",
         "ramsey/uuid": "^4.7",
         "surfnet/stepup-bundle": "^6.0",

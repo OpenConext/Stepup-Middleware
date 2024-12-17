@@ -18,6 +18,8 @@
 
 namespace Surfnet\Stepup\Identity\Value;
 
+use SensitiveParameter;
+
 /**
  * Unhashed secret
  *
@@ -51,7 +53,7 @@ class UnhashedSecret implements HashableSecret
         return new HashedSecret($hashedSecret);
     }
 
-    public function __construct(private readonly string $secret)
+    public function __construct(#[SensitiveParameter] private readonly string $secret)
     {
     }
 

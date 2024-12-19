@@ -8,14 +8,12 @@ FROM ghcr.io/openconext/openconext-basecontainers/php82-apache2:latest
 WORKDIR /var/www/html
 COPY --from=unpack /unpack/ /var/www/html/
 # Add the application configuration files
-COPY config/openconext/parameters.yaml.dist config/openconext/parameters.yaml
-
-# Add the config files for Apache2
-RUN rm -rf /etc/apache2/sites-enabled/*
-COPY ./docker/conf/middleware-test-apache2.conf /etc/apache2/sites-enabled/middleware.conf
-RUN rm -rf /var/www/html/var/cache/prod &&\
-  mkdir -p /var/www/html/var/cache &&\
+RUN cp config/openconext/parameters.yaml.dist config/openconext/parameters.yaml && \
+  rm -rf /etc/apache2/sites-enabled/*
+COPY ./docker/conf/middleware-apache2.conf /etc/apache2/sites-enabled/middleware.conf
+RUN rm -rf /var/www/html/var/cache/prod && \
+  mkdir -p /var/www/html/var/ && \
   chown -R www-data /var/www/html/var
-
 EXPOSE 80
+
 CMD ["apache2-foreground"]

@@ -1,8 +1,10 @@
 monolog:
+  channels:
+    - deprecation
   handlers:
     prod-signaler:
       type: fingers_crossed
-      action_level: ERROR
+      action_level: INFO
       passthru_level: NOTICE # this means that all message of level NOTICE or higher are always logged
       handler: main_syslog
       bubble: false # if we handle it, nothing else should
@@ -12,6 +14,9 @@ monolog:
       path: "php://stderr"
       formatter: surfnet_stepup.monolog.json_formatter
       channels: [ "!deprecation" ]
+    deprecation:
+      type: "null"
+      channels: [deprecation]
 
 when@dev: &override
   monolog:

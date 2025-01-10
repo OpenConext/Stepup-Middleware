@@ -1,4 +1,11 @@
 # Changelog
+
+# 6.0.0
+- Move to PHP 8.2
+- Move to Synfony 6
+- Upgrade composer dependencies 
+- Bump saml2, xmlseclibs
+
 # 5.2.0
 - Some changes for the Docker release of Middleware. This app will get a PHP7.2 release in docker
 - Migrate the github actions to reusable actions

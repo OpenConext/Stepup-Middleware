@@ -237,4 +237,9 @@ class RaListingRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public function contains(IdentityId $identityId): bool
+    {
+        return count(parent::findBy(['identityId' => (string)$identityId])) > 0;
+    }
 }

@@ -34,4 +34,10 @@ interface DeprovisionServiceInterface
      * any user data either.
      */
     public function deprovision(string $collabPersonId): void;
+
+    /**
+     * This method checks if the right to be forgotten command
+     * can be used on the specified user.
+     */
+    public function assertIsAllowed(string $collabPersonId): void;
 }

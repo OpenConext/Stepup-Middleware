@@ -22,7 +22,6 @@ use Exception;
 use Surfnet\Stepup\Exception\DomainException;
 use Surfnet\Stepup\Helper\UserDataFormatterInterface;
 use Surfnet\StepupMiddleware\ApiBundle\Service\DeprovisionServiceInterface;
-use Surfnet\StepupMiddleware\ApiBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DeprovisionController extends AbstractController
@@ -42,11 +41,12 @@ class DeprovisionController extends AbstractController
             if ($userData !== []) {
                 $this->deprovisionService->deprovision($collabPersonId);
             }
-        } catch (DomainException) {
+        } catch (DomainException $e) {
             // On domain exceptions, like when the identity is forgotten, we return OK, with empty data
             // just so the deprovision run does not end prematurely. At this point, no other domain exceptions
             // are thrown.
             $userData = [];
+            $errors = [$e->getMessage()];
         } catch (Exception $e) {
             $userData = [];
             $errors = [$e->getMessage()];
@@ -57,8 +57,11 @@ class DeprovisionController extends AbstractController
     public function dryRun(string $collabPersonId): JsonResponse
     {
         $this->denyAccessUnlessGrantedOneOff(['ROLE_DEPROVISION']);
+
         $errors = [];
         try {
+            $this->deprovisionService->assertIsAllowed($collabPersonId);
+
             $userData = $this->deprovisionService->readUserData($collabPersonId);
         } catch (Exception $e) {
             $userData = [];

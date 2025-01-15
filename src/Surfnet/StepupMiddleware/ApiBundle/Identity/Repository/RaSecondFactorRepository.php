@@ -23,6 +23,9 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Surfnet\Stepup\Exception\RuntimeException;
+use Surfnet\Stepup\Identity\Value\CommonName;
+use Surfnet\Stepup\Identity\Value\DocumentNumber;
+use Surfnet\Stepup\Identity\Value\Email;
 use Surfnet\Stepup\Identity\Value\IdentityId;
 use Surfnet\StepupMiddleware\ApiBundle\Authorization\Filter\InstitutionAuthorizationRepositoryFilter;
 use Surfnet\StepupMiddleware\ApiBundle\Doctrine\Type\SecondFactorStatusType;
@@ -31,6 +34,7 @@ use Surfnet\StepupMiddleware\ApiBundle\Identity\Query\RaSecondFactorQuery;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Value\SecondFactorStatus;
 
 /**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @extends ServiceEntityRepository<RaSecondFactor>
  */
 class RaSecondFactorRepository extends ServiceEntityRepository
@@ -203,9 +207,15 @@ class RaSecondFactorRepository extends ServiceEntityRepository
         $this->getEntityManager()->createQueryBuilder()
             ->update($this->getEntityName(), 'rasf')
             ->set('rasf.status', ":forgotten")
+            ->set('rasf.name', ":name")
+            ->set('rasf.email', ":email")
+            ->set('rasf.documentNumber', ":documentNumber")
             ->where('rasf.identityId = :identityId')
             ->setParameter('identityId', $identityId->getIdentityId())
             ->setParameter('forgotten', 40)
+            ->setParameter('name', CommonName::unknown())
+            ->setParameter('email', Email::unknown())
+            ->setParameter('documentNumber', DocumentNumber::unknown())
             ->getQuery()
             ->execute();
     }

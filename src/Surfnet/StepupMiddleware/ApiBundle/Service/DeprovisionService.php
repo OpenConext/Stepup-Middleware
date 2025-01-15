@@ -20,22 +20,31 @@ namespace Surfnet\StepupMiddleware\ApiBundle\Service;
 
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 use Surfnet\Stepup\Identity\EventSourcing\IdentityRepository;
 use Surfnet\Stepup\Identity\Value\IdentityId;
+use Surfnet\Stepup\Identity\Value\NameId;
 use Surfnet\StepupMiddleware\ApiBundle\Exception\UserNotFoundException;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Entity\Identity;
 use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\IdentityRepository as ApiIdentityRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\RaListingRepository;
+use Surfnet\StepupMiddleware\ApiBundle\Identity\Repository\SraaRepository;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Identity\Command\ForgetIdentityCommand;
 use Surfnet\StepupMiddleware\CommandHandlingBundle\Pipeline\Pipeline;
 use function sprintf;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class DeprovisionService implements DeprovisionServiceInterface
 {
     public function __construct(
-        private readonly Pipeline $pipeline,
-        private readonly IdentityRepository $eventSourcingRepository,
-        private readonly ApiIdentityRepository $apiRepository,
-        private readonly LoggerInterface $logger,
+        private readonly Pipeline                                                                           $pipeline,
+        private readonly IdentityRepository                                                                 $eventSourcingRepository,
+        private readonly ApiIdentityRepository                                                              $apiRepository,
+        private readonly LoggerInterface                                                                    $logger,
+        private readonly SraaRepository                                                                     $sraaRepository,
+        private readonly RaListingRepository                                                                $raListingRepository,
     ) {
     }
 
@@ -84,5 +93,23 @@ class DeprovisionService implements DeprovisionServiceInterface
             );
         }
         return $user;
+    }
+
+    public function assertIsAllowed(string $collabPersonId): void
+    {
+        $nameId = new NameId($collabPersonId);
+        $identity = $this->apiRepository->findOneByNameId($nameId);
+
+        if ($identity === null) {
+            throw new RuntimeException('Cannot forget an identity that does not exist.');
+        }
+
+        if ($this->sraaRepository->contains($identity->nameId)) {
+            throw new RuntimeException('Cannot forget an identity that is currently accredited as an SRAA');
+        }
+
+        if ($this->raListingRepository->contains(new IdentityId($identity->id))) {
+            throw new RuntimeException('Cannot forget an identity that is currently accredited as an RA(A)');
+        }
     }
 }
